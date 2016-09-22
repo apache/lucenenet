@@ -610,11 +610,11 @@ namespace Lucene.Net.Util.Fst
                         if (path.Arc.Label == FST.END_LABEL)
                         {
                             // Add final output:
-                            //System.out.println("    done!: " + path);
+                            //Debug.WriteLine("    done!: " + path);
                             T finalOutput = fst.Outputs.Add(path.Cost, path.Arc.Output);
                             if (AcceptResult(path.Input, finalOutput))
                             {
-                                //System.out.println("    add result: " + path);
+                                //Debug.WriteLine("    add result: " + path);
                                 results.Add(new Result<T>(path.Input, finalOutput));
                             }
                             else

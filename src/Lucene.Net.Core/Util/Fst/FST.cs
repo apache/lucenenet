@@ -357,7 +357,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw new InvalidOperationException("already finished");
             }
-            if (newStartNode == FST.FINAL_END_NODE && emptyOutput != null)
+            if (newStartNode == FST.FINAL_END_NODE && !EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 newStartNode = 0;
             }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Util.Fst
             }
             // TODO: really we should encode this as an arc, arriving
             // to the root node, instead of special casing here:
-            if (emptyOutput != null)
+            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 // Accepts empty string
                 @out.WriteByte(1);
@@ -866,7 +866,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public FST.Arc<T> GetFirstArc(FST.Arc<T> arc)
         {
-            if (emptyOutput != null)
+            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 arc.Flags = FST.BIT_FINAL_ARC | FST.BIT_LAST_ARC;
                 arc.NextFinalOutput = emptyOutput;
@@ -996,7 +996,7 @@ namespace Lucene.Net.Util.Fst
         public FST.Arc<T> ReadFirstTargetArc(FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
             //int pos = address;
-            //System.out.println("    readFirstTarget follow.target=" + follow.Target + " isFinal=" + follow.isFinal());
+            //Debug.WriteLine("    readFirstTarget follow.target=" + follow.Target + " isFinal=" + follow.IsFinal);
             if (follow.IsFinal)
             {
                 // Insert "fake" final first arc:
@@ -1014,7 +1014,7 @@ namespace Lucene.Net.Util.Fst
                     arc.NextArc = follow.Target;
                 }
                 arc.Target = FST.FINAL_END_NODE;
-                //System.out.println("    insert isFinal; nextArc=" + follow.Target + " isLast=" + arc.isLast() + " output=" + outputs.outputToString(arc.Output));
+                //Debug.WriteLine("    insert isFinal; nextArc=" + follow.Target + " isLast=" + arc.IsLast + " output=" + Outputs.OutputToString(arc.Output));
                 return arc;
             }
             else
@@ -1106,8 +1106,7 @@ namespace Lucene.Net.Util.Fst
 
             if (arc.Label == FST.END_LABEL)
             {
-                //System.out.println("    nextArc fake " +
-                //arc.nextArc);
+                //Debug.WriteLine("    nextArc fake " + arc.NextArc);
 
                 long pos = GetNodeAddress(arc.NextArc);
                 @in.Position = pos;
@@ -2046,7 +2045,7 @@ namespace Lucene.Net.Util.Fst
             fst.startNode = newNodeAddress.Get((int)startNode);
             //System.out.println("new startNode=" + fst.startNode + " old startNode=" + startNode);
 
-            if (emptyOutput != null)
+            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 fst.EmptyOutput = emptyOutput;
             }
