@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -39,17 +40,20 @@ namespace Lucene.Net.Analysis.Synonym
         private IPositionLengthAttribute posLenAtt;
         private IOffsetAttribute offsetAtt;
 
+        private static Regex space = new Regex(" +", RegexOptions.Compiled);
+
         private void Add(string input, string output, bool keepOrig)
         {
             if (VERBOSE)
             {
                 Console.WriteLine("  add input=" + input + " output=" + output + " keepOrig=" + keepOrig);
             }
+
             CharsRef inputCharsRef = new CharsRef();
-            SynonymMap.Builder.Join(input.Split(new string[] { " +" }, StringSplitOptions.RemoveEmptyEntries), inputCharsRef);
+            SynonymMap.Builder.Join(space.Split(input), inputCharsRef);
 
             CharsRef outputCharsRef = new CharsRef();
-            SynonymMap.Builder.Join(output.Split(new string[] { " +" }, StringSplitOptions.RemoveEmptyEntries), outputCharsRef);
+            SynonymMap.Builder.Join(space.Split(output), outputCharsRef);
 
             b.Add(inputCharsRef, outputCharsRef, keepOrig);
         }
