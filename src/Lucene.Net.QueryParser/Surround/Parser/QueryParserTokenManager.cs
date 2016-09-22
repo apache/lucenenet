@@ -686,7 +686,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 {
                     if (jjmatchedPos + 1 < curPos)
                         input_stream.Backup(curPos - jjmatchedPos - 1);
-                    if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
+                    if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 63 /*077*/))) != 0L)
                     {
                         matchedToken = JjFillToken();
                         if (jjnewLexState[jjmatchedKind] != -1)
