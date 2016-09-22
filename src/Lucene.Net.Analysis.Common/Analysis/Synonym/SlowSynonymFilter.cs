@@ -188,14 +188,13 @@ namespace Lucene.Net.Analysis.Synonym
                     origPosInc.PositionIncrement = origPos - pos;
                     generated.Add(origTok);
                     pos += origPosInc.PositionIncrement;
-                    //origTok = matched.Count == 0 ? null : matched.RemoveFirst();
                     if (matched.Count == 0)
                     {
                         origTok = null;
                     }
                     else
                     {
-                        origTok = matched.Count > 0 ? matched.First.Value : null;
+                        origTok = matched.First.Value;
                         matched.RemoveFirst();
                     }
                     if (origTok != null)
@@ -230,7 +229,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             if (buffer != null && buffer.Count > 0)
             {
-                var first = matched.Count > 0 ? matched.First.Value : null;
+                var first = buffer.First.Value;
                 buffer.RemoveFirst();
                 return first;
 
