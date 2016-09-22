@@ -83,57 +83,52 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             pattern = new Regex(re.ToString(), RegexOptions.Compiled);
         }
 
-        // TODO: Finish implementation
         public override void VisitMatchingTerms(IndexReader reader, string fieldName, SimpleTerm.IMatchingTermVisitor mtv)
         {
-            throw new NotImplementedException("Need to translate this from Java's whacky RegEx syntax");
-            //int prefixLength = prefix.Length;
-            //Terms terms = MultiFields.GetTerms(reader, fieldName);
-            //if (terms != null)
-            //{
-            //    MatchCollection matcher = pattern.Matches("");
-            //    try
-            //    {
-            //        TermsEnum termsEnum = terms.Iterator(null);
+            int prefixLength = prefix.Length;
+            Terms terms = MultiFields.GetTerms(reader, fieldName);
+            if (terms != null)
+            {
+                TermsEnum termsEnum = terms.Iterator(null);
 
-            //        TermsEnum.SeekStatus status = termsEnum.SeekCeil(prefixRef);
-            //        BytesRef text;
-            //        if (status == TermsEnum.SeekStatus.FOUND)
-            //        {
-            //            text = prefixRef;
-            //        }
-            //        else if (status == TermsEnum.SeekStatus.NOT_FOUND)
-            //        {
-            //            text = termsEnum.Term();
-            //        }
-            //        else
-            //        {
-            //            text = null;
-            //        }
+                TermsEnum.SeekStatus status = termsEnum.SeekCeil(prefixRef);
+                BytesRef text;
+                if (status == TermsEnum.SeekStatus.FOUND)
+                {
+                    text = prefixRef;
+                }
+                else if (status == TermsEnum.SeekStatus.NOT_FOUND)
+                {
+                    text = termsEnum.Term();
+                }
+                else
+                {
+                    text = null;
+                }
 
-            //        while (text != null)
-            //        {
-            //            if (text != null && StringHelper.StartsWith(text, prefixRef))
-            //            {
-            //                string textString = text.Utf8ToString();
-            //                matcher.Reset(textString.Substring(prefixLength));
-            //                if (matcher.Success)
-            //                {
-            //                    mtv.VisitMatchingTerm(new Term(fieldName, textString));
-            //                }
-            //            }
-            //            else
-            //            {
-            //                break;
-            //            }
-            //            text = termsEnum.Next();
-            //        }
-            //    }
-            //    finally
-            //    {
-            //        matcher.Reset();
-            //    }
-            //}
+                while (text != null)
+                {
+                    if (text != null && StringHelper.StartsWith(text, prefixRef))
+                    {
+                        string textString = text.Utf8ToString();
+                        // LUCENENET NOTE: Java's matches() method checks to see if the
+                        // entire string is a match with the regex, so we mimic that
+                        // by testing to ensure the lengths of the input and match are equal 
+                        // as well as whether it is successful.
+                        string toMatchEntirely = textString.Substring(prefixLength);
+                        Match matcher = pattern.Match(toMatchEntirely);
+                        if (matcher.Success && matcher.Length == toMatchEntirely.Length)
+                        {
+                            mtv.VisitMatchingTerm(new Term(fieldName, textString));
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    text = termsEnum.Next();
+                }
+            }
         }
     }
 }
