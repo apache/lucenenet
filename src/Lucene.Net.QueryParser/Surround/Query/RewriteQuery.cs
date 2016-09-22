@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public RewriteQuery(
             SQ srndQuery,
-            String fieldName,
+            string fieldName,
             BasicQueryFactory qf)
         {
             this.srndQuery = srndQuery;

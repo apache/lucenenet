@@ -142,12 +142,12 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         }
 
         protected virtual SrndQuery GetTermQuery(
-              String term, bool quoted)
+              string term, bool quoted)
         {
             return new SrndTermQuery(term, quoted);
         }
 
-        protected virtual bool AllowedSuffix(String suffixed)
+        protected virtual bool AllowedSuffix(string suffixed)
         {
             return (suffixed.Length - 1) >= minimumPrefixLength;
         }

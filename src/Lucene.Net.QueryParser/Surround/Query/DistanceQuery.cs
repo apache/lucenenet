@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual Search.Query GetSpanNearQuery(
             IndexReader reader,
-            String fieldName,
+            string fieldName,
             float boost,
             BasicQueryFactory qf)
         {

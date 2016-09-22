@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// All the methods except backup can be implemented in any fashion. backup
     /// needs to be implemented correctly for the correct operation of the lexer.
     /// Rest of the methods are all used to get information like line number,
-    /// column number and the String that constitutes a token and are not used
+    /// column number and the string that constitutes a token and are not used
     /// by the lexer. Hence their implementation won't affect the generated lexer's
     /// operation.
     /// </summary>
@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// implementation of this is as follows :
         /// 
         /// {
-        /// String t = GetImage();
+        /// string t = GetImage();
         /// return t.substring(t.length() - len, t.length()).toCharArray();
         /// }
         /// </summary>

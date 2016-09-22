@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
      */
 
     /// <summary>
-    /// Query that matches String prefixes
+    /// Query that matches string prefixes
     /// </summary>
     public class SrndPrefixQuery : SimpleTerm
     {

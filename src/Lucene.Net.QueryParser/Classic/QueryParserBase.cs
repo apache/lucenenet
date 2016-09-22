@@ -424,7 +424,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <param name="slop"></param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
         /// <returns></returns>
-        protected internal virtual Query GetFieldQuery(String field, String queryText, int slop)
+        protected internal virtual Query GetFieldQuery(string field, string queryText, int slop)
         {
             Query query = GetFieldQuery(field, queryText, true);
 
@@ -898,7 +898,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Returns a String where the escape char has been
+        /// Returns a string where the escape char has been
         /// removed, or kept only once if there was a double escape.
         /// 
         /// Supports escaped unicode characters, e. g. translates 
@@ -979,7 +979,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ParseException("Term can not end with escape character.");
             }
 
-            return new String(output, 0, length);
+            return new string(output, 0, length);
         }
 
         /// <summary>
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Returns a String where those characters that QueryParser
+        /// Returns a string where those characters that QueryParser
         /// expects to be escaped are escaped by a preceding <code>\</code>.
         /// </summary>
         public static string Escape(string s)
