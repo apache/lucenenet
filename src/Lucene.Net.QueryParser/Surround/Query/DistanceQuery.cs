@@ -51,9 +51,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             var sqi = GetSubQueriesEnumerator();
             while (sqi.MoveNext())
             {
-                var dsq = sqi.Current as IDistanceSubQuery;
-                if (dsq != null)
+                var leq = sqi.Current;
+                if (leq is IDistanceSubQuery)
                 {
+                    var dsq = sqi.Current as IDistanceSubQuery;
                     string m = dsq.DistanceSubQueryNotAllowed();
                     if (m != null)
                     {
@@ -62,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 }
                 else
                 {
-                    return "Operator " + OperatorName + " does not allow subquery " + dsq.ToString();
+                    return "Operator " + OperatorName + " does not allow subquery " + leq.ToString();
                 }
             }
             return null; /* subqueries acceptable */
