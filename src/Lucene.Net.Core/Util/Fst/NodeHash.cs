@@ -113,29 +113,6 @@ namespace Lucene.Net.Util.Fst
                 h = PRIME * h + (int)(scratchArc.Target ^ (scratchArc.Target >> 32));
                 h = PRIME * h + scratchArc.Output.GetHashCode();
                 h = PRIME * h + scratchArc.NextFinalOutput.GetValueHashCode();
-                //// LUCENENET: Since lists do not compare values by default in .NET,
-                //// we need this workaround to get the hashcode of the type + all of the
-                //// values.
-                //if (scratchArc.NextFinalOutput is IEnumerable)
-                //{
-                //    h = PRIME * h + scratchArc.NextFinalOutput.GetType().GetHashCode();
-                //    foreach (object value in scratchArc.NextFinalOutput as IEnumerable)
-                //    {
-                //        if (value != null)
-                //        {
-                //            h = PRIME * h + value.GetHashCode();
-                //        }
-                //        else
-                //        {
-                //            h = PRIME * h + 0; // 0 for null
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    h = PRIME * h + scratchArc.NextFinalOutput.GetHashCode();
-                //}
-
                 if (scratchArc.IsFinal)
                 {
                     h += 17;
