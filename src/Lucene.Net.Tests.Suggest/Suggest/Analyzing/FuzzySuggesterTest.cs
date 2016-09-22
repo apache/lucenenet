@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             keys.Add(new Input("foo bar boo far", 12));
             MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
-            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, FuzzySuggester.EXACT_FIRST | FuzzySuggester.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                                                           0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
             int numIters = AtLeast(10);
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             keys.Add(new Input("фуу бар буу фар", 12));
             MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
-            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, FuzzySuggester.EXACT_FIRST | FuzzySuggester.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                 0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, true);
             suggester.Build(new InputArrayIterator(keys));
             int numIters = AtLeast(10);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer standard = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
-            FuzzySuggester suggester = new FuzzySuggester(standard, standard, AnalyzingSuggester.EXACT_FIRST | AnalyzingSuggester.PRESERVE_SEP, 256, -1, false, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+            FuzzySuggester suggester = new FuzzySuggester(standard, standard, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, false, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                 FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("abcd", 1),
             };
 
-            int options = 0;
+            SuggesterOptions options = 0;
 
             Analyzer a = new MockAnalyzer(Random());
             FuzzySuggester suggester = new FuzzySuggester(a, a, options, 256, -1, true, 1, true, 1, 3, false);
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
 
             Analyzer a = GetUnusualAnalyzer();
-            FuzzySuggester suggester = new FuzzySuggester(a, a, AnalyzingSuggester.EXACT_FIRST | AnalyzingSuggester.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("x y", 1),
                 new Input("x y z", 3),
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
 
             Analyzer a = GetUnusualAnalyzer();
-            FuzzySuggester suggester = new FuzzySuggester(a, a, AnalyzingSuggester.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
 
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("x y", 1),
@@ -830,7 +830,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
             FuzzySuggester suggester = new FuzzySuggester(a, a,
-                                                          preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true, 1, false, 1, 3, unicodeAware);
+                                                          preserveSep ? SuggesterOptions.PRESERVE_SEP : 0, 256, -1, true, 1, false, 1, 3, unicodeAware);
             suggester.Build(new InputArrayIterator(keys));
 
             foreach (string prefix in allPrefixes)
@@ -1012,7 +1012,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestEditSeps()
         {
             Analyzer a = new MockAnalyzer(Random());
-            FuzzySuggester suggester = new FuzzySuggester(a, a, FuzzySuggester.PRESERVE_SEP, 2, -1, true, 2, true, 1, 3, false);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 2, -1, true, 2, true, 1, 3, false);
 
             IList<Input> keys = Arrays.AsList(new Input[] {
                 new Input("foo bar", 40),

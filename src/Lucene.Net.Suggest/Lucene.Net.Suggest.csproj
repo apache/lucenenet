@@ -64,6 +64,7 @@
     <Compile Include="Suggest\Analyzing\FreeTextSuggester.cs" />
     <Compile Include="Suggest\Analyzing\FSTUtil.cs" />
     <Compile Include="Suggest\Analyzing\FuzzySuggester.cs" />
+    <Compile Include="Suggest\Analyzing\SuggesterOptions.cs" />
     <Compile Include="Suggest\Analyzing\SuggestStopFilter.cs" />
     <Compile Include="Suggest\BufferedInputIterator.cs" />
     <Compile Include="Suggest\BufferingTermFreqIteratorWrapper.cs" />

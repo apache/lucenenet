@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="queryAnalyzer">
         ///           <see cref="Analyzer"/> that will be used for analyzing query text during lookup </param>
         public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
-            : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true, 
+            : this(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, 
                   DEFAULT_MAX_EDITS, DEFAULT_TRANSPOSITIONS, DEFAULT_NON_FUZZY_PREFIX, 
                   DEFAULT_MIN_FUZZY_LENGTH, DEFAULT_UNICODE_AWARE)
         {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///        analyzing suggestions while building the index. </param>
         /// <param name="queryAnalyzer"> The <see cref="Analyzer"/> that will be used for
         ///        analyzing query text during lookup </param>
-        /// <param name="options"> see <see cref="EXACT_FIRST"/>, <see cref="PRESERVE_SEP"/> </param>
+        /// <param name="options"> see <see cref="SuggesterOptions.EXACT_FIRST"/>, <see cref="SuggesterOptions.PRESERVE_SEP"/> </param>
         /// <param name="maxSurfaceFormsPerAnalyzedForm"> Maximum number of
         ///        surface forms to keep for a single analyzed form.
         ///        When there are too many surface forms we discard the
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="nonFuzzyPrefix"> length of common (non-fuzzy) prefix (see default <see cref="DEFAULT_NON_FUZZY_PREFIX"/> </param>
         /// <param name="minFuzzyLength"> minimum length of lookup key before any edits are allowed (see default <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>) </param>
         /// <param name="unicodeAware"> operate Unicode code points instead of bytes. </param>
-        public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options, 
+        public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, SuggesterOptions options, 
             int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements, 
             int maxEdits, bool transpositions, int nonFuzzyPrefix, int minFuzzyLength, bool unicodeAware)
             : base(indexAnalyzer, queryAnalyzer, options, maxSurfaceFormsPerAnalyzedForm, maxGraphExpansions, preservePositionIncrements)

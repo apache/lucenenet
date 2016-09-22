@@ -119,24 +119,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool preserveSep;
 
         /// <summary>
-        /// Include this flag in the options parameter to 
-        /// <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)"/> to always
-        /// return the exact match first, regardless of score.  This
-        /// has no performance impact but could result in
-        /// low-quality suggestions. 
-        /// </summary>
-        public const int EXACT_FIRST = 1;
-
-        /// <summary>
-        /// Include this flag in the options parameter to
-        /// <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)"/> to preserve
-        /// token separators when matching. 
-        /// </summary>
-        public const int PRESERVE_SEP = 2;
-
-        /// <summary>
         /// Represents the separation between tokens, if
-        ///  PRESERVE_SEP was specified 
+        /// <see cref="SuggesterOptions.PRESERVE_SEP"/> was specified 
         /// </summary>
         private const int SEP_LABEL = '\u001F';
 
@@ -180,22 +164,22 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private long count = 0;
 
         /// <summary>
-        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)">
-        /// AnalyzingSuggester(analyzer, analyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// AnalyzingSuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer analyzer)
-            : this(analyzer, analyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+            : this(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         {
         }
 
         /// <summary>
-        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)">
-        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
-            : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+            : this(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         {
         }
 
@@ -206,7 +190,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///   analyzing suggestions while building the index. </param>
         /// <param name="queryAnalyzer"> Analyzer that will be used for
         ///   analyzing query text during lookup </param>
-        /// <param name="options"> see <see cref="EXACT_FIRST"/>, <see cref="PRESERVE_SEP"/> </param>
+        /// <param name="options"> see <see cref="SuggesterOptions.EXACT_FIRST"/>, <see cref="SuggesterOptions.PRESERVE_SEP"/> </param>
         /// <param name="maxSurfaceFormsPerAnalyzedForm"> Maximum number of
         ///   surface forms to keep for a single analyzed form.
         ///   When there are too many surface forms we discard the
@@ -216,19 +200,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///   no limit. </param>
         /// <param name="preservePositionIncrements"> Whether position holes
         ///   should appear in the automata </param>
-        // LUCENENET TODO: Make options into an enum
-        public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options,
+        public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, SuggesterOptions options,
             int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements)
         {
             this.indexAnalyzer = indexAnalyzer;
             this.queryAnalyzer = queryAnalyzer;
-            if ((options & ~(EXACT_FIRST | PRESERVE_SEP)) != 0)
+            if ((options & ~(SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP)) != 0)
             {
-                throw new System.ArgumentException("options should only contain EXACT_FIRST and PRESERVE_SEP; got " +
+                throw new System.ArgumentException("options should only contain SuggesterOptions.EXACT_FIRST and SuggesterOptions.PRESERVE_SEP; got " +
                                                    options);
             }
-            this.exactFirst = (options & EXACT_FIRST) != 0;
-            this.preserveSep = (options & PRESERVE_SEP) != 0;
+            this.exactFirst = (options & SuggesterOptions.EXACT_FIRST) != 0;
+            this.preserveSep = (options & SuggesterOptions.PRESERVE_SEP) != 0;
 
             // NOTE: this is just an implementation limitation; if
             // somehow this is a problem we could fix it by using

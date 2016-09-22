@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
             AnalyzingSuggester analyzingSuggester = new AnalyzingSuggester(new MockAnalyzer(Random()), new MockAnalyzer(Random()),
-                AnalyzingSuggester.EXACT_FIRST | AnalyzingSuggester.PRESERVE_SEP, 256, -1, Random().nextBoolean());
+                SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, Random().nextBoolean());
             bool doPayloads = Random().nextBoolean();
             if (doPayloads)
             {
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer standard = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             AnalyzingSuggester suggester = new AnalyzingSuggester(standard, standard,
-                AnalyzingSuggester.EXACT_FIRST | AnalyzingSuggester.PRESERVE_SEP, 256, -1, false);
+                SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, false);
 
             suggester.Build(new InputArrayIterator(keys));
 
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("abcd", 1),
             };
 
-            int options = 0;
+            SuggesterOptions options = 0;
 
             Analyzer a = new MockAnalyzer(Random());
             AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, options, 256, -1, true);
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
 
             Analyzer a = GetUnusualAnalyzer();
-            int options = AnalyzingSuggester.EXACT_FIRST | AnalyzingSuggester.PRESERVE_SEP;
+            SuggesterOptions options = SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP;
             AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, options, 256, -1, true);
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("x y", 1),
@@ -587,7 +587,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
 
             Analyzer a = GetUnusualAnalyzer();
-            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, AnalyzingSuggester.PRESERVE_SEP, 256, -1, true);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, SuggesterOptions.PRESERVE_SEP, 256, -1, true);
 
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("x y", 1),
@@ -910,7 +910,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
             AnalyzingSuggester suggester = new AnalyzingSuggester(a, a,
-                                                                  preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true);
+                                                                  preserveSep ? SuggesterOptions.PRESERVE_SEP : 0, 256, -1, true);
             if (doPayloads)
             {
                 suggester.Build(new InputArrayIterator(Shuffle(payloadKeys)));
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Query 1
             Analyzer a1 = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
             AnalyzingSuggester suggester1 = new AnalyzingSuggester(a1, a1,
-                preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true);
+                preserveSep ? SuggesterOptions.PRESERVE_SEP : 0, 256, -1, true);
 
             suggester1.Build(new InputArrayIterator(new Input[] { new Input(token11, 123456), new Input(token21, 654321) }));
 
@@ -1084,7 +1084,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Query 2
             Analyzer a2 = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
             AnalyzingSuggester suggester2 = new AnalyzingSuggester(a2, a2,
-                preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true);
+                preserveSep ? SuggesterOptions.PRESERVE_SEP : 0, 256, -1, true);
 
             suggester2.Build(new InputArrayIterator(new Input[] { new Input(token12, 1234567), new Input(token22, 7654321) }));
 
@@ -1118,7 +1118,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestQueueExhaustion()
         {
             Analyzer a = new MockAnalyzer(Random());
-            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, AnalyzingSuggester.EXACT_FIRST, 256, -1, true);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, SuggesterOptions.EXACT_FIRST, 256, -1, true);
 
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("a", 2),
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockAnalyzer(Random());
 
-            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, AnalyzingSuggester.EXACT_FIRST, 256, -1, true);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, SuggesterOptions.EXACT_FIRST, 256, -1, true);
 
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("a", 5),
@@ -1415,7 +1415,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestDupSurfaceFormsMissingResults3()
         {
             Analyzer a = new MockAnalyzer(Random());
-            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, AnalyzingSuggester.PRESERVE_SEP, 256, -1, true);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, SuggesterOptions.PRESERVE_SEP, 256, -1, true);
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("a a", 7),
                 new Input("a a", 7),
@@ -1430,7 +1430,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestEndingSpace()
         {
             Analyzer a = new MockAnalyzer(Random());
-            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, AnalyzingSuggester.PRESERVE_SEP, 256, -1, true);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a, a, SuggesterOptions.PRESERVE_SEP, 256, -1, true);
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("i love lucy", 7),
                 new Input("isla de muerta", 8),
