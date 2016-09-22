@@ -1045,6 +1045,59 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
+
+        /// <summary>
+        /// LUCENENET specific test. Added fixed inputs to help with debugging issues found in TestRandom().
+        /// Not necessarily required per se, but it may come in handy again if the above test fails.
+        /// </summary>
+        [Test]
+        public void TestFixed()
+        {
+            bool preserveSep = true;
+            int numStopChars = 2;
+            bool preserveHoles = true;
+
+            string token11 = "foo bar foo bar";
+            string token21 = "bar foo orange cat";
+
+            string token12 = "sally sells seashells by the sea shore";
+            string token22 = "peter piper picked a pack of pickled peppers";
+
+            string query1 = "ba";
+            string query2 = "pet";
+
+            // Query 1
+            Analyzer a1 = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
+            AnalyzingSuggester suggester1 = new AnalyzingSuggester(a1, a1,
+                preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true);
+
+            suggester1.Build(new InputArrayIterator(new Input[] { new Input(token11, 123456), new Input(token21, 654321) }));
+
+            int topN1 = 4;
+            IList<Lookup.LookupResult> r1 = suggester1.DoLookup(query1, false, topN1);
+
+            assertEquals(1, r1.size());
+
+            assertEquals("bar foo orange cat", r1.ElementAt(0).key);
+            assertEquals(654321, r1.ElementAt(0).value, 0f);
+
+            // Query 2
+            Analyzer a2 = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
+            AnalyzingSuggester suggester2 = new AnalyzingSuggester(a2, a2,
+                preserveSep ? AnalyzingSuggester.PRESERVE_SEP : 0, 256, -1, true);
+
+            suggester2.Build(new InputArrayIterator(new Input[] { new Input(token12, 1234567), new Input(token22, 7654321) }));
+
+            int topN2 = 4;
+            IList<Lookup.LookupResult> r2 = suggester2.DoLookup(query2, false, topN2);
+
+            assertEquals(1, r2.size());
+
+            assertEquals("peter piper picked a pack of pickled peppers", r2.ElementAt(0).key);
+            assertEquals(7654321, r2.ElementAt(0).value, 0f);
+        }
+
+
         [Test]
         public void TestMaxSurfaceFormsPerAnalyzedForm()
         {
