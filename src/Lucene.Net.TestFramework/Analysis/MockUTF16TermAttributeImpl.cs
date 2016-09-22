@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis
         public override void FillBytesRef()
         {
             BytesRef bytes = BytesRef;
-            var utf16 = Charset.GetBytes(Charset.ToString());
+            var utf16 = Charset.GetBytes(this.ToString());
             bytes.Bytes = utf16;
             bytes.Offset = 0;
             bytes.Length = utf16.Length;
