@@ -156,11 +156,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     // Element start
                     uri = node.NamespaceURI;
                     name = node.Name;
+                    bool isEmptyElement = node.IsEmptyElement;
                     var attributes = GetAttributes(node);
                     raw = string.Empty; // node.ReadOuterXml(); - not used, but was messing with the node pointer
 
                     this.StartElement(uri, name, raw, attributes);
-                    if (node.IsEmptyElement)
+                    if (isEmptyElement)
                     {
                         this.EndElement(uri, name, raw);
                     }
