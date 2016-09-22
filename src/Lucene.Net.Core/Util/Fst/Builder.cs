@@ -391,7 +391,8 @@ namespace Lucene.Net.Util.Fst
                 output = NO_OUTPUT;
             }
 
-            // LUCENENET: Commented this because it makes testing difficult in Visual Studio.
+            // LUCENENET TODO: Commented this because it makes testing difficult in Visual Studio.
+            // However, should investigate why this line is failing.
             //Debug.Assert(LastInput.Length == 0 || input.CompareTo(LastInput) >= 0, "inputs are added out of order lastInput=" + LastInput + " vs input=" + input);
             Debug.Assert(ValidOutput(output));
 
