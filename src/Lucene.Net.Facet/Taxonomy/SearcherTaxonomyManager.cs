@@ -32,6 +32,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using SearcherManager = Lucene.Net.Search.SearcherManager;
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using System;
 
     /// <summary>
     /// Manages near-real-time reopen of both an IndexSearcher
@@ -163,7 +164,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 else if (taxoWriter != null && taxoWriter.TaxonomyEpoch != taxoEpoch)
                 {
                     IOUtils.Close(newReader, tr);
-                    throw new ThreadStateException("DirectoryTaxonomyWriter.replaceTaxonomy was called, which is not allowed when using SearcherTaxonomyManager");
+                    throw new InvalidOperationException("DirectoryTaxonomyWriter.replaceTaxonomy was called, which is not allowed when using SearcherTaxonomyManager");
                 }
 
                 return new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, newReader), tr);
