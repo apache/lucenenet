@@ -353,24 +353,21 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // TODO: can we use an int-based hash impl, such as IntToObjectMap,
             // wrapped as LRU?
-            int catIDInteger = Convert.ToInt32(ordinal);
-            lock (categoryCache)
+
+            // LUCENENET NOTE: We don't need to convert int to int here.
+            // Also, our cache implementation is thread safe, so we can nix the
+            // locks.
+            FacetLabel res;
+            if (categoryCache.TryGetValue(ordinal, out res))
             {
-                var res = categoryCache.Get(catIDInteger,false);
-                if (res != null)
-                {
-                    return res;
-                }
+                return res;
             }
 
             Document doc = indexReader.Document(ordinal);
-            FacetLabel ret = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
-            lock (categoryCache)
-            {
-                categoryCache.Put(catIDInteger, ret);
-            }
+            res = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
+            categoryCache.Put(ordinal, res);
 
-            return ret;
+            return res;
         }
 
         public override int Size
@@ -395,14 +392,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             set
             {
                 EnsureOpen();
-                lock (categoryCache)
-                {
-                    categoryCache.MaxSize = value;
-                }
-                lock (ordinalCache)
-                {
-                    ordinalCache.MaxSize = value;
-                }
+                // LUCENENET NOTE: No locking required here,
+                // since our LRU implementation is thread-safe
+                categoryCache.MaxSize = value;
+                ordinalCache.MaxSize = value;
             }
         }
 

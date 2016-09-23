@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +20,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// LRUHashMap is an extension of Java's HashMap, which has a bounded size();
@@ -58,97 +53,146 @@ namespace Lucene.Net.Facet.Taxonomy
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class LRUHashMap<TV, TU> where TU : class //this is implementation of LRU Cache
+    public class LRUHashMap<TKey, TValue> where TValue : class //this is implementation of LRU Cache
     {
+        private readonly Dictionary<TKey, CacheDataObject> cache;
+        // We can't use a ReaderWriterLockSlim because every read is also a 
+        // write, so we gain nothing by doing so
+        private readonly object syncLock = new object();
+        // Record last access so we can tie break if 2 calls make it in within
+        // the same millisecond.
+        private long lastAccess;
+        private int maxSize;
 
-        public int MaxSize { get; set; }
-        private int CleanSize;
-        private TimeSpan MaxDuration;
-
-
-        private readonly ConcurrentDictionary<TV, CacheDataObject<TU>> _cache = new ConcurrentDictionary<TV, CacheDataObject<TU>>();
-
-        public LRUHashMap(int maxSize = 50000, int cleanPercentage = 30, TimeSpan maxDuration = default(TimeSpan))
+        public LRUHashMap(int maxSize)
         {
-            MaxSize = maxSize;
-            CleanSize = (int)Math.Max(MaxSize * (1.0 * cleanPercentage / 100), 1);
-            if (maxDuration == default(TimeSpan))
+            if (maxSize < 1)
             {
-                MaxDuration = TimeSpan.FromDays(1);
+                throw new ArgumentOutOfRangeException("maxSize must be at least 1");
             }
-            else
-            {
-                MaxDuration = maxDuration;
-            }
+            this.maxSize = maxSize;
+            this.cache = new Dictionary<TKey, CacheDataObject>(maxSize);
         }
 
-        
-        public bool Put(TV cacheKey, TU value)
+        public virtual int MaxSize
         {
-            return AddToCache(cacheKey, value);
-        }
-
-        public bool AddToCache(TV cacheKey, TU value)
-        {
-            var cachedResult = new CacheDataObject<TU>
+            get { return maxSize; }
+            set
             {
-                Usage = 1, //value == null ? 1 : value.Usage + 1,
-                Value = value,
-                Timestamp = DateTime.UtcNow
-            };
-
-            _cache.AddOrUpdate(cacheKey, cachedResult, (_, __) => cachedResult);
-            if (_cache.Count > MaxSize)
-            {
-                foreach (var source in _cache
-                    .OrderByDescending(x => x.Value.Usage)
-                    .ThenBy(x => x.Value.Timestamp)
-                    .Skip(MaxSize - CleanSize))
+                if (value < 1)
                 {
-                    if (EqualityComparer<TV>.Default.Equals(source.Key, cacheKey))
-                        continue; // we don't want to remove the one we just added
-                    CacheDataObject<TU> ignored;
-                    _cache.TryRemove(source.Key, out ignored);
+                    throw new ArgumentOutOfRangeException("MaxSize must be at least 1");
+                }
+                maxSize = value;
+            }
+        }
+
+        public bool Put(TKey key, TValue value)
+        {
+            lock (syncLock)
+            { 
+                CacheDataObject cdo;
+                if (cache.TryGetValue(key, out cdo))
+                {
+                    // Item already exists, update our last access time
+                    cdo.Timestamp = GetTimestamp();
+                }
+                else
+                {
+                    cache[key] = new CacheDataObject
+                    {
+                        Value = value,
+                        Timestamp = GetTimestamp()
+                    };
+                    // We have added a new item, so we may need to remove the eldest
+                    if (cache.Count > MaxSize)
+                    {
+                        // Remove the eldest item (lowest timestamp) from the cache
+                        cache.Remove(cache.OrderBy(x => x.Value.Timestamp).First().Key);
+                    }
                 }
             }
             return true;
         }
 
-        public TU Get(TV cacheKey, bool increment = false)
+        public TValue Get(TKey key)
         {
-            CacheDataObject<TU> value;
-            if (_cache.TryGetValue(cacheKey, out value) && (DateTime.UtcNow - value.Timestamp) <= MaxDuration)
+            lock (syncLock)
             {
-                if (increment)
+                CacheDataObject cdo;
+                if (cache.TryGetValue(key, out cdo))
                 {
-                    Interlocked.Increment(ref value.Usage);
+                    // Write our last access time
+                    cdo.Timestamp = GetTimestamp();
+
+                    return cdo.Value;
                 }
-                return value.Value;
             }
             return null;
         }
 
-        public bool IsExistInCache(TV cacheKey)
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            return (_cache.ContainsKey(cacheKey));
+            lock (syncLock)
+            {
+                CacheDataObject cdo;
+                if (cache.TryGetValue(key, out cdo))
+                {
+                    // Write our last access time
+                    cdo.Timestamp = GetTimestamp();
+                    value = cdo.Value;
+
+                    return true;
+                }
+
+                value = null;
+                return false;
+            }
         }
 
+        public bool ContainsKey(TKey key)
+        {
+            return cache.ContainsKey(key);
+        }
+
+        // LUCENENET TODO: Rename to Count (.NETify)
         public int Size()
         {
-            return _cache.Count;
+            return cache.Count;
         }
+
+        private long GetTimestamp()
+        {
+            long ticks = DateTime.UtcNow.Ticks;
+            if (ticks <= lastAccess)
+            {
+                // Tie break by incrementing
+                // when 2 calls happen within the
+                // same millisecond
+                ticks = ++lastAccess;
+            }
+            else
+            {
+                lastAccess = ticks;
+            }
+            return ticks;
+        }
+        
 
         #region Nested type: CacheDataObject
 
-        private class CacheDataObject<T> where T : class
+        private class CacheDataObject
         {
-            public DateTime Timestamp;
-            public int Usage;
-            public T Value;
+            // Ticks representing the last access time
+            public long Timestamp;
+            public TValue Value;
+
+            public override string ToString()
+            {
+                return "Last Access: " + Timestamp.ToString() + " - " + Value.ToString();
+            }
         }
 
         #endregion
-
     }
-
 }
