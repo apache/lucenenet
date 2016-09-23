@@ -1,13 +1,9 @@
-﻿using System.Text;
-using Lucene.Net.Support;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,14 +20,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     [TestFixture]
     public class TestCharBlockArray : FacetTestCase
     {
 
-        /* not finished yet because of missing charset decoder */
-
-        /*
-        public virtual void testArray()
+        [Test]
+        public virtual void TestArray()
         {
             CharBlockArray array = new CharBlockArray();
             StringBuilder builder = new StringBuilder();
@@ -47,9 +42,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
 
-                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onUnmappableCharacter(CodingErrorAction.REPLACE).onMalformedInput(CodingErrorAction.REPLACE);
-                string s = decoder.Decode(ByteBuffer.Wrap(buffer, 0, size)).ToString();
-                array.append(s);
+                string s = Encoding.UTF8.GetString(buffer, 0, size);
+                array.Append(s);
                 builder.Append(s);
             }
 
@@ -59,9 +53,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random().Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onUnmappableCharacter(CodingErrorAction.REPLACE).onMalformedInput(CodingErrorAction.REPLACE);
-                string s = decoder.decode(ByteBuffer.Wrap(buffer, 0, size)).ToString();
-                array.append((CharSequence)s);
+                string s = Encoding.UTF8.GetString(buffer, 0, size);
+                array.Append(s);
                 builder.Append(s);
             }
 
@@ -71,29 +64,30 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random().Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onUnmappableCharacter(CodingErrorAction.REPLACE).onMalformedInput(CodingErrorAction.REPLACE);
-                string s = decoder.decode(ByteBuffer.Wrap(buffer, 0, size)).ToString();
+                string s = Encoding.UTF8.GetString(buffer, 0, size);
                 for (int j = 0; j < s.Length; j++)
                 {
-                    array.append(s[j]);
+                    array.Append(s[j]);
                 }
                 builder.Append(s);
             }
 
             AssertEqualsInternal("GrowingCharArray<->StringBuilder mismatch.", builder, array);
 
-            File tempDir = CreateTempDir("growingchararray");
-            File f = new File(tempDir, "GrowingCharArrayTest.tmp");
-            BufferedOutputStream @out = new BufferedOutputStream(new FileOutputStream(f));
-            array.flush(@out);
-            @out.flush();
-            @out.Close();
+            DirectoryInfo tempDir = CreateTempDir("growingchararray");
+            FileInfo f = new FileInfo(Path.Combine(tempDir.FullName, "GrowingCharArrayTest.tmp"));
+            using (Stream @out = new FileStream(f.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                array.Flush(@out);
+                @out.Flush();
+            }
 
-            BufferedInputStream @in = new BufferedInputStream(new FileInputStream(f));
-            array = CharBlockArray.open(@in);
-            AssertEqualsInternal("GrowingCharArray<->StringBuilder mismatch after flush/load.", builder, array);
-            @in.Close();
-            f.delete();
+            using (Stream @in = new FileStream(f.FullName, FileMode.Open, FileAccess.Read))
+            {
+                array = CharBlockArray.Open(@in);
+                AssertEqualsInternal("GrowingCharArray<->StringBuilder mismatch after flush/load.", builder, array);
+            }
+            f.Delete();
         }
 
         private static void AssertEqualsInternal(string msg, StringBuilder expected, CharBlockArray actual)
@@ -104,7 +98,5 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Assert.AreEqual(expected[i], actual.CharAt(i), msg);
             }
         }
-        */
     }
-
 }

@@ -13,13 +13,12 @@ namespace Lucene.Net.Support
     {
         static readonly BinaryFormatter Formatter = new BinaryFormatter();
 
-        public static MemoryStream SerializeToStream(object o)
+        public static void SerializeToStream(object o, Stream outputStream)
         {
-            using (var stream = new MemoryStream())
-            {
-                Formatter.Serialize(stream, o);
-                return stream;
-            }
+            // LUCENENET TODO: It would probably be better to serialize to
+            // XML so this works across .NET framework versions or alternatively
+            // find/create an alternative binary formatter implementation that works that way.
+            Formatter.Serialize(outputStream, o);
         }
 
         public static object DeserializeFromStream(Stream stream)

@@ -396,7 +396,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Opens the file and reloads the CompactLabelToOrdinal. The file it expects
         /// is generated from the <seealso cref="#flush(File)"/> command.
         /// </summary>
-        public static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
+        internal static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
         {
             /// <summary>
             /// Part of the file is the labelRepository, which needs to be rehashed
@@ -422,7 +422,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 l2o.Init();
 
                 // now read the chars
-                l2o.labelRepository = CharBlockArray.Open(dis);
+                l2o.labelRepository = CharBlockArray.Open(dis.BaseStream);
 
                 l2o.collisionMap = new CollisionMap(l2o.labelRepository);
 
@@ -443,13 +443,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     // identical code to CategoryPath.hashFromSerialized. since we need to
                     // advance offset, we cannot call the method directly. perhaps if we
                     // could pass a mutable Integer or something...
-                    int length = (short)l2o.labelRepository.CharAt(offset++);
+                    int length = (ushort)l2o.labelRepository.CharAt(offset++);
                     int hash = length;
                     if (length != 0)
                     {
                         for (int i = 0; i < length; i++)
                         {
-                            int len = (short)l2o.labelRepository.CharAt(offset++);
+                            int len = (ushort)l2o.labelRepository.CharAt(offset++);
                             hash = hash * 31 + l2o.labelRepository.SubSequence(offset, offset + len).GetHashCode();
                             offset += len;
                         }
@@ -482,24 +482,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         }
 
-        public virtual void Flush(Stream stream)
+        internal virtual void Flush(FileStream stream)
         {
-
-            OutputStreamDataOutput dos = new OutputStreamDataOutput(stream);
-
-            try
+            using (BinaryWriter dos = new BinaryWriter(stream))
             {
-                dos.WriteInt(this.counter);
+                dos.Write(this.counter);
 
                 // write the labelRepository
-                this.labelRepository.Flush(dos);
-                // Closes the data output stream
-                dos.Dispose();
-
-            }
-            finally
-            {
-                dos.Dispose();
+                this.labelRepository.Flush(dos.BaseStream);
             }
         }
 

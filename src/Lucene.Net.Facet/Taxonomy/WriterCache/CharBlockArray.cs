@@ -54,7 +54,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public object Clone()
             {
-                throw new NotImplementedException();
+                var clone = new Block(chars.Length);
+                clone.length = length;
+                Array.Copy(chars, clone.chars, chars.Length);
+                return clone;
             }
         }
 
@@ -214,21 +217,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return sb.ToString();
         }
 
-        internal virtual void Flush(OutputStreamDataOutput @out)
+        internal virtual void Flush(Stream @out)
         {
-            
-            using (var ms = StreamUtils.SerializeToStream(this))
-            {
-                var bytes = ms.ToArray();
-                @out.WriteBytes(bytes, 0, bytes.Length);
-            }
+            StreamUtils.SerializeToStream(this, @out);
         }
 
-        public static CharBlockArray Open(BinaryReader @in)
+        public static CharBlockArray Open(Stream @in)
         {
             return StreamUtils.DeserializeFromStream(@in) as CharBlockArray;
         }
-
     }
-
 }
