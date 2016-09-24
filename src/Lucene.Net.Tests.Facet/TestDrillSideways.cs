@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Facet
                         {
                             // Tie-break facet labels are only in unicode
                             // order with SortedSetDVFacets:
-                            Assert.AreEqual("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].label);
+                            assertEquals("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].label);
                         }
                     }
                 }
