@@ -50,6 +50,8 @@ namespace Lucene.Net.Facet.Taxonomy
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using System.Text;
+
     [TestFixture]
     public class TestTaxonomyFacetCounts : FacetTestCase
     {
@@ -128,9 +130,15 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.Null(facets.GetTopChildren(10, "Non exitent dim"));
 
             // Smoke test PrintTaxonomyStats:
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PrintTaxonomyStats.PrintStats(taxoReader, Console.Out, true);
-            string result = bos.ToString();
+            string result;
+            using (ByteArrayOutputStream bos = new ByteArrayOutputStream())
+            {
+                using (StreamWriter w = new StreamWriter(bos, Encoding.UTF8, 2048, true) { AutoFlush = true })
+                {
+                    PrintTaxonomyStats.PrintStats(taxoReader, w, true);
+                }
+                result = bos.ToString();
+            }
             Assert.True(result.IndexOf("/Author: 4 immediate children; 5 total categories", StringComparison.Ordinal) != -1);
             Assert.True(result.IndexOf("/Publish Date: 3 immediate children; 12 total categories", StringComparison.Ordinal) != -1);
             // Make sure at least a few nodes of the tree came out:
