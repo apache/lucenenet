@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -152,13 +153,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             {
                 return false;
             }
-            IEnumerator<object> it = cache.Keys.GetEnumerator();
-            int i = 0;
-            
-            while (i < n && it.MoveNext())
+
+            // LUCENENET: Loop in reverse so we can safely delete
+            // a range of items (0 - n) without a 
+            // "Collection was modified" conflict
+            for (int i = n - 1; i >= 0; i--)
             {
-                cache.Remove(it.Current);
-                i++;
+                cache.Remove(cache.Keys.ElementAt(i));
             }
             return true;
         }
