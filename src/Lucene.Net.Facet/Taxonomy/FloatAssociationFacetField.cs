@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System.Globalization;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
 	  public override string ToString()
 	  {
-		return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + bytesRefToFloat(assoc) + ")";
+		return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + bytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
 	  }
 	}
 

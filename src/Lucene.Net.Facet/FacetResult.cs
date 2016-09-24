@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Globalization;
+using System;
 
 namespace Lucene.Net.Facet
 {
@@ -51,12 +53,39 @@ namespace Lucene.Net.Facet
         public readonly LabelAndValue[] LabelValues;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// The original data type of <see cref="Value"/> that was passed through the constructor.
+        /// </summary>
+        public readonly Type typeOfValue;
+
+        /// <summary>
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
+        /// </summary>
         public FacetResult(string dim, string[] path, float value, LabelAndValue[] labelValues, int childCount)
+            : this(dim, path, labelValues, childCount)
+        {
+            this.Value = value;
+            this.typeOfValue = typeof(float);
+        }
+
+        /// <summary>
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
+        /// </summary>
+        public FacetResult(string dim, string[] path, int value, LabelAndValue[] labelValues, int childCount)
+            : this(dim, path, labelValues, childCount)
+        {
+            this.Value = value;
+            this.typeOfValue = typeof(int);
+        }
+
+        /// <summary>
+        /// Private constructor for shared parameters to be called by public constructors.
+        /// </summary>
+        private FacetResult(string dim, string[] path, LabelAndValue[] labelValues, int childCount)
         {
             this.Dim = dim;
             this.Path = path;
-            this.Value = value;
             this.LabelValues = labelValues;
             this.ChildCount = childCount;
         }
@@ -69,7 +98,14 @@ namespace Lucene.Net.Facet
             sb.Append(" path=");
             sb.Append("[" + Arrays.ToString(Path) + "]");
             sb.Append(" value=");
-            sb.Append(Value);
+            if (typeOfValue == typeof(int))
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0}", Value); // No formatting (looks like int)
+            }
+            else
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#####}", Value); // Decimal formatting
+            }
             sb.Append(" childCount=");
             sb.Append(ChildCount);
             sb.Append('\n');

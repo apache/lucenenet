@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Support;
+using System;
+using System.Globalization;
 
 namespace Lucene.Net.Facet
 {
@@ -35,16 +37,38 @@ namespace Lucene.Net.Facet
         public readonly float value;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// The original data type of <see cref="value"/> that was passed through the constructor.
+        /// </summary>
+        public readonly Type typeOfValue;
+
+        /// <summary>
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
+        /// </summary>
         public LabelAndValue(string label, float value)
         {
             this.label = label;
             this.value = value;
+            this.typeOfValue = typeof(float);
+        }
+
+        /// <summary>
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
+        /// </summary>
+        public LabelAndValue(string label, int value)
+        {
+            this.label = label;
+            this.value = value;
+            this.typeOfValue = typeof(int);
         }
 
         public override string ToString()
         {
-            return label + " (" + value + ")";
+            string valueString = (typeOfValue == typeof(int)) 
+                ? value.ToString("0", CultureInfo.InvariantCulture) 
+                : value.ToString("0.0#####", CultureInfo.InvariantCulture);
+            return label + " (" + valueString + ")";
         }
 
         public override bool Equals(object _other)
