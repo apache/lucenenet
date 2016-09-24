@@ -3,14 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,6 +20,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+
     /// <summary>
     /// A <seealso cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
     /// index.
@@ -36,7 +35,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     internal class TaxonomyIndexArrays : ParallelTaxonomyArrays
     {
-
         private readonly int[] parents_Renamed;
 
         // the following two arrays are lazily intialized. note that we only keep a
@@ -246,7 +244,5 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // the array is guaranteed to be populated
             return siblings_Renamed;
         }
-
     }
-
 }

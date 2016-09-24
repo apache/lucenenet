@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public abstract class FloatTaxonomyFacets : TaxonomyFacets
     {
-
         /// <summary>
         /// Per-ordinal value. </summary>
         protected readonly float[] values;

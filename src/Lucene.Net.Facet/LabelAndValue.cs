@@ -1,10 +1,8 @@
-﻿using Lucene.Net.Support;
-using System;
+﻿using System;
 using System.Globalization;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -65,8 +63,8 @@ namespace Lucene.Net.Facet
 
         public override string ToString()
         {
-            string valueString = (typeOfValue == typeof(int)) 
-                ? value.ToString("0", CultureInfo.InvariantCulture) 
+            string valueString = (typeOfValue == typeof(int))
+                ? value.ToString("0", CultureInfo.InvariantCulture)
                 : value.ToString("0.0#####", CultureInfo.InvariantCulture);
             return label + " (" + valueString + ")";
         }
@@ -86,5 +84,4 @@ namespace Lucene.Net.Facet
             return label.GetHashCode() + 1439 * value.GetHashCode();
         }
     }
-
 }

@@ -1,7 +1,6 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,66 +17,63 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Abstract class for storing Label->Ordinal mappings in a taxonomy. 
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public abstract class LabelToOrdinal
-	{
+    /// <summary>
+    /// Abstract class for storing Label->Ordinal mappings in a taxonomy. 
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public abstract class LabelToOrdinal
+    {
+        /// <summary>
+        /// How many ordinals we've seen. </summary>
+        protected internal int counter;
 
-	  /// <summary>
-	  /// How many ordinals we've seen. </summary>
-	  protected internal int counter;
+        /// <summary>
+        /// Returned by <seealso cref="#getOrdinal"/> when the label isn't
+        ///  recognized. 
+        /// </summary>
+        public const int INVALID_ORDINAL = -2;
 
-	  /// <summary>
-	  /// Returned by <seealso cref="#getOrdinal"/> when the label isn't
-	  ///  recognized. 
-	  /// </summary>
-	  public const int INVALID_ORDINAL = -2;
+        /// <summary>
+        /// Default constructor. </summary>
+        public LabelToOrdinal()
+        {
+        }
 
-	  /// <summary>
-	  /// Default constructor. </summary>
-	  public LabelToOrdinal()
-	  {
-	  }
+        /// <summary>
+        /// return the maximal Ordinal assigned so far
+        /// </summary>
+        public virtual int MaxOrdinal
+        {
+            get
+            {
+                return this.counter;
+            }
+        }
 
-	  /// <summary>
-	  /// return the maximal Ordinal assigned so far
-	  /// </summary>
-	  public virtual int MaxOrdinal
-	  {
-		  get
-		  {
-			return this.counter;
-		  }
-	  }
+        /// <summary>
+        /// Returns the next unassigned ordinal. The default behavior of this method
+        /// is to simply increment a counter.
+        /// </summary>
+        public virtual int NextOrdinal
+        {
+            get
+            {
+                return this.counter++;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns the next unassigned ordinal. The default behavior of this method
-	  /// is to simply increment a counter.
-	  /// </summary>
-	  public virtual int NextOrdinal
-	  {
-		  get
-		  {
-			return this.counter++;
-		  }
-	  }
+        /// <summary>
+        /// Adds a new label if its not yet in the table.
+        /// Throws an <seealso cref="IllegalArgumentException"/> if the same label with
+        /// a different ordinal was previoulsy added to this table.
+        /// </summary>
+        public abstract void AddLabel(FacetLabel label, int ordinal);
 
-	  /// <summary>
-	  /// Adds a new label if its not yet in the table.
-	  /// Throws an <seealso cref="IllegalArgumentException"/> if the same label with
-	  /// a different ordinal was previoulsy added to this table.
-	  /// </summary>
-	  public abstract void AddLabel(FacetLabel label, int ordinal);
-
-	  /// <summary>
-	  /// Returns the ordinal assigned to the given label, 
-	  /// or <seealso cref="#INVALID_ORDINAL"/> if the label cannot be found in this table.
-	  /// </summary>
-	  public abstract int GetOrdinal(FacetLabel label);
-
-	}
-
+        /// <summary>
+        /// Returns the ordinal assigned to the given label, 
+        /// or <seealso cref="#INVALID_ORDINAL"/> if the label cannot be found in this table.
+        /// </summary>
+        public abstract int GetOrdinal(FacetLabel label);
+    }
 }

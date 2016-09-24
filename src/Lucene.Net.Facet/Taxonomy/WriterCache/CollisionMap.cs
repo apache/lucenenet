@@ -2,11 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class CollisionMap
     {
-
         private int capacity_Renamed;
         private float loadFactor;
         private int size_Renamed;
@@ -261,7 +257,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next_Renamed;
                 if (e == null)
                 {
-					throw new InvalidOperationException(this.GetType() + " cannot get next entry");;
+                    throw new InvalidOperationException(this.GetType() + " cannot get next entry"); ;
                 }
 
                 Entry n = e.next;
@@ -305,7 +301,5 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 get { return Current; }
             }
         }
-
     }
-
 }

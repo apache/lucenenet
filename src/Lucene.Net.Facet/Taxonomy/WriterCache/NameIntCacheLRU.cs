@@ -30,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     // synchronized so that no two methods of this class are called concurrently.
     public class NameIntCacheLRU
     {
-
         private Dictionary<object, int?> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
@@ -63,16 +62,16 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         private void CreateCache(int maxSize)
-	  {
-        //if (maxSize < int.MaxValue)
-        //{
-        //    cache = new LRUHashMap<object,int?>(1000,true); //for LRU
-        //}
-        //else
-		{
-		  cache = new Dictionary<object, int?>(1000); //no need for LRU
-		}
-	  }
+        {
+            //if (maxSize < int.MaxValue)
+            //{
+            //    cache = new LRUHashMap<object,int?>(1000,true); //for LRU
+            //}
+            //else
+            {
+                cache = new Dictionary<object, int?>(1000); //no need for LRU
+            }
+        }
 
         internal virtual int? Get(FacetLabel name)
         {
@@ -163,7 +162,5 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
             return true;
         }
-
     }
-
 }

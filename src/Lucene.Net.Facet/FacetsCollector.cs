@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +22,7 @@ namespace Lucene.Net.Facet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Collects hits for subsequent faceting.  Once you've run
     ///  a search and collect hits into this, instantiate one of
@@ -33,7 +33,6 @@ namespace Lucene.Net.Facet
     /// </summary>
     public class FacetsCollector : Collector
     {
-
         private AtomicReaderContext context;
         private Scorer scorer;
         private int totalHits;
@@ -233,7 +232,6 @@ namespace Lucene.Net.Facet
             }
         }
 
-
         /// <summary>
         /// Utility method, to search and also collect all hits
         ///  into the provided <seealso cref="Collector"/>. 
@@ -368,5 +366,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

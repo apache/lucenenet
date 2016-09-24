@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Lucene.Net.Facet.SortedSet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,18 +21,13 @@ namespace Lucene.Net.Facet.SortedSet
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
-    using OrdRange = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState.OrdRange;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MultiDocValues = Lucene.Net.Index.MultiDocValues;
-    using MultiSortedSetDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedSetDocValues;
+    using OrdRange = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState.OrdRange;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LongValues = Lucene.Net.Util.LongValues;
 
     /// <summary>
     /// Compute facets counts from previously
@@ -58,7 +52,6 @@ namespace Lucene.Net.Facet.SortedSet
     /// </summary>
     public class SortedSetDocValuesFacetCounts : Facets
     {
-
         internal readonly SortedSetDocValuesReaderState state;
         internal readonly SortedSetDocValues dv;
         internal readonly string field;
@@ -98,7 +91,6 @@ namespace Lucene.Net.Facet.SortedSet
 
         private FacetResult GetDim(string dim, OrdRange ordRange, int topN)
         {
-
             TopOrdAndIntQueue q = null;
 
             int bottomCount = 0;
@@ -180,7 +172,6 @@ namespace Lucene.Net.Facet.SortedSet
 
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-
                 var reader = hits.context.AtomicReader;
                 //System.out.println("  reader=" + reader);
                 // LUCENE-5090: make sure the provided reader context "matches"
@@ -301,7 +292,6 @@ namespace Lucene.Net.Facet.SortedSet
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-
             IList<FacetResult> results = new List<FacetResult>();
             foreach (KeyValuePair<string, OrdRange> ent in state.PrefixToOrdRange)
             {
@@ -344,5 +334,4 @@ namespace Lucene.Net.Facet.SortedSet
             }
         }
     }
-
 }

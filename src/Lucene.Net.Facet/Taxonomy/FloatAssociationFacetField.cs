@@ -3,8 +3,7 @@ using System.Globalization;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,46 +20,46 @@ namespace Lucene.Net.Facet.Taxonomy
 	 * limitations under the License.
 	 */
 
-	using Document = Lucene.Net.Documents.Document;
-	using BytesRef = Lucene.Net.Util.BytesRef;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Documents.Document;
 
-	/// <summary>
-	/// Add an instance of this to your <seealso cref="Document"/> to add
-	///  a facet label associated with a float.  Use {@link
-	///  TaxonomyFacetSumFloatAssociations} to aggregate float values
-	///  per facet label at search time.
-	/// 
-	///  @lucene.experimental 
-	/// </summary>
-	public class FloatAssociationFacetField : AssociationFacetField
-	{
+    /// <summary>
+    /// Add an instance of this to your <seealso cref="Document"/> to add
+    ///  a facet label associated with a float.  Use {@link
+    ///  TaxonomyFacetSumFloatAssociations} to aggregate float values
+    ///  per facet label at search time.
+    /// 
+    ///  @lucene.experimental 
+    /// </summary>
+    public class FloatAssociationFacetField : AssociationFacetField
+    {
+        /// <summary>
+        /// Creates this from {@code dim} and {@code path} and a
+        ///  float association 
+        /// </summary>
+        public FloatAssociationFacetField(float assoc, string dim, params string[] path) 
+            : base(floatToBytesRef(assoc), dim, path)
+        {
+        }
 
-	  /// <summary>
-	  /// Creates this from {@code dim} and {@code path} and a
-	  ///  float association 
-	  /// </summary>
-	  public FloatAssociationFacetField(float assoc, string dim, params string[] path) : base(floatToBytesRef(assoc), dim, path)
-	  {
-	  }
+        /// <summary>
+        /// Encodes a {@code float} as a 4-byte <seealso cref="BytesRef"/>. </summary>
+        public static BytesRef floatToBytesRef(float v)
+        {
+            return IntAssociationFacetField.intToBytesRef(Number.FloatToIntBits(v));
+        }
 
-	  /// <summary>
-	  /// Encodes a {@code float} as a 4-byte <seealso cref="BytesRef"/>. </summary>
-	  public static BytesRef floatToBytesRef(float v)
-	  {
-		return IntAssociationFacetField.intToBytesRef(Number.FloatToIntBits(v));
-	  }
+        /// <summary>
+        /// Decodes a previously encoded {@code float}. </summary>
+        public static float bytesRefToFloat(BytesRef b)
+        {
+            return Number.IntBitsToFloat(IntAssociationFacetField.bytesRefToInt(b));
+        }
 
-	  /// <summary>
-	  /// Decodes a previously encoded {@code float}. </summary>
-	  public static float bytesRefToFloat(BytesRef b)
-	  {
-		return Number.IntBitsToFloat(IntAssociationFacetField.bytesRefToInt(b));
-	  }
-
-	  public override string ToString()
-	  {
-		return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + bytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
-	  }
-	}
-
+        public override string ToString()
+        {
+            return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + 
+                " value=" + bytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
+        }
+    }
 }

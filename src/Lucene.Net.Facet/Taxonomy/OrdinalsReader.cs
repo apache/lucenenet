@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@
 
     public abstract class OrdinalsReader
     {
-
         /// <summary>
         /// Returns ordinals for documents in one segment. </summary>
         public abstract class OrdinalsSegmentReader
@@ -64,5 +62,4 @@
         /// </summary>
         public abstract string IndexFieldName { get; }
     }
-
 }

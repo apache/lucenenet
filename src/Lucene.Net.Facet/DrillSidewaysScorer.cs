@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using Scorer = Lucene.Net.Search.Scorer;
+using System.Diagnostics;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,20 +21,18 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Bits = Lucene.Net.Util.Bits;
+    using BulkScorer = Lucene.Net.Search.BulkScorer;
     using Collector = Lucene.Net.Search.Collector;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Scorer = Lucene.Net.Search.Scorer;
-    using BulkScorer = Lucene.Net.Search.BulkScorer;
-    using Weight = Lucene.Net.Search.Weight;
-    using Bits = Lucene.Net.Util.Bits;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using Scorer = Lucene.Net.Search.Scorer;
+    using Weight = Lucene.Net.Search.Weight;
 
     internal class DrillSidewaysScorer : BulkScorer
     {
-
         //private static boolean DEBUG = false;
 
         private readonly Collector drillDownCollector;
@@ -56,7 +52,8 @@ namespace Lucene.Net.Facet
         private int collectDocID = -1;
         private float collectScore;
 
-        internal DrillSidewaysScorer(AtomicReaderContext context, Scorer baseScorer, Collector drillDownCollector, DocsAndCost[] dims, bool scoreSubDocsAtOnce)
+        internal DrillSidewaysScorer(AtomicReaderContext context, Scorer baseScorer, 
+            Collector drillDownCollector, DocsAndCost[] dims, bool scoreSubDocsAtOnce)
         {
             this.dims = dims;
             this.context = context;
@@ -177,7 +174,8 @@ namespace Lucene.Net.Facet
         ///  this case we just .next() on base and .advance() on
         ///  the dim filters. 
         /// </summary>
-        private void DoQueryFirstScoring(Collector collector, DocIdSetIterator[] disis, Collector[] sidewaysCollectors, Bits[] bits, Collector[] bitsSidewaysCollectors)
+        private void DoQueryFirstScoring(Collector collector, DocIdSetIterator[] disis, 
+            Collector[] sidewaysCollectors, Bits[] bits, Collector[] bitsSidewaysCollectors)
         {
             //if (DEBUG) {
             //  System.out.println("  doQueryFirstScoring");
@@ -258,9 +256,9 @@ namespace Lucene.Net.Facet
                 }
 
                 docID = baseScorer.NextDoc();
-            nextDocContinue: ;
+                nextDocContinue:;
             }
-        nextDocBreak: ;
+            nextDocBreak:;
         }
 
         /// <summary>
@@ -822,5 +820,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
-
-    using TwoPhaseCommit = Lucene.Net.Index.TwoPhaseCommit;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +19,8 @@ namespace Lucene.Net.Facet.Taxonomy
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using TwoPhaseCommit = Lucene.Net.Index.TwoPhaseCommit;
 
     /// <summary>
     /// TaxonomyWriter is the interface which the faceted-search library uses
@@ -56,7 +53,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public interface TaxonomyWriter : IDisposable, TwoPhaseCommit
     {
-
         /// <summary>
         /// addCategory() adds a category with a given path name to the taxonomy,
         /// and returns its ordinal. If the category was already present in
@@ -118,8 +114,5 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </para>
         /// </summary>
         IDictionary<string, string> CommitData { set; get; }
-
-
     }
-
 }

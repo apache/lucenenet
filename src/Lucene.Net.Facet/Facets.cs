@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Support;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +19,6 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Common base class for all facets implementations.
     /// 
@@ -30,7 +26,6 @@ namespace Lucene.Net.Facet
     /// </summary>
     public abstract class Facets
     {
-
         /// <summary>
         /// Default constructor. </summary>
         public Facets()
@@ -60,5 +55,4 @@ namespace Lucene.Net.Facet
         /// </summary>
         public abstract IList<FacetResult> GetAllDims(int topN);
     }
-
 }

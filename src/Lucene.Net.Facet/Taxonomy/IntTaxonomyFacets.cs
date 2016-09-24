@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using DimConfig = Lucene.Net.Facet.FacetsConfig.DimConfig;
 
     /// <summary>
@@ -31,7 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
     public abstract class IntTaxonomyFacets : TaxonomyFacets
     {
-
         /// <summary>
         /// Per-ordinal value. </summary>
         protected internal readonly int[] values;

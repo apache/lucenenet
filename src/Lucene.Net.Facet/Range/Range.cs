@@ -1,8 +1,5 @@
-﻿using Lucene.Net.Facet;
-
-namespace Lucene.Net.Facet.Range
+﻿namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,10 +17,8 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
     using Filter = Lucene.Net.Search.Filter;
-    using FilteredQuery = Lucene.Net.Search.FilteredQuery; // javadocs
-    using Lucene.Net.Search; // javadocs
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// Base class for a single labeled range.
@@ -86,5 +81,4 @@ namespace Lucene.Net.Facet.Range
             throw new System.ArgumentException("range \"" + Label + "\" matches nothing");
         }
     }
-
 }

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +18,6 @@ namespace Lucene.Net.Facet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// Maps specified dims to provided Facets impls; else, uses
@@ -99,5 +95,4 @@ namespace Lucene.Net.Facet
             return results;
         }
     }
-
 }

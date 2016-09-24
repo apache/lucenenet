@@ -1,9 +1,7 @@
-﻿using Lucene.Net.Facet;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,10 +19,10 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Lucene.Net.Documents.Document; // javadocs
     using Field = Lucene.Net.Documents.Field;
     using FieldType = Lucene.Net.Documents.FieldType;
-    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
     /// Add an instance of this to your <seealso cref="Document"/> to add
@@ -39,7 +37,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class AssociationFacetField : Field
     {
-
         /// <summary>
         /// Indexed <seealso cref="FieldType"/>. </summary>
         public static readonly FieldType TYPE = new FieldType();
@@ -87,5 +84,4 @@ namespace Lucene.Net.Facet.Taxonomy
             return "AssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " bytes=" + assoc + ")";
         }
     }
-
 }

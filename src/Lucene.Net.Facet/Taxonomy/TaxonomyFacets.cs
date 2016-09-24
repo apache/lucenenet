@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,14 +21,12 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using DimConfig = Lucene.Net.Facet.FacetsConfig.DimConfig; // javadocs
 
     /// <summary>
     /// Base class for all taxonomy-based facets impls. </summary>
     public abstract class TaxonomyFacets : Facets
     {
-
         private static readonly IComparer<FacetResult> BY_VALUE_THEN_DIM = new ComparatorAnonymousInnerClassHelper();
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<FacetResult>
@@ -132,6 +128,5 @@ namespace Lucene.Net.Facet.Taxonomy
             Array.Sort(resultArray, BY_VALUE_THEN_DIM);
             return resultArray;
         }
-
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,19 +19,15 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
-    using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField; // javadocs
-    using FloatDocValuesField = Lucene.Net.Documents.FloatDocValuesField; // javadocs
-    using MatchingDocs = FacetsCollector.MatchingDocs;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
-    using FloatFieldSource = Lucene.Net.Queries.Function.ValueSources.FloatFieldSource; // javadocs
-    using DocIdSet = Lucene.Net.Search.DocIdSet;
-    using Filter = Lucene.Net.Search.Filter;
     using Bits = Lucene.Net.Util.Bits;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
+    using Filter = Lucene.Net.Search.Filter;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// <seealso cref="Facets"/> implementation that computes counts for
@@ -58,7 +51,6 @@ namespace Lucene.Net.Facet.Range
     /// </summary>
     public class DoubleRangeFacetCounts : RangeFacetCounts
     {
-
         /// <summary>
         /// Create {@code RangeFacetCounts}, using {@link
         ///  DoubleFieldSource} from the specified field. 
@@ -107,7 +99,7 @@ namespace Lucene.Net.Facet.Range
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)
             {
-                FunctionValues fv = valueSource.GetValues(new Dictionary<string,object>(), hits.context);
+                FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.context);
 
                 TotCount += hits.totalHits;
                 Bits bits;
@@ -156,5 +148,4 @@ namespace Lucene.Net.Facet.Range
             TotCount -= missingCount;
         }
     }
-
 }

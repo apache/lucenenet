@@ -1,7 +1,8 @@
-﻿namespace Lucene.Net.Facet
-{
+﻿using Lucene.Net.Util;
 
-	/*
+namespace Lucene.Net.Facet
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,56 +19,51 @@
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Util;
+    /// <summary>
+    /// Keeps highest results, first by largest float value,
+    ///  then tie break by smallest ord. 
+    /// </summary>
+    public class TopOrdAndFloatQueue : PriorityQueue<TopOrdAndFloatQueue.OrdAndValue>
+    {
+        /// <summary>
+        /// Holds a single entry. </summary>
+        public sealed class OrdAndValue
+        {
+            /// <summary>
+            /// Ordinal of the entry. </summary>
+            public int ord;
 
-	/// <summary>
-	/// Keeps highest results, first by largest float value,
-	///  then tie break by smallest ord. 
-	/// </summary>
-	public class TopOrdAndFloatQueue : PriorityQueue<TopOrdAndFloatQueue.OrdAndValue>
-	{
+            /// <summary>
+            /// Value associated with the ordinal. </summary>
+            public float value;
 
-	  /// <summary>
-	  /// Holds a single entry. </summary>
-	  public sealed class OrdAndValue
-	  {
+            /// <summary>
+            /// Default constructor. </summary>
+            public OrdAndValue()
+            {
+            }
+        }
 
-		/// <summary>
-		/// Ordinal of the entry. </summary>
-		public int ord;
+        /// <summary>
+        /// Sole constructor. </summary>
+        public TopOrdAndFloatQueue(int topN) : base(topN, false)
+        {
+        }
 
-		/// <summary>
-		/// Value associated with the ordinal. </summary>
-		public float value;
-
-		/// <summary>
-		/// Default constructor. </summary>
-		public OrdAndValue()
-		{
-		}
-	  }
-
-	  /// <summary>
-	  /// Sole constructor. </summary>
-	  public TopOrdAndFloatQueue(int topN) : base(topN, false)
-	  {
-	  }
-
-	  public override bool LessThan(OrdAndValue a, OrdAndValue b)
-	  {
-		if (a.value < b.value)
-		{
-		  return true;
-		}
-		else if (a.value > b.value)
-		{
-		  return false;
-		}
-		else
-		{
-		  return a.ord > b.ord;
-		}
-	  }
-	}
-
+        public override bool LessThan(OrdAndValue a, OrdAndValue b)
+        {
+            if (a.value < b.value)
+            {
+                return true;
+            }
+            else if (a.value > b.value)
+            {
+                return false;
+            }
+            else
+            {
+                return a.ord > b.ord;
+            }
+        }
+    }
 }

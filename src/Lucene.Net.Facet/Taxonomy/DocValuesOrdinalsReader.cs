@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,11 +17,11 @@
      * limitations under the License.
      */
 
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocValues = Lucene.Net.Index.DocValues;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocValues = Lucene.Net.Index.DocValues;
     using IntsRef = Lucene.Net.Util.IntsRef;
 
     /// <summary>
@@ -126,5 +125,4 @@
             }
         }
     }
-
 }

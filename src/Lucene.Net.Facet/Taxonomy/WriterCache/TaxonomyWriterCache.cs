@@ -1,8 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +16,8 @@
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
 
     /// <summary>
     /// TaxonomyWriterCache is a relatively simple interface for a cache of
@@ -49,7 +48,6 @@
     /// </summary>
     public interface TaxonomyWriterCache
     {
-
         /// <summary>
         /// Let go of whatever resources the cache is holding. After a close(),
         /// this object can no longer be used.
@@ -99,7 +97,5 @@
         /// assume that the cache is still operable after this method returns.
         /// </summary>
         void Clear();
-
     }
-
 }

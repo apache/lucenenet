@@ -1,7 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +24,6 @@
     /// </summary>
     public class LruTaxonomyWriterCache : TaxonomyWriterCache
     {
-
         /// <summary>
         /// Determines cache type.
         /// For guaranteed correctness - not relying on no-collisions in the hash
@@ -143,7 +140,5 @@
                 return ret;
             }
         }
-
     }
-
 }

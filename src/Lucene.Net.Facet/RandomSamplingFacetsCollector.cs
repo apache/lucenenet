@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Facet;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,13 +21,12 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
     using DimConfig = FacetsConfig.DimConfig;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// Collects hits for subsequent faceting, using sampling if needed. Once you've
@@ -47,18 +43,15 @@ namespace Lucene.Net.Facet
     /// </summary>
     public class RandomSamplingFacetsCollector : FacetsCollector
     {
-
         /// <summary>
         /// Faster alternative for java.util.Random, inspired by
-        /// http://dmurphy747.wordpress.com/2011/03/23/xorshift-vs-random-
-        /// performance-in-java/
+        /// http://dmurphy747.wordpress.com/2011/03/23/xorshift-vs-random-performance-in-java/
         /// <para>
         /// Has a period of 2^64-1
         /// </para>
         /// </summary>
         private class XORShift64Random
         {
-
             internal long x;
 
             /// <summary>
@@ -85,7 +78,6 @@ namespace Lucene.Net.Facet
                 int res = (int)(RandomLong() % n);
                 return (res < 0) ? -res : res;
             }
-
         }
 
         private const int NOT_CALCULATED = -1;
@@ -317,7 +309,5 @@ namespace Lucene.Net.Facet
                 return samplingRate;
             }
         }
-
     }
-
 }

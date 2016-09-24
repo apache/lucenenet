@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,11 +19,10 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using MatchingDocs = FacetsCollector.MatchingDocs;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
     /// Computes facets counts, assuming the default encoding
@@ -36,7 +32,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class FastTaxonomyFacetCounts : IntTaxonomyFacets
     {
-
         /// <summary>
         /// Create {@code FastTaxonomyFacetCounts}, which also
         ///  counts all facet labels. 
@@ -75,7 +70,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 BytesRef bytesRef = new BytesRef();
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    dv.Get(doc,bytesRef);
+                    dv.Get(doc, bytesRef);
                     var bytes = bytesRef.Bytes;
                     int end = bytesRef.Offset + bytesRef.Length;
                     int ord = 0;
@@ -101,5 +96,4 @@ namespace Lucene.Net.Facet.Taxonomy
             Rollup();
         }
     }
-
 }

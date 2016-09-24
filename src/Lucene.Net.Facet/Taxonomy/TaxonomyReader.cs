@@ -1,15 +1,11 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
-
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,6 +22,8 @@ namespace Lucene.Net.Facet.Taxonomy
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /// <summary>
     /// TaxonomyReader is the read-only interface with which the faceted-search
@@ -68,12 +66,10 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public abstract class TaxonomyReader
     {
-
         /// <summary>
         /// An iterator over a category's children. </summary>
         public class ChildrenIterator
         {
-
             internal readonly int[] siblings;
             internal int child;
 
@@ -96,7 +92,6 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 return res;
             }
-
         }
 
         /// <summary>
@@ -310,8 +305,5 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             return false;
         }
-
-
     }
-
 }

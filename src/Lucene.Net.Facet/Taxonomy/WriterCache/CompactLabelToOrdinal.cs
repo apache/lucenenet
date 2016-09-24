@@ -50,7 +50,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class CompactLabelToOrdinal : LabelToOrdinal
     {
-
         /// <summary>
         /// Default maximum load factor. </summary>
         public const float DefaultLoadFactor = 0.15f;
@@ -81,7 +80,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Sole constructor. </summary>
         public CompactLabelToOrdinal(int initialCapacity, float loadFactor, int numHashArrays)
         {
-
             this.hashArrays = new HashArray[numHashArrays];
 
             this.capacity = DetermineCapacity((int)Math.Pow(2, numHashArrays), initialCapacity);

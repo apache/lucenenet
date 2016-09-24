@@ -1,15 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Facet.SortedSet;
+using Lucene.Net.Facet.Taxonomy;
+using Lucene.Net.Search;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Lucene.Net.Search;
-using Lucene.Net.Facet;
-using Lucene.Net.Facet.SortedSet;
-using Lucene.Net.Facet.Taxonomy;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,6 +24,7 @@ namespace Lucene.Net.Facet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Computes drill down and sideways counts for the provided
     /// <seealso cref="DrillDownQuery"/>.  Drill sideways counts include
@@ -48,7 +47,6 @@ namespace Lucene.Net.Facet
     /// </summary>
     public class DrillSideways
     {
-
         /// <summary>
         /// <seealso cref="IndexSearcher"/> passed to constructor. </summary>
         protected internal readonly IndexSearcher searcher;
@@ -97,7 +95,6 @@ namespace Lucene.Net.Facet
             this.state = state;
         }
 
-        
         /// <summary>
         /// Subclass can override to customize per-dim Facets
         ///  impl. 
@@ -290,6 +287,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
-
 }

@@ -1,50 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using FieldType = Lucene.Net.Documents.FieldType;
-    using StringField = Lucene.Net.Documents.StringField;
-    using TextField = Lucene.Net.Documents.TextField;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
-    using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
-    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
-    using ReaderManager = Lucene.Net.Index.ReaderManager;
-    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException; // javadocs
-    using NativeFSLockFactory = Lucene.Net.Store.NativeFSLockFactory;
-    using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -61,6 +25,33 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException; // javadocs
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
+    using Directory = Lucene.Net.Store.Directory;
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using FieldType = Lucene.Net.Documents.FieldType;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
+    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using ReaderManager = Lucene.Net.Index.ReaderManager;
+    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
+    using StringField = Lucene.Net.Documents.StringField;
+    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using TextField = Lucene.Net.Documents.TextField;
+    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// <seealso cref="TaxonomyWriter"/> which uses a <seealso cref="Directory"/> to store the taxonomy
@@ -83,7 +74,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyWriter : TaxonomyWriter
     {
-
         /// <summary>
         /// Property name of user commit data that contains the index epoch. The epoch
         /// changes whenever the taxonomy is recreated (i.e. opened with
@@ -184,9 +174,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///     removed using <seealso cref="#unlock(Directory)"/>. </exception>
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
-        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, TaxonomyWriterCache cache)
+        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
+            TaxonomyWriterCache cache)
         {
-
             dir = directory;
             IndexWriterConfig config = CreateIndexWriterConfig(openMode);
             indexWriter = OpenIndexWriter(dir, config);
@@ -1198,5 +1188,4 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
     }
-
 }

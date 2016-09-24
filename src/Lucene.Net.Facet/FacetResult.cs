@@ -1,12 +1,10 @@
-﻿using System.Text;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using System.Globalization;
+﻿using Lucene.Net.Support;
 using System;
+using System.Globalization;
+using System.Text;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +26,6 @@ namespace Lucene.Net.Facet
     /// Counts or aggregates for a single dimension. </summary>
     public sealed class FacetResult
     {
-
         /// <summary>
         /// Dimension that was requested. </summary>
         public readonly string Dim;
@@ -136,5 +133,4 @@ namespace Lucene.Net.Facet
             return hashCode;
         }
     }
-
 }

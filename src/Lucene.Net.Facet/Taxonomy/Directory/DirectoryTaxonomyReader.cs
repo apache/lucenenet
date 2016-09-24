@@ -2,22 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Lucene.Net.Store;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-    using Document = Lucene.Net.Documents.Document;
-    using Lucene.Net.Facet.Taxonomy;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,6 +22,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
+    using Lucene.Net.Facet.Taxonomy;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Documents.Document;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+
     /// <summary>
     /// A <seealso cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
     /// <seealso cref="Directory"/>.
@@ -49,7 +47,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyReader : TaxonomyReader, IDisposable
     {
-
         public class IntClass
         {
             public int? IntItem { get; set; }
@@ -71,7 +68,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// recreated, you should pass {@code null} as the caches and parent/children
         /// arrays.
         /// </summary>
-        internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, LRUHashMap<FacetLabel, IntClass> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, TaxonomyIndexArrays taxoArrays)
+        internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
+            LRUHashMap<FacetLabel, IntClass> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, 
+            TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
             this.taxoWriter = taxoWriter;
@@ -439,5 +438,4 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Dispose(true);
         }
     }
-
 }

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,11 +19,10 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using IntsRef = Lucene.Net.Util.IntsRef;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
 
     /// <summary>
     /// Reads from any <seealso cref="OrdinalsReader"/>; use {@link
@@ -73,5 +70,4 @@ namespace Lucene.Net.Facet.Taxonomy
             Rollup();
         }
     }
-
 }

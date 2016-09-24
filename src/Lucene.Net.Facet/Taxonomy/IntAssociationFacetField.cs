@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +19,8 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using Document = Lucene.Net.Documents.Document;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Documents.Document;
 
     /// <summary>
     /// Add an instance of this to your <seealso cref="Document"/> to add
@@ -33,7 +32,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class IntAssociationFacetField : AssociationFacetField
     {
-
         /// <summary>
         /// Creates this from {@code dim} and {@code path} and an
         ///  int association 
@@ -49,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static BytesRef intToBytesRef(int v)
         {
-            
+
             byte[] bytes = new byte[4];
             // big-endian:
             bytes[0] = (byte)(v >> 24);
@@ -63,7 +61,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Decodes a previously encoded {@code int}. </summary>
         public static int bytesRefToInt(BytesRef b)
         {
-            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
+            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | 
+                ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
         }
 
         public override string ToString()
@@ -71,5 +70,4 @@ namespace Lucene.Net.Facet.Taxonomy
             return "IntAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + bytesRefToInt(assoc) + ")";
         }
     }
-
 }

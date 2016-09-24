@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Support;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,15 +19,14 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+    using Bits = Lucene.Net.Util.Bits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
-    using Bits = Lucene.Net.Util.Bits;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// Represents a range over double values.
@@ -138,7 +134,6 @@ namespace Lucene.Net.Facet.Range
                 this.valueSource = valueSource;
             }
 
-
             public override string ToString()
             {
                 return "Filter(" + outerInstance.ToString() + ")";
@@ -152,7 +147,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                var values = valueSource.GetValues(new Dictionary<string,Lucene.Net.Search.Scorer>(), context);
+                var values = valueSource.GetValues(new Dictionary<string, Lucene.Net.Search.Scorer>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 
@@ -197,7 +192,6 @@ namespace Lucene.Net.Facet.Range
                     this.fastMatchBits = fastMatchBits;
                 }
 
-
                 public override Bits GetBits()
                 {
                     return new BitsAnonymousInnerClassHelper(this);
@@ -238,6 +232,4 @@ namespace Lucene.Net.Facet.Range
             }
         }
     }
-
-
 }

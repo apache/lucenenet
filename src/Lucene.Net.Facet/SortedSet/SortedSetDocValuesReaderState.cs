@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Facet.SortedSet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +18,6 @@ namespace Lucene.Net.Facet.SortedSet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using IndexReader = Lucene.Net.Index.IndexReader;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
@@ -42,10 +40,8 @@ namespace Lucene.Net.Facet.SortedSet
     ///  for a given <seealso cref="IndexReader"/>. 
     /// </para>
     /// </summary>
-
     public abstract class SortedSetDocValuesReaderState
     {
-
         /// <summary>
         /// Holds start/end range of ords, which maps to one
         ///  dimension (someday we may generalize it to map to
@@ -99,5 +95,4 @@ namespace Lucene.Net.Facet.SortedSet
         /// Number of unique labels. </summary>
         public abstract int Size { get; }
     }
-
 }

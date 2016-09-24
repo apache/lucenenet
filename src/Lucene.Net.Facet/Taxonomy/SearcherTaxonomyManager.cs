@@ -1,9 +1,8 @@
-﻿using System.Threading;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
+using System;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,18 +20,16 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Lucene.Net.Search;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using SearcherFactory = Lucene.Net.Search.SearcherFactory;
     using SearcherManager = Lucene.Net.Search.SearcherManager;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using System;
 
     /// <summary>
     /// Manages near-real-time reopen of both an IndexSearcher
@@ -45,7 +42,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class SearcherTaxonomyManager : ReferenceManager<SearcherTaxonomyManager.SearcherAndTaxonomy>
     {
-
         /// <summary>
         /// Holds a matched pair of <seealso cref="IndexSearcher"/> and
         ///  <seealso cref="TaxonomyReader"/> 
@@ -77,7 +73,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Creates near-real-time searcher and taxonomy reader
         ///  from the corresponding writers. 
         /// </summary>
-        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
+        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, 
+            SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
         {
             if (searcherFactory == null)
             {
@@ -86,7 +83,8 @@ namespace Lucene.Net.Facet.Taxonomy
             this.searcherFactory = searcherFactory;
             this.taxoWriter = taxoWriter;
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
-            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer, applyAllDeletes)), taxoReader);
+            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(
+                searcherFactory, DirectoryReader.Open(writer, applyAllDeletes)), taxoReader);
             this.taxoEpoch = taxoWriter.TaxonomyEpoch;
         }
 
@@ -107,7 +105,8 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             this.searcherFactory = searcherFactory;
             var taxoReader = new DirectoryTaxonomyReader(taxoDir);
-            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(indexDir)), taxoReader);
+            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(
+                searcherFactory, DirectoryReader.Open(indexDir)), taxoReader);
             this.taxoWriter = null;
             taxoEpoch = -1;
         }
@@ -176,5 +175,4 @@ namespace Lucene.Net.Facet.Taxonomy
             return reference.searcher.IndexReader.RefCount;
         }
     }
-
 }

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,17 +23,16 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
     using Filter = Lucene.Net.Search.Filter;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
+    using IndexReader = Lucene.Net.Index.IndexReader;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using Query = Lucene.Net.Search.Query;
+    using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
 
     /// <summary>
@@ -52,7 +50,6 @@ namespace Lucene.Net.Facet
     /// </summary>
     public sealed class DrillDownQuery : Query
     {
-
         /// <summary>
         /// Creates a drill-down term. </summary>
         public static Term Term(string field, string dim, params string[] path)
@@ -68,7 +65,7 @@ namespace Lucene.Net.Facet
         /// Used by clone() </summary>
         internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int?> drillDownDims)
         {
-            this.query = (BooleanQuery) query.Clone();
+            this.query = (BooleanQuery)query.Clone();
             this.drillDownDims.AddAll(drillDownDims);
             this.config = config;
         }
@@ -384,5 +381,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

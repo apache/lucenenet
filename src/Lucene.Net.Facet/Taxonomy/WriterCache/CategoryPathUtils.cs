@@ -23,7 +23,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// Utilities for use of <seealso cref="FacetLabel"/> by <seealso cref="CompactLabelToOrdinal"/>. </summary>
     internal class CategoryPathUtils
     {
-
         /// <summary>
         /// Serializes the given <seealso cref="FacetLabel"/> to the <seealso cref="CharBlockArray"/>. </summary>
         public static void Serialize(FacetLabel cp, CharBlockArray charBlockArray)

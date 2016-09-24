@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Facet.SortedSet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@
     /// </summary>
     public class SortedSetDocValuesFacetField : Field
     {
-
         /// <summary>
         /// Indexed <seealso cref="FieldType"/>. </summary>
         public static readonly FieldType TYPE = new FieldType();
@@ -61,5 +59,4 @@
             return "SortedSetDocValuesFacetField(dim=" + Dim + " label=" + Label + ")";
         }
     }
-
 }

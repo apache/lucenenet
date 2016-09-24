@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +19,13 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+    using Bits = Lucene.Net.Util.Bits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
-    using Bits = Lucene.Net.Util.Bits;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// Represents a range over long values.
@@ -147,7 +144,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                FunctionValues values = valueSource.GetValues(new Dictionary<string,object>(), context);
+                FunctionValues values = valueSource.GetValues(new Dictionary<string, object>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 
@@ -220,7 +217,7 @@ namespace Lucene.Net.Facet.Range
                         return outerInstance.outerInstance.outerInstance.accept(outerInstance.values.LongVal(docID));
                     }
 
-                    
+
                     public virtual int Length()
                     {
                         return outerInstance.maxDoc;
@@ -231,9 +228,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     throw new System.NotSupportedException("this filter can only be accessed via bits()");
                 }
-
             }
         }
     }
-
 }

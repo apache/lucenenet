@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,15 +19,14 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using LongFieldSource = Lucene.Net.Queries.Function.ValueSources.LongFieldSource;
-    using DocIdSet = Lucene.Net.Search.DocIdSet;
-    using Filter = Lucene.Net.Search.Filter;
     using Bits = Lucene.Net.Util.Bits;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Filter = Lucene.Net.Search.Filter;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using LongFieldSource = Lucene.Net.Queries.Function.ValueSources.LongFieldSource;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// <seealso cref="Facets"/> implementation that computes counts for
@@ -71,7 +68,8 @@ namespace Lucene.Net.Facet.Range
         ///  checked for the matching ranges.  The filter must be
         ///  random access (implement <seealso cref="DocIdSet#bits"/>). 
         /// </summary>
-        public LongRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)
+        public LongRangeFacetCounts(string field, ValueSource valueSource, 
+            FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
             Count(valueSource, hits.GetMatchingDocs);
@@ -139,5 +137,4 @@ namespace Lucene.Net.Facet.Range
             TotCount -= missingCount;
         }
     }
-
 }

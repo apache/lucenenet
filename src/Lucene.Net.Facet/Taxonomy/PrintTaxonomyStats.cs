@@ -3,7 +3,6 @@ using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,10 +20,9 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
-    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using Directory = Lucene.Net.Store.Directory;
+    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
 
     /// <summary>
@@ -33,7 +31,6 @@ namespace Lucene.Net.Facet.Taxonomy
     // java -cp ../build/core/classes/java:../build/facet/classes/java org.apache.lucene.facet.util.PrintTaxonomyStats -printTree /s2/scratch/indices/wikibig.trunk.noparents.facets.Lucene41.nd1M/facets
     public class PrintTaxonomyStats
     {
-
         /// <summary>
         /// Sole constructor. </summary>
         public PrintTaxonomyStats()
@@ -117,5 +114,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

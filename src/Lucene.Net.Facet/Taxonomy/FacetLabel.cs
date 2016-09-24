@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -220,5 +219,4 @@ namespace Lucene.Net.Facet.Taxonomy
             return "FacetLabel: [" + Arrays.ToString(parts) + "]";
         }
     }
-
 }

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Lucene.Net.Facet.SortedSet;
-using Lucene.Net.Facet.Taxonomy;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,23 +25,22 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
-    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Documents.StringField;
-    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AssociationFacetField = Lucene.Net.Facet.Taxonomy.AssociationFacetField;
+    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Documents.Document;
     using FacetLabel = Lucene.Net.Facet.Taxonomy.FacetLabel;
+    using Field = Lucene.Net.Documents.Field;
     using FloatAssociationFacetField = Lucene.Net.Facet.Taxonomy.FloatAssociationFacetField;
-    using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
-    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
     using IndexableField = Lucene.Net.Index.IndexableField;
     using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
     using IntsRef = Lucene.Net.Util.IntsRef;
+    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
+    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
+    using StringField = Lucene.Net.Documents.StringField;
+    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
 
     /// <summary>
     /// Records per-dimension configuration.  By default a
@@ -63,7 +59,6 @@ namespace Lucene.Net.Facet
     /// </summary>
     public class FacetsConfig
     {
-
         /// <summary>
         /// Which Lucene field holds the drill-downs and ords (as
         ///  doc values). 
@@ -708,5 +703,4 @@ namespace Lucene.Net.Facet
             return parts.ToArray();
         }
     }
-
 }

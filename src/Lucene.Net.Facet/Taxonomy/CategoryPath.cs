@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Holds a sequence of string components, specifying the hierarchical name of a
     /// category.
@@ -32,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class CategoryPath : IComparable<CategoryPath>
     {
-
         /// <summary>
         /// An empty <seealso cref="CategoryPath"/> </summary>
         public static readonly CategoryPath EMPTY = new CategoryPath();
@@ -154,7 +151,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private void hasDelimiter(string offender, char delimiter)
         {
-            throw new System.ArgumentException("delimiter character '" + delimiter + "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");
+            throw new System.ArgumentException("delimiter character '" + delimiter + 
+                "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");
         }
 
         private void noDelimiter(char[] buf, int offset, int len, char delimiter)
@@ -310,7 +308,5 @@ namespace Lucene.Net.Facet.Taxonomy
             sb.Length = sb.Length - 1; // remove last delimiter
             return sb.ToString();
         }
-
     }
-
 }

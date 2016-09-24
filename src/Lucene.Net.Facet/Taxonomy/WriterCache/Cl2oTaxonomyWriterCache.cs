@@ -2,9 +2,6 @@
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -117,7 +114,5 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return cache == null ? 0 : cache.MemoryUsage;
             }
         }
-
     }
-
 }

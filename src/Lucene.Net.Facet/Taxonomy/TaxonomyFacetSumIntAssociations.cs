@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,11 +19,10 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
 
     /// <summary>
     /// Aggregates sum of int values previously indexed with
@@ -36,7 +33,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class TaxonomyFacetSumIntAssociations : IntTaxonomyFacets
     {
-
         /// <summary>
         /// Create {@code TaxonomyFacetSumIntAssociations} against
         ///  the default index field. 
@@ -82,9 +78,11 @@ namespace Lucene.Net.Facet.Taxonomy
                     int offset = bytesRef.Offset;
                     while (offset < end)
                     {
-                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
-                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
                         values[ord] += value;
                     }
@@ -92,5 +90,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

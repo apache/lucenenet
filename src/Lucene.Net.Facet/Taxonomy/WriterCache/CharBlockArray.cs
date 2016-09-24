@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Lucene.Net.Store;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -33,7 +32,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     [Serializable]
     public class CharBlockArray : ICharSequence
     {
-
         private const long serialVersionUID = 1L;
 
         private const int DefaultBlockSize = 32 * 1024; // 32 KB default size

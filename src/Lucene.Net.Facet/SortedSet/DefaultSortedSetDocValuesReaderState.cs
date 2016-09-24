@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Lucene.Net.Facet;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.SortedSet
 {
@@ -28,7 +27,6 @@ namespace Lucene.Net.Facet.SortedSet
     /// </summary>
     public class DefaultSortedSetDocValuesReaderState : SortedSetDocValuesReaderState
     {
-
         private readonly string field;
         private readonly AtomicReader topReader;
         private readonly int valueCount;
@@ -152,7 +150,5 @@ namespace Lucene.Net.Facet.SortedSet
                 return valueCount;
             }
         }
-
     }
-
 }

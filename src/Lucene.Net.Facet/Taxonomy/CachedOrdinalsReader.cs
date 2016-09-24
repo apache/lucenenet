@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,12 +22,11 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using Accountable = Lucene.Net.Util.Accountable;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IntsRef = Lucene.Net.Util.IntsRef;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
@@ -62,7 +60,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class CachedOrdinalsReader : OrdinalsReader, Accountable
     {
-
         private readonly OrdinalsReader source;
 
         private readonly IDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
@@ -128,7 +125,6 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Holds the cached ordinals in two parallel {@code int[]} arrays. </summary>
         public sealed class CachedOrds : Accountable
         {
-
             /// <summary>
             /// Index into <seealso cref="#ordinals"/> for each document. </summary>
             public readonly int[] offsets;
@@ -204,5 +200,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }
