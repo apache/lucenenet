@@ -182,11 +182,9 @@ namespace Lucene.Net.Facet
             }
         }
 
-        protected internal virtual void SortLabelValues(IList<LabelAndValue> labelValues)
+        protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
         {
-            var resArray = labelValues.ToArray();
-            Array.Sort(resArray,new ComparatorAnonymousInnerClassHelper2(this));
-            labelValues = resArray.ToList();
+            labelValues.Sort(new ComparatorAnonymousInnerClassHelper2(this));
         }
 
         private class ComparatorAnonymousInnerClassHelper2 : IComparer<LabelAndValue>
@@ -215,11 +213,9 @@ namespace Lucene.Net.Facet
             }
         }
 
-        protected internal virtual void SortFacetResults(IList<FacetResult> results)
+        protected internal virtual void SortFacetResults(List<FacetResult> results)
         {
-            var resArray = results.ToArray();
-            Array.Sort(resArray, new ComparatorAnonymousInnerClassHelper3(this));
-            results = resArray.ToList();
+            results.Sort(new ComparatorAnonymousInnerClassHelper3(this));
         }
 
         private class ComparatorAnonymousInnerClassHelper3 : IComparer<FacetResult>

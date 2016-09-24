@@ -816,10 +816,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                 }
 
-                IList<FacetResult> expected = new List<FacetResult>();
+                List<FacetResult> expected = new List<FacetResult>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    IList<LabelAndValue> labelValues = new List<LabelAndValue>();
+                    List<LabelAndValue> labelValues = new List<LabelAndValue>();
                     int totCount = 0;
                     foreach (KeyValuePair<string, int?> ent in expectedCounts[i])
                     {
