@@ -75,11 +75,18 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             prefixRef = new BytesRef(prefix);
 
             StringBuilder re = new StringBuilder();
+            // LUCENENET NOTE: To mimic Java's matches() method, we alter
+            // the Regex to match the entire string. This makes the Regex
+            // fail fast when not at the beginning of the string, which is
+            // more efficient than testing the length after a successful match.
+            // http://stackoverflow.com/a/12547528/181087
+            re.Append(@"\A(?:");
             while (i < truncated.Length)
             {
                 AppendRegExpForChar(truncated[i], re);
                 i++;
             }
+            re.Append(@")\z");
             pattern = new Regex(re.ToString(), RegexOptions.Compiled);
         }
 
@@ -111,13 +118,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                     if (text != null && StringHelper.StartsWith(text, prefixRef))
                     {
                         string textString = text.Utf8ToString();
-                        // LUCENENET NOTE: Java's matches() method checks to see if the
-                        // entire string is a match with the regex, so we mimic that
-                        // by testing to ensure the lengths of the input and match are equal 
-                        // as well as whether it is successful.
-                        string toMatchEntirely = textString.Substring(prefixLength);
-                        Match matcher = pattern.Match(toMatchEntirely);
-                        if (matcher.Success && matcher.Length == toMatchEntirely.Length)
+                        Match matcher = pattern.Match(textString.Substring(prefixLength));
+                        if (matcher.Success)
                         {
                             mtv.VisitMatchingTerm(new Term(fieldName, textString));
                         }
