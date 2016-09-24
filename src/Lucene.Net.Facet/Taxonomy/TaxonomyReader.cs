@@ -270,6 +270,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
+        // LUCENENET TODO: Rename to Count (.NETify)
         /// <summary>
         /// Returns the number of categories in the taxonomy. Note that the number of
         /// categories returned is often slightly higher than the number of categories
