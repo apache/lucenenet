@@ -47,12 +47,12 @@ namespace Lucene.Net.Facet.Taxonomy
 
             internal IndexWriter w;
             internal FacetsConfig config;
-            internal TaxonomyWriter tw;
+            internal ITaxonomyWriter tw;
             internal ReferenceManager<SearcherAndTaxonomy> mgr;
             internal int ordLimit;
             internal AtomicBoolean stop;
 
-            public IndexerThread(IndexWriter w, FacetsConfig config, TaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
+            public IndexerThread(IndexWriter w, FacetsConfig config, ITaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
             {
                 this.w = w;
                 this.config = config;

@@ -28,7 +28,7 @@ namespace Lucene.Net.Facet
     using Field = Lucene.Net.Documents.Field;
     using TextField = Lucene.Net.Documents.TextField;
     using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
-    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
@@ -234,7 +234,7 @@ namespace Lucene.Net.Facet
             // create and open an index writer
             RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
-            TaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
+            ITaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = Config;
             config.SetIndexFieldName("Band", "$music");
@@ -286,7 +286,7 @@ namespace Lucene.Net.Facet
             return fc;
         }
 
-        private static void seedIndex(TaxonomyWriter tw, RandomIndexWriter iw, FacetsConfig config)
+        private static void seedIndex(ITaxonomyWriter tw, RandomIndexWriter iw, FacetsConfig config)
         {
             foreach (FacetField ff in CATEGORIES)
             {

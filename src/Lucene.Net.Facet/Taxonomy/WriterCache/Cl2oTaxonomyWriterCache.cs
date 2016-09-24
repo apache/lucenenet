@@ -27,7 +27,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class Cl2oTaxonomyWriterCache : TaxonomyWriterCache
+    public class Cl2oTaxonomyWriterCache : ITaxonomyWriterCache
     {
         private const int LockTimeOut = 1000;
         private readonly ReaderWriterLock @lock = new ReaderWriterLock();

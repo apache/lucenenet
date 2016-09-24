@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private void doTestReadRecreatedTaxonomy(Random random, bool closeReader)
         {
             Directory dir = null;
-            TaxonomyWriter tw = null;
+            ITaxonomyWriter tw = null;
             TaxonomyReader tr = null;
 
             // prepare a few categories

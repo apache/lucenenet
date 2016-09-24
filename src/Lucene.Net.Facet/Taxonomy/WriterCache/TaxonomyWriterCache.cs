@@ -20,8 +20,8 @@
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
 
     /// <summary>
-    /// TaxonomyWriterCache is a relatively simple interface for a cache of
-    /// category->ordinal mappings, used in TaxonomyWriter implementations (such as
+    /// ITaxonomyWriterCache is a relatively simple interface for a cache of
+    /// category->ordinal mappings, used in ITaxonomyWriter implementations (such as
     /// <seealso cref="DirectoryTaxonomyWriter"/>).
     /// <para>
     /// It basically has put() methods for adding a mapping, and get() for looking a
@@ -46,7 +46,7 @@
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public interface TaxonomyWriterCache
+    public interface ITaxonomyWriterCache
     {
         /// <summary>
         /// Let go of whatever resources the cache is holding. After a close(),

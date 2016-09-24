@@ -23,7 +23,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using TwoPhaseCommit = Lucene.Net.Index.TwoPhaseCommit;
 
     /// <summary>
-    /// TaxonomyWriter is the interface which the faceted-search library uses
+    /// ITaxonomyWriter is the interface which the faceted-search library uses
     /// to dynamically build the taxonomy at indexing time.
     /// <P>
     /// Notes about concurrent access to the taxonomy:
@@ -51,7 +51,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     /// @lucene.experimental
     /// </summary>
-    public interface TaxonomyWriter : IDisposable, TwoPhaseCommit
+    public interface ITaxonomyWriter : IDisposable, TwoPhaseCommit
     {
         /// <summary>
         /// addCategory() adds a category with a given path name to the taxonomy,

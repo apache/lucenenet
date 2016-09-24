@@ -13,7 +13,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Lucene.Net.Documents.Document;
     using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -48,11 +48,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class TestDirectoryTaxonomyWriter : FacetTestCase
     {
 
-        // A No-Op TaxonomyWriterCache which always discards all given categories, and
+        // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static TaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : TaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
         {
             public virtual void Close()
             {
@@ -272,7 +272,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Directory dir = NewDirectory();
             var values = new ConcurrentDictionary<string, string>();
             double d = Random().NextDouble();
-            TaxonomyWriterCache cache;
+            ITaxonomyWriterCache cache;
             if (d < 0.7)
             {
                 // this is the fastest, yet most memory consuming

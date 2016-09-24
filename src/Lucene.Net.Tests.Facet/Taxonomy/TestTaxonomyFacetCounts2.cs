@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsNoTerms(IndexWriter indexWriter, TaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsNoTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
         {
             Random random = Random();
             int numDocs = AtLeast(random, 2);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsAndTerms(IndexWriter indexWriter, TaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsAndTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
         {
             Random random = Random();
             int numDocs = AtLeast(random, 2);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsAndSomeTerms(IndexWriter indexWriter, TaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsAndSomeTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
         {
             Random random = Random();
             int numDocs = AtLeast(random, 2);
@@ -260,7 +260,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             //conf.MergePolicy = NoMergePolicy.INSTANCE; // prevent merges, so we can control the index segments
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
 
             allExpectedCounts = newCounts();
             termExpectedCounts = newCounts();

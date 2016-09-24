@@ -287,7 +287,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory taxoDir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwc.SetSimilarity(new PerFieldSimilarityWrapperAnonymousInnerClassHelper(this));
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
             FacetsConfig config = new FacetsConfig();
 
@@ -543,7 +543,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
 
@@ -686,7 +686,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
-        private void indexTwoDocs(TaxonomyWriter taxoWriter, IndexWriter indexWriter, FacetsConfig config, bool withContent)
+        private void indexTwoDocs(ITaxonomyWriter taxoWriter, IndexWriter indexWriter, FacetsConfig config, bool withContent)
         {
             for (int i = 0; i < 2; i++)
             {

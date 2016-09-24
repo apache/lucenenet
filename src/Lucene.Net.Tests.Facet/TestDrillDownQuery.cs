@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet
     using Document = Lucene.Net.Documents.Document;
     using Field = Lucene.Net.Documents.Field;
     using TextField = Lucene.Net.Documents.TextField;
-    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet
             RandomIndexWriter writer = new RandomIndexWriter(r, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(r, MockTokenizer.KEYWORD, false)));
 
             taxoDir = NewDirectory();
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             config = new FacetsConfig();
 
             // Randomize the per-dim config:

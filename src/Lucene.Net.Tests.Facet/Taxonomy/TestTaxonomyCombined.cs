@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet.Taxonomy
 	  };
 
         /// <summary>
-        ///  When adding the above categories with TaxonomyWriter.AddCategory(), 
+        ///  When adding the above categories with ITaxonomyWriter.AddCategory(), 
         ///  the following paths are expected to be returned:
         ///  (note that currently the full path is not returned, and therefore
         ///  not tested - rather, just the last component, the ordinal, is returned
@@ -99,7 +99,7 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  index will surely have this method fail.
         /// </summary>
 
-        public static void FillTaxonomy(TaxonomyWriter tw)
+        public static void FillTaxonomy(ITaxonomyWriter tw)
         {
             for (int i = 0; i < categories.Length; i++)
             {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        ///  Basic tests for TaxonomyWriter. Basically, we test that
+        ///  Basic tests for ITaxonomyWriter. Basically, we test that
         ///  IndexWriter.AddCategory works, i.e. returns the expected ordinals
         ///  (this is tested by calling the fillTaxonomy() method above).
         ///  We do not test here that after writing the index can be read -
@@ -161,7 +161,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var indexDir = NewDirectory();
             var tw = new DirectoryTaxonomyWriter(indexDir);
             FillTaxonomy(tw);
-            // Also check TaxonomyWriter.getSize() - see that the taxonomy's size
+            // Also check ITaxonomyWriter.getSize() - see that the taxonomy's size
             // is what we expect it to be.
             Assert.AreEqual(ExpectedCategories.Length, tw.Size);
             tw.Dispose();
@@ -445,7 +445,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Tests for TaxonomyWriter's getParent() method. We check it by comparing
+        /// Tests for ITaxonomyWriter's getParent() method. We check it by comparing
         /// its results to those we could have gotten by looking at the category
         /// string paths using a TaxonomyReader (where the parentage is obvious).
         /// Note that after testReaderBasic(), we already know we can trust the
@@ -490,7 +490,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexDir.Dispose();
         }
 
-        private void CheckWriterParent(TaxonomyReader tr, TaxonomyWriter tw)
+        private void CheckWriterParent(TaxonomyReader tr, ITaxonomyWriter tw)
         {
             // check that the parent of the root ordinal is the invalid ordinal:
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tw.GetParent(0));
@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// taxonomy index. Calling it after something else was already added to the
         /// taxonomy index will surely have this method fail.
         /// </summary>
-        public static void FillTaxonomyCheckPaths(TaxonomyWriter tw)
+        public static void FillTaxonomyCheckPaths(ITaxonomyWriter tw)
         {
             for (int i = 0; i < categories.Length; i++)
             {
@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         // After fillTaxonomy returned successfully, checkPaths() checks that
         // the getParent() calls return as expected, from the table
-        public static void CheckPaths(TaxonomyWriter tw)
+        public static void CheckPaths(ITaxonomyWriter tw)
         {
             for (int i = 0; i < categories.Length; i++)
             {
@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Basic test for TaxonomyWriter.getParent(). This is similar to testWriter
+        /// Basic test for ITaxonomyWriter.getParent(). This is similar to testWriter
         /// above, except we also check the parents of the added categories, not just
         /// the categories themselves.
         /// </summary>
@@ -1122,7 +1122,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var indexDir = NewDirectory();
             var tw = new DirectoryTaxonomyWriter(indexDir);
             FillTaxonomyCheckPaths(tw);
-            // Also check TaxonomyWriter.getSize() - see that the taxonomy's size
+            // Also check ITaxonomyWriter.getSize() - see that the taxonomy's size
             // is what we expect it to be.
             Assert.AreEqual(ExpectedCategories.Length, tw.Size);
             tw.Dispose();

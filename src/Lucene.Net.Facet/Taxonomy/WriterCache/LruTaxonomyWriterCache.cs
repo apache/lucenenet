@@ -22,7 +22,7 @@
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class LruTaxonomyWriterCache : TaxonomyWriterCache
+    public class LruTaxonomyWriterCache : ITaxonomyWriterCache
     {
         /// <summary>
         /// Determines cache type.

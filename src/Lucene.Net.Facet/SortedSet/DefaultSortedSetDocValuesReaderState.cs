@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet.SortedSet
             valueCount = (int)dv.ValueCount;
 
             // TODO: we can make this more efficient if eg we can be
-            // "involved" when OrdinalMap is being created?  Ie see
+            // "involved" when IOrdinalMap is being created?  Ie see
             // each term/ord it's assigning as it goes...
             string lastDim = null;
             int startOrd = -1;

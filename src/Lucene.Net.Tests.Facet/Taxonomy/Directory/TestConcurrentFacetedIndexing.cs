@@ -10,7 +10,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
 
     using Document = Lucene.Net.Documents.Document;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -38,11 +38,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class TestConcurrentFacetedIndexing : FacetTestCase
     {
 
-        // A No-Op TaxonomyWriterCache which always discards all given categories, and
+        // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static TaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : TaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
         {
             public TaxonomyWriterCacheAnonymousInnerClassHelper()
             {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             return new FacetField(l1, l2, l3);
         }
 
-        internal static TaxonomyWriterCache NewTaxoWriterCache(int ndocs)
+        internal static ITaxonomyWriterCache NewTaxoWriterCache(int ndocs)
         {
             double d = Random().NextDouble();
             if (d < 0.7)

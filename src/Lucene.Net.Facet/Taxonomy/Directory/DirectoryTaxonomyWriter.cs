@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using ReaderManager = Lucene.Net.Index.ReaderManager;
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
     using StringField = Lucene.Net.Documents.StringField;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = Lucene.Net.Documents.TextField;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class DirectoryTaxonomyWriter : TaxonomyWriter
+    public class DirectoryTaxonomyWriter : ITaxonomyWriter
     {
         /// <summary>
         /// Property name of user commit data that contains the index epoch. The epoch
@@ -87,7 +87,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private readonly Directory dir;
         private readonly IndexWriter indexWriter;
-        private readonly TaxonomyWriterCache cache;
+        private readonly ITaxonomyWriterCache cache;
         private readonly AtomicInteger cacheMisses = new AtomicInteger(0);
 
         // Records the taxonomy index epoch, updated on replaceTaxonomy as well.
@@ -175,7 +175,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
-            TaxonomyWriterCache cache)
+            ITaxonomyWriterCache cache)
         {
             dir = directory;
             IndexWriterConfig config = CreateIndexWriterConfig(openMode);
@@ -332,7 +332,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// with the parameters (1024, 0.15f, 3), i.e., the entire taxonomy is
         /// cached in memory while building it.
         /// </summary>
-        public static TaxonomyWriterCache DefaultTaxonomyWriterCache()
+        public static ITaxonomyWriterCache DefaultTaxonomyWriterCache()
         {
             return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
         }
@@ -897,14 +897,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <seealso cref="OrdinalMap"/> with a mapping from the original ordinal to the new
         /// ordinal.
         /// </summary>
-        public virtual void AddTaxonomy(Directory taxoDir, OrdinalMap map)
+        public virtual void AddTaxonomy(Directory taxoDir, IOrdinalMap map)
         {
             EnsureOpen();
             DirectoryReader r = DirectoryReader.Open(taxoDir);
             try
             {
                 int size = r.NumDocs;
-                OrdinalMap ordinalMap = map;
+                IOrdinalMap ordinalMap = map;
                 ordinalMap.Size = size;
                 int @base = 0;
                 TermsEnum te = null;
@@ -936,11 +936,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// wit separate taxonomies.
         /// <para> 
         /// addToTaxonomies() merges one or more taxonomies into the given taxonomy
-        /// (this). An OrdinalMap is filled for each of the added taxonomies,
+        /// (this). An IOrdinalMap is filled for each of the added taxonomies,
         /// containing the new ordinal (in the merged taxonomy) of each of the
         /// categories in the old taxonomy.
         /// <P>  
-        /// There exist two implementations of OrdinalMap: MemoryOrdinalMap and
+        /// There exist two implementations of IOrdinalMap: MemoryOrdinalMap and
         /// DiskOrdinalMap. As their names suggest, the former keeps the map in
         /// memory and the latter in a temporary disk file. Because these maps will
         /// later be needed one by one (to remap the counting lists), not all at the
@@ -949,7 +949,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// by one, when needed).
         /// </para>
         /// </summary>
-        public interface OrdinalMap
+        public interface IOrdinalMap
         {
             /// <summary>
             /// Set the size of the map. This MUST be called before addMapping().
@@ -983,7 +983,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// <seealso cref="OrdinalMap"/> maintained in memory
         /// </summary>
-        public sealed class MemoryOrdinalMap : OrdinalMap
+        public sealed class MemoryOrdinalMap : IOrdinalMap
         {
             internal int[] map;
 
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// <seealso cref="OrdinalMap"/> maintained on file system
         /// </summary>
-        public sealed class DiskOrdinalMap : OrdinalMap
+        public sealed class DiskOrdinalMap : IOrdinalMap
         {
             internal string tmpfile;
             internal OutputStreamDataOutput @out;

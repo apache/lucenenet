@@ -40,7 +40,7 @@ namespace Lucene.Net.Facet
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
-    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
 
     /// <summary>
     /// Records per-dimension configuration.  By default a
@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet
         /// input one!
         /// </para>
         /// </summary>
-        public virtual Document Build(TaxonomyWriter taxoWriter, Document doc)
+        public virtual Document Build(ITaxonomyWriter taxoWriter, Document doc)
         {
             // Find all FacetFields, collated by the actual field:
             IDictionary<string, IList<FacetField>> byField = new Dictionary<string, IList<FacetField>>();
@@ -395,7 +395,7 @@ namespace Lucene.Net.Facet
             return result;
         }
 
-        private void ProcessFacetFields(TaxonomyWriter taxoWriter, IDictionary<string, IList<FacetField>> byField, Document doc)
+        private void ProcessFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<FacetField>> byField, Document doc)
         {
 
             foreach (KeyValuePair<string, IList<FacetField>> ent in byField)
@@ -486,7 +486,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void ProcessAssocFacetFields(TaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc)
+        private void ProcessAssocFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc)
         {
             foreach (KeyValuePair<string, IList<AssociationFacetField>> ent in byField)
             {
@@ -592,11 +592,11 @@ namespace Lucene.Net.Facet
             return new BytesRef(bytes, 0, upto);
         }
 
-        private void checkTaxoWriter(TaxonomyWriter taxoWriter)
+        private void checkTaxoWriter(ITaxonomyWriter taxoWriter)
         {
             if (taxoWriter == null)
             {
-                throw new ThreadStateException("a non-null TaxonomyWriter must be provided when indexing FacetField or AssociationFacetField");
+                throw new ThreadStateException("a non-null ITaxonomyWriter must be provided when indexing FacetField or AssociationFacetField");
             }
         }
 

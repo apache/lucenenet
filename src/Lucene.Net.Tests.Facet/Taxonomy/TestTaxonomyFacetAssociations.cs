@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("a", true);
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -241,7 +241,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
-            TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+            ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             config.SetRequireDimCount("a", true);
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
