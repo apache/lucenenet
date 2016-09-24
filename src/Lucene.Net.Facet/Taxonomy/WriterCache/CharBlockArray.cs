@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 {
                     toCopy = remainingInBlock;
                 }
-                s.CopyTo(offset, this.current.chars, this.current.length, offset + toCopy - offset);
+                s.CopyTo(offset, this.current.chars, this.current.length, toCopy);
                 offset += toCopy;
                 remain -= toCopy;
                 this.current.length += toCopy;
@@ -187,7 +187,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return b.chars[IndexInBlock(index)];
         }
 
-        public ICharSequence SubSequence(int start, int end)
+        public string SubSequence(int start, int end)
         {
             int remaining = end - start;
             StringBuilder sb = new StringBuilder(remaining);
@@ -201,11 +201,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 remaining -= numToAppend;
                 indexInBlock = 0; // 2nd+ iterations read from start of the block
             }
-            return new StringCharSequenceWrapper(sb.ToString());
+            return sb.ToString();
         }
 
-
-
+        ICharSequence ICharSequence.SubSequence(int start, int end)
+        {
+            return new StringCharSequenceWrapper(this.SubSequence(start, end));
+        }
 
         public override string ToString()
         {

@@ -1,14 +1,12 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using NUnit.Framework;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,11 +23,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     [TestFixture]
     public class TestCompactLabelToOrdinal : FacetTestCase
     {
-        /* not finished to porting yet because of missing decoder implementation */
-        /*
+        [Test]
         public virtual void TestL2O()
         {
             LabelToOrdinal map = new LabelToOrdinalMap();
@@ -43,18 +41,17 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             byte[] buffer = new byte[50];
 
             Random random = Random();
-            for (int i = 0; i < numUniqueValues; )
+            for (int i = 0; i < numUniqueValues;)
             {
                 random.NextBytes(buffer);
                 int size = 1 + random.Next(buffer.Length);
 
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onUnmappableCharacter(CodingErrorAction.REPLACE).onMalformedInput(CodingErrorAction.REPLACE);
-                uniqueValues[i] = decoder.decode(ByteBuffer.Wrap(buffer, 0, size)).ToString();
+                uniqueValues[i] = Encoding.UTF8.GetString(buffer, 0, size);
                 // we cannot have empty path components, so eliminate all prefix as well
                 // as middle consecutive delimiter chars.
-                uniqueValues[i] = uniqueValues[i].replaceAll("/+", "/");
+                uniqueValues[i] = Regex.Replace(uniqueValues[i], "/+", "/");
                 if (uniqueValues[i].StartsWith("/", StringComparison.Ordinal))
                 {
                     uniqueValues[i] = uniqueValues[i].Substring(1);
@@ -66,16 +63,21 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
 
             var tmpDir = CreateTempDir("testLableToOrdinal");
-            var f = new File(tmpDir, "CompactLabelToOrdinalTest.tmp");
+            var f = new FileInfo(Path.Combine(tmpDir.FullName, "CompactLabelToOrdinalTest.tmp"));
             int flushInterval = 10;
 
             for (int i = 0; i < n; i++)
             {
                 if (i > 0 && i % flushInterval == 0)
                 {
-                    compact.Flush(f);
-                    compact = CompactLabelToOrdinal.open(f, 0.15f, 3);
-                    Assert.True(f.delete());
+                    using (var fileStream = new FileStream(f.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        compact.Flush(fileStream);
+                    }
+                    compact = CompactLabelToOrdinal.Open(f, 0.15f, 3);
+                    //assertTrue(f.Delete());
+                    f.Delete();
+                    assertFalse(File.Exists(f.FullName));
                     if (flushInterval < (n / 10))
                     {
                         flushInterval *= 10;
@@ -97,7 +99,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
 
-                Assert.AreEqual(ord1, ord2);
+                if (VERBOSE)
+                {
+                    Console.WriteLine("Testing label: " + label.ToString());
+                }
+
+                assertEquals(ord1, ord2);
 
                 if (ord1 == LabelToOrdinal.INVALID_ORDINAL)
                 {
@@ -121,13 +128,136 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
-                Assert.AreEqual(ord1, ord2);
+
+                if (VERBOSE)
+                {
+                    Console.WriteLine("Testing label 2: " + label.ToString());
+                }
+
+                assertEquals(ord1, ord2);
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific test similar to TestL2O without any randomness, useful for debugging
+        /// </summary>
+        [Test]
+        public virtual void TestL2OBasic()
+        {
+            LabelToOrdinal map = new LabelToOrdinalMap();
+
+            CompactLabelToOrdinal compact = new CompactLabelToOrdinal(200, 0.15f, 3);
+
+            int n = 50;
+
+            string[] uniqueValues = new string[]
+            {
+                @"�",
+                @"�r�G��F�\u0382�7\u0019�h�\u0015���#\u001d3\r{��q�_���Ԃ������",
+                "foo bar one",
+                new string(new char[] { (char)65533, (char)65533, (char)65, (char)65533, (char)45, (char)106, (char)40, (char)643, (char)65533, (char)11, (char)65533, (char)88, (char)65533, (char)78, (char)126, (char)56, (char)12, (char)71 }),
+                "foo bar two",
+                "foo bar three",
+                "foo bar four",
+                "foo bar five",
+                "foo bar six",
+                "foo bar seven",
+                "foo bar eight",
+                "foo bar nine",
+                "foo bar ten",
+                "foo/bar/one",
+                "foo/bar/two",
+                "foo/bar/three",
+                "foo/bar/four",
+                "foo/bar/five",
+                "foo/bar/six",
+                "foo/bar/seven",
+                "foo/bar/eight",
+                "foo/bar/nine",
+                "foo/bar/ten",
+                ""
+            };
+
+            var tmpDir = CreateTempDir("testLableToOrdinal");
+            var f = new FileInfo(Path.Combine(tmpDir.FullName, "CompactLabelToOrdinalTest.tmp"));
+            int flushInterval = 10;
+
+            for (int i = 0; i < n; i++)
+            {
+                if (i > 0 && i % flushInterval == 0)
+                {
+                    using (var fileStream = new FileStream(f.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        compact.Flush(fileStream);
+                    }
+                    compact = CompactLabelToOrdinal.Open(f, 0.15f, 3);
+                    //assertTrue(f.Delete());
+                    f.Delete();
+                    assertFalse(File.Exists(f.FullName));
+                    if (flushInterval < (n / 10))
+                    {
+                        flushInterval *= 10;
+                    }
+                }
+
+                FacetLabel label = new FacetLabel();
+                foreach (string s in uniqueValues)
+                {
+                    if (s.Length == 0)
+                    {
+                        label = new FacetLabel();
+                    }
+                    else
+                    {
+                        label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    }
+
+                    int ord1 = map.GetOrdinal(label);
+                    int ord2 = compact.GetOrdinal(label);
+
+                    if (VERBOSE)
+                    {
+                        Console.WriteLine("Testing label: " + label.ToString());
+                    }
+
+                    assertEquals(ord1, ord2);
+
+                    if (ord1 == LabelToOrdinal.INVALID_ORDINAL)
+                    {
+                        ord1 = compact.NextOrdinal;
+                        map.AddLabel(label, ord1);
+                        compact.AddLabel(label, ord1);
+                    }
+                }
+            }
+
+            for (int i = 0; i < uniqueValues.Length; i++)
+            {
+                FacetLabel label;
+                string s = uniqueValues[i];
+                if (s.Length == 0)
+                {
+                    label = new FacetLabel();
+                }
+                else
+                {
+                    label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                }
+                int ord1 = map.GetOrdinal(label);
+                int ord2 = compact.GetOrdinal(label);
+
+                if (VERBOSE)
+                {
+                    Console.WriteLine("Testing label 2: " + label.ToString());
+                }
+
+                assertEquals(ord1, ord2);
             }
         }
 
         private class LabelToOrdinalMap : LabelToOrdinal
         {
-            internal IDictionary<FacetLabel, int?> map = new Dictionary<FacetLabel, int?>();
+            internal IDictionary<FacetLabel, int> map = new Dictionary<FacetLabel, int>();
 
             internal LabelToOrdinalMap()
             {
@@ -140,12 +270,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public override int GetOrdinal(FacetLabel label)
             {
-                int? value = map[label];
-                return (value != null) ? (int)value : LabelToOrdinal.INVALID_ORDINAL;
+                int value;
+                if (map.TryGetValue(label, out value))
+                {
+                    return value;
+                }
+                return LabelToOrdinal.INVALID_ORDINAL;
             }
-
-        } */
-
+        } 
     }
-
 }

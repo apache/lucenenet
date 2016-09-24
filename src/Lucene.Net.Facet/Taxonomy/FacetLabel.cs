@@ -162,7 +162,12 @@ namespace Lucene.Net.Facet.Taxonomy
                 return 0;
             }
 
-            return Arrays.GetHashCode(Components);
+            int hash = Length;
+            for (int i = 0; i < Length; i++)
+            {
+                hash = hash * 31 + Components[i].GetHashCode();
+            }
+            return hash;
         }
 
         /// <summary>

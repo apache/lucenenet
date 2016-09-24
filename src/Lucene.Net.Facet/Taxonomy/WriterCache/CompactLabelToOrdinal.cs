@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Store;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +20,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// This is a very efficient LabelToOrdinal implementation that uses a
@@ -396,7 +393,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Opens the file and reloads the CompactLabelToOrdinal. The file it expects
         /// is generated from the <seealso cref="#flush(File)"/> command.
         /// </summary>
-        internal static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
+        internal static CompactLabelToOrdinal Open(FileInfo file, float loadFactor, int numHashArrays)
         {
             /// <summary>
             /// Part of the file is the labelRepository, which needs to be rehashed
@@ -411,7 +408,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             BinaryReader dis = null;
             try
             {
-                dis = new BinaryReader(new FileStream(file,FileMode.Open,FileAccess.Read));
+                dis = new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read));
 
                 // TaxiReader needs to load the "counter" or occupancy (L2O) to know
                 // the next unique facet. we used to load the delimiter too, but
@@ -465,9 +462,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
 
             }
-            catch (DllNotFoundException)
+            catch (SerializationException se)
             {
-                throw new IOException("Invalid file format. Cannot deserialize.");
+                throw new IOException("Invalid file format. Cannot deserialize.", se);
             }
             finally
             {
@@ -482,7 +479,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         }
 
-        internal virtual void Flush(FileStream stream)
+        internal virtual void Flush(Stream stream)
         {
             using (BinaryWriter dos = new BinaryWriter(stream))
             {
@@ -508,5 +505,4 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
     }
-
 }

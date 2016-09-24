@@ -1,6 +1,7 @@
-﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
-{
+﻿using System;
 
+namespace Lucene.Net.Facet.Taxonomy.WriterCache
+{
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -85,7 +86,7 @@
                     return false;
                 }
 
-                if (!cp.Components[i].Equals(charBlockArray.SubSequence(offset, offset + len)))
+                if (!cp.Components[i].Equals(charBlockArray.SubSequence(offset, offset + len), StringComparison.Ordinal))
                 {
                     return false;
                 }
@@ -93,7 +94,5 @@
             }
             return true;
         }
-
     }
-
 }

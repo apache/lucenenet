@@ -76,13 +76,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             DirectoryInfo tempDir = CreateTempDir("growingchararray");
             FileInfo f = new FileInfo(Path.Combine(tempDir.FullName, "GrowingCharArrayTest.tmp"));
-            using (Stream @out = new FileStream(f.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var @out = new FileStream(f.FullName, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 array.Flush(@out);
                 @out.Flush();
             }
 
-            using (Stream @in = new FileStream(f.FullName, FileMode.Open, FileAccess.Read))
+            using (var @in = new FileStream(f.FullName, FileMode.Open, FileAccess.Read))
             {
                 array = CharBlockArray.Open(@in);
                 AssertEqualsInternal("GrowingCharArray<->StringBuilder mismatch after flush/load.", builder, array);
