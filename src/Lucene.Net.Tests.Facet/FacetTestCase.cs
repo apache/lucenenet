@@ -154,7 +154,7 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i, new ComparatorAnonymousInnerClassHelper(this));
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), new ComparatorAnonymousInnerClassHelper(this));
                     }
                     numInRow = 1;
                     if (i < labelValues.Length)
