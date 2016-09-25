@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Facet
                 }
             nextDocContinue: ;
             }
-        nextDocBreak:
+            //nextDocBreak:// Not referenced
 
             IDictionary<string, int?> idToDocID = new Dictionary<string, int?>();
             for (int i = 0; i < s.IndexReader.MaxDoc; i++)

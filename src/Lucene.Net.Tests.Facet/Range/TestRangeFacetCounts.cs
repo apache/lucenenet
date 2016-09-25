@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Facet.Range
             private Filter fastMatchFilter;
 
 
-            public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts testRangeFacetCounts, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
+            public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
                 : base(indexSearcher, facetsConfig, org)
             {
                 this.outerInstance = outerInstance;

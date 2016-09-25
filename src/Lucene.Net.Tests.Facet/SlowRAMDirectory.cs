@@ -241,6 +241,8 @@ namespace Lucene.Net.Facet
                     return io.FilePointer;
                 }
             }
+
+            [Obsolete]
             public override void Seek(long pos)
             {
                 io.Seek(pos);

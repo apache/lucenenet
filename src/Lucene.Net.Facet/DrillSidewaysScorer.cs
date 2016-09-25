@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet
                 docID = baseScorer.NextDoc();
                 nextDocContinue:;
             }
-            nextDocBreak:;
+            //nextDocBreak:; // Not referenced
         }
 
         /// <summary>
