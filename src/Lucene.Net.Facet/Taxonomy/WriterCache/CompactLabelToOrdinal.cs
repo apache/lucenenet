@@ -67,9 +67,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// How many labels. </summary>
-        public virtual int SizeOfMap()
+        public virtual int SizeOfMap
         {
-            return this.collisionMap.Count;
+            get
+            {
+                return this.collisionMap.Count;
+            }
         }
 
         private CompactLabelToOrdinal()
