@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -222,10 +223,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override int GetHashCode()
             {
-                return hcode;
+                return RuntimeHelpers.GetHashCode(this);
             }
-
-            private static readonly int hcode = typeof(DoubleDocValuesAnonymousInnerClassHelper).GetHashCode();
 
             public override string Description
             {
