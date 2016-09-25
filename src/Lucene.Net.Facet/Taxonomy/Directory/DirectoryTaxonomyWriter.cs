@@ -905,7 +905,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 int size = r.NumDocs;
                 IOrdinalMap ordinalMap = map;
-                ordinalMap.Size = size;
+                ordinalMap.SetSize(size);
                 int @base = 0;
                 TermsEnum te = null;
                 DocsEnum docs = null;
@@ -957,7 +957,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// called exactly 'size' times, with different origOrdinals between 0
             /// and size-1.  
             /// </summary>
-            int Size { set; }
+            void SetSize(int taxonomySize);
 
             /// <summary>
             /// Record a mapping. </summary>
@@ -995,9 +995,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 map = new int[] { };
             }
 
-            public int Size
+            public void SetSize(int taxonomySize)
             {
-                set { map = new int[value]; }
+                map = new int[taxonomySize];
             }
 
             public void AddMapping(int origOrdinal, int newOrdinal)
@@ -1011,8 +1011,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     Array.Resize(ref map, origOrdinal + 1);
                     map[origOrdinal] = newOrdinal;
                 }
-
-
             }
 
             public void AddDone() // nothing to do
@@ -1051,12 +1049,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 @out.WriteInt(newOrdinal);
             }
 
-            public int Size
+            public void SetSize(int taxonomySize)
             {
-                set
-                {
-                    @out.WriteInt(value);
-                }
+                @out.WriteInt(taxonomySize);
             }
 
             public void AddDone()
