@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FillTaxonomy(tw);
             // Also check ITaxonomyWriter.getSize() - see that the taxonomy's size
             // is what we expect it to be.
-            Assert.AreEqual(ExpectedCategories.Length, tw.Size);
+            Assert.AreEqual(ExpectedCategories.Length, tw.Count);
             tw.Dispose();
             indexDir.Dispose();
         }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FillTaxonomy(tw);
             // Let's check the number of categories again, to see that no
             // extraneous categories were created:
-            Assert.AreEqual(ExpectedCategories.Length, tw.Size);
+            Assert.AreEqual(ExpectedCategories.Length, tw.Count);
             tw.Dispose();
             indexDir.Dispose();
         }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // ones, and that the number of categories hasn't grown by the new
             // additions
             FillTaxonomy(tw);
-            Assert.AreEqual(ExpectedCategories.Length, tw.Size);
+            Assert.AreEqual(ExpectedCategories.Length, tw.Count);
             tw.Dispose();
             indexDir.Dispose();
         }
@@ -243,7 +243,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // not be open (as explained above) but because it was not set to null,
             // we forgot that, tried to reopen it, and got an AlreadyClosedException.
             tw.Commit();
-            Assert.AreEqual(ExpectedCategories.Length + 1, tw.Size);
+            Assert.AreEqual(ExpectedCategories.Length + 1, tw.Count);
             tw.Dispose();
             indexDir.Dispose();
         }
@@ -259,37 +259,37 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             var indexDir = NewDirectory();
             var tw = new DirectoryTaxonomyWriter(indexDir);
-            Assert.AreEqual(1, tw.Size); // the root only
+            Assert.AreEqual(1, tw.Count); // the root only
             // Test that adding a new top-level category works
             Assert.AreEqual(1, tw.AddCategory(new FacetLabel("a")));
-            Assert.AreEqual(2, tw.Size);
+            Assert.AreEqual(2, tw.Count);
             // Test that adding the same category again is noticed, and the
             // same ordinal (and not a new one) is returned.
             Assert.AreEqual(1, tw.AddCategory(new FacetLabel("a")));
-            Assert.AreEqual(2, tw.Size);
+            Assert.AreEqual(2, tw.Count);
             // Test that adding another top-level category returns a new ordinal,
             // not the same one
             Assert.AreEqual(2, tw.AddCategory(new FacetLabel("b")));
-            Assert.AreEqual(3, tw.Size);
+            Assert.AreEqual(3, tw.Count);
             // Test that adding a category inside one of the above adds just one
             // new ordinal:
             Assert.AreEqual(3, tw.AddCategory(new FacetLabel("a", "c")));
-            Assert.AreEqual(4, tw.Size);
+            Assert.AreEqual(4, tw.Count);
             // Test that adding the same second-level category doesn't do anything:
             Assert.AreEqual(3, tw.AddCategory(new FacetLabel("a", "c")));
-            Assert.AreEqual(4, tw.Size);
+            Assert.AreEqual(4, tw.Count);
             // Test that adding a second-level category with two new components
             // indeed adds two categories
             Assert.AreEqual(5, tw.AddCategory(new FacetLabel("d", "e")));
-            Assert.AreEqual(6, tw.Size);
+            Assert.AreEqual(6, tw.Count);
             // Verify that the parents were added above in the order we expected
             Assert.AreEqual(4, tw.AddCategory(new FacetLabel("d")));
             // Similar, but inside a category that already exists:
             Assert.AreEqual(7, tw.AddCategory(new FacetLabel("b", "d", "e")));
-            Assert.AreEqual(8, tw.Size);
+            Assert.AreEqual(8, tw.Count);
             // And now inside two levels of categories that already exist:
             Assert.AreEqual(8, tw.AddCategory(new FacetLabel("b", "d", "f")));
-            Assert.AreEqual(9, tw.Size);
+            Assert.AreEqual(9, tw.Count);
 
             tw.Dispose();
             indexDir.Dispose();
@@ -307,7 +307,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var tw = new DirectoryTaxonomyWriter(indexDir);
             // right after opening the index, it should already contain the
             // root, so have size 1:
-            Assert.AreEqual(1, tw.Size);
+            Assert.AreEqual(1, tw.Count);
             tw.Dispose();
             var tr = new DirectoryTaxonomyReader(indexDir);
             Assert.AreEqual(1, tr.Count);
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FillTaxonomyCheckPaths(tw);
             // Also check ITaxonomyWriter.getSize() - see that the taxonomy's size
             // is what we expect it to be.
-            Assert.AreEqual(ExpectedCategories.Length, tw.Size);
+            Assert.AreEqual(ExpectedCategories.Length, tw.Count);
             tw.Dispose();
             indexDir.Dispose();
         }

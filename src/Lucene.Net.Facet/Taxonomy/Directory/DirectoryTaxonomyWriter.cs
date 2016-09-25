@@ -723,7 +723,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        public virtual int Size
+        public virtual int Count
         {
             get
             {

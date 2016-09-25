@@ -102,7 +102,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// are also added automatically (including the root, which always get
         /// ordinal 0).
         /// </summary>
-        int Size { get; }
+        int Count { get; }
 
         /// <summary>
         /// Sets the commit user data map. That method is considered a transaction and

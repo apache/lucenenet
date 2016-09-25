@@ -419,7 +419,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // LUCENE-4633: make sure that category "a" is not added again in any case
             taxoWriter.AddTaxonomy(input, new MemoryOrdinalMap());
-            Assert.AreEqual(2, taxoWriter.Size, "no categories should have been added"); // root + 'a'
+            Assert.AreEqual(2, taxoWriter.Count, "no categories should have been added"); // root + 'a'
             Assert.AreEqual(ordA, taxoWriter.AddCategory(new FacetLabel("a")), "category 'a' received new ordinal?");
 
             // add the same category again -- it should not receive the same ordinal !

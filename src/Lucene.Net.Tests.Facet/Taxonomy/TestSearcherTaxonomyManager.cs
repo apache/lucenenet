@@ -114,10 +114,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
                         if (VERBOSE)
                         {
-                            Console.WriteLine("TW size=" + tw.Size + " vs " + ordLimit);
+                            Console.WriteLine("TW size=" + tw.Count + " vs " + ordLimit);
                         }
 
-                        if (tw.Size >= ordLimit)
+                        if (tw.Count >= ordLimit)
                         {
                             break;
                         }
