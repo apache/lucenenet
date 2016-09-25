@@ -582,11 +582,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class SinglePositionTokenStream : TokenStream
         {
-            internal ICharTermAttribute termAtt;
-            internal IPositionIncrementAttribute posIncrAtt;
-            internal bool returned;
-            internal int val;
-            internal readonly string word;
+            private ICharTermAttribute termAtt;
+            private IPositionIncrementAttribute posIncrAtt;
+            private bool returned;
+            private int val;
+            private readonly string word;
 
             public SinglePositionTokenStream(string word)
             {

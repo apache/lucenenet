@@ -92,12 +92,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return index % blockSize;
         }
 
-        public CharBlockArray Append(ICharSequence chars)
+        public virtual CharBlockArray Append(ICharSequence chars)
         {
             return Append(chars, 0, chars.Length);
         }
 
-        public CharBlockArray Append(char c)
+        public virtual CharBlockArray Append(char c)
         {
             if (this.current.length == this.blockSize)
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return this;
         }
 
-        public CharBlockArray Append(ICharSequence chars, int start, int length)
+        public virtual CharBlockArray Append(ICharSequence chars, int start, int length)
         {
             int end = start + length;
             for (int i = start; i < end; i++)
@@ -170,8 +170,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.length_Renamed += s.Length;
             return this;
         }
+        public virtual char CharAt(int index)
+        {
+            Block b = blocks[BlockIndex(index)];
+            return b.chars[IndexInBlock(index)];
+        }
 
-        public int Length
+        public virtual int Length
         {
             get
             {
@@ -179,13 +184,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public char CharAt(int index)
-        {
-            Block b = blocks[BlockIndex(index)];
-            return b.chars[IndexInBlock(index)];
-        }
-
-        public string SubSequence(int start, int end)
+        public virtual string SubSequence(int start, int end)
         {
             int remaining = end - start;
             StringBuilder sb = new StringBuilder(remaining);

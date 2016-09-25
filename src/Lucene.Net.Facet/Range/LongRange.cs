@@ -120,8 +120,8 @@ namespace Lucene.Net.Facet.Range
         {
             private readonly LongRange outerInstance;
 
-            private Filter fastMatchFilter;
-            private ValueSource valueSource;
+            private readonly Filter fastMatchFilter;
+            private readonly ValueSource valueSource;
 
             public FilterAnonymousInnerClassHelper(LongRange outerInstance, Filter fastMatchFilter, ValueSource valueSource)
             {
@@ -175,10 +175,10 @@ namespace Lucene.Net.Facet.Range
             {
                 private readonly FilterAnonymousInnerClassHelper outerInstance;
 
-                private Bits acceptDocs;
-                private FunctionValues values;
-                private int maxDoc;
-                private Bits fastMatchBits;
+                private readonly Bits acceptDocs;
+                private readonly FunctionValues values;
+                private readonly int maxDoc;
+                private readonly Bits fastMatchBits;
 
                 public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper outerInstance, Bits acceptDocs, FunctionValues values, int maxDoc, Bits fastMatchBits)
                 {

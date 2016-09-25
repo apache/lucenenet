@@ -70,8 +70,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// An iterator over a category's children. </summary>
         public class ChildrenIterator
         {
-            internal readonly int[] siblings;
-            internal int child;
+            private readonly int[] siblings;
+            private int child;
 
             internal ChildrenIterator(int child, int[] siblings)
             {

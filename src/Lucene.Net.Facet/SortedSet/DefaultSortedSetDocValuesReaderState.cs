@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// <seealso cref="IndexReader"/> passed to the constructor. </summary>
-        public readonly IndexReader origReader;
+        private readonly IndexReader origReader;
 
         private readonly IDictionary<string, OrdRange> prefixToOrdRange = new Dictionary<string, OrdRange>();
 
