@@ -221,8 +221,8 @@ namespace Lucene.Net.Facet.Taxonomy
         public virtual ChildrenIterator GetChildren(int ordinal)
         {
             ParallelTaxonomyArrays arrays = ParallelTaxonomyArrays;
-            int child = ordinal >= 0 ? arrays.Children()[ordinal] : INVALID_ORDINAL;
-            return new ChildrenIterator(child, arrays.Siblings());
+            int child = ordinal >= 0 ? arrays.Children[ordinal] : INVALID_ORDINAL;
+            return new ChildrenIterator(child, arrays.Siblings);
         }
 
         /// <summary>

@@ -253,7 +253,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // assert categories
                 Assert.AreEqual(numCategories, reader.Size);
                 int roundOrdinal = reader.GetOrdinal(new FacetLabel(Convert.ToString(i)));
-                int[] parents = reader.ParallelTaxonomyArrays.Parents();
+                int[] parents = reader.ParallelTaxonomyArrays.Parents;
                 Assert.AreEqual(0, parents[roundOrdinal]); // round's parent is root
                 for (int j = 0; j < numCats; j++)
                 {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var reader = new DirectoryTaxonomyReader(writer);
             Assert.AreEqual(1, reader.Size);
-            Assert.AreEqual(1, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(1, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // add category and call forceMerge -- this should flush IW and merge segments down to 1
             // in ParentArray.initFromReader, this used to fail assuming there are no parents.
@@ -319,7 +319,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             reader.Dispose();
             reader = newtr;
             Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();
             writer.Dispose();
@@ -367,7 +367,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var reader = new DirectoryTaxonomyReader(writer);
             Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // merge all the segments so that NRT reader thinks there's a change 
             iw.ForceMerge(1);
@@ -378,7 +378,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             reader.Dispose();
             reader = newtr;
             Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();
             writer.Dispose();

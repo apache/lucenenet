@@ -52,18 +52,18 @@
         /// Returns the parents array, where {@code parents[i]} denotes the parent of
         /// category ordinal {@code i}.
         /// </summary>
-        public abstract int[] Parents();
+        public abstract int[] Parents { get; }
 
         /// <summary>
         /// Returns the children array, where {@code children[i]} denotes a child of
         /// category ordinal {@code i}.
         /// </summary>
-        public abstract int[] Children();
+        public abstract int[] Children { get; }
 
         /// <summary>
         /// Returns the siblings array, where {@code siblings[i]} denotes the sibling
         /// of category ordinal {@code i}.
         /// </summary>
-        public abstract int[] Siblings();
+        public abstract int[] Siblings { get; }
     }
 }

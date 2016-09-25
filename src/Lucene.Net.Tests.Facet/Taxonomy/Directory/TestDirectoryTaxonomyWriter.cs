@@ -325,7 +325,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 Fail("mismatch number of categories");
             }
 
-            int[] parents = dtr.ParallelTaxonomyArrays.Parents();
+            int[] parents = dtr.ParallelTaxonomyArrays.Parents;
             foreach (string cat in values.Keys)
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));

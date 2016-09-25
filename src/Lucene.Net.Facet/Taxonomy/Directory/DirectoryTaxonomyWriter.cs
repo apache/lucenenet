@@ -886,7 +886,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 throw new System.IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
             }
 
-            int[] parents = TaxoArrays.Parents();
+            int[] parents = TaxoArrays.Parents;
             Debug.Assert(ordinal < parents.Length, "requested ordinal (" + ordinal + "); parents.length (" + parents.Length + ") !");
             return parents[ordinal];
         }

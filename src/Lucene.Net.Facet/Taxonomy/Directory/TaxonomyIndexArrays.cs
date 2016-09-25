@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // it may be caused if e.g. the taxonomy segments were merged, and so an updated
             // NRT reader was obtained, even though nothing was changed. this is not very likely
             // to happen.
-            int[] copyParents = copyFrom.Parents();
+            int[] copyParents = copyFrom.Parents;
             this.parents = new int[reader.MaxDoc];
             Array.Copy(copyParents, 0, parents, 0, copyParents.Length);
             InitParents(reader, copyParents.Length);
@@ -98,8 +98,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     if (copyFrom != null)
                     {
                         // called from the ctor, after we know copyFrom has initialized children/siblings
-                        Array.Copy(copyFrom.Children(), 0, children, 0, copyFrom.Children().Length);
-                        Array.Copy(copyFrom.Siblings(), 0, siblings, 0, copyFrom.Siblings().Length);
+                        Array.Copy(copyFrom.Children, 0, children, 0, copyFrom.Children.Length);
+                        Array.Copy(copyFrom.Siblings, 0, siblings, 0, copyFrom.Siblings.Length);
                         ComputeChildrenSiblings(copyFrom.parents.Length);
                     }
                     else
@@ -207,9 +207,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Returns the parents array, where {@code parents[i]} denotes the parent of
         /// category ordinal {@code i}.
         /// </summary>
-        public override int[] Parents()
+        public override int[] Parents
         {
-            return parents;
+            get
+            {
+                return parents;
+            }
         }
 
         /// <summary>
@@ -218,15 +221,18 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// category that was added last to the taxonomy as an immediate child of
         /// {@code i}.
         /// </summary>
-        public override int[] Children()
+        public override int[] Children
         {
-            if (!initializedChildren)
+            get
             {
-                InitChildrenSiblings(null);
-            }
+                if (!initializedChildren)
+                {
+                    InitChildrenSiblings(null);
+                }
 
-            // the array is guaranteed to be populated
-            return children;
+                // the array is guaranteed to be populated
+                return children;
+            }
         }
 
         /// <summary>
@@ -234,15 +240,18 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// of category ordinal {@code i}. The sibling is defined as the previous
         /// youngest child of {@code parents[i]}.
         /// </summary>
-        public override int[] Siblings()
+        public override int[] Siblings
         {
-            if (!initializedChildren)
+            get
             {
-                InitChildrenSiblings(null);
-            }
+                if (!initializedChildren)
+                {
+                    InitChildrenSiblings(null);
+                }
 
-            // the array is guaranteed to be populated
-            return siblings;
+                // the array is guaranteed to be populated
+                return siblings;
+            }
         }
     }
 }

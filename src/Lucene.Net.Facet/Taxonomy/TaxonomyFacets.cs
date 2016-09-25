@@ -86,8 +86,8 @@ namespace Lucene.Net.Facet.Taxonomy
             this.taxoReader = taxoReader;
             this.config = config;
             ParallelTaxonomyArrays pta = taxoReader.ParallelTaxonomyArrays;
-            children = pta.Children();
-            siblings = pta.Siblings();
+            children = pta.Children;
+            siblings = pta.Siblings;
         }
 
         /// <summary>
