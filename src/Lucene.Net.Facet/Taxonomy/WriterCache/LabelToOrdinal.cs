@@ -55,12 +55,9 @@
         /// Returns the next unassigned ordinal. The default behavior of this method
         /// is to simply increment a counter.
         /// </summary>
-        public virtual int NextOrdinal
+        public virtual int GetNextOrdinal()
         {
-            get
-            {
-                return this.counter++;
-            }
+            return this.counter++;
         }
 
         /// <summary>
