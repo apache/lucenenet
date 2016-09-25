@@ -38,9 +38,9 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Optional: if specified, we first test this Filter to
-        ///  see whether the document should be checked for
-        ///  matching ranges.  If this is null, all documents are
-        ///  checked. 
+        /// see whether the document should be checked for
+        /// matching ranges.  If this is null, all documents are
+        /// checked. 
         /// </summary>
         protected internal readonly Filter fastMatchFilter;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet.Range
         protected internal int totCount;
 
         /// <summary>
-        /// Create {@code RangeFacetCounts} </summary>
+        /// Create <see cref="RangeFacetCounts"/> </summary>
         protected internal RangeFacetCounts(string field, Range[] ranges, Filter fastMatchFilter)
         {
             this.field = field;

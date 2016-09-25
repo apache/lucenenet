@@ -23,11 +23,10 @@ namespace Lucene.Net.Facet.Range
 
     /// <summary>
     /// Counts how many times each range was seen;
-    ///  per-hit it's just a binary search (<seealso cref="#add"/>)
-    ///  against the elementary intervals, and in the end we
-    ///  rollup back to the original ranges. 
+    /// per-hit it's just a binary search (<see cref="Add"/>)
+    /// against the elementary intervals, and in the end we
+    /// rollup back to the original ranges. 
     /// </summary>
-
     internal sealed class LongRangeCounter
     {
         internal readonly LongRangeNode root;
@@ -205,8 +204,8 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Fills counts corresponding to the original input
-        ///  ranges, returning the missing count (how many hits
-        ///  didn't match any ranges). 
+        /// ranges, returning the missing count (how many hits
+        /// didn't match any ranges). 
         /// </summary>
         public int FillCounts(int[] counts)
         {
@@ -285,7 +284,8 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Holds one node of the segment tree. </summary>
+        /// Holds one node of the segment tree.
+        /// </summary>
         public sealed class LongRangeNode
         {
             internal readonly LongRangeNode left;
@@ -328,7 +328,8 @@ namespace Lucene.Net.Facet.Range
             }
 
             /// <summary>
-            /// Recursively assigns range outputs to each node. </summary>
+            /// Recursively assigns range outputs to each node.
+            /// </summary>
             internal void AddOutputs(int index, LongRange range)
             {
                 if (start >= range.minIncl && end <= range.maxIncl)

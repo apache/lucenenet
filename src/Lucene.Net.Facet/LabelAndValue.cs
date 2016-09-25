@@ -22,7 +22,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Single label and its value, usually contained in a
-    ///  <seealso cref="FacetResult"/>. 
+    /// <see cref="FacetResult"/>. 
     /// </summary>
     public sealed class LabelAndValue
     {
@@ -69,14 +69,14 @@ namespace Lucene.Net.Facet
             return Label + " (" + valueString + ")";
         }
 
-        public override bool Equals(object _other)
+        public override bool Equals(object other)
         {
-            if ((_other is LabelAndValue) == false)
+            if ((other is LabelAndValue) == false)
             {
                 return false;
             }
-            LabelAndValue other = (LabelAndValue)_other;
-            return Label.Equals(other.Label) && Value.Equals(other.Value);
+            LabelAndValue _other = (LabelAndValue)other;
+            return Label.Equals(_other.Label) && Value.Equals(_other.Value);
         }
 
         public override int GetHashCode()

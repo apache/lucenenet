@@ -32,13 +32,13 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// A per-segment cache of documents' facet ordinals. Every
-    /// <seealso cref="CachedOrds"/> holds the ordinals in a raw {@code
-    /// int[]}, and therefore consumes as much RAM as the total
+    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="int[]"/>, 
+    /// and therefore consumes as much RAM as the total
     /// number of ordinals found in the segment, but saves the
     /// CPU cost of decoding ordinals during facet counting.
     /// 
     /// <para>
-    /// <b>NOTE:</b> every <seealso cref="CachedOrds"/> is limited to 2.1B
+    /// <b>NOTE:</b> every <see cref="CachedOrds"/> is limited to 2.1B
     /// total ordinals. If that is a limitation for you then
     /// consider limiting the segment size to fewer documents, or
     /// use an alternative cache which pages through the category
@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </para>
     /// <para>
     /// <b>NOTE:</b> when using this cache, it is advised to use
-    /// a <seealso cref="DocValuesFormat"/> that does not cache the data in
+    /// a <see cref="DocValuesFormat"/> that does not cache the data in
     /// memory, at least for the category lists fields, or
     /// otherwise you'll be doing double-caching.
     /// 
@@ -122,20 +122,23 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Holds the cached ordinals in two parallel {@code int[]} arrays. </summary>
+        /// Holds the cached ordinals in two parallel <see cref="int[]"/> arrays.
+        /// </summary>
         public sealed class CachedOrds : Accountable
         {
             /// <summary>
-            /// Index into <seealso cref="#ordinals"/> for each document. </summary>
+            /// Index into <see cref="Ordinals"/> for each document.
+            /// </summary>
             public int[] Offsets { get; private set; }
 
             /// <summary>
-            /// Holds ords for all docs. </summary>
+            /// Holds ords for all docs.
+            /// </summary>
             public int[] Ordinals { get; private set; }
 
             /// <summary>
-            /// Creates a new <seealso cref="CachedOrds"/> from the <seealso cref="BinaryDocValues"/>.
-            /// Assumes that the <seealso cref="BinaryDocValues"/> is not {@code null}.
+            /// Creates a new <see cref="CachedOrds"/> from the <see cref="BinaryDocValues"/>.
+            /// Assumes that the <see cref="BinaryDocValues"/> is not <c>null</c>.
             /// </summary>
             public CachedOrds(OrdinalsSegmentReader source, int maxDoc)
             {

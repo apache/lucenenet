@@ -33,8 +33,8 @@ namespace Lucene.Net.Facet.Taxonomy
     using Weight = Lucene.Net.Search.Weight;
 
     /// <summary>
-    /// Aggregates sum of values from {@link
-    ///  FunctionValues#doubleVal}, for each facet label.
+    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal"/>, 
+    /// for each facet label.
     /// 
     ///  @lucene.experimental 
     /// </summary>
@@ -44,10 +44,9 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Aggreggates float facet values from the provided
-        ///  <seealso cref="ValueSource"/>, pulling ordinals using {@link
-        ///  DocValuesOrdinalsReader} against the default indexed
-        ///  facet field {@link
-        ///  FacetsConfig#DEFAULT_INDEX_FIELD_NAME}. 
+        /// <see cref="ValueSource"/>, pulling ordinals using <see cref="DocValuesOrdinalsReader"/>
+        /// against the default indexed
+        /// facet field <see cref="FacetsConfig.DEFAULT_INDEX_FIELD_NAME"/>. 
         /// </summary>
         public TaxonomyFacetSumValueSource(TaxonomyReader taxoReader, FacetsConfig config,
             FacetsCollector fc, ValueSource valueSource)
@@ -58,8 +57,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Aggreggates float facet values from the provided
-        ///  <seealso cref="ValueSource"/>, and pulls ordinals from the
-        ///  provided <seealso cref="OrdinalsReader"/>. 
+        /// <see cref="ValueSource"/>, and pulls ordinals from the
+        /// provided <see cref="OrdinalsReader"/>. 
         /// </summary>
         public TaxonomyFacetSumValueSource(OrdinalsReader ordinalsReader, TaxonomyReader taxoReader,
             FacetsConfig config, FacetsCollector fc, ValueSource valueSource)
@@ -158,15 +157,16 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// <seealso cref="ValueSource"/> that returns the score for each
-        ///  hit; use this to aggregate the sum of all hit scores
-        ///  for each facet label.  
+        /// <see cref="ValueSource"/> that returns the score for each
+        /// hit; use this to aggregate the sum of all hit scores
+        /// for each facet label.  
         /// </summary>
         public class ScoreValueSource : ValueSource
         {
 
             /// <summary>
-            /// Sole constructor. </summary>
+            /// Sole constructor.
+            /// </summary>
             public ScoreValueSource()
             {
             }

@@ -24,18 +24,17 @@ namespace Lucene.Net.Facet.Taxonomy
     using Document = Lucene.Net.Documents.Document;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> to add
-    ///  a facet label associated with a float.  Use {@link
-    ///  TaxonomyFacetSumFloatAssociations} to aggregate float values
-    ///  per facet label at search time.
+    /// Add an instance of this to your <see cref="Document"/> to add
+    /// a facet label associated with a float.  Use <see cref="TaxonomyFacetSumFloatAssociations"/>
+    /// to aggregate float values per facet label at search time.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class FloatAssociationFacetField : AssociationFacetField
     {
         /// <summary>
-        /// Creates this from {@code dim} and {@code path} and a
-        ///  float association 
+        /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and a
+        /// float association 
         /// </summary>
         public FloatAssociationFacetField(float assoc, string dim, params string[] path) 
             : base(FloatToBytesRef(assoc), dim, path)
@@ -43,14 +42,16 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Encodes a {@code float} as a 4-byte <seealso cref="BytesRef"/>. </summary>
+        /// Encodes a <see cref="float"/> as a 4-byte <see cref="BytesRef"/>.
+        /// </summary>
         public static BytesRef FloatToBytesRef(float v)
         {
             return IntAssociationFacetField.IntToBytesRef(Number.FloatToIntBits(v));
         }
 
         /// <summary>
-        /// Decodes a previously encoded {@code float}. </summary>
+        /// Decodes a previously encoded <see cref="float"/>.
+        /// </summary>
         public static float BytesRefToFloat(BytesRef b)
         {
             return Number.IntBitsToFloat(IntAssociationFacetField.BytesRefToInt(b));

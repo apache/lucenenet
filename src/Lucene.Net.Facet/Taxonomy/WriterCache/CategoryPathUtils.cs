@@ -20,11 +20,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// Utilities for use of <seealso cref="FacetLabel"/> by <seealso cref="CompactLabelToOrdinal"/>. </summary>
+    /// Utilities for use of <see cref="FacetLabel"/> by <see cref="CompactLabelToOrdinal"/>.
+    /// </summary>
     internal class CategoryPathUtils
     {
         /// <summary>
-        /// Serializes the given <seealso cref="FacetLabel"/> to the <seealso cref="CharBlockArray"/>. </summary>
+        /// Serializes the given <see cref="FacetLabel"/> to the <see cref="CharBlockArray"/>.
+        /// </summary>
         public static void Serialize(FacetLabel cp, CharBlockArray charBlockArray)
         {
             charBlockArray.Append((char)cp.Length);
@@ -41,7 +43,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Calculates a hash function of a path that was serialized with
-        /// <seealso cref="#serialize(FacetLabel, CharBlockArray)"/>.
+        /// <see cref="Serialize(FacetLabel, CharBlockArray)"/>.
         /// </summary>
         public static int HashCodeOfSerialized(CharBlockArray charBlockArray, int offset)
         {
@@ -62,8 +64,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Check whether the <seealso cref="FacetLabel"/> is equal to the one serialized in
-        /// <seealso cref="CharBlockArray"/>.
+        /// Check whether the <see cref="FacetLabel"/> is equal to the one serialized in
+        /// <see cref="CharBlockArray"/>.
         /// </summary>
         public static bool EqualsToSerialized(FacetLabel cp, CharBlockArray charBlockArray, int offset)
         {

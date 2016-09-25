@@ -26,8 +26,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
-    // Note: Nothing in this class is synchronized. The caller is assumed to be
-    // synchronized so that no two methods of this class are called concurrently.
+    /// <remarks>
+    /// Note: Nothing in this class is synchronized. The caller is assumed to be
+    /// synchronized so that no two methods of this class are called concurrently.
+    /// </remarks>
     public class NameIntCacheLRU
     {
         private Dictionary<object, int?> cache;
@@ -42,7 +44,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Maximum number of cache entries before eviction. </summary>
+        /// Maximum number of cache entries before eviction.
+        /// </summary>
         public virtual int Capacity
         {
             get
@@ -52,7 +55,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Number of entries currently in the cache. </summary>
+        /// Number of entries currently in the cache.
+        /// </summary>
         public virtual int Count
         {
             get
@@ -91,7 +95,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Subclasses can override this to provide caching by e.g. hash of the string. </summary>
+        /// Subclasses can override this to provide caching by e.g. hash of the string.
+        /// </summary>
         internal virtual object Key(FacetLabel name)
         {
             return name;
@@ -140,7 +145,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// If cache is full remove least recently used entries from cache. Return true
         /// if anything was removed, false otherwise.
         /// 
-        /// See comment in DirectoryTaxonomyWriter.addToCache(CategoryPath, int) for an
+        /// See comment in <see cref="Directory.DirectoryTaxonomyWriter.AddToCache(FacetLabel, int)"/> for an
         /// explanation why we clean 2/3rds of the cache, and not just one entry.
         /// </summary>
         internal virtual bool MakeRoomLRU()

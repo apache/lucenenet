@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// Similar to <seealso cref="StringBuilder"/>, but with a more efficient growing strategy.
+    /// Similar to <see cref="StringBuilder"/>, but with a more efficient growing strategy.
     /// This class uses char array blocks to grow.
     /// 
     /// @lucene.experimental

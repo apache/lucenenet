@@ -31,19 +31,20 @@ namespace Lucene.Net.Facet.Taxonomy
     public class CategoryPath : IComparable<CategoryPath>
     {
         /// <summary>
-        /// An empty <seealso cref="CategoryPath"/> </summary>
+        /// An empty <see cref="CategoryPath"/>
+        /// </summary>
         public static readonly CategoryPath EMPTY = new CategoryPath();
 
         /// <summary>
-        /// The components of this <seealso cref="CategoryPath"/>. Note that this array may be
-        /// shared with other <seealso cref="CategoryPath"/> instances, e.g. as a result of
-        /// <seealso cref="#subpath(int)"/>, therefore you should traverse the array up to
-        /// <seealso cref="#length"/> for this path's components.
+        /// The components of this <see cref="CategoryPath"/>. Note that this array may be
+        /// shared with other <see cref="CategoryPath"/> instances, e.g. as a result of
+        /// <see cref="Subpath(int)"/>, therefore you should traverse the array up to
+        /// <see cref="Length"/> for this path's components.
         /// </summary>
         public string[] Components { get; private set; }
 
         /// <summary>
-        /// The number of components of this <seealso cref="CategoryPath"/>. </summary>
+        /// The number of components of this <see cref="CategoryPath"/>. </summary>
         public int Length { get; private set; }
 
         // Used by singleton EMPTY
@@ -65,7 +66,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Construct from the given path components. </summary>
+        /// Construct from the given path <paramref name="components"/>.
+        /// </summary>
         public CategoryPath(params string[] components)
         {
             Debug.Assert(components.Length > 0, "use CategoryPath.EMPTY to create an empty path");
@@ -81,7 +83,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Construct from a given path, separating path components with {@code delimiter}. </summary>
+        /// Construct from a given path, separating path components with <paramref name="delimiter"/>.
+        /// </summary>
         public CategoryPath(string pathString, char delimiter)
         {
             string[] comps = pathString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
@@ -107,7 +110,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Returns the number of characters needed to represent the path, including
         /// delimiter characters, for using with
-        /// <seealso cref="#copyFullPath(char[], int, char)"/>.
+        /// <see cref="CopyFullPath(char[], int, char)"/>.
         /// </summary>
         public virtual int FullPathLength()
         {
@@ -126,7 +129,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Compares this path with another <seealso cref="CategoryPath"/> for lexicographic
+        /// Compares this path with another <see cref="CategoryPath"/> for lexicographic
         /// order.
         /// </summary>
         public virtual int CompareTo(CategoryPath other)
@@ -167,14 +170,14 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Copies the path components to the given {@code char[]}, starting at index
-        /// {@code start}. {@code delimiter} is copied between the path components.
+        /// Copies the path components to the given <see cref="char[]"/>, starting at index
+        /// <paramref name="start"/>. <paramref name="delimiter"/> is copied between the path components.
         /// Returns the number of chars copied.
         /// 
         /// <para>
         /// <b>NOTE:</b> this method relies on the array being large enough to hold the
         /// components and separators - the amount of needed space can be calculated
-        /// with <seealso cref="#fullPathLength()"/>.
+        /// with <see cref="FullPathLength()"/>.
         /// </para>
         /// </summary>
         public virtual int CopyFullPath(char[] buf, int start, char delimiter)
@@ -241,7 +244,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Calculate a 64-bit hash function for this path. </summary>
+        /// Calculate a 64-bit hash function for this path.
+        /// </summary>
         public virtual long LongHashCode()
         {
             if (Length == 0)
@@ -258,7 +262,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Returns a sub-path of this path up to {@code length} components. </summary>
+        /// Returns a sub-path of this path up to <paramref name="length"/> components.
+        /// </summary>
         public virtual CategoryPath Subpath(int length)
         {
             if (length >= this.Length || length < 0)
@@ -279,7 +284,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Returns a string representation of the path, separating components with
         /// '/'.
         /// </summary>
-        /// <seealso cref= #toString(char) </seealso>
+        /// <see cref= #toString(char) </seealso>
         public override string ToString()
         {
             return ToString('/');

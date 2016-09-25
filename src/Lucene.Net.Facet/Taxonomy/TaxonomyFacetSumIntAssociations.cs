@@ -26,16 +26,16 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Aggregates sum of int values previously indexed with
-    ///  <seealso cref="IntAssociationFacetField"/>, assuming the default
-    ///  encoding.
+    /// <see cref="IntAssociationFacetField"/>, assuming the default
+    /// encoding.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class TaxonomyFacetSumIntAssociations : IntTaxonomyFacets
     {
         /// <summary>
-        /// Create {@code TaxonomyFacetSumIntAssociations} against
-        ///  the default index field. 
+        /// Create <see cref="TaxonomyFacetSumIntAssociations"/> against
+        /// the default index field. 
         /// </summary>
         public TaxonomyFacetSumIntAssociations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -43,8 +43,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Create {@code TaxonomyFacetSumIntAssociations} against
-        ///  the specified index field. 
+        /// Create <see cref="TaxonomyFacetSumIntAssociations"/> against
+        /// the specified index field. 
         /// </summary>
         public TaxonomyFacetSumIntAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)

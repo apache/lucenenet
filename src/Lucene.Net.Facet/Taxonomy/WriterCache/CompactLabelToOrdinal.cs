@@ -22,21 +22,21 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// This is a very efficient LabelToOrdinal implementation that uses a
-    /// CharBlockArray to store all labels and a configurable number of HashArrays to
+    /// This is a very efficient <see cref="LabelToOrdinal"/> implementation that uses a
+    /// <see cref="CharBlockArray"/> to store all labels and a configurable number of <see cref="HashArray"/>s to
     /// reference the labels.
     /// <para>
-    /// Since the HashArrays don't handle collisions, a <seealso cref="CollisionMap"/> is used
+    /// Since the <see cref="HashArray"/>s don't handle collisions, a <see cref="CollisionMap"/> is used
     /// to store the colliding labels.
     /// </para>
     /// <para>
     /// This data structure grows by adding a new HashArray whenever the number of
-    /// collisions in the <seealso cref="CollisionMap"/> exceeds {@code loadFactor} * 
-    /// <seealso cref="#getMaxOrdinal()"/>. Growing also includes reinserting all colliding
-    /// labels into the HashArrays to possibly reduce the number of collisions.
+    /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/> * 
+    /// <see cref="GetMaxOrdinal()"/>. Growing also includes reinserting all colliding
+    /// labels into the <see cref="HashArray"/>s to possibly reduce the number of collisions.
     /// 
-    /// For setting the {@code loadFactor} see 
-    /// <seealso cref="#CompactLabelToOrdinal(int, float, int)"/>. 
+    /// For setting the <see cref="loadFactor"/> see 
+    /// <see cref="CompactLabelToOrdinal(int, float, int)"/>. 
     /// 
     /// </para>
     /// <para>
@@ -66,7 +66,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private float loadFactor;
 
         /// <summary>
-        /// How many labels. </summary>
+        /// How many labels. 
+        /// </summary>
         public virtual int SizeOfMap
         {
             get
@@ -80,7 +81,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public CompactLabelToOrdinal(int initialCapacity, float loadFactor, int numHashArrays)
         {
             this.hashArrays = new HashArray[numHashArrays];
@@ -293,7 +295,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Returns index for hash code h. </summary>
+        /// Returns index for hash code h.
+        /// </summary>
         internal static int IndexFor(int h, int length)
         {
             return h & (length - 1);
@@ -389,7 +392,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Opens the file and reloads the CompactLabelToOrdinal. The file it expects
-        /// is generated from the <seealso cref="#flush(File)"/> command.
+        /// is generated from the <see cref="Flush(Stream)"/> command.
         /// </summary>
         internal static CompactLabelToOrdinal Open(FileInfo file, float loadFactor, int numHashArrays)
         {

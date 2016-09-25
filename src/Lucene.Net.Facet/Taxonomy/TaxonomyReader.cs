@@ -28,32 +28,37 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// TaxonomyReader is the read-only interface with which the faceted-search
     /// library uses the taxonomy during search time.
-    /// <P>
+    /// <para>
     /// A TaxonomyReader holds a list of categories. Each category has a serial
     /// number which we call an "ordinal", and a hierarchical "path" name:
-    /// <UL>
-    /// <LI>
+    /// <list type="bullet">
+    /// <item>
     /// The ordinal is an integer that starts at 0 for the first category (which is
     /// always the root category), and grows contiguously as more categories are
     /// added; Note that once a category is added, it can never be deleted.
-    /// <LI>
+    /// </item>
+    /// <item>
     /// The path is a CategoryPath object specifying the category's position in the
     /// hierarchy.
-    /// </UL>
-    /// <B>Notes about concurrent access to the taxonomy:</B>
-    /// <P>
+    /// </item>
+    /// </list>
+    /// </para>
+    /// <b>Notes about concurrent access to the taxonomy:</b>
+    /// <para>
     /// An implementation must allow multiple readers to be active concurrently
     /// with a single writer. Readers follow so-called "point in time" semantics,
     /// i.e., a TaxonomyReader object will only see taxonomy entries which were
     /// available at the time it was created. What the writer writes is only
-    /// available to (new) readers after the writer's commit() is called.
-    /// <P>
+    /// available to (new) readers after the writer's <see cref="Index.IndexWriter.Commit()"/> is called.
+    /// </para>
+    /// <para>
     /// In faceted search, two separate indices are used: the main Lucene index,
     /// and the taxonomy. Because the main index refers to the categories listed
     /// in the taxonomy, it is important to open the taxonomy *after* opening the
-    /// main index, and it is also necessary to reopen() the taxonomy after
-    /// reopen()ing the main index.
-    /// <P>
+    /// main index, and it is also necessary to Reopen() the taxonomy after
+    /// Reopen()ing the main index.
+    /// </para>
+    /// <para>
     /// This order is important, otherwise it would be possible for the main index
     /// to refer to a category which is not yet visible in the old snapshot of
     /// the taxonomy. Note that it is indeed fine for the the taxonomy to be opened
@@ -61,13 +66,15 @@ namespace Lucene.Net.Facet.Taxonomy
     /// a category is added to the taxonomy, it can never be changed or deleted,
     /// so there is no danger that a "too new" taxonomy not being consistent with
     /// an older index.
+    /// </para>
     /// 
     /// @lucene.experimental
     /// </summary>
     public abstract class TaxonomyReader
     {
         /// <summary>
-        /// An iterator over a category's children. </summary>
+        /// An iterator over a category's children.
+        /// </summary>
         public class ChildrenIterator
         {
             private readonly int[] siblings;
@@ -80,7 +87,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             /// <summary>
-            /// Return the next child ordinal, or <seealso cref="TaxonomyReader#INVALID_ORDINAL"/>
+            /// Return the next child ordinal, or <see cref="TaxonomyReader.INVALID_ORDINAL"/>
             /// if no more children.
             /// </summary>
             public virtual int Next()
@@ -95,35 +102,36 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public TaxonomyReader()
         {
         }
 
         /// <summary>
         /// The root category (the category with the empty path) always has the ordinal
-        /// 0, to which we give a name ROOT_ORDINAL. <seealso cref="#getOrdinal(FacetLabel)"/>
-        /// of an empty path will always return {@code ROOT_ORDINAL}, and
-        /// <seealso cref="#getPath(int)"/> with {@code ROOT_ORDINAL} will return the empty path.
+        /// 0, to which we give a name ROOT_ORDINAL. <see cref="GetOrdinal(FacetLabel)"/>
+        /// of an empty path will always return <see cref="ROOT_ORDINAL"/>, and
+        /// <see cref="GetPath(int)"/> with <see cref="ROOT_ORDINAL"/> will return the empty path.
         /// </summary>
         public const int ROOT_ORDINAL = 0;
 
         /// <summary>
         /// Ordinals are always non-negative, so a negative ordinal can be used to
-        /// signify an error. Methods here return INVALID_ORDINAL (-1) in this case.
+        /// signify an error. Methods here return <see cref="INVALID_ORDINAL"/> (-1) in this case.
         /// </summary>
         public const int INVALID_ORDINAL = -1;
 
         /// <summary>
         /// If the taxonomy has changed since the provided reader was opened, open and
-        /// return a new <seealso cref="TaxonomyReader"/>; else, return {@code null}. The new
-        /// reader, if not {@code null}, will be the same type of reader as the one
+        /// return a new <see cref="TaxonomyReader"/>; else, return <c>null</c>. The new
+        /// reader, if not <c>null</c>, will be the same type of reader as the one
         /// given to this method.
         /// 
         /// <para>
         /// This method is typically far less costly than opening a fully new
-        /// <seealso cref="TaxonomyReader"/> as it shares resources with the provided
-        /// <seealso cref="TaxonomyReader"/>, when possible.
+        /// <see cref="TaxonomyReader"/> as it shares resources with the provided
+        /// <see cref="TaxonomyReader"/>, when possible.
         /// </para>
         /// </summary>
         public static T OpenIfChanged<T>(T oldTaxoReader) where T : TaxonomyReader
@@ -145,14 +153,14 @@ namespace Lucene.Net.Facet.Taxonomy
         protected internal abstract void DoClose();
 
         /// <summary>
-        /// Implements the actual opening of a new <seealso cref="TaxonomyReader"/> instance if
+        /// Implements the actual opening of a new <see cref="TaxonomyReader"/> instance if
         /// the taxonomy has changed.
         /// </summary>
-        /// <seealso cref= #openIfChanged(TaxonomyReader) </seealso>
+        /// <see cref= #openIfChanged(TaxonomyReader) </seealso>
         protected abstract TaxonomyReader DoOpenIfChanged();
 
         /// <summary>
-        /// Throws <seealso cref="AlreadyClosedException"/> if this IndexReader is closed
+        /// Throws <see cref="AlreadyClosedException"/> if this <see cref="IndexReader"/> is disposed
         /// </summary>
         protected void EnsureOpen()
         {
@@ -211,13 +219,14 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Returns a <seealso cref="ParallelTaxonomyArrays"/> object which can be used to
+        /// Returns a <see cref="ParallelTaxonomyArrays"/> object which can be used to
         /// efficiently traverse the taxonomy tree.
         /// </summary>
         public abstract ParallelTaxonomyArrays ParallelTaxonomyArrays { get; }
 
         /// <summary>
-        /// Returns an iterator over the children of the given ordinal. </summary>
+        /// Returns an iterator over the children of the given ordinal.
+        /// </summary>
         public virtual ChildrenIterator GetChildren(int ordinal)
         {
             ParallelTaxonomyArrays arrays = ParallelTaxonomyArrays;
@@ -228,7 +237,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Retrieve user committed data.
         /// </summary>
-        /// <seealso cref= TaxonomyWriter#setCommitData(Map) </seealso>
+        /// <seealso cref="ITaxonomyWriter.CommitData"/>
         public abstract IDictionary<string, string> CommitUserData { get; }
 
         /// <summary>
@@ -237,12 +246,13 @@ namespace Lucene.Net.Facet.Taxonomy
         /// categories are added (note that once a category is added, it can never be
         /// deleted).
         /// </summary>
-        /// <returns> the category's ordinal or <seealso cref="#INVALID_ORDINAL"/> if the category
-        ///         wasn't foun. </returns>
+        /// <returns> the category's ordinal or <see cref="INVALID_ORDINAL"/> if the category
+        ///         wasn't found. </returns>
         public abstract int GetOrdinal(FacetLabel categoryPath);
 
         /// <summary>
-        /// Returns ordinal for the dim + path. </summary>
+        /// Returns ordinal for the dim + path.
+        /// </summary>
         public virtual int GetOrdinal(string dim, string[] path)
         {
             string[] fullPath = new string[path.Length + 1];
@@ -252,11 +262,13 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Returns the path name of the category with the given ordinal. </summary>
+        /// Returns the path name of the category with the given ordinal.
+        /// </summary>
         public abstract FacetLabel GetPath(int ordinal);
 
         /// <summary>
-        /// Returns the current refCount for this taxonomy reader. </summary>
+        /// Returns the current refCount for this taxonomy reader.
+        /// </summary>
         public int RefCount
         {
             get
@@ -278,8 +290,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Expert: increments the refCount of this TaxonomyReader instance. RefCounts
         /// can be used to determine when a taxonomy reader can be closed safely, i.e.
         /// as soon as there are no more references. Be sure to always call a
-        /// corresponding decRef(), in a finally clause; otherwise the reader may never
-        /// be closed.
+        /// corresponding <see cref="DecRef"/>, in a finally clause; otherwise the reader may never
+        /// be disposed.
         /// </summary>
         public void IncRef()
         {
@@ -289,8 +301,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Expert: increments the refCount of this TaxonomyReader
-        ///  instance only if it has not been closed yet.  Returns
-        ///  true on success. 
+        /// instance only if it has not been closed yet.  Returns
+        /// <c>true</c> on success. 
         /// </summary>
         public bool TryIncRef()
         {

@@ -44,15 +44,16 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Records per-dimension configuration.  By default a
-    ///  dimension is flat, single valued and does
-    ///  not require count for the dimension; use
-    ///  the setters in this class to change these settings for
-    ///  each dim.
+    /// dimension is flat, single valued and does
+    /// not require count for the dimension; use
+    /// the setters in this class to change these settings for
+    /// each dim.
     /// 
-    ///  <para><b>NOTE</b>: this configuration is not saved into the
-    ///  index, but it's vital, and up to the application to
-    ///  ensure, that at search time the provided {@code
-    ///  FacetsConfig} matches what was used during indexing.
+    /// <para>
+    /// <b>NOTE</b>: this configuration is not saved into the
+    /// index, but it's vital, and up to the application to
+    /// ensure, that at search time the provided <see cref="FacetsConfig"/>
+    /// matches what was used during indexing.
     /// 
     ///  @lucene.experimental 
     /// </para>
@@ -61,7 +62,7 @@ namespace Lucene.Net.Facet
     {
         /// <summary>
         /// Which Lucene field holds the drill-downs and ords (as
-        ///  doc values). 
+        /// doc values). 
         /// </summary>
         public const string DEFAULT_INDEX_FIELD_NAME = "$facets";
 
@@ -99,7 +100,8 @@ namespace Lucene.Net.Facet
             public string IndexFieldName { get; set; }
 
             /// <summary>
-            /// Default constructor. </summary>
+            /// Default constructor.
+            /// </summary>
             public DimConfig()
             {
                 IndexFieldName = DEFAULT_INDEX_FIELD_NAME;
@@ -111,19 +113,21 @@ namespace Lucene.Net.Facet
         public static readonly DimConfig DEFAULT_DIM_CONFIG = new DimConfig();
 
         /// <summary>
-        /// Default constructor. </summary>
+        /// Default constructor.
+        /// </summary>
         public FacetsConfig()
         {
         }
 
         /// <summary>
         /// Get the default configuration for new dimensions.  Useful when
-        ///  the dimension is not known beforehand and may need different 
-        ///  global default settings, like {@code multivalue =
-        ///  true}.
+        /// the dimension is not known beforehand and may need different 
+        /// global default settings, like <c>multivalue = true</c>.
         /// </summary>
-        ///  <returns> The default configuration to be used for dimensions that 
-        ///  are not yet set in the <seealso cref="FacetsConfig"/>  </returns>
+        /// <returns>
+        /// The default configuration to be used for dimensions that 
+        /// are not yet set in the <see cref="FacetsConfig"/>
+        /// </returns>
         protected virtual DimConfig DefaultDimConfig
         {
             get
@@ -133,7 +137,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Get the current configuration for a dimension. </summary>
+        /// Get the current configuration for a dimension.
+        /// </summary>
         public virtual DimConfig GetDimConfig(string dimName)
         {
             lock (this)
@@ -148,8 +153,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if this dimension is hierarchical
-        ///  (has depth > 1 paths). 
+        /// Pass <c>true</c> if this dimension is hierarchical
+        /// (has depth > 1 paths). 
         /// </summary>
         public virtual void SetHierarchical(string dimName, bool v)
         {
@@ -168,8 +173,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if this dimension may have more than
-        ///  one value per document. 
+        /// Pass <c>true</c> if this dimension may have more than
+        /// one value per document. 
         /// </summary>
         public virtual void SetMultiValued(string dimName, bool v)
         {
@@ -188,9 +193,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if at search time you require
-        ///  accurate counts of the dimension, i.e. how many
-        ///  hits have this dimension. 
+        /// Pass <c>true</c> if at search time you require
+        /// accurate counts of the dimension, i.e. how many
+        /// hits have this dimension. 
         /// </summary>
         public virtual void SetRequireDimCount(string dimName, bool v)
         {
@@ -210,8 +215,8 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Specify which index field name should hold the
-        ///  ordinals for this dimension; this is only used by the
-        ///  taxonomy based facet methods. 
+        /// ordinals for this dimension; this is only used by the
+        /// taxonomy based facet methods. 
         /// </summary>
         public virtual void SetIndexFieldName(string dimName, string indexFieldName)
         {
@@ -230,7 +235,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Returns map of field name to <seealso cref="DimConfig"/>. </summary>
+        /// Returns map of field name to <see cref="DimConfig"/>.
+        /// </summary>
         public virtual IDictionary<string, DimConfig> DimConfigs
         {
             get
@@ -249,12 +255,12 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Translates any added <seealso cref="FacetField"/>s into normal fields for indexing;
-        /// only use this version if you did not add any taxonomy-based fields (
-        /// <seealso cref="FacetField"/> or <seealso cref="AssociationFacetField"/>).
+        /// Translates any added <see cref="FacetField"/>s into normal fields for indexing;
+        /// only use this version if you did not add any taxonomy-based fields 
+        /// (<see cref="FacetField"/> or <see cref="AssociationFacetField"/>).
         /// 
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to IndexWriter, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
@@ -264,10 +270,10 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Translates any added <seealso cref="FacetField"/>s into normal fields for indexing.
+        /// Translates any added <see cref="FacetField"/>s into normal fields for indexing.
         /// 
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to IndexWriter, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
@@ -527,8 +533,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Encodes ordinals into a BytesRef; expert: subclass can
-        ///  override this to change encoding. 
+        /// Encodes ordinals into a <see cref="BytesRef"/>; expert: subclass can
+        /// override this to change encoding. 
         /// </summary>
         protected virtual BytesRef DedupAndEncode(IntsRef ordinals)
         {
@@ -608,7 +614,8 @@ namespace Lucene.Net.Facet
         private const char ESCAPE_CHAR = '\u001E';
 
         /// <summary>
-        /// Turns a dim + path into an encoded string. </summary>
+        /// Turns a dim + path into an encoded string.
+        /// </summary>
         public static string PathToString(string dim, string[] path)
         {
             string[] fullPath = new string[1 + path.Length];
@@ -618,15 +625,16 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Turns a dim + path into an encoded string. </summary>
+        /// Turns a dim + path into an encoded string.
+        /// </summary>
         public static string PathToString(string[] path)
         {
             return PathToString(path, path.Length);
         }
 
         /// <summary>
-        /// Turns the first {@code length} elements of {@code
-        /// path} into an encoded string. 
+        /// Turns the first <paramref name="length"/> elements of <paramref name="path"/>
+        /// into an encoded string. 
         /// </summary>
         public static string PathToString(string[] path, int length)
         {
@@ -661,9 +669,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Turns an encoded string (from a previous call to {@link
-        ///  #pathToString}) back into the original {@code
-        ///  String[]}. 
+        /// Turns an encoded string (from a previous call to <see cref="PathToString"/>) 
+        /// back into the original <see cref="string[]"/>. 
         /// </summary>
         public static string[] StringToPath(string s)
         {

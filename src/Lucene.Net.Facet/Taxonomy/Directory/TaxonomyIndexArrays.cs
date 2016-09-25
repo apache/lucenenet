@@ -28,7 +28,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using MultiFields = Lucene.Net.Index.MultiFields;
 
     /// <summary>
-    /// A <seealso cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
+    /// A <see cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
     /// index.
     /// 
     /// @lucene.experimental
@@ -45,7 +45,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private int[] children, siblings;
 
         /// <summary>
-        /// Used by <seealso cref="#add(int, int)"/> after the array grew. </summary>
+        /// Used by <see cref="Add(int, int)"/> after the array grew.
+        /// </summary>
         private TaxonomyIndexArrays(int[] parents)
         {
             this.parents = parents;
@@ -137,7 +138,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        // Read the parents of the new categories
+        /// <summary>
+        /// Read the parents of the new categories
+        /// </summary>
         private void InitParents(IndexReader reader, int first)
         {
             if (reader.MaxDoc == first)
@@ -204,8 +207,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Returns the parents array, where {@code parents[i]} denotes the parent of
-        /// category ordinal {@code i}.
+        /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
+        /// category ordinal <c>i</c>.
         /// </summary>
         public override int[] Parents
         {
@@ -216,10 +219,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Returns the children array, where {@code children[i]} denotes the youngest
-        /// child of category ordinal {@code i}. The youngest child is defined as the
+        /// Returns the children array, where <c>Children[i]</c> denotes the youngest
+        /// child of category ordinal <c>i</c>. The youngest child is defined as the
         /// category that was added last to the taxonomy as an immediate child of
-        /// {@code i}.
+        /// <c>i</c>.
         /// </summary>
         public override int[] Children
         {
@@ -236,9 +239,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Returns the siblings array, where {@code siblings[i]} denotes the sibling
-        /// of category ordinal {@code i}. The sibling is defined as the previous
-        /// youngest child of {@code parents[i]}.
+        /// Returns the siblings array, where <c>Siblings[i]</c> denotes the sibling
+        /// of category ordinal <c>i</c>. The sibling is defined as the previous
+        /// youngest child of <c>Parents[i]</c>.
         /// </summary>
         public override int[] Siblings
         {

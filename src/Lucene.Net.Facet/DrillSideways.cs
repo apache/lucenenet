@@ -27,18 +27,18 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Computes drill down and sideways counts for the provided
-    /// <seealso cref="DrillDownQuery"/>.  Drill sideways counts include
+    /// <see cref="DrillDownQuery"/>.  Drill sideways counts include
     /// alternative values/aggregates for the drill-down
     /// dimensions so that a dimension does not disappear after
     /// the user drills down into it.
     /// 
     /// <para> Use one of the static search
     /// methods to do the search, and then get the hits and facet
-    /// results from the returned <seealso cref="DrillSidewaysResult"/>.
+    /// results from the returned <see cref="DrillSidewaysResult"/>.
     /// 
     /// </para>
-    /// <para><b>NOTE</b>: this allocates one {@link
-    /// FacetsCollector} for each drill-down, plus one.  If your
+    /// <para><b>NOTE</b>: this allocates one <see cref="FacetsCollector"/>
+    /// for each drill-down, plus one.  If your
     /// index has high number of facet labels then this will
     /// multiply your memory usage.
     /// 
@@ -48,33 +48,37 @@ namespace Lucene.Net.Facet
     public class DrillSideways
     {
         /// <summary>
-        /// <seealso cref="IndexSearcher"/> passed to constructor. </summary>
+        /// <see cref="IndexSearcher"/> passed to constructor.
+        /// </summary>
         protected internal readonly IndexSearcher searcher;
 
         /// <summary>
-        /// <seealso cref="TaxonomyReader"/> passed to constructor. </summary>
+        /// <see cref="TaxonomyReader"/> passed to constructor.
+        /// </summary>
         protected internal readonly TaxonomyReader taxoReader;
 
         /// <summary>
-        /// <seealso cref="SortedSetDocValuesReaderState"/> passed to
-        ///  constructor; can be null. 
+        /// <see cref="SortedSetDocValuesReaderState"/> passed to
+        /// constructor; can be <c>null</c>. 
         /// </summary>
         protected internal readonly SortedSetDocValuesReaderState state;
 
         /// <summary>
-        /// <seealso cref="FacetsConfig"/> passed to constructor. </summary>
+        /// <see cref="FacetsConfig"/> passed to constructor.
+        /// </summary>
         protected internal readonly FacetsConfig config;
 
         /// <summary>
-        /// Create a new {@code DrillSideways} instance. </summary>
+        /// Create a new <see cref="DrillSideways"/> instance.
+        /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, TaxonomyReader taxoReader)
             : this(searcher, config, taxoReader, null)
         {
         }
 
         /// <summary>
-        /// Create a new {@code DrillSideways} instance, assuming the categories were
-        ///  indexed with <seealso cref="SortedSetDocValuesFacetField"/>. 
+        /// Create a new <see cref="DrillSideways"/> instance, assuming the categories were
+        /// indexed with <see cref="SortedSetDocValuesFacetField"/>. 
         /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, SortedSetDocValuesReaderState state)
             : this(searcher, config, null, state)
@@ -82,10 +86,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Create a new {@code DrillSideways} instance, where some
-        ///  dimensions were indexed with {@link
-        ///  SortedSetDocValuesFacetField} and others were indexed
-        ///  with <seealso cref="FacetField"/>. 
+        /// Create a new <see cref="DrillSideways"/> instance, where some
+        /// dimensions were indexed with <see cref="SortedSetDocValuesFacetField"/>
+        /// and others were indexed with <see cref="FacetField"/>. 
         /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, TaxonomyReader taxoReader, SortedSetDocValuesReaderState state)
         {
@@ -97,7 +100,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Subclass can override to customize per-dim Facets
-        ///  impl. 
+        /// impl. 
         /// </summary>
         protected virtual Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
         {
@@ -139,7 +142,7 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Search, collecting hits with a <seealso cref="Collector"/>, and
+        /// Search, collecting hits with a <see cref="Collector"/>, and
         /// computing drill down and sideways counts.
         /// </summary>
         public virtual DrillSidewaysResult Search(DrillDownQuery query, Collector hitCollector)
@@ -194,7 +197,7 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Search, sorting by <seealso cref="Sort"/>, and computing
+        /// Search, sorting by <see cref="Sort"/>, and computing
         /// drill down and sideways counts.
         /// </summary>
         public virtual DrillSidewaysResult Search(DrillDownQuery query, Filter filter, FieldDoc after, int topN, Sort sort, bool doDocScores, bool doMaxScore)
@@ -249,15 +252,14 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Override this and return true if your collector
-        ///  (e.g., {@code ToParentBlockJoinCollector}) expects all
-        ///  sub-scorers to be positioned on the document being
-        ///  collected.  This will cause some performance loss;
-        ///  default is false.  Note that if you return true from
-        ///  this method (in a subclass) be sure your collector
-        ///  also returns false from {@link
-        ///  Collector#acceptsDocsOutOfOrder}: this will trick
-        ///  {@code BooleanQuery} into also scoring all subDocs at
-        ///  once. 
+        /// (e.g., <see cref="Join.ToParentBlockJoinCollector"/>) expects all
+        /// sub-scorers to be positioned on the document being
+        /// collected.  This will cause some performance loss;
+        /// default is <c>false</c>.  Note that if you return true from
+        /// this method (in a subclass) be sure your collector
+        /// also returns <c>false</c> from <see cref="Collector.AcceptsDocsOutOfOrder"/>: 
+        /// this will trick <see cref="BooleanQuery"/> into also scoring all subDocs at
+        /// once. 
         /// </summary>
         protected virtual bool ScoreSubDocsAtOnce()
         {
@@ -266,20 +268,23 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Result of a drill sideways search, including the
-        ///  <seealso crTopDocsetss"/> and <seealso cref="Lucene"/>. 
+        /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>. 
         /// </summary>
         public class DrillSidewaysResult
         {
             /// <summary>
-            /// Combined drill down & sideways results. </summary>
+            /// Combined drill down & sideways results.
+            /// </summary>
             public Facets Facets { get; private set; }
 
             /// <summary>
-            /// Hits. </summary>
+            /// Hits.
+            /// </summary>
             public TopDocs Hits { get; private set; }
 
             /// <summary>
-            /// Sole constructor. </summary>
+            /// Sole constructor.
+            /// </summary>
             public DrillSidewaysResult(Facets facets, TopDocs hits)
             {
                 this.Facets = facets;

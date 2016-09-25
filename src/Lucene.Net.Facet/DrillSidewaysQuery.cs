@@ -36,9 +36,8 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Only purpose is to punch through and return a
-    ///  DrillSidewaysScorer 
+    /// <see cref="DrillSidewaysScorer"/> 
     /// </summary>
-
     internal class DrillSidewaysQuery : Query
     {
         internal readonly Query baseQuery;

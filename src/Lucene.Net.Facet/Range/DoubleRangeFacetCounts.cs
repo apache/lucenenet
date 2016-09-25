@@ -30,20 +30,20 @@ namespace Lucene.Net.Facet.Range
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
-    /// <seealso cref="Facets"/> implementation that computes counts for
-    ///  dynamic double ranges from a provided {@link
-    ///  ValueSource}, using <seealso cref="FunctionValues#doubleVal"/>.  Use
+    /// <see cref="Facets"/> implementation that computes counts for
+    ///  dynamic double ranges from a provided <see cref="ValueSource"/>, 
+    ///  using <see cref="FunctionValues.DoubleVal"/>.  Use
     ///  this for dimensions that change in real-time (e.g. a
     ///  relative time based dimension like "Past day", "Past 2
     ///  days", etc.) or that change for each request (e.g.
-    ///  distance from the user's location, "< 1 km", "< 2 km",
+    ///  distance from the user's location, "&lt; 1 km", "&lt; 2 km",
     ///  etc.).
     /// 
-    ///  <para> If you had indexed your field using {@link
-    ///  FloatDocValuesField} then pass <seealso cref="FloatFieldSource"/>
-    ///  as the <seealso cref="ValueSource"/>; if you used {@link
-    ///  DoubleDocValuesField} then pass {@link
-    ///  DoubleFieldSource} (this is the default used when you
+    ///  <para> If you had indexed your field using <see cref="Documents.FloatDocValuesField"/> 
+    ///  then pass <see cref="Queries.Function.ValueSources.FloatFieldSource"/>
+    ///  as the <see cref="ValueSource"/>; if you used 
+    ///  <see cref="Documents.DoubleDocValuesField"/> then pass 
+    ///  <see cref="DoubleFieldSource"/> (this is the default used when you
     ///  pass just a the field name).
     /// 
     ///  @lucene.experimental 
@@ -52,8 +52,8 @@ namespace Lucene.Net.Facet.Range
     public class DoubleRangeFacetCounts : RangeFacetCounts
     {
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using {@link
-        ///  DoubleFieldSource} from the specified field. 
+        /// Create <see cref="RangeFacetCounts"/>, using 
+        /// <see cref="DoubleFieldSource"/> from the specified field. 
         /// </summary>
         public DoubleRangeFacetCounts(string field, FacetsCollector hits, params DoubleRange[] ranges)
             : this(field, new DoubleFieldSource(field), hits, ranges)
@@ -61,8 +61,8 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>. 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>. 
         /// </summary>
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params DoubleRange[] ranges)
             : this(field, valueSource, hits, null, ranges)
@@ -70,11 +70,11 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>, and using the provided Filter as
-        ///  a fastmatch: only documents passing the filter are
-        ///  checked for the matching ranges.  The filter must be
-        ///  random access (implement <seealso cref="DocIdSet#bits"/>). 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>, and using the provided Filter as
+        /// a fastmatch: only documents passing the filter are
+        /// checked for the matching ranges.  The filter must be
+        /// random access (implement <see cref="DocIdSet.GetBits()"/>). 
         /// </summary>
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, DoubleRange[] ranges)
             : base(field, ranges, fastMatchFilter)

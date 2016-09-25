@@ -26,15 +26,15 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Computes facets counts, assuming the default encoding
-    ///  into DocValues was used.
+    /// into DocValues was used.
     /// 
     /// @lucene.experimental 
     /// </summary>
     public class FastTaxonomyFacetCounts : IntTaxonomyFacets
     {
         /// <summary>
-        /// Create {@code FastTaxonomyFacetCounts}, which also
-        ///  counts all facet labels. 
+        /// Create <see cref="FastTaxonomyFacetCounts"/>, which also
+        /// counts all facet labels. 
         /// </summary>
         public FastTaxonomyFacetCounts(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -42,11 +42,11 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Create {@code FastTaxonomyFacetCounts}, using the
-        ///  specified {@code indexFieldName} for ordinals.  Use
-        ///  this if you had set {@link
-        ///  FacetsConfig#setIndexFieldName} to change the index
-        ///  field name for certain dimensions. 
+        /// Create <see cref="FastTaxonomyFacetCounts"/>, using the
+        /// specified <paramref name="indexFieldName"/> for ordinals.  Use
+        /// this if you had set <see cref="FacetsConfig.SetIndexFieldName"/>
+        /// to change the index
+        /// field name for certain dimensions. 
         /// </summary>
         public FastTaxonomyFacetCounts(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)

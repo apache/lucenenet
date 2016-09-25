@@ -29,13 +29,13 @@ namespace Lucene.Net.Facet.Range
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
-    /// <seealso cref="Facets"/> implementation that computes counts for
-    ///  dynamic long ranges from a provided <seealso cref="ValueSource"/>,
-    ///  using <seealso cref="FunctionValues#longVal"/>.  Use
-    ///  this for dimensions that change in real-time (e.g. a
-    ///  relative time based dimension like "Past day", "Past 2
-    ///  days", etc.) or that change for each request (e.g. 
-    ///  distance from the user's location, "< 1 km", "< 2 km",
+    /// <see cref="Facets"/> implementation that computes counts for
+    /// dynamic long ranges from a provided <see cref="ValueSource"/>,
+    /// using <see cref="FunctionValues.LongVal"/>.  Use
+    /// this for dimensions that change in real-time (e.g. a
+    /// relative time based dimension like "Past day", "Past 2
+    /// days", etc.) or that change for each request (e.g. 
+    /// distance from the user's location, "&lt; 1 km", "&lt; 2 km",
     ///  etc.).
     /// 
     ///  @lucene.experimental 
@@ -44,8 +44,8 @@ namespace Lucene.Net.Facet.Range
     {
 
         /// <summary>
-        /// Create {@code LongRangeFacetCounts}, using {@link
-        ///  LongFieldSource} from the specified field. 
+        /// Create <see cref="LongRangeFacetCounts"/>, using
+        /// <see cref="LongFieldSource"/> from the specified field. 
         /// </summary>
         public LongRangeFacetCounts(string field, FacetsCollector hits, params LongRange[] ranges)
             : this(field, new LongFieldSource(field), hits, ranges)
@@ -53,8 +53,8 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>. 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>. 
         /// </summary>
         public LongRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params LongRange[] ranges)
             : this(field, valueSource, hits, null, ranges)
@@ -62,11 +62,11 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>, and using the provided Filter as
-        ///  a fastmatch: only documents passing the filter are
-        ///  checked for the matching ranges.  The filter must be
-        ///  random access (implement <seealso cref="DocIdSet#bits"/>). 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>, and using the provided Filter as
+        /// a fastmatch: only documents passing the filter are
+        /// checked for the matching ranges.  The filter must be
+        /// random access (implement <see cref="DocIdSet.GetBits"/>). 
         /// </summary>
         public LongRangeFacetCounts(string field, ValueSource valueSource, 
             FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)

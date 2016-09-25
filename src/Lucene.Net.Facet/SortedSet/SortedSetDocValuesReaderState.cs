@@ -23,29 +23,29 @@ namespace Lucene.Net.Facet.SortedSet
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 
     /// <summary>
-    /// Wraps a <seealso cref="IndexReader"/> and resolves ords
-    ///  using existing <seealso cref="SortedSetDocValues"/> APIs without a
-    ///  separate taxonomy index.  This only supports flat facets
-    ///  (dimension + label), and it makes faceting a bit
-    ///  slower, adds some cost at reopen time, but avoids
-    ///  managing the separate taxonomy index.  It also requires
-    ///  less RAM than the taxonomy index, as it manages the flat
-    ///  (2-level) hierarchy more efficiently.  In addition, the
-    ///  tie-break during faceting is now meaningful (in label
-    ///  sorted order).
+    /// Wraps a <see cref="IndexReader"/> and resolves ords
+    /// using existing <see cref="SortedSetDocValues"/> APIs without a
+    /// separate taxonomy index.  This only supports flat facets
+    /// (dimension + label), and it makes faceting a bit
+    /// slower, adds some cost at reopen time, but avoids
+    /// managing the separate taxonomy index.  It also requires
+    /// less RAM than the taxonomy index, as it manages the flat
+    /// (2-level) hierarchy more efficiently.  In addition, the
+    /// tie-break during faceting is now meaningful (in label
+    /// sorted order).
     /// 
-    ///  <para><b>NOTE</b>: creating an instance of this class is
-    ///  somewhat costly, as it computes per-segment ordinal maps,
-    ///  so you should create it once and re-use that one instance
-    ///  for a given <seealso cref="IndexReader"/>. 
+    /// <para><b>NOTE</b>: creating an instance of this class is
+    /// somewhat costly, as it computes per-segment ordinal maps,
+    /// so you should create it once and re-use that one instance
+    /// for a given <see cref="IndexReader"/>. 
     /// </para>
     /// </summary>
     public abstract class SortedSetDocValuesReaderState
     {
         /// <summary>
         /// Holds start/end range of ords, which maps to one
-        ///  dimension (someday we may generalize it to map to
-        ///  hierarchies within one dimension). 
+        /// dimension (someday we may generalize it to map to
+        /// hierarchies within one dimension). 
         /// </summary>
         public sealed class OrdRange
         {
@@ -80,11 +80,11 @@ namespace Lucene.Net.Facet.SortedSet
         public abstract string Field { get; }
 
         /// <summary>
-        /// Returns the <seealso cref="OrdRange"/> for this dimension. </summary>
+        /// Returns the <see cref="OrdRange"/> for this dimension. </summary>
         public abstract OrdRange GetOrdRange(string dim);
 
         /// <summary>
-        /// Returns mapping from prefix to <seealso cref="OrdRange"/>. </summary>
+        /// Returns mapping from prefix to <see cref="OrdRange"/>. </summary>
         public abstract IDictionary<string, OrdRange> PrefixToOrdRange { get; }
 
         /// <summary>

@@ -32,18 +32,18 @@ namespace Lucene.Net.Facet.SortedSet
 
     /// <summary>
     /// Compute facets counts from previously
-    ///  indexed <seealso cref="SortedSetDocValuesFacetField"/>,
-    ///  without require a separate taxonomy index.  Faceting is
-    ///  a bit slower (~25%), and there is added cost on every
-    ///  <seealso cref="IndexReader"/> open to create a new {@link
-    ///  SortedSetDocValuesReaderState}.  Furthermore, this does
-    ///  not support hierarchical facets; only flat (dimension +
-    ///  label) facets, but it uses quite a bit less RAM to do
-    ///  so.
+    /// indexed <see cref="SortedSetDocValuesFacetField"/>,
+    /// without require a separate taxonomy index.  Faceting is
+    /// a bit slower (~25%), and there is added cost on every
+    /// <see cref="IndexReader"/> open to create a new 
+    /// <see cref="SortedSetDocValuesReaderState"/>.  Furthermore, this does
+    /// not support hierarchical facets; only flat (dimension +
+    /// label) facets, but it uses quite a bit less RAM to do
+    /// so.
     /// 
-    ///  <para><b>NOTE</b>: this class should be instantiated and
-    ///  then used from a single thread, because it holds a
-    ///  thread-private instance of <seealso cref="SortedSetDocValues"/>.
+    /// <para><b>NOTE</b>: this class should be instantiated and
+    /// then used from a single thread, because it holds a
+    /// thread-private instance of <see cref="SortedSetDocValues"/>.
     /// 
     /// </para>
     /// <para><b>NOTE:</b>: tie-break is by unicode sort order
@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Sparse faceting: returns any dimension that had any
-        ///  hits, topCount labels per dimension. 
+        /// hits, topCount labels per dimension. 
         /// </summary>
         public SortedSetDocValuesFacetCounts(SortedSetDocValuesReaderState state, FacetsCollector hits)
         {

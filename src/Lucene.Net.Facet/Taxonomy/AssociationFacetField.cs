@@ -25,20 +25,20 @@ namespace Lucene.Net.Facet.Taxonomy
     using FieldType = Lucene.Net.Documents.FieldType;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> to add
-    ///  a facet label associated with an arbitrary byte[].
-    ///  This will require a custom <seealso cref="Facets"/>
-    ///  implementation at search time; see {@link
-    ///  IntAssociationFacetField} and {@link
-    ///  FloatAssociationFacetField} to use existing {@link
-    ///  Facets} implementations.
+    /// Add an instance of this to your <see cref="Document"/> to add
+    /// a facet label associated with an arbitrary <see cref="byte[]"/>.
+    /// This will require a custom <see cref="Facets"/>
+    /// implementation at search time; see <see cref="IntAssociationFacetField"/> 
+    /// and <see cref="FloatAssociationFacetField"/> to use existing 
+    /// <see cref="Facets"/> implementations.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class AssociationFacetField : Field
     {
         /// <summary>
-        /// Indexed <seealso cref="FieldType"/>. </summary>
+        /// Indexed <see cref="FieldType"/>.
+        /// </summary>
         public static readonly FieldType TYPE = new FieldType();
         static AssociationFacetField()
         {
@@ -47,20 +47,23 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Dimension for this field. </summary>
+        /// Dimension for this field.
+        /// </summary>
         public string Dim { get; private set; }
 
         /// <summary>
-        /// Facet path for this field. </summary>
+        /// Facet path for this field.
+        /// </summary>
         public string[] Path { get; private set; }
 
         /// <summary>
-        /// Associated value. </summary>
+        /// Associated value.
+        /// </summary>
         public BytesRef Assoc { get; private set; }
 
         /// <summary>
-        /// Creates this from {@code dim} and {@code path} and an
-        ///  association 
+        /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
+        /// association 
         /// </summary>
         public AssociationFacetField(BytesRef assoc, string dim, params string[] path)
             : base("dummy", TYPE)

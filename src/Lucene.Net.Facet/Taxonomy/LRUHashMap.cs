@@ -22,33 +22,17 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
     /// <summary>
-    /// LRUHashMap is an extension of Java's HashMap, which has a bounded size();
-    /// When it reaches that size, each time a new element is added, the least
+    /// <see cref="LRUHashMap{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Capacity"/>;
+    /// When it reaches that <see cref="Capacity"/>, each time a new element is added, the least
     /// recently used (LRU) entry is removed.
     /// <para>
-    /// Java makes it very easy to implement LRUHashMap - all its functionality is
-    /// already available from <seealso cref="java.util.LinkedHashMap"/>, and we just need to
-    /// configure that properly.
+    /// Unlike the Java Lucene implementation, this one is thread safe. Do note
+    /// that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
+    /// a write operation also takes place to update the element's last access time.
+    /// This is because the LRU order needs to be remembered to determine which element
+    /// to evict when the <see cref="Capacity"/> is exceeded. 
     /// </para>
     /// <para>
-    /// Note that like HashMap, LRUHashMap is unsynchronized, and the user MUST
-    /// synchronize the access to it if used from several threads. Moreover, while
-    /// with HashMap this is only a concern if one of the threads is modifies the
-    /// map, with LURHashMap every read is a modification (because the LRU order
-    /// needs to be remembered) so proper synchronization is always necessary.
-    /// </para>
-    /// <para>
-    /// With the usual synchronization mechanisms available to the user, this
-    /// unfortunately means that LRUHashMap will probably perform sub-optimally under
-    /// heavy contention: while one thread uses the hash table (reads or writes), any
-    /// other thread will be blocked from using it - or even just starting to use it
-    /// (e.g., calculating the hash function). A more efficient approach would be not
-    /// to use LinkedHashMap at all, but rather to use a non-locking (as much as
-    /// possible) thread-safe solution, something along the lines of
-    /// java.util.concurrent.ConcurrentHashMap (though that particular class does not
-    /// support the additional LRU semantics, which will need to be added separately
-    /// using a concurrent linked list or additional storage of timestamps (in an
-    /// array or inside the entry objects), or whatever).
     /// 
     /// @lucene.experimental
     /// </para>
@@ -74,6 +58,17 @@ namespace Lucene.Net.Facet.Taxonomy
             this.cache = new Dictionary<TKey, CacheDataObject>(capacity);
         }
 
+        /// <summary>
+        /// allows changing the map's maximal number of elements
+        /// which was defined at construction time.
+        /// <para>
+        /// Note that if the map is already larger than maxSize, the current 
+        /// implementation does not shrink it (by removing the oldest elements);
+        /// Rather, the map remains in its current size as new elements are
+        /// added, and will only start shrinking (until settling again on the
+        /// given <see cref="Capacity"/>) if existing elements are explicitly deleted.
+        /// </para>
+        /// </summary>
         public virtual int Capacity
         {
             get { return capacity; }

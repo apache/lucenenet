@@ -21,13 +21,13 @@
     using FieldType = Lucene.Net.Documents.FieldType;
 
     /// <summary>
-    /// Add an instance of this to your Document for every facet
-    ///  label to be indexed via SortedSetDocValues. 
+    /// Add an instance of this to your <see cref="Documents.Document"/> for every facet
+    /// label to be indexed via <see cref="Index.SortedSetDocValues"/>. 
     /// </summary>
     public class SortedSetDocValuesFacetField : Field
     {
         /// <summary>
-        /// Indexed <seealso cref="FieldType"/>. </summary>
+        /// Indexed <see cref="FieldType"/>. </summary>
         public static readonly FieldType TYPE = new FieldType();
         static SortedSetDocValuesFacetField()
         {

@@ -29,13 +29,14 @@
         protected internal int counter;
 
         /// <summary>
-        /// Returned by <seealso cref="#getOrdinal"/> when the label isn't
-        ///  recognized. 
+        /// Returned by <see cref="GetOrdinal"/> when the label isn't
+        /// recognized. 
         /// </summary>
         public const int INVALID_ORDINAL = -2;
 
         /// <summary>
-        /// Default constructor. </summary>
+        /// Default constructor.
+        /// </summary>
         public LabelToOrdinal()
         {
         }
@@ -62,14 +63,14 @@
 
         /// <summary>
         /// Adds a new label if its not yet in the table.
-        /// Throws an <seealso cref="IllegalArgumentException"/> if the same label with
+        /// Throws an <see cref="System.ArgumentException"/> if the same label with
         /// a different ordinal was previoulsy added to this table.
         /// </summary>
         public abstract void AddLabel(FacetLabel label, int ordinal);
 
         /// <summary>
         /// Returns the ordinal assigned to the given label, 
-        /// or <seealso cref="#INVALID_ORDINAL"/> if the label cannot be found in this table.
+        /// or <see cref="INVALID_ORDINAL"/> if the label cannot be found in this table.
         /// </summary>
         public abstract int GetOrdinal(FacetLabel label);
     }

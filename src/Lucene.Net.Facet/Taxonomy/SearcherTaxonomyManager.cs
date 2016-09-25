@@ -32,32 +32,35 @@ namespace Lucene.Net.Facet.Taxonomy
     using SearcherManager = Lucene.Net.Search.SearcherManager;
 
     /// <summary>
-    /// Manages near-real-time reopen of both an IndexSearcher
-    /// and a TaxonomyReader.
+    /// Manages near-real-time reopen of both an <see cref="IndexSearcher"/>
+    /// and a <see cref="TaxonomyReader"/>.
     /// 
-    /// <para><b>NOTE</b>: If you call {@link
-    /// DirectoryTaxonomyWriter#replaceTaxonomy} then you must
-    /// open a new {@code SearcherTaxonomyManager} afterwards.
+    /// <para>
+    /// <b>NOTE</b>: If you call <see cref="DirectoryTaxonomyWriter.ReplaceTaxonomy"/>
+    /// then you must open a new <see cref="SearcherTaxonomyManager"/> afterwards.
     /// </para>
     /// </summary>
     public class SearcherTaxonomyManager : ReferenceManager<SearcherTaxonomyManager.SearcherAndTaxonomy>
     {
         /// <summary>
-        /// Holds a matched pair of <seealso cref="IndexSearcher"/> and
-        ///  <seealso cref="Taxonomy.TaxonomyReader"/> 
+        /// Holds a matched pair of <see cref="IndexSearcher"/> and
+        /// <see cref="Taxonomy.TaxonomyReader"/> 
         /// </summary>
         public class SearcherAndTaxonomy
         {
             /// <summary>
-            /// Point-in-time <seealso cref="IndexSearcher"/>. </summary>
+            /// Point-in-time <see cref="IndexSearcher"/>.
+            /// </summary>
             public IndexSearcher Searcher { get; private set; }
 
             /// <summary>
-            /// Matching point-in-time <seealso cref="DirectoryTaxonomyReader"/>. </summary>
+            /// Matching point-in-time <see cref="DirectoryTaxonomyReader"/>.
+            /// </summary>
             public DirectoryTaxonomyReader TaxonomyReader { get; private set; }
 
             /// <summary>
-            /// Create a SearcherAndTaxonomy </summary>
+            /// Create a <see cref="SearcherAndTaxonomy"/>
+            /// </summary>
             public SearcherAndTaxonomy(IndexSearcher searcher, DirectoryTaxonomyReader taxonomyReader)
             {
                 this.Searcher = searcher;
@@ -71,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Creates near-real-time searcher and taxonomy reader
-        ///  from the corresponding writers. 
+        /// from the corresponding writers. 
         /// </summary>
         public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, 
             SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
@@ -93,8 +96,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// 
         /// <para>
         /// <b>NOTE:</b> you should only use this constructor if you commit and call
-        /// <seealso cref="#maybeRefresh()"/> in the same thread. Otherwise it could lead to an
-        /// unsync'd <seealso cref="IndexSearcher"/> and <seealso cref="TaxonomyReader"/> pair.
+        /// <see cref="Index.ReaderManager.MaybeRefresh()"/> in the same thread. Otherwise it could lead to an
+        /// unsync'd <see cref="IndexSearcher"/> and <see cref="TaxonomyReader"/> pair.
         /// </para>
         /// </summary>
         public SearcherTaxonomyManager(Store.Directory indexDir, Store.Directory taxoDir, SearcherFactory searcherFactory)

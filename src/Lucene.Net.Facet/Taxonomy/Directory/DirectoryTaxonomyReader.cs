@@ -34,8 +34,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using MultiFields = Lucene.Net.Index.MultiFields;
 
     /// <summary>
-    /// A <seealso cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
-    /// <seealso cref="Directory"/>.
+    /// A <see cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
+    /// <see cref="Directory"/>.
     /// <P>
     /// Reading from the on-disk index on every method call is too slow, so this
     /// implementation employs caching: Some methods cache recent requests and their
@@ -64,8 +64,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private volatile TaxonomyIndexArrays taxoArrays;
 
         /// <summary>
-        /// Called only from <seealso cref="#doOpenIfChanged()"/>. If the taxonomy has been
-        /// recreated, you should pass {@code null} as the caches and parent/children
+        /// Called only from <see cref="DoOpenIfChanged()"/>. If the taxonomy has been
+        /// recreated, you should pass <c>null</c> as the caches and parent/children
         /// arrays.
         /// </summary>
         internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
@@ -84,14 +84,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open for reading a taxonomy stored in a given <seealso cref="Directory"/>.
+        /// Open for reading a taxonomy stored in a given <see cref="Directory"/>.
         /// </summary>
-        /// <param name="directory">
-        ///          The <seealso cref="Directory"/> in which the taxonomy resides. </param>
-        /// <exception cref="CorruptIndexException">
-        ///           if the Taxonomy is corrupt. </exception>
-        /// <exception cref="IOException">
-        ///           if another error occurred. </exception>
+        /// <param name="directory"> The <see cref="Directory"/> in which the taxonomy resides. </param>
+        /// <exception cref="Index.CorruptIndexException"> if the Taxonomy is corrupt. </exception>
+        /// <exception cref="IOException"> if another error occurred. </exception>
         public DirectoryTaxonomyReader(Directory directory)
         {
             indexReader = OpenIndexReader(directory);
@@ -106,11 +103,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Opens a <seealso cref="DirectoryTaxonomyReader"/> over the given
-        /// <seealso cref="DirectoryTaxonomyWriter"/> (for NRT).
+        /// Opens a <see cref="DirectoryTaxonomyReader"/> over the given
+        /// <see cref="DirectoryTaxonomyWriter"/> (for NRT).
         /// </summary>
         /// <param name="taxoWriter">
-        ///          The <seealso cref="DirectoryTaxonomyWriter"/> from which to obtain newly
+        ///          The <see cref="DirectoryTaxonomyWriter"/> from which to obtain newly
         ///          added categories, in real-time. </param>
         public DirectoryTaxonomyReader(DirectoryTaxonomyWriter taxoWriter)
         {
@@ -150,16 +147,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Implements the opening of a new <seealso cref="DirectoryTaxonomyReader"/> instance if
+        /// Implements the opening of a new <see cref="DirectoryTaxonomyReader"/> instance if
         /// the taxonomy has changed.
         /// 
         /// <para>
-        /// <b>NOTE:</b> the returned <seealso cref="DirectoryTaxonomyReader"/> shares the
+        /// <b>NOTE:</b> the returned <see cref="DirectoryTaxonomyReader"/> shares the
         /// ordinal and category caches with this reader. This is not expected to cause
         /// any issues, unless the two instances continue to live. The reader
         /// guarantees that the two instances cannot affect each other in terms of
         /// correctness of the caches, however if the size of the cache is changed
-        /// through <seealso cref="#setCacheSize(int)"/>, it will affect both reader instances.
+        /// through <see cref="CacheSize"/>, it will affect both reader instances.
         /// </para>
         /// </summary>
         protected override TaxonomyReader DoOpenIfChanged()
@@ -231,8 +228,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open the <seealso cref="DirectoryReader"/> from this {@link
-        ///  Directory}. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
         /// </summary>
         protected virtual DirectoryReader OpenIndexReader(Directory directory)
         {
@@ -240,8 +236,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open the <seealso cref="DirectoryReader"/> from this {@link
-        ///  IndexWriter}. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
         /// </summary>
         protected virtual DirectoryReader OpenIndexReader(IndexWriter writer)
         {
@@ -249,8 +244,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Expert: returns the underlying <seealso cref="DirectoryReader"/> instance that is
-        /// used by this <seealso cref="TaxonomyReader"/>.
+        /// Expert: returns the underlying <see cref="DirectoryReader"/> instance that is
+        /// used by this <see cref="TaxonomyReader"/>.
         /// </summary>
         internal virtual DirectoryReader InternalIndexReader
         {
@@ -379,13 +374,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// setCacheSize controls the maximum allowed size of each of the caches
-        /// used by <seealso cref="#getPath(int)"/> and <seealso cref="#getOrdinal(FacetLabel)"/>.
+        /// Setting <see cref="CacheSize"/> controls the maximum allowed size of each of the caches
+        /// used by <see cref="GetPath(int)"/> and <see cref="GetOrdinal(FacetLabel)"/>.
         /// <P>
         /// Currently, if the given size is smaller than the current size of
         /// a cache, it will not shrink, and rather we be limited to its current
         /// size. </summary>
-        /// <param name="size"> the new maximum cache size, in number of entries. </param>
+        /// <param name="value"> the new maximum cache size, in number of entries. </param>
         public virtual int CacheSize
         {
             set
@@ -400,8 +395,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Returns ordinal -> label mapping, up to the provided
-        ///  max ordinal or number of ordinals, whichever is
-        ///  smaller. 
+        /// max ordinal or number of ordinals, whichever is
+        /// smaller. 
         /// </summary>
         public virtual string ToString(int max)
         {

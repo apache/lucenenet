@@ -23,16 +23,16 @@
     /// <summary>
     /// Provides per-document ordinals. 
     /// </summary>
-
     public abstract class OrdinalsReader
     {
         /// <summary>
-        /// Returns ordinals for documents in one segment. </summary>
+        /// Returns ordinals for documents in one segment.
+        /// </summary>
         public abstract class OrdinalsSegmentReader
         {
             /// <summary>
-            /// Get the ordinals for this document.  ordinals.offset
-            ///  must always be 0! 
+            /// Get the ordinals for this document. The <paramref name="ordinals"/>.<see cref="IntsRef.Offset"/>
+            /// must always be 0! 
             /// </summary>
             public abstract void Get(int doc, IntsRef ordinals);
 
@@ -57,8 +57,8 @@
         public abstract OrdinalsSegmentReader GetReader(AtomicReaderContext context);
 
         /// <summary>
-        /// Returns the indexed field name this {@code
-        ///  OrdinalsReader} is reading from. 
+        /// Returns the indexed field name this <see cref="OrdinalsReader"/>
+        /// is reading from. 
         /// </summary>
         public abstract string IndexFieldName { get; }
     }

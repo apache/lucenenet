@@ -25,7 +25,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Base class for all taxonomy-based facets that aggregate
-    ///  to a per-ords float[]. 
+    /// to a per-ords <see cref="float[]"/>. 
     /// </summary>
     public abstract class FloatTaxonomyFacets : TaxonomyFacets
     {
@@ -34,7 +34,8 @@ namespace Lucene.Net.Facet.Taxonomy
         protected readonly float[] values;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         protected internal FloatTaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
             : base(indexFieldName, taxoReader, config)
         {
@@ -42,7 +43,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Rolls up any single-valued hierarchical dimensions. </summary>
+        /// Rolls up any single-valued hierarchical dimensions.
+        /// </summary>
         protected virtual void Rollup()
         {
             // Rollup any necessary dims:

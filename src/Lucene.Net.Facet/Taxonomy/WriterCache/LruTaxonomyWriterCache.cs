@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// LRU <seealso cref="TaxonomyWriterCache"/> - good choice for huge taxonomies.
+    /// LRU <see cref="ITaxonomyWriterCache"/> - good choice for huge taxonomies.
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -47,7 +47,8 @@
         private NameIntCacheLRU cache;
 
         /// <summary>
-        /// Creates this with <seealso cref="LRUType#LRU_HASHED"/> method. </summary>
+        /// Creates this with <see cref="LRUType.LRU_HASHED"/> method.
+        /// </summary>
         public LruTaxonomyWriterCache(int cacheSize)
             : this(cacheSize, LRUType.LRU_HASHED)
         {
@@ -60,7 +61,8 @@
         }
 
         /// <summary>
-        /// Creates this with the specified method. </summary>
+        /// Creates this with the specified method.
+        /// </summary>
         public LruTaxonomyWriterCache(int cacheSize, LRUType lruType)
         {
             // TODO (Facet): choose between NameHashIntCacheLRU and NameIntCacheLRU.

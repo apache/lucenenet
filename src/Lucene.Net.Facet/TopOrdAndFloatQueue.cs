@@ -21,12 +21,13 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Keeps highest results, first by largest float value,
-    ///  then tie break by smallest ord. 
+    /// then tie break by smallest ord. 
     /// </summary>
     public class TopOrdAndFloatQueue : PriorityQueue<TopOrdAndFloatQueue.OrdAndValue>
     {
         /// <summary>
-        /// Holds a single entry. </summary>
+        /// Holds a single entry.
+        /// </summary>
         public sealed class OrdAndValue
         {
             /// <summary>
@@ -38,14 +39,16 @@ namespace Lucene.Net.Facet
             public float Value { get; set; }
 
             /// <summary>
-            /// Default constructor. </summary>
+            /// Default constructor.
+            /// </summary>
             public OrdAndValue()
             {
             }
         }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public TopOrdAndFloatQueue(int topN) : base(topN, false)
         {
         }

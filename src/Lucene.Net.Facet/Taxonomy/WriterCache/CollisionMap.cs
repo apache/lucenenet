@@ -22,7 +22,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// HashMap to store colliding labels. See <seealso cref="CompactLabelToOrdinal"/> for
+    /// HashMap to store colliding labels. See <see cref="CompactLabelToOrdinal"/> for
     /// details.
     /// 
     /// @lucene.experimental
@@ -75,7 +75,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// How many mappings. </summary>
+        /// How many mappings.
+        /// </summary>
         public virtual int Count
         {
             get
@@ -125,9 +126,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Return the mapping, or {@link
-        ///  LabelToOrdinal#INVALID_ORDINAL} if the label isn't
-        ///  recognized. 
+        /// Return the mapping, or <see cref="LabelToOrdinal.INVALID_ORDINAL"/> 
+        /// if the label isn't recognized. 
         /// </summary>
         public virtual int Get(FacetLabel label, int hash)
         {

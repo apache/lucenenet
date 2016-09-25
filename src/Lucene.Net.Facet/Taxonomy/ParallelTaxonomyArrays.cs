@@ -19,18 +19,18 @@
 
     /// <summary>
     /// Returns 3 arrays for traversing the taxonomy:
-    /// <ul>
-    /// <li>{@code parents}: {@code parents[i]} denotes the parent of category
-    /// ordinal {@code i}.</li>
-    /// <li>{@code children}: {@code children[i]} denotes a child of category ordinal
-    /// {@code i}.</li>
-    /// <li>{@code siblings}: {@code siblings[i]} denotes the sibling of category
-    /// ordinal {@code i}.</li>
-    /// </ul>
+    /// <list type="bullet">
+    /// <item> <see cref="Parents"/>: <c>Parents[i]</c> denotes the parent of category
+    /// ordinal <c>i</c>.</item>
+    /// <item> <see cref="Children"/>: <c>Children[i]</c> denotes a child of category ordinal
+    /// <c>i</c>.</item>
+    /// <item> <see cref="Siblings"/>: <c>Siblings[i]</c> denotes the sibling of category
+    /// ordinal <c>i</c>.</item>
+    /// </list>
     /// 
-    /// To traverse the taxonomy tree, you typically start with {@code children[0]}
+    /// To traverse the taxonomy tree, you typically start with <c>Children[0]</c>
     /// (ordinal 0 is reserved for ROOT), and then depends if you want to do DFS or
-    /// BFS, you call {@code children[children[0]]} or {@code siblings[children[0]]}
+    /// BFS, you call <c>Children[Children[0]]</c> or <c>Siblings[Children[0]]</c>
     /// and so forth, respectively.
     /// 
     /// <para>
@@ -43,26 +43,27 @@
     public abstract class ParallelTaxonomyArrays
     {
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public ParallelTaxonomyArrays()
         {
         }
 
         /// <summary>
-        /// Returns the parents array, where {@code parents[i]} denotes the parent of
-        /// category ordinal {@code i}.
+        /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
+        /// category ordinal <c>i</c>.
         /// </summary>
         public abstract int[] Parents { get; }
 
         /// <summary>
-        /// Returns the children array, where {@code children[i]} denotes a child of
-        /// category ordinal {@code i}.
+        /// Returns the children array, where <c>Children[i]</c> denotes a child of
+        /// category ordinal <c>i</c>.
         /// </summary>
         public abstract int[] Children { get; }
 
         /// <summary>
-        /// Returns the siblings array, where {@code siblings[i]} denotes the sibling
-        /// of category ordinal {@code i}.
+        /// Returns the siblings array, where <c>Siblings[i]</c> denotes the sibling
+        /// of category ordinal <c>i</c>.
         /// </summary>
         public abstract int[] Siblings { get; }
     }

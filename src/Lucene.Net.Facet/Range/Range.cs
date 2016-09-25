@@ -44,30 +44,30 @@
         }
 
         /// <summary>
-        /// Returns a new <seealso cref="Filter"/> accepting only documents
-        ///  in this range.  This filter is not general-purpose;
-        ///  you should either use it with <seealso cref="DrillSideways"/> by
-        ///  adding it to <seealso cref="DrillDownQuery#add"/>, or pass it to
-        ///  <seealso cref="FilteredQuery"/> using its {@link
-        ///  FilteredQuery#QUERY_FIRST_FILTER_STRATEGY}.  If the
-        ///  <seealso cref="ValueSource"/> is static, e.g. an indexed numeric
-        ///  field, then it may be more efficient to use {@link
-        ///  NumericRangeFilter}.  The provided fastMatchFilter,
-        ///  if non-null, will first be consulted, and only if
-        ///  that is set for each document will the range then be
-        ///  checked. 
+        /// Returns a new <see cref="Filter"/> accepting only documents
+        /// in this range.  This filter is not general-purpose;
+        /// you should either use it with <see cref="DrillSideways"/> by
+        /// adding it to <see cref="DrillDownQuery.Add"/>, or pass it to
+        /// <see cref="Search.FilteredQuery"/> using its 
+        /// <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.
+        /// If the <see cref="ValueSource"/> is static, e.g. an indexed numeric
+        /// field, then it may be more efficient to use 
+        /// <see cref="Search.NumericRangeFilter"/>.  The provided <paramref name="fastMatchFilter"/>,
+        /// if non-null, will first be consulted, and only if
+        /// that is set for each document will the range then be
+        /// checked. 
         /// </summary>
         public abstract Filter GetFilter(Filter fastMatchFilter, ValueSource valueSource);
 
         /// <summary>
-        /// Returns a new <seealso cref="Filter"/> accepting only documents
+        /// Returns a new <see cref="Filter"/> accepting only documents
         ///  in this range.  This filter is not general-purpose;
-        ///  you should either use it with <seealso cref="DrillSideways"/> by
-        ///  adding it to <seealso cref="DrillDownQuery#add"/>, or pass it to
-        ///  <seealso cref="FilteredQuery"/> using its {@link
-        ///  FilteredQuery#QUERY_FIRST_FILTER_STRATEGY}.  If the
-        ///  <seealso cref="ValueSource"/> is static, e.g. an indexed numeric
-        ///  field, then it may be more efficient to use <seealso cref="NumericRangeFilter"/>. 
+        ///  you should either use it with <see cref="DrillSideways"/> by
+        ///  adding it to <see cref="DrillDownQuery.Add"/>, or pass it to
+        ///  <see cref="Search.FilteredQuery"/> using its 
+        ///  <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.  If the
+        ///  <see cref="ValueSource"/> is static, e.g. an indexed numeric
+        ///  field, then it may be more efficient to use <see cref="Search.NumericRangeFilter"/>. 
         /// </summary>
         public virtual Filter GetFilter(ValueSource valueSource)
         {
@@ -75,7 +75,8 @@
         }
 
         /// <summary>
-        /// Invoke this for a useless range. </summary>
+        /// Invoke this for a useless range.
+        /// </summary>
         protected internal virtual void FailNoMatch()
         {
             throw new System.ArgumentException("range \"" + Label + "\" matches nothing");

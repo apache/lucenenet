@@ -23,30 +23,35 @@ namespace Lucene.Net.Facet
      */
 
     /// <summary>
-    /// Counts or aggregates for a single dimension. </summary>
+    /// Counts or aggregates for a single dimension.
+    /// </summary>
     public sealed class FacetResult
     {
         /// <summary>
-        /// Dimension that was requested. </summary>
+        /// Dimension that was requested.
+        /// </summary>
         public string Dim { get; private set; }
 
         /// <summary>
-        /// Path whose children were requested. </summary>
+        /// Path whose children were requested.
+        /// </summary>
         public string[] Path { get; private set; }
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
-        ///  sum of all child values), even those not included in
-        ///  the topN. 
+        /// sum of all child values), even those not included in
+        /// the topN. 
         /// </summary>
         public float Value { get; private set; }
 
         /// <summary>
-        /// How many child labels were encountered. </summary>
+        /// How many child labels were encountered.
+        /// </summary>
         public int ChildCount { get; private set; }
 
         /// <summary>
-        /// Child counts. </summary>
+        /// Child counts.
+        /// </summary>
         public LabelAndValue[] LabelValues { get; private set; }
 
         /// <summary>

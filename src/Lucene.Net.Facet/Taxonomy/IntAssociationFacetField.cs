@@ -23,18 +23,17 @@ namespace Lucene.Net.Facet.Taxonomy
     using Document = Lucene.Net.Documents.Document;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> to add
-    ///  a facet label associated with an int.  Use {@link
-    ///  TaxonomyFacetSumIntAssociations} to aggregate int values
-    ///  per facet label at search time.
+    /// Add an instance of this to your <see cref="Document"/> to add
+    /// a facet label associated with an int.  Use <see cref="TaxonomyFacetSumIntAssociations"/>
+    /// to aggregate int values per facet label at search time.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class IntAssociationFacetField : AssociationFacetField
     {
         /// <summary>
-        /// Creates this from {@code dim} and {@code path} and an
-        ///  int association 
+        /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
+        /// int association 
         /// </summary>
         public IntAssociationFacetField(int assoc, string dim, params string[] path)
             : base(IntToBytesRef(assoc), dim, path)
@@ -42,8 +41,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Encodes an {@code int} as a 4-byte <seealso cref="BytesRef"/>,
-        ///  big-endian. 
+        /// Encodes an <see cref="int"/> as a 4-byte <see cref="BytesRef"/>,
+        /// big-endian. 
         /// </summary>
         public static BytesRef IntToBytesRef(int v)
         {
@@ -58,7 +57,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Decodes a previously encoded {@code int}. </summary>
+        /// Decodes a previously encoded <see cref="int"/>.
+        /// </summary>
         public static int BytesRefToInt(BytesRef b)
         {
             return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | 

@@ -169,10 +169,10 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Used when base query is highly constraining vs the
-        ///  drilldowns, or when the docs must be scored at once
-        ///  (i.e., like BooleanScorer2, not BooleanScorer).  In
-        ///  this case we just .next() on base and .advance() on
-        ///  the dim filters. 
+        /// drilldowns, or when the docs must be scored at once
+        /// (i.e., like <see cref="Search.BooleanScorer2"/>, not <see cref="Search.BooleanScorer"/>).  In
+        /// this case we just .Next() on base and .Advance() on
+        /// the dim filters. 
         /// </summary>
         private void DoQueryFirstScoring(Collector collector, DocIdSetIterator[] disis, 
             Collector[] sidewaysCollectors, Bits[] bits, Collector[] bitsSidewaysCollectors)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Used when drill downs are highly constraining vs
-        ///  baseQuery. 
+        /// baseQuery. 
         /// </summary>
         private void DoDrillDownAdvanceScoring(Collector collector, DocIdSetIterator[] disis, Collector[] sidewaysCollectors)
         {

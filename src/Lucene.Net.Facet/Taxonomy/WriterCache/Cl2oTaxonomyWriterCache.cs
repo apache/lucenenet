@@ -20,9 +20,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// <seealso cref="TaxonomyWriterCache"/> using <seealso cref="CompactLabelToOrdinal"/>. Although
+    /// <see cref="ITaxonomyWriterCache"/> using <see cref="CompactLabelToOrdinal"/>. Although
     /// called cache, it maintains in memory all the mappings from category to
-    /// ordinal, relying on that <seealso cref="CompactLabelToOrdinal"/> is an efficient
+    /// ordinal, relying on that <see cref="CompactLabelToOrdinal"/> is an efficient
     /// mapping for this purpose.
     /// 
     /// @lucene.experimental
@@ -37,7 +37,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private volatile CompactLabelToOrdinal cache;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public Cl2oTaxonomyWriterCache(int initialCapcity, float loadFactor, int numHashArrays)
         {
             this.cache = new CompactLabelToOrdinal(initialCapcity, loadFactor, numHashArrays);
@@ -106,7 +107,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Returns the number of bytes in memory used by this object. </summary>
+        /// Returns the number of bytes in memory used by this object.
+        /// </summary>
         public virtual int GetMemoryUsage()
         {
             return cache == null ? 0 : cache.GetMemoryUsage();
