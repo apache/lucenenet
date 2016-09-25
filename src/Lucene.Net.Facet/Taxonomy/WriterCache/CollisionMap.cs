@@ -76,17 +76,23 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// How many mappings. </summary>
-        public virtual int Size()
+        public virtual int Count
         {
-            return this.size;
+            get
+            {
+                return this.size;
+            }
         }
 
         /// <summary>
         /// How many slots are allocated. 
         /// </summary>
-        public virtual int Capacity()
+        public virtual int Capacity
         {
-            return this.capacity;
+            get
+            {
+                return this.capacity;
+            }
         }
 
         private void Grow()

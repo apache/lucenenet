@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// How many labels. </summary>
         public virtual int SizeOfMap()
         {
-            return this.collisionMap.Size();
+            return this.collisionMap.Count;
         }
 
         private CompactLabelToOrdinal()
@@ -117,7 +117,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public override void AddLabel(FacetLabel label, int ordinal)
         {
-            if (collisionMap.Size() > threshold)
+            if (collisionMap.Count > threshold)
             {
                 Grow();
             }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
 
             CollisionMap oldCollisionMap = this.collisionMap;
-            this.collisionMap = new CollisionMap(oldCollisionMap.Capacity(), this.labelRepository);
+            this.collisionMap = new CollisionMap(oldCollisionMap.Capacity, this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
             var it = oldCollisionMap.GetEnumerator();
@@ -245,7 +245,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             this.collisionMap.AddLabelOffset(hash, knownOffset, cid);
 
-            if (this.collisionMap.Size() > this.threshold)
+            if (this.collisionMap.Count > this.threshold)
             {
                 Grow();
             }
