@@ -33,27 +33,27 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private Dictionary<object, int?> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
-        private int maxCacheSize;
+        private int capacity;
 
-        internal NameIntCacheLRU(int maxCacheSize)
+        internal NameIntCacheLRU(int capacity)
         {
-            this.maxCacheSize = maxCacheSize;
-            CreateCache(maxCacheSize);
+            this.capacity = capacity;
+            CreateCache(capacity);
         }
 
         /// <summary>
         /// Maximum number of cache entries before eviction. </summary>
-        public virtual int MaxSize
+        public virtual int Capacity
         {
             get
             {
-                return maxCacheSize;
+                return capacity;
             }
         }
 
         /// <summary>
         /// Number of entries currently in the cache. </summary>
-        public virtual int Size
+        public virtual int Count
         {
             get
             {
@@ -63,6 +63,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private void CreateCache(int maxSize)
         {
+            // LUCENENET TODO: Create an adapter so we can plug in either a generic
+            // dictionary or LRUHashMap or alternatively make LRUHashMap implement IDictionary<TKey, TValue>
             //if (maxSize < int.MaxValue)
             //{
             //    cache = new LRUHashMap<object,int?>(1000,true); //for LRU
@@ -120,7 +122,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             get
             {
-                return cache.Count > maxCacheSize;
+                return cache.Count > capacity;
             }
         }
 
@@ -147,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             {
                 return false;
             }
-            int n = cache.Count - (2 * maxCacheSize) / 3;
+            int n = cache.Count - (2 * capacity) / 3;
             if (n <= 0)
             {
                 return false;
