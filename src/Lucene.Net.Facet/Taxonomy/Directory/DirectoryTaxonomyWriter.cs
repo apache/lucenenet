@@ -995,7 +995,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 map = new int[] { };
             }
 
-            public int Size { set; private get; }
+            public int Size
+            {
+                set { map = new int[value]; }
+            }
 
             public void AddMapping(int origOrdinal, int newOrdinal)
             {
