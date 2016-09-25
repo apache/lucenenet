@@ -134,7 +134,7 @@ namespace Lucene.Net.Facet.Taxonomy
             int len = Length < other.Length ? Length : other.Length;
             for (int i = 0, j = 0; i < len; i++, j++)
             {
-                int cmp = Components[i].CompareTo(other.Components[j]);
+                int cmp = Components[i].CompareToOrdinal(other.Components[j]);
                 if (cmp < 0) // this is 'before'
                 {
                     return -1;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -329,7 +330,7 @@ namespace Lucene.Net.Facet.SortedSet
                 }
                 else
                 {
-                    return a.Dim.CompareTo(b.Dim);
+                    return a.Dim.CompareToOrdinal(b.Dim);
                 }
             }
         }
