@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Range
                     // Skip missing docs:
                     if (fv.Exists(doc))
                     {
-                        counter.add(fv.LongVal(doc));
+                        counter.Add(fv.LongVal(doc));
                     }
                     else
                     {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            int x = counter.fillCounts(Counts);
+            int x = counter.FillCounts(Counts);
 
             missingCount += x;
 

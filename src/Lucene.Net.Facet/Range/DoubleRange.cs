@@ -100,7 +100,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// True if this range accepts the provided value. </summary>
-        public bool accept(double value)
+        public bool Accept(double value)
         {
             return value >= minIncl && value <= maxIncl;
         }
@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Range
                         {
                             return false;
                         }
-                        return outerInstance.outerInstance.outerInstance.accept(outerInstance.values.DoubleVal(docID));
+                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.DoubleVal(docID));
                     }
 
                     public virtual int Length()

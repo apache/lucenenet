@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// True if this range accepts the provided value. </summary>
-        public bool accept(long value)
+        public bool Accept(long value)
         {
             return value >= minIncl && value <= maxIncl;
         }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Facet.Range
                         {
                             return false;
                         }
-                        return outerInstance.outerInstance.outerInstance.accept(outerInstance.values.LongVal(docID));
+                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.LongVal(docID));
                     }
 
 

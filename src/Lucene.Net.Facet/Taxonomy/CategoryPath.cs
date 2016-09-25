@@ -149,19 +149,19 @@ namespace Lucene.Net.Facet.Taxonomy
             return length - other.length;
         }
 
-        private void hasDelimiter(string offender, char delimiter)
+        private void HasDelimiter(string offender, char delimiter)
         {
             throw new System.ArgumentException("delimiter character '" + delimiter + 
                 "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");
         }
 
-        private void noDelimiter(char[] buf, int offset, int len, char delimiter)
+        private void NoDelimiter(char[] buf, int offset, int len, char delimiter)
         {
             for (int idx = 0; idx < len; idx++)
             {
                 if (buf[offset + idx] == delimiter)
                 {
-                    hasDelimiter(new string(buf, offset, len), delimiter);
+                    HasDelimiter(new string(buf, offset, len), delimiter);
                 }
             }
         }
@@ -190,12 +190,12 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 int len = components[i].Length;
                 components[i].CopyTo(0, buf, idx, len - 0);
-                noDelimiter(buf, idx, len, delimiter);
+                NoDelimiter(buf, idx, len, delimiter);
                 idx += len;
                 buf[idx++] = delimiter;
             }
             components[upto].CopyTo(0, buf, idx, components[upto].Length - 0);
-            noDelimiter(buf, idx, components[upto].Length, delimiter);
+            NoDelimiter(buf, idx, components[upto].Length, delimiter);
 
             return idx + components[upto].Length - start;
         }
@@ -301,7 +301,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 if (components[i].IndexOf(delimiter) != -1)
                 {
-                    hasDelimiter(components[i], delimiter);
+                    HasDelimiter(components[i], delimiter);
                 }
                 sb.Append(components[i]).Append(delimiter);
             }

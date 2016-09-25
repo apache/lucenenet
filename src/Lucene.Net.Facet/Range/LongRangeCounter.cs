@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.Range
             // each node in the tree:
             for (int i = 0; i < ranges.Length; i++)
             {
-                root.addOutputs(i, ranges[i]);
+                root.AddOutputs(i, ranges[i]);
             }
 
             // Set boundaries (ends of each elementary interval):
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet.Range
             //System.out.println("root:\n" + root);
         }
 
-        public void add(long v)
+        public void Add(long v)
         {
             //System.out.println("add v=" + v);
 
@@ -208,23 +208,23 @@ namespace Lucene.Net.Facet.Range
         ///  ranges, returning the missing count (how many hits
         ///  didn't match any ranges). 
         /// </summary>
-        public int fillCounts(int[] counts)
+        public int FillCounts(int[] counts)
         {
             //System.out.println("  rollup");
             missingCount = 0;
             leafUpto = 0;
-            rollup(root, counts, false);
+            Rollup(root, counts, false);
             return missingCount;
         }
 
-        private int rollup(LongRangeNode node, int[] counts, bool sawOutputs)
+        private int Rollup(LongRangeNode node, int[] counts, bool sawOutputs)
         {
             int count;
             sawOutputs |= node.outputs != null;
             if (node.left != null)
             {
-                count = rollup(node.left, counts, sawOutputs);
-                count += rollup(node.right, counts, sawOutputs);
+                count = Rollup(node.left, counts, sawOutputs);
+                count += Rollup(node.right, counts, sawOutputs);
             }
             else
             {
@@ -319,7 +319,7 @@ namespace Lucene.Net.Facet.Range
                 return sb.ToString();
             }
 
-            internal static void indent(StringBuilder sb, int depth)
+            internal static void Indent(StringBuilder sb, int depth)
             {
                 for (int i = 0; i < depth; i++)
                 {
@@ -329,7 +329,7 @@ namespace Lucene.Net.Facet.Range
 
             /// <summary>
             /// Recursively assigns range outputs to each node. </summary>
-            internal void addOutputs(int index, LongRange range)
+            internal void AddOutputs(int index, LongRange range)
             {
                 if (start >= range.minIncl && end <= range.maxIncl)
                 {
@@ -345,14 +345,14 @@ namespace Lucene.Net.Facet.Range
                 {
                     Debug.Assert(right != null);
                     // Recurse:
-                    left.addOutputs(index, range);
-                    right.addOutputs(index, range);
+                    left.AddOutputs(index, range);
+                    right.AddOutputs(index, range);
                 }
             }
 
             internal void ToString(StringBuilder sb, int depth)
             {
-                indent(sb, depth);
+                Indent(sb, depth);
                 if (left == null)
                 {
                     Debug.Assert(right == null);

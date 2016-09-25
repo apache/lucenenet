@@ -378,7 +378,7 @@ namespace Lucene.Net.Facet
             Document result = new Document();
 
             ProcessFacetFields(taxoWriter, byField, result);
-            processSSDVFacetFields(dvByField, result);
+            ProcessSSDVFacetFields(dvByField, result);
             ProcessAssocFacetFields(taxoWriter, assocByField, result);
 
             //System.out.println("add stored: " + addedStoredFields);
@@ -416,7 +416,7 @@ namespace Lucene.Net.Facet
 
                     FacetLabel cp = new FacetLabel(facetField.dim, facetField.path);
 
-                    checkTaxoWriter(taxoWriter);
+                    CheckTaxoWriter(taxoWriter);
                     int ordinal = taxoWriter.AddCategory(cp);
                     if (ordinals.Length == ordinals.Ints.Length)
                     {
@@ -461,7 +461,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public void processSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
+        public void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
         {
             //System.out.println("process SSDV: " + byField);
             foreach (KeyValuePair<string, IList<SortedSetDocValuesFacetField>> ent in byField)
@@ -496,7 +496,7 @@ namespace Lucene.Net.Facet
                 foreach (AssociationFacetField field in ent.Value)
                 {
                     // NOTE: we don't add parents for associations
-                    checkTaxoWriter(taxoWriter);
+                    CheckTaxoWriter(taxoWriter);
                     FacetLabel label = new FacetLabel(field.dim, field.path);
                     int ordinal = taxoWriter.AddCategory(label);
                     if (upto + 4 > bytes.Length)
@@ -592,7 +592,7 @@ namespace Lucene.Net.Facet
             return new BytesRef(bytes, 0, upto);
         }
 
-        private void checkTaxoWriter(ITaxonomyWriter taxoWriter)
+        private void CheckTaxoWriter(ITaxonomyWriter taxoWriter)
         {
             if (taxoWriter == null)
             {

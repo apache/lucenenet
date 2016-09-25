@@ -38,28 +38,28 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  float association 
         /// </summary>
         public FloatAssociationFacetField(float assoc, string dim, params string[] path) 
-            : base(floatToBytesRef(assoc), dim, path)
+            : base(FloatToBytesRef(assoc), dim, path)
         {
         }
 
         /// <summary>
         /// Encodes a {@code float} as a 4-byte <seealso cref="BytesRef"/>. </summary>
-        public static BytesRef floatToBytesRef(float v)
+        public static BytesRef FloatToBytesRef(float v)
         {
-            return IntAssociationFacetField.intToBytesRef(Number.FloatToIntBits(v));
+            return IntAssociationFacetField.IntToBytesRef(Number.FloatToIntBits(v));
         }
 
         /// <summary>
         /// Decodes a previously encoded {@code float}. </summary>
-        public static float bytesRefToFloat(BytesRef b)
+        public static float BytesRefToFloat(BytesRef b)
         {
-            return Number.IntBitsToFloat(IntAssociationFacetField.bytesRefToInt(b));
+            return Number.IntBitsToFloat(IntAssociationFacetField.BytesRefToInt(b));
         }
 
         public override string ToString()
         {
             return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + 
-                " value=" + bytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
+                " value=" + BytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
         }
     }
 }

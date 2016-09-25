@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.Range
                     // Skip missing docs:
                     if (fv.Exists(doc))
                     {
-                        counter.add(NumericUtils.DoubleToSortableLong(fv.DoubleVal(doc)));
+                        counter.Add(NumericUtils.DoubleToSortableLong(fv.DoubleVal(doc)));
                     }
                     else
                     {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            missingCount += counter.fillCounts(Counts);
+            missingCount += counter.FillCounts(Counts);
             TotCount -= missingCount;
         }
     }
