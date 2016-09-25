@@ -53,6 +53,6 @@ namespace Lucene.Net.Facet
         ///  different dimensions were indexed, for example
         ///  depending on the type of document. 
         /// </summary>
-        public abstract IList<FacetResult> GetAllDims(int topN);
+        public abstract List<FacetResult> GetAllDims(int topN);
     }
 }

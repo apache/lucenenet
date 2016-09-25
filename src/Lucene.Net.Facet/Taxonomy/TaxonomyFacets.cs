@@ -105,7 +105,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return dimConfig;
         }
 
-        public override IList<FacetResult> GetAllDims(int topN)
+        public override List<FacetResult> GetAllDims(int topN)
         {
             int ord = children[TaxonomyReader.ROOT_ORDINAL];
             IList<FacetResult> results = new List<FacetResult>();
@@ -125,8 +125,8 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             // Sort by highest value, tie break by dim:
-            var resultArray = results.ToArray();
-            Array.Sort(resultArray, BY_VALUE_THEN_DIM);
+            var resultArray = results.ToList();
+            resultArray.Sort(BY_VALUE_THEN_DIM);
             return resultArray;
         }
     }

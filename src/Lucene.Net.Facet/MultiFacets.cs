@@ -67,10 +67,10 @@ namespace Lucene.Net.Facet
             return facets.GetSpecificValue(dim, path);
         }
 
-        public override IList<FacetResult> GetAllDims(int topN)
+        public override List<FacetResult> GetAllDims(int topN)
         {
 
-            IList<FacetResult> results = new List<FacetResult>();
+            List<FacetResult> results = new List<FacetResult>();
 
             // First add the specific dim's facets:
             foreach (KeyValuePair<string, Facets> ent in dimToFacets)

@@ -86,9 +86,9 @@ namespace Lucene.Net.Facet.Range
             throw new System.NotSupportedException();
         }
 
-        public override IList<FacetResult> GetAllDims(int topN)
+        public override List<FacetResult> GetAllDims(int topN)
         {
-            return new[] { GetTopChildren(topN, null) };
+            return new List<FacetResult> { GetTopChildren(topN, null) };
         }
     }
 }
