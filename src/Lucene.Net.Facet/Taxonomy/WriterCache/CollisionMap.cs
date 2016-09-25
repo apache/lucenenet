@@ -198,27 +198,24 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Returns an estimate of the memory usage of this CollisionMap. </summary>
         /// <returns> The approximate number of bytes used by this structure. </returns>
-        internal virtual int MemoryUsage
+        internal virtual int GetMemoryUsage()
         {
-            get
+            int memoryUsage = 0;
+            if (this.entries != null)
             {
-                int memoryUsage = 0;
-                if (this.entries != null)
+                foreach (Entry e in this.entries)
                 {
-                    foreach (Entry e in this.entries)
+                    if (e != null)
                     {
-                        if (e != null)
+                        memoryUsage += (4 * 4);
+                        for (Entry ee = e.next; ee != null; ee = ee.next)
                         {
                             memoryUsage += (4 * 4);
-                            for (Entry ee = e.next; ee != null; ee = ee.next)
-                            {
-                                memoryUsage += (4 * 4);
-                            }
                         }
                     }
                 }
-                return memoryUsage;
             }
+            return memoryUsage;
         }
 
         private class EntryIterator : IEnumerator<Entry>

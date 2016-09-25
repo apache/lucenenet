@@ -356,35 +356,32 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// this package. Memory is consumed mainly by three structures: the hash arrays,
         /// label repository and collision map.
         /// </summary>
-        internal virtual int MemoryUsage
+        internal virtual int GetMemoryUsage()
         {
-            get
+            int memoryUsage = 0;
+            if (this.hashArrays != null)
             {
-                int memoryUsage = 0;
-                if (this.hashArrays != null)
+                // HashArray capacity is instance-specific.
+                foreach (HashArray ha in this.hashArrays)
                 {
-                    // HashArray capacity is instance-specific.
-                    foreach (HashArray ha in this.hashArrays)
-                    {
-                        // Each has 2 capacity-length arrays of ints.
-                        memoryUsage += (ha.capacity * 2 * 4) + 4;
-                    }
+                    // Each has 2 capacity-length arrays of ints.
+                    memoryUsage += (ha.capacity * 2 * 4) + 4;
                 }
-                if (this.labelRepository != null)
-                {
-                    // All blocks are the same size.
-                    int blockSize = this.labelRepository.blockSize;
-                    // Each block has room for blockSize UTF-16 chars.
-                    int actualBlockSize = (blockSize * 2) + 4;
-                    memoryUsage += this.labelRepository.blocks.Count * actualBlockSize;
-                    memoryUsage += 8; // Two int values for array as a whole.
-                }
-                if (this.collisionMap != null)
-                {
-                    memoryUsage += this.collisionMap.MemoryUsage;
-                }
-                return memoryUsage;
             }
+            if (this.labelRepository != null)
+            {
+                // All blocks are the same size.
+                int blockSize = this.labelRepository.blockSize;
+                // Each block has room for blockSize UTF-16 chars.
+                int actualBlockSize = (blockSize * 2) + 4;
+                memoryUsage += this.labelRepository.blocks.Count * actualBlockSize;
+                memoryUsage += 8; // Two int values for array as a whole.
+            }
+            if (this.collisionMap != null)
+            {
+                memoryUsage += this.collisionMap.GetMemoryUsage();
+            }
+            return memoryUsage;
         }
 
         /// <summary>

@@ -107,12 +107,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Returns the number of bytes in memory used by this object. </summary>
-        public virtual int MemoryUsage
+        public virtual int GetMemoryUsage()
         {
-            get
-            {
-                return cache == null ? 0 : cache.MemoryUsage;
-            }
+            return cache == null ? 0 : cache.GetMemoryUsage();
         }
     }
 }
