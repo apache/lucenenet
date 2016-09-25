@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
         {
-            public virtual void Close()
+            public virtual void Dispose()
             {
             }
             public virtual int Get(FacetLabel categoryPath)

@@ -381,7 +381,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 if (cache != null)
                 {
-                    cache.Close();
+                    cache.Dispose();
                 }
             }
         }

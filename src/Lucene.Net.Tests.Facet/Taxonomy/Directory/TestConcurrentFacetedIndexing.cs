@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
 
-            public virtual void Close()
+            public virtual void Dispose()
             {
             }
             public virtual int Get(FacetLabel categoryPath)

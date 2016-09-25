@@ -100,12 +100,15 @@
             }
         }
 
-        public virtual void Close()
+        public virtual void Dispose()
         {
             lock (this)
             {
-                cache.Clear();
-                cache = null;
+                if (cache != null)
+                {
+                    cache.Clear();
+                    cache = null;
+                }
             }
         }
 

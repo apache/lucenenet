@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public virtual void Close()
+        public virtual void Dispose()
         {
             lock (this)
             {
