@@ -108,7 +108,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                 if (ord1 == LabelToOrdinal.INVALID_ORDINAL)
                 {
-                    ord1 = compact.NextOrdinal;
+                    ord1 = compact.GetNextOrdinal();
                     map.AddLabel(label, ord1);
                     compact.AddLabel(label, ord1);
                 }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                     if (ord1 == LabelToOrdinal.INVALID_ORDINAL)
                     {
-                        ord1 = compact.NextOrdinal;
+                        ord1 = compact.GetNextOrdinal();
                         map.AddLabel(label, ord1);
                         compact.AddLabel(label, ord1);
                     }

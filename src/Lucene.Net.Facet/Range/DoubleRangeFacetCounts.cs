@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet.Range
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, DoubleRange[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
-            Count(valueSource, hits.GetMatchingDocs);
+            Count(valueSource, hits.GetMatchingDocs());
         }
 
         private void Count(ValueSource valueSource, IEnumerable<MatchingDocs> matchingDocs)

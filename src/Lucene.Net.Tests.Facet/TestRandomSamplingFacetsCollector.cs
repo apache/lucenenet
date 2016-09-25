@@ -75,10 +75,10 @@ namespace Lucene.Net.Facet
             searcher.Search(new TermQuery(new Term("EvenOdd", "NeverMatches")), collectRandomZeroResults);
 
             // There should be no divisions by zero and no null result
-            Assert.NotNull(collectRandomZeroResults.GetMatchingDocs);
+            Assert.NotNull(collectRandomZeroResults.GetMatchingDocs());
 
             // There should be no results at all
-            foreach (MatchingDocs doc in collectRandomZeroResults.GetMatchingDocs)
+            foreach (MatchingDocs doc in collectRandomZeroResults.GetMatchingDocs())
             {
                 Assert.AreEqual(0, doc.TotalHits);
             }

@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet
         private int totalHits;
         private float[] scores;
         private readonly bool keepScores;
-        private readonly IList<MatchingDocs> matchingDocs = new List<MatchingDocs>();
+        private readonly List<MatchingDocs> matchingDocs = new List<MatchingDocs>();
         private Docs docs;
 
         /// <summary>
@@ -166,20 +166,17 @@ namespace Lucene.Net.Facet
         /// Returns the documents matched by the query, one <seealso cref="GetMatchingDocs"/> per
         /// visited segment.
         /// </summary>
-        public virtual IList<MatchingDocs> GetMatchingDocs
+        public virtual List<MatchingDocs> GetMatchingDocs()
         {
-            get
+            if (docs != null)
             {
-                if (docs != null)
-                {
-                    matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
-                    docs = null;
-                    scores = null;
-                    context = null;
-                }
-
-                return matchingDocs;
+                matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
+                docs = null;
+                scores = null;
+                context = null;
             }
+
+            return matchingDocs;
         }
 
         public override sealed bool AcceptsDocsOutOfOrder()

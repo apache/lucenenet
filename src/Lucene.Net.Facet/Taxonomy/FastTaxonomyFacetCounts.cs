@@ -51,7 +51,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public FastTaxonomyFacetCounts(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)
         {
-            Count(fc.GetMatchingDocs);
+            Count(fc.GetMatchingDocs());
         }
 
         private void Count(IList<FacetsCollector.MatchingDocs> matchingDocs)

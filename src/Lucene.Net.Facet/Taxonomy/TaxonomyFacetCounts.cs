@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy
             : base(ordinalsReader.IndexFieldName, taxoReader, config)
         {
             this.ordinalsReader = ordinalsReader;
-            Count(fc.GetMatchingDocs);
+            Count(fc.GetMatchingDocs());
         }
 
         private void Count(IList<FacetsCollector.MatchingDocs> matchingDocs)

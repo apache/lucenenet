@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Range
             FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
-            Count(valueSource, hits.GetMatchingDocs);
+            Count(valueSource, hits.GetMatchingDocs());
         }
 
         private void Count(ValueSource valueSource, IList<MatchingDocs> matchingDocs)

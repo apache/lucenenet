@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet.Taxonomy
             : base(ordinalsReader.IndexFieldName, taxoReader, config)
         {
             this.ordinalsReader = ordinalsReader;
-            SumValues(fc.GetMatchingDocs, fc.KeepScores, valueSource);
+            SumValues(fc.GetMatchingDocs(), fc.KeepScores, valueSource);
         }
 
         private sealed class FakeScorer : Scorer

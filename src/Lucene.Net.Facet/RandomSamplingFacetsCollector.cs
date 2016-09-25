@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Lucene.Net.Facet
 {
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DimConfig = FacetsConfig.DimConfig;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -86,7 +87,7 @@ namespace Lucene.Net.Facet
         private readonly XORShift64Random random;
 
         private double samplingRate;
-        private IList<MatchingDocs> sampledDocs;
+        private List<MatchingDocs> sampledDocs;
         private int totalHits = NOT_CALCULATED;
         private int leftoverBin = NOT_CALCULATED;
         private int leftoverIndex = NOT_CALCULATED;
@@ -132,50 +133,44 @@ namespace Lucene.Net.Facet
         /// MatchingDocs, scores is set to {@code null}
         /// </para>
         /// </summary>
-        public override IList<MatchingDocs> GetMatchingDocs
+        public override List<MatchingDocs> GetMatchingDocs()
         {
-            get
+            List<MatchingDocs> matchingDocs = base.GetMatchingDocs();
+
+            if (totalHits == NOT_CALCULATED)
             {
-                IList<MatchingDocs> matchingDocs = base.GetMatchingDocs;
-
-                if (totalHits == NOT_CALCULATED)
+                totalHits = 0;
+                foreach (MatchingDocs md in matchingDocs)
                 {
-                    totalHits = 0;
-                    foreach (MatchingDocs md in matchingDocs)
-                    {
-                        totalHits += md.TotalHits;
-                    }
+                    totalHits += md.TotalHits;
                 }
-
-                if (totalHits <= sampleSize)
-                {
-                    return matchingDocs;
-                }
-
-                if (sampledDocs == null)
-                {
-                    samplingRate = (1.0 * sampleSize) / totalHits;
-                    sampledDocs = CreateSampledDocs(matchingDocs);
-                }
-                return sampledDocs;
             }
+
+            if (totalHits <= sampleSize)
+            {
+                return matchingDocs;
+            }
+
+            if (sampledDocs == null)
+            {
+                samplingRate = (1.0 * sampleSize) / totalHits;
+                sampledDocs = CreateSampledDocs(matchingDocs);
+            }
+            return sampledDocs;
         }
 
         /// <summary>
         /// Returns the original matching documents. </summary>
-        public virtual IList<MatchingDocs> OriginalMatchingDocs
+        public virtual List<MatchingDocs> GetOriginalMatchingDocs()
         {
-            get
-            {
-                return base.GetMatchingDocs;
-            }
+            return base.GetMatchingDocs();
         }
 
         /// <summary>
         /// Create a sampled copy of the matching documents list. </summary>
-        private IList<MatchingDocs> CreateSampledDocs(IList<MatchingDocs> matchingDocsList)
+        private List<MatchingDocs> CreateSampledDocs(IEnumerable<MatchingDocs> matchingDocsList)
         {
-            IList<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count);
+            List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count());
             foreach (MatchingDocs docs in matchingDocsList)
             {
                 sampledDocsList.Add(CreateSample(docs));

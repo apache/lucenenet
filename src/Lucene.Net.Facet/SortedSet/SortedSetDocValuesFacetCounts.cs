@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.SortedSet
             dv = state.DocValues;
             counts = new int[state.Size];
             //System.out.println("field=" + field);
-            Count(hits.GetMatchingDocs);
+            Count(hits.GetMatchingDocs());
         }
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)

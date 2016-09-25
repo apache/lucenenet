@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public TaxonomyFacetSumIntAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)
         {
-            SumValues(fc.GetMatchingDocs);
+            SumValues(fc.GetMatchingDocs());
         }
 
         private void SumValues(IList<FacetsCollector.MatchingDocs> matchingDocs)
