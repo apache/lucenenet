@@ -31,27 +31,27 @@ namespace Lucene.Net.Facet.Taxonomy
         public virtual void TestLru()
         {
             LRUHashMap<string, string> lru = new LRUHashMap<string, string>(3);
-            Assert.AreEqual(0, lru.Size());
+            Assert.AreEqual(0, lru.Count);
             lru.Put("one", "Hello world");
-            Assert.AreEqual(1, lru.Size());
+            Assert.AreEqual(1, lru.Count);
             lru.Put("two", "Hi man");
-            Assert.AreEqual(2, lru.Size());
+            Assert.AreEqual(2, lru.Count);
             lru.Put("three", "Bonjour");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             lru.Put("four", "Shalom");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.NotNull(lru.Get("three"));
             Assert.NotNull(lru.Get("two"));
             Assert.NotNull(lru.Get("four"));
             Assert.Null(lru.Get("one"));
             lru.Put("five", "Yo!");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.Null(lru.Get("three")); // three was last used, so it got removed
             Assert.NotNull(lru.Get("five"));
             lru.Get("four");
             lru.Put("six", "hi");
             lru.Put("seven", "hey dude");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.Null(lru.Get("one"));
             Assert.Null(lru.Get("two"));
             Assert.Null(lru.Get("three"));

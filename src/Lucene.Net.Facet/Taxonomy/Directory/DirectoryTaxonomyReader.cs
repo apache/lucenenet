@@ -393,8 +393,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 EnsureOpen();
                 // LUCENENET NOTE: No locking required here,
                 // since our LRU implementation is thread-safe
-                categoryCache.MaxSize = value;
-                ordinalCache.MaxSize = value;
+                categoryCache.Capacity = value;
+                ordinalCache.Capacity = value;
             }
         }
 

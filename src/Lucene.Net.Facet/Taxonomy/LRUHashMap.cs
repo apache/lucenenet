@@ -62,28 +62,28 @@ namespace Lucene.Net.Facet.Taxonomy
         // Record last access so we can tie break if 2 calls make it in within
         // the same millisecond.
         private long lastAccess;
-        private int maxSize;
+        private int capacity;
 
-        public LRUHashMap(int maxSize)
+        public LRUHashMap(int capacity)
         {
-            if (maxSize < 1)
+            if (capacity < 1)
             {
-                throw new ArgumentOutOfRangeException("maxSize must be at least 1");
+                throw new ArgumentOutOfRangeException("capacity must be at least 1");
             }
-            this.maxSize = maxSize;
-            this.cache = new Dictionary<TKey, CacheDataObject>(maxSize);
+            this.capacity = capacity;
+            this.cache = new Dictionary<TKey, CacheDataObject>(capacity);
         }
 
-        public virtual int MaxSize
+        public virtual int Capacity
         {
-            get { return maxSize; }
+            get { return capacity; }
             set
             {
                 if (value < 1)
                 {
-                    throw new ArgumentOutOfRangeException("MaxSize must be at least 1");
+                    throw new ArgumentOutOfRangeException("Capacity must be at least 1");
                 }
-                maxSize = value;
+                capacity = value;
             }
         }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         timestamp = GetTimestamp()
                     };
                     // We have added a new item, so we may need to remove the eldest
-                    if (cache.Count > MaxSize)
+                    if (cache.Count > Capacity)
                     {
                         // Remove the eldest item (lowest timestamp) from the cache
                         cache.Remove(cache.OrderBy(x => x.Value.timestamp).First().Key);
@@ -155,10 +155,12 @@ namespace Lucene.Net.Facet.Taxonomy
             return cache.ContainsKey(key);
         }
 
-        // LUCENENET TODO: Rename to Count (.NETify)
-        public int Size()
+        public int Count
         {
-            return cache.Count;
+            get
+            {
+                return cache.Count;
+            }
         }
 
         private long GetTimestamp()
