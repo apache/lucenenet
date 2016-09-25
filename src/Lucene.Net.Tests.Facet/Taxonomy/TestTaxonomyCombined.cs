@@ -310,7 +310,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(1, tw.Size);
             tw.Dispose();
             var tr = new DirectoryTaxonomyReader(indexDir);
-            Assert.AreEqual(1, tr.Size);
+            Assert.AreEqual(1, tr.Count);
             Assert.AreEqual(0, tr.GetPath(0).Length);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
@@ -331,7 +331,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var tw = new DirectoryTaxonomyWriter(indexDir);
             tw.Commit();
             var tr = new DirectoryTaxonomyReader(indexDir);
-            Assert.AreEqual(1, tr.Size);
+            Assert.AreEqual(1, tr.Count);
             Assert.AreEqual(0, tr.GetPath(0).Length);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
@@ -356,16 +356,16 @@ namespace Lucene.Net.Facet.Taxonomy
             var tr = new DirectoryTaxonomyReader(indexDir);
 
             // test TaxonomyReader.getSize():
-            Assert.AreEqual(ExpectedCategories.Length, tr.Size);
+            Assert.AreEqual(ExpectedCategories.Length, tr.Count);
 
             // test round trips of ordinal => category => ordinal
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 Assert.AreEqual(i, tr.GetOrdinal(tr.GetPath(i)));
             }
 
             // test TaxonomyReader.getCategory():
-            for (int i = 1; i < tr.Size; i++)
+            for (int i = 1; i < tr.Count; i++)
             {
                 FacetLabel expectedCategory = new FacetLabel(ExpectedCategories[i]);
                 FacetLabel category = tr.GetPath(i);
@@ -376,7 +376,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             //  (also test invalid ordinals:)
             Assert.Null(tr.GetPath(-1));
-            Assert.Null(tr.GetPath(tr.Size));
+            Assert.Null(tr.GetPath(tr.Count));
             Assert.Null(tr.GetPath(TaxonomyReader.INVALID_ORDINAL));
 
             // test TaxonomyReader.GetOrdinal():
@@ -424,7 +424,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, parents[0]);
 
             // check parent of non-root ordinals:
-            for (int ordinal = 1; ordinal < tr.Size; ordinal++)
+            for (int ordinal = 1; ordinal < tr.Count; ordinal++)
             {
                 FacetLabel me = tr.GetPath(ordinal);
                 int parentOrdinal = parents[ordinal];
@@ -496,7 +496,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tw.GetParent(0));
 
             // check parent of non-root ordinals:
-            for (int ordinal = 1; ordinal < tr.Size; ordinal++)
+            for (int ordinal = 1; ordinal < tr.Count; ordinal++)
             {
                 FacetLabel me = tr.GetPath(ordinal);
                 int parentOrdinal = tw.GetParent(ordinal);
@@ -534,7 +534,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             try
             {
-                int parent = tw.GetParent(tr.Size);
+                int parent = tw.GetParent(tr.Count);
                 Fail("getParent for getSize() should throw exception, but returned " + parent);
             }
             catch (System.IndexOutOfRangeException)
@@ -558,9 +558,9 @@ namespace Lucene.Net.Facet.Taxonomy
             var tr = new DirectoryTaxonomyReader(indexDir);
             ParallelTaxonomyArrays ca = tr.ParallelTaxonomyArrays;
             int[] youngestChildArray = ca.Children;
-            Assert.AreEqual(tr.Size, youngestChildArray.Length);
+            Assert.AreEqual(tr.Count, youngestChildArray.Length);
             int[] olderSiblingArray = ca.Siblings;
-            Assert.AreEqual(tr.Size, olderSiblingArray.Length);
+            Assert.AreEqual(tr.Count, olderSiblingArray.Length);
             for (int i = 0; i < ExpectedCategories.Length; i++)
             {
                 // find expected children by looking at all expectedCategories
@@ -631,13 +631,13 @@ namespace Lucene.Net.Facet.Taxonomy
             var tr = new DirectoryTaxonomyReader(indexDir);
             ParallelTaxonomyArrays ca = tr.ParallelTaxonomyArrays;
             int[] children = ca.Children;
-            Assert.AreEqual(tr.Size, children.Length);
+            Assert.AreEqual(tr.Count, children.Length);
             int[] olderSiblingArray = ca.Siblings;
-            Assert.AreEqual(tr.Size, olderSiblingArray.Length);
+            Assert.AreEqual(tr.Count, olderSiblingArray.Length);
 
             // test that the "youngest child" of every category is indeed a child:
             int[] parents = tr.ParallelTaxonomyArrays.Parents;
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 int youngestChild = children[i];
                 if (youngestChild != TaxonomyReader.INVALID_ORDINAL)
@@ -648,14 +648,14 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // test that the "older sibling" of every category is indeed older (lower)
             // (it can also be INVALID_ORDINAL, which is lower than any ordinal)
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 Assert.True(olderSiblingArray[i] < i, "olderSiblingArray[" + i + "] should be <" + i);
             }
 
             // test that the "older sibling" of every category is indeed a sibling
             // (they share the same parent)
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 int sibling = olderSiblingArray[i];
                 if (sibling == TaxonomyReader.INVALID_ORDINAL)
@@ -670,11 +670,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // test that the "youngest child" is indeed the youngest (so we don't
             // miss the first children in the chain)
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 // Find the really youngest child:
                 int j;
-                for (j = tr.Size - 1; j > i; j--)
+                for (j = tr.Count - 1; j > i; j--)
                 {
                     if (parents[j] == i)
                     {
@@ -691,7 +691,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // test that the "older sibling" is indeed the least oldest one - and
             // not a too old one or -1 (so we didn't miss some children in the
             // middle or the end of the chain).
-            for (int i = 0; i < tr.Size; i++)
+            for (int i = 0; i < tr.Count; i++)
             {
                 // Find the youngest older sibling:
                 int j;
@@ -725,7 +725,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tw.Commit();
             var tr = new DirectoryTaxonomyReader(indexDir);
             ParallelTaxonomyArrays ca = tr.ParallelTaxonomyArrays;
-            Assert.AreEqual(3, tr.Size);
+            Assert.AreEqual(3, tr.Count);
             Assert.AreEqual(3, ca.Siblings.Length);
             Assert.AreEqual(3, ca.Children.Length);
             Assert.True(Arrays.Equals(new int[] { 1, 2, -1 }, ca.Children));
@@ -736,7 +736,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // Before refresh, nothing changed..
             ParallelTaxonomyArrays newca = tr.ParallelTaxonomyArrays;
             Assert.AreSame(newca, ca); // we got exactly the same object
-            Assert.AreEqual(3, tr.Size);
+            Assert.AreEqual(3, tr.Count);
             Assert.AreEqual(3, ca.Siblings.Length);
             Assert.AreEqual(3, ca.Children.Length);
             // After the refresh, things change:
@@ -745,7 +745,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tr.Dispose();
             tr = newtr;
             ca = tr.ParallelTaxonomyArrays;
-            Assert.AreEqual(5, tr.Size);
+            Assert.AreEqual(5, tr.Count);
             Assert.AreEqual(5, ca.Siblings.Length);
             Assert.AreEqual(5, ca.Children.Length);
             Assert.True(Arrays.Equals(new int[] { 4, 3, -1, -1, -1 }, ca.Children));
@@ -934,13 +934,13 @@ namespace Lucene.Net.Facet.Taxonomy
             tw.Commit();
             var tr = new DirectoryTaxonomyReader(indexDir);
 
-            Assert.AreEqual(1, tr.Size); // the empty taxonomy has size 1 (the root)
+            Assert.AreEqual(1, tr.Count); // the empty taxonomy has size 1 (the root)
             tw.AddCategory(new FacetLabel("Author"));
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             Assert.Null(TaxonomyReader.OpenIfChanged(tr)); // this is not enough, because tw.Commit() hasn't been done yet
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             tw.Commit();
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             var newTaxoReader = TaxonomyReader.OpenIfChanged(tr);
             Assert.NotNull(newTaxoReader);
             tr.Dispose();
@@ -956,7 +956,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Fail("After category addition, commit() and refresh(), getParent for " + author + " should NOT throw exception");
             }
-            Assert.AreEqual(2, tr.Size); // finally, see there are two categories
+            Assert.AreEqual(2, tr.Count); // finally, see there are two categories
 
             // now, add another category, and verify that after commit and refresh
             // the parent of this category is correct (this requires the reader
@@ -973,7 +973,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(author, parents[dawkins]);
             Assert.AreEqual(TaxonomyReader.ROOT_ORDINAL, parents[author]);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, parents[TaxonomyReader.ROOT_ORDINAL]);
-            Assert.AreEqual(3, tr.Size);
+            Assert.AreEqual(3, tr.Count);
             tw.Dispose();
             tr.Dispose();
             indexDir.Dispose();
@@ -990,25 +990,25 @@ namespace Lucene.Net.Facet.Taxonomy
             // Test getOrdinal():
             FacetLabel author = new FacetLabel("Author");
 
-            Assert.AreEqual(1, tr.Size); // the empty taxonomy has size 1 (the root)
+            Assert.AreEqual(1, tr.Count); // the empty taxonomy has size 1 (the root)
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(author));
             tw.AddCategory(author);
             // before commit and refresh, no change:
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(author));
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             Assert.Null(TaxonomyReader.OpenIfChanged(tr)); // this is not enough, because tw.Commit() hasn't been done yet
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(author));
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             tw.Commit();
             // still not enough before refresh:
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(author));
-            Assert.AreEqual(1, tr.Size); // still root only...
+            Assert.AreEqual(1, tr.Count); // still root only...
             var newTaxoReader = TaxonomyReader.OpenIfChanged(tr);
             Assert.NotNull(newTaxoReader);
             tr.Dispose();
             tr = newTaxoReader;
             Assert.AreEqual(1, tr.GetOrdinal(author));
-            Assert.AreEqual(2, tr.Size);
+            Assert.AreEqual(2, tr.Count);
             tw.Dispose();
             tr.Dispose();
             indexDir.Dispose();
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Facet.Taxonomy
             writer.AddCategory(cp);
             var newReader = TaxonomyReader.OpenIfChanged(reader);
             Assert.NotNull(newReader, "expected a new instance");
-            Assert.AreEqual(2, newReader.Size);
+            Assert.AreEqual(2, newReader.Count);
             Assert.AreNotSame(TaxonomyReader.INVALID_ORDINAL, newReader.GetOrdinal(cp));
             reader.Dispose();
             reader = newReader;

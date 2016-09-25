@@ -125,14 +125,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var destTr = new DirectoryTaxonomyReader(dest);
             try
             {
-                int destSize = destTr.Size;
+                int destSize = destTr.Count;
                 var srcTR = new DirectoryTaxonomyReader(src);
                 try
                 {
                     var map = ordMap.Map;
 
                     // validate taxo sizes
-                    int srcSize = srcTR.Size;
+                    int srcSize = srcTR.Count;
                     Assert.True(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
 
                     // validate that all source categories exist in destination, and their
@@ -275,9 +275,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var dtr = new DirectoryTaxonomyReader(dest);
             // +2 to account for the root category + "a"
-            Assert.AreEqual(numCategories + 2, dtr.Size);
+            Assert.AreEqual(numCategories + 2, dtr.Count);
             var categories = new HashSet<FacetLabel>();
-            for (int i = 1; i < dtr.Size; i++)
+            for (int i = 1; i < dtr.Count; i++)
             {
                 FacetLabel cat = dtr.GetPath(i);
                 Assert.True(categories.Add(cat), "category " + cat + " already existed");

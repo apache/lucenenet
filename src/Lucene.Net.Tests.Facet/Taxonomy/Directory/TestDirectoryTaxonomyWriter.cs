@@ -312,7 +312,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             DirectoryTaxonomyReader dtr = new DirectoryTaxonomyReader(dir);
             // +1 for root category
-            if (values.Count + 1 != dtr.Size)
+            if (values.Count + 1 != dtr.Count)
             {
                 foreach (string value in values.Keys)
                 {

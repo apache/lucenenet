@@ -365,7 +365,7 @@ namespace Lucene.Net.Facet.Taxonomy
             SearcherAndTaxonomy pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(1, pair.TaxonomyReader.Size);
+                Assert.AreEqual(1, pair.TaxonomyReader.Count);
             }
             finally
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Facet.Taxonomy
             pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(3, pair.TaxonomyReader.Size);
+                Assert.AreEqual(3, pair.TaxonomyReader.Count);
             }
             finally
             {

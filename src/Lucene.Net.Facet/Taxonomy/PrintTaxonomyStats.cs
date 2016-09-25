@@ -70,7 +70,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Recursively prints stats for all ordinals. </summary>
         public static void PrintStats(TaxonomyReader r, TextWriter @out, bool printTree)
         {
-            @out.WriteLine(r.Size + " total categories.");
+            @out.WriteLine(r.Count + " total categories.");
 
             ChildrenIterator it = r.GetChildren(TaxonomyReader.ROOT_ORDINAL);
             int child;

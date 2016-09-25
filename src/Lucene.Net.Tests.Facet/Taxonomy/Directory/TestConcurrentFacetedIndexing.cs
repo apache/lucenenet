@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var tr = new DirectoryTaxonomyReader(tw);
             // +1 for root category
-            if (values.Count + 1 != tr.Size)
+            if (values.Count + 1 != tr.Count)
             {
                 foreach (string value in values.Keys)
                 {

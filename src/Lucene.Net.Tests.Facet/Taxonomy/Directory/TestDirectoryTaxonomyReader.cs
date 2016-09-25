@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ltr.Dispose();
 
             // should not fail as we IncRef() before close
-            var tmpSie = ltr.Size;
+            var tmpSie = ltr.Count;
             ltr.DecRef();
 
             dir.Dispose();
@@ -118,7 +118,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ltr.Dispose();
             try
             {
-                var tmpSize = ltr.Size;
+                var tmpSize = ltr.Count;
                 Fail("An AlreadyClosedException should have been thrown here");
             }
             catch (AlreadyClosedException)
@@ -166,7 +166,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 tw.Dispose();
 
                 tr = new DirectoryTaxonomyReader(dir);
-                int baseNumCategories = tr.Size;
+                int baseNumCategories = tr.Count;
 
                 for (int i = 0; i < n; i++)
                 {
@@ -189,7 +189,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         tr.Dispose(true);
                         tr = newtr;
                     }
-                    Assert.AreEqual(baseNumCategories + 1 + k, tr.Size, "Wrong #categories in taxonomy (i=" + i + ", k=" + k + ")");
+                    Assert.AreEqual(baseNumCategories + 1 + k, tr.Count, "Wrong #categories in taxonomy (i=" + i + ", k=" + k + ")");
                 }
             }
             finally
@@ -251,7 +251,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 reader = newtr;
 
                 // assert categories
-                Assert.AreEqual(numCategories, reader.Size);
+                Assert.AreEqual(numCategories, reader.Count);
                 int roundOrdinal = reader.GetOrdinal(new FacetLabel(Convert.ToString(i)));
                 int[] parents = reader.ParallelTaxonomyArrays.Parents;
                 Assert.AreEqual(0, parents[roundOrdinal]); // round's parent is root
@@ -305,7 +305,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper2(dir);
 
             var reader = new DirectoryTaxonomyReader(writer);
-            Assert.AreEqual(1, reader.Size);
+            Assert.AreEqual(1, reader.Count);
             Assert.AreEqual(1, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // add category and call forceMerge -- this should flush IW and merge segments down to 1
@@ -318,7 +318,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.NotNull(newtr);
             reader.Dispose();
             reader = newtr;
-            Assert.AreEqual(2, reader.Size);
+            Assert.AreEqual(2, reader.Count);
             Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();
@@ -366,7 +366,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             writer.AddCategory(new FacetLabel("a"));
 
             var reader = new DirectoryTaxonomyReader(writer);
-            Assert.AreEqual(2, reader.Size);
+            Assert.AreEqual(2, reader.Count);
             Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // merge all the segments so that NRT reader thinks there's a change 
@@ -377,7 +377,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.NotNull(newtr);
             reader.Dispose();
             reader = newtr;
-            Assert.AreEqual(2, reader.Size);
+            Assert.AreEqual(2, reader.Count);
             Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();

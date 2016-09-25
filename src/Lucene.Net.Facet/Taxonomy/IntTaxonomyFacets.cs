@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy
         protected internal IntTaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
             : base(indexFieldName, taxoReader, config)
         {
-            values = new int[taxoReader.Size];
+            values = new int[taxoReader.Count];
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            TopOrdAndIntQueue q = new TopOrdAndIntQueue(Math.Min(taxoReader.Size, topN));
+            TopOrdAndIntQueue q = new TopOrdAndIntQueue(Math.Min(taxoReader.Count, topN));
 
             int bottomValue = 0;
 

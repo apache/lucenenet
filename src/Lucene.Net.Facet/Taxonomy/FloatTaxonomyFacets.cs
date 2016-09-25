@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy
         protected internal FloatTaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
             : base(indexFieldName, taxoReader, config)
         {
-            values = new float[taxoReader.Size];
+            values = new float[taxoReader.Count];
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            TopOrdAndFloatQueue q = new TopOrdAndFloatQueue(Math.Min(taxoReader.Size, topN));
+            TopOrdAndFloatQueue q = new TopOrdAndFloatQueue(Math.Min(taxoReader.Count, topN));
             float bottomValue = 0;
 
             int ord = children[dimOrd];

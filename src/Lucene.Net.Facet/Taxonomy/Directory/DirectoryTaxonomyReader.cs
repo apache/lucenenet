@@ -369,7 +369,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             return res;
         }
 
-        public override int Size
+        public override int Count
         {
             get
             {

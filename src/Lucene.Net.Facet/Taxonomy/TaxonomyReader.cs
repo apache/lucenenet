@@ -265,7 +265,6 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        // LUCENENET TODO: Rename to Count (.NETify)
         /// <summary>
         /// Returns the number of categories in the taxonomy. Note that the number of
         /// categories returned is often slightly higher than the number of categories
@@ -273,7 +272,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// taxonomy, its ancestors are also added automatically (including the root,
         /// which always get ordinal 0).
         /// </summary>
-        public abstract int Size { get; }
+        public abstract int Count { get; }
 
         /// <summary>
         /// Expert: increments the refCount of this TaxonomyReader instance. RefCounts
