@@ -93,6 +93,6 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Number of unique labels. </summary>
-        public abstract int Size { get; }
+        public abstract int Count { get; }
     }
 }

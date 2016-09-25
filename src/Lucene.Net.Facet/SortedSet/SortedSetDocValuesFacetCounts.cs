@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.SortedSet
             this.state = state;
             this.field = state.Field;
             dv = state.DocValues;
-            counts = new int[state.Size];
+            counts = new int[state.Count];
             //System.out.println("field=" + field);
             Count(hits.GetMatchingDocs());
         }
