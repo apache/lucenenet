@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet
             int i = 0;
             while (i <= labelValues.Length)
             {
-                if (i < labelValues.Length && (double)labelValues[i].value == lastValue)
+                if (i < labelValues.Length && (double)labelValues[i].Value == lastValue)
                 {
                     numInRow++;
                 }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Facet
                     numInRow = 1;
                     if (i < labelValues.Length)
                     {
-                        lastValue = (double)labelValues[i].value;
+                        lastValue = (double)labelValues[i].Value;
                     }
                 }
                 i++;
@@ -177,8 +177,8 @@ namespace Lucene.Net.Facet
 
             public virtual int Compare(LabelAndValue a, LabelAndValue b)
             {
-                Debug.Assert((double)a.value == (double)b.value);
-                return (new BytesRef(a.label)).CompareTo(new BytesRef(b.label));
+                Debug.Assert((double)a.Value == (double)b.Value);
+                return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
             }
         }
 
@@ -198,17 +198,17 @@ namespace Lucene.Net.Facet
 
             public virtual int Compare(LabelAndValue a, LabelAndValue b)
             {
-                if ((double)a.value > (double)b.value)
+                if ((double)a.Value > (double)b.Value)
                 {
                     return -1;
                 }
-                else if ((double)a.value < (double)b.value)
+                else if ((double)a.Value < (double)b.Value)
                 {
                     return 1;
                 }
                 else
                 {
-                    return (new BytesRef(a.label)).CompareTo(new BytesRef(b.label));
+                    return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
                 }
             }
         }
@@ -278,8 +278,8 @@ namespace Lucene.Net.Facet
             Assert.AreEqual(a.LabelValues.Length, b.LabelValues.Length);
             for (int i = 0; i < a.LabelValues.Length; i++)
             {
-                Assert.AreEqual(a.LabelValues[i].label, b.LabelValues[i].label);
-                Assert.AreEqual((float)a.LabelValues[i].value, (float)b.LabelValues[i].value, (float)a.LabelValues[i].value / 1e5);
+                Assert.AreEqual(a.LabelValues[i].Label, b.LabelValues[i].Label);
+                Assert.AreEqual((float)a.LabelValues[i].Value, (float)b.LabelValues[i].Value, (float)a.LabelValues[i].Value / 1e5);
             }
         }
     }

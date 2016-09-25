@@ -40,19 +40,19 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Minimum. </summary>
-        public readonly double Min;
+        public double Min { get; private set; }
 
         /// <summary>
         /// Maximum. </summary>
-        public readonly double Max;
+        public double Max { get; private set; }
 
         /// <summary>
         /// True if the minimum value is inclusive. </summary>
-        public readonly bool MinInclusive;
+        public bool MinInclusive { get; private set; }
 
         /// <summary>
         /// True if the maximum value is inclusive. </summary>
-        public readonly bool MaxInclusive;
+        public bool MaxInclusive { get; private set; }
 
         private const double EPSILON = 1E-14;
         /// <summary>

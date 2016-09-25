@@ -175,10 +175,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         //System.out.println("search maxOrd=" + pair.taxonomyReader.getSize());
                         FacetsCollector sfc = new FacetsCollector();
-                        pair.searcher.Search(new MatchAllDocsQuery(), sfc);
-                        Facets facets = GetTaxonomyFacetCounts(pair.taxonomyReader, config, sfc);
+                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc);
+                        Facets facets = GetTaxonomyFacetCounts(pair.TaxonomyReader, config, sfc);
                         FacetResult result = facets.GetTopChildren(10, "field");
-                        if (pair.searcher.IndexReader.NumDocs > 0)
+                        if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
                             Assert.True(result.ChildCount > 0);
@@ -283,10 +283,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         //System.out.println("search maxOrd=" + pair.taxonomyReader.getSize());
                         FacetsCollector sfc = new FacetsCollector();
-                        pair.searcher.Search(new MatchAllDocsQuery(), sfc);
-                        Facets facets = GetTaxonomyFacetCounts(pair.taxonomyReader, config, sfc);
+                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc);
+                        Facets facets = GetTaxonomyFacetCounts(pair.TaxonomyReader, config, sfc);
                         FacetResult result = facets.GetTopChildren(10, "field");
-                        if (pair.searcher.IndexReader.NumDocs > 0)
+                        if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
                             Assert.True(result.ChildCount > 0);
@@ -365,7 +365,7 @@ namespace Lucene.Net.Facet.Taxonomy
             SearcherAndTaxonomy pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(1, pair.taxonomyReader.Size);
+                Assert.AreEqual(1, pair.TaxonomyReader.Size);
             }
             finally
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Facet.Taxonomy
             pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(3, pair.taxonomyReader.Size);
+                Assert.AreEqual(3, pair.TaxonomyReader.Size);
             }
             finally
             {

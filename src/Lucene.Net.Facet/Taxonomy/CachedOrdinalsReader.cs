@@ -115,9 +115,9 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Get(int docID, IntsRef ordinals)
             {
-                ordinals.Ints = cachedOrds.ordinals;
-                ordinals.Offset = cachedOrds.offsets[docID];
-                ordinals.Length = cachedOrds.offsets[docID + 1] - ordinals.Offset;
+                ordinals.Ints = cachedOrds.Ordinals;
+                ordinals.Offset = cachedOrds.Offsets[docID];
+                ordinals.Length = cachedOrds.Offsets[docID + 1] - ordinals.Offset;
             }
         }
 
@@ -127,11 +127,11 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             /// <summary>
             /// Index into <seealso cref="#ordinals"/> for each document. </summary>
-            public readonly int[] offsets;
+            public int[] Offsets { get; private set; }
 
             /// <summary>
             /// Holds ords for all docs. </summary>
-            public readonly int[] ordinals;
+            public int[] Ordinals { get; private set; }
 
             /// <summary>
             /// Creates a new <seealso cref="CachedOrds"/> from the <seealso cref="BinaryDocValues"/>.
@@ -139,7 +139,7 @@ namespace Lucene.Net.Facet.Taxonomy
             /// </summary>
             public CachedOrds(OrdinalsSegmentReader source, int maxDoc)
             {
-                offsets = new int[maxDoc + 1];
+                Offsets = new int[maxDoc + 1];
                 int[] ords = new int[maxDoc]; // let's assume one ordinal per-document as an initial size
 
                 // this aggregator is limited to Integer.MAX_VALUE total ordinals.
@@ -147,7 +147,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 IntsRef values = new IntsRef(32);
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
-                    offsets[docID] = (int)totOrds;
+                    Offsets[docID] = (int)totOrds;
                     source.Get(docID, values);
                     long nextLength = totOrds + values.Length;
                     if (nextLength > ords.Length)
@@ -161,26 +161,26 @@ namespace Lucene.Net.Facet.Taxonomy
                     Array.Copy(values.Ints, 0, ords, (int)totOrds, values.Length);
                     totOrds = nextLength;
                 }
-                offsets[maxDoc] = (int)totOrds;
+                Offsets[maxDoc] = (int)totOrds;
 
                 // if ords array is bigger by more than 10% of what we really need, shrink it
                 if ((double)totOrds / ords.Length < 0.9)
                 {
-                    this.ordinals = new int[(int)totOrds];
-                    Array.Copy(ords, 0, this.ordinals, 0, (int)totOrds);
+                    this.Ordinals = new int[(int)totOrds];
+                    Array.Copy(ords, 0, this.Ordinals, 0, (int)totOrds);
                 }
                 else
                 {
-                    this.ordinals = ords;
+                    this.Ordinals = ords;
                 }
             }
 
             public long RamBytesUsed()
             {
-                long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.SizeOf(offsets);
-                if (offsets != ordinals)
+                long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.SizeOf(Offsets);
+                if (Offsets != Ordinals)
                 {
-                    mem += RamUsageEstimator.SizeOf(ordinals);
+                    mem += RamUsageEstimator.SizeOf(Ordinals);
                 }
                 return mem;
             }

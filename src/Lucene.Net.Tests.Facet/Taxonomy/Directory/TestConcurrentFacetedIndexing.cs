@@ -203,7 +203,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             FacetField ff = NewCategory();
                             doc.Add(ff);
 
-                            FacetLabel label = new FacetLabel(ff.dim, ff.path);
+                            FacetLabel label = new FacetLabel(ff.Dim, ff.Path);
                             // add all prefixes to values
                             int level = label.Length;
                             while (level > 0)

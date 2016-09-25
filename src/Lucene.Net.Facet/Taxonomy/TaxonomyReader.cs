@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return newTaxoReader;
         }
 
-        private volatile bool Closed = false;
+        private volatile bool closed = false;
 
         // set refCount to 1 at start
         private readonly AtomicInteger refCount = new AtomicInteger(1);
@@ -168,10 +168,10 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 lock (this)
                 {
-                    if (!Closed)
+                    if (!closed)
                     {
                         DecRef();
-                        Closed = true;
+                        closed = true;
                     }
                 }
             }
@@ -192,7 +192,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     DoClose();
-                    Closed = true;
+                    closed = true;
                     success = true;
                 }
                 finally

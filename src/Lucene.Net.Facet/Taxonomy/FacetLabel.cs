@@ -50,11 +50,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <seealso cref="#subpath(int)"/>, therefore you should traverse the array up to
         /// <seealso cref="#length"/> for this path's components.
         /// </summary>
-        public readonly string[] Components;
+        public string[] Components { get; private set; }
 
         /// <summary>
         /// The number of components of this <seealso cref="FacetLabel"/>. </summary>
-        public readonly int Length;
+        public int Length { get; private set; }
 
         // Used by subpath
         private FacetLabel(FacetLabel copyFrom, int prefixLen)

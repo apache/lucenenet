@@ -28,16 +28,16 @@ namespace Lucene.Net.Facet
     {
         /// <summary>
         /// Facet's label. </summary>
-        public readonly string label;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Value associated with this label. </summary>
-        public readonly float value;
+        public float Value { get; private set; }
 
         /// <summary>
-        /// The original data type of <see cref="value"/> that was passed through the constructor.
+        /// The original data type of <see cref="Value"/> that was passed through the constructor.
         /// </summary>
-        public readonly Type typeOfValue;
+        public Type TypeOfValue { get; private set; }
 
         /// <summary>
         /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
@@ -45,9 +45,9 @@ namespace Lucene.Net.Facet
         /// </summary>
         public LabelAndValue(string label, float value)
         {
-            this.label = label;
-            this.value = value;
-            this.typeOfValue = typeof(float);
+            this.Label = label;
+            this.Value = value;
+            this.TypeOfValue = typeof(float);
         }
 
         /// <summary>
@@ -56,17 +56,17 @@ namespace Lucene.Net.Facet
         /// </summary>
         public LabelAndValue(string label, int value)
         {
-            this.label = label;
-            this.value = value;
-            this.typeOfValue = typeof(int);
+            this.Label = label;
+            this.Value = value;
+            this.TypeOfValue = typeof(int);
         }
 
         public override string ToString()
         {
-            string valueString = (typeOfValue == typeof(int))
-                ? value.ToString("0", CultureInfo.InvariantCulture)
-                : value.ToString("0.0#####", CultureInfo.InvariantCulture);
-            return label + " (" + valueString + ")";
+            string valueString = (TypeOfValue == typeof(int))
+                ? Value.ToString("0", CultureInfo.InvariantCulture)
+                : Value.ToString("0.0#####", CultureInfo.InvariantCulture);
+            return Label + " (" + valueString + ")";
         }
 
         public override bool Equals(object _other)
@@ -76,12 +76,12 @@ namespace Lucene.Net.Facet
                 return false;
             }
             LabelAndValue other = (LabelAndValue)_other;
-            return label.Equals(other.label) && value.Equals(other.value);
+            return Label.Equals(other.Label) && Value.Equals(other.Value);
         }
 
         public override int GetHashCode()
         {
-            return label.GetHashCode() + 1439 * value.GetHashCode();
+            return Label.GetHashCode() + 1439 * Value.GetHashCode();
         }
     }
 }

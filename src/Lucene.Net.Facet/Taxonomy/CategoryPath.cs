@@ -40,17 +40,17 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <seealso cref="#subpath(int)"/>, therefore you should traverse the array up to
         /// <seealso cref="#length"/> for this path's components.
         /// </summary>
-        public readonly string[] components;
+        public string[] Components { get; private set; }
 
         /// <summary>
         /// The number of components of this <seealso cref="CategoryPath"/>. </summary>
-        public readonly int length;
+        public int Length { get; private set; }
 
         // Used by singleton EMPTY
         private CategoryPath()
         {
-            components = null;
-            length = 0;
+            Components = null;
+            Length = 0;
         }
 
         // Used by subpath
@@ -59,9 +59,9 @@ namespace Lucene.Net.Facet.Taxonomy
             // while the code which calls this method is safe, at some point a test
             // tripped on AIOOBE in toString, but we failed to reproduce. adding the
             // assert as a safety check.
-            Debug.Assert(prefixLen > 0 && prefixLen <= copyFrom.components.Length, "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.components.Length);
-            this.components = copyFrom.components;
-            length = prefixLen;
+            Debug.Assert(prefixLen > 0 && prefixLen <= copyFrom.Components.Length, "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.Components.Length);
+            this.Components = copyFrom.Components;
+            Length = prefixLen;
         }
 
         /// <summary>
@@ -76,8 +76,8 @@ namespace Lucene.Net.Facet.Taxonomy
                     throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(components));
                 }
             }
-            this.components = components;
-            length = components.Length;
+            this.Components = components;
+            Length = components.Length;
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace Lucene.Net.Facet.Taxonomy
             string[] comps = pathString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
             if (comps.Length == 1 && comps[0].Length == 0)
             {
-                components = null;
-                length = 0;
+                Components = null;
+                Length = 0;
             }
             else
             {
@@ -99,8 +99,8 @@ namespace Lucene.Net.Facet.Taxonomy
                         throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(comps));
                     }
                 }
-                components = comps;
-                length = components.Length;
+                Components = comps;
+                Length = Components.Length;
             }
         }
 
@@ -111,17 +111,17 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual int FullPathLength()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
             int charsNeeded = 0;
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < Length; i++)
             {
-                charsNeeded += components[i].Length;
+                charsNeeded += Components[i].Length;
             }
-            charsNeeded += length - 1; // num delimter chars
+            charsNeeded += Length - 1; // num delimter chars
             return charsNeeded;
         }
 
@@ -131,10 +131,10 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual int CompareTo(CategoryPath other)
         {
-            int len = length < other.length ? length : other.length;
+            int len = Length < other.Length ? Length : other.Length;
             for (int i = 0, j = 0; i < len; i++, j++)
             {
-                int cmp = components[i].CompareTo(other.components[j]);
+                int cmp = Components[i].CompareTo(other.Components[j]);
                 if (cmp < 0) // this is 'before'
                 {
                     return -1;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             // one is a prefix of the other
-            return length - other.length;
+            return Length - other.Length;
         }
 
         private void HasDelimiter(string offender, char delimiter)
@@ -179,25 +179,25 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual int CopyFullPath(char[] buf, int start, char delimiter)
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
             int idx = start;
-            int upto = length - 1;
+            int upto = Length - 1;
             for (int i = 0; i < upto; i++)
             {
-                int len = components[i].Length;
-                components[i].CopyTo(0, buf, idx, len - 0);
+                int len = Components[i].Length;
+                Components[i].CopyTo(0, buf, idx, len - 0);
                 NoDelimiter(buf, idx, len, delimiter);
                 idx += len;
                 buf[idx++] = delimiter;
             }
-            components[upto].CopyTo(0, buf, idx, components[upto].Length - 0);
-            NoDelimiter(buf, idx, components[upto].Length, delimiter);
+            Components[upto].CopyTo(0, buf, idx, Components[upto].Length - 0);
+            NoDelimiter(buf, idx, Components[upto].Length, delimiter);
 
-            return idx + components[upto].Length - start;
+            return idx + Components[upto].Length - start;
         }
 
         public override bool Equals(object obj)
@@ -208,16 +208,16 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             CategoryPath other = (CategoryPath)obj;
-            if (length != other.length)
+            if (Length != other.Length)
             {
                 return false; // not same length, cannot be equal
             }
 
             // CategoryPaths are more likely to differ at the last components, so start
             // from last-first
-            for (int i = length - 1; i >= 0; i--)
+            for (int i = Length - 1; i >= 0; i--)
             {
-                if (!components[i].Equals(other.components[i]))
+                if (!Components[i].Equals(other.Components[i]))
                 {
                     return false;
                 }
@@ -227,15 +227,15 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override int GetHashCode()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
-            int hash = length;
-            for (int i = 0; i < length; i++)
+            int hash = Length;
+            for (int i = 0; i < Length; i++)
             {
-                hash = hash * 31 + components[i].GetHashCode();
+                hash = hash * 31 + Components[i].GetHashCode();
             }
             return hash;
         }
@@ -244,15 +244,15 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Calculate a 64-bit hash function for this path. </summary>
         public virtual long LongHashCode()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
-            long hash = length;
-            for (int i = 0; i < length; i++)
+            long hash = Length;
+            for (int i = 0; i < Length; i++)
             {
-                hash = hash * 65599 + components[i].GetHashCode();
+                hash = hash * 65599 + Components[i].GetHashCode();
             }
             return hash;
         }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Returns a sub-path of this path up to {@code length} components. </summary>
         public virtual CategoryPath Subpath(int length)
         {
-            if (length >= this.length || length < 0)
+            if (length >= this.Length || length < 0)
             {
                 return this;
             }
@@ -291,19 +291,19 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual string ToString(char delimiter)
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return "";
             }
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < Length; i++)
             {
-                if (components[i].IndexOf(delimiter) != -1)
+                if (Components[i].IndexOf(delimiter) != -1)
                 {
-                    HasDelimiter(components[i], delimiter);
+                    HasDelimiter(Components[i], delimiter);
                 }
-                sb.Append(components[i]).Append(delimiter);
+                sb.Append(Components[i]).Append(delimiter);
             }
             sb.Length = sb.Length - 1; // remove last delimiter
             return sb.ToString();

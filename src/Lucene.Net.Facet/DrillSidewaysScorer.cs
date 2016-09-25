@@ -723,8 +723,8 @@ namespace Lucene.Net.Facet
         {
             private readonly DrillSidewaysScorer outerInstance;
 
-            internal float score_Renamed;
-            internal int doc;
+            //internal float score_Renamed; // not used
+            //internal int doc; // not used
 
             public FakeScorer(DrillSidewaysScorer outerInstance)
                 : base(null)

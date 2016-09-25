@@ -31,11 +31,11 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// Ordinal of the entry. </summary>
-            public int ord;
+            public int Ord { get; set; }
 
             /// <summary>
             /// Value associated with the ordinal. </summary>
-            public float value;
+            public float Value { get; set; }
 
             /// <summary>
             /// Default constructor. </summary>
@@ -52,17 +52,17 @@ namespace Lucene.Net.Facet
 
         public override bool LessThan(OrdAndValue a, OrdAndValue b)
         {
-            if (a.value < b.value)
+            if (a.Value < b.Value)
             {
                 return true;
             }
-            else if (a.value > b.value)
+            else if (a.Value > b.Value)
             {
                 return false;
             }
             else
             {
-                return a.ord > b.ord;
+                return a.Ord > b.Ord;
             }
         }
     }

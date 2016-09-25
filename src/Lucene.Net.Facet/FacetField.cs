@@ -42,11 +42,11 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Dimension for this field. </summary>
-        public readonly string dim;
+        public string Dim { get; private set; }
 
         /// <summary>
         /// Path for this field. </summary>
-        public readonly string[] path;
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Creates the this from {@code dim} and
@@ -60,17 +60,17 @@ namespace Lucene.Net.Facet
             {
                 VerifyLabel(label);
             }
-            this.dim = dim;
+            this.Dim = dim;
             if (path.Length == 0)
             {
                 throw new System.ArgumentException("path must have at least one element");
             }
-            this.path = path;
+            this.Path = path;
         }
 
         public override string ToString()
         {
-            return "FacetField(dim=" + dim + " path=[" + Arrays.ToString(path) + "])";
+            return "FacetField(dim=" + Dim + " path=[" + Arrays.ToString(Path) + "])";
         }
 
         /// <summary>

@@ -30,11 +30,11 @@ namespace Lucene.Net.Facet.Range
     {
         /// <summary>
         /// Ranges passed to constructor. </summary>
-        protected internal readonly Range[] Ranges;
+        protected internal readonly Range[] ranges;
 
         /// <summary>
         /// Counts, initialized in by subclass. </summary>
-        protected internal readonly int[] Counts;
+        protected internal readonly int[] counts;
 
         /// <summary>
         /// Optional: if specified, we first test this Filter to
@@ -42,42 +42,42 @@ namespace Lucene.Net.Facet.Range
         ///  matching ranges.  If this is null, all documents are
         ///  checked. 
         /// </summary>
-        protected internal readonly Filter FastMatchFilter;
+        protected internal readonly Filter fastMatchFilter;
 
         /// <summary>
         /// Our field name. </summary>
-        protected internal readonly string Field;
+        protected internal readonly string field;
 
         /// <summary>
         /// Total number of hits. </summary>
-        protected internal int TotCount;
+        protected internal int totCount;
 
         /// <summary>
         /// Create {@code RangeFacetCounts} </summary>
         protected internal RangeFacetCounts(string field, Range[] ranges, Filter fastMatchFilter)
         {
-            this.Field = field;
-            this.Ranges = ranges;
-            this.FastMatchFilter = fastMatchFilter;
-            Counts = new int[ranges.Length];
+            this.field = field;
+            this.ranges = ranges;
+            this.fastMatchFilter = fastMatchFilter;
+            counts = new int[ranges.Length];
         }
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
         {
-            if (dim.Equals(Field) == false)
+            if (dim.Equals(field) == false)
             {
-                throw new System.ArgumentException("invalid dim \"" + dim + "\"; should be \"" + Field + "\"");
+                throw new System.ArgumentException("invalid dim \"" + dim + "\"; should be \"" + field + "\"");
             }
             if (path.Length != 0)
             {
                 throw new System.ArgumentException("path.length should be 0");
             }
-            LabelAndValue[] labelValues = new LabelAndValue[Counts.Length];
-            for (int i = 0; i < Counts.Length; i++)
+            LabelAndValue[] labelValues = new LabelAndValue[counts.Length];
+            for (int i = 0; i < counts.Length; i++)
             {
-                labelValues[i] = new LabelAndValue(Ranges[i].Label, Counts[i]);
+                labelValues[i] = new LabelAndValue(ranges[i].Label, counts[i]);
             }
-            return new FacetResult(dim, path, TotCount, labelValues, labelValues.Length);
+            return new FacetResult(dim, path, totCount, labelValues, labelValues.Length);
         }
 
         public override float GetSpecificValue(string dim, params string[] path)

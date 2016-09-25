@@ -1213,10 +1213,10 @@ namespace Lucene.Net.Facet
                 {
                     foreach (LabelAndValue labelValue in fr.LabelValues)
                     {
-                        actualValues[labelValue.label] = (int)labelValue.value;
+                        actualValues[labelValue.Label] = (int)labelValue.Value;
                         if (VERBOSE)
                         {
-                            Console.WriteLine("        " + idx + ": " + new BytesRef(labelValue.label) + ": " + labelValue.value);
+                            Console.WriteLine("        " + idx + ": " + new BytesRef(labelValue.Label) + ": " + labelValue.Value);
                             idx++;
                         }
                     }
@@ -1254,12 +1254,12 @@ namespace Lucene.Net.Facet
                     for (int i = 0; i < topNIDs.Length; i++)
                     {
                         int expectedOrd = topNIDs[i];
-                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.LabelValues[i].value);
+                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.LabelValues[i].Value);
                         if (isSortedSetDV)
                         {
                             // Tie-break facet labels are only in unicode
                             // order with SortedSetDVFacets:
-                            assertEquals("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].label);
+                            assertEquals("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].Label);
                         }
                     }
                 }

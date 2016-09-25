@@ -31,11 +31,11 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// Ordinal of the entry. </summary>
-            public int Ord;
+            public int Ord { get; set; }
 
             /// <summary>
             /// Value associated with the ordinal. </summary>
-            public int Value;
+            public int Value { get; set; }
 
             /// <summary>
             /// Default constructor. </summary>

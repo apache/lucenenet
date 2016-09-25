@@ -28,31 +28,31 @@ namespace Lucene.Net.Facet
     {
         /// <summary>
         /// Dimension that was requested. </summary>
-        public readonly string Dim;
+        public string Dim { get; private set; }
 
         /// <summary>
         /// Path whose children were requested. </summary>
-        public readonly string[] Path;
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
         ///  sum of all child values), even those not included in
         ///  the topN. 
         /// </summary>
-        public readonly float Value;
+        public float Value { get; private set; }
 
         /// <summary>
         /// How many child labels were encountered. </summary>
-        public readonly int ChildCount;
+        public int ChildCount { get; private set; }
 
         /// <summary>
         /// Child counts. </summary>
-        public readonly LabelAndValue[] LabelValues;
+        public LabelAndValue[] LabelValues { get; private set; }
 
         /// <summary>
         /// The original data type of <see cref="Value"/> that was passed through the constructor.
         /// </summary>
-        public readonly Type typeOfValue;
+        public Type TypeOfValue { get; private set; }
 
         /// <summary>
         /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Facet
             : this(dim, path, labelValues, childCount)
         {
             this.Value = value;
-            this.typeOfValue = typeof(float);
+            this.TypeOfValue = typeof(float);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Facet
             : this(dim, path, labelValues, childCount)
         {
             this.Value = value;
-            this.typeOfValue = typeof(int);
+            this.TypeOfValue = typeof(int);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Facet
             sb.Append(" path=");
             sb.Append("[" + Arrays.ToString(Path) + "]");
             sb.Append(" value=");
-            if (typeOfValue == typeof(int))
+            if (TypeOfValue == typeof(int))
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0}", Value); // No formatting (looks like int)
             }

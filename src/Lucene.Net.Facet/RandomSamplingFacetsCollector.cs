@@ -143,7 +143,7 @@ namespace Lucene.Net.Facet
                     totalHits = 0;
                     foreach (MatchingDocs md in matchingDocs)
                     {
-                        totalHits += md.totalHits;
+                        totalHits += md.TotalHits;
                     }
                 }
 
@@ -187,7 +187,7 @@ namespace Lucene.Net.Facet
         /// Create a sampled of the given hits. </summary>
         private MatchingDocs CreateSample(MatchingDocs docs)
         {
-            int maxdoc = docs.context.Reader.MaxDoc;
+            int maxdoc = docs.Context.Reader.MaxDoc;
 
             // TODO: we could try the WAH8DocIdSet here as well, as the results will be sparse
             FixedBitSet sampleDocs = new FixedBitSet(maxdoc);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Facet
                     limit = binSize;
                     randomIndex = random.NextInt(binSize);
                 }
-                DocIdSetIterator it = docs.bits.GetIterator();
+                DocIdSetIterator it = docs.Bits.GetIterator();
                 for (int doc = it.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = it.NextDoc())
                 {
                     if (counter == randomIndex)
@@ -250,7 +250,7 @@ namespace Lucene.Net.Facet
                     }
                 }
 
-                return new MatchingDocs(docs.context, sampleDocs, docs.totalHits, null);
+                return new MatchingDocs(docs.Context, sampleDocs, docs.TotalHits, null);
             }
             catch (IOException)
             {
@@ -282,12 +282,12 @@ namespace Lucene.Net.Facet
 
             for (int i = 0; i < res.LabelValues.Length; i++)
             {
-                childPath[res.Path.Length + 1] = res.LabelValues[i].label;
+                childPath[res.Path.Length + 1] = res.LabelValues[i].Label;
                 string fullPath = FacetsConfig.PathToString(childPath, childPath.Length);
                 int max = reader.DocFreq(new Term(dimConfig.IndexFieldName, fullPath));
-                int correctedCount = (int)((double)res.LabelValues[i].value / samplingRate);
+                int correctedCount = (int)((double)res.LabelValues[i].Value / samplingRate);
                 correctedCount = Math.Min(max, correctedCount);
-                fixedLabelValues[i] = new LabelAndValue(res.LabelValues[i].label, correctedCount);
+                fixedLabelValues[i] = new LabelAndValue(res.LabelValues[i].Label, correctedCount);
             }
 
             // cap the total count on the total number of non-deleted documents in the reader

@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override string ToString()
         {
-            return "IntAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + BytesRefToInt(assoc) + ")";
+            return "IntAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " value=" + BytesRefToInt(Assoc) + ")";
         }
     }
 }

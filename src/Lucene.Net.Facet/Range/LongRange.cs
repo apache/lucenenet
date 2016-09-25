@@ -39,19 +39,19 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Minimum. </summary>
-        public readonly long min;
+        public long Min { get; private set; }
 
         /// <summary>
         /// Maximum. </summary>
-        public readonly long max;
+        public long Max { get; private set; }
 
         /// <summary>
         /// True if the minimum value is inclusive. </summary>
-        public readonly bool minInclusive;
+        public bool MinInclusive { get; private set; }
 
         /// <summary>
         /// True if the maximum value is inclusive. </summary>
-        public readonly bool maxInclusive;
+        public bool MaxInclusive { get; private set; }
 
         // TODO: can we require fewer args? (same for
         // Double/FloatRange too)
@@ -61,10 +61,10 @@ namespace Lucene.Net.Facet.Range
         public LongRange(string label, long minIn, bool minInclusive, long maxIn, bool maxInclusive)
             : base(label)
         {
-            this.min = minIn;
-            this.max = maxIn;
-            this.minInclusive = minInclusive;
-            this.maxInclusive = maxInclusive;
+            this.Min = minIn;
+            this.Max = maxIn;
+            this.MinInclusive = minInclusive;
+            this.MaxInclusive = maxInclusive;
 
             if (!minInclusive)
             {

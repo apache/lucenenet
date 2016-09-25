@@ -29,9 +29,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class CollisionMap
     {
-        private int capacity_Renamed;
+        private int capacity;
         private float loadFactor;
-        private int size_Renamed;
+        private int size;
         private int threshold;
 
         internal class Entry
@@ -68,17 +68,17 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             this.labelRepository = labelRepository;
             this.loadFactor = loadFactor;
-            this.capacity_Renamed = CompactLabelToOrdinal.DetermineCapacity(2, initialCapacity);
+            this.capacity = CompactLabelToOrdinal.DetermineCapacity(2, initialCapacity);
 
-            this.entries = new Entry[this.capacity_Renamed];
-            this.threshold = (int)(this.capacity_Renamed * this.loadFactor);
+            this.entries = new Entry[this.capacity];
+            this.threshold = (int)(this.capacity * this.loadFactor);
         }
 
         /// <summary>
         /// How many mappings. </summary>
         public virtual int Size()
         {
-            return this.size_Renamed;
+            return this.size;
         }
 
         /// <summary>
@@ -86,12 +86,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public virtual int Capacity()
         {
-            return this.capacity_Renamed;
+            return this.capacity;
         }
 
         private void Grow()
         {
-            int newCapacity = this.capacity_Renamed * 2;
+            int newCapacity = this.capacity * 2;
             Entry[] newEntries = new Entry[newCapacity];
             Entry[] src = this.entries;
 
@@ -113,9 +113,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
             }
 
-            this.capacity_Renamed = newCapacity;
+            this.capacity = newCapacity;
             this.entries = newEntries;
-            this.threshold = (int)(this.capacity_Renamed * this.loadFactor);
+            this.threshold = (int)(this.capacity * this.loadFactor);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public virtual int Get(FacetLabel label, int hash)
         {
-            int bucketIndex = IndexFor(hash, this.capacity_Renamed);
+            int bucketIndex = IndexFor(hash, this.capacity);
             Entry e = this.entries[bucketIndex];
 
             while (e != null && !(hash == e.hash && CategoryPathUtils.EqualsToSerialized(label, labelRepository, e.offset)))
@@ -145,7 +145,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public virtual int AddLabel(FacetLabel label, int hash, int cid)
         {
-            int bucketIndex = IndexFor(hash, this.capacity_Renamed);
+            int bucketIndex = IndexFor(hash, this.capacity);
             for (Entry e = this.entries[bucketIndex]; e != null; e = e.next)
             {
                 if (e.hash == hash && CategoryPathUtils.EqualsToSerialized(label, labelRepository, e.offset))
@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public virtual void AddLabelOffset(int hash, int offset, int cid)
         {
-            int bucketIndex = IndexFor(hash, this.capacity_Renamed);
+            int bucketIndex = IndexFor(hash, this.capacity);
             AddEntry(offset, cid, hash, bucketIndex);
         }
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             Entry e = this.entries[bucketIndex];
             this.entries[bucketIndex] = new Entry(offset, cid, hash, e);
-            if (this.size_Renamed++ >= this.threshold)
+            if (this.size++ >= this.threshold)
             {
                 Grow();
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual IEnumerator<CollisionMap.Entry> entryIterator()
         {
-            return new EntryIterator(this, entries, size_Renamed);
+            return new EntryIterator(this, entries, size);
         }
 
         /// <summary>

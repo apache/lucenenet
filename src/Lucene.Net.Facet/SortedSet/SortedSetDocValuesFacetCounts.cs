@@ -172,13 +172,13 @@ namespace Lucene.Net.Facet.SortedSet
 
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                var reader = hits.context.AtomicReader;
+                var reader = hits.Context.AtomicReader;
                 //System.out.println("  reader=" + reader);
                 // LUCENE-5090: make sure the provided reader context "matches"
                 // the top-level reader passed to the
                 // SortedSetDocValuesReaderState, else cryptic
                 // AIOOBE can happen:
-                if (!Equals(ReaderUtil.GetTopLevelContext(hits.context).Reader, origReader))
+                if (!Equals(ReaderUtil.GetTopLevelContext(hits.Context).Reader, origReader))
                 {
                     throw new InvalidOperationException("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
                 }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Facet.SortedSet
                     continue;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 // TODO: yet another option is to count all segs
                 // first, only in seg-ord space, and then do a
@@ -202,11 +202,11 @@ namespace Lucene.Net.Facet.SortedSet
                 // segs)
                 if (ordinalMap != null)
                 {
-                    int segOrd = hits.context.Ord;
+                    int segOrd = hits.Context.Ord;
 
                     int numSegOrds = (int)segValues.ValueCount;
 
-                    if (hits.totalHits < numSegOrds / 10)
+                    if (hits.TotalHits < numSegOrds / 10)
                     {
                         //System.out.println("    remap as-we-go");
                         // Remap every ord to global ord as we iterate:

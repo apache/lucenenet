@@ -44,24 +44,24 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         /// <summary>
         /// Holds a matched pair of <seealso cref="IndexSearcher"/> and
-        ///  <seealso cref="TaxonomyReader"/> 
+        ///  <seealso cref="Taxonomy.TaxonomyReader"/> 
         /// </summary>
         public class SearcherAndTaxonomy
         {
             /// <summary>
             /// Point-in-time <seealso cref="IndexSearcher"/>. </summary>
-            public readonly IndexSearcher searcher;
+            public IndexSearcher Searcher { get; private set; }
 
             /// <summary>
             /// Matching point-in-time <seealso cref="DirectoryTaxonomyReader"/>. </summary>
-            public readonly DirectoryTaxonomyReader taxonomyReader;
+            public DirectoryTaxonomyReader TaxonomyReader { get; private set; }
 
             /// <summary>
             /// Create a SearcherAndTaxonomy </summary>
             public SearcherAndTaxonomy(IndexSearcher searcher, DirectoryTaxonomyReader taxonomyReader)
             {
-                this.searcher = searcher;
-                this.taxonomyReader = taxonomyReader;
+                this.Searcher = searcher;
+                this.TaxonomyReader = taxonomyReader;
             }
         }
 
@@ -113,7 +113,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         protected override void DecRef(SearcherAndTaxonomy @ref)
         {
-            @ref.searcher.IndexReader.DecRef();
+            @ref.Searcher.IndexReader.DecRef();
 
             // This decRef can fail, and then in theory we should
             // tryIncRef the searcher to put back the ref count
@@ -122,20 +122,20 @@ namespace Lucene.Net.Facet.Taxonomy
             // during close, in which case 2) very likely the
             // searcher was also just closed by the above decRef and
             // a tryIncRef would fail:
-            @ref.taxonomyReader.DecRef();
+            @ref.TaxonomyReader.DecRef();
         }
 
         protected override bool TryIncRef(SearcherAndTaxonomy @ref)
         {
-            if (@ref.searcher.IndexReader.TryIncRef())
+            if (@ref.Searcher.IndexReader.TryIncRef())
             {
-                if (@ref.taxonomyReader.TryIncRef())
+                if (@ref.TaxonomyReader.TryIncRef())
                 {
                     return true;
                 }
                 else
                 {
-                    @ref.searcher.IndexReader.DecRef();
+                    @ref.Searcher.IndexReader.DecRef();
                 }
             }
             return false;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // Must re-open searcher first, otherwise we may get a
             // new reader that references ords not yet known to the
             // taxonomy reader:
-            IndexReader r = @ref.searcher.IndexReader;
+            IndexReader r = @ref.Searcher.IndexReader;
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
             if (newReader == null)
             {
@@ -154,11 +154,11 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             else
             {
-                var tr = TaxonomyReader.OpenIfChanged(@ref.taxonomyReader);
+                var tr = TaxonomyReader.OpenIfChanged(@ref.TaxonomyReader);
                 if (tr == null)
                 {
-                    @ref.taxonomyReader.IncRef();
-                    tr = @ref.taxonomyReader;
+                    @ref.TaxonomyReader.IncRef();
+                    tr = @ref.TaxonomyReader;
                 }
                 else if (taxoWriter != null && taxoWriter.TaxonomyEpoch != taxoEpoch)
                 {
@@ -172,7 +172,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         protected override int GetRefCount(SearcherAndTaxonomy reference)
         {
-            return reference.searcher.IndexReader.RefCount;
+            return reference.Searcher.IndexReader.RefCount;
         }
     }
 }

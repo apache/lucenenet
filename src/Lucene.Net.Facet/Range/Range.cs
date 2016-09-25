@@ -30,7 +30,7 @@
 
         /// <summary>
         /// Label that identifies this range. </summary>
-        public readonly string Label;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>

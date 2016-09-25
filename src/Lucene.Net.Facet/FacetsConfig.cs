@@ -80,28 +80,29 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// True if this dimension is hierarchical. </summary>
-            public bool Hierarchical;
+            public bool Hierarchical { get; set; }
 
             /// <summary>
             /// True if this dimension is multi-valued. </summary>
-            public bool MultiValued;
+            public bool MultiValued { get; set; }
 
             /// <summary>
             /// True if the count/aggregate for the entire dimension
             ///  is required, which is unusual (default is false). 
             /// </summary>
-            public bool RequireDimCount;
+            public bool RequireDimCount { get; set; }
 
             /// <summary>
             /// Actual field where this dimension's facet labels
             ///  should be indexed 
             /// </summary>
-            public string IndexFieldName = DEFAULT_INDEX_FIELD_NAME;
+            public string IndexFieldName { get; set; }
 
             /// <summary>
             /// Default constructor. </summary>
             public DimConfig()
             {
+                IndexFieldName = DEFAULT_INDEX_FIELD_NAME;
             }
         }
 
@@ -288,10 +289,10 @@ namespace Lucene.Net.Facet
                 if (field.FieldType == FacetField.TYPE)
                 {
                     FacetField facetField = (FacetField)field;
-                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
+                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
                     if (dimConfig.MultiValued == false)
                     {
-                        CheckSeen(seenDims, facetField.dim);
+                        CheckSeen(seenDims, facetField.Dim);
                     }
                     string indexFieldName = dimConfig.IndexFieldName;
                     IList<FacetField> fields;
@@ -324,18 +325,18 @@ namespace Lucene.Net.Facet
                 if (field.FieldType == AssociationFacetField.TYPE)
                 {
                     AssociationFacetField facetField = (AssociationFacetField)field;
-                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
+                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
                     if (dimConfig.MultiValued == false)
                     {
-                        CheckSeen(seenDims, facetField.dim);
+                        CheckSeen(seenDims, facetField.Dim);
                     }
                     if (dimConfig.Hierarchical)
                     {
-                        throw new System.ArgumentException("AssociationFacetField cannot be hierarchical (dim=\"" + facetField.dim + "\")");
+                        throw new System.ArgumentException("AssociationFacetField cannot be hierarchical (dim=\"" + facetField.Dim + "\")");
                     }
                     if (dimConfig.RequireDimCount)
                     {
-                        throw new System.ArgumentException("AssociationFacetField cannot requireDimCount (dim=\"" + facetField.dim + "\")");
+                        throw new System.ArgumentException("AssociationFacetField cannot requireDimCount (dim=\"" + facetField.Dim + "\")");
                     }
 
                     string indexFieldName = dimConfig.IndexFieldName;
@@ -408,13 +409,13 @@ namespace Lucene.Net.Facet
                 foreach (FacetField facetField in ent.Value)
                 {
 
-                    FacetsConfig.DimConfig ft = GetDimConfig(facetField.dim);
-                    if (facetField.path.Length > 1 && ft.Hierarchical == false)
+                    FacetsConfig.DimConfig ft = GetDimConfig(facetField.Dim);
+                    if (facetField.Path.Length > 1 && ft.Hierarchical == false)
                     {
-                        throw new System.ArgumentException("dimension \"" + facetField.dim + "\" is not hierarchical yet has " + facetField.path.Length + " components");
+                        throw new System.ArgumentException("dimension \"" + facetField.Dim + "\" is not hierarchical yet has " + facetField.Path.Length + " components");
                     }
 
-                    FacetLabel cp = new FacetLabel(facetField.dim, facetField.path);
+                    FacetLabel cp = new FacetLabel(facetField.Dim, facetField.Path);
 
                     CheckTaxoWriter(taxoWriter);
                     int ordinal = taxoWriter.AddCategory(cp);
@@ -497,7 +498,7 @@ namespace Lucene.Net.Facet
                 {
                     // NOTE: we don't add parents for associations
                     CheckTaxoWriter(taxoWriter);
-                    FacetLabel label = new FacetLabel(field.dim, field.path);
+                    FacetLabel label = new FacetLabel(field.Dim, field.Path);
                     int ordinal = taxoWriter.AddCategory(label);
                     if (upto + 4 > bytes.Length)
                     {
@@ -508,12 +509,12 @@ namespace Lucene.Net.Facet
                     bytes[upto++] = (byte)(ordinal >> 16);
                     bytes[upto++] = (byte)(ordinal >> 8);
                     bytes[upto++] = (byte)ordinal;
-                    if (upto + field.assoc.Length > bytes.Length)
+                    if (upto + field.Assoc.Length > bytes.Length)
                     {
-                        bytes = ArrayUtil.Grow(bytes, upto + field.assoc.Length);
+                        bytes = ArrayUtil.Grow(bytes, upto + field.Assoc.Length);
                     }
-                    Array.Copy(field.assoc.Bytes, field.assoc.Offset, bytes, upto, field.assoc.Length);
-                    upto += field.assoc.Length;
+                    Array.Copy(field.Assoc.Bytes, field.Assoc.Offset, bytes, upto, field.Assoc.Length);
+                    upto += field.Assoc.Length;
 
                     // Drill down:
                     for (int i = 1; i <= label.Length; i++)

@@ -362,7 +362,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             FacetResult result = facets.GetTopChildren(10, "a");
             Assert.AreEqual(1, result.LabelValues.Length);
-            Assert.AreEqual(1, (int)result.LabelValues[0].value);
+            Assert.AreEqual(1, (int)result.LabelValues[0].Value);
 
             IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
@@ -502,8 +502,8 @@ namespace Lucene.Net.Facet.Taxonomy
             var allLabels = new HashSet<string>();
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                allLabels.Add(labelValue.label);
-                Assert.AreEqual(1, (int)labelValue.value);
+                allLabels.Add(labelValue.Label);
+                Assert.AreEqual(1, (int)labelValue.Value);
             }
             Assert.AreEqual(numLabels, allLabels.Count);
 
@@ -744,7 +744,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(2, result.LabelValues.Length, "wrong number of children");
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(2, (int)labelValue.value, "wrong weight for child " + labelValue.label);
+                Assert.AreEqual(2, (int)labelValue.Value, "wrong weight for child " + labelValue.Label);
             }
 
             IOUtils.Close(indexReader, taxoReader, indexDir, taxoDir);

@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet
             // There should be no results at all
             foreach (MatchingDocs doc in collectRandomZeroResults.GetMatchingDocs)
             {
-                Assert.AreEqual(0, doc.totalHits);
+                Assert.AreEqual(0, doc.TotalHits);
             }
 
             // Now start searching and retrieve results.
@@ -125,14 +125,14 @@ namespace Lucene.Net.Facet
             int sum = 0;
             foreach (LabelAndValue lav in random10Result.LabelValues)
             {
-                sum += (int)lav.value;
+                sum += (int)lav.Value;
             }
             float mu = (float)sum / (float)maxNumChildren;
 
             float variance = 0;
             foreach (LabelAndValue lav in random10Result.LabelValues)
             {
-                variance += (float)Math.Pow((mu - (int)lav.value), 2);
+                variance += (float)Math.Pow((mu - (int)lav.Value), 2);
             }
             variance = variance / maxNumChildren;
             float sigma = (float)Math.Sqrt(variance);

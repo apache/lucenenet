@@ -46,15 +46,15 @@ namespace Lucene.Net.Facet.Taxonomy
         protected virtual void Rollup()
         {
             // Rollup any necessary dims:
-            foreach (KeyValuePair<string, FacetsConfig.DimConfig> ent in Config.DimConfigs)
+            foreach (KeyValuePair<string, FacetsConfig.DimConfig> ent in config.DimConfigs)
             {
                 string dim = ent.Key;
                 FacetsConfig.DimConfig ft = ent.Value;
                 if (ft.Hierarchical && ft.MultiValued == false)
                 {
-                    int dimRootOrd = TaxoReader.GetOrdinal(new FacetLabel(dim));
+                    int dimRootOrd = taxoReader.GetOrdinal(new FacetLabel(dim));
                     Debug.Assert(dimRootOrd > 0);
-                    values[dimRootOrd] += Rollup(Children[dimRootOrd]);
+                    values[dimRootOrd] += Rollup(children[dimRootOrd]);
                 }
             }
         }
@@ -64,10 +64,10 @@ namespace Lucene.Net.Facet.Taxonomy
             float sum = 0;
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
-                float childValue = values[ord] + Rollup(Children[ord]);
+                float childValue = values[ord] + Rollup(children[ord]);
                 values[ord] = childValue;
                 sum += childValue;
-                ord = Siblings[ord];
+                ord = siblings[ord];
             }
             return sum;
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     throw new System.ArgumentException("cannot return dimension-level value alone; use getTopChildren instead");
                 }
             }
-            int ord = TaxoReader.GetOrdinal(new FacetLabel(dim, path));
+            int ord = taxoReader.GetOrdinal(new FacetLabel(dim, path));
             if (ord < 0)
             {
                 return -1;
@@ -106,16 +106,16 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             FacetsConfig.DimConfig dimConfig = VerifyDim(dim);
             FacetLabel cp = new FacetLabel(dim, path);
-            int dimOrd = TaxoReader.GetOrdinal(cp);
+            int dimOrd = taxoReader.GetOrdinal(cp);
             if (dimOrd == -1)
             {
                 return null;
             }
 
-            TopOrdAndFloatQueue q = new TopOrdAndFloatQueue(Math.Min(TaxoReader.Size, topN));
+            TopOrdAndFloatQueue q = new TopOrdAndFloatQueue(Math.Min(taxoReader.Size, topN));
             float bottomValue = 0;
 
-            int ord = Children[dimOrd];
+            int ord = children[dimOrd];
             float sumValues = 0;
             int childCount = 0;
 
@@ -132,17 +132,17 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             reuse = new TopOrdAndFloatQueue.OrdAndValue();
                         }
-                        reuse.ord = ord;
-                        reuse.value = values[ord];
+                        reuse.Ord = ord;
+                        reuse.Value = values[ord];
                         reuse = q.InsertWithOverflow(reuse);
                         if (q.Size() == topN)
                         {
-                            bottomValue = q.Top().value;
+                            bottomValue = q.Top().Value;
                         }
                     }
                 }
 
-                ord = Siblings[ord];
+                ord = siblings[ord];
             }
 
             if (sumValues == 0)
@@ -171,8 +171,8 @@ namespace Lucene.Net.Facet.Taxonomy
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
                 TopOrdAndFloatQueue.OrdAndValue ordAndValue = q.Pop();
-                FacetLabel child = TaxoReader.GetPath(ordAndValue.ord);
-                labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.value);
+                FacetLabel child = taxoReader.GetPath(ordAndValue.Ord);
+                labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
             }
 
             return new FacetResult(dim, path, sumValues, labelValues, childCount);

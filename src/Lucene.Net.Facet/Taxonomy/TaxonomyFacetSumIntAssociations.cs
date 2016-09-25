@@ -57,13 +57,13 @@ namespace Lucene.Net.Facet.Taxonomy
             //System.out.println("count matchingDocs=" + matchingDocs + " facetsField=" + facetsFieldName);
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                BinaryDocValues dv = hits.context.AtomicReader.GetBinaryDocValues(IndexFieldName);
+                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(indexFieldName);
                 if (dv == null) // this reader does not have DocValues for the requested category list
                 {
                     continue;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

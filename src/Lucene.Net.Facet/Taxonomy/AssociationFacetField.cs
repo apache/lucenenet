@@ -48,15 +48,15 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Dimension for this field. </summary>
-        public readonly string dim;
+        public string Dim { get; private set; }
 
         /// <summary>
         /// Facet path for this field. </summary>
-        public readonly string[] path;
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Associated value. </summary>
-        public readonly BytesRef assoc;
+        public BytesRef Assoc { get; private set; }
 
         /// <summary>
         /// Creates this from {@code dim} and {@code path} and an
@@ -70,18 +70,18 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 FacetField.VerifyLabel(label);
             }
-            this.dim = dim;
-            this.assoc = assoc;
+            this.Dim = dim;
+            this.Assoc = assoc;
             if (path.Length == 0)
             {
                 throw new System.ArgumentException("path must have at least one element");
             }
-            this.path = path;
+            this.Path = path;
         }
 
         public override string ToString()
         {
-            return "AssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " bytes=" + assoc + ")";
+            return "AssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " bytes=" + Assoc + ")";
         }
     }
 }

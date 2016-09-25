@@ -78,20 +78,20 @@ namespace Lucene.Net.Facet.Range
         private void Count(ValueSource valueSource, IList<MatchingDocs> matchingDocs)
         {
 
-            LongRange[] ranges = (LongRange[])this.Ranges;
+            LongRange[] ranges = (LongRange[])this.ranges;
 
             LongRangeCounter counter = new LongRangeCounter(ranges);
 
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)
             {
-                FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.context);
+                FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.Context);
 
-                TotCount += hits.totalHits;
+                totCount += hits.TotalHits;
                 Bits bits;
-                if (FastMatchFilter != null)
+                if (fastMatchFilter != null)
                 {
-                    DocIdSet dis = FastMatchFilter.GetDocIdSet(hits.context, null);
+                    DocIdSet dis = fastMatchFilter.GetDocIdSet(hits.Context, null);
                     if (dis == null)
                     {
                         // No documents match
@@ -108,7 +108,7 @@ namespace Lucene.Net.Facet.Range
                     bits = null;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
@@ -129,12 +129,12 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            int x = counter.FillCounts(Counts);
+            int x = counter.FillCounts(counts);
 
             missingCount += x;
 
             //System.out.println("totCount " + totCount + " missingCount " + counter.missingCount);
-            TotCount -= missingCount;
+            totCount -= missingCount;
         }
     }
 }

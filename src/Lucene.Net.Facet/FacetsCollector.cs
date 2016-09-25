@@ -72,28 +72,28 @@ namespace Lucene.Net.Facet
 
             /// <summary>
             /// Context for this segment. </summary>
-            public readonly AtomicReaderContext context;
+            public AtomicReaderContext Context { get; private set; }
 
             /// <summary>
             /// Which documents were seen. </summary>
-            public readonly DocIdSet bits;
+            public DocIdSet Bits { get; private set; }
 
             /// <summary>
             /// Non-sparse scores array. </summary>
-            public readonly float[] scores;
+            public float[] Scores { get; private set; }
 
             /// <summary>
             /// Total number of hits </summary>
-            public readonly int totalHits;
+            public int TotalHits { get; private set; }
 
             /// <summary>
             /// Sole constructor. </summary>
             public MatchingDocs(AtomicReaderContext context, DocIdSet bits, int totalHits, float[] scores)
             {
-                this.context = context;
-                this.bits = bits;
-                this.scores = scores;
-                this.totalHits = totalHits;
+                this.Context = context;
+                this.Bits = bits;
+                this.Scores = scores;
+                this.TotalHits = totalHits;
             }
         }
 

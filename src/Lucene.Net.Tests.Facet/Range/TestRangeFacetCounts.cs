@@ -433,11 +433,11 @@ namespace Lucene.Net.Facet.Range
                         LongRange prevRange = ranges[Random().Next(rangeID)];
                         if (Random().NextBoolean())
                         {
-                            min = prevRange.min;
+                            min = prevRange.Min;
                         }
                         else
                         {
-                            min = prevRange.max;
+                            min = prevRange.Max;
                         }
                     }
                     else
@@ -451,11 +451,11 @@ namespace Lucene.Net.Facet.Range
                         LongRange prevRange = ranges[Random().Next(rangeID)];
                         if (Random().NextBoolean())
                         {
-                            max = prevRange.min;
+                            max = prevRange.Min;
                         }
                         else
                         {
-                            max = prevRange.max;
+                            max = prevRange.Max;
                         }
                     }
                     else
@@ -546,8 +546,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     LongRange range = ranges[rangeID];
 
@@ -557,11 +557,11 @@ namespace Lucene.Net.Facet.Range
                     {
                         if (Random().NextBoolean())
                         {
-                            ddq.Add("field", NumericRangeFilter.NewLongRange("field", range.min, range.max, range.minInclusive, range.maxInclusive));
+                            ddq.Add("field", NumericRangeFilter.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                         else
                         {
-                            ddq.Add("field", NumericRangeQuery.NewLongRange("field", range.min, range.max, range.minInclusive, range.maxInclusive));
+                            ddq.Add("field", NumericRangeQuery.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                     }
                     else
@@ -751,8 +751,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("TEST: verify range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     DoubleRange range = ranges[rangeID];
 
@@ -937,8 +937,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     DoubleRange range = ranges[rangeID];
 

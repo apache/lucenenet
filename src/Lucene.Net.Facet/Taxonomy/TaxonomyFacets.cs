@@ -54,39 +54,39 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Index field name provided to the constructor. </summary>
-        protected readonly string IndexFieldName;
+        protected readonly string indexFieldName;
 
         /// <summary>
         /// {@code TaxonomyReader} provided to the constructor. </summary>
-        protected readonly TaxonomyReader TaxoReader;
+        protected readonly TaxonomyReader taxoReader;
 
         /// <summary>
         /// {@code FacetsConfig} provided to the constructor. </summary>
-        protected readonly FacetsConfig Config;
+        protected readonly FacetsConfig config;
 
         /// <summary>
         /// Maps parent ordinal to its child, or -1 if the parent
         ///  is childless. 
         /// </summary>
-        protected readonly int[] Children;
+        protected readonly int[] children;
 
         /// <summary>
         /// Maps an ordinal to its sibling, or -1 if there is no
         ///  sibling. 
         /// </summary>
-        protected readonly int[] Siblings;
+        protected readonly int[] siblings;
 
         /// <summary>
         /// Sole constructor. 
         /// </summary>
         protected internal TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
         {
-            this.IndexFieldName = indexFieldName;
-            this.TaxoReader = taxoReader;
-            this.Config = config;
+            this.indexFieldName = indexFieldName;
+            this.taxoReader = taxoReader;
+            this.config = config;
             ParallelTaxonomyArrays pta = taxoReader.ParallelTaxonomyArrays;
-            Children = pta.Children();
-            Siblings = pta.Siblings();
+            children = pta.Children();
+            siblings = pta.Siblings();
         }
 
         /// <summary>
@@ -96,23 +96,23 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         protected internal virtual DimConfig VerifyDim(string dim)
         {
-            DimConfig dimConfig = Config.GetDimConfig(dim);
-            if (!dimConfig.IndexFieldName.Equals(IndexFieldName))
+            DimConfig dimConfig = config.GetDimConfig(dim);
+            if (!dimConfig.IndexFieldName.Equals(indexFieldName))
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + IndexFieldName);
+                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + indexFieldName);
             }
             return dimConfig;
         }
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-            int ord = Children[TaxonomyReader.ROOT_ORDINAL];
+            int ord = children[TaxonomyReader.ROOT_ORDINAL];
             IList<FacetResult> results = new List<FacetResult>();
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
-                string dim = TaxoReader.GetPath(ord).Components[0];
-                DimConfig dimConfig = Config.GetDimConfig(dim);
-                if (dimConfig.IndexFieldName.Equals(IndexFieldName))
+                string dim = taxoReader.GetPath(ord).Components[0];
+                DimConfig dimConfig = config.GetDimConfig(dim);
+                if (dimConfig.IndexFieldName.Equals(indexFieldName))
                 {
                     FacetResult result = GetTopChildren(topN, dim);
                     if (result != null)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         results.Add(result);
                     }
                 }
-                ord = Siblings[ord];
+                ord = siblings[ord];
             }
 
             // Sort by highest value, tie break by dim:

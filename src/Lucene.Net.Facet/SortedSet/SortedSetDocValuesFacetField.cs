@@ -37,11 +37,11 @@
 
         /// <summary>
         /// Dimension. </summary>
-        public readonly string Dim;
+        public string Dim { get; private set; }
 
         /// <summary>
         /// Label. </summary>
-        public readonly string Label;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>

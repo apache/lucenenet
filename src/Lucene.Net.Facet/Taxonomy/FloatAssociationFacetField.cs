@@ -58,8 +58,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override string ToString()
         {
-            return "FloatAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + 
-                " value=" + BytesRefToFloat(assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
+            return "FloatAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + 
+                " value=" + BytesRefToFloat(Assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
         }
     }
 }

@@ -126,7 +126,7 @@ namespace Lucene.Net.Facet.Taxonomy
             foreach (FacetField ff in docCategories)
             {
                 doc.Add(ff);
-                string cp = ff.dim + "/" + ff.path[0];
+                string cp = ff.Dim + "/" + ff.Path[0];
                 allExpectedCounts[cp] = allExpectedCounts[cp] + 1;
                 if (updateTermExpectedCounts)
                 {
@@ -228,19 +228,19 @@ namespace Lucene.Net.Facet.Taxonomy
             counts[CP_D] = 0;
             foreach (FacetField ff in CATEGORIES_A)
             {
-                counts[ff.dim + "/" + ff.path[0]] = 0;
+                counts[ff.Dim + "/" + ff.Path[0]] = 0;
             }
             foreach (FacetField ff in CATEGORIES_B)
             {
-                counts[ff.dim + "/" + ff.path[0]] = 0;
+                counts[ff.Dim + "/" + ff.Path[0]] = 0;
             }
             foreach (FacetField ff in CATEGORIES_C)
             {
-                counts[ff.dim + "/" + ff.path[0]] = 0;
+                counts[ff.Dim + "/" + ff.Path[0]] = 0;
             }
             foreach (FacetField ff in CATEGORIES_D)
             {
-                counts[ff.dim + "/" + ff.path[0]] = 0;
+                counts[ff.Dim + "/" + ff.Path[0]] = 0;
             }
             return counts;
         }
@@ -296,13 +296,13 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(-1, (int)result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(termExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(termExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
             Assert.AreEqual(termExpectedCounts[CP_B], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Close(indexReader, taxoReader);
@@ -325,9 +325,9 @@ namespace Lucene.Net.Facet.Taxonomy
             int prevValue = int.MaxValue;
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
-                Assert.True((int)labelValue.value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.value + " prevValue=" + prevValue);
-                prevValue = (int)labelValue.value;
+                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
+                Assert.True((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
+                prevValue = (int)labelValue.Value;
             }
 
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
@@ -335,9 +335,9 @@ namespace Lucene.Net.Facet.Taxonomy
             prevValue = int.MaxValue;
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
-                Assert.True((int)labelValue.value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.value + " prevValue=" + prevValue);
-                prevValue = (int)labelValue.value;
+                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
+                Assert.True((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
+                prevValue = (int)labelValue.Value;
             }
 
             IOUtils.Close(indexReader, taxoReader);
@@ -359,13 +359,13 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(-1, (int)result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(int.MaxValue, CP_B);
             Assert.AreEqual(allExpectedCounts[CP_B], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Close(indexReader, taxoReader);
@@ -387,13 +387,13 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_C + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(allExpectedCounts[CP_C + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_D, CP_D);
             Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.label], labelValue.value);
+                Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Close(indexReader, taxoReader);

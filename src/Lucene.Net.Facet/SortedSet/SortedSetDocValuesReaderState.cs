@@ -51,10 +51,10 @@ namespace Lucene.Net.Facet.SortedSet
         {
             /// <summary>
             /// Start of range, inclusive: </summary>
-            public readonly int Start;
+            public int Start { get; private set; }
             /// <summary>
             /// End of range, inclusive: </summary>
-            public readonly int End;
+            public int End { get; private set; }
 
             /// <summary>
             /// Start and end are inclusive. </summary>

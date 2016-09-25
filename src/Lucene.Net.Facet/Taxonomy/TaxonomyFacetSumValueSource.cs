@@ -129,13 +129,13 @@ namespace Lucene.Net.Facet.Taxonomy
             IntsRef scratch = new IntsRef();
             foreach (MatchingDocs hits in matchingDocs)
             {
-                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.context);
+                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.Context);
 
                 int scoresIdx = 0;
-                float[] scores = hits.scores;
+                float[] scores = hits.Scores;
 
-                FunctionValues functionValues = valueSource.GetValues(context, hits.context);
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                FunctionValues functionValues = valueSource.GetValues(context, hits.Context);
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

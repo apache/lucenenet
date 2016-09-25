@@ -272,11 +272,11 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// Combined drill down & sideways results. </summary>
-            public readonly Facets Facets;
+            public Facets Facets { get; private set; }
 
             /// <summary>
             /// Hits. </summary>
-            public readonly TopDocs Hits;
+            public TopDocs Hits { get; private set; }
 
             /// <summary>
             /// Sole constructor. </summary>

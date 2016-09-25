@@ -95,20 +95,20 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (cache.TryGetValue(key, out cdo))
                 {
                     // Item already exists, update our last access time
-                    cdo.Timestamp = GetTimestamp();
+                    cdo.timestamp = GetTimestamp();
                 }
                 else
                 {
                     cache[key] = new CacheDataObject
                     {
-                        Value = value,
-                        Timestamp = GetTimestamp()
+                        value = value,
+                        timestamp = GetTimestamp()
                     };
                     // We have added a new item, so we may need to remove the eldest
                     if (cache.Count > MaxSize)
                     {
                         // Remove the eldest item (lowest timestamp) from the cache
-                        cache.Remove(cache.OrderBy(x => x.Value.Timestamp).First().Key);
+                        cache.Remove(cache.OrderBy(x => x.Value.timestamp).First().Key);
                     }
                 }
             }
@@ -123,9 +123,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (cache.TryGetValue(key, out cdo))
                 {
                     // Write our last access time
-                    cdo.Timestamp = GetTimestamp();
+                    cdo.timestamp = GetTimestamp();
 
-                    return cdo.Value;
+                    return cdo.value;
                 }
             }
             return null;
@@ -139,8 +139,8 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (cache.TryGetValue(key, out cdo))
                 {
                     // Write our last access time
-                    cdo.Timestamp = GetTimestamp();
-                    value = cdo.Value;
+                    cdo.timestamp = GetTimestamp();
+                    value = cdo.value;
 
                     return true;
                 }
@@ -184,12 +184,12 @@ namespace Lucene.Net.Facet.Taxonomy
         private class CacheDataObject
         {
             // Ticks representing the last access time
-            public long Timestamp;
-            public TValue Value;
+            public long timestamp;
+            public TValue value;
 
             public override string ToString()
             {
-                return "Last Access: " + Timestamp.ToString() + " - " + Value.ToString();
+                return "Last Access: " + timestamp.ToString() + " - " + value.ToString();
             }
         }
 

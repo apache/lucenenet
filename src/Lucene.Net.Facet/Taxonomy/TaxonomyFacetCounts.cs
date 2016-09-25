@@ -53,8 +53,8 @@ namespace Lucene.Net.Facet.Taxonomy
             IntsRef scratch = new IntsRef();
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.context);
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.Context);
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
