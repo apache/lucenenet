@@ -796,7 +796,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             termsEnum = terms.Iterator(termsEnum);
                             while (termsEnum.Next() != null)
                             {
-                                if (!cache.Full)
+                                if (!cache.IsFull)
                                 {
                                     BytesRef t = termsEnum.Term();
                                     // Since we guarantee uniqueness of categories, each term has exactly

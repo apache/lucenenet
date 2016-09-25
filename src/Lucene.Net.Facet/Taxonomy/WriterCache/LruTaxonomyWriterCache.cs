@@ -79,7 +79,7 @@
             }
         }
 
-        public virtual bool Full
+        public virtual bool IsFull
         {
             get
             {

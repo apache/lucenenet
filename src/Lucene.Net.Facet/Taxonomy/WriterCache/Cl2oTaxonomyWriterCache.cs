@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public virtual bool Full
+        public virtual bool IsFull
         {
             get
             {

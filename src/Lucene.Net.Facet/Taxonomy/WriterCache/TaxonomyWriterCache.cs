@@ -90,7 +90,7 @@
         /// Returns true if the cache is full, such that the next <seealso cref="#put"/> will
         /// evict entries from it, false otherwise.
         /// </summary>
-        bool Full { get; }
+        bool IsFull { get; }
 
         /// <summary>
         /// Clears the content of the cache. Unlike <seealso cref="#close()"/>, the caller can
