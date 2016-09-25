@@ -208,7 +208,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.collisionMap = new CollisionMap(oldCollisionMap.Capacity(), this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
-            var it = oldCollisionMap.entryIterator();
+            var it = oldCollisionMap.GetEnumerator();
 
             while (it.MoveNext())
             {

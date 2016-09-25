@@ -182,7 +182,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        internal virtual IEnumerator<CollisionMap.Entry> entryIterator()
+        internal virtual IEnumerator<CollisionMap.Entry> GetEnumerator()
         {
             return new EntryIterator(this, entries, size);
         }
