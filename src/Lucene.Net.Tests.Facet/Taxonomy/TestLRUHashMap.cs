@@ -59,6 +59,12 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.Null(lru.Get("five"));
             Assert.NotNull(lru.Get("six"));
             Assert.NotNull(lru.Get("seven"));
+
+            // LUCENENET specific tests to ensure Put is implemented correctly
+            Assert.Null(lru.Put("ten", "oops"));
+            assertEquals("oops", lru.Put("ten", "not oops"));
+            assertEquals("not oops", lru.Put("ten", "new value"));
+            assertEquals("new value", lru.Put("ten", "new value2"));
         }
     }
 

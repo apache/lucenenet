@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
@@ -32,7 +33,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </remarks>
     public class NameIntCacheLRU
     {
-        private Dictionary<object, int?> cache;
+        private IDictionary<object, int> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
         private int capacity;
@@ -67,31 +68,36 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private void CreateCache(int maxSize)
         {
-            // LUCENENET TODO: Create an adapter so we can plug in either a generic
-            // dictionary or LRUHashMap or alternatively make LRUHashMap implement IDictionary<TKey, TValue>
-            //if (maxSize < int.MaxValue)
-            //{
-            //    cache = new LRUHashMap<object,int?>(1000,true); //for LRU
-            //}
-            //else
+            if (maxSize < int.MaxValue)
             {
-                cache = new Dictionary<object, int?>(1000); //no need for LRU
+                cache = new LurchTable<object, int>(1000, LurchTableOrder.Access); //for LRU
+            }
+            else
+            {
+                cache = new Dictionary<object, int>(1000); //no need for LRU
             }
         }
 
-        internal virtual int? Get(FacetLabel name)
+        internal virtual int Get(FacetLabel name)
+        {
+            int result;
+            TryGetValue(name, out result);
+            return result;
+        }
+
+        internal virtual bool TryGetValue(FacetLabel name, out int value)
         {
             object key = Key(name);
-            int? res = cache.ContainsKey(key) ? cache[key] : null;
-            if (res == null)
+            if (!cache.TryGetValue(key, out value))
             {
                 nMisses++;
+                return false;
             }
             else
             {
                 nHits++;
+                return true;
             }
-            return res;
         }
 
         /// <summary>
@@ -111,13 +117,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Add a new value to cache.
         /// Return true if cache became full and some room need to be made. 
         /// </summary>
-        internal virtual bool Put(FacetLabel name, int? val)
+        internal virtual bool Put(FacetLabel name, int val)
         {
             cache[Key(name)] = val;
             return CacheFull;
         }
 
-        internal virtual bool Put(FacetLabel name, int prefixLen, int? val)
+        internal virtual bool Put(FacetLabel name, int prefixLen, int val)
         {
             cache[Key(name, prefixLen)] = val;
             return CacheFull;
@@ -160,12 +166,24 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return false;
             }
 
-            // LUCENENET: Loop in reverse so we can safely delete
-            // a range of items (0 - n) without a 
-            // "Collection was modified" conflict
-            for (int i = n - 1; i >= 0; i--)
+            lock (this)
             {
-                cache.Remove(cache.Keys.ElementAt(i));
+                // Double-check that another thread didn't beat us to the operation
+                n = cache.Count - (2 * capacity) / 3;
+                if (n <= 0)
+                {
+                    return false;
+                }
+
+                //System.Diagnostics.Debug.WriteLine("Removing cache entries in MakeRoomLRU");
+
+                // LUCENENET: Loop in reverse so we can safely delete
+                // a range of items (0 - n) without a 
+                // "Collection was modified" conflict
+                for (int i = n - 1; i >= 0; i--)
+                {
+                    cache.Remove(cache.Keys.ElementAt(i));
+                }
             }
             return true;
         }

@@ -116,13 +116,13 @@
         {
             lock (this)
             {
-                int? res = cache.Get(categoryPath);
-                if (res == null)
+                int result;
+                if (!cache.TryGetValue(categoryPath, out result))
                 {
                     return -1;
                 }
 
-                return (int)res;
+                return result;
             }
         }
 
@@ -130,7 +130,7 @@
         {
             lock (this)
             {
-                bool ret = cache.Put(categoryPath, new int?(ordinal));
+                bool ret = cache.Put(categoryPath, ordinal);
                 // If the cache is full, we need to clear one or more old entries
                 // from the cache. However, if we delete from the cache a recent
                 // addition that isn't yet in our reader, for this entry to be

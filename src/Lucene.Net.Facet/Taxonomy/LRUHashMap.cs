@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -26,8 +27,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// When it reaches that <see cref="Capacity"/>, each time a new element is added, the least
     /// recently used (LRU) entry is removed.
     /// <para>
-    /// Unlike the Java Lucene implementation, this one is thread safe. Do note
-    /// that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
+    /// Unlike the Java Lucene implementation, this one is thread safe because it is backed by the <see cref="LurchTable{TKey, TValue}"/>.
+    /// Do note that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
     /// a write operation also takes place to update the element's last access time.
     /// This is because the LRU order needs to be remembered to determine which element
     /// to evict when the <see cref="Capacity"/> is exceeded. 
@@ -37,117 +38,75 @@ namespace Lucene.Net.Facet.Taxonomy
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class LRUHashMap<TKey, TValue> where TValue : class //this is implementation of LRU Cache
+    public class LRUHashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private readonly Dictionary<TKey, CacheDataObject> cache;
-        // We can't use a ReaderWriterLockSlim because every read is also a 
-        // write, so we gain nothing by doing so
-        private readonly object syncLock = new object();
-        // Record last access so we can tie break if 2 calls make it in within
-        // the same millisecond.
-        private long lastAccess;
-        private int capacity;
+        private LurchTable<TKey, TValue> cache;
 
         public LRUHashMap(int capacity)
         {
-            if (capacity < 1)
-            {
-                throw new ArgumentOutOfRangeException("capacity must be at least 1");
-            }
-            this.capacity = capacity;
-            this.cache = new Dictionary<TKey, CacheDataObject>(capacity);
+            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, capacity);
         }
 
         /// <summary>
         /// allows changing the map's maximal number of elements
         /// which was defined at construction time.
         /// <para>
-        /// Note that if the map is already larger than maxSize, the current 
+        /// Note that if the map is already larger than <see cref="Limit"/>, the current 
         /// implementation does not shrink it (by removing the oldest elements);
         /// Rather, the map remains in its current size as new elements are
         /// added, and will only start shrinking (until settling again on the
-        /// given <see cref="Capacity"/>) if existing elements are explicitly deleted.
+        /// given <see cref="Limit"/>) if existing elements are explicitly deleted.
         /// </para>
         /// </summary>
-        public virtual int Capacity
+        public virtual int Limit
         {
-            get { return capacity; }
+            get
+            {
+                return cache.Limit;
+            }
             set
             {
                 if (value < 1)
                 {
-                    throw new ArgumentOutOfRangeException("Capacity must be at least 1");
+                    throw new ArgumentOutOfRangeException("Limit must be at least 1");
                 }
-                capacity = value;
+                cache.Limit = value;
             }
         }
 
-        public bool Put(TKey key, TValue value)
+        public TValue Put(TKey key, TValue value)
         {
-            lock (syncLock)
-            { 
-                CacheDataObject cdo;
-                if (cache.TryGetValue(key, out cdo))
-                {
-                    // Item already exists, update our last access time
-                    cdo.timestamp = GetTimestamp();
-                }
-                else
-                {
-                    cache[key] = new CacheDataObject
-                    {
-                        value = value,
-                        timestamp = GetTimestamp()
-                    };
-                    // We have added a new item, so we may need to remove the eldest
-                    if (cache.Count > Capacity)
-                    {
-                        // Remove the eldest item (lowest timestamp) from the cache
-                        cache.Remove(cache.OrderBy(x => x.Value.timestamp).First().Key);
-                    }
-                }
-            }
-            return true;
+            TValue oldValue = default(TValue);
+            cache.AddOrUpdate(key, value, (k, v) =>
+            {
+                oldValue = cache[key];
+                return value;
+            });
+            return oldValue;
         }
 
         public TValue Get(TKey key)
         {
-            lock (syncLock)
+            TValue result;
+            if (!cache.TryGetValue(key, out result))
             {
-                CacheDataObject cdo;
-                if (cache.TryGetValue(key, out cdo))
-                {
-                    // Write our last access time
-                    cdo.timestamp = GetTimestamp();
-
-                    return cdo.value;
-                }
+                return default(TValue);
             }
-            return null;
+            return result;
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        #region IDictionary<TKey, TValue> members
+
+        public TValue this[TKey key]
         {
-            lock (syncLock)
+            get
             {
-                CacheDataObject cdo;
-                if (cache.TryGetValue(key, out cdo))
-                {
-                    // Write our last access time
-                    cdo.timestamp = GetTimestamp();
-                    value = cdo.value;
-
-                    return true;
-                }
-
-                value = null;
-                return false;
+                return cache[key];
             }
-        }
-
-        public bool ContainsKey(TKey key)
-        {
-            return cache.ContainsKey(key);
+            set
+            {
+                cache[key] = value;
+            }
         }
 
         public int Count
@@ -158,36 +117,83 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        private long GetTimestamp()
+        public bool IsReadOnly
         {
-            long ticks = DateTime.UtcNow.Ticks;
-            if (ticks <= lastAccess)
+            get
             {
-                // Tie break by incrementing
-                // when 2 calls happen within the
-                // same millisecond
-                ticks = ++lastAccess;
+                return false;
             }
-            else
-            {
-                lastAccess = ticks;
-            }
-            return ticks;
         }
-        
 
-        #region Nested type: CacheDataObject
-
-        private class CacheDataObject
+        public ICollection<TKey> Keys
         {
-            // Ticks representing the last access time
-            public long timestamp;
-            public TValue value;
-
-            public override string ToString()
+            get
             {
-                return "Last Access: " + timestamp.ToString() + " - " + value.ToString();
+                return cache.Keys;
             }
+        }
+
+        public ICollection<TValue> Values
+        {
+            get
+            {
+                return cache.Values;
+            }
+        }
+
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Add(TKey key, TValue value)
+        {
+            cache.Add(key, value);
+        }
+
+        public void Clear()
+        {
+            cache.Clear();
+        }
+
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool ContainsKey(TKey key)
+        {
+            return cache.ContainsKey(key);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return cache.GetEnumerator();
+        }
+
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Remove(TKey key)
+        {
+            return cache.Remove(key);
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            return cache.TryGetValue(key, out value);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return cache.GetEnumerator();
         }
 
         #endregion

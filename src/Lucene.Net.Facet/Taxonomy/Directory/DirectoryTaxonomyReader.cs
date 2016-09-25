@@ -287,26 +287,26 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
             // First try to find the answer in the LRU cache:
-            lock (ordinalCache)
+
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
+            IntClass res = ordinalCache.Get(cp);
+            if (res != null && res.IntItem != null)
             {
-                IntClass res = ordinalCache.Get(cp);
-                if (res != null && res.IntItem != null)
+                if ((int)res.IntItem.Value < indexReader.MaxDoc)
                 {
-                    if ((int)res.IntItem.Value < indexReader.MaxDoc)
-                    {
-                        // Since the cache is shared with DTR instances allocated from
-                        // doOpenIfChanged, we need to ensure that the ordinal is one that
-                        // this DTR instance recognizes.
-                        return (int)res.IntItem.Value;
-                    }
-                    else
-                    {
-                        // if we get here, it means that the category was found in the cache,
-                        // but is not recognized by this TR instance. Therefore there's no
-                        // need to continue search for the path on disk, because we won't find
-                        // it there too.
-                        return TaxonomyReader.INVALID_ORDINAL;
-                    }
+                    // Since the cache is shared with DTR instances allocated from
+                    // doOpenIfChanged, we need to ensure that the ordinal is one that
+                    // this DTR instance recognizes.
+                    return (int)res.IntItem.Value;
+                }
+                else
+                {
+                    // if we get here, it means that the category was found in the cache,
+                    // but is not recognized by this TR instance. Therefore there's no
+                    // need to continue search for the path on disk, because we won't find
+                    // it there too.
+                    return TaxonomyReader.INVALID_ORDINAL;
                 }
             }
 
@@ -323,10 +323,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // that are allocated from doOpenIfChanged. Therefore, if we only store
                 // information about found categories, we cannot accidently tell a new
                 // generation of DTR that a category does not exist.
-                lock (ordinalCache)
-                {
-                    ordinalCache.Put(cp, new IntClass { IntItem = Convert.ToInt32(ret) });
-                }
+
+                // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+                // and removing the lock seems to make the performance better.
+                ordinalCache.Put(cp, new IntClass { IntItem = Convert.ToInt32(ret) });
             }
 
             return ret;
@@ -348,10 +348,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // TODO: can we use an int-based hash impl, such as IntToObjectMap,
             // wrapped as LRU?
 
-            // LUCENENET NOTE: We don't need to convert int to int here.
-            // Also, our cache implementation is thread safe, so we can nix the
-            // locks.
+            // LUCENENET NOTE: We don't need to convert ordinal from int to int here as was done in Java.
             FacetLabel res;
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
             if (categoryCache.TryGetValue(ordinal, out res))
             {
                 return res;
@@ -359,6 +359,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             Document doc = indexReader.Document(ordinal);
             res = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
             categoryCache.Put(ordinal, res);
 
             return res;
@@ -386,10 +388,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             set
             {
                 EnsureOpen();
-                // LUCENENET NOTE: No locking required here,
-                // since our LRU implementation is thread-safe
-                categoryCache.Capacity = value;
-                ordinalCache.Capacity = value;
+                lock (categoryCache)
+                {
+                    categoryCache.Limit = value;
+                }
+                lock (ordinalCache)
+                {
+                    ordinalCache.Limit = value;
+                }
             }
         }
 
