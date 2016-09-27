@@ -451,10 +451,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             string[] k = new string[n];
             char[] v = new char[n];
             Iterator iter = new Iterator(this);
-            while (iter.HasMoreElements())
+            while (iter.MoveNext())
             {
                 v[i] = iter.Value;
-                iter.MoveNext();
                 k[i++] = iter.Current;
             }
             Init();
@@ -527,6 +526,16 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return new Iterator(this);
         }
 
+        /// <summary>
+        /// Enumerator for TernaryTree
+        /// 
+        /// LUCENENET NOTE: This differs a bit from its Java counterpart to adhere to
+        /// .NET IEnumerator semantics. In Java, when the <see cref="Iterator"/> is
+        /// instantiated, it is already positioned at the first element. However,
+        /// to act like a .NET IEnumerator, the initial state is undefined and considered
+        /// to be before the first element until <see cref="MoveNext"/> is called, and
+        /// if a move took place it will return <c>true</c>;
+        /// </summary>
         public class Iterator : IEnumerator<string>
         {
             private readonly TernaryTree outerInstance;
@@ -576,13 +585,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             internal StringBuilder ks;
 
+            private bool isInitialized = false;
+
             public Iterator(TernaryTree outerInstance)
             {
                 this.outerInstance = outerInstance;
                 cur = -1;
                 ns = new Stack<Item>();
                 ks = new StringBuilder();
-                Rewind();
+                isInitialized = false;
             }
 
             public virtual void Rewind()
@@ -592,14 +603,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 cur = outerInstance.root;
                 Run();
             }
-
-            //public override string NextElement()
-            //{
-            //  string res = curkey;
-            //  cur = up();
-            //  run();
-            //  return res;
-            //}
 
             public virtual char Value
             {
@@ -611,13 +614,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     }
                     return (char)0;
                 }
-            }
-
-
-
-            public bool HasMoreElements()
-            {
-                return (cur != -1);
             }
 
             /// <summary>
@@ -752,7 +748,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 get
                 {
-                    return curkey;
+                    return Current;
                 }
             }
 
@@ -763,6 +759,16 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             public bool MoveNext()
             {
+                if (!isInitialized)
+                {
+                    Rewind();
+                    isInitialized = true;
+                    return cur != -1;
+                }
+                if (cur == -1)
+                {
+                    return false;
+                }
                 cur = Up();
                 Run();
                 return cur != -1;
@@ -770,7 +776,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
 
             #endregion
