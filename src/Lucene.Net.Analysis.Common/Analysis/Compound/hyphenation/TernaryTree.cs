@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
@@ -782,22 +783,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             #endregion
         }
 
-        // LUCENENET: Not sure we really need this
-        // public virtual void printStats(PrintStream @out)
-        // {
-        //@out.println("Number of keys = " + Convert.ToString(length));
-        //@out.println("Node count = " + Convert.ToString(freenode));
-        //// System.out.println("Array length = " + Integer.toString(eq.length));
-        //@out.println("Key Array length = " + Convert.ToString(kv.length()));
+        public virtual void PrintStats(TextWriter @out)
+        {
+            @out.WriteLine("Number of keys = " + Convert.ToString(length));
+            @out.WriteLine("Node count = " + Convert.ToString(freenode));
+            // System.out.println("Array length = " + Integer.toString(eq.length));
+            @out.WriteLine("Key Array length = " + Convert.ToString(kv.Length()));
 
-        ///*
-        // * for(int i=0; i<kv.length(); i++) if ( kv.get(i) != 0 )
-        // * System.out.print(kv.get(i)); else System.out.println("");
-        // * System.out.println("Keys:"); for(Enumeration enum = keys();
-        // * enum.hasMoreElements(); ) System.out.println(enum.nextElement());
-        // */
-
-        // }
+            /*
+             * for(int i=0; i<kv.length(); i++) if ( kv.get(i) != 0 )
+             * System.out.print(kv.get(i)); else System.out.println("");
+             * System.out.println("Keys:"); for(Enumeration enum = keys();
+             * enum.hasMoreElements(); ) System.out.println(enum.nextElement());
+             */
+        }
         /*
           public static void main(String[] args) {
             TernaryTree tt = new TernaryTree();
