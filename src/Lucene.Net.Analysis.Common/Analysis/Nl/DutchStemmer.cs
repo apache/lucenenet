@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         private StringBuilder sb = new StringBuilder();
         private bool _removedE;
-        private IDictionary<object, string> _stemDict;
+        private IDictionary<string, string> _stemDict;
 
         private int _R1;
         private int _R2;
@@ -464,7 +464,7 @@ namespace Lucene.Net.Analysis.Nl
             return false;
         }
 
-        internal virtual IDictionary<object, string> StemDictionary
+        internal virtual IDictionary<string, string> StemDictionary
         {
             set
             {

@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Core
         public static CharArraySet MakeStopSet(LuceneVersion matchVersion, string[] stopWords, bool ignoreCase)
         {
             CharArraySet stopSet = new CharArraySet(matchVersion, stopWords.Length, ignoreCase);
-            stopSet.AddAll(Arrays.AsList(stopWords));
+            stopSet.UnionWith(stopWords);
             return stopSet;
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Core
         public static CharArraySet MakeStopSet<T1>(LuceneVersion matchVersion, IEnumerable<T1> stopWords, bool ignoreCase)
         {
             var stopSet = new CharArraySet(matchVersion, stopWords.Count(), ignoreCase);
-            stopSet.AddAll(stopWords.Cast<object>().ToArray());
+            stopSet.UnionWith(stopWords);
             return stopSet;
         }
 

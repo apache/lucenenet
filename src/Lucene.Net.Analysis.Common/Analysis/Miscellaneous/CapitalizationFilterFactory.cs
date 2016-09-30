@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             if (k != null)
             {
                 keep = new CharArraySet(luceneMatchVersion, 10, ignoreCase);
-                keep.AddAll(k);
+                keep.UnionWith(k);
             }
 
             k = GetSet(args, OK_PREFIX);

@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayMap<string>.UnmodifiableMap(CharArrayMap<string>.Copy(matchVersion, stemOverrideDict));
+                this.origStemdict = CharArrayMap.UnmodifiableMap(CharArrayMap.Copy(matchVersion, stemOverrideDict));
             }
             else
             {
@@ -173,11 +173,11 @@ namespace Lucene.Net.Analysis.Nl
                 StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(false);
                 CharArrayMap<string>.EntryIterator iter = (CharArrayMap<string>.EntryIterator)stemOverrideDict.EntrySet().GetEnumerator();
                 CharsRef spare = new CharsRef();
-                while (iter.HasNext())
+                while (iter.HasNext)
                 {
                     char[] nextKey = iter.NextKey();
                     spare.CopyChars(nextKey, 0, nextKey.Length);
-                    builder.Add(new string(spare.Chars), iter.CurrentValue());
+                    builder.Add(new string(spare.Chars), iter.CurrentValue);
                 }
                 try
                 {

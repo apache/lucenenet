@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Version = Lucene.Net.Util.LuceneVersion;
 
@@ -114,7 +115,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.add(NOT_IN_SET.ToCharArray());
+                set.Add(NOT_IN_SET.ToCharArray());
                 fail("Modified unmodifiable set");
             }
             catch (System.NotSupportedException)
@@ -138,7 +139,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.add(new StringBuilder(NOT_IN_SET));
+                set.Add(new StringBuilder(NOT_IN_SET));
                 fail("Modified unmodifiable set");
             }
             catch (System.NotSupportedException)
@@ -192,7 +193,9 @@ namespace Lucene.Net.Analysis.Util
             // above fails to execute.
             try
             {
-                set.Remove(new CharArraySet(TEST_VERSION_CURRENT, TEST_STOP_WORDS, true));
+#pragma warning disable 612, 618
+                set.Remove(TEST_STOP_WORDS[0]);
+#pragma warning restore 612, 618
                 fail("Modified unmodifiable set");
             }
             catch (System.NotSupportedException)
@@ -224,6 +227,18 @@ namespace Lucene.Net.Analysis.Util
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
             }
 
+            // LUCENENET Specific - added to test .NETified UnionWith method
+            try
+            {
+                set.UnionWith(new[] { NOT_IN_SET });
+                fail("Modified unmodifiable set");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
+            }
+
             for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
                 assertTrue(set.contains(TEST_STOP_WORDS[i]));
@@ -241,18 +256,18 @@ namespace Lucene.Net.Analysis.Util
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
             foreach (var stopword in TEST_STOP_WORDS)
             {
-                assertTrue(set.contains(stopword));
+                assertTrue(set.Contains(stopword));
             }
-            assertTrue(set.contains(Convert.ToInt32(1)));
-            assertTrue(set.contains("1"));
-            assertTrue(set.contains(new[] { '1' }));
+            assertTrue(set.Contains(Convert.ToInt32(1)));
+            assertTrue(set.Contains("1"));
+            assertTrue(set.Contains(new[] { '1' }));
 
             try
             {
                 CharArraySet.UnmodifiableSet(null);
                 fail("can not make null unmodifiable");
             }
-            catch (System.NullReferenceException)
+            catch (System.ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
                 // expected
             }
@@ -406,9 +421,9 @@ namespace Lucene.Net.Analysis.Util
                 stopwordsUpper.Add(@string.ToUpper());
             }
             setIngoreCase.addAll(TEST_STOP_WORDS);
-            setIngoreCase.add(Convert.ToInt32(1));
+            setIngoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.addAll(TEST_STOP_WORDS);
-            setCaseSensitive.add(Convert.ToInt32(1));
+            setCaseSensitive.Add(Convert.ToInt32(1));
 
             CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
             CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
@@ -459,9 +474,9 @@ namespace Lucene.Net.Analysis.Util
                 stopwordsUpper.Add(@string.ToUpper());
             }
             setIngoreCase.addAll(TEST_STOP_WORDS);
-            setIngoreCase.add(Convert.ToInt32(1));
+            setIngoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.addAll(TEST_STOP_WORDS);
-            setCaseSensitive.add(Convert.ToInt32(1));
+            setCaseSensitive.Add(Convert.ToInt32(1));
 
             CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
             CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
@@ -559,11 +574,11 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(CharArraySet.EMPTY_SET.Count == 0);
             foreach (string stopword in TEST_STOP_WORDS)
             {
-                assertFalse(CharArraySet.EMPTY_SET.contains(stopword));
+                assertFalse(CharArraySet.EMPTY_SET.Contains(stopword));
             }
-            assertFalse(CharArraySet.EMPTY_SET.contains("foo"));
-            assertFalse(CharArraySet.EMPTY_SET.contains((object)"foo"));
-            assertFalse(CharArraySet.EMPTY_SET.contains("foo".ToCharArray()));
+            assertFalse(CharArraySet.EMPTY_SET.Contains("foo"));
+            assertFalse(CharArraySet.EMPTY_SET.Contains((object)"foo"));
+            assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray()));
             assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray(), 0, 3));
         }
 
@@ -584,7 +599,16 @@ namespace Lucene.Net.Analysis.Util
             }
             try
             {
-                set.Contains(null);
+                set.Contains((ICharSequence)null);
+                fail("null value must raise NPE");
+            }
+            catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            {
+            }
+            // LUCENENET Specific test for string (since it does not implement ICharSequence)
+            try
+            {
+                set.Contains((string)null);
                 fail("null value must raise NPE");
             }
             catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
@@ -615,6 +639,245 @@ namespace Lucene.Net.Analysis.Util
             set.add("test2");
             assertTrue(set.ToString().Contains(", "));
         }
-    }
 
+
+        #region LUCENENET specific tests
+
+        [Test]
+        public virtual void TestUnionWithObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var existingValuesAsObject = new List<object> { "seashells", "sea", "shore" };
+            var mixedExistingNonExistingValuesAsObject = new List<object> { "true", "set", "of", "unique", "values", "except", "sells" };
+            var nonExistingMixedTypes = new object[] { true, (byte)55, (short)44, (int)33, (sbyte)22, (long)11, (char)'\n', "hurray", (uint)99, (ulong)89, (ushort)79, new char[] { 't', 'w', 'o' }, new StringCharSequenceWrapper("testing") };
+
+            // Add existing values
+            assertFalse(target.UnionWith(existingValuesAsObject));
+            assertEquals(7, target.Count);
+            CollectionAssert.AreEquivalent(originalValues, target);
+
+            // Add mixed existing/non-existing values
+            assertTrue(target.UnionWith(mixedExistingNonExistingValuesAsObject));
+            assertEquals(13, target.Count);
+            CollectionAssert.AreEquivalent(new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore",
+                "true", "set", "of", "unique", "values", "except"}, target);
+
+            target.Clear();
+            assertEquals(0, target.Count);
+            assertTrue(target.UnionWith(originalValues.Cast<object>())); // Need to cast here because the .NET return type is void for UnionWith.
+            CollectionAssert.AreEquivalent(originalValues, target);
+
+            // Add mixed types as object
+            assertTrue(target.UnionWith(nonExistingMixedTypes));
+            assertEquals(20, target.Count);
+            assertTrue(target.Contains(true));
+            assertTrue(target.Contains((byte)55));
+            assertTrue(target.Contains((short)44));
+            assertTrue(target.Contains((int)33));
+            assertTrue(target.Contains((sbyte)22));
+            assertTrue(target.Contains((long)11));
+            assertTrue(target.Contains((char)'\n'));
+            assertTrue(target.Contains("hurray"));
+            assertTrue(target.Contains((uint)99));
+            assertTrue(target.Contains((ulong)89));
+            assertTrue(target.Contains((ushort)79));
+            assertTrue(target.Contains(new char[] { 't', 'w', 'o' }));
+            assertTrue(target.Contains(new StringCharSequenceWrapper("testing")));
+        }
+
+        [Test]
+        public virtual void TestUnionWithCharArray()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var existingValues = new List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var mixedExistingNonExistingValues = new List<char[]> { "true".ToCharArray(), "set".ToCharArray(), "of".ToCharArray(), "unique".ToCharArray(), "values".ToCharArray(), "except".ToCharArray(), "sells".ToCharArray() };
+
+            // Add existing values
+            assertFalse(target.UnionWith(existingValues));
+            assertEquals(7, target.Count);
+            CollectionAssert.AreEquivalent(originalValues, target);
+
+            // Add mixed existing/non-existing values
+            assertTrue(target.UnionWith(mixedExistingNonExistingValues));
+            assertEquals(13, target.Count);
+            CollectionAssert.AreEquivalent(new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore",
+                "true", "set", "of", "unique", "values", "except"}, target);
+        }
+
+        [Test]
+        public virtual void TestUnionWithString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var existingValues = new List<string> { "seashells", "sea", "shore" };
+            var mixedExistingNonExistingValues = new List<string> { "true", "set", "of", "unique", "values", "except", "sells" };
+
+            // Add existing values
+            //assertFalse(target.UnionWith(existingValues));
+            target.UnionWith(existingValues);
+            assertEquals(7, target.Count);
+            CollectionAssert.AreEquivalent(originalValues, target);
+
+            // Add mixed existing/non-existing values
+            //assertTrue(target.UnionWith(mixedExistingNonExistingValues));
+            target.UnionWith(mixedExistingNonExistingValues);
+            assertEquals(13, target.Count);
+            CollectionAssert.AreEquivalent(new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore",
+                "true", "set", "of", "unique", "values", "except"}, target);
+        }
+
+        [Test]
+        public virtual void TestUnionWithCharSequence()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var existingValues = new List<ICharSequence> { new StringCharSequenceWrapper("seashells"), new StringCharSequenceWrapper("sea"), new StringCharSequenceWrapper("shore") };
+            var mixedExistingNonExistingValues = new List<ICharSequence> { new StringCharSequenceWrapper("true"), new StringCharSequenceWrapper("set"), new StringCharSequenceWrapper("of"), new StringCharSequenceWrapper("unique"), new StringCharSequenceWrapper("values"), new StringCharSequenceWrapper("except"), new StringCharSequenceWrapper("sells") };
+
+            // Add existing values
+            assertFalse(target.UnionWith(existingValues));
+            assertEquals(7, target.Count);
+            CollectionAssert.AreEquivalent(originalValues, target);
+
+            // Add mixed existing/non-existing values
+            assertTrue(target.UnionWith(mixedExistingNonExistingValues));
+            assertEquals(13, target.Count);
+            CollectionAssert.AreEquivalent(new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore",
+                "true", "set", "of", "unique", "values", "except"}, target);
+        }
+
+        [Test]
+        public virtual void TestIsSubsetOfString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<string> { "seashells", "sea", "shore" };
+            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsSubsetOfObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<object> { "seashells", "sea", "shore" };
+            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsProperSubsetOfString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<string> { "seashells", "sea", "shore" };
+            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsProperSubsetOfObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<object> { "seashells", "sea", "shore" };
+            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsSupersetOfString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<string> { "seashells", "sea", "shore" };
+            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsSupersetOfObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<object> { "seashells", "sea", "shore" };
+            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsProperSupersetOfString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<string> { "seashells", "sea", "shore" };
+            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestIsProperSupersetOfObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new List<object> { "seashells", "sea", "shore" };
+            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValues));
+        }
+
+        [Test]
+        public virtual void TestOverlapsString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var nonOverlapping = new List<string> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
+            var overlapping = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.Overlaps(nonOverlapping));
+            assertTrue(target.Overlaps(overlapping));
+            assertTrue(target.Overlaps(originalValues));
+        }
+
+        [Test]
+        public virtual void TestOverlapsObject()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var nonOverlapping = new List<object> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
+            var overlapping = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.Overlaps(nonOverlapping));
+            assertTrue(target.Overlaps(overlapping));
+            assertTrue(target.Overlaps(originalValues));
+        }
+
+        #endregion
+    }
 }

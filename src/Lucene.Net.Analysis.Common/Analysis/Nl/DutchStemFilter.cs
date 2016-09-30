@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Nl
         }
 
         /// <param name="stemdictionary"> Dictionary of word stem pairs, that overrule the algorithm </param>
-        public DutchStemFilter(TokenStream _in, IDictionary<object, string> stemdictionary) : this(_in)
+        public DutchStemFilter(TokenStream _in, IDictionary<string, string> stemdictionary) : this(_in)
         {
             stemmer.StemDictionary = stemdictionary;
         }

@@ -312,7 +312,7 @@ namespace Lucene.Net.Analysis.Util
                 foreach (string file in files)
                 {
                     var wlist = GetLines(loader, file.Trim());
-                    words.AddAll(StopFilter.MakeStopSet(luceneMatchVersion, wlist, ignoreCase));
+                    words.UnionWith(StopFilter.MakeStopSet(luceneMatchVersion, wlist, ignoreCase));
                 }
             }
             return words;
