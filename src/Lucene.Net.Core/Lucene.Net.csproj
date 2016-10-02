@@ -626,12 +626,16 @@
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CultureContext.cs" />
+    <Compile Include="Support\DataInputStream.cs" />
+    <Compile Include="Support\DataOutputStream.cs" />
     <Compile Include="Support\ErrorHandling.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashCodeMerge.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
+    <Compile Include="Support\IDataInput.cs" />
+    <Compile Include="Support\IDataOutput.cs" />
     <Compile Include="Support\IdentityComparer.cs" />
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
