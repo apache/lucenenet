@@ -242,7 +242,7 @@ namespace Lucene.Net.Store
                 // an infinite file
             }
 
-            protected override void ReadInternal(byte[] b, int offset, int length)
+            protected internal override void ReadInternal(byte[] b, int offset, int length)
             {
                 for (int i = offset; i < offset + length; i++)
                 {

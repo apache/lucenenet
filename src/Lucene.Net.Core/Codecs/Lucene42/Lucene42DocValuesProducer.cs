@@ -431,8 +431,8 @@ namespace Lucene.Net.Codecs.Lucene42
 
             // per-thread resources
             var @in = fst.BytesReader;
-            var firstArc = new FST<long?>.Arc<long?>();
-            var scratchArc = new FST<long?>.Arc<long?>();
+            var firstArc = new FST.Arc<long?>();
+            var scratchArc = new FST.Arc<long?>();
             var scratchInts = new IntsRef();
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
 
@@ -444,13 +444,13 @@ namespace Lucene.Net.Codecs.Lucene42
             private readonly FSTEntry Entry;
             private readonly NumericDocValues DocToOrd;
             private readonly FST<long?> Fst;
-            private readonly FST<long?>.BytesReader @in;
-            private readonly FST<long?>.Arc<long?> FirstArc;
-            private readonly FST<long?>.Arc<long?> ScratchArc;
+            private readonly FST.BytesReader @in;
+            private readonly FST.Arc<long?> FirstArc;
+            private readonly FST.Arc<long?> ScratchArc;
             private readonly IntsRef ScratchInts;
             private readonly BytesRefFSTEnum<long?> FstEnum;
 
-            public SortedDocValuesAnonymousInnerClassHelper(FSTEntry entry, NumericDocValues docToOrd, FST<long?> fst, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> firstArc, FST<long?>.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum)
+            public SortedDocValuesAnonymousInnerClassHelper(FSTEntry entry, NumericDocValues docToOrd, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum)
             {
                 this.Entry = entry;
                 this.DocToOrd = docToOrd;
@@ -489,7 +489,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 try
                 {
-                    BytesRefFSTEnum<long?>.InputOutput<long?> o = FstEnum.SeekCeil(key);
+                    BytesRefFSTEnum.InputOutput<long?> o = FstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
@@ -546,8 +546,8 @@ namespace Lucene.Net.Codecs.Lucene42
 
             // per-thread resources
             var @in = fst.BytesReader;
-            var firstArc = new FST<long?>.Arc<long?>();
-            var scratchArc = new FST<long?>.Arc<long?>();
+            var firstArc = new FST.Arc<long?>();
+            var scratchArc = new FST.Arc<long?>();
             var scratchInts = new IntsRef();
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
             var @ref = new BytesRef();
@@ -560,15 +560,15 @@ namespace Lucene.Net.Codecs.Lucene42
             private readonly FSTEntry Entry;
             private readonly BinaryDocValues DocToOrds;
             private readonly FST<long?> Fst;
-            private readonly FST<long?>.BytesReader @in;
-            private readonly FST<long?>.Arc<long?> FirstArc;
-            private readonly FST<long?>.Arc<long?> ScratchArc;
+            private readonly FST.BytesReader @in;
+            private readonly FST.Arc<long?> FirstArc;
+            private readonly FST.Arc<long?> ScratchArc;
             private readonly IntsRef ScratchInts;
             private readonly BytesRefFSTEnum<long?> FstEnum;
             private readonly BytesRef @ref;
             private readonly ByteArrayDataInput Input;
 
-            public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry entry, BinaryDocValues docToOrds, FST<long?> fst, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> firstArc, FST<long?>.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum, BytesRef @ref, ByteArrayDataInput input)
+            public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry entry, BinaryDocValues docToOrds, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum, BytesRef @ref, ByteArrayDataInput input)
             {
                 this.Entry = entry;
                 this.DocToOrds = docToOrds;
@@ -715,9 +715,9 @@ namespace Lucene.Net.Codecs.Lucene42
             // maybe we should add a FSTEnum that supports this operation?
             internal readonly FST<long?> Fst;
 
-            internal readonly FST<long?>.BytesReader BytesReader;
-            internal readonly FST<long?>.Arc<long?> FirstArc = new FST<long?>.Arc<long?>();
-            internal readonly FST<long?>.Arc<long?> ScratchArc = new FST<long?>.Arc<long?>();
+            internal readonly FST.BytesReader BytesReader;
+            internal readonly FST.Arc<long?> FirstArc = new FST.Arc<long?>();
+            internal readonly FST.Arc<long?> ScratchArc = new FST.Arc<long?>();
             internal readonly IntsRef ScratchInts = new IntsRef();
             internal readonly BytesRef ScratchBytes = new BytesRef();
 

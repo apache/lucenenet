@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     pendingOutput = fst.Outputs.Add(pendingOutput, scratchArc.Output);
                     bufUpto += Character.CharCount(codePoint);
                 }
-                if (scratchArc.Final)
+                if (scratchArc.IsFinal)
                 {
                     matchOutput = fst.Outputs.Add(pendingOutput, scratchArc.NextFinalOutput);
                 }

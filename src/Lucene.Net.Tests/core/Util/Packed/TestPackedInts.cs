@@ -8,7 +8,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +24,6 @@ namespace Lucene.Net.Util.Packed
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
@@ -984,6 +982,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         [Test]
+        [Ignore("LUCENENET TODO: LongBuffer and the method AsLongBuffer are not yet ported, so we cannot currently run this test without porting or finding an alternative way to compare the data.")]
         public virtual void TestEncodeDecode()
         {
             foreach (PackedInts.Format format in PackedInts.Format.Values())
@@ -1060,35 +1059,38 @@ namespace Lucene.Net.Util.Packed
                         Assert.AreEqual(blocks2, blocks3, msg);
                     }
 
-                    // 4. byte[] decoding
-                    sbyte[] byteBlocks = new sbyte[8 * blocks.Length];
-                    ByteBuffer.Wrap((byte[])(Array)byteBlocks).AsLongBuffer().Put(blocks);
-                    long[] values2 = new long[valuesOffset + longIterations * longValueCount];
-                    decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
-                    foreach (long value in values2)
-                    {
-                        Assert.IsTrue(value <= PackedInts.MaxValue(bpv), msg);
-                    }
-                    Assert.AreEqual(values, values2, msg);
-                    // test decoding to int[]
-                    if (bpv <= 32)
-                    {
-                        int[] intValues2 = new int[values2.Length];
-                        decoder.Decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
-                        Assert.IsTrue(Equals(intValues2, values2), msg);
-                    }
+                    // LUCENENET TODO: LongBuffer and the method AsLongBuffer are not yet ported, so we
+                    // cannot currently run the following tests.
 
-                    // 5. byte[] encoding
-                    sbyte[] blocks3_ = new sbyte[8 * (blocksOffset2 + blocksLen)];
-                    encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
-                    Assert.AreEqual(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap((byte[])(Array)blocks3_).AsLongBuffer());
-                    // test encoding from int[]
-                    if (bpv <= 32)
-                    {
-                        sbyte[] blocks4 = new sbyte[blocks3_.Length];
-                        encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
-                        Assert.AreEqual(blocks3_, blocks4, msg);
-                    }
+                    //// 4. byte[] decoding
+                    //byte[] byteBlocks = new byte[8 * blocks.Length];
+                    //ByteBuffer.Wrap(byteBlocks).AsLongBuffer().Put(blocks);
+                    //long[] values2 = new long[valuesOffset + longIterations * longValueCount];
+                    //decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
+                    //foreach (long value in values2)
+                    //{
+                    //    Assert.IsTrue(value <= PackedInts.MaxValue(bpv), msg);
+                    //}
+                    //Assert.AreEqual(values, values2, msg);
+                    //// test decoding to int[]
+                    //if (bpv <= 32)
+                    //{
+                    //    int[] intValues2 = new int[values2.Length];
+                    //    decoder.Decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
+                    //    Assert.IsTrue(Equals(intValues2, values2), msg);
+                    //}
+
+                    //// 5. byte[] encoding
+                    //byte[] blocks3_ = new byte[8 * (blocksOffset2 + blocksLen)];
+                    //encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
+                    //assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsLongBuffer());
+                    //// test encoding from int[]
+                    //if (bpv <= 32)
+                    //{
+                    //    byte[] blocks4 = new byte[blocks3_.Length];
+                    //    encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
+                    //    Assert.AreEqual(blocks3_, blocks4, msg);
+                    //}
                 }
             }
         }
@@ -1337,7 +1339,7 @@ namespace Lucene.Net.Util.Packed
                 @out.Dispose();
 
                 IndexInput in1 = dir.OpenInput("out.bin", IOContext.DEFAULT);
-                sbyte[] buf = new sbyte[(int)fp];
+                byte[] buf = new byte[(int)fp];
                 in1.ReadBytes(buf, 0, (int)fp);
                 in1.Seek(0L);
                 ByteArrayDataInput in2 = new ByteArrayDataInput((byte[])(Array)buf);
@@ -1470,7 +1472,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test]        
+        [Test, Timeout(180000)]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long)int.MaxValue * 2);

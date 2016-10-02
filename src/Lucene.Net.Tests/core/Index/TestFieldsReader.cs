@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            protected override void ReadInternal(byte[] b, int offset, int length)
+            protected internal override void ReadInternal(byte[] b, int offset, int length)
             {
                 SimOutage();
                 @delegate.Seek(FilePointer);

@@ -437,7 +437,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 // OK, entire token matched; now see if this is a final
                 // state:
-                if (scratchArc.Final)
+                if (scratchArc.IsFinal)
                 {
                     matchOutput = fst.Outputs.Add(pendingOutput, scratchArc.NextFinalOutput);
                     matchInputLength = tokenCount;

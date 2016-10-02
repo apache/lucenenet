@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
                 return pos;
             }
 
-            protected override Position NewInstance()
+            protected internal override Position NewInstance()
             {
                 Position pos = new Position();
                 pos.Pos = -1;

@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+            protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 if (results == null)
                 {

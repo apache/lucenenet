@@ -2669,7 +2669,7 @@ namespace Lucene.Net.Util
 
                 try
                 {
-                    if (!f.Exists)
+                    if (!System.IO.Directory.Exists(f.FullName))
                     {
                         f.Create();
                         iterate = false;

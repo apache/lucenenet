@@ -4,9 +4,8 @@ using System.IO;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests
+namespace Lucene.Net
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +22,7 @@ namespace Lucene.Net.Tests
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Documents.Document;
     using Field = Field;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Tests
                 }
             }
 
-            protected override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
+            protected internal override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
                 thread.ThreadPriority = MergeThreadPriority;
@@ -81,12 +81,12 @@ namespace Lucene.Net.Tests
                 return thread;
             }
 
-            protected override void HandleMergeException(Exception t)
+            protected internal override void HandleMergeException(Exception t)
             {
                 OuterInstance.ExcCalled = true;
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 OuterInstance.MergeCalled = true;
                 base.DoMerge(merge);

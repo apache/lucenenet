@@ -1368,7 +1368,7 @@ namespace Lucene.Net.Index
                 this.SawAfterFlush = sawAfterFlush;
             }
 
-            protected override void DoAfterFlush()
+            protected internal override void DoAfterFlush()
             {
                 Assert.IsTrue(Closing.Get() || DocsInSegment.Get() >= 7, "only " + DocsInSegment.Get() + " in segment");
                 DocsInSegment.Set(0);

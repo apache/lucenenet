@@ -452,7 +452,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-                Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST<BytesRef>.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15);
+                Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15);
                 var bytes = new byte[(int)scratchBytes.FilePointer];
                 Debug.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs
             internal void Append(Builder<BytesRef> builder, FST<BytesRef> subIndex)
             {
                 BytesRefFSTEnum<BytesRef> subIndexEnum = new BytesRefFSTEnum<BytesRef>(subIndex);
-                BytesRefFSTEnum<BytesRef>.InputOutput<BytesRef> indexEnt;
+                BytesRefFSTEnum.InputOutput<BytesRef> indexEnt;
                 while ((indexEnt = subIndexEnum.Next()) != null)
                 {
                     //if (DEBUG) {
@@ -1100,7 +1100,7 @@ namespace Lucene.Net.Codecs
                 // this Builder is just used transiently to fragment
                 // terms into "good" blocks; we don't save the
                 // resulting FST:
-                BlockBuilder = new Builder<object>(FST<BytesRef>.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, NoOutputs, new FindBlocks(this), false, PackedInts.COMPACT, true, 15);
+                BlockBuilder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, NoOutputs, new FindBlocks(this), false, PackedInts.COMPACT, true, 15);
 
                 this.LongsSize = outerInstance.PostingsWriter.SetField(fieldInfo);
             }

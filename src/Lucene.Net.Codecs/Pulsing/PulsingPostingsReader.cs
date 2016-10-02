@@ -699,7 +699,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// 
         /// @lucene.internal
         /// </summary>
-        internal sealed class PulsingEnumAttributeImpl : AttributeImpl, IPulsingEnumAttribute
+        internal sealed class PulsingEnumAttribute : AttributeImpl, IPulsingEnumAttribute
         {
             // we could store 'other', but what if someone 'chained' multiple postings readers,
             // this could cause problems?
@@ -720,13 +720,11 @@ namespace Lucene.Net.Codecs.Pulsing
                 // and is calling clearAttributes(), so they don't nuke the reuse information!
             }
 
-            public override void CopyTo(AttributeImpl target)
+            public override void CopyTo(Util.Attribute target)
             {
                 // this makes no sense for us, because our state is per-docsenum.
                 // we don't want to copy any stuff over to another docsenum ever!
             }
-
         }
-
     }
 }

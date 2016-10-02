@@ -2,7 +2,9 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace Lucene.Net.Util
 {
@@ -72,7 +74,7 @@ namespace Lucene.Net.Util
         /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
-        public static WeakIdentityMap<K, V> newHashMap()
+        public static WeakIdentityMap<K, V> NewHashMap()
         {
             return NewHashMap(false);
         }
@@ -162,20 +164,37 @@ namespace Lucene.Net.Util
 
         public IEnumerable<K> Keys
         {
-            // .NET port: using this method which mimics IDictionary instead of KeyIterator()
             get
             {
-                foreach (var key in BackingStore.Keys)
-                {
-                    var target = key.Target;
+                return new KeyWrapper(this);
+            }
+        }
 
-                    if (target == null)
-                        continue;
-                    else if (target == NULL)
-                        yield return null;
-                    else
-                        yield return (K)target;
-                }
+        /// <summary>
+        /// LUCENENET specific class to allow the 
+        /// GetEnumerator() method to be overridden
+        /// for the keys so we can return an enumerator
+        /// that is smart enough to clean up the dead keys
+        /// and also so that MoveNext() returns false in the
+        /// event there are no more values left (instead of returning
+        /// a null value in an extra enumeration).
+        /// </summary>
+        private class KeyWrapper : IEnumerable<K>
+        {
+            private readonly WeakIdentityMap<K, V> outerInstance;
+            public KeyWrapper(WeakIdentityMap<K, V> outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
+            public IEnumerator<K> GetEnumerator()
+            {
+                outerInstance.Reap();
+                return new IteratorAnonymousInnerClassHelper(outerInstance);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
             }
         }
 
@@ -229,93 +248,87 @@ namespace Lucene.Net.Util
             return BackingStore.Count;
         }
 
-        /*LUCENE TO-DO I don't think necessary
-        /// <summary>
-        /// Returns an iterator over all weak keys of this map.
-        /// Keys already garbage collected will not be returned.
-        /// this Iterator does not support removals.
-        /// </summary>
-        public IEnumerator<K> KeyIterator()
+        private class IteratorAnonymousInnerClassHelper : IEnumerator<K>
         {
-          Reap();
-          IEnumerator<IdentityWeakReference> iterator = BackingStore.Keys.GetEnumerator();
-          // IMPORTANT: Don't use oal.util.FilterIterator here:
-          // We need *strong* reference to current key after setNext()!!!
-          return new IteratorAnonymousInnerClassHelper(this, iterator);
+            private readonly WeakIdentityMap<K,V> outerInstance;
+
+            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<K,V> outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
+
+            // holds strong reference to next element in backing iterator:
+            private object next = null;
+            private int position = -1; // start before the beginning of the set
+
+            public K Current
+            {
+                get
+                {
+                    return (K)next;
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public void Dispose()
+            {
+                // Nothing to do
+            }
+
+            
+            public bool MoveNext()
+            {
+                while (true)
+                {
+                    IdentityWeakReference key;
+
+                    // If the next position doesn't exist, exit
+                    if (++position >= outerInstance.BackingStore.Count)
+                    {
+                        position--;
+                        return false;
+                    }
+                    try
+                    {
+                        key = outerInstance.BackingStore.Keys.ElementAt(position);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        // some other thread beat us to the last element (or removed a prior element) - fail gracefully.
+                        position--;
+                        return false;
+                    }
+                    if (!key.IsAlive)
+                    {
+                        outerInstance.BackingStore.Remove(key);
+                        position--;
+                        continue;
+                    }
+                    // unfold "null" special value:
+                    if (key.Target == NULL)
+                    {
+                        next = null;
+                    }
+                    else
+                    {
+                        next = key.Target;
+                    }
+                    return true;
+                }
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
         }
-
-        private class IteratorAnonymousInnerClassHelper : Iterator<K>
-        {
-            private readonly WeakIdentityMap<K,V> OuterInstance;
-
-            private IEnumerator<IdentityWeakReference> Iterator;
-
-            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<K,V> outerInstance, IEnumerator<IdentityWeakReference> iterator)
-            {
-                this.OuterInstance = outerInstance;
-                this.Iterator = iterator;
-                next = null;
-                nextIsSet = false;
-            }
-
-              // holds strong reference to next element in backing iterator:
-            private object next;
-            // the backing iterator was already consumed:
-            private bool nextIsSet;
-            /
-            public virtual bool HasNext()
-            {
-              return nextIsSet || SetNext();
-            }
-
-            public virtual K Next()
-            {
-              if (!HasNext())
-              {
-                throw new Exception();
-              }
-              Debug.Assert(nextIsSet);
-              try
-              {
-                return (K) next;
-              }
-              finally
-              {
-                 // release strong reference and invalidate current value:
-                nextIsSet = false;
-                next = null;
-              }
-            }
-
-            public virtual void Remove()
-            {
-              throw new System.NotSupportedException();
-            }
-
-            private bool SetNext()
-            {
-              Debug.Assert(!nextIsSet);
-              while (Iterator.MoveNext())
-              {
-                next = Iterator.Current;
-                if (next == null)
-                {
-                  // the key was already GCed, we can remove it from backing map:
-                  Iterator.remove();
-                }
-                else
-                {
-                  // unfold "null" special value:
-                  if (next == NULL)
-                  {
-                    next = null;
-                  }
-                  return nextIsSet = true;
-                }
-              }
-              return false;
-            }
-        }*/
 
         /// <summary>
         /// Returns an iterator over all values of this map.

@@ -1,18 +1,10 @@
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Globalization;
-using Lucene.Net.Documents;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
-    /*using Rule = org.junit.Rule;
-    using RuleChain = org.junit.rules.RuleChain;
-    using TestRule = org.junit.rules.TestRule;
-
-    using SystemPropertiesRestoreRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesRestoreRule;*/
-
-    using NUnit.Framework;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

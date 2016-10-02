@@ -462,7 +462,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
             {
                 return true;
             }

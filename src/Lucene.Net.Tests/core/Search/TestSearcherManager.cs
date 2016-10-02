@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             RunTest("TestSearcherManager");
         }
 
-        protected override IndexSearcher FinalSearcher
+        protected internal override IndexSearcher FinalSearcher
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         private readonly IList<long> PastSearchers = new List<long>();
         private bool IsNRT;
 
-        protected override void DoAfterWriter(TaskScheduler es)
+        protected internal override void DoAfterWriter(TaskScheduler es)
         {
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper(this, es);
             if (Random().NextBoolean())
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override void DoSearching(TaskScheduler es, DateTime stopTime)
+        protected internal override void DoSearching(TaskScheduler es, DateTime stopTime)
         {
             ThreadClass reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
             reopenThread.SetDaemon(true);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override IndexSearcher CurrentSearcher
+        protected internal override IndexSearcher CurrentSearcher
         {
             get
             {
@@ -240,12 +240,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override void ReleaseSearcher(IndexSearcher s)
+        protected internal override void ReleaseSearcher(IndexSearcher s)
         {
             s.IndexReader.DecRef();
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             Assert.IsTrue(WarmCalled);
             if (VERBOSE)

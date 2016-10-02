@@ -28,17 +28,11 @@ namespace Lucene.Net.Util.Fst
 
     public sealed class BytesRefFSTEnum<T> : FSTEnum<T>
     {
-        private readonly BytesRef Current_Renamed = new BytesRef(10);
-        private readonly InputOutput<T> Result = new InputOutput<T>();
-        private BytesRef Target;
+        private readonly BytesRef current = new BytesRef(10);
+        private readonly BytesRefFSTEnum.InputOutput<T> result = new BytesRefFSTEnum.InputOutput<T>();
+        private BytesRef target;
 
-        /// <summary>
-        /// Holds a single input (BytesRef) + output pair. </summary>
-        public class InputOutput<T>
-        {
-            public BytesRef Input;
-            public T Output;
-        }
+        // LUCENENET NOTE: InputOutput<T> was moved to the BytesRefFSTEnum class
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
@@ -48,16 +42,16 @@ namespace Lucene.Net.Util.Fst
         public BytesRefFSTEnum(FST<T> fst)
             : base(fst)
         {
-            Result.Input = Current_Renamed;
-            Current_Renamed.Offset = 1;
+            result.Input = current;
+            current.Offset = 1;
         }
 
-        public InputOutput<T> Current()
+        public BytesRefFSTEnum.InputOutput<T> Current()
         {
-            return Result;
+            return result;
         }
 
-        public InputOutput<T> Next()
+        public BytesRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");
             DoNext();
@@ -66,20 +60,20 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to smallest term that's >= target. </summary>
-        public InputOutput<T> SeekCeil(BytesRef target)
+        public BytesRefFSTEnum.InputOutput<T> SeekCeil(BytesRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekCeil();
             return SetResult();
         }
 
         /// <summary>
         /// Seeks to biggest term that's <= target. </summary>
-        public InputOutput<T> SeekFloor(BytesRef target)
+        public BytesRefFSTEnum.InputOutput<T> SeekFloor(BytesRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekFloor();
             return SetResult();
         }
@@ -90,13 +84,13 @@ namespace Lucene.Net.Util.Fst
         ///  #seekFloor} or <seealso cref="#seekCeil"/> because it
         ///  short-circuits as soon the match is not found.
         /// </summary>
-        public InputOutput<T> SeekExact(BytesRef target)
+        public BytesRefFSTEnum.InputOutput<T> SeekExact(BytesRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(Upto == 1 + target.Length);
+                Debug.Assert(upto == 1 + target.Length);
                 return SetResult();
             }
             else
@@ -109,13 +103,13 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                if (Upto - 1 == Target.Length)
+                if (upto - 1 == target.Length)
                 {
-                    return FST<T>.END_LABEL;
+                    return FST.END_LABEL;
                 }
                 else
                 {
-                    return Target.Bytes[Target.Offset + Upto - 1] & 0xFF;
+                    return target.Bytes[target.Offset + upto - 1] & 0xFF;
                 }
             }
         }
@@ -125,31 +119,50 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return Current_Renamed.Bytes[Upto] & 0xFF;
+                return current.Bytes[upto] & 0xFF;
             }
             set
             {
-                Current_Renamed.Bytes[Upto] = (byte)value;
+                current.Bytes[upto] = (byte)value;
             }
         }
 
         protected internal override void Grow()
         {
-            Current_Renamed.Bytes = ArrayUtil.Grow(Current_Renamed.Bytes, Upto + 1);
+            current.Bytes = ArrayUtil.Grow(current.Bytes, upto + 1);
         }
 
-        private InputOutput<T> SetResult()
+        private BytesRefFSTEnum.InputOutput<T> SetResult()
         {
-            if (Upto == 0)
+            if (upto == 0)
             {
                 return null;
             }
             else
             {
-                Current_Renamed.Length = Upto - 1;
-                Result.Output = Output[Upto];
-                return Result;
+                current.Length = upto - 1;
+                result.Output = output[upto];
+                return result;
             }
+        }
+    }
+
+    /// <summary>
+    /// LUCENENET specific. This class is to mimic Java's ability to specify
+    /// nested classes of Generics without having to specify the generic type
+    /// (i.e. BytesRefFSTEnum.InputOutput{T} rather than BytesRefFSTEnum{T}.InputOutput{T})
+    /// </summary>
+    public sealed class BytesRefFSTEnum
+    {
+        private BytesRefFSTEnum()
+        { }
+
+        /// <summary>
+        /// Holds a single input (BytesRef) + output pair. </summary>
+        public class InputOutput<T>
+        {
+            public BytesRef Input;
+            public T Output;
         }
     }
 }

@@ -28,17 +28,11 @@ namespace Lucene.Net.Util.Fst
 
     public sealed class IntsRefFSTEnum<T> : FSTEnum<T>
     {
-        private readonly IntsRef Current_Renamed = new IntsRef(10);
-        private readonly InputOutput<T> Result = new InputOutput<T>();
-        private IntsRef Target;
+        private readonly IntsRef current = new IntsRef(10);
+        private readonly IntsRefFSTEnum.InputOutput<T> result = new IntsRefFSTEnum.InputOutput<T>();
+        private IntsRef target;
 
-        /// <summary>
-        /// Holds a single input (IntsRef) + output pair. </summary>
-        public class InputOutput<T>
-        {
-            public IntsRef Input;
-            public T Output;
-        }
+        // LUCENENET NOTE: The InputOutput<T> class was moved into the IntsRefFSTEnum class
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
@@ -48,16 +42,16 @@ namespace Lucene.Net.Util.Fst
         public IntsRefFSTEnum(FST<T> fst)
             : base(fst)
         {
-            Result.Input = Current_Renamed;
-            Current_Renamed.Offset = 1;
+            result.Input = current;
+            current.Offset = 1;
         }
 
-        public InputOutput<T> Current()
+        public IntsRefFSTEnum.InputOutput<T> Current()
         {
-            return Result;
+            return result;
         }
 
-        public InputOutput<T> Next()
+        public IntsRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");
             DoNext();
@@ -66,20 +60,20 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to smallest term that's >= target. </summary>
-        public InputOutput<T> SeekCeil(IntsRef target)
+        public IntsRefFSTEnum.InputOutput<T> SeekCeil(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekCeil();
             return SetResult();
         }
 
         /// <summary>
         /// Seeks to biggest term that's <= target. </summary>
-        public InputOutput<T> SeekFloor(IntsRef target)
+        public IntsRefFSTEnum.InputOutput<T> SeekFloor(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekFloor();
             return SetResult();
         }
@@ -90,13 +84,13 @@ namespace Lucene.Net.Util.Fst
         ///  #seekFloor} or <seealso cref="#seekCeil"/> because it
         ///  short-circuits as soon the match is not found.
         /// </summary>
-        public InputOutput<T> SeekExact(IntsRef target)
+        public IntsRefFSTEnum.InputOutput<T> SeekExact(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(Upto == 1 + target.Length);
+                Debug.Assert(upto == 1 + target.Length);
                 return SetResult();
             }
             else
@@ -109,13 +103,13 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                if (Upto - 1 == Target.Length)
+                if (upto - 1 == target.Length)
                 {
-                    return FST<T>.END_LABEL;
+                    return FST.END_LABEL;
                 }
                 else
                 {
-                    return Target.Ints[Target.Offset + Upto - 1];
+                    return target.Ints[target.Offset + upto - 1];
                 }
             }
         }
@@ -125,31 +119,50 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return Current_Renamed.Ints[Upto];
+                return current.Ints[upto];
             }
             set
             {
-                Current_Renamed.Ints[Upto] = value;
+                current.Ints[upto] = value;
             }
         }
 
         protected internal override void Grow()
         {
-            Current_Renamed.Ints = ArrayUtil.Grow(Current_Renamed.Ints, Upto + 1);
+            current.Ints = ArrayUtil.Grow(current.Ints, upto + 1);
         }
 
-        private InputOutput<T> SetResult()
+        private IntsRefFSTEnum.InputOutput<T> SetResult()
         {
-            if (Upto == 0)
+            if (upto == 0)
             {
                 return null;
             }
             else
             {
-                Current_Renamed.Length = Upto - 1;
-                Result.Output = Output[Upto];
-                return Result;
+                current.Length = upto - 1;
+                result.Output = output[upto];
+                return result;
             }
+        }
+    }
+
+    /// <summary>
+    /// LUCENENET specific. This class is to mimic Java's ability to specify
+    /// nested classes of Generics without having to specify the generic type
+    /// (i.e. IntsRefFSTEnum.InputOutput{T} rather than IntsRefFSTEnum{T}.InputOutput{T})
+    /// </summary>
+    public sealed class IntsRefFSTEnum
+    {
+        private IntsRefFSTEnum()
+        { }
+
+        /// <summary>
+        /// Holds a single input (IntsRef) + output pair. </summary>
+        public class InputOutput<T>
+        {
+            public IntsRef Input;
+            public T Output;
         }
     }
 }
