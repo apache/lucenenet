@@ -9,7 +9,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     [TestFixture]
     public class TestMultiAnalyzer_ : BaseTokenStreamTestCase
@@ -98,7 +98,9 @@ namespace Lucene.Net.QueryParser.Classic
         [Test]
         public void TestPosIncrementAnalyzer()
         {
+#pragma warning disable 612, 618
             QueryParser qp = new QueryParser(LuceneVersion.LUCENE_40, "", new PosIncrementAnalyzer());
+#pragma warning restore 612, 618
             assertEquals("quick brown", qp.Parse("the quick brown").toString());
             assertEquals("quick brown fox", qp.Parse("the quick brown fox").toString());
         }

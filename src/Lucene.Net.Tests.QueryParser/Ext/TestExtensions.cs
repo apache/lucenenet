@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParser.Ext
                 fail("should throw NPE - escape string is null");
             }
             //catch (NullPointerException e)
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 // 
             }

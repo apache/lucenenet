@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -217,7 +217,7 @@ namespace Lucene.Net.QueryParser.Classic
 					default: 
 						if ((ch = str[i]) < 0x20 || ch > 0x7e)
 						{
-							System.String s = "0000" + System.Convert.ToString(ch, 16);
+							string s = "0000" + System.Convert.ToString(ch, 16);
 							retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
 						}
 						else

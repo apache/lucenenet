@@ -1,8 +1,9 @@
 ﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -43,7 +44,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
         public int CompareTo(SimpleTerm ost)
         {
             /* for ordering terms and prefixes before using an index, not used */
-            return this.ToStringUnquoted().CompareTo(ost.ToStringUnquoted());
+            return this.ToStringUnquoted().CompareToOrdinal(ost.ToStringUnquoted());
         }
 
         protected virtual void SuffixToString(StringBuilder r) { } /* override for prefix query */

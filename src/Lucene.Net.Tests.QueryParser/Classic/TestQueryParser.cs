@@ -1,15 +1,15 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
-using Lucene.Net.QueryParser.Flexible.Standard;
-using Lucene.Net.QueryParser.Util;
+using Lucene.Net.QueryParsers.Flexible.Standard;
+using Lucene.Net.QueryParsers.Util;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -156,7 +156,7 @@ namespace Lucene.Net.QueryParser.Classic
                 typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
                 fail("please switch public QueryParser(CharStream) to be protected");
             }
-            catch (Exception nsme)
+            catch (Exception /*nsme*/)
             {
                 // expected
             }
@@ -165,7 +165,7 @@ namespace Lucene.Net.QueryParser.Classic
                 typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
                 fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
             }
-            catch (Exception nsme)
+            catch (Exception /*nsme*/)
             {
                 // expected
             }
@@ -186,7 +186,7 @@ namespace Lucene.Net.QueryParser.Classic
                     {
                         fms = float.Parse(fuzzySlop.image.Substring(1, fuzzySlop.image.Length - 2));
                     }
-                    catch (Exception ignored) { }
+                    catch (Exception /*ignored*/) { }
                     float value = float.Parse(termImage);
                     return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(), (value + fms / 2.0f).ToString(), true, true);
                 }
@@ -281,7 +281,7 @@ namespace Lucene.Net.QueryParser.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("a?t");
                 fail("Wildcard queries should not be allowed");
             }
-            catch (ParseException expected)
+            catch (ParseException /*expected*/)
             {
                 // expected exception
             }
@@ -296,7 +296,7 @@ namespace Lucene.Net.QueryParser.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("xunit~");
                 fail("Fuzzy queries should not be allowed");
             }
-            catch (ParseException expected)
+            catch (ParseException /*expected*/)
             {
                 // expected exception
             }

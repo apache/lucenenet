@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lucene.Net.QueryParser.ComplexPhrase
+namespace Lucene.Net.QueryParsers.ComplexPhrase
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

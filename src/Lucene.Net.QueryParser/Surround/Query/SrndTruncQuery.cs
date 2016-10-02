@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -75,65 +75,62 @@ namespace Lucene.Net.QueryParser.Surround.Query
             prefixRef = new BytesRef(prefix);
 
             StringBuilder re = new StringBuilder();
+            // LUCENENET NOTE: To mimic Java's matches() method, we alter
+            // the Regex to match the entire string. This makes the Regex
+            // fail fast when not at the beginning of the string, which is
+            // more efficient than testing the length after a successful match.
+            // http://stackoverflow.com/a/12547528/181087
+            re.Append(@"\A(?:");
             while (i < truncated.Length)
             {
                 AppendRegExpForChar(truncated[i], re);
                 i++;
             }
+            re.Append(@")\z");
             pattern = new Regex(re.ToString(), RegexOptions.Compiled);
         }
 
-        // TODO: Finish implementation
         public override void VisitMatchingTerms(IndexReader reader, string fieldName, SimpleTerm.IMatchingTermVisitor mtv)
         {
-            throw new NotImplementedException("Need to translate this from Java's whacky RegEx syntax");
-            //int prefixLength = prefix.Length;
-            //Terms terms = MultiFields.GetTerms(reader, fieldName);
-            //if (terms != null)
-            //{
-            //    MatchCollection matcher = pattern.Matches("");
-            //    try
-            //    {
-            //        TermsEnum termsEnum = terms.Iterator(null);
+            int prefixLength = prefix.Length;
+            Terms terms = MultiFields.GetTerms(reader, fieldName);
+            if (terms != null)
+            {
+                TermsEnum termsEnum = terms.Iterator(null);
 
-            //        TermsEnum.SeekStatus status = termsEnum.SeekCeil(prefixRef);
-            //        BytesRef text;
-            //        if (status == TermsEnum.SeekStatus.FOUND)
-            //        {
-            //            text = prefixRef;
-            //        }
-            //        else if (status == TermsEnum.SeekStatus.NOT_FOUND)
-            //        {
-            //            text = termsEnum.Term();
-            //        }
-            //        else
-            //        {
-            //            text = null;
-            //        }
+                TermsEnum.SeekStatus status = termsEnum.SeekCeil(prefixRef);
+                BytesRef text;
+                if (status == TermsEnum.SeekStatus.FOUND)
+                {
+                    text = prefixRef;
+                }
+                else if (status == TermsEnum.SeekStatus.NOT_FOUND)
+                {
+                    text = termsEnum.Term();
+                }
+                else
+                {
+                    text = null;
+                }
 
-            //        while (text != null)
-            //        {
-            //            if (text != null && StringHelper.StartsWith(text, prefixRef))
-            //            {
-            //                string textString = text.Utf8ToString();
-            //                matcher.Reset(textString.Substring(prefixLength));
-            //                if (matcher.Success)
-            //                {
-            //                    mtv.VisitMatchingTerm(new Term(fieldName, textString));
-            //                }
-            //            }
-            //            else
-            //            {
-            //                break;
-            //            }
-            //            text = termsEnum.Next();
-            //        }
-            //    }
-            //    finally
-            //    {
-            //        matcher.Reset();
-            //    }
-            //}
+                while (text != null)
+                {
+                    if (text != null && StringHelper.StartsWith(text, prefixRef))
+                    {
+                        string textString = text.Utf8ToString();
+                        Match matcher = pattern.Match(textString.Substring(prefixLength));
+                        if (matcher.Success)
+                        {
+                            mtv.VisitMatchingTerm(new Term(fieldName, textString));
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    text = termsEnum.Next();
+                }
+            }
         }
     }
 }

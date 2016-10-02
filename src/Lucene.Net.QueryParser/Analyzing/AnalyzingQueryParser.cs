@@ -1,12 +1,12 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lucene.Net.QueryParser.Analyzing
+namespace Lucene.Net.QueryParsers.Analyzing
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -110,6 +110,27 @@ namespace Lucene.Net.QueryParser.Analyzing
         }
 
         /// <summary>
+        /// Called when parser parses an input term
+        /// that uses prefix notation; that is, contains a single '*' wildcard
+        /// character as its last character.Since this is a special case
+        /// of generic wildcard term, and such a query can be optimized easily,
+        /// this usually results in a different query object.
+        /// <p>
+        /// Depending on analyzer and settings, a prefix term may (most probably will)
+        /// be lower-cased automatically. It <b>will</b> go through the default Analyzer.
+        /// <p>
+        /// Overrides super class, by passing terms through analyzer.
+        /// </summary>
+        /// <param name="field">Name of the field query will use.</param>
+        /// <param name="termStr">Term to use for building term for the query (<b>without</b> trailing '*' character!)</param>
+        /// <returns>Resulting <see cref="Query"/> built for the term</returns>
+        protected internal override Query GetPrefixQuery(string field, string termStr)
+        {
+            string analyzed = AnalyzeSingleChunk(field, termStr, termStr);
+            return base.GetPrefixQuery(field, analyzed);
+        }
+
+        /// <summary>
         /// Called when parser parses an input term that has the fuzzy suffix (~) appended.
         /// <p>
         /// Depending on analyzer and settings, a fuzzy term may (most probably will)
@@ -183,7 +204,7 @@ namespace Lucene.Net.QueryParser.Analyzing
                     throw new ParseException(string.Format(Locale, @"Analyzer returned nothing for ""{0}""", chunk));
                 }
             }
-            catch (System.IO.IOException e)
+            catch (System.IO.IOException /*e*/)
             {
                 throw new ParseException(
                     string.Format(Locale, @"IO error while trying to analyze single term: ""{0}""", termStr));

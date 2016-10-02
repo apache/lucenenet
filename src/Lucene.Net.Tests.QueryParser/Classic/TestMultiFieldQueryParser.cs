@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParser.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries5, fields, new MockAnalyzer(Random()));
                 fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected exception, array length differs
             }
@@ -216,7 +216,7 @@ namespace Lucene.Net.QueryParser.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected exception, array length differs
             }
@@ -241,7 +241,7 @@ namespace Lucene.Net.QueryParser.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected exception, array length differs
             }
@@ -263,7 +263,7 @@ namespace Lucene.Net.QueryParser.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected exception, array length differs
             }
@@ -284,7 +284,7 @@ namespace Lucene.Net.QueryParser.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected exception, array length differs
             }

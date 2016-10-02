@@ -1,9 +1,9 @@
-﻿using Lucene.Net.QueryParser.Surround.Query;
+﻿using Lucene.Net.QueryParsers.Surround.Query;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -142,12 +142,12 @@ namespace Lucene.Net.QueryParser.Surround.Parser
         }
 
         protected virtual SrndQuery GetTermQuery(
-              String term, bool quoted)
+              string term, bool quoted)
         {
             return new SrndTermQuery(term, quoted);
         }
 
-        protected virtual bool AllowedSuffix(String suffixed)
+        protected virtual bool AllowedSuffix(string suffixed)
         {
             return (suffixed.Length - 1) >= minimumPrefixLength;
         }
@@ -432,25 +432,25 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                     /* prefix OR */
                     queries = FieldsQueryList();
                     { if (true) return GetOrQuery(queries, false /* not infix */, oprt); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.AND:
                     oprt = Jj_consume_token(RegexpToken.AND);
                     /* prefix AND */
                     queries = FieldsQueryList();
                     { if (true) return GetAndQuery(queries, false /* not infix */, oprt); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.N:
                     oprt = Jj_consume_token(RegexpToken.N);
                     /* prefix N */
                     queries = FieldsQueryList();
                     { if (true) return GetDistanceQuery(queries, false /* not infix */, oprt, false /* not ordered */); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.W:
                     oprt = Jj_consume_token(RegexpToken.W);
                     /* prefix W */
                     queries = FieldsQueryList();
                     { if (true) return GetDistanceQuery(queries, false  /* not infix */, oprt, true /* ordered */); }
-                    break;
+                    //break; // unreachable
                 default:
                     jj_la1[6] = jj_gen;
                     Jj_consume_token(-1);
@@ -496,11 +496,11 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 case RegexpToken.TERM:
                     term = Jj_consume_token(RegexpToken.TERM);
                     { if (true) return GetTermQuery(term.image, false /* not quoted */); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
                     { if (true) return GetTermQuery(term.image.Substring(1, (term.image.Length - 1) - 1), true /* quoted */); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.SUFFIXTERM:
                     term = Jj_consume_token(RegexpToken.SUFFIXTERM);
                     /* ending in * */
@@ -509,7 +509,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                         { if (true) throw new ParseException(truncationErrorMessage + term.image); }
                     }
                     { if (true) return GetPrefixQuery(term.image.Substring(0, term.image.Length - 1), false /* not quoted */); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.TRUNCTERM:
                     term = Jj_consume_token(RegexpToken.TRUNCTERM);
                     /* with at least one * or ? */
@@ -518,7 +518,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                         { if (true) throw new ParseException(truncationErrorMessage + term.image); }
                     }
                     { if (true) return GetTruncQuery(term.image); }
-                    break;
+                    //break; // unreachable
                 case RegexpToken.TRUNCQUOTED:
                     term = Jj_consume_token(RegexpToken.TRUNCQUOTED);
                     /* eg. "9b-b,m"* */
@@ -527,7 +527,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                         { if (true) throw new ParseException(truncationErrorMessage + term.image); }
                     }
                     { if (true) return GetPrefixQuery(term.image.Substring(1, (term.image.Length - 2) - 1), true /* quoted */); }
-                    break;
+                    //break; // unreachable
                 default:
                     jj_la1[8] = jj_gen;
                     Jj_consume_token(-1);
@@ -883,7 +883,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                         p = p.next;
                     } while (p != null);
                 }
-                catch (LookaheadSuccess ls) { }
+                catch (LookaheadSuccess /*ls*/) { }
             }
             jj_rescan = false;
         }

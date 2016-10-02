@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -1204,12 +1204,12 @@ namespace Lucene.Net.QueryParser.Classic
 		protected internal virtual Token JjFillToken()
 		{
 			Token t;
-			System.String curTokenImage;
+			string curTokenImage;
 			int beginLine;
 			int endLine;
 			int beginColumn;
 			int endColumn;
-			System.String im = jjstrLiteralImages[jjmatchedKind];
+			string im = jjstrLiteralImages[jjmatchedKind];
 			curTokenImage = (im == null)?input_stream.Image:im;
 			beginLine = input_stream.BeginLine;
 			beginColumn = input_stream.BeginColumn;
@@ -1293,7 +1293,7 @@ namespace Lucene.Net.QueryParser.Classic
 				}
 				int error_line = input_stream.EndLine;
 				int error_column = input_stream.EndColumn;
-				System.String error_after = null;
+				string error_after = null;
 				bool EOFSeen = false;
 				try
 				{

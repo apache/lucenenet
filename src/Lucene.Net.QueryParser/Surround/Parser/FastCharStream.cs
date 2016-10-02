@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lucene.Net.QueryParser.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
 
         public string Image
         {
-            get { return new System.String(buffer, tokenStart, bufferPosition - tokenStart); }
+            get { return new string(buffer, tokenStart, bufferPosition - tokenStart); }
         }
 
         public char[] GetSuffix(int len)

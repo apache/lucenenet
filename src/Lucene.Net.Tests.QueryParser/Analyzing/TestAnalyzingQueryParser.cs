@@ -7,13 +7,13 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.QueryParser.Analyzing
+namespace Lucene.Net.QueryParsers.Analyzing
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -137,7 +137,7 @@ namespace Lucene.Net.QueryParser.Analyzing
             {
                 Query q = GetAnalyzedQuery("*", a, false);
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 pex = true;
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParser.Analyzing
                 String qString = ParseWithAnalyzingQueryParser("*", a, true);
                 assertEquals("Every word", "*", qString);
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 pex = true;
             }
@@ -181,7 +181,7 @@ namespace Lucene.Net.QueryParser.Analyzing
                 string q = ParseWithAnalyzingQueryParser(wildcardInput[0], a, false);
 
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 ex = true;
             }

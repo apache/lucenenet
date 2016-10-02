@@ -2,7 +2,7 @@
 using Lucene.Net.Util;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
      */
 
     /// <summary>
-    /// Query that matches String prefixes
+    /// Query that matches string prefixes
     /// </summary>
     public class SrndPrefixQuery : SimpleTerm
     {

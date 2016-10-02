@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
         //}
 
         private bool verbose = false; /* to show actual parsing error messages */
-        private readonly string fieldName = "bi";
+        //private readonly string fieldName = "bi";
 
         string[] exceptionQueries = {
             "*",

@@ -5,7 +5,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,7 +36,9 @@ namespace Lucene.Net.QueryParser.Surround.Query
             docs = documents;
             fieldName = fName;
             using (IndexWriter writer = new IndexWriter(db, new IndexWriterConfig(
+#pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
                 new MockAnalyzer(random))))
             {
                 for (int j = 0; j < docs.Length; j++)

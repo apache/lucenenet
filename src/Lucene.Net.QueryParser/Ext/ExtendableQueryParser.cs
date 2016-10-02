@@ -3,7 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParser.Ext
     /// keys into the field symbol associated with a registered instance of
     /// <see cref="ParserExtension"/>. A customizable separation character separates the
     /// extension key from the actual field symbol. The <see cref="ExtendableQueryParser"/>
-    /// splits (<see cref="Extensions.SplitExtensionField(String, String)"/>) the
+    /// splits (<see cref="Extensions.SplitExtensionField(string, string)"/>) the
     /// extension key from the field symbol and tries to resolve the associated
     /// <see cref="ParserExtension"/>. If the parser can't resolve the key or the field
     /// token does not contain a separation character, <see cref="ExtendableQueryParser"/>

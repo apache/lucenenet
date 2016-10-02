@@ -2,7 +2,7 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Flexible.Standard;
+using Lucene.Net.QueryParsers.Flexible.Standard;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -12,7 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -123,7 +123,9 @@ namespace Lucene.Net.QueryParser.Classic
             AllowLeadingWildcard = false;
 
             PhraseSlop = 0;
+#pragma warning disable 612, 618
             FuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
+#pragma warning restore 612, 618
             FuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
             Locale = CultureInfo.CurrentCulture;
             TimeZone = TimeZoneInfo.Local;
@@ -141,7 +143,9 @@ namespace Lucene.Net.QueryParser.Classic
         {
             Analyzer = a;
             field = f;
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 AutoGeneratePhraseQueries = false;
             }
@@ -420,7 +424,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// <param name="slop"></param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
         /// <returns></returns>
-        protected internal virtual Query GetFieldQuery(String field, String queryText, int slop)
+        protected internal virtual Query GetFieldQuery(string field, string queryText, int slop)
         {
             Query query = GetFieldQuery(field, queryText, true);
 
@@ -542,8 +546,10 @@ namespace Lucene.Net.QueryParser.Classic
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
             string text = term.Text();
+#pragma warning disable 612, 618
             int numEdits = FuzzyQuery.FloatToEdits(minimumSimilarity,
                 Character.CodePointCount(text,0, text.Length));
+#pragma warning restore 612, 618
             return new FuzzyQuery(term, numEdits, prefixLength);
         }
 
@@ -837,7 +843,7 @@ namespace Lucene.Net.QueryParser.Classic
             {
                 fms = float.Parse(fuzzySlop.image.Substring(1), Locale);
             }
-            catch (Exception ignored) { }
+            catch (Exception /*ignored*/) { }
             if (fms < 0.0f)
             {
                 throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
@@ -860,7 +866,7 @@ namespace Lucene.Net.QueryParser.Classic
                 {
                     s = (int)float.Parse(fuzzySlop.image.Substring(1), Locale);
                 }
-                catch (Exception ignored) { }
+                catch (Exception /*ignored*/) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 2)), s);
         }
@@ -875,7 +881,7 @@ namespace Lucene.Net.QueryParser.Classic
                 {
                     f = float.Parse(boost.image, Locale);
                 }
-                catch (Exception ignored)
+                catch (Exception /*ignored*/)
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)
@@ -892,7 +898,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         /// <summary>
-        /// Returns a String where the escape char has been
+        /// Returns a string where the escape char has been
         /// removed, or kept only once if there was a double escape.
         /// 
         /// Supports escaped unicode characters, e. g. translates 
@@ -973,7 +979,7 @@ namespace Lucene.Net.QueryParser.Classic
                 throw new ParseException("Term can not end with escape character.");
             }
 
-            return new String(output, 0, length);
+            return new string(output, 0, length);
         }
 
         /// <summary>
@@ -1000,7 +1006,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         /// <summary>
-        /// Returns a String where those characters that QueryParser
+        /// Returns a string where those characters that QueryParser
         /// expects to be escaped are escaped by a preceding <code>\</code>.
         /// </summary>
         public static string Escape(string s)

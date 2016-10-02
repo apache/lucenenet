@@ -7,7 +7,7 @@
     <ProjectGuid>{FBD2EB4D-EAC9-409C-A23D-64D27DF23576}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Search</RootNamespace>
+    <RootNamespace>Lucene.Net.Suggest</RootNamespace>
     <AssemblyName>Lucene.Net.Suggest</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

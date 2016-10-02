@@ -4,7 +4,7 @@ using Lucene.Net.Search;
 using System;
 using System.Globalization;
 
-namespace Lucene.Net.QueryParser.Flexible.Standard
+namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

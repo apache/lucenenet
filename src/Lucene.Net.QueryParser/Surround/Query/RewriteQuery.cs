@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Index;
 using System;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
 
         public RewriteQuery(
             SQ srndQuery,
-            String fieldName,
+            string fieldName,
             BasicQueryFactory qf)
         {
             this.srndQuery = srndQuery;

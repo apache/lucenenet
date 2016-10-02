@@ -3,7 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// Boost, and the boost to apply to each term.
         /// 
         /// <p/>
-        /// It will, when parse(String query) is called, construct a query like this
+        /// It will, when parse(string query) is called, construct a query like this
         /// (assuming the query consists of two terms and you specify the two fields
         /// <c>title</c> and <c>body</c>):
         /// <p/>
@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// Creates a MultiFieldQueryParser.
         /// 
         /// <p/>
-        /// It will, when parse(String query) is called, construct a query like this
+        /// It will, when parse(string query) is called, construct a query like this
         /// (assuming the query consists of two terms and you specify the two fields
         /// <c>title</c> and <c>body</c>):
         /// <p/>
@@ -189,7 +189,7 @@ namespace Lucene.Net.QueryParser.Classic
             return base.GetFuzzyQuery(field, termStr, minSimilarity);
         }
 
-        protected internal override Query GetPrefixQuery(System.String field, System.String termStr)
+        protected internal override Query GetPrefixQuery(string field, string termStr)
         {
             if (field == null)
             {
@@ -296,7 +296,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// <p/>
         /// Uasge:
         /// <code>
-        /// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+        /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
         /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
         /// BooleanClause.Occur.MUST,
         /// BooleanClause.Occur.MUST_NOT};
@@ -351,8 +351,8 @@ namespace Lucene.Net.QueryParser.Classic
         /// <p/>
         /// Usage:
         /// <code>
-        /// String[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
-        /// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+        /// string[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
+        /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
         /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
         /// BooleanClause.Occur.MUST,
         /// BooleanClause.Occur.MUST_NOT};

@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Simple
+namespace Lucene.Net.QueryParsers.Simple
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -605,7 +605,7 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisablePhrase()
         {
             Query expected = new TermQuery(new Term("field", "\"test\""));
-            assertEquals(expected, ParseKeyword("\"test\"", SimpleQueryParser.PHRASE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\"test\"", ~SimpleQueryParser.PHRASE_OPERATOR));
         }
 
         /** test the ability to enable/disable prefix operator */
@@ -613,7 +613,7 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisablePrefix()
         {
             Query expected = new TermQuery(new Term("field", "test*"));
-            assertEquals(expected, ParseKeyword("test*", SimpleQueryParser.PREFIX_OPERATOR));
+            assertEquals(expected, ParseKeyword("test*", ~SimpleQueryParser.PREFIX_OPERATOR));
         }
 
         /** test the ability to enable/disable AND operator */
@@ -621,9 +621,9 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisableAND()
         {
             Query expected = new TermQuery(new Term("field", "foo+bar"));
-            assertEquals(expected, ParseKeyword("foo+bar", SimpleQueryParser.AND_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo+bar", ~SimpleQueryParser.AND_OPERATOR));
             expected = new TermQuery(new Term("field", "+foo+bar"));
-            assertEquals(expected, ParseKeyword("+foo+bar", SimpleQueryParser.AND_OPERATOR));
+            assertEquals(expected, ParseKeyword("+foo+bar", ~SimpleQueryParser.AND_OPERATOR));
         }
 
         /** test the ability to enable/disable OR operator */
@@ -631,9 +631,9 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisableOR()
         {
             Query expected = new TermQuery(new Term("field", "foo|bar"));
-            assertEquals(expected, ParseKeyword("foo|bar", SimpleQueryParser.OR_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo|bar", ~SimpleQueryParser.OR_OPERATOR));
             expected = new TermQuery(new Term("field", "|foo|bar"));
-            assertEquals(expected, ParseKeyword("|foo|bar", SimpleQueryParser.OR_OPERATOR));
+            assertEquals(expected, ParseKeyword("|foo|bar", ~SimpleQueryParser.OR_OPERATOR));
         }
 
         /** test the ability to enable/disable NOT operator */
@@ -641,7 +641,7 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisableNOT()
         {
             Query expected = new TermQuery(new Term("field", "-foo"));
-            assertEquals(expected, ParseKeyword("-foo", SimpleQueryParser.NOT_OPERATOR));
+            assertEquals(expected, ParseKeyword("-foo", ~SimpleQueryParser.NOT_OPERATOR));
         }
 
         /** test the ability to enable/disable precedence operators */
@@ -649,9 +649,9 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisablePrecedence()
         {
             Query expected = new TermQuery(new Term("field", "(foo)"));
-            assertEquals(expected, ParseKeyword("(foo)", SimpleQueryParser.PRECEDENCE_OPERATORS));
+            assertEquals(expected, ParseKeyword("(foo)", ~SimpleQueryParser.PRECEDENCE_OPERATORS));
             expected = new TermQuery(new Term("field", ")foo("));
-            assertEquals(expected, ParseKeyword(")foo(", SimpleQueryParser.PRECEDENCE_OPERATORS));
+            assertEquals(expected, ParseKeyword(")foo(", ~SimpleQueryParser.PRECEDENCE_OPERATORS));
         }
 
         /** test the ability to enable/disable escape operators */
@@ -659,27 +659,27 @@ namespace Lucene.Net.QueryParser.Simple
         public void TestDisableEscape()
         {
             Query expected = new TermQuery(new Term("field", "foo\\bar"));
-            assertEquals(expected, ParseKeyword("foo\\bar", SimpleQueryParser.ESCAPE_OPERATOR));
-            assertEquals(expected, ParseKeyword("(foo\\bar)", SimpleQueryParser.ESCAPE_OPERATOR));
-            assertEquals(expected, ParseKeyword("\"foo\\bar\"", SimpleQueryParser.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo\\bar", ~SimpleQueryParser.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("(foo\\bar)", ~SimpleQueryParser.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\"foo\\bar\"", ~SimpleQueryParser.ESCAPE_OPERATOR));
         }
 
         [Test]
         public void TestDisableWhitespace()
         {
             Query expected = new TermQuery(new Term("field", "foo foo"));
-            assertEquals(expected, ParseKeyword("foo foo", SimpleQueryParser.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo foo", ~SimpleQueryParser.WHITESPACE_OPERATOR));
             expected = new TermQuery(new Term("field", " foo foo\n "));
-            assertEquals(expected, ParseKeyword(" foo foo\n ", SimpleQueryParser.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword(" foo foo\n ", ~SimpleQueryParser.WHITESPACE_OPERATOR));
             expected = new TermQuery(new Term("field", "\t\tfoo foo foo"));
-            assertEquals(expected, ParseKeyword("\t\tfoo foo foo", SimpleQueryParser.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\t\tfoo foo foo", ~SimpleQueryParser.WHITESPACE_OPERATOR));
         }
 
         [Test]
         public void TestDisableFuzziness()
         {
             Query expected = new TermQuery(new Term("field", "foo~1"));
-            assertEquals(expected, ParseKeyword("foo~1", SimpleQueryParser.FUZZY_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo~1", ~SimpleQueryParser.FUZZY_OPERATOR));
         }
 
         [Test]
@@ -692,7 +692,7 @@ namespace Lucene.Net.QueryParser.Simple
             BooleanQuery expected = new BooleanQuery();
             expected.Add(expectedPhrase, BooleanClause.Occur.MUST);
             expected.Add(new TermQuery(new Term("field", "~2")), BooleanClause.Occur.MUST);
-            assertEquals(expected, Parse("\"foo bar\"~2", SimpleQueryParser.NEAR_OPERATOR));
+            assertEquals(expected, Parse("\"foo bar\"~2", ~SimpleQueryParser.NEAR_OPERATOR));
         }
 
         // we aren't supposed to barf on any input...

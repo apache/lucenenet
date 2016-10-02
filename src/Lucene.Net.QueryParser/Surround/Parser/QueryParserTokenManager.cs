@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -433,7 +433,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 38 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
-                catch (System.IO.IOException e) { return curPos; }
+                catch (System.IO.IOException /*e*/) { return curPos; }
             }
         }
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
-                catch (System.IO.IOException e) { return curPos; }
+                catch (System.IO.IOException /*e*/) { return curPos; }
             }
         }
         internal static readonly int[] jjnextStates = {
@@ -662,7 +662,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 {
                     curChar = input_stream.BeginToken();
                 }
-                catch (System.IO.IOException e)
+                catch (System.IO.IOException /*e*/)
                 {
                     jjmatchedKind = 0;
                     matchedToken = JjFillToken();
@@ -686,7 +686,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 {
                     if (jjmatchedPos + 1 < curPos)
                         input_stream.Backup(curPos - jjmatchedPos - 1);
-                    if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
+                    if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 63 /*077*/))) != 0L)
                     {
                         matchedToken = JjFillToken();
                         if (jjnewLexState[jjmatchedKind] != -1)
@@ -705,7 +705,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 string error_after = null;
                 bool EOFSeen = false;
                 try { input_stream.ReadChar(); input_stream.Backup(1); }
-                catch (System.IO.IOException e1)
+                catch (System.IO.IOException /*e1*/)
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1 ? "" : input_stream.Image;
