@@ -73,9 +73,9 @@ namespace Lucene.Net.Codecs.SimpleText
             var maxValue = long.MinValue;
             foreach (var n in values)
             {
-                var v = n;
-                minValue = Math.Min(minValue, v.Value); // Added .Value to account for long?
-                maxValue = Math.Max(maxValue, v.Value); // Added .Value to account for long?
+                var v = n.GetValueOrDefault();
+                minValue = Math.Min(minValue, v); // Added .Value to account for long?
+                maxValue = Math.Max(maxValue, v); // Added .Value to account for long?
             }
 
             // write our minimum value to the .dat, all entries are deltas from that
