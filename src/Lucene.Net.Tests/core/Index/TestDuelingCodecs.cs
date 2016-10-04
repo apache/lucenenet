@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
             // as this gives the best overall coverage. when we have more
             // codecs we should probably pick 2 from Codec.availableCodecs()
 
-            LeftCodec = Codec.ForName("Lucene41");
+            LeftCodec = Codec.ForName("SimpleText");
             RightCodec = new RandomCodec(Random());
 
             LeftDir = NewDirectory();
