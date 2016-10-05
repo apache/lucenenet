@@ -425,6 +425,8 @@
     <Compile Include="core\SupportClassException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Support\TestDataInputStream.cs" />
+    <Compile Include="core\Support\TestDataOutputStream.cs" />
     <Compile Include="core\TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -621,6 +623,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="core\Support\ReadFully.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

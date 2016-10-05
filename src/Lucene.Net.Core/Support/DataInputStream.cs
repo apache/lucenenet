@@ -7,6 +7,10 @@ namespace Lucene.Net.Support
     /// Java's DataInputStream is similar to .NET's BinaryReader. However, it reads
     /// using a modified UTF-8 format that cannot be read using BinaryReader.
     /// This is a port of DataInputStream that is fully compatible with Java's DataOutputStream.
+    /// <para>
+    /// Usage Note: Always favor BinaryReader over DataInputStream unless you specifically need
+    /// the modified UTF-8 format and/or the <see cref="ReadUTF(IDataInput)"/> method.
+    /// </para>
     /// </summary>
     public class DataInputStream : IDataInput, IDisposable
     {
@@ -62,11 +66,25 @@ namespace Lucene.Net.Support
             int total = 0;
             int cur = 0;
 
-            while ((total < n) && ((cur = (int)@in.Seek(n - total, SeekOrigin.Begin)) > 0))
+            while ((total < n) && ((cur = Skip(@in, n - total)) > 0))
             {
                 total += cur;
             }
 
+            return total;
+        }
+
+        /// <summary>
+        /// Helper method for SkipBytes, since Position and Seek do not work on
+        /// non-seekable streams.
+        /// </summary>
+        private static int Skip(Stream stream, int n)
+        {
+            int total = 0;
+            while (total < n && stream.ReadByte() > -1)
+            {
+                total++;
+            }
             return total;
         }
 
