@@ -8,6 +8,10 @@ namespace Lucene.Net.Support
     /// Java's DataOutputStream is similar to .NET's BinaryWriter. However, it writes
     /// in a modified UTF-8 format that cannot be read (or duplicated) using BinaryWriter.
     /// This is a port of DataOutputStream that is fully compatible with Java's DataInputStream.
+    /// <para>
+    /// Usage Note: Always favor BinaryWriter over DataOutputStream unless you specifically need
+    /// the modified UTF-8 format and/or the <see cref="WriteUTF(IDataOutput)"/> method.
+    /// </para>
     /// </summary>
     public class DataOutputStream : IDataOutput, IDisposable
     {
@@ -236,6 +240,11 @@ namespace Lucene.Net.Support
             }
             @out.Write(bytearr, 0, utflen + 2);
             return utflen + 2;
+        }
+
+        public int Length
+        {
+            get { return written; }
         }
 
 
