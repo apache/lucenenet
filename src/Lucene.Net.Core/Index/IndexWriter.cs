@@ -1266,8 +1266,7 @@ namespace Lucene.Net.Index
 
                 if (WriteLock != null)
                 {
-                    WriteLock.Release(); // release write lock
-                    WriteLock.Dispose();
+                    WriteLock.Dispose(); // release write lock
                     WriteLock = null;
                 }
                 lock (this)
