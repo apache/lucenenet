@@ -1,5 +1,5 @@
 Apache Lucene.Net
-Copyright 2006-2014 The Apache Software Foundation
+Copyright 2006-2016 The Apache Software Foundation
 
 this product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
