@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Spell
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
                 new MockAnalyzer(Random(), MockTokenizer.KEYWORD, true), Similarity, TimeZone);
 
-            String[] termsToAdd = { "metanoia", "metanoian", "metanoiai", "metanoias", "metanoið‘" };
+            string[] termsToAdd = { "metanoia", "metanoian", "metanoiai", "metanoias", "metanoið‘" };
             for (int i = 0; i < termsToAdd.Length; i++)
             {
                 Document doc = new Document();
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             IndexReader ir = writer.Reader;
-            String misspelled = "metanoix";
+            string misspelled = "metanoix";
             SuggestWord[] similar = spellchecker.SuggestSimilar(new Term("repentance", misspelled), 4, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
             assertTrue(similar.Length == 4);
 
