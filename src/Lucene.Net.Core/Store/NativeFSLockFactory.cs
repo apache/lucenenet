@@ -195,6 +195,16 @@ namespace Lucene.Net.Store
             }
         }
 
+        public override void Dispose()
+        {
+            // LUCENENET: No lock to release, just dispose the channel
+            if (Channel != null)
+            {
+                Channel.Dispose();
+                Channel = null;
+            }
+        }
+
         public override void Release()
         {
             lock (this)
