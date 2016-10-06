@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
 	    protected override void Dispose(bool disposing)
 	    {
-	        if (disposing) return;
+	        if (!disposing) return;
 	        try
 	        {
 	            IOUtils.Close(_output);
