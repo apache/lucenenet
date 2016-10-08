@@ -265,7 +265,16 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual object Clone()
         {
-            return (DataInput)base.MemberwiseClone();
+            DataInput clone = null;
+            try
+            {
+                clone = (DataInput)base.MemberwiseClone();
+            }
+            catch (Exception)
+            {
+            }
+
+            return clone;
         }
 
         /// <summary>
