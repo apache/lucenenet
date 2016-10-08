@@ -74,6 +74,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [Test]
         public virtual void TestRandomStoredFields()
         {
             Directory dir = NewDirectory();
@@ -191,7 +192,7 @@ namespace Lucene.Net.Index
 
         [Test]
         // LUCENE-1727: make sure doc fields are stored in order
-        public void TestStoredFieldsOrder()
+        public virtual void TestStoredFieldsOrder()
         {
             Directory d = NewDirectory();
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -228,7 +229,7 @@ namespace Lucene.Net.Index
 
         [Test]
         // LUCENE-1219
-        public void TestBinaryFieldOffsetLength()
+        public virtual void TestBinaryFieldOffsetLength()
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -260,7 +261,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        public void TestNumericField()
+        [Test]
+        public virtual void TestNumericField()
         {
             Directory dir = NewDirectory();
             var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -345,7 +347,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestIndexedBit()
+        public virtual void TestIndexedBit()
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -364,7 +366,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestReadSkip()
+        public virtual void TestReadSkip()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -419,7 +421,7 @@ namespace Lucene.Net.Index
         }
 
         [Test, Timeout(300000)]
-        public void TestEmptyDocs()
+        public virtual void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -448,7 +450,7 @@ namespace Lucene.Net.Index
         }
 
         [Test, Timeout(300000)]
-        public void TestConcurrentReads()
+        public virtual void TestConcurrentReads()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -669,7 +671,7 @@ namespace Lucene.Net.Index
         }
 
         [Test, LongRunningTest, Timeout(int.MaxValue)]
-        public void TestBigDocuments()
+        public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"
             // for this test we force a FS dir
@@ -746,7 +748,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBulkMergeWithDeletes()
+        public virtual void TestBulkMergeWithDeletes()
         {
             int numDocs = AtLeast(200);
             Directory dir = NewDirectory();

@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestOneNumber()
+        public virtual void TestOneNumber()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestOneFloat()
+        public virtual void TestOneFloat()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoNumbers()
+        public virtual void TestTwoNumbers()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoBinaryValues()
+        public virtual void TestTwoBinaryValues()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoFieldsMixed()
+        public virtual void TestTwoFieldsMixed()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestThreeFieldsMixed()
+        public virtual void TestThreeFieldsMixed()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestThreeFieldsMixed2()
+        public virtual void TestThreeFieldsMixed2()
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoDocumentsNumeric()
+        public virtual void TestTwoDocumentsNumeric()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoDocumentsMerged()
+        public virtual void TestTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBigNumericRange()
+        public virtual void TestBigNumericRange()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBigNumericRange2()
+        public virtual void TestBigNumericRange2()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBytes()
+        public virtual void TestBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBytesTwoDocumentsMerged()
+        public virtual void TestBytesTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedBytes()
+        public virtual void TestSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedBytesTwoDocuments()
+        public virtual void TestSortedBytesTwoDocuments()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedBytesThreeDocuments()
+        public virtual void TestSortedBytesThreeDocuments()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -692,7 +692,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedBytesTwoDocumentsMerged()
+        public virtual void TestSortedBytesTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedMergeAwayAllValues()
+        public virtual void TestSortedMergeAwayAllValues()
         {
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
@@ -785,7 +785,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBytesWithNewline()
+        public virtual void TestBytesWithNewline()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -811,7 +811,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestMissingSortedBytes()
+        public virtual void TestMissingSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -844,7 +844,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedTermsEnum()
+        public virtual void TestSortedTermsEnum()
         {
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
@@ -917,7 +917,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestEmptySortedBytes()
+        public virtual void TestEmptySortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -949,7 +949,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestEmptyBytes()
+        public virtual void TestEmptyBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -981,7 +981,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestVeryLargeButLegalBytes()
+        public virtual void TestVeryLargeButLegalBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestVeryLargeButLegalSortedBytes()
+        public virtual void TestVeryLargeButLegalSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestCodecUsesOwnBytes()
+        public virtual void TestCodecUsesOwnBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestCodecUsesOwnSortedBytes()
+        public virtual void TestCodecUsesOwnSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestCodecUsesOwnBytesEachTime()
+        public virtual void TestCodecUsesOwnBytesEachTime()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1129,7 +1129,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestCodecUsesOwnSortedBytesEachTime()
+        public virtual void TestCodecUsesOwnSortedBytesEachTime()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
 
@@ -1167,7 +1167,7 @@ namespace Lucene.Net.Index
          * Simple test case to show how to use the API
          */
         [Test]
-        public void TestDocValuesSimple()
+        public virtual void TestDocValuesSimple()
         {
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestRandomSortedBytes()
+        public virtual void TestRandomSortedBytes()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1489,7 +1489,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBooleanNumericsVsStoredFields()
+        public virtual void TestBooleanNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestByteNumericsVsStoredFields()
+        public virtual void TestByteNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1509,7 +1509,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestByteMissingVsFieldCache()
+        public virtual void TestByteMissingVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1519,7 +1519,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestShortNumericsVsStoredFields()
+        public virtual void TestShortNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1529,7 +1529,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestShortMissingVsFieldCache()
+        public virtual void TestShortMissingVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1539,7 +1539,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestIntNumericsVsStoredFields()
+        public virtual void TestIntNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1549,7 +1549,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestIntMissingVsFieldCache()
+        public virtual void TestIntMissingVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1559,7 +1559,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestLongNumericsVsStoredFields()
+        public virtual void TestLongNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1569,7 +1569,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestLongMissingVsFieldCache()
+        public virtual void TestLongMissingVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1644,7 +1644,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBinaryFixedLengthVsStoredFields()
+        public virtual void TestBinaryFixedLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1655,7 +1655,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestBinaryVariableLengthVsStoredFields()
+        public virtual void TestBinaryVariableLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1789,7 +1789,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedFixedLengthVsStoredFields()
+        public virtual void TestSortedFixedLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1800,7 +1800,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedFixedLengthVsFieldCache()
+        public virtual void TestSortedFixedLengthVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1811,7 +1811,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedVariableLengthVsFieldCache()
+        public virtual void TestSortedVariableLengthVsFieldCache()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1821,7 +1821,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedVariableLengthVsStoredFields()
+        public virtual void TestSortedVariableLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1831,7 +1831,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetOneValue()
+        public virtual void TestSortedSetOneValue()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -1859,7 +1859,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoFields()
+        public virtual void TestSortedSetTwoFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -1897,7 +1897,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoDocumentsMerged()
+        public virtual void TestSortedSetTwoDocumentsMerged()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -1942,7 +1942,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoValues()
+        public virtual void TestSortedSetTwoValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -1975,7 +1975,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoValuesUnordered()
+        public virtual void TestSortedSetTwoValuesUnordered()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2008,7 +2008,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetThreeValuesTwoDocs()
+        public virtual void TestSortedSetThreeValuesTwoDocs()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2060,7 +2060,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoDocumentsLastMissing()
+        public virtual void TestSortedSetTwoDocumentsLastMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2095,7 +2095,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoDocumentsLastMissingMerge()
+        public virtual void TestSortedSetTwoDocumentsLastMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2132,7 +2132,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoDocumentsFirstMissing()
+        public virtual void TestSortedSetTwoDocumentsFirstMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2168,7 +2168,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTwoDocumentsFirstMissingMerge()
+        public virtual void TestSortedSetTwoDocumentsFirstMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2205,7 +2205,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetMergeAwayAllValues()
+        public virtual void TestSortedSetMergeAwayAllValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2236,7 +2236,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetTermsEnum()
+        public virtual void TestSortedSetTermsEnum()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
@@ -2392,7 +2392,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetFixedLengthVsStoredFields()
+        public virtual void TestSortedSetFixedLengthVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2404,7 +2404,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetVariableLengthVsStoredFields()
+        public virtual void TestSortedSetVariableLengthVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2415,7 +2415,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetFixedLengthSingleValuedVsStoredFields()
+        public virtual void TestSortedSetFixedLengthSingleValuedVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2427,7 +2427,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetVariableLengthSingleValuedVsStoredFields()
+        public virtual void TestSortedSetVariableLengthSingleValuedVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2649,7 +2649,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetFixedLengthVsUninvertedField()
+        public virtual void TestSortedSetFixedLengthVsUninvertedField()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2661,7 +2661,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestSortedSetVariableLengthVsUninvertedField()
+        public virtual void TestSortedSetVariableLengthVsUninvertedField()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             int numIterations = AtLeast(1);
@@ -2672,7 +2672,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestGCDCompression()
+        public virtual void TestGCDCompression()
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -2704,11 +2704,13 @@ namespace Lucene.Net.Index
             }
         }
 
+        [Test]
         public virtual void TestZeros()
         {
             DoTestNumericsVsStoredFields(0, 0);
         }
 
+        [Test]
         public virtual void TestZeroOrMin()
         {
             // try to make GCD compression fail if the format did not anticipate that
@@ -2737,7 +2739,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoNumbersOneMissing()
+        public virtual void TestTwoNumbersOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2768,7 +2770,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoNumbersOneMissingWithMerging()
+        public virtual void TestTwoNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2800,7 +2802,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestThreeNumbersOneMissingWithMerging()
+        public virtual void TestThreeNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2838,7 +2840,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoBytesOneMissing()
+        public virtual void TestTwoBytesOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2872,7 +2874,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestTwoBytesOneMissingWithMerging()
+        public virtual void TestTwoBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2907,7 +2909,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void TestThreeBytesOneMissingWithMerging()
+        public virtual void TestThreeBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory directory = NewDirectory();
@@ -2950,7 +2952,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-4853
         [Test]
-        public void TestHugeBinaryValues()
+        public virtual void TestHugeBinaryValues()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             // FSDirectory because SimpleText will consume gobbs of
@@ -3071,7 +3073,7 @@ namespace Lucene.Net.Index
 
         // TODO: get this out of here and into the deprecated codecs (4.0, 4.2)
         [Test]
-        public void TestHugeBinaryValueLimit()
+        public virtual void TestHugeBinaryValueLimit()
         {
             // We only test DVFormats that have a limit
             AssumeFalse("test requires codec with limits on max binary field length", CodecAcceptsHugeBinaryValues("field"));
@@ -3156,7 +3158,7 @@ namespace Lucene.Net.Index
         /// Tests dv against stored fields with threads (binary/numeric/sorted, no missing)
         /// </summary>
         [Test]
-        public void TestThreads()
+        public virtual void TestThreads()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -3275,7 +3277,7 @@ namespace Lucene.Net.Index
         /// Tests dv against stored fields with threads (all types + missing)
         /// </summary>
         [Test]
-        public void TestThreads2()
+        public virtual void TestThreads2()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
@@ -3465,7 +3467,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-5218
         [Test]
-        public void TestEmptyBinaryValueOnPageSizes()
+        public virtual void TestEmptyBinaryValueOnPageSizes()
         {
             // Test larger and larger power-of-two sized values,
             // followed by empty string value:
