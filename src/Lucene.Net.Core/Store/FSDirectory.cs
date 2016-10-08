@@ -318,6 +318,10 @@ namespace Lucene.Net.Store
             try
             {
                 file.Delete();
+                if (File.Exists(file.FullName))
+                {
+                    throw new System.IO.IOException("Cannot delete " + file);
+                }
             }
             catch (Exception)
             {
