@@ -4,6 +4,7 @@ using System;
 
 namespace Lucene.Net.Index
 {
+    using System.Text.RegularExpressions;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -138,6 +139,9 @@ namespace Lucene.Net.Index
             // primary source for our data is from linefiledocs, its realistic.
             LineFileDocs lineFileDocs = new LineFileDocs(random);
 
+            // LUCENENET: compile a regex so we don't have to do it in each loop (for regex.split())
+            Regex whiteSpace = new Regex("\\s+", RegexOptions.Compiled);
+
             // TODO: we should add other fields that use things like docs&freqs but omit positions,
             // because linefiledocs doesn't cover all the possibilities.
             for (int i = 0; i < numdocs; i++)
@@ -145,7 +149,7 @@ namespace Lucene.Net.Index
                 Document document = lineFileDocs.NextDoc();
                 // grab the title and add some SortedSet instances for fun
                 string title = document.Get("titleTokenized");
-                string[] split = title.Split("\\s+".ToCharArray());
+                string[] split = whiteSpace.Split(title);
                 foreach (string trash in split)
                 {
                     document.Add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));
