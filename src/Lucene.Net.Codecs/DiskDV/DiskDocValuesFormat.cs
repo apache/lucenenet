@@ -22,6 +22,8 @@ namespace Lucene.Net.Codecs.DiskDV
     using Lucene45;
     using Index;
     using System;
+    using Util;
+    using System.Collections.Generic;
 
     /// <summary>
     /// DocValues format that keeps most things on disk.
@@ -43,7 +45,23 @@ namespace Lucene.Net.Codecs.DiskDV
 
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
-            return new Lucene45DocValuesConsumer(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION);
+            return new Lucene45DocValuesConsumerAnonymousHelper(this, state);
+        }
+
+        private class Lucene45DocValuesConsumerAnonymousHelper : Lucene45DocValuesConsumer
+        {
+            private readonly DiskDocValuesFormat outerInstance;
+
+            public Lucene45DocValuesConsumerAnonymousHelper(DiskDocValuesFormat outerInstance, SegmentWriteState state)
+                : base(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION)
+            {
+                this.outerInstance = outerInstance;
+            }
+
+            protected override void AddTermsDict(FieldInfo field, IEnumerable<BytesRef> values)
+            {
+                AddBinaryField(field, values);
+            }
         }
 
         public override DocValuesProducer FieldsProducer(SegmentReadState state)
