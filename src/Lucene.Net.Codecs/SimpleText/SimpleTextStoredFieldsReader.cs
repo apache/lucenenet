@@ -20,6 +20,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
     using System;
     using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
     using Support;
 
 	using FieldInfo = Index.FieldInfo;
@@ -185,11 +187,8 @@ namespace Lucene.Net.Codecs.SimpleText
             if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_STRING))
             {
                 visitor.StringField(fieldInfo,
-                    _scratch.Bytes.SubList(_scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length,
-                        _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length).ToString());
-
-                   // new string(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
-                   //     Encoding.UTF8));
+                    Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length,
+                        _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_BINARY))
             {
@@ -201,25 +200,25 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.IntField(fieldInfo, Convert.ToInt32(_scratchUtf16.ToString()));
+                visitor.IntField(fieldInfo, Convert.ToInt32(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_LONG))
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.LongField(fieldInfo, Convert.ToInt64(_scratchUtf16.ToString()));
+                visitor.LongField(fieldInfo, Convert.ToInt64(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_FLOAT))
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.FloatField(fieldInfo, Convert.ToSingle(_scratchUtf16.ToString()));
+                visitor.FloatField(fieldInfo, Convert.ToSingle(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_DOUBLE))
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.DoubleField(fieldInfo, Convert.ToDouble(_scratchUtf16.ToString()));
+                visitor.DoubleField(fieldInfo, Convert.ToDouble(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
         }
 
@@ -234,7 +233,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             try
             {

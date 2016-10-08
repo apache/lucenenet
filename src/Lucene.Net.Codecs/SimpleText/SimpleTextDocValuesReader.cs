@@ -21,24 +21,27 @@ namespace Lucene.Net.Codecs.SimpleText
     using System.Diagnostics;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Globalization;
+    using System.Text;
     using Support;
 
-	using BinaryDocValues = Index.BinaryDocValues;
-	using CorruptIndexException = Index.CorruptIndexException;
-	using DocValues = Index.DocValues;
-	using FieldInfo = Index.FieldInfo;
-	using DocValuesType = Index.FieldInfo.DocValuesType_e;
-	using IndexFileNames = Index.IndexFileNames;
-	using NumericDocValues = Index.NumericDocValues;
-	using SegmentReadState = Index.SegmentReadState;
-	using SortedDocValues = Index.SortedDocValues;
-	using SortedSetDocValues = Index.SortedSetDocValues;
-	using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
-	using ChecksumIndexInput = Store.ChecksumIndexInput;
-	using IndexInput = Store.IndexInput;
-	using Bits = Util.Bits;
-	using BytesRef = Util.BytesRef;
-	using StringHelper = Util.StringHelper;
+    using BinaryDocValues = Index.BinaryDocValues;
+    using CorruptIndexException = Index.CorruptIndexException;
+    using DocValues = Index.DocValues;
+    using FieldInfo = Index.FieldInfo;
+    using DocValuesType = Index.FieldInfo.DocValuesType_e;
+    using IndexFileNames = Index.IndexFileNames;
+    using NumericDocValues = Index.NumericDocValues;
+    using SegmentReadState = Index.SegmentReadState;
+    using SortedDocValues = Index.SortedDocValues;
+    using SortedSetDocValues = Index.SortedSetDocValues;
+    using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
+    using IndexInput = Store.IndexInput;
+    using Bits = Util.Bits;
+    using BytesRef = Util.BytesRef;
+    using StringHelper = Util.StringHelper;
+    using System.Numerics;
 
     public class SimpleTextDocValuesReader : DocValuesProducer
     {
@@ -205,7 +208,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             DATA.Dispose();
         }
@@ -242,7 +245,7 @@ namespace Lucene.Net.Codecs.SimpleText
         /// <summary> Used only in ctor: </summary>
         private string StripPrefix(BytesRef prefix)
         {
-            return SCRATCH.Bytes.SubList(SCRATCH.Offset + prefix.Length, SCRATCH.Length - prefix.Length).ToString();
+            return Encoding.UTF8.GetString(SCRATCH.Bytes, SCRATCH.Offset + prefix.Length, SCRATCH.Length - prefix.Length);
         }
 
         public override long RamBytesUsed()
@@ -324,8 +327,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 int len;
                 try
                 {
-                    len = int.Parse(_scratch.Bytes.SubList(_scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Number, CultureInfo.InvariantCulture);
                 }
                 catch (FormatException ex)
                 {
@@ -380,7 +383,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(_input, _scratch);
                 try
                 {
-                    return int.Parse(Decimal.Parse(_scratch.Utf8ToString()).ToString(_ordDecoderFormat)) - 1;
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                    return int.Parse(_scratch.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1;
                 }
                 catch (Exception pe)
                 {
@@ -403,11 +407,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 int len;
                 try
                 {
-                    len =
-                        int.Parse(
-                            Decimal.Parse(_scratch.Bytes.SubList(
-                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat));
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
+
                 }
                 catch (Exception pe)
                 {
@@ -488,11 +491,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 int len;
                 try
                 {
-                    len =
-                        int.Parse(
-                            Decimal.Parse(_scratch.Bytes.SubList(
-                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat));
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
                 }
                 catch (Exception pe)
                 {
@@ -538,10 +539,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
                 SimpleTextUtil.ReadLine(_input, _scratch);
 
-                long bd;
+                
+                decimal bd;
                 try
                 {
-                    bd = long.Parse(_scratch.Utf8ToString());
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
+                    bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
                 }
                 catch (FormatException ex)
                 {
@@ -549,7 +552,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
-                return _field.MinValue + bd;
+                return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
             }
         }
 
@@ -582,9 +585,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 int len;
                 try
                 {
-                    len = int.Parse(_scratch.Bytes.SubList(
-                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
                 }
                 catch (FormatException ex)
                 {

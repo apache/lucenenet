@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
                 {
                     throw new InvalidOperationException("files were not computed yet");
                 }
-                return SetFiles;//CollectionsHelper.UnmodifiableSet(SetFiles);
+                return Collections.UnmodifiableSet(SetFiles);
             }
 
             set

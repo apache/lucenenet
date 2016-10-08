@@ -301,8 +301,9 @@ namespace Lucene.Net.Store
                     {
                         f.Dispose();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ex.ToString());
                     }
                 }
 
@@ -741,13 +742,16 @@ namespace Lucene.Net.Store
                 if (OpenFiles.TryGetValue(name, out v))
                 {
                     v++;
+                    //Debug.WriteLine("Add {0} - {1} - {2}", c, name, v);
                     OpenFiles[name] = v;
                 }
                 else
                 {
+                    //Debug.WriteLine("Add {0} - {1} - {2}", c, name, 1);
                     OpenFiles[name] = 1;
-                    OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
                 }
+
+                OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
             }
         }
 
@@ -1087,16 +1091,19 @@ namespace Lucene.Net.Store
                 {
                     if (v == 1)
                     {
+                        //Debug.WriteLine("RemoveOpenFile OpenFiles.Remove {0} - {1}", c, name);
                         OpenFiles.Remove(name);
-                        Exception _;
-                        OpenFileHandles.TryRemove(c, out _);
                     }
                     else
                     {
                         v--;
                         OpenFiles[name] = v;
+                        //Debug.WriteLine("RemoveOpenFile OpenFiles DECREMENT {0} - {1} - {2}", c, name, v);
                     }
                 }
+
+                Exception _;
+                OpenFileHandles.TryRemove(c, out _);
             }
         }
 
@@ -1342,7 +1349,7 @@ namespace Lucene.Net.Store
                     if (disposing)
                     {
                         DelegateHandle.Dispose();
-                        OuterInstance.RemoveOpenFile(this, Name);
+                        OuterInstance.RemoveOpenFile(OuterInstance, Name);
                     }
                 }
             }

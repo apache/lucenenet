@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.SimpleText
     
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Collections.Generic;
 
 	using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
@@ -138,15 +139,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
-                var positions = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPOSITIONS.Length, _scratch));
+                var positions = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPOSITIONS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
-                var offsets = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDOFFSETS.Length, _scratch));
+                var offsets = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDOFFSETS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
-                var payloads = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPAYLOADS.Length, _scratch));
+                var payloads = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPAYLOADS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
@@ -240,7 +241,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             try
             {
@@ -298,7 +299,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override Terms Terms(string field)
             {
-                return _fields[field];
+                return _fields.ContainsKey(field) ? _fields[field] : null;
             }
 
             public override int Size

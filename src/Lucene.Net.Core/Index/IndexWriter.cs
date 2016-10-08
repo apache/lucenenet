@@ -5916,7 +5916,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private static bool SlowFileExists(Directory dir, string fileName)
         {
-            /*
             try
             {
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
@@ -5925,8 +5924,11 @@ namespace Lucene.Net.Index
             catch (FileNotFoundException)
             {
                 return false;
-            }*/
-            return dir.FileExists(fileName);
+            }
+            catch (NoSuchFileException)
+            {
+                return false;
+            }
         }
     }
 }

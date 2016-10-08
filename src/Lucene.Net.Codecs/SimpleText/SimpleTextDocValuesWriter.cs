@@ -21,6 +21,8 @@ namespace Lucene.Net.Codecs.SimpleText
     using System;
     using System.Diagnostics;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Numerics;
     using System.Text;
 
     using FieldInfo = Index.FieldInfo;
@@ -74,21 +76,21 @@ namespace Lucene.Net.Codecs.SimpleText
             foreach (var n in values)
             {
                 var v = n.GetValueOrDefault();
-                minValue = Math.Min(minValue, v); // Added .Value to account for long?
-                maxValue = Math.Max(maxValue, v); // Added .Value to account for long?
+                minValue = Math.Min(minValue, v);
+                maxValue = Math.Max(maxValue, v);
             }
 
             // write our minimum value to the .dat, all entries are deltas from that
             SimpleTextUtil.Write(data, MINVALUE);
-            SimpleTextUtil.Write(data, Convert.ToString(minValue), scratch);
+            SimpleTextUtil.Write(data, minValue.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
             // build up our fixed-width "simple text packed ints" format
-            System.Numerics.BigInteger maxBig = maxValue;
-            System.Numerics.BigInteger minBig = minValue;
-            var diffBig = maxBig - minBig;
+            BigInteger maxBig = maxValue;
+            BigInteger minBig = minValue;
+            var diffBig = BigInteger.Subtract(maxBig, minBig);
 
-            var maxBytesPerValue = diffBig.ToString().Length;
+            var maxBytesPerValue = diffBig.ToString(CultureInfo.InvariantCulture).Length;
             var sb = new StringBuilder();
             for (var i = 0; i < maxBytesPerValue; i++)
                 sb.Append('0');
@@ -109,8 +111,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 Debug.Assert(value >= minValue);
 
-                var delta = value - minValue;
-                string s = delta.ToString(patternString);
+                var delta = BigInteger.Subtract(value, minValue);
+                string s = delta.ToString(patternString, CultureInfo.InvariantCulture);
                 Debug.Assert(s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
@@ -138,18 +140,20 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // write maxLength
             SimpleTextUtil.Write(data, MAXLENGTH);
-            SimpleTextUtil.Write(data, Convert.ToString(maxLength), scratch);
+            SimpleTextUtil.Write(data, maxLength.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            var maxBytesLength = Convert.ToString(maxLength).Length;
+            var maxBytesLength = maxLength.ToString(CultureInfo.InvariantCulture).Length;
             var sb = new StringBuilder();
             for (var i = 0; i < maxBytesLength; i++)
             {
                 sb.Append('0');
             }
             // write our pattern for encoding lengths
+            var patternString = sb.ToString();
+
             SimpleTextUtil.Write(data, PATTERN);
-            SimpleTextUtil.Write(data, sb.ToString(), scratch);
+            SimpleTextUtil.Write(data, patternString, scratch);
             SimpleTextUtil.WriteNewline(data);
             
            
@@ -158,7 +162,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 int length = value == null ? 0 : value.Length;
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, length.ToString(sb.ToString()), scratch);
+                SimpleTextUtil.Write(data, length.ToString(patternString, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -198,15 +202,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // write numValues
             SimpleTextUtil.Write(data, NUMVALUES);
-            SimpleTextUtil.Write(data, Convert.ToString(valueCount), scratch);
+            SimpleTextUtil.Write(data, valueCount.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
             // write maxLength
             SimpleTextUtil.Write(data, MAXLENGTH);
-            SimpleTextUtil.Write(data, Convert.ToString(maxLength), scratch);
+            SimpleTextUtil.Write(data, maxLength.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            int maxBytesLength = Convert.ToString(maxLength).Length;
+            int maxBytesLength = maxLength.ToString(CultureInfo.InvariantCulture).Length;
             var sb = new StringBuilder();
             for (int i = 0; i < maxBytesLength; i++)
             {
@@ -220,7 +224,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             var encoderFormat = sb.ToString();
 
-            int maxOrdBytes = Convert.ToString(valueCount + 1L).Length;
+            int maxOrdBytes = (valueCount + 1L).ToString(CultureInfo.InvariantCulture).Length;
             sb.Length = 0;
             for (int i = 0; i < maxOrdBytes; i++)
             {
@@ -241,7 +245,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 // write length
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat), scratch);
+                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -251,7 +255,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (int i = value.Length; i < maxLength; i++)
                 {
-                    data.WriteByte((byte)(sbyte) ' ');
+                    data.WriteByte((byte)' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
@@ -262,7 +266,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             foreach (var ord in docToOrd)
             {
-                SimpleTextUtil.Write(data, (ord + 1).Value.ToString(ordEncoderFormat), scratch);
+                SimpleTextUtil.Write(data, (ord + 1).GetValueOrDefault().ToString(ordEncoderFormat, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(data);
             }
         }
@@ -284,15 +288,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // write numValues
             SimpleTextUtil.Write(data, NUMVALUES);
-            SimpleTextUtil.Write(data, Convert.ToString(valueCount), scratch);
+            SimpleTextUtil.Write(data, valueCount.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
             // write maxLength
             SimpleTextUtil.Write(data, MAXLENGTH);
-            SimpleTextUtil.Write(data, Convert.ToString(maxLength), scratch);
+            SimpleTextUtil.Write(data, maxLength.ToString(CultureInfo.InvariantCulture), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            int maxBytesLength = Convert.ToString(maxLength).Length;
+            int maxBytesLength = maxLength.ToString(CultureInfo.InvariantCulture).Length;
             var sb = new StringBuilder();
             for (int i = 0; i < maxBytesLength; i++)
             {
@@ -323,7 +327,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         sb2.Append(",");
                     }
-                    sb2.Append(Convert.ToString(ord));
+                    sb2.Append(ord.GetValueOrDefault().ToString(CultureInfo.InvariantCulture));
                 }
                 maxOrdListLength = Math.Max(maxOrdListLength, sb2.Length);
             }
@@ -346,7 +350,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 // write length
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat), scratch);
+                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -356,7 +360,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (var i = value.Length; i < maxLength; i++)
                 {
-                    data.WriteByte((byte)(sbyte) ' ');
+                    data.WriteByte((byte)' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
@@ -379,7 +383,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (sb2.Length > 0)
                         sb2.Append(",");
                     
-                    sb2.Append(Convert.ToString(ord));
+                    sb2.Append(ord);
                 }
                 // now pad to fit: these are numbers so spaces work well. reader calls trim()
                 var numPadding = maxOrdListLength - sb2.Length;
@@ -394,7 +398,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (data == null || disposing) return;
+            if (data == null || !disposing) return;
             var success = false;
             try
             {

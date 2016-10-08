@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using System.Diagnostics;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using Support;
     using Util.Fst;
     
@@ -99,8 +100,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 
                 if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD))
                 {
-                    var fieldName = scratch.Bytes.SubList(scratch.Offset + SimpleTextFieldsWriter.FIELD.Length,
-                        scratch.Length - SimpleTextFieldsWriter.FIELD.Length).ToString();
+                    var fieldName = Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + SimpleTextFieldsWriter.FIELD.Length,
+                        scratch.Length - SimpleTextFieldsWriter.FIELD.Length);
                     fields[fieldName] = input.FilePointer;
                 }
             }
@@ -737,11 +738,14 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             lock (this)
             {
-                Terms terms = _termsCache[field];
-                if (terms != null) return terms;
+                SimpleTextTerms terms;
+                if (_termsCache.TryGetValue(field, out terms))
+                {
+                    return terms;
+                }
 
-                var fp = _fields[field];
-                if (fp == null)
+                long? fp;
+                if (!_fields.TryGetValue(field, out fp) || !fp.HasValue)
                 {
                     return null;
                 }

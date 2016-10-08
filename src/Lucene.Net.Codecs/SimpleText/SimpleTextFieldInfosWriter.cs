@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using IOContext = Store.IOContext;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
+    using System.Globalization;
 
     /// <summary>
     /// writes plaintext field infos files
@@ -73,7 +74,7 @@ namespace Lucene.Net.Codecs.SimpleText
             try
             {
                 SimpleTextUtil.Write(output, NUMFIELDS);
-                SimpleTextUtil.Write(output, Convert.ToString(infos.Size()), scratch);
+                SimpleTextUtil.Write(output, infos.Size().ToString(CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 foreach (FieldInfo fi in infos)
@@ -83,11 +84,11 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NUMBER);
-                    SimpleTextUtil.Write(output, Convert.ToString(fi.Number), scratch);
+                    SimpleTextUtil.Write(output, fi.Number.ToString(CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, ISINDEXED);
-                    SimpleTextUtil.Write(output, Convert.ToString(fi.Indexed), scratch);
+                    SimpleTextUtil.Write(output, fi.Indexed.ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     if (fi.Indexed)
@@ -99,15 +100,15 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
 
                     SimpleTextUtil.Write(output, STORETV);
-                    SimpleTextUtil.Write(output, Convert.ToString(fi.HasVectors()), scratch);
+                    SimpleTextUtil.Write(output, fi.HasVectors().ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, PAYLOADS);
-                    SimpleTextUtil.Write(output, Convert.ToString(fi.HasPayloads()), scratch);
+                    SimpleTextUtil.Write(output, fi.HasPayloads().ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS);
-                    SimpleTextUtil.Write(output, Convert.ToString(!fi.OmitsNorms()), scratch);
+                    SimpleTextUtil.Write(output, (!fi.OmitsNorms()).ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS_TYPE);
@@ -119,13 +120,13 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, DOCVALUES_GEN);
-                    SimpleTextUtil.Write(output, Convert.ToString(fi.DocValuesGen), scratch);
+                    SimpleTextUtil.Write(output, fi.DocValuesGen.ToString(CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     IDictionary<string, string> atts = fi.Attributes();
                     int numAtts = atts == null ? 0 : atts.Count;
                     SimpleTextUtil.Write(output, NUM_ATTS);
-                    SimpleTextUtil.Write(output, Convert.ToString(numAtts), scratch);
+                    SimpleTextUtil.Write(output, numAtts.ToString(CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     if (numAtts <= 0 || atts == null) continue;
@@ -156,7 +157,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static string GetDocValuesType(FieldInfo.DocValuesType_e? type)
+        private static string GetDocValuesType(DocValuesType? type)
         {
             return type.HasValue ? type.ToString() : "false";
         }

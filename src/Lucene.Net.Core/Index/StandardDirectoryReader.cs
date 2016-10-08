@@ -55,20 +55,20 @@ namespace Lucene.Net.Index
 
         private class FindSegmentsFileAnonymousInnerClassHelper : SegmentInfos.FindSegmentsFile
         {
-            private new readonly Directory Directory;
-            private readonly int TermInfosIndexDivisor;
+            private readonly Directory directory;
+            private readonly int termInfosIndexDivisor;
 
             public FindSegmentsFileAnonymousInnerClassHelper(Directory directory, int termInfosIndexDivisor)
                 : base(directory)
             {
-                this.Directory = directory;
-                this.TermInfosIndexDivisor = termInfosIndexDivisor;
+                this.directory = directory;
+                this.termInfosIndexDivisor = termInfosIndexDivisor;
             }
 
             protected internal override object DoBody(string segmentFileName)
             {
                 var sis = new SegmentInfos();
-                sis.Read(Directory, segmentFileName);
+                sis.Read(directory, segmentFileName);
                 var readers = new SegmentReader[sis.Size()];
                 for (int i = sis.Size() - 1; i >= 0; i--)
                 {
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
                     bool success = false;
                     try
                     {
-                        readers[i] = new SegmentReader(sis.Info(i), TermInfosIndexDivisor, IOContext.READ);
+                        readers[i] = new SegmentReader(sis.Info(i), termInfosIndexDivisor, IOContext.READ);
                         success = true;
                     }
                     catch (System.IO.IOException ex)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                return new StandardDirectoryReader(Directory, readers, null, sis, TermInfosIndexDivisor, false);
+                return new StandardDirectoryReader(directory, readers, null, sis, termInfosIndexDivisor, false);
             }
         }
 
