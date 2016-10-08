@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Sep
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             IOUtils.Close(DOC_OUT, SKIP_OUT, FREQ_OUT, POS_OUT, PAYLOAD_OUT);
         }

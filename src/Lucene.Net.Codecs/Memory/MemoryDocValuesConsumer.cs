@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs.Memory
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             var success = false;
             try
