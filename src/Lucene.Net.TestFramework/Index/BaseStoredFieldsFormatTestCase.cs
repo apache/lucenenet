@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
                         Document docExp = docs[testID];
                         for (int i = 0; i < fieldCount; i++)
                         {
-                            Assert.AreEqual("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.Get("f" + i), doc.Get("f" + i));
+                            assertEquals("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.Get("f" + i), doc.Get("f" + i));
                         }
                     }
                     r.Dispose();
