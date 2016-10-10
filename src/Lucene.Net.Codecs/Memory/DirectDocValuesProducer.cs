@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -214,8 +215,8 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                var instance = numericInstances[field.Number];
-                if (instance == null)
+                NumericDocValues instance;
+                if (!numericInstances.TryGetValue(field.Number, out instance))
                 {
                     // Lazy load
                     instance = LoadNumeric(numerics[field.Number]);
@@ -235,7 +236,8 @@ namespace Lucene.Net.Codecs.Memory
                         var values = new byte[entry.count];
                         data.ReadBytes(values, 0, entry.count);
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                        return new NumericDocValuesAnonymousInnerClassHelper(values);
+                        // LUCENENET: IMPORTANT - some bytes are negative here, so we need to pass as sbyte
+                        return new NumericDocValuesAnonymousInnerClassHelper((sbyte[])(Array)values);
                     }
 
                 case 2:
@@ -278,9 +280,9 @@ namespace Lucene.Net.Codecs.Memory
 
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            private readonly byte[] values;
+            private readonly sbyte[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper(byte[] values)
+            public NumericDocValuesAnonymousInnerClassHelper(sbyte[] values)
             {
                 this.values = values;
             }
@@ -340,8 +342,8 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                var instance = binaryInstances[field.Number];
-                if (instance == null)
+                BinaryDocValues instance;
+                if (!binaryInstances.TryGetValue(field.Number, out instance))
                 {
                     // Lazy load
                     instance = LoadBinary(binaries[field.Number]);
@@ -393,8 +395,8 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                var instance = sortedInstances[field.Number];
-                if (instance == null)
+                SortedDocValues instance;
+                if (!sortedInstances.TryGetValue(field.Number, out instance))
                 {
                     // Lazy load
                     instance = LoadSorted(field);
@@ -457,9 +459,9 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                var instance = sortedSetInstances[field.Number];
                 var entry = sortedSets[field.Number];
-                if (instance == null)
+                SortedSetRawValues instance;
+                if (!sortedSetInstances.TryGetValue(field.Number, out instance))
                 {
                     // Lazy load
                     instance = LoadSortedSet(entry);
@@ -563,8 +565,7 @@ namespace Lucene.Net.Codecs.Memory
                 Bits instance;
                 lock (this)
                 {
-                    instance = docsWithFieldInstances[fieldNumber];
-                    if (instance == null)
+                    if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
                     {
                         var data = (IndexInput)this.data.Clone();
                         data.Seek(offset);

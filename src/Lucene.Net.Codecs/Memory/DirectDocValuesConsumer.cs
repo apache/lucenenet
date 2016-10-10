@@ -48,11 +48,11 @@ namespace Lucene.Net.Codecs.Memory
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                     dataExtension);
                 data = state.Directory.CreateOutput(dataName, state.Context);
-                CodecUtil.WriteHeader(data, dataCodec, MemoryDocValuesProducer.VERSION_CURRENT);
+                CodecUtil.WriteHeader(data, dataCodec, DirectDocValuesProducer.VERSION_CURRENT);
                 string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                     metaExtension);
                 meta = state.Directory.CreateOutput(metaName, state.Context);
-                CodecUtil.WriteHeader(meta, metaCodec, MemoryDocValuesProducer.VERSION_CURRENT);
+                CodecUtil.WriteHeader(meta, metaCodec, DirectDocValuesProducer.VERSION_CURRENT);
                 success = true;
             }
             finally
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Memory
                 long v;
                 if (nv != null)
                 {
-                    v = (long) nv;
+                    v = nv.Value;
                 }
                 else
                 {
@@ -329,8 +329,7 @@ namespace Lucene.Net.Codecs.Memory
             // (the final sum):
             public virtual IEnumerator<long?> GetEnumerator()
             {
-                var iter = _docToOrdCount.GetEnumerator();
-                return new IteratorAnonymousInnerClassHelper(this, iter);
+                return new IteratorAnonymousInnerClassHelper(this, _docToOrdCount);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -340,23 +339,24 @@ namespace Lucene.Net.Codecs.Memory
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<long?>
             {
-                private readonly IEnumerator<long?> _iter;
+                private readonly IEnumerator<long?> iter;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance,
-                    IEnumerator<long?> iter)
+                    IEnumerable<long?> docToOrdCount)
                 {
-                    _iter = iter;
+                    this.iter = docToOrdCount.GetEnumerator();
                 }
 
 
                 private long sum;
                 private bool ended;
+                private long toReturn;
 
                 public long? Current
                 {
                     get
                     {
-                        return _iter.Current;
+                        return toReturn;
                     }
                 }
 
@@ -368,17 +368,16 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public virtual void Remove()
-                {
-                    throw new NotSupportedException();
-                }
+                // LUCENENET: Remove() not supported by .NET
 
                 public bool MoveNext()
                 {
-                    long toReturn = sum;
-                    if (_iter.MoveNext())
+                    if (ended) return false;
+
+                    toReturn = sum;
+                    if (iter.MoveNext())
                     {
-                        long? n = _iter.Current;
+                        long? n = iter.Current;
                         if (n.HasValue)
                         {
                             sum += n.Value;
@@ -386,18 +385,21 @@ namespace Lucene.Net.Codecs.Memory
 
                         return true;
                     }
-                    else 
+                    else if (!ended)
                     {
                         ended = true;
+                        return true;
+                    }
+                    else
+                    { 
+                        Debug.Assert(false);
                         return false;
                     }
-
-                    //return toReturn;
                 }
 
                 public void Reset()
                 {
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
                 }
 
                 #region IDisposable Support
@@ -409,7 +411,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (disposing)
                         {
-                            // TODO: dispose managed state (managed objects).          
+                            // TODO: dispose managed state (managed objects).
+                            iter.Dispose();         
                         }
 
                         // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
