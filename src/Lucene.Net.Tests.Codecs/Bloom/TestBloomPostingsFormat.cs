@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.bloom
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.Bloom
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,23 +21,19 @@
 	 * limitations under the License.
 	 */
 
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Basic tests for BloomPostingsFormat
+    /// </summary>
+    public class TestBloomPostingsFormat : BasePostingsFormatTestCase
+    {
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new TestBloomFilteredLucene41Postings());
 
-	/// <summary>
-	/// Basic tests for BloomPostingsFormat
-	/// </summary>
-	public class TestBloomPostingsFormat : BasePostingsFormatTestCase
-	{
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new TestBloomFilteredLucene41Postings());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }

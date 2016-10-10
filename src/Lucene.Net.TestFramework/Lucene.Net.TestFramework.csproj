@@ -141,6 +141,7 @@
     <Compile Include="Codecs\asserting\AssertingTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
     <Compile Include="Codecs\compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
