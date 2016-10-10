@@ -230,6 +230,7 @@ namespace Lucene.Net.Index.Sorter
             dir.Dispose();
         }
 
+        [Test]
         public virtual void TestBinaryDocValuesField()
         {
             BinaryDocValues dv = reader.GetBinaryDocValues(BINARY_DV_FIELD);
@@ -241,6 +242,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestDocsAndPositionsEnum()
         {
             TermsEnum termsEnum = reader.Terms(DOC_POSITIONS_FIELD).Iterator(null);
@@ -320,6 +322,7 @@ namespace Lucene.Net.Index.Sorter
             return bits;
         }
 
+        [Test]
         public virtual void TestDocsEnum()
         {
             Bits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
@@ -366,6 +369,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestNormValues()
         {
             NumericDocValues dv = reader.GetNormValues(NORMS_FIELD);
@@ -376,6 +380,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestNumericDocValuesField()
         {
             NumericDocValues dv = reader.GetNumericDocValues(NUMERIC_DV_FIELD);
@@ -386,6 +391,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestSortedDocValuesField()
         {
             SortedDocValues dv = reader.GetSortedDocValues(SORTED_DV_FIELD);
@@ -398,6 +404,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestSortedSetDocValuesField()
         {
             AssumeTrue("default codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
@@ -416,6 +423,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
+        [Test]
         public virtual void TestTermVectors()
         {
             int maxDoc = reader.MaxDoc;
