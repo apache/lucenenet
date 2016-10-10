@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
         /// Test length=0.
         /// </summary>
         [Test]
-        public void TestNoBit()
+        public virtual void TestNoBit()
         {
             BitArray bs = new BitArray(1);
             T copy = CopyOf(bs, 0);
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
         /// Test length=1.
         /// </summary>
         [Test]
-        public void Test1Bit()
+        public virtual void Test1Bit()
         {
             BitArray bs = new BitArray(1);
             if (Random().NextBoolean())
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
         /// Test length=2.
         /// </summary>
         [Test]
-        public void Test2Bits()
+        public virtual void Test2Bits()
         {
             BitArray bs = new BitArray(2);
             if (Random().NextBoolean())
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util
         /// </summary>
         [Test, Timeout(150000)]
         [LongRunningTest]
-        public void TestAgainstBitSet()
+        public virtual void TestAgainstBitSet()
         {
             int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
             // test various random sets with various load factors
