@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.memory
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.Memory
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +21,20 @@
 	 * limitations under the License.
 	 */
 
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Tests MemoryPostingsFormat
+    /// </summary>
+    public class TestMemoryPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize doPack
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat());
 
-	/// <summary>
-	/// Tests MemoryPostingsFormat
-	/// </summary>
-	public class TestMemoryPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize doPack
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new MemoryPostingsFormat());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }
