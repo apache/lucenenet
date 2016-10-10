@@ -1,9 +1,17 @@
-﻿using System.Text;
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
-namespace org.apache.lucene.codecs.pulsing
+namespace Lucene.Net.Codecs.Pulsing
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,164 +28,145 @@ namespace org.apache.lucene.codecs.pulsing
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Pulses 10k terms/docs, 
+    /// originally designed to find JRE bugs (https://issues.apache.org/jira/browse/LUCENE-3335)
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    // LUCENENET TODO: This was marked with the Nightly attribute in Java Lucene
+    public class Test10KPulsings : LuceneTestCase
+    {
+        [Test]
+        public virtual void Test10kPulsed()
+        {
+            // we always run this test with pulsing codec.
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1));
 
-	using MockAnalyzer = org.apache.lucene.analysis.MockAnalyzer;
-	using Document = org.apache.lucene.document.Document;
-	using Field = org.apache.lucene.document.Field;
-	using FieldType = org.apache.lucene.document.FieldType;
-	using TextField = org.apache.lucene.document.TextField;
-	using DocsEnum = org.apache.lucene.index.DocsEnum;
-	using IndexOptions = org.apache.lucene.index.FieldInfo.IndexOptions;
-	using IndexReader = org.apache.lucene.index.IndexReader;
-	using MultiFields = org.apache.lucene.index.MultiFields;
-	using RandomIndexWriter = org.apache.lucene.index.RandomIndexWriter;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using DocIdSetIterator = org.apache.lucene.search.DocIdSetIterator;
-	using BaseDirectoryWrapper = org.apache.lucene.store.BaseDirectoryWrapper;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+            DirectoryInfo f = CreateTempDir("10kpulsed");
+            BaseDirectoryWrapper dir = NewFSDirectory(f);
+            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
 
-	/// <summary>
-	/// Pulses 10k terms/docs, 
-	/// originally designed to find JRE bugs (https://issues.apache.org/jira/browse/LUCENE-3335)
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @LuceneTestCase.Nightly public class Test10KPulsings extends org.apache.lucene.util.LuceneTestCase
-	public class Test10KPulsings : LuceneTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test10kPulsed() throws Exception
-	  public virtual void test10kPulsed()
-	  {
-		// we always run this test with pulsing codec.
-		Codec cp = TestUtil.alwaysPostingsFormat(new Pulsing41PostingsFormat(1));
+            Document document = new Document();
+            FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-		File f = createTempDir("10kpulsed");
-		BaseDirectoryWrapper dir = newFSDirectory(f);
-		dir.CheckIndexOnClose = false; // we do this ourselves explicitly
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
+            switch (TestUtil.NextInt(Random(), 0, 2))
+            {
+                case 0:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                    break;
+                case 1:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    break;
+                default:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    break;
+            }
 
-		Document document = new Document();
-		FieldType ft = new FieldType(TextField.TYPE_STORED);
+            Field field = NewField("field", "", ft);
+            document.Add(field);
 
-		switch (TestUtil.Next(random(), 0, 2))
-		{
-		  case 0:
-			  ft.IndexOptions = IndexOptions.DOCS_ONLY;
-			  break;
-		  case 1:
-			  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
-			  break;
-		  default:
-			  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-			  break;
-		}
+            //NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));
 
-		Field field = newField("field", "", ft);
-		document.add(field);
+            for (int i = 0; i < 10050; i++)
+            {
+                //field.StringValue = df.format(i);
+                field.StringValue = i.ToString("00000", CultureInfo.InvariantCulture);
+                iw.AddDocument(document);
+            }
 
-		NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));
+            IndexReader ir = iw.Reader;
+            iw.Dispose();
 
-		for (int i = 0; i < 10050; i++)
-		{
-		  field.StringValue = df.format(i);
-		  iw.addDocument(document);
-		}
+            TermsEnum te = MultiFields.GetTerms(ir, "field").Iterator(null);
+            DocsEnum de = null;
 
-		IndexReader ir = iw.Reader;
-		iw.close();
+            for (int i = 0; i < 10050; i++)
+            {
+                //string expected = df.format(i);
+                string expected = i.ToString("00000", CultureInfo.InvariantCulture);
+                assertEquals(expected, te.Next().Utf8ToString());
+                de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+                assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
+            }
+            ir.Dispose();
 
-		TermsEnum te = MultiFields.getTerms(ir, "field").iterator(null);
-		DocsEnum de = null;
+            TestUtil.CheckIndex(dir);
+            dir.Dispose();
+        }
 
-		for (int i = 0; i < 10050; i++)
-		{
-		  string expected = df.format(i);
-		  assertEquals(expected, te.next().utf8ToString());
-		  de = TestUtil.docs(random(), te, null, de, DocsEnum.FLAG_NONE);
-		  assertTrue(de.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		  assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.nextDoc());
-		}
-		ir.close();
+        /// <summary>
+        /// a variant, that uses pulsing, but uses a high TF to force pass thru to the underlying codec
+        /// </summary>
+        [Test]
+        public virtual void Test10kNotPulsed()
+        {
+            // we always run this test with pulsing codec.
+            int freqCutoff = TestUtil.NextInt(Random(), 1, 10);
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(freqCutoff));
 
-		TestUtil.checkIndex(dir);
-		dir.close();
-	  }
+            DirectoryInfo f = CreateTempDir("10knotpulsed");
+            BaseDirectoryWrapper dir = NewFSDirectory(f);
+            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
 
-	  /// <summary>
-	  /// a variant, that uses pulsing, but uses a high TF to force pass thru to the underlying codec
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test10kNotPulsed() throws Exception
-	  public virtual void test10kNotPulsed()
-	  {
-		// we always run this test with pulsing codec.
-		int freqCutoff = TestUtil.Next(random(), 1, 10);
-		Codec cp = TestUtil.alwaysPostingsFormat(new Pulsing41PostingsFormat(freqCutoff));
+            Document document = new Document();
+            FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-		File f = createTempDir("10knotpulsed");
-		BaseDirectoryWrapper dir = newFSDirectory(f);
-		dir.CheckIndexOnClose = false; // we do this ourselves explicitly
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
+            switch (TestUtil.NextInt(Random(), 0, 2))
+            {
+                case 0:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                    break;
+                case 1:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    break;
+                default:
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    break;
+            }
 
-		Document document = new Document();
-		FieldType ft = new FieldType(TextField.TYPE_STORED);
+            Field field = NewField("field", "", ft);
+            document.Add(field);
 
-		switch (TestUtil.Next(random(), 0, 2))
-		{
-		  case 0:
-			  ft.IndexOptions = IndexOptions.DOCS_ONLY;
-			  break;
-		  case 1:
-			  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
-			  break;
-		  default:
-			  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-			  break;
-		}
+            //NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));
 
-		Field field = newField("field", "", ft);
-		document.add(field);
+            int freq = freqCutoff + 1;
 
-		NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));
+            for (int i = 0; i < 10050; i++)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < freq; j++)
+                {
+                    //sb.Append(df.format(i));
+                    sb.Append(i.ToString("00000", CultureInfo.InvariantCulture));
+                    sb.Append(' '); // whitespace
+                }
+                field.StringValue = sb.ToString();
+                iw.AddDocument(document);
+            }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = freqCutoff + 1;
-		int freq = freqCutoff + 1;
+            IndexReader ir = iw.Reader;
+            iw.Dispose();
 
-		for (int i = 0; i < 10050; i++)
-		{
-		  StringBuilder sb = new StringBuilder();
-		  for (int j = 0; j < freq; j++)
-		  {
-			sb.Append(df.format(i));
-			sb.Append(' '); // whitespace
-		  }
-		  field.StringValue = sb.ToString();
-		  iw.addDocument(document);
-		}
+            TermsEnum te = MultiFields.GetTerms(ir, "field").Iterator(null);
+            DocsEnum de = null;
 
-		IndexReader ir = iw.Reader;
-		iw.close();
+            for (int i = 0; i < 10050; i++)
+            {
+                //string expected = df.format(i);
+                string expected = i.ToString("00000", CultureInfo.InvariantCulture);
+                assertEquals(expected, te.Next().Utf8ToString());
+                de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+                assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
+            }
+            ir.Dispose();
 
-		TermsEnum te = MultiFields.getTerms(ir, "field").iterator(null);
-		DocsEnum de = null;
-
-		for (int i = 0; i < 10050; i++)
-		{
-		  string expected = df.format(i);
-		  assertEquals(expected, te.next().utf8ToString());
-		  de = TestUtil.docs(random(), te, null, de, DocsEnum.FLAG_NONE);
-		  assertTrue(de.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		  assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.nextDoc());
-		}
-		ir.close();
-
-		TestUtil.checkIndex(dir);
-		dir.close();
-	  }
-	}
-
+            TestUtil.CheckIndex(dir);
+            dir.Dispose();
+        }
+    }
 }

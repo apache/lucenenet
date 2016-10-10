@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.pulsing
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.Pulsing
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +21,20 @@
 	 * limitations under the License.
 	 */
 
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Tests PulsingPostingsFormat
+    /// </summary>
+    public class TestPulsingPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize cutoff
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat());
 
-	/// <summary>
-	/// Tests PulsingPostingsFormat
-	/// </summary>
-	public class TestPulsingPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize cutoff
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new Pulsing41PostingsFormat());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }

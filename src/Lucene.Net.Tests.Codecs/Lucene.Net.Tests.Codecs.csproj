@@ -49,6 +49,9 @@
     <Compile Include="IntBlock\TestIntBlockCodec.cs" />
     <Compile Include="IntBlock\TestVariableIntBlockPostingsFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pulsing\Test10KPulsings.cs" />
+    <Compile Include="Pulsing\TestPulsingPostingsFormat.cs" />
+    <Compile Include="Pulsing\TestPulsingReuse.cs" />
     <Compile Include="Sep\TestSepPostingsFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextDocValuesFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextPostingsFormat.cs" />
