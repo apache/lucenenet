@@ -259,8 +259,10 @@ namespace Lucene.Net.Codecs.Pulsing
 
         protected override void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (disposing)
+            {
                 _wrappedPostingsReader.Dispose();
+            }
         }
         
         /// <summary>
@@ -278,7 +280,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 return null;
             
             var atts = de.Attributes();
-            return atts.AddAttribute<IPulsingEnumAttribute>().Enums()[this];
+            DocsEnum result;
+            atts.AddAttribute<IPulsingEnumAttribute>().Enums().TryGetValue(this, out result);
+            return result;
         }
 
         /// <summary>
