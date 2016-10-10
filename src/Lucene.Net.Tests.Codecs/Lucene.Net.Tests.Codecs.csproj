@@ -46,6 +46,7 @@
     <Compile Include="Bloom\TestBloomPostingsFormat.cs" />
     <Compile Include="DiskDv\TestDiskDocValuesFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sep\TestSepPostingsFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextDocValuesFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextPostingsFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextStoredFieldsFormat.cs" />

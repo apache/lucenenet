@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.codecs.sep
-{
+﻿using Lucene.Net.Codecs.MockSep;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.Sep
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +22,20 @@
 	 * limitations under the License.
 	 */
 
-	using MockSepPostingsFormat = org.apache.lucene.codecs.mocksep.MockSepPostingsFormat;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Tests sep layout
+    /// </summary>
+    public class TestSepPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize cutoff
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockSepPostingsFormat());
 
-	/// <summary>
-	/// Tests sep layout
-	/// </summary>
-	public class TestSepPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize cutoff
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new MockSepPostingsFormat());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }
