@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-        [Test]
+        [Test, Timeout(80000)]
         public virtual void TestAppendingLongBuffer()
         {
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -119,7 +120,7 @@ namespace Lucene.Net.Util
             return s;
         }
 
-        [Test, Timeout(180000)]
+        [Test, LongRunningTest, Timeout(300000)]
         public virtual void TestSimpleByteArrays()
         {
             object[][] all = new object[0][];
