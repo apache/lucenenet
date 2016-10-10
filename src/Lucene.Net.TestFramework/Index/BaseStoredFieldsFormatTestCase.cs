@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandomStoredFields()
         {
             Directory dir = NewDirectory();
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // LUCENE-1727: make sure doc fields are stored in order
         public virtual void TestStoredFieldsOrder()
         {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // LUCENE-1219
         public virtual void TestBinaryFieldOffsetLength()
         {
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestNumericField()
         {
             Directory dir = NewDirectory();
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestIndexedBit()
         {
             Directory dir = NewDirectory();
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestReadSkip()
         {
             Directory dir = NewDirectory();
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(300000)]
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
@@ -449,7 +449,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(300000)]
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestConcurrentReads()
         {
             Directory dir = NewDirectory();
@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
             return result;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestWriteReadMerge()
         {
             // get another codec, other than the default: so we are merging segments across different codecs
@@ -670,7 +670,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"
@@ -747,7 +747,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBulkMergeWithDeletes()
         {
             int numDocs = AtLeast(200);

@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
         /// Placeholder: JUnit freaks if you don't have one test ... making
         /// class abstract doesn't help
         /// </summary>
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestNoop()
         {
             /* NOOP */

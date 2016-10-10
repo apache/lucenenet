@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// The purpose of this test is to make sure that bulk merge doesn't accumulate useless data over runs.
         /// </summary>
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMergeStability()
         {
             Directory dir = NewDirectory();

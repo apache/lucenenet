@@ -230,7 +230,7 @@ namespace Lucene.Net.Index.Sorter
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBinaryDocValuesField()
         {
             BinaryDocValues dv = reader.GetBinaryDocValues(BINARY_DV_FIELD);
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDocsAndPositionsEnum()
         {
             TermsEnum termsEnum = reader.Terms(DOC_POSITIONS_FIELD).Iterator(null);
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index.Sorter
             return bits;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDocsEnum()
         {
             Bits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestNormValues()
         {
             NumericDocValues dv = reader.GetNormValues(NORMS_FIELD);
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestNumericDocValuesField()
         {
             NumericDocValues dv = reader.GetNumericDocValues(NUMERIC_DV_FIELD);
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedDocValuesField()
         {
             SortedDocValues dv = reader.GetSortedDocValues(SORTED_DV_FIELD);
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetDocValuesField()
         {
             AssumeTrue("default codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTermVectors()
         {
             int maxDoc = reader.MaxDoc;

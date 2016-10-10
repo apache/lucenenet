@@ -668,7 +668,7 @@ namespace Lucene.Net.Index
             return (new IndexSearcher(reader)).Search(new TermQuery(new Term("id", id)), 1).ScoreDocs[0].Doc;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // only one doc with vectors
         public virtual void TestRareVectors()
         {
@@ -715,7 +715,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestHighFreqs()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 3, 5);
@@ -737,7 +737,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestLotsOfFields()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
@@ -755,7 +755,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, Timeout(300000)]
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // different options for the same field
         public virtual void TestMixedOptions()
         {
@@ -790,7 +790,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandom()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
@@ -817,7 +817,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMerge()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
@@ -866,7 +866,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // run random tests from different threads to make sure the per-thread clones
         // don't share mutable data
         public virtual void TestClone()
