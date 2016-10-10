@@ -56,7 +56,9 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class VirtualMethod<C>
+    // LUCENENET NOTE: Pointless to make this class generic, since the generic type is never used (the Type class in .NET
+    // is not generic).
+    public sealed class VirtualMethod
     {
         private static readonly ISet<MethodInfo> SingletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
@@ -156,7 +158,7 @@ namespace Lucene.Net.Util
         ///  <li>&lt; 1, iff {@code m2} is overridden in a subclass of the class overriding/declaring {@code m1}
         ///  <li>0, iff both methods are overridden in the same class (or are not overridden at all)
         /// </ul> </returns>
-        public static int compareImplementationDistance<C>(Type clazz, VirtualMethod<C> m1, VirtualMethod<C> m2)
+        public static int CompareImplementationDistance(Type clazz, VirtualMethod m1, VirtualMethod m2)
         {
             return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
         }

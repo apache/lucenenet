@@ -23,24 +23,33 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestVirtualMethod : LuceneTestCase
     {
-        private static readonly VirtualMethod<TestVirtualMethod> PublicTestMethod;
-        private static readonly VirtualMethod<TestVirtualMethod> ProtectedTestMethod;
+        private static readonly VirtualMethod PublicTestMethod;
+        private static readonly VirtualMethod ProtectedTestMethod;
 
         static TestVirtualMethod()
         {
-            PublicTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
-            ProtectedTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "ProtectedTest", typeof(int));
+            PublicTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
+            ProtectedTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "ProtectedTest", typeof(int));
         }
 
-        public virtual void PublicTest(string test)
+        /// <summary>
+        /// LUCENENET specific class used here because inheriting test classes messes up the context
+        /// that the tests are run in. So, we substitute a class that has no tests.
+        /// </summary>
+        public class BaseTestVirtualMethod
         {
+
+            public virtual void PublicTest(string test)
+            {
+            }
+
+            protected virtual void ProtectedTest(int test)
+            {
+            }
+
         }
 
-        protected virtual void ProtectedTest(int test)
-        {
-        }
-
-        internal class TestClass1 : TestVirtualMethod
+        internal class TestClass1 : BaseTestVirtualMethod
         {
             public override void PublicTest(string test)
             {
@@ -65,7 +74,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal class TestClass4 : TestVirtualMethod
+        internal class TestClass4 : BaseTestVirtualMethod
         {
         }
 
@@ -76,22 +85,24 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestGeneral()
         {
-            Assert.AreEqual(0, PublicTestMethod.GetImplementationDistance(this.GetType()));
+            // LUCENENET: Substituted BaseTestVirtualMethod for this class, but the logic is the same.
+            Assert.AreEqual(0, PublicTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
             Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass1)));
             Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass2)));
             Assert.AreEqual(3, PublicTestMethod.GetImplementationDistance(typeof(TestClass3)));
             Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
             Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
-            Assert.AreEqual(0, ProtectedTestMethod.GetImplementationDistance(this.GetType()));
+            // LUCENENET: Substituted BaseTestVirtualMethod for this class, but the logic is the same.
+            Assert.AreEqual(0, ProtectedTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
             Assert.AreEqual(1, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass1)));
             Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass2)));
             Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass3)));
             Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
             Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
-            Assert.IsTrue(VirtualMethod<TestVirtualMethod>.compareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
-            Assert.AreEqual(0, VirtualMethod<TestVirtualMethod>.compareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
+            Assert.IsTrue(VirtualMethod.CompareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
+            Assert.AreEqual(0, VirtualMethod.CompareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
         }
 
         [Test]
@@ -110,7 +121,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "bogus");
+                new VirtualMethod(typeof(BaseTestVirtualMethod), "bogus");
                 Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
             }
             catch (System.ArgumentException arg)
@@ -120,7 +131,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                new VirtualMethod<TestClass2>(typeof(TestClass2), "PublicTest", typeof(string));
+                new VirtualMethod(typeof(TestClass2), "PublicTest", typeof(string));
             }
             catch (System.ArgumentException arg)
             {
@@ -130,7 +141,7 @@ namespace Lucene.Net.Util
             try
             {
                 // try to create a second instance of the same baseClass / method combination
-                new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
+                new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
                 Assert.Fail("Violating singleton status succeeded");
             }
             catch (System.ArgumentException arg)
