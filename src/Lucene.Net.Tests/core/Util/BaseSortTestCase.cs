@@ -154,55 +154,55 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        public void TestEmpty()
+        public virtual void TestEmpty()
         {
             SortTest(new Entry[0]);
         }
 
         [Test]
-        public void TestOne()
+        public virtual void TestOne()
         {
             DoTest(RandomStrategy, 1);
         }
 
         [Test]
-        public void TestTwo()
+        public virtual void TestTwo()
         {
             DoTest(RandomStrategy, 2);
         }
 
         [Test]
-        public void TestRandom()
+        public virtual void TestRandom()
         {
             DoTest(RandomStrategy);
         }
 
         [Test]
-        public void TestRandomLowCardinality()
+        public virtual void TestRandomLowCardinality()
         {
             DoTest(RandomLowCardinalityStrategy, 2);
         }
 
         [Test]
-        public void TestAscending()
+        public virtual void TestAscending()
         {
             DoTest(AscendingStrategy, 2);
         }
 
         [Test]
-        public void TestAscendingSequences()
+        public virtual void TestAscendingSequences()
         {
             DoTest(AscendingSequencesStrategy, 2);
         }
 
         [Test]
-        public void TestDescending()
+        public virtual void TestDescending()
         {
             DoTest(DescendingStrategy, 2);
         }
 
         [Test]
-        public void TestStrictlyDescendingStrategy()
+        public virtual void TestStrictlyDescendingStrategy()
         {
             DoTest(StrictlyDescendingStrategy, 2);
         }
