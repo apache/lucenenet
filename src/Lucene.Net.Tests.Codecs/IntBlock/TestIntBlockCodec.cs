@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.codecs.intblock
-{
+﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.IntBlock
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,59 +22,51 @@
 	 * limitations under the License.
 	 */
 
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using org.apache.lucene.store;
-	using org.apache.lucene.codecs.mockintblock;
-	using org.apache.lucene.codecs.sep;
+    public class TestIntBlockCodec : LuceneTestCase
+    {
 
-	public class TestIntBlockCodec : LuceneTestCase
-	{
+        [Test]
+        public virtual void TestSimpleIntBlocks()
+        {
+            Directory dir = NewDirectory();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSimpleIntBlocks() throws Exception
-	  public virtual void testSimpleIntBlocks()
-	  {
-		Directory dir = newDirectory();
+            IntStreamFactory f = (new MockFixedIntBlockPostingsFormat(128)).getIntFactory();
 
-		IntStreamFactory f = (new MockFixedIntBlockPostingsFormat(128)).IntFactory;
+            IntIndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random()));
+            for (int i = 0; i < 11777; i++)
+            {
+                @out.Write(i);
+            }
+            @out.Dispose();
 
-		IntIndexOutput @out = f.createOutput(dir, "test", newIOContext(random()));
-		for (int i = 0;i < 11777;i++)
-		{
-		  @out.write(i);
-		}
-		@out.close();
+            IntIndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
+            IntIndexInputReader r = @in.Reader();
 
-		IntIndexInput @in = f.openInput(dir, "test", newIOContext(random()));
-		IntIndexInput.Reader r = @in.reader();
+            for (int i = 0; i < 11777; i++)
+            {
+                assertEquals(i, r.Next());
+            }
+            @in.Dispose();
 
-		for (int i = 0;i < 11777;i++)
-		{
-		  assertEquals(i, r.next());
-		}
-		@in.close();
+            dir.Dispose();
+        }
 
-		dir.close();
-	  }
+        [Test]
+        public virtual void TestEmptySimpleIntBlocks()
+        {
+            Directory dir = NewDirectory();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptySimpleIntBlocks() throws Exception
-	  public virtual void testEmptySimpleIntBlocks()
-	  {
-		Directory dir = newDirectory();
+            IntStreamFactory f = (new MockFixedIntBlockPostingsFormat(128)).getIntFactory();
+            IntIndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random()));
 
-		IntStreamFactory f = (new MockFixedIntBlockPostingsFormat(128)).IntFactory;
-		IntIndexOutput @out = f.createOutput(dir, "test", newIOContext(random()));
+            // write no ints
+            @out.Dispose();
 
-		// write no ints
-		@out.close();
-
-		IntIndexInput @in = f.openInput(dir, "test", newIOContext(random()));
-		@in.reader();
-		// read no ints
-		@in.close();
-		dir.close();
-	  }
-	}
-
+            IntIndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
+            @in.Reader();
+            // read no ints
+            @in.Dispose();
+            dir.Dispose();
+        }
+    }
 }

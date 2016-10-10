@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.intblock
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.IntBlock
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,26 +21,25 @@
 	 * limitations under the License.
 	 */
 
-	using MockVariableIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockVariableIntBlockPostingsFormat;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    //using MockVariableIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockVariableIntBlockPostingsFormat;
+    //using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
+    //using TestUtil = org.apache.lucene.util.TestUtil;
+    //using TestUtil = org.apache.lucene.util.TestUtil;
 
-	/// <summary>
-	/// Basic tests for VariableIntBlock
-	/// </summary>
-	public class TestVariableIntBlockPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize blocksize
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new MockVariableIntBlockPostingsFormat());
+    /// <summary>
+    /// Basic tests for VariableIntBlock
+    /// </summary>
+    public class TestVariableIntBlockPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize blocksize
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockVariableIntBlockPostingsFormat());
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }

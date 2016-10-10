@@ -45,6 +45,9 @@
     <Compile Include="BlockTerms\TestFixedGapPostingsFormat.cs" />
     <Compile Include="Bloom\TestBloomPostingsFormat.cs" />
     <Compile Include="DiskDv\TestDiskDocValuesFormat.cs" />
+    <Compile Include="IntBlock\TestFixedIntBlockPostingsFormat.cs" />
+    <Compile Include="IntBlock\TestIntBlockCodec.cs" />
+    <Compile Include="IntBlock\TestVariableIntBlockPostingsFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sep\TestSepPostingsFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextDocValuesFormat.cs" />

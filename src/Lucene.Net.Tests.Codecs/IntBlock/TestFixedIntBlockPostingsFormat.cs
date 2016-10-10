@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.intblock
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.IntBlock
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +21,20 @@
 	 * limitations under the License.
 	 */
 
-	using MockFixedIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockFixedIntBlockPostingsFormat;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Basic tests for FixedIntBlock
+    /// </summary>
+    public class TestFixedIntBlockPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize blocksize
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockFixedIntBlockPostingsFormat());
 
-	/// <summary>
-	/// Basic tests for FixedIntBlock
-	/// </summary>
-	public class TestFixedIntBlockPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize blocksize
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new MockFixedIntBlockPostingsFormat());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }
