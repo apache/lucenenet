@@ -421,10 +421,14 @@ namespace Lucene.Net.Index
                 HashSet<string> usedFileNames = new HashSet<string>();
                 for (int i = 0; i < fieldCount; ++i)
                 {
-                    do
-                    {
-                        this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
-                    } while (usedFileNames.Contains(this.FieldNames[i]));
+                    // LUCENENET NOTE: Using a simple Linq query to filter rather than using brute force makes this a lot
+                    // faster (and won't infinitely retry due to poor random distribution).
+                    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames.Except(usedFileNames).ToArray());
+                    //do
+                    //{
+                    //    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
+                    //} while (usedFileNames.Contains(this.FieldNames[i]));
+
                     usedFileNames.Add(this.FieldNames[i]);
                     TokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt(Random(), 1, maxTermCount), sampleTerms, sampleTermBytes);
                 }
