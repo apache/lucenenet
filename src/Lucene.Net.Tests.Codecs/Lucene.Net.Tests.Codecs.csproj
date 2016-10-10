@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockTerms\TestFixedGapPostingsFormat.cs" />
     <Compile Include="DiskDv\TestDiskDocValuesFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleText\TestSimpleTextDocValuesFormat.cs" />

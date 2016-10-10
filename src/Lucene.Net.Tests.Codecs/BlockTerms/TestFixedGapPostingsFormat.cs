@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.codecs.blockterms
-{
+﻿using Lucene.Net.Codecs.Lucene41Ords;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.BlockTerms
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,26 +22,21 @@
 	 * limitations under the License.
 	 */
 
-	using Lucene41WithOrds = org.apache.lucene.codecs.lucene41ords.Lucene41WithOrds;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Basic tests of a PF using FixedGap terms dictionary
+    /// </summary>
+    // TODO: we should add an instantiation for VarGap too to TestFramework, and a test in this package
+    // TODO: ensure both of these are also in rotation in RandomCodec
+    public class TestFixedGapPostingsFormat : BasePostingsFormatTestCase
+    {
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Lucene41WithOrds());
 
-	/// <summary>
-	/// Basic tests of a PF using FixedGap terms dictionary
-	/// </summary>
-	// TODO: we should add an instantiation for VarGap too to TestFramework, and a test in this package
-	// TODO: ensure both of these are also in rotation in RandomCodec
-	public class TestFixedGapPostingsFormat : BasePostingsFormatTestCase
-	{
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new Lucene41WithOrds());
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }
