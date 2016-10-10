@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.simpletext
-{
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Index;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.SimpleText
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,18 +21,15 @@
 	 * limitations under the License.
 	 */
 
-	using BaseStoredFieldsFormatTestCase = org.apache.lucene.index.BaseStoredFieldsFormatTestCase;
+    public class TestSimpleTextStoredFieldsFormat : BaseStoredFieldsFormatTestCase
+    {
 
-	public class TestSimpleTextStoredFieldsFormat : BaseStoredFieldsFormatTestCase
-	{
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new SimpleTextCodec();
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return new SimpleTextCodec();
+            }
+        }
+    }
 }

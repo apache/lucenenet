@@ -1,7 +1,17 @@
-﻿namespace org.apache.lucene.codecs.simpletext
-{
+﻿using System;
+using Lucene.Net.Index;
+using NUnit.Framework;
+using Lucene.Net.Analysis;
+using Lucene.Net.Store;
+using Lucene.Net.Documents;
+using Lucene.Net.Util;
+using Lucene.Net.Search;
+using System.Diagnostics;
+using Lucene.Net.Analysis.Standard;
 
-	/*
+namespace Lucene.Net.Codecs.SimpleText
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,22 +28,19 @@
 	 * limitations under the License.
 	 */
 
-	using BaseDocValuesFormatTestCase = org.apache.lucene.index.BaseDocValuesFormatTestCase;
+    /// <summary>
+    /// Tests SimpleTextDocValuesFormat
+    /// </summary>
+    public class TestSimpleTextDocValuesFormat : BaseDocValuesFormatTestCase
+    {
+        private readonly Codec codec = new SimpleTextCodec();
 
-	/// <summary>
-	/// Tests SimpleTextDocValuesFormat
-	/// </summary>
-	public class TestSimpleTextDocValuesFormat : BaseDocValuesFormatTestCase
-	{
-	  private readonly Codec codec = new SimpleTextCodec();
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
+    }
 }

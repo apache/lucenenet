@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.codecs.simpletext
-{
+﻿using Lucene.Net.Index;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.SimpleText
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,19 +20,15 @@
 	 * limitations under the License.
 	 */
 
-	using BaseTermVectorsFormatTestCase = org.apache.lucene.index.BaseTermVectorsFormatTestCase;
+    public class TestSimpleTextTermVectorsFormat : BaseTermVectorsFormatTestCase
+    {
 
-	public class TestSimpleTextTermVectorsFormat : BaseTermVectorsFormatTestCase
-	{
-
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new SimpleTextCodec();
-		  }
-	  }
-
-	}
-
+        protected override Codec Codec
+        {
+            get
+            {
+                return new SimpleTextCodec();
+            }
+        }
+    }
 }
