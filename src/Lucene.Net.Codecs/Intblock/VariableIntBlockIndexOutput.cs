@@ -1,27 +1,25 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Store;
+using System.Diagnostics;
 
-namespace Lucene.Net.Codecs.Intblock
+namespace Lucene.Net.Codecs.IntBlock
 {
-
-    using System.Diagnostics;
-    using Sep;
-    using IntIndexOutput = Sep.IntIndexOutput;
-    using IndexOutput = Store.IndexOutput;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Naive int block API that writes vInts.  This is
@@ -43,7 +41,10 @@ namespace Lucene.Net.Codecs.Intblock
     /// </summary>
     public abstract class VariableIntBlockIndexOutput : IntIndexOutput
     {
-        private bool _hitExcDuringWrite;
+        protected readonly IndexOutput output;
+
+        private int upto;
+        private bool hitExcDuringWrite;
 
         // TODO what Var-Var codecs exist in practice... and what are there blocksizes like?
         // if its less than 128 we should set that as max and use byte?
@@ -56,8 +57,8 @@ namespace Lucene.Net.Codecs.Intblock
         /// </summary>
         protected internal VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
-            OUTPUT = output;
-            output.WriteInt(maxBlockSize);
+            this.output = output;
+            this.output.WriteInt(maxBlockSize);
         }
 
         /// <summary>
@@ -68,37 +69,94 @@ namespace Lucene.Net.Codecs.Intblock
 
         public override IntIndexOutputIndex Index()
         {
-            return new IntBlockIndexOuput(this);
+            return new OutputIndex(this);
+        }
+
+        private class OutputIndex : IntIndexOutputIndex
+        {
+            private readonly VariableIntBlockIndexOutput outerInstance;
+
+            public OutputIndex(VariableIntBlockIndexOutput outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
+
+            long fp;
+            int upto;
+            long lastFP;
+            int lastUpto;
+
+            public override void Mark()
+            {
+                fp = outerInstance.output.FilePointer;
+                upto = outerInstance.upto;
+            }
+
+            public override void CopyFrom(IntIndexOutputIndex other, bool copyLast)
+            {
+                OutputIndex idx = (OutputIndex)other;
+                fp = idx.fp;
+                upto = idx.upto;
+                if (copyLast)
+                {
+                    lastFP = fp;
+                    lastUpto = upto;
+                }
+            }
+
+            public override void Write(DataOutput indexOut, bool absolute)
+            {
+                Debug.Assert(upto >= 0);
+                if (absolute)
+                {
+                    indexOut.WriteVInt(upto);
+                    indexOut.WriteVLong(fp);
+                }
+                else if (fp == lastFP)
+                {
+                    // same block
+                    Debug.Assert(upto >= lastUpto);
+                    int uptoDelta = upto - lastUpto;
+                    indexOut.WriteVInt(uptoDelta << 1 | 1);
+                }
+                else
+                {
+                    // new block
+                    indexOut.WriteVInt(upto << 1);
+                    indexOut.WriteVLong(fp - lastFP);
+                }
+                lastUpto = upto;
+                lastFP = fp;
+            }
         }
 
         public override void Write(int v)
         {
-            _hitExcDuringWrite = true;
-            _upto -= Add(v) - 1;
-            _hitExcDuringWrite = false;
-            Debug.Assert(_upto >= 0);
+            hitExcDuringWrite = true;
+            upto -= Add(v) - 1;
+            hitExcDuringWrite = false;
+            Debug.Assert(upto >= 0);
         }
 
         public override void Dispose()
         {
             try
             {
-                if (_hitExcDuringWrite) return;
+                if (hitExcDuringWrite) return;
 
                 // stuff 0s in until the "real" data is flushed:
                 var stuffed = 0;
-                while (_upto > stuffed)
+                while (upto > stuffed)
                 {
-                    _upto -= Add(0) - 1;
-                    Debug.Assert(_upto >= 0);
+                    upto -= Add(0) - 1;
+                    Debug.Assert(upto >= 0);
                     stuffed += 1;
                 }
             }
             finally
             {
-                OUTPUT.Dispose();
+                output.Dispose();
             }
         }
     }
-
 }
