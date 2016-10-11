@@ -631,17 +631,21 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = OuterInstance.NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-                    IwConstructed.Signal();
-                    StartIndexing_Renamed.Wait();
-                    writer.AddDocument(doc);
-                    writer.Dispose();
+                    using (IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))))
+                    {
+                        if (IwConstructed.CurrentCount > 0)
+                        {
+                            IwConstructed.Signal();
+                        }
+                        StartIndexing_Renamed.Wait();
+                        writer.AddDocument(doc);
+                    }
                 }
                 catch (Exception e)
                 {
                     Failed = true;
                     Failure = e;
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine(e.ToString());
                     return;
                 }
             }

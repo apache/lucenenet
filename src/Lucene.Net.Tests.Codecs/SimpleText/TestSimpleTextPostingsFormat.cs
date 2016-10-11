@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.codecs.simpletext
-{
+﻿using Lucene.Net.Index;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.SimpleText
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +20,82 @@
 	 * limitations under the License.
 	 */
 
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using Nightly = org.apache.lucene.util.LuceneTestCase.Nightly;
+    /// <summary>
+    /// Tests SimpleText's postings
+    /// </summary>
+    public class TestSimpleTextPostingsFormat : BasePostingsFormatTestCase // please figure out why I am so horrendously slow!
+    {
+        private readonly Codec codec = new SimpleTextCodec();
 
-	/// <summary>
-	/// Tests SimpleText's postings
-	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Nightly public class TestSimpleTextPostingsFormat extends org.apache.lucene.index.BasePostingsFormatTestCase
-	public class TestSimpleTextPostingsFormat : BasePostingsFormatTestCase // please figure out why I am so horrendously slow!
-	{
-	  private readonly Codec codec = new SimpleTextCodec();
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
 
+        #region BasePostingsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestDocsOnly()
+        {
+            base.TestDocsOnly();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqs()
+        {
+            base.TestDocsAndFreqs();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositions()
+        {
+            base.TestDocsAndFreqsAndPositions();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndPayloads();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsets()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsets();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
+    }
 }

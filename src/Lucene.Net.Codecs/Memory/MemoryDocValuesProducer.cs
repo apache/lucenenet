@@ -208,8 +208,8 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                NumericDocValues instance = numericInstances[field.Number];
-                if (instance == null)
+                NumericDocValues instance;
+                if (!numericInstances.TryGetValue(field.Number, out instance))
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -265,7 +265,8 @@ namespace Lucene.Net.Codecs.Memory
                     var bytes = new byte[maxDoc];
                     data.ReadBytes(bytes, 0, bytes.Length);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                    return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
+                    // LUCENENET: IMPORTANT - some bytes are negative here, so we need to pass as sbyte
+                    return new NumericDocValuesAnonymousInnerClassHelper2(this, (sbyte[])(Array)bytes);
                 case GCD_COMPRESSED:
                     long min = data.ReadLong();
                     long mult = data.ReadLong();
@@ -303,9 +304,9 @@ namespace Lucene.Net.Codecs.Memory
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
             private readonly MemoryDocValuesProducer outerInstance;
-            private readonly byte[] bytes;
+            private readonly sbyte[] bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(MemoryDocValuesProducer outerInstance, byte[] bytes)
+            public NumericDocValuesAnonymousInnerClassHelper2(MemoryDocValuesProducer outerInstance, sbyte[] bytes)
             {
                 this.outerInstance = outerInstance;
                 this.bytes = bytes;
@@ -341,8 +342,8 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                BinaryDocValues instance = binaryInstances[field.Number];
-                if (instance == null)
+                BinaryDocValues instance;
+                if (!binaryInstances.TryGetValue(field.Number, out instance))
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
@@ -425,8 +426,7 @@ namespace Lucene.Net.Codecs.Memory
             FST<long?> instance;
             lock (this)
             {
-                instance = fstInstances[field.Number];
-                if (instance == null)
+                if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
                     instance = new FST<long?>(data, PositiveIntOutputs.Singleton);
@@ -541,8 +541,7 @@ namespace Lucene.Net.Codecs.Memory
             FST<long?> instance;
             lock (this)
             {
-                instance = fstInstances[field.Number];
-                if (instance == null)
+                if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
                     instance = new FST<long?>(data, PositiveIntOutputs.Singleton);
@@ -683,8 +682,7 @@ namespace Lucene.Net.Codecs.Memory
                 Bits instance;
                 lock (this)
                 {
-                    instance = docsWithFieldInstances[fieldNumber];
-                    if (instance == null)
+                    if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
                     {
                         var data = (IndexInput)this.data.Clone();
                         data.Seek(offset);
@@ -723,8 +721,10 @@ namespace Lucene.Net.Codecs.Memory
 
         protected override void Dispose(bool disposing)
         {
-            data.Dispose();
-            base.Dispose();
+            if (disposing)
+            {
+                data.Dispose();
+            }
         }
 
         internal class NumericEntry

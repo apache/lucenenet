@@ -93,7 +93,11 @@ namespace Lucene.Net.Codecs.Memory
                     int docCount = @in.ReadVInt();
                     int longsSize = @in.ReadVInt();
                     TermsReader current = new TermsReader(this, fieldInfo, @in, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize);
-                    TermsReader previous = fields[fieldInfo.Name] = current;
+                    TermsReader previous;
+                    // LUCENENET NOTE: This simulates a put operation in Java,
+                    // getting the prior value first before setting it.
+                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, @in, current, previous);
                 }
                 success = true;

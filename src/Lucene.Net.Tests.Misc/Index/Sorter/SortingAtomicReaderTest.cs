@@ -81,11 +81,10 @@ namespace Lucene.Net.Index.Sorter
         }
 
 
-        // LUCENENET NOTE: According to this answer, you are supposed to be able to
-        // put tests in an abstract class to run them from multiple places with different
-        // test input. However, that doesn't seem to work in Visual Studio - it doesn't
-        // find any test in an abstract class. So, this is a (not so great) workaround
-        // to run the tests from multiple places without having to duplicate the test code.
+        #region SorterTestBase
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
 
         [Test]
         public override void TestBinaryDocValuesField()
@@ -134,5 +133,7 @@ namespace Lucene.Net.Index.Sorter
         {
             base.TestTermVectors();
         }
+
+        #endregion
     }
 }

@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Sep
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             IOUtils.Close(_freqIn, _docIn, _skipIn, _posIn, _payloadIn);
         }

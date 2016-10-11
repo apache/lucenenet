@@ -16,8 +16,9 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -136,8 +137,8 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 _outerInstance = outerInstance;
                 _indexOptions = field.FieldIndexOptions.Value;
-                _writePositions = _indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                _writeOffsets = _indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                _writePositions = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                _writeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override void StartDoc(int docId, int termDocFreq)
@@ -152,12 +153,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 _outerInstance.Write(DOC);
-                _outerInstance.Write(Convert.ToString(docId));
+                _outerInstance.Write(Convert.ToString(docId, CultureInfo.InvariantCulture));
                 _outerInstance.Newline();
                 if (_indexOptions != IndexOptions.DOCS_ONLY)
                 {
                     _outerInstance.Write(FREQ);
-                    _outerInstance.Write(Convert.ToString(termDocFreq));
+                    _outerInstance.Write(Convert.ToString(termDocFreq, CultureInfo.InvariantCulture));
                     _outerInstance.Newline();
                 }
 
@@ -176,7 +177,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_writePositions)
                 {
                     _outerInstance.Write(POS);
-                    _outerInstance.Write(Convert.ToString(position));
+                    _outerInstance.Write(Convert.ToString(position, CultureInfo.InvariantCulture));
                     _outerInstance.Newline();
                 }
 
@@ -187,10 +188,10 @@ namespace Lucene.Net.Codecs.SimpleText
                         "startOffset=" + startOffset + " lastStartOffset=" + _lastStartOffset);
                     _lastStartOffset = startOffset;
                     _outerInstance.Write(START_OFFSET);
-                    _outerInstance.Write(Convert.ToString(startOffset));
+                    _outerInstance.Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));
                     _outerInstance.Newline();
                     _outerInstance.Write(END_OFFSET);
-                    _outerInstance.Write(Convert.ToString(endOffset));
+                    _outerInstance.Write(Convert.ToString(endOffset, CultureInfo.InvariantCulture));
                     _outerInstance.Newline();
                 }
 

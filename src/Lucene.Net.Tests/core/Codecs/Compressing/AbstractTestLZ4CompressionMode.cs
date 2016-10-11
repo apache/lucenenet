@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Compressing
             return compressed;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestShortLiteralsAndMatchs()
         {
             // literals and matchs lengths <= 15
@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.Compressing
             Test(decompressed);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestLongMatchs()
         {
             // match length >= 20
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Compressing
             Test(decompressed);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestLongLiterals()
         {
             // long literals (length >= 16) which are not the last literals
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.Compressing
             Test(decompressed);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMatchRightBeforeLastLiterals()
         {
             Test(new byte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5 });

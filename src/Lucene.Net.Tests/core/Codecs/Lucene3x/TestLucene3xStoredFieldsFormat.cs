@@ -52,5 +52,89 @@ namespace Lucene.Net.Codecs.Lucene3x
             // for 3.x: we currently cannot take an index with existing 4.x segments
             // and merge into newly formed 3.x segments.
         }
+
+
+
+        #region BaseStoredFieldsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestRandomStoredFields()
+        {
+            base.TestRandomStoredFields();
+        }
+
+        [Test]
+        // LUCENE-1727: make sure doc fields are stored in order
+        public override void TestStoredFieldsOrder()
+        {
+            base.TestStoredFieldsOrder();
+        }
+
+        [Test]
+        // LUCENE-1219
+        public override void TestBinaryFieldOffsetLength()
+        {
+            base.TestBinaryFieldOffsetLength();
+        }
+
+        [Test]
+        public override void TestNumericField()
+        {
+            base.TestNumericField();
+        }
+
+        [Test]
+        public override void TestIndexedBit()
+        {
+            base.TestIndexedBit();
+        }
+
+        [Test]
+        public override void TestReadSkip()
+        {
+            base.TestReadSkip();
+        }
+
+        [Test]
+        public override void TestEmptyDocs()
+        {
+            base.TestEmptyDocs();
+        }
+
+        [Test]
+        public override void TestConcurrentReads()
+        {
+            base.TestConcurrentReads();
+        }
+
+        [Test, Timeout(120000)]
+        public override void TestBigDocuments()
+        {
+            base.TestBigDocuments();
+        }
+
+        [Test]
+        public override void TestBulkMergeWithDeletes()
+        {
+            base.TestBulkMergeWithDeletes();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
     }
 }

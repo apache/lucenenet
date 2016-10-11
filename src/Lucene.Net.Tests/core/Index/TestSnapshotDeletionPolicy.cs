@@ -118,7 +118,6 @@ namespace Lucene.Net.Index
             this.Snapshots = new List<IndexCommit>();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestSnapshotDeletionPolicy_Mem()
         {

@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
     using StringHelper = Util.StringHelper;
+    using System.Text;
 
     /// <summary>
     /// reads plaintext field infos files
@@ -166,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private static string ReadString(int offset, BytesRef scratch)
         {
-            return scratch.Bytes.SubList(scratch.Offset + offset, scratch.Length + offset).ToString();
+            return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset);
         }
     }
 }

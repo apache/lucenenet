@@ -616,10 +616,7 @@ namespace Lucene.Net.Util
         [Test, Explicit]
         public static void Benchmarks()
         {
-            if (!VERBOSE)
-            {
-                Assert.Fail("Turn VERBOSE on or otherwise you won't see the results.");
-            }
+            AssumeTrue("Turn VERBOSE on or otherwise you won't see the results.", VERBOSE);
                
             int maxSize = AtLeast(100000);
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);

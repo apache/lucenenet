@@ -141,6 +141,7 @@
     <Compile Include="Codecs\asserting\AssertingTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
     <Compile Include="Codecs\compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -250,10 +251,13 @@
     <Compile Include="Codecs\MissingOrdRemapper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\MockIntBlock\MockFixedIntBlockPostingsFormat.cs" />
+    <Compile Include="Codecs\MockIntBlock\MockVariableIntBlockPostingsFormat.cs" />
     <Compile Include="Codecs\MockSep\MockSepPostingsFormat.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntFactory.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntIndexOutput.cs" />
+    <Compile Include="Codecs\NestedPulsing\NestedPulsingPostingsFormat.cs" />
     <Compile Include="Codecs\ramonly\RAMOnlyPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>

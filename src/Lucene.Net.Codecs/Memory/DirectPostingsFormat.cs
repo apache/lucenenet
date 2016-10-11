@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.Memory
                 terms = new TermAndSkip[numTerms];
                 termOffsets = new int[1 + numTerms];
 
-                sbyte[] termBytes = new sbyte[1024];
+                byte[] termBytes = new byte[1024];
 
                 this.minSkipCount = minSkipCount;
 
@@ -622,7 +622,7 @@ namespace Lucene.Net.Codecs.Memory
                 return termLen - other.Length;
             }
 
-            private void SetSkips(int termOrd, sbyte[] termBytes)
+            private void SetSkips(int termOrd, byte[] termBytes)
             {
                 int termLength = termOffsets[termOrd + 1] - termOffsets[termOrd];
 

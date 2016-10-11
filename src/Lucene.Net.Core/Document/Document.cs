@@ -266,7 +266,7 @@ namespace Lucene.Net.Documents
         {
             foreach (IndexableField field in fields)
             {
-                if (field.Name.Equals(name) && field.StringValue != null)
+                if (field.Name.Equals(name, System.StringComparison.Ordinal) && field.StringValue != null)
                 {
                     return field.StringValue;
                 }

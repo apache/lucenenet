@@ -208,5 +208,55 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, psdp.SnapshotCount, "Should have no snapshots !");
             dir.Dispose();
         }
+
+
+        #region TestSnapshotDeletionPolicy
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestSnapshotDeletionPolicy_Mem()
+        {
+            base.TestSnapshotDeletionPolicy_Mem();
+        }
+
+        [Test]
+        public override void TestBasicSnapshots()
+        {
+            base.TestBasicSnapshots();
+        }
+
+        [Test]
+        public override void TestMultiThreadedSnapshotting()
+        {
+            base.TestMultiThreadedSnapshotting();
+        }
+
+        [Test]
+        public override void TestRollbackToOldSnapshot()
+        {
+            base.TestRollbackToOldSnapshot();
+        }
+
+        [Test]
+        public override void TestReleaseSnapshot()
+        {
+            base.TestReleaseSnapshot();
+        }
+
+        [Test]
+        public override void TestSnapshotLastCommitTwice()
+        {
+            base.TestSnapshotLastCommitTwice();
+        }
+
+        [Test]
+        public override void TestMissingCommits()
+        {
+            base.TestMissingCommits();
+        }
+
+        #endregion
     }
 }

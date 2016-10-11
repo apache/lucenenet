@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.codecs.blockterms
-{
+﻿using Lucene.Net.Codecs.Lucene41Ords;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.BlockTerms
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,26 +22,84 @@
 	 * limitations under the License.
 	 */
 
-	using Lucene41WithOrds = org.apache.lucene.codecs.lucene41ords.Lucene41WithOrds;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    /// <summary>
+    /// Basic tests of a PF using FixedGap terms dictionary
+    /// </summary>
+    // TODO: we should add an instantiation for VarGap too to TestFramework, and a test in this package
+    // TODO: ensure both of these are also in rotation in RandomCodec
+    public class TestFixedGapPostingsFormat : BasePostingsFormatTestCase
+    {
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Lucene41WithOrds());
 
-	/// <summary>
-	/// Basic tests of a PF using FixedGap terms dictionary
-	/// </summary>
-	// TODO: we should add an instantiation for VarGap too to TestFramework, and a test in this package
-	// TODO: ensure both of these are also in rotation in RandomCodec
-	public class TestFixedGapPostingsFormat : BasePostingsFormatTestCase
-	{
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new Lucene41WithOrds());
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
 
+        #region BasePostingsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestDocsOnly()
+        {
+            base.TestDocsOnly();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqs()
+        {
+            base.TestDocsAndFreqs();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositions()
+        {
+            base.TestDocsAndFreqsAndPositions();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndPayloads();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsets()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsets();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
+    }
 }

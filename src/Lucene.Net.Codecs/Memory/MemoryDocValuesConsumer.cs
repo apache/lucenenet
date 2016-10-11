@@ -102,7 +102,16 @@ namespace Lucene.Net.Codecs.Memory
                 long count = 0;
                 foreach (var nv in values)
                 {
-                    long v = nv.Value;
+                    long v;
+                    if (nv == null)
+                    {
+                        v = 0;
+                        missing = true;
+                    }
+                    else
+                    {
+                        v = nv.Value;
+                    }
 
                     if (gcd != 1)
                     {
@@ -218,7 +227,7 @@ namespace Lucene.Net.Codecs.Memory
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
                 {
-                    writer.Add(nv.Value);
+                    writer.Add(nv.GetValueOrDefault());
                 }
                 writer.Finish();
             }
@@ -226,7 +235,7 @@ namespace Lucene.Net.Codecs.Memory
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             var success = false;
             try
@@ -494,12 +503,12 @@ namespace Lucene.Net.Codecs.Memory
 
             public void Dispose()
             {
-                throw new NotImplementedException();
+                // nothing to do
             }
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
     }

@@ -44,10 +44,18 @@ namespace Lucene.Net.Index
         }
 
         [TestFixtureTearDown]
-        public static void AfterClass()
+        public void AfterClass()
         {
             Dir.Dispose();
             Dir = null;
+            base.TearDown();
+        }
+
+        public override void TearDown()
+        {
+            // LUCENENET: We don't want our temp directory deleted until after
+            // all of the tests in the class run. So we need to override this and
+            // call base.TearDown() manually during TestFixtureTearDown
         }
 
         [Test]

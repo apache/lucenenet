@@ -1266,8 +1266,7 @@ namespace Lucene.Net.Index
 
                 if (WriteLock != null)
                 {
-                    WriteLock.Release(); // release write lock
-                    WriteLock.Dispose();
+                    WriteLock.Dispose(); // release write lock
                     WriteLock = null;
                 }
                 lock (this)
@@ -5917,7 +5916,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private static bool SlowFileExists(Directory dir, string fileName)
         {
-            /*
             try
             {
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
@@ -5926,8 +5924,11 @@ namespace Lucene.Net.Index
             catch (FileNotFoundException)
             {
                 return false;
-            }*/
-            return dir.FileExists(fileName);
+            }
+            catch (NoSuchFileException)
+            {
+                return false;
+            }
         }
     }
 }

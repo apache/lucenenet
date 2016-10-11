@@ -85,16 +85,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override object Clone()
         {
-            IndexInput clone = null;
-            try
-            {
-                clone = (IndexInput)base.MemberwiseClone();
-            }
-            catch (System.Exception)
-            {
-            }
-
-            return clone;
+            return (IndexInput)base.Clone();
         }
     }
 }

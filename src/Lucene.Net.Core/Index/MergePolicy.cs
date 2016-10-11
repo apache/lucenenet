@@ -456,6 +456,8 @@ namespace Lucene.Net.Index
         /// Exception thrown if there are any problems while
         ///  executing a merge.
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+        [Serializable]
         public class MergeException : Exception
         {
             internal Directory Dir;

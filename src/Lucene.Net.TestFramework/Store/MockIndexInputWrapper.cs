@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
             {
                 // turn on the following to look for leaks closing inputs,
                 // after fixing TestTransactions
-                Dir.MaybeThrowDeterministicException();
+                // Dir.MaybeThrowDeterministicException();
             }
             finally
             {
@@ -61,10 +61,6 @@ namespace Lucene.Net.Store
                 if (!IsClone)
                 {
                     Dir.RemoveIndexInput(this, Name);
-                }
-                else
-                {
-                    //Could this be where things aren't being deleted?
                 }
             }
         }
