@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
             {
                 SimpleTextDocsEnum docsEnum;
-                if (reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
+                if (reuse != null && reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
                 {
                     docsEnum = (SimpleTextDocsEnum) reuse;
                 }
@@ -214,14 +214,14 @@ namespace Lucene.Net.Codecs.SimpleText
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
-                if (_indexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     // Positions were not indexed
                     return null;
                 }
 
                 SimpleTextDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is SimpleTextDocsAndPositionsEnum && ((SimpleTextDocsAndPositionsEnum) reuse).CanReuse(_outerInstance._input))
+                if (reuse != null && reuse is SimpleTextDocsAndPositionsEnum && ((SimpleTextDocsAndPositionsEnum) reuse).CanReuse(_outerInstance._input))
                 {
                     docsAndPositionsEnum = (SimpleTextDocsAndPositionsEnum) reuse;
                 }
@@ -399,8 +399,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 _liveDocs = liveDocs;
                 _nextDocStart = fp;
                 _docId = -1;
-                _readPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                _readOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                _readPositions = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                _readOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
                 if (!_readOffsets)
                 {
@@ -709,18 +709,18 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool HasFreqs()
             {
-                return _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                return _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             }
 
             public override bool HasOffsets()
             {
                 return
-                    _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override bool HasPositions()
             {
-                return _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             }
 
             public override bool HasPayloads()

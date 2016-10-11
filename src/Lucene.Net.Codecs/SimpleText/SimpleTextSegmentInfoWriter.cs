@@ -19,6 +19,7 @@ namespace Lucene.Net.Codecs.SimpleText
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
@@ -65,17 +66,17 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.WriteNewline(output);
 
                 SimpleTextUtil.Write(output, SI_DOCCOUNT);
-                SimpleTextUtil.Write(output, Convert.ToString(si.DocCount), scratch);
+                SimpleTextUtil.Write(output, Convert.ToString(si.DocCount, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 SimpleTextUtil.Write(output, SI_USECOMPOUND);
-                SimpleTextUtil.Write(output, Convert.ToString(si.UseCompoundFile), scratch);
+                SimpleTextUtil.Write(output, Convert.ToString(si.UseCompoundFile, CultureInfo.InvariantCulture).ToLowerInvariant(), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 IDictionary<string, string> diagnostics = si.Diagnostics;
                 int numDiagnostics = diagnostics == null ? 0 : diagnostics.Count;
                 SimpleTextUtil.Write(output, SI_NUM_DIAG);
-                SimpleTextUtil.Write(output, Convert.ToString(numDiagnostics), scratch);
+                SimpleTextUtil.Write(output, Convert.ToString(numDiagnostics, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 if (numDiagnostics > 0)
@@ -95,7 +96,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 var files = si.Files;
                 var numFiles = files == null ? 0 : files.Count;
                 SimpleTextUtil.Write(output, SI_NUM_FILES);
-                SimpleTextUtil.Write(output, Convert.ToString(numFiles), scratch);
+                SimpleTextUtil.Write(output, Convert.ToString(numFiles, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 if (numFiles > 0)

@@ -86,11 +86,11 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void StartDocument(int numStoredFields)
 	    {
 	        Write(DOC);
-	        Write(Convert.ToString(_numDocsWritten));
+	        Write(Convert.ToString(_numDocsWritten, CultureInfo.InvariantCulture));
 	        NewLine();
 
 	        Write(NUM);
-	        Write(Convert.ToString(numStoredFields));
+	        Write(Convert.ToString(numStoredFields, CultureInfo.InvariantCulture));
 	        NewLine();
 
 	        _numDocsWritten++;
