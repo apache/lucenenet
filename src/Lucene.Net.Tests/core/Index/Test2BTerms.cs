@@ -165,8 +165,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test2BTerms() throws java.io.IOException
-        [Ignore]
+        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
         public virtual void Test2BTerms_Mem([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {

@@ -43,12 +43,11 @@ namespace Lucene.Net.Index
     /// Test indexes ~82M docs with 52 positions each, so you get > Integer.MAX_VALUE positions
     /// @lucene.experimental
     /// </summary>
-    [Ignore]
     [TestFixture]
     public class Test2BPositions : LuceneTestCase
     // uses lots of space and takes a few minutes
     {
-        //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
+        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {

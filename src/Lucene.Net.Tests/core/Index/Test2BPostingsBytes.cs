@@ -43,14 +43,13 @@ namespace Lucene.Net.Index
     /// so you get > Integer.MAX_VALUE postings data for the term
     /// @lucene.experimental
     /// </summary>
-    [Ignore]
     [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
     // disable Lucene3x: older lucene formats always had this issue.
     // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
     // with some codecs needs more heap space as well.
     {
-        //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
+        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {

@@ -35,10 +35,10 @@ namespace Lucene.Net.Index
     /// <summary>
     /// this test creates an index with one segment that is a little larger than 4GB.
     /// </summary>
-    [Ignore]
     [TestFixture]
     public class Test4GBStoredFields : LuceneTestCase
     {
+        [Ignore] // LUCENENET NOTE: This was marked Nightly in Java
         [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
