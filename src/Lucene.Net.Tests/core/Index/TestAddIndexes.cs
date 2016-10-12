@@ -1129,23 +1129,20 @@ namespace Lucene.Net.Index
 
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
-            //internal readonly PostingsFormat SimpleTextFormat;
+            internal readonly PostingsFormat SimpleTextFormat;
             internal readonly PostingsFormat DefaultFormat;
-
-            //internal readonly PostingsFormat MockSepFormat;
+            internal readonly PostingsFormat MockSepFormat;
 
             public CustomPerFieldCodec()
             {
-                //SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
+                SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
                 DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-                //MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
+                MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                return DefaultFormat;
-                //LUCENE TODO: Other codecs not defined in core
-                /*if (field.Equals("id"))
+                if (field.Equals("id"))
                 {
                     return SimpleTextFormat;
                 }
@@ -1156,7 +1153,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     return DefaultFormat;
-                }*/
+                }
             }
         }
 
