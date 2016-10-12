@@ -55,6 +55,45 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="core\App.config" />
+    <EmbeddedResource Include="core\Index\bogus24.upgraded.to.36.zip" />
+    <EmbeddedResource Include="core\Index\index.30.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.30.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.optimized.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.optimized.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.32.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.32.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.34.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.34.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.36.surrogates.zip" />
+    <EmbeddedResource Include="core\Index\index.40.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.optimized.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.optimized.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.41.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.41.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.42.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.42.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.45.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.45.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.461.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.461.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\moreterms.40.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.19.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.19.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.20.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.20.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.21.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.21.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.22.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.22.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.23.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.23.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.24.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.24.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.29.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.29.nocfs.zip" />
     <None Include="core\Lucene.Net.snk" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -169,6 +208,7 @@
     <Compile Include="core\Index\TestAllFilesHaveChecksumFooter.cs" />
     <Compile Include="core\Index\TestAllFilesHaveCodecHeader.cs" />
     <Compile Include="core\Index\TestAtomicUpdate.cs" />
+    <Compile Include="core\Index\TestBackwardsCompatibility.cs" />
     <Compile Include="core\Index\TestBagOfPositions.cs" />
     <Compile Include="core\Index\TestBagOfPostings.cs" />
     <Compile Include="core\Index\TestBinaryDocValuesUpdates.cs" />

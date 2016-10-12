@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public class CheckIndex
     {
-        private StreamWriter infoStream;
+        private TextWriter infoStream;
         private Directory Dir;
 
         /// <summary>
@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
         ///  messages are printed.  If verbose is true then more
         ///  details are printed.
         /// </summary>
-        public virtual void SetInfoStream(StreamWriter @out, bool verbose)
+        public virtual void SetInfoStream(TextWriter @out, bool verbose)
         {
             infoStream = @out;
             this.Verbose = verbose;
@@ -429,8 +429,12 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Set infoStream where messages should go. See <seealso cref="#setInfoStream(PrintStream,boolean)"/>. </summary>
-        public virtual StreamWriter InfoStream
+        public virtual TextWriter InfoStream
         {
+            get
+            {
+                return infoStream;
+            }
             set
             {
                 SetInfoStream(value, false);
@@ -442,7 +446,7 @@ namespace Lucene.Net.Index
             infoStream.Flush();
         }
 
-        private static void Msg(StreamWriter @out, string msg)
+        private static void Msg(TextWriter @out, string msg)
         {
             if (@out != null)
             {
@@ -495,7 +499,11 @@ namespace Lucene.Net.Index
                 result.MissingSegments = true;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(t.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(t.ToString());
+                    //infoStream.WriteLine(t.StackTrace);
                 }
                 return result;
             }
@@ -540,7 +548,11 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: could not open segments file in directory");
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(t.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(t.ToString());
+                    //infoStream.WriteLine(t.StackTrace);
                 }
                 result.CantOpenSegments = true;
                 return result;
@@ -555,7 +567,11 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(t.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(t.ToString());
+                    //infoStream.WriteLine(t.StackTrace);
                 }
                 result.MissingSegmentVersion = true;
                 return result;
@@ -838,7 +854,11 @@ namespace Lucene.Net.Index
                     Msg(infoStream, "    WARNING: " + comment + "; full exception:");
                     if (infoStream != null)
                     {
-                        infoStream.WriteLine(t.StackTrace);
+                        // LUCENENET NOTE: Some tests rely on the error type being in
+                        // the message. We can't get the error type with StackTrace, we
+                        // need ToString() for that.
+                        infoStream.WriteLine(t.ToString());
+                        //infoStream.WriteLine(t.StackTrace);
                     }
                     Msg(infoStream, "");
                     result.TotLoseDocCount += toLoseDocCount;
@@ -885,7 +905,7 @@ namespace Lucene.Net.Index
         /// Test field norms.
         /// @lucene.experimental
         /// </summary>
-        public static Status.FieldNormStatus TestFieldNorms(AtomicReader reader, StreamWriter infoStream)
+        public static Status.FieldNormStatus TestFieldNorms(AtomicReader reader, TextWriter infoStream)
         {
             Status.FieldNormStatus status = new Status.FieldNormStatus();
 
@@ -922,7 +942,11 @@ namespace Lucene.Net.Index
                 status.Error = e;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(e.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(e.ToString());
+                    //infoStream.WriteLine(e.StackTrace);
                 }
             }
 
@@ -933,7 +957,7 @@ namespace Lucene.Net.Index
         /// checks Fields api is consistent with itself.
         /// searcher is optional, to verify with queries. Can be null.
         /// </summary>
-        private static Status.TermIndexStatus CheckFields(Fields fields, Bits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, StreamWriter infoStream, bool verbose)
+        private static Status.TermIndexStatus CheckFields(Fields fields, Bits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, TextWriter infoStream, bool verbose)
         {
             // TODO: we should probably return our own stats thing...?!
 
@@ -1584,7 +1608,7 @@ namespace Lucene.Net.Index
         /// Test the term index.
         /// @lucene.experimental
         /// </summary>
-        public static Status.TermIndexStatus TestPostings(AtomicReader reader, StreamWriter infoStream)
+        public static Status.TermIndexStatus TestPostings(AtomicReader reader, TextWriter infoStream)
         {
             return TestPostings(reader, infoStream, false);
         }
@@ -1593,7 +1617,7 @@ namespace Lucene.Net.Index
         /// Test the term index.
         /// @lucene.experimental
         /// </summary>
-        public static Status.TermIndexStatus TestPostings(AtomicReader reader, StreamWriter infoStream, bool verbose)
+        public static Status.TermIndexStatus TestPostings(AtomicReader reader, TextWriter infoStream, bool verbose)
         {
             // TODO: we should go and verify term vectors match, if
             // crossCheckTermVectors is on...
@@ -1628,7 +1652,11 @@ namespace Lucene.Net.Index
                 status.Error = e;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(e.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(e.ToString());
+                    //infoStream.WriteLine(e.StackTrace);
                 }
             }
 
@@ -1639,7 +1667,7 @@ namespace Lucene.Net.Index
         /// Test stored fields.
         /// @lucene.experimental
         /// </summary>
-        public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, StreamWriter infoStream)
+        public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, TextWriter infoStream)
         {
             Status.StoredFieldStatus status = new Status.StoredFieldStatus();
 
@@ -1678,7 +1706,11 @@ namespace Lucene.Net.Index
                 status.Error = e;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(e.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(e.ToString());
+                    //infoStream.WriteLine(e.StackTrace);
                 }
             }
 
@@ -1689,7 +1721,7 @@ namespace Lucene.Net.Index
         /// Test docvalues.
         /// @lucene.experimental
         /// </summary>
-        public static Status.DocValuesStatus TestDocValues(AtomicReader reader, StreamWriter infoStream)
+        public static Status.DocValuesStatus TestDocValues(AtomicReader reader, TextWriter infoStream)
         {
             Status.DocValuesStatus status = new Status.DocValuesStatus();
             try
@@ -1722,7 +1754,11 @@ namespace Lucene.Net.Index
                 status.Error = e;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(e.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(e.ToString());
+                    //infoStream.WriteLine(e.StackTrace);
                 }
             }
             return status;
@@ -1955,7 +1991,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckNorms(FieldInfo fi, AtomicReader reader, StreamWriter infoStream)
+        private static void CheckNorms(FieldInfo fi, AtomicReader reader, TextWriter infoStream)
         {
             switch (fi.NormType)
             {
@@ -1972,7 +2008,7 @@ namespace Lucene.Net.Index
         /// Test term vectors.
         /// @lucene.experimental
         /// </summary>
-        public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, StreamWriter infoStream)
+        public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, TextWriter infoStream)
         {
             return TestTermVectors(reader, infoStream, false, false);
         }
@@ -1981,7 +2017,7 @@ namespace Lucene.Net.Index
         /// Test term vectors.
         /// @lucene.experimental
         /// </summary>
-        public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, StreamWriter infoStream, bool verbose, bool crossCheckTermVectors)
+        public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, TextWriter infoStream, bool verbose, bool crossCheckTermVectors)
         {
             Status.TermVectorStatus status = new Status.TermVectorStatus();
             FieldInfos fieldInfos = reader.FieldInfos;
@@ -2242,7 +2278,11 @@ namespace Lucene.Net.Index
                 status.Error = e;
                 if (infoStream != null)
                 {
-                    infoStream.WriteLine(e.StackTrace);
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream.WriteLine(e.ToString());
+                    //infoStream.WriteLine(e.StackTrace);
                 }
             }
 

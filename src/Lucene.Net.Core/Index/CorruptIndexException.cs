@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -23,7 +24,7 @@ namespace Lucene.Net.Index
     /// this exception is thrown when Lucene detects
     /// an inconsistency in the index.
     /// </summary>
-    public class CorruptIndexException : Exception
+    public class CorruptIndexException : IOException
     {
         /// <summary>
         /// Sole constructor. </summary>
