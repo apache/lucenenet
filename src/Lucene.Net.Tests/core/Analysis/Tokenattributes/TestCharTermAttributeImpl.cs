@@ -273,6 +273,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 return LongTestString[i];
             }
 
+            // LUCENENET specific - Added to .NETify
+            public char this[int i]
+            {
+                get { return LongTestString[i]; }
+            }
+
             public int Length
             {
                 get

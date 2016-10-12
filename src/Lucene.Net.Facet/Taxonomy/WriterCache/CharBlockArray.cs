@@ -176,6 +176,16 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return b.chars[IndexInBlock(index)];
         }
 
+        // LUCENENET specific - added to .NETify
+        public virtual char this[int index]
+        {
+            get
+            {
+                Block b = blocks[BlockIndex(index)];
+                return b.chars[IndexInBlock(index)];
+            }
+        }
+
         public virtual int Length
         {
             get

@@ -105,6 +105,13 @@ namespace Lucene.Net.Analysis.Util
             buf[index] = ch;
         }
 
+        // LUCENENET specific - added to .NETify
+        public virtual char this[int index]
+        {
+            get { return buf[index]; }
+            set { buf[index] = value; }
+        }
+
         public virtual ICharSequence SubSequence(int start, int end)
         {
             throw new System.NotSupportedException(); // todo

@@ -252,6 +252,20 @@ namespace Lucene.Net.Util
             return Chars[Offset + index];
         }
 
+        // LUCENENET specific - added to .NETify
+        public char this[int index]
+        {
+            get
+            {
+                // NOTE: must do a real check here to meet the specs of CharSequence
+                if (index < 0 || index >= Length)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                return Chars[Offset + index];
+            }
+        }
+
         public ICharSequence SubSequence(int start, int end)
         {
             // NOTE: must do a real check here to meet the specs of CharSequence
