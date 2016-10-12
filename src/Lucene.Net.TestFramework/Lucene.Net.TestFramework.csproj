@@ -123,6 +123,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Attributes\LongRunningTestAttribute.cs" />
+    <Compile Include="Attributes\LuceneNetSpecificAttribute.cs" />
     <Compile Include="Codecs\asserting\AssertingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
