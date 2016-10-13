@@ -209,6 +209,7 @@
     <Compile Include="core\Index\TestAllFilesHaveCodecHeader.cs" />
     <Compile Include="core\Index\TestAtomicUpdate.cs" />
     <Compile Include="core\Index\TestBackwardsCompatibility.cs" />
+    <Compile Include="core\Index\TestBackwardsCompatibility3x.cs" />
     <Compile Include="core\Index\TestBagOfPositions.cs" />
     <Compile Include="core\Index\TestBagOfPostings.cs" />
     <Compile Include="core\Index\TestBinaryDocValuesUpdates.cs" />
