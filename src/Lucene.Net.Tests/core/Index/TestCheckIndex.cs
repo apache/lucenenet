@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             if (VERBOSE)
             {
-                // TODO checker.InfoStream = Console.Out;
+                checker.InfoStream = Console.Out;
             }
             CheckIndex.Status indexStatus = checker.DoCheckIndex();
             if (indexStatus.Clean == false)
