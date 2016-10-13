@@ -244,6 +244,7 @@
     <Compile Include="core\Index\TestFieldsReader.cs" />
     <Compile Include="core\Index\TestFilterAtomicReader.cs" />
     <Compile Include="core\Index\TestFlex.cs" />
+    <Compile Include="core\Index\TestFlushByRamOrCountsPolicy.cs" />
     <Compile Include="core\Index\TestForceMergeForever.cs" />
     <Compile Include="core\Index\TestForTooMuchCloning.cs" />
     <Compile Include="core\Index\TestIndexableField.cs" />
