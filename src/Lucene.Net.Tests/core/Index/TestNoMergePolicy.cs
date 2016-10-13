@@ -1,9 +1,9 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System.Reflection;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -44,15 +44,17 @@ namespace Lucene.Net.Index
             Assert.IsTrue(NoMergePolicy.COMPOUND_FILES.UseCompoundFile(null, null));
         }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestFinalSingleton()
 	    {
-		    Assert.IsTrue(Modifier.isFinal(typeof(NoMergePolicy).Modifiers));
-		    Constructor<?>[] ctors = typeof(NoMergePolicy).DeclaredConstructors;
-		    Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		    Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
-	    }*/
+		    assertTrue(typeof(NoMergePolicy).IsSealed);
+		    ConstructorInfo[] ctors = typeof(NoMergePolicy).GetConstructors(BindingFlags.Instance |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public |
+                    BindingFlags.DeclaredOnly); // LUCENENET NOTE: It seems .NET automatically adds a private static constructor, so leaving off the static BindingFlag
+            assertEquals("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
+		    assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
+	    }
 
         [Test]
         public virtual void TestMethodsOverridden()
