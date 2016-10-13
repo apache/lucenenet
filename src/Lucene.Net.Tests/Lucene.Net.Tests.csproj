@@ -331,6 +331,7 @@
     <Compile Include="core\Index\TestTransactions.cs" />
     <Compile Include="core\Index\TestTryDelete.cs" />
     <Compile Include="core\Index\TestTwoPhaseCommitTool.cs" />
+    <Compile Include="core\Index\TestUniqueTermCount.cs" />
     <Compile Include="core\RectangularArrays.cs">
       <SubType>Code</SubType>
     </Compile>
