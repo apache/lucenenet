@@ -4,6 +4,7 @@ using Lucene.Net.Documents;
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
+    using Support;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -39,15 +40,17 @@ namespace Lucene.Net.Index
             idp.OnCommit<IndexCommit>(null);
         }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestFinalSingleton()
 	    {
-		    Assert.IsTrue(Modifier.isFinal(typeof(NoDeletionPolicy).Modifiers));
-		    Constructor<?>[] ctors = typeof(NoDeletionPolicy).DeclaredConstructors;
-		    Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		    Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
-	    }*/
+		    assertTrue(typeof(NoDeletionPolicy).IsSealed);
+		    ConstructorInfo[] ctors = typeof(NoDeletionPolicy).GetConstructors(BindingFlags.Instance |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public |
+                    BindingFlags.DeclaredOnly); // LUCENENET NOTE: It seems .NET automatically adds a private static constructor, so leaving off the static BindingFlag
+		    assertEquals("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
+		    assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
+	    }
 
         [Test]
         public virtual void TestMethodsOverridden()
