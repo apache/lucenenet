@@ -1940,10 +1940,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Make sure we skip wicked long terms.
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestWickedLongTerm()
         {
+            fail("Test has infinite recursion");
+
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer(), Similarity, TimeZone);
 
