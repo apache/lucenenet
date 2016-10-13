@@ -3,8 +3,9 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
+    using Codecs.Memory;
     //using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
-    
+
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -48,12 +49,11 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
             //provider.register(new MemoryCodec());
-            // LUCENE TODO: uncomment this out once MemoryPostingsFormat is brought over
-            //if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
-            //{
-            //    Codec.Default =
-            //        TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(random().nextBoolean(), random.NextFloat()));
-            //}
+            if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
+            {
+                Codec.Default =
+                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextFloat()));
+            }
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
