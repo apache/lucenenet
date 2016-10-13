@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
 
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific] // Apparently added to LUCENENET for debugging
         public virtual void TestExposeUnclosedFiles()
         {
             Directory d = NewDirectory();
