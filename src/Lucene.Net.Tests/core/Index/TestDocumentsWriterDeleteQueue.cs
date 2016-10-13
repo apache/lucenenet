@@ -1,13 +1,14 @@
-using System.Threading;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
@@ -166,15 +167,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestPartiallyAppliedGlobalSlice()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("GlobalBufferLock");
-            field.Accessible = true;
-            ReentrantLock @lock = (ReentrantLock)field.Get(queue);
-            @lock.@Lock();
+            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("GlobalBufferLock", 
+                BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
+            ReentrantLock @lock = (ReentrantLock)field.GetValue(queue);
+            @lock.Lock();
             ThreadClass t = new ThreadAnonymousInnerClassHelper(this, queue);
             t.Start();
             t.Join();
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(freezeGlobalBuffer.Any());
             Assert.AreEqual(1, freezeGlobalBuffer.TermCount);
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
-        }*/
+        }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
