@@ -32,72 +32,76 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexReaderClose : LuceneTestCase
     {
-        [Test, Repeat(10)]
+        [Test]
         public virtual void TestCloseUnderException()
         {
-            Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir,
-                NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            writer.Commit();
-            writer.Dispose();
-            DirectoryReader open = DirectoryReader.Open(dir);
-            bool throwOnClose = !Rarely();
-            AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
-            FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
-            IList<IndexReader.ReaderClosedListener> listeners = new List<IndexReader.ReaderClosedListener>();
-            int listenerCount = Random().Next(20);
-            AtomicInteger count = new AtomicInteger();
-            bool faultySet = false;
-            for (int i = 0; i < listenerCount; i++)
+            int iters = 1000 + 1 + Random().nextInt(20);
+            for (int j = 0; j < iters; j++)
             {
-                if (Rarely())
+                Directory dir = NewDirectory();
+                IndexWriter writer = new IndexWriter(dir,
+                    NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                writer.Commit();
+                writer.Dispose();
+                DirectoryReader open = DirectoryReader.Open(dir);
+                bool throwOnClose = !Rarely();
+                AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
+                FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
+                IList<IndexReader.ReaderClosedListener> listeners = new List<IndexReader.ReaderClosedListener>();
+                int listenerCount = Random().Next(20);
+                AtomicInteger count = new AtomicInteger();
+                bool faultySet = false;
+                for (int i = 0; i < listenerCount; i++)
                 {
-                    faultySet = true;
+                    if (Rarely())
+                    {
+                        faultySet = true;
+                        reader.AddReaderClosedListener(new FaultyListener());
+                    }
+                    else
+                    {
+                        count.IncrementAndGet();
+                        reader.AddReaderClosedListener(new CountListener(count));
+                    }
+                }
+                if (!faultySet && !throwOnClose)
+                {
                     reader.AddReaderClosedListener(new FaultyListener());
                 }
-                else
+                try
                 {
-                    count.IncrementAndGet();
-                    reader.AddReaderClosedListener(new CountListener(count));
+                    reader.Dispose();
+                    Assert.Fail("expected Exception");
                 }
-            }
-            if (!faultySet && !throwOnClose)
-            {
-                reader.AddReaderClosedListener(new FaultyListener());
-            }
-            try
-            {
-                reader.Dispose();
-                Assert.Fail("expected Exception");
-            }
-            catch (InvalidOperationException ex)
-            {
-                if (throwOnClose)
+                catch (InvalidOperationException ex)
                 {
-                    Assert.AreEqual("BOOM!", ex.Message);
+                    if (throwOnClose)
+                    {
+                        Assert.AreEqual("BOOM!", ex.Message);
+                    }
+                    else
+                    {
+                        Assert.AreEqual("GRRRRRRRRRRRR!", ex.Message);
+                    }
                 }
-                else
-                {
-                    Assert.AreEqual("GRRRRRRRRRRRR!", ex.Message);
-                }
-            }
 
-            try
-            {
-                var aaa = reader.Fields;
-                Assert.Fail("we are closed");
-            }
-            catch (AlreadyClosedException ex)
-            {
-            }
+                try
+                {
+                    var aaa = reader.Fields;
+                    Assert.Fail("we are closed");
+                }
+                catch (AlreadyClosedException ex)
+                {
+                }
 
-            if (Random().NextBoolean())
-            {
-                reader.Dispose(); // call it again
+                if (Random().NextBoolean())
+                {
+                    reader.Dispose(); // call it again
+                }
+                Assert.AreEqual(0, count.Get());
+                wrap.Dispose();
+                dir.Dispose();
             }
-            Assert.AreEqual(0, count.Get());
-            wrap.Dispose();
-            dir.Dispose();
         }
 
         private class FilterAtomicReaderAnonymousInnerClassHelper : FilterAtomicReader
