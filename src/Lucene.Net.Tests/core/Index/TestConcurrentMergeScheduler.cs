@@ -100,10 +100,11 @@ namespace Lucene.Net.Index
 
         // Make sure running BG merges still work fine even when
         // we are hitting exceptions during flushing.
-        [Ignore]
         [Test]
         public virtual void TestFlushExceptions()
         {
+            fail("Test has infinite recursion");
+
             MockDirectoryWrapper directory = NewMockDirectory();
             FailOnlyOnFlush failure = new FailOnlyOnFlush(this);
             directory.FailOn(failure);
