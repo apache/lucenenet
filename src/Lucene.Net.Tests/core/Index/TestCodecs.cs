@@ -1,13 +1,15 @@
+using Lucene.Net.Codecs.MockSep;
+using Lucene.Net.Documents;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
@@ -488,56 +490,56 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /* Not implemented in Core
+        [Test]
         public virtual void TestSepPositionAfterMerge()
         {
-          Directory dir = NewDirectory();
-          IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-          config.SetMergePolicy(NewLogMergePolicy());
-          config.Codec = TestUtil.AlwaysPostingsFormat(new MockSepPostingsFormat());
-          IndexWriter writer = new IndexWriter(dir, config);
+            Directory dir = NewDirectory();
+            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            config.SetMergePolicy(NewLogMergePolicy());
+            config.SetCodec(TestUtil.AlwaysPostingsFormat(new MockSepPostingsFormat()));
+            IndexWriter writer = new IndexWriter(dir, config);
 
-          try
-          {
-            PhraseQuery pq = new PhraseQuery();
-            pq.Add(new Term("content", "bbb"));
-            pq.Add(new Term("content", "ccc"));
+            try
+            {
+                PhraseQuery pq = new PhraseQuery();
+                pq.Add(new Term("content", "bbb"));
+                pq.Add(new Term("content", "ccc"));
 
-            Document doc = new Document();
-            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-            customType.OmitNorms = true;
-            doc.Add(NewField("content", "aaa bbb ccc ddd", customType));
+                Document doc = new Document();
+                FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+                customType.OmitNorms = true;
+                doc.Add(NewField("content", "aaa bbb ccc ddd", customType));
 
-            // add document and force commit for creating a first segment
-            writer.AddDocument(doc);
-            writer.Commit();
+                // add document and force commit for creating a first segment
+                writer.AddDocument(doc);
+                writer.Commit();
 
-            ScoreDoc[] results = this.Search(writer, pq, 5);
-            Assert.AreEqual(1, results.Length);
-            Assert.AreEqual(0, results[0].Doc);
+                ScoreDoc[] results = this.Search(writer, pq, 5);
+                Assert.AreEqual(1, results.Length);
+                Assert.AreEqual(0, results[0].Doc);
 
-            // add document and force commit for creating a second segment
-            writer.AddDocument(doc);
-            writer.Commit();
+                // add document and force commit for creating a second segment
+                writer.AddDocument(doc);
+                writer.Commit();
 
-            // at this point, there should be at least two segments
-            results = this.Search(writer, pq, 5);
-            Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(0, results[0].Doc);
+                // at this point, there should be at least two segments
+                results = this.Search(writer, pq, 5);
+                Assert.AreEqual(2, results.Length);
+                Assert.AreEqual(0, results[0].Doc);
 
-            writer.ForceMerge(1);
+                writer.ForceMerge(1);
 
-            // optimise to merge the segments.
-            results = this.Search(writer, pq, 5);
-            Assert.AreEqual(2, results.Length);
-            Assert.AreEqual(0, results[0].Doc);
-          }
-          finally
-          {
-            writer.Dispose();
-            dir.Dispose();
-          }
-        }*/
+                // optimise to merge the segments.
+                results = this.Search(writer, pq, 5);
+                Assert.AreEqual(2, results.Length);
+                Assert.AreEqual(0, results[0].Doc);
+            }
+            finally
+            {
+                writer.Dispose();
+                dir.Dispose();
+            }
+        }
 
         private ScoreDoc[] Search(IndexWriter writer, Query q, int n)
         {
