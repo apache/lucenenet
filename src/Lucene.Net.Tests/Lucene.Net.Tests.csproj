@@ -263,6 +263,7 @@
     <Compile Include="core\Index\TestIndexWriterMerging.cs" />
     <Compile Include="core\Index\TestIndexWriterNRTIsCurrent.cs" />
     <Compile Include="core\Index\TestIndexWriterOnDiskFull.cs" />
+    <Compile Include="core\Index\TestIndexWriterOnJRECrash.cs" />
     <Compile Include="core\Index\TestIndexWriterOutOfFileDescriptors.cs" />
     <Compile Include="core\Index\TestIndexWriterReader.cs" />
     <Compile Include="core\Index\TestIndexWriterUnicode.cs" />
