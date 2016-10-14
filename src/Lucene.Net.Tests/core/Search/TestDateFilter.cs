@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search
             indexStore.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test()
         {
             // noop, required for the before and after tests to run
