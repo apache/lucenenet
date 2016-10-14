@@ -53,7 +53,8 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestPositionIncrement : LuceneTestCase
     {
-        internal const bool VERBOSE = false;
+        // LUCENENET: This existed in Lucene, but do we really want to override the global setting?
+        //internal const bool VERBOSE = false;
 
         [Test]
         public virtual void TestSetPosition()
