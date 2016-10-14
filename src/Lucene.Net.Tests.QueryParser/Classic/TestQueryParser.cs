@@ -551,5 +551,255 @@ namespace Lucene.Net.QueryParsers.Classic
             assertEquals(expected, qp.Parse("\"中国\"~3^2"));
         }
 
+
+        #region QueryParserTestBase
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestCJK()
+        {
+            base.TestCJK();
+        }
+
+        [Test]
+        public override void TestCJKTerm()
+        {
+            base.TestCJKTerm();
+        }
+
+        [Test]
+        public override void TestCJKBoostedTerm()
+        {
+            base.TestCJKBoostedTerm();
+        }
+
+        [Test]
+        public override void TestCJKPhrase()
+        {
+            base.TestCJKPhrase();
+        }
+
+        [Test]
+        public override void TestCJKBoostedPhrase()
+        {
+            base.TestCJKBoostedPhrase();
+        }
+
+        [Test]
+        public override void TestCJKSloppyPhrase()
+        {
+            base.TestCJKSloppyPhrase();
+        }
+
+        [Test]
+        public override void TestAutoGeneratePhraseQueriesOn()
+        {
+            base.TestAutoGeneratePhraseQueriesOn();
+        }
+
+        [Test]
+        public override void TestSimple()
+        {
+            base.TestSimple();
+        }
+
+        [Test]
+        public override void TestOperatorVsWhitespace()
+        {
+            base.TestOperatorVsWhitespace();
+        }
+
+        [Test]
+        public override void TestPunct()
+        {
+            base.TestPunct();
+        }
+
+        [Test]
+        public override void TestSlop()
+        {
+            base.TestSlop();
+        }
+
+        [Test]
+        public override void TestNumber()
+        {
+            base.TestNumber();
+        }
+
+        [Test]
+        public override void TestWildcard()
+        {
+            base.TestWildcard();
+        }
+
+        [Test]
+        public override void TestLeadingWildcardType()
+        {
+            base.TestLeadingWildcardType();
+        }
+
+        [Test]
+        public override void TestQPA()
+        {
+            base.TestQPA();
+        }
+
+        [Test]
+        public override void TestRange()
+        {
+            base.TestRange();
+        }
+
+        [Test]
+        public override void TestRangeWithPhrase()
+        {
+            base.TestRangeWithPhrase();
+        }
+
+        [Test]
+        public override void TestDateRange()
+        {
+            base.TestDateRange();
+        }
+
+        [Test]
+        public override void TestEscaped()
+        {
+            base.TestEscaped();
+        }
+
+        [Test]
+        public override void TestEscapedVsQuestionMarkAsWildcard()
+        {
+            base.TestEscapedVsQuestionMarkAsWildcard();
+        }
+
+        [Test]
+        public override void TestQueryStringEscaping()
+        {
+            base.TestQueryStringEscaping();
+        }
+
+        [Test]
+        public override void TestTabNewlineCarriageReturn()
+        {
+            base.TestTabNewlineCarriageReturn();
+        }
+
+        [Test]
+        public override void TestSimpleDAO()
+        {
+            base.TestSimpleDAO();
+        }
+
+        [Test]
+        public override void TestBoost()
+        {
+            base.TestBoost();
+        }
+
+        [Test]
+        public override void TestException()
+        {
+            base.TestException();
+        }
+
+        [Test]
+        public override void TestBooleanQuery()
+        {
+            base.TestBooleanQuery();
+        }
+
+        [Test]
+        public override void TestPrecedence()
+        {
+            base.TestPrecedence();
+        }
+
+        [Test]
+        public override void TestEscapedWildcard()
+        {
+            base.TestEscapedWildcard();
+        }
+
+        [Test]
+        public override void TestRegexps()
+        {
+            base.TestRegexps();
+        }
+
+        [Test]
+        public override void TestStopwords()
+        {
+            base.TestStopwords();
+        }
+
+        [Test]
+        public override void TestPositionIncrement()
+        {
+            base.TestPositionIncrement();
+        }
+
+        [Test]
+        public override void TestMatchAllDocs()
+        {
+            base.TestMatchAllDocs();
+        }
+
+        // LUCENE-2002: make sure defaults for StandardAnalyzer's
+        // enableStopPositionIncr & QueryParser's enablePosIncr
+        // "match"
+        [Test]
+        public override void TestPositionIncrements()
+        {
+            base.TestPositionIncrements();
+        }
+
+        [Test]
+        public override void TestCollatedRange()
+        {
+            base.TestCollatedRange();
+        }
+
+        [Test]
+        public override void TestDistanceAsEditsParsing()
+        {
+            base.TestDistanceAsEditsParsing();
+        }
+
+        [Test]
+        public override void TestPhraseQueryToString()
+        {
+            base.TestPhraseQueryToString();
+        }
+
+        [Test]
+        public override void TestParseWildcardAndPhraseQueries()
+        {
+            base.TestParseWildcardAndPhraseQueries();
+        }
+
+        [Test]
+        public override void TestPhraseQueryPositionIncrements()
+        {
+            base.TestPhraseQueryPositionIncrements();
+        }
+
+        [Test]
+        public override void TestMatchAllQueryParsing()
+        {
+            base.TestMatchAllQueryParsing();
+        }
+
+        [Test]
+        public override void TestNestedAndClausesFoo()
+        {
+            base.TestNestedAndClausesFoo();
+        }
+
+        #endregion
     }
 }
