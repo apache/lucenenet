@@ -1531,6 +1531,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// test sorts for a custom byte parser that uses a simple char encoding
         /// </summary>
+        [Test]
         public virtual void TestCustomByteParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
@@ -1646,6 +1647,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// test sorts for a custom long parser that uses a simple char encoding
         /// </summary>
+        [Test]
         public virtual void TestCustomLongParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
@@ -1703,6 +1705,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// test sorts for a custom float parser that uses a simple char encoding
         /// </summary>
+        [Test]
         public virtual void TestCustomFloatParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
