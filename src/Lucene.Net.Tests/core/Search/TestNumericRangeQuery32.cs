@@ -320,6 +320,7 @@ namespace Lucene.Net.Search
             TestRightOpenRange(4);
         }
 
+        [Test]
         public virtual void TestRightOpenRange_2bit()
         {
             TestRightOpenRange(2);
