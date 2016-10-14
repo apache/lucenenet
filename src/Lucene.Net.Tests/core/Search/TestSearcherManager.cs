@@ -256,8 +256,7 @@ namespace Lucene.Net.Search
             LifetimeMGR.Dispose();
         }
 
-        //LUCENE TODO: Compilation Problems
-        /*[Test]
+        [Test]
         public virtual void TestIntermediateClose()
         {
             Directory dir = NewDirectory();
@@ -268,7 +267,8 @@ namespace Lucene.Net.Search
             CountdownEvent awaitEnterWarm = new CountdownEvent(1);
             CountdownEvent awaitClose = new CountdownEvent(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
-            TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
+            //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
+            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
             SearcherManager searcherManager = Random().NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random().NextBoolean(), factory);
             if (VERBOSE)
@@ -288,13 +288,13 @@ namespace Lucene.Net.Search
             writer.Commit();
             AtomicBoolean success = new AtomicBoolean(false);
             Exception[] exc = new Exception[1];
-            ThreadClass thread = new ThreadClass(new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc));
+            ThreadClass thread = new ThreadClass(() => new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc).Run());
             thread.Start();
             if (VERBOSE)
             {
                 Console.WriteLine("THREAD started");
             }
-            awaitEnterWarmWait();
+            awaitEnterWarm.Wait();
             if (VERBOSE)
             {
                 Console.WriteLine("NOW call close");
@@ -316,12 +316,12 @@ namespace Lucene.Net.Search
             Assert.IsNull(exc[0], "" + exc[0]);
             writer.Dispose();
             dir.Dispose();
-            if (es != null)
-            {
-                es.shutdown();
-                es.awaitTermination(1, TimeUnit.SECONDS);
-            }
-        }*/
+            //if (es != null)
+            //{
+            //    es.shutdown();
+            //    es.awaitTermination(1, TimeUnit.SECONDS);
+            //}
+        }
 
         private class SearcherFactoryAnonymousInnerClassHelper2 : SearcherFactory
         {
