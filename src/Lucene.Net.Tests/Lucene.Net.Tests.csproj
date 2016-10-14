@@ -445,6 +445,7 @@
     <Compile Include="core\Search\TestTermRangeQuery.cs" />
     <Compile Include="core\Search\TestTermScorer.cs" />
     <Compile Include="core\Search\TestTermVectors.cs" />
+    <Compile Include="core\Search\TestTimeLimitingCollector.cs" />
     <Compile Include="core\Search\TestTopDocsCollector.cs" />
     <Compile Include="core\Search\TestTopDocsMerge.cs" />
     <Compile Include="core\Search\TestTopFieldCollector.cs" />
