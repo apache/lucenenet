@@ -4,7 +4,11 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
+    using Index;
     using NUnit.Framework;
+    using Support;
+    using System.Threading.Tasks;
+    using Util;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -148,12 +152,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestDeMorgan()
         {
             Directory dir1 = NewDirectory();
-            RandomIndexWriter iw1 = new RandomIndexWriter(Random(), dir1);
+            RandomIndexWriter iw1 = new RandomIndexWriter(Random(), dir1, Similarity, TimeZone);
             Document doc1 = new Document();
             doc1.Add(NewTextField("field", "foo bar", Field.Store.NO));
             iw1.AddDocument(doc1);
@@ -161,7 +164,7 @@ namespace Lucene.Net.Search
             iw1.Dispose();
 
             Directory dir2 = NewDirectory();
-            RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2);
+            RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2, Similarity, TimeZone);
             Document doc2 = new Document();
             doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
             iw2.AddDocument(doc2);
@@ -178,25 +181,25 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(multireader);
             Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
 
-            TaskScheduler es = Executors.newCachedThreadPool(new NamedThreadFactory("NRT search threads"));
+
+            Task foo = new Task(TestDeMorgan);
+
+            TaskScheduler es = TaskScheduler.Default;
             searcher = new IndexSearcher(multireader, es);
             if (VERBOSE)
             {
                 Console.WriteLine("rewritten form: " + searcher.Rewrite(query));
             }
             Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
-            es.shutdown();
-            es.awaitTermination(new TimeSpan(0, 0, 0, 1));
 
             multireader.Dispose();
             reader1.Dispose();
             reader2.Dispose();
             dir1.Dispose();
             dir2.Dispose();
-        }*/
+        }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
@@ -292,7 +295,7 @@ namespace Lucene.Net.Search
                         int nextUpto;
                         int nextDoc;
                         int left = hits.Count - upto;
-                        if (left == 1 || Random().NextBoolean())
+                        if (left == 1 || Random().nextBoolean())
                         {
                             // next
                             nextUpto = 1 + upto;
@@ -324,7 +327,7 @@ namespace Lucene.Net.Search
 
             r.Dispose();
             d.Dispose();
-        }*/
+        }
 
         // LUCENE-4477 / LUCENE-4401:
         [Test]
@@ -404,3 +407,4 @@ namespace Lucene.Net.Search
         }
     }
 }
+ 
