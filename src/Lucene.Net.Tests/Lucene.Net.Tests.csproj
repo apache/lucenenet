@@ -375,6 +375,7 @@
     <Compile Include="core\Search\TestComplexExplanationsOfNonMatches.cs" />
     <Compile Include="core\Search\TestConjunctions.cs" />
     <Compile Include="core\Search\TestConstantScoreQuery.cs" />
+    <Compile Include="core\Search\TestControlledRealTimeReopenThread.cs" />
     <Compile Include="core\Search\TestCustomSearcherSort.cs" />
     <Compile Include="core\Search\TestDateFilter.cs" />
     <Compile Include="core\Search\TestDateSort.cs" />
