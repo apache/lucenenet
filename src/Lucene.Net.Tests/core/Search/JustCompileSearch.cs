@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileScorer : Scorer
         {
-            protected internal JustCompileScorer(Weight weight)
+            internal JustCompileScorer(Weight weight)
                 : base(weight)
             {
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileTopDocsCollector : TopDocsCollector<ScoreDoc>
         {
-            protected internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
+            internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
                 : base(pq)
             {
             }
