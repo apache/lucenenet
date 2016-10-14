@@ -388,6 +388,7 @@
     <Compile Include="core\Search\TestEarlyTermination.cs" />
     <Compile Include="core\Search\TestElevationComparator.cs" />
     <Compile Include="core\Search\TestExplanations.cs" />
+    <Compile Include="core\Search\TestFieldCache.cs" />
     <Compile Include="core\Search\TestFieldCacheRangeFilter.cs" />
     <Compile Include="core\Search\TestFieldCacheRewriteMethod.cs" />
     <Compile Include="core\Search\TestFieldCacheTermsFilter.cs" />
