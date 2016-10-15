@@ -71,6 +71,7 @@ namespace Lucene.Net.Store
         // is working as expected.
         // Our input comes from a dynamically generated/ "file" - see
         // MyBufferedIndexInput below.
+        [Test]
         public virtual void TestReadByte()
         {
             MyBufferedIndexInput input = new MyBufferedIndexInput();
