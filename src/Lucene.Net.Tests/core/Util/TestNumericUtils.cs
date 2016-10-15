@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
                 {
                     // test if smaller
                     Assert.IsTrue(last.CompareTo(act) < 0, "actual bigger than last (BytesRef)");
-                    //Assert.IsTrue(last.Utf8ToString().CompareTo(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
+                    Assert.IsTrue(last.Utf8ToString().CompareToOrdinal(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
                 }
                 // test is back and forward conversion works
                 Assert.AreEqual(l, NumericUtils.PrefixCodedToLong(act), "forward and back conversion should generate same long");
@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
                 {
                     // test if smaller
                     Assert.IsTrue(last.CompareTo(act) < 0, "actual bigger than last (BytesRef)");
-                    //Assert.IsTrue(last.Utf8ToString().CompareTo(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
+                    Assert.IsTrue(last.Utf8ToString().CompareToOrdinal(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
                 }
                 // test is back and forward conversion works
                 Assert.AreEqual(i, NumericUtils.PrefixCodedToInt(act), "forward and back conversion should generate same int");
