@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Automaton
     {
         /// <summary>
         /// test a bunch of random regular expressions </summary>
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestRegexps()
         {
             int num = AtLeast(500);
