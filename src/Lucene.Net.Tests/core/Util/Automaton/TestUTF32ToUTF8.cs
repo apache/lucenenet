@@ -236,7 +236,7 @@ namespace Lucene.Net.Util.Automaton
             Assert.IsTrue(bra.Run(bytes, 0, bytes.Length));
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public void TestRandomRegexes()
         {
             int num = AtLeast(250);
