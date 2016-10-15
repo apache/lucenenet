@@ -484,6 +484,7 @@
     </Compile>
     <Compile Include="core\TestSearch.cs" />
     <Compile Include="core\TestSearchForDuplicates.cs" />
+    <Compile Include="core\TestWorstCaseTestBehavior.cs" />
     <Compile Include="core\Util\Automaton\TestBasicOperations.cs">
       <SubType>Code</SubType>
     </Compile>
