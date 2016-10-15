@@ -47,8 +47,15 @@ namespace Lucene.Net.Store
         public override void SetUp()
         {
             base.SetUp();
-            // LUCENENET TODO: what?!?!?!?!?!
-            AssumeTrue("test requires a jre that supports unmapping", MMapDirectory.UNMAP_SUPPORTED);
+            // LUCENENET NOTE:
+            // Java seems to have issues releasing memory mapped resources when calling close()
+            // http://stackoverflow.com/a/2973059/181087
+
+            // However, according to MSDN, the Dispose() method of the MemoryMappedFile class will "release all resources".
+            // https://msdn.microsoft.com/en-us/library/system.io.memorymappedfiles.memorymappedfile(v=vs.110).aspx
+            // Therefore, I am assuming removing the below line is the correct choice for .NET.
+
+            //AssumeTrue("test requires a jre that supports unmapping", MMapDirectory.UNMAP_SUPPORTED);
         }
 
         [Test]
