@@ -68,8 +68,9 @@ namespace Lucene.Net.Util
         // see http://en.wikipedia.org/wiki/Binary_GCD_algorithm#Iterative_version_in_C.2B.2B_using_ctz_.28count_trailing_zeros.29
         public static long Gcd(long a, long b)
         {
-            a = Math.Abs(a);
-            b = Math.Abs(b);
+            // LUCENENET: Math.Abs and BigInteger.Abs get an OverflowException, so we resort to this.
+            a = a < 0 ? -a : a;
+            b = b < 0 ? -b : b;
             if (a == 0)
             {
                 return b;

@@ -1,12 +1,11 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -60,11 +59,16 @@ namespace Lucene.Net.Util
         }
 
         // slow version used for testing
-        internal static long Gcd(long l1, long l2)
+        private static bool TryGetGcd(long a, long b, out long result)
         {
-            System.Numerics.BigInteger gcd = System.Numerics.BigInteger.ValueOf(l1).gcd(System.Numerics.BigInteger.ValueOf(l2));
-            Debug.Assert(gcd.BitCount() <= 64);
-            return (long)gcd;
+            result = 0;
+            var c = System.Numerics.BigInteger.GreatestCommonDivisor(a, b);
+            if (c <= long.MaxValue && c >= long.MinValue)
+            {
+                result = (long)c;
+                return true;
+            }
+            return false; // would overflow
         }
 
         [Test]
@@ -76,12 +80,20 @@ namespace Lucene.Net.Util
                 long l1 = RandomLong();
                 long l2 = RandomLong();
                 long gcd = MathUtil.Gcd(l1, l2);
-                long actualGcd = Gcd(l1, l2);
-                Assert.AreEqual(actualGcd, gcd);
-                if (gcd != 0)
+                long actualGcd;
+                if (TryGetGcd(l1, l2, out actualGcd))
                 {
-                    Assert.AreEqual(l1, (l1 / gcd) * gcd);
-                    Assert.AreEqual(l2, (l2 / gcd) * gcd);
+                    Assert.AreEqual(actualGcd, gcd);
+                    if (gcd != 0)
+                    {
+                        Assert.AreEqual(l1, (l1 / gcd) * gcd);
+                        Assert.AreEqual(l2, (l2 / gcd) * gcd);
+                    }
+                }
+                else
+                {
+                    // GCD cast to long would fail, try again
+                    i--;
                 }
             }
         }

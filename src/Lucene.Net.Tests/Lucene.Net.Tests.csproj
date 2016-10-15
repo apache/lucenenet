@@ -592,6 +592,7 @@
     <Compile Include="core\Util\TestLongBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestMathUtil.cs" />
     <Compile Include="core\Util\TestMergedIterator.cs">
       <SubType>Code</SubType>
     </Compile>
