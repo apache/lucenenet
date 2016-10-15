@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
     //using Ignore = org.junit.Ignore;
 
     //ORIGINAL LINE: @Ignore("You must increase heap to > 2 G to run this") public class Test2BPagedBytes extends LuceneTestCase
-    [Ignore]
+    [Ignore("You must increase heap to > 2 G to run this")]
     [TestFixture]
     public class Test2BPagedBytes : LuceneTestCase
     {
