@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
             dir.Dispose();
         }
 
-        [Test, Repeat(100)]
+        [Test]
         public void TestDiskFull()
         {
             // test writeBytes
@@ -93,13 +93,13 @@ namespace Lucene.Net.Store
             dir = NewMockDirectory();
             dir.MaxSizeInBytes = 3;
             @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-            @out.CopyBytes(new ByteArrayDataInput((byte[])(Array)bytes), bytes.Length); // first copy should succeed
+            @out.CopyBytes(new ByteArrayDataInput(bytes), bytes.Length); // first copy should succeed
             // flush() to ensure the written bytes are not buffered and counted
             // against the directory size
             @out.Flush();
             try
             {
-                @out.CopyBytes(new ByteArrayDataInput((byte[])(Array)bytes), bytes.Length);
+                @out.CopyBytes(new ByteArrayDataInput(bytes), bytes.Length);
                 Assert.Fail("should have failed on disk full");
             }
             catch (IOException e)
