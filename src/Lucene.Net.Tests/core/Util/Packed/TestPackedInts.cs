@@ -503,7 +503,7 @@ namespace Lucene.Net.Util.Packed
 	    
           NOTE: this test allocates 256 MB
          */
-        [Ignore]
+        [Ignore("See LUCENE-4488 - LUCENENET NOTE: In .NET it is not possible to catch OOME")]
         [Test]
         public virtual void TestIntOverflow()
         {
