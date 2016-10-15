@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
         // Verify: do stress test, by opening IndexReaders and
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised:
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestStressLocks()
         {
             _testStressLocks(null, CreateTempDir("index.TestLockFactory6"));
@@ -159,7 +159,7 @@ namespace Lucene.Net.Store
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised, but use
         // NativeFSLockFactory:
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestStressLocksNativeFSLockFactory()
         {
             DirectoryInfo dir = CreateTempDir("index.TestLockFactory7");
