@@ -47,7 +47,7 @@ namespace Lucene.Net.Support
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
-    public class LurchTable<TKey, TValue> : IDictionary<TKey, TValue>
+    public class LurchTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable
     {
         /// <summary> Method signature for the ItemUpdated event </summary>
         public delegate void ItemUpdatedMethod(KeyValuePair<TKey, TValue> previous, KeyValuePair<TKey, TValue> next);

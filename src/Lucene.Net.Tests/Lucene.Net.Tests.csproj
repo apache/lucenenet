@@ -472,6 +472,8 @@
     <Compile Include="core\SupportClassException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Support\TestLurchTable.cs" />
+    <Compile Include="core\Support\TestLurchTableThreading.cs" />
     <Compile Include="core\TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>
