@@ -1392,7 +1392,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            protected override void FlushBuffer(byte[] b, int offset, int len)
+            protected internal override void FlushBuffer(byte[] b, int offset, int len)
             {
                 Io.WriteBytes(b, offset, len);
             }

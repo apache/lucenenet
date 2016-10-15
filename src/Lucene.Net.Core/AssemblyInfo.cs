@@ -50,6 +50,7 @@ using System.Runtime.CompilerServices;
 // This has broad implications, though because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
+[assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]
 [assembly: InternalsVisibleTo("Lucene.Net.Misc")]
 
 //

@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
             {
                 return LuceneTestCase.Random().NextBoolean();
             }

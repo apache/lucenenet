@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis
                 OuterInstance = outerInstance;
             }
 
-            protected override LookaheadTokenFilter.Position NewInstance()
+            protected internal override LookaheadTokenFilter.Position NewInstance()
             {
                 return OuterInstance.NewPosition();
             }

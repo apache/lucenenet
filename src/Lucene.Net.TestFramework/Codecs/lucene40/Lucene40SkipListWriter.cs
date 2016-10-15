@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        protected override void WriteSkipData(int level, IndexOutput skipBuffer)
+        protected internal override void WriteSkipData(int level, IndexOutput skipBuffer)
         {
             // To efficiently store payloads/offsets in the posting lists we do not store the length of
             // every payload/offset. Instead we omit the length if the previous lengths were the same

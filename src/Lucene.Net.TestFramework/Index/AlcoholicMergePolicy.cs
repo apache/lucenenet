@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             MaxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
         }
 
-        protected override long Size(SegmentCommitInfo info)
+        protected internal override long Size(SegmentCommitInfo info)
         {
             int hourOfDay = Calendar.Hour;
             if (hourOfDay < 6 || hourOfDay > 20 || Random.Next(23) == 5)
