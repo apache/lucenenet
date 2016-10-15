@@ -304,7 +304,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, LongRunningTest, Timeout(50000)]
+        [Test, LongRunningTest, Timeout(50000), LuceneNetSpecific]
         public virtual void TestMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
@@ -333,7 +333,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, LongRunningTest, Timeout(50000)]
+        [Test, LongRunningTest, Timeout(50000), LuceneNetSpecific]
         public virtual void TestStrictMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
