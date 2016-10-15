@@ -345,7 +345,7 @@ namespace Lucene.Net.Util
             DoRandomSets(AtLeast(1200), AtLeast(1000), 2);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestClearSmall()
         {
             OpenBitSet a = new OpenBitSet(30);   // 0110010111001000101101001001110...0
@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
             Assert.True(a.Equals(b));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestClearLarge()
         {
             int iters = AtLeast(1000);
