@@ -453,7 +453,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return;
             }
-            HashSet<State> initialset = new HashSet<State>();
+            HashSet<State> initialset = new ValueHashSet<State>();
             initialset.Add(a.Initial);
             DeterminizeSimple(a, initialset);
         }
@@ -488,7 +488,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 for (int n = 0; n < points.Length; n++)
                 {
-                    ISet<State> p = new HashSet<State>();
+                    ISet<State> p = new ValueHashSet<State>();
                     foreach (State q in s)
                     {
                         foreach (Transition t in q.Transitions)

@@ -252,7 +252,7 @@ namespace Lucene.Net.Util.Automaton
             }
             foreach (State r in states)
             {
-                m[r] = new HashSet<Transition>();
+                m[r] = new ValueHashSet<Transition>();
                 r.accept = false;
             }
             foreach (State r in states)
