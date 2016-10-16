@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestMixedCodecs : LuceneTestCase
     {

@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
     using TestUtil = Lucene.Net.Util.TestUtil;
     using ThreadedIndexingAndSearchingTestCase = Lucene.Net.Index.ThreadedIndexingAndSearchingTestCase;
 
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestSearcherManager : ThreadedIndexingAndSearchingTestCase
     {

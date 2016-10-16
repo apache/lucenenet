@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestPayloadsOnVectors : LuceneTestCase
     {

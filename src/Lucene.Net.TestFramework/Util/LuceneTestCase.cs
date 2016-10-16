@@ -254,12 +254,11 @@ namespace Lucene.Net.Util
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         public class SuppressCodecs : System.Attribute
         {
-            private string[] value;
-
-            public string[] Value()
+            public SuppressCodecs(params string[] value)
             {
-                return value;
+                this.Value = value;
             }
+            public string[] Value { get; private set; }
         }
 
         /// <summary>

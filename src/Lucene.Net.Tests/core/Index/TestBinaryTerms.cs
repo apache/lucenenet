@@ -34,6 +34,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Test indexing and searching some byte[] terms
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestBinaryTerms : LuceneTestCase
     {

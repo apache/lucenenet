@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
     /// In the example, a docvalues field is used as a per-document boost (separate from the norm)
     /// @lucene.experimental
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocValuesScoring : LuceneTestCase
     {

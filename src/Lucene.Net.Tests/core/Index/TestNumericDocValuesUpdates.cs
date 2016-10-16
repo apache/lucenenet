@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestNumericDocValuesUpdates : LuceneTestCase
     {

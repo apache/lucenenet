@@ -43,6 +43,7 @@ namespace Lucene.Net.Index
     /// so you get > Integer.MAX_VALUE postings data for the term
     /// @lucene.experimental
     /// </summary>
+    [SuppressCodecs("SimpleText", "Memory", "Direct", "Lucene3x")]
     [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
     // disable Lucene3x: older lucene formats always had this issue.

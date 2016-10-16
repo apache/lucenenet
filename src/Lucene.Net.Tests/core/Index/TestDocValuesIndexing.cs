@@ -45,6 +45,7 @@ namespace Lucene.Net.Index
     /// Tests DocValues integration into IndexWriter
     ///
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocValuesIndexing : LuceneTestCase
     {

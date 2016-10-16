@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     // TODO
     //   - mix in forceMerge, addIndexes
     //   - randomoly mix in non-congruent docs
-
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestNRTThreads : ThreadedIndexingAndSearchingTestCase
     {

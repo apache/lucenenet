@@ -26,6 +26,7 @@ namespace Lucene.Net.Index
     /// Tests the codec configuration defined by LuceneTestCase randomly
     ///  (typically a mix across different fields).
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     public class TestDocValuesFormat : BaseDocValuesFormatTestCase
     {
         protected override Codec Codec

@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Tests the Terms.DocCount statistic
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocCount : LuceneTestCase
     {

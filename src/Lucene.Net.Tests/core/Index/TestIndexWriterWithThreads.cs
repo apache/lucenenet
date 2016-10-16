@@ -50,6 +50,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// MultiThreaded IndexWriter tests
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {

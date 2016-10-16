@@ -44,6 +44,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestQueryRescorer : LuceneTestCase
     {

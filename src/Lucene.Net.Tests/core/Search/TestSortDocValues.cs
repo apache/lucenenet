@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
     /// These are mostly like TestSort's tests, except each test
     /// indexes the field up-front as docvalues, and checks no fieldcaches were made
     /// </summary>
+    [SuppressCodecs("Lucene3x", "Appending", "Lucene40", "Lucene41", "Lucene42")] // avoid codecs that don't support "missing"
     [TestFixture]
     public class TestSortDocValues : LuceneTestCase
     {

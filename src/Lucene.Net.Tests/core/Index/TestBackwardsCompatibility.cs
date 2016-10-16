@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
     // we won't even be running the actual code, only the impostor
     // @SuppressCodecs("Lucene4x")
     // Sep codec cannot yet handle the offsets in our 4.x index!
-    //[SuppressCodecs("Lucene4x")] // LUCENENET TODO: SuppressCodecs doesn't accept a parameter
+    [SuppressCodecs("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene40", "Lucene41", "Appending", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestBackwardsCompatibility : LuceneTestCase
     {

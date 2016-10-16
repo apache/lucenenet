@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Fst
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
-
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestFSTs : LuceneTestCase
     {

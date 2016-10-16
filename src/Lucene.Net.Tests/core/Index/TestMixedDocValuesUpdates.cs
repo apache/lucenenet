@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestMixedDocValuesUpdates : LuceneTestCase
     {

@@ -31,6 +31,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 
+    [SuppressCodecs("Lucene3x")]
     [Ignore("takes ~ 45 minutes")]
     [TestFixture]
     public class Test2BBinaryDocValues : LuceneTestCase

@@ -42,6 +42,7 @@ namespace Lucene.Net.Index
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestTermsEnum : LuceneTestCase
     {

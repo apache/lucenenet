@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using SortedDocValuesField = SortedDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocValuesWithThreads : LuceneTestCase
     {

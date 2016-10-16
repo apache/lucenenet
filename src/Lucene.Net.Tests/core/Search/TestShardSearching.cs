@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
     //   - test pulling docs in 2nd round trip...
     //   - filter too
 
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestShardSearching : ShardSearchingTestBase
     {

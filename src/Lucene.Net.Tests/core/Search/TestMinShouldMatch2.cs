@@ -47,6 +47,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// tests BooleanScorer2's minShouldMatch </summary>
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41")]
     [TestFixture]
     public class TestMinShouldMatch2 : LuceneTestCase
     {

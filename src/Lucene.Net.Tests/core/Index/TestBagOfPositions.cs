@@ -42,9 +42,11 @@ namespace Lucene.Net.Index
     /// totalTermFreq of its integer value, and checks that the totalTermFreq is correct.
     /// </summary>
     // TODO: somehow factor this with BagOfPostings? its almost the same
+    [SuppressCodecs("Direct", "Memory", "Lucene3x")] // at night this makes like 200k/300k docs and will make Direct's heart beat!
+                                                     // Lucene3x doesnt have totalTermFreq, so the test isn't interesting there.
     [TestFixture]
-    public class TestBagOfPositions : LuceneTestCase // at night this makes like 200k/300k docs and will make Direct's heart beat!
-    // Lucene3x doesnt have totalTermFreq, so the test isn't interesting there.
+    public class TestBagOfPositions : LuceneTestCase
+    
     {
         [Test]
         public virtual void Test()

@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using SortedDocValuesField = SortedDocValuesField;
 
+    [SuppressCodecs("Lucene3x")]
     [Ignore("very slow")]
     [TestFixture]
     public class Test2BSortedDocValues : LuceneTestCase

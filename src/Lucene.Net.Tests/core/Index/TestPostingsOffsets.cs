@@ -50,6 +50,7 @@ namespace Lucene.Net.Index
     // TODO: we really need to test indexingoffsets, but then getting only docs / docs + freqs.
     // not all codecs store prx separate...
     // TODO: fix sep codec to index offsets so we can greatly reduce this list!
+    [SuppressCodecs("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom")]
     [TestFixture]
     public class TestPostingsOffsets : LuceneTestCase
     {

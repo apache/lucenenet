@@ -54,6 +54,7 @@ namespace Lucene.Net.Search
     //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using Version = Lucene.Net.Util.LuceneVersion;
 
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestControlledRealTimeReopenThread : ThreadedIndexingAndSearchingTestCase
     {

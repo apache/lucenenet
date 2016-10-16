@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
 
     //@TimeoutSuite(millis = 80 * TimeUnits.HOUR) @Ignore("takes ~ 30 minutes") @SuppressCodecs("Lucene3x") public class Test2BNumericDocValues extends Lucene.Net.Util.LuceneTestCase
+    [SuppressCodecs("Lucene3x")]
     [Ignore("takes ~ 30 minutes")]
     [TestFixture]
     public class Test2BNumericDocValues : LuceneTestCase

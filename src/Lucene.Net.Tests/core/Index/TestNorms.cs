@@ -44,6 +44,7 @@ namespace Lucene.Net.Index
     /// Test that norms info is preserved during index life - including
     /// separate norms, addDocument, addIndexes, forceMerge.
     /// </summary>
+    [SuppressCodecs("Memory", "Direct", "SimpleText")]
     [TestFixture]
     public class TestNorms : LuceneTestCase
     {

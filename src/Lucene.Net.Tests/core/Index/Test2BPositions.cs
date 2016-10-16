@@ -43,6 +43,7 @@ namespace Lucene.Net.Index
     /// Test indexes ~82M docs with 52 positions each, so you get > Integer.MAX_VALUE positions
     /// @lucene.experimental
     /// </summary>
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class Test2BPositions : LuceneTestCase
     // uses lots of space and takes a few minutes
