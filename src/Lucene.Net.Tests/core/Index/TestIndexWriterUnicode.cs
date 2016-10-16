@@ -286,8 +286,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestInvalidUTF16()
         {
-            fail("Test has infinite recursion");
-
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestIndexWriter.StringSplitAnalyzer()));
             Document doc = new Document();
