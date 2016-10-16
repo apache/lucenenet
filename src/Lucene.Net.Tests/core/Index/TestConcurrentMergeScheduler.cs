@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
                         {
                             break;
                         }
-                        if ("flush".Equals(method.Name))
+                        if ("Flush".Equals(method.Name))
                         {
                             isDoFlush = true;
                         }
-                        if ("close".Equals(method.Name))
+                        if ("Close".Equals(method.Name))
                         {
                             isClose = true;
                         }
@@ -103,8 +103,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushExceptions()
         {
-            fail("Test has infinite recursion");
-
             MockDirectoryWrapper directory = NewMockDirectory();
             FailOnlyOnFlush failure = new FailOnlyOnFlush(this);
             directory.FailOn(failure);
