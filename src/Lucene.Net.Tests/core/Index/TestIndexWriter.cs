@@ -1929,7 +1929,7 @@ namespace Lucene.Net.Index
                 StringBuilder b = new StringBuilder();
                 char[] buffer = new char[1024];
                 int n;
-                while ((n = input.Read(buffer, 0, buffer.Length)) != -1)
+                while ((n = input.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     b.Append(buffer, 0, n);
                 }
@@ -1943,8 +1943,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestWickedLongTerm()
         {
-            fail("Test has infinite recursion");
-
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer(), Similarity, TimeZone);
 
