@@ -1,9 +1,13 @@
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -60,9 +64,7 @@ namespace Lucene.Net.Search
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
+    
 
     [TestFixture]
     public class TestFieldCache : LuceneTestCase
@@ -98,15 +100,15 @@ namespace Lucene.Net.Search
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
-                doc.Add(NewStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
-                doc.Add(NewStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
-                doc.Add(NewStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
-                doc.Add(NewStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
-                doc.Add(NewStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
+                doc.Add(NewStringField("theLong", (theLong--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theDouble", (theDouble--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theByte", (theByte--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theShort", (theShort--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theInt", (theInt--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theFloat", (theFloat--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
                 if (i % 2 == 0)
                 {
-                    doc.Add(NewStringField("sparse", Convert.ToString(i), Field.Store.NO));
+                    doc.Add(NewStringField("sparse", (i).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
                 }
 
                 if (i % 2 == 0)
