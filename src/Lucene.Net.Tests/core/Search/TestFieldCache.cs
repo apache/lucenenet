@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    
+    using System.Text;
 
     [TestFixture]
     public class TestFieldCache : LuceneTestCase
@@ -158,11 +158,14 @@ namespace Lucene.Net.Search
             try
             {
                 IFieldCache cache = FieldCache.DEFAULT;
-                MemoryStream bos = new MemoryStream(1024);
-                cache.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
-                cache.GetDoubles(Reader, "theDouble", false);
-                cache.GetFloats(Reader, "theDouble", false);
-                Assert.IsTrue(bos.ToString(/*IOUtils.UTF_8*/).IndexOf("WARNING") != -1);
+                StringBuilder sb = new StringBuilder();
+                using (var bos = new StringWriter(sb))
+                {
+                    cache.InfoStream = bos;
+                    cache.GetDoubles(Reader, "theDouble", false);
+                    cache.GetFloats(Reader, "theDouble", false);
+                }
+                Assert.IsTrue(sb.ToString(/*IOUtils.UTF_8*/).IndexOf("WARNING") != -1);
             }
             finally
             {

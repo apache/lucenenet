@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
         /// entries are created that are not sane according to
         /// <seealso cref="Lucene.Net.Util.FieldCacheSanityChecker"/>.
         /// </summary>
-        StreamWriter InfoStream { set; get; }
+        TextWriter InfoStream { set; get; }
     }
 
     public static class FieldCache
@@ -568,7 +568,11 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // FloatField, instead, which already decodes
                 // directly from byte[]
-                return float.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+
+                // LUCENENET: We parse to double first and then cast to float, which allows us to parse 
+                // double.MaxValue.ToString("R") (resulting in Infinity). This is how it worked in Java
+                // and the TestFieldCache.TestInfoStream() test depends on this behavior to pass.
+                return (float)double.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
             }
 
             public TermsEnum TermsEnum(Terms terms)
