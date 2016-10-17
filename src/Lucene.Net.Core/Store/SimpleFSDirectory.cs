@@ -197,7 +197,7 @@ namespace Lucene.Net.Store
                         while (total < len)
                         {
                             int toRead = Math.Min(CHUNK_SIZE, len - total);
-                            int i = File.Read((byte[])(Array)b, offset + total, toRead);
+                            int i = File.Read(b, offset + total, toRead);
                             if (i < 0) // be defensive here, even though we checked before hand, something could have changed
                             {
                                 throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
