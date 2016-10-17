@@ -591,8 +591,7 @@ namespace Lucene.Net.Index
             Writer = new IndexWriter(Dir, conf);
             TestUtil.ReduceOpenFiles(Writer);
 
-            //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
-            TaskScheduler es = null;
+            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
 
             DoAfterWriter(es);
 
