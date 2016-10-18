@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInteger iters = new AtomicInteger();
             int NUM_ITER = 200 * RANDOM_MULTIPLIER;
-            Barrier restart = new Barrier(1, (barrier) => new RunnableAnonymousInnerClassHelper(this, cache, iters).Run());
+            Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousInnerClassHelper(this, cache, iters).Run());
             for (int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
             {
                 threads[threadIDX] = new ThreadAnonymousInnerClassHelper(this, cache, failed, iters, NUM_ITER, restart);
