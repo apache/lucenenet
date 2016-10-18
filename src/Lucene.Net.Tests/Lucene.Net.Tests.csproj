@@ -472,6 +472,9 @@
     <Compile Include="core\SupportClassException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Support\BaseBufferTestCase.cs" />
+    <Compile Include="core\Support\TestLongBuffer.cs" />
+    <Compile Include="core\Support\TestByteBuffer.cs" />
     <Compile Include="core\Support\TestLurchTable.cs" />
     <Compile Include="core\Support\TestLurchTableThreading.cs" />
     <Compile Include="core\TestAssertions.cs">

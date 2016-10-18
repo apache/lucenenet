@@ -13,6 +13,16 @@ namespace Lucene.Net.Support
             _accessor = accessor;
         }
 
+        internal override byte _get(int i)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override void _put(int i, byte b)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool IsDirect
         {
             get { return true; }
@@ -30,7 +40,7 @@ namespace Lucene.Net.Support
 
         public override ByteBuffer Duplicate()
         {
-            return new MemoryMappedFileByteBuffer(_accessor, Mark, Position, Limit, Capacity);
+            return new MemoryMappedFileByteBuffer(_accessor, MarkValue, Position, Limit, Capacity);
         }
 
         public override ByteBuffer AsReadOnlyBuffer()
@@ -274,6 +284,11 @@ namespace Lucene.Net.Support
                 _accessor.Dispose();
 
             _accessor = null;
+        }
+
+        public override LongBuffer AsLongBuffer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

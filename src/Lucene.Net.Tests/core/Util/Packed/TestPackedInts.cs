@@ -982,7 +982,6 @@ namespace Lucene.Net.Util.Packed
         }
 
         [Test]
-        [Ignore("LUCENENET TODO: LongBuffer and the method AsLongBuffer are not yet ported, so we cannot currently run this test without porting or finding an alternative way to compare the data.")]
         public virtual void TestEncodeDecode()
         {
             foreach (PackedInts.Format format in PackedInts.Format.Values())
@@ -1059,38 +1058,35 @@ namespace Lucene.Net.Util.Packed
                         Assert.AreEqual(blocks2, blocks3, msg);
                     }
 
-                    // LUCENENET TODO: LongBuffer and the method AsLongBuffer are not yet ported, so we
-                    // cannot currently run the following tests.
+                    // 4. byte[] decoding
+                    byte[] byteBlocks = new byte[8 * blocks.Length];
+                    ByteBuffer.Wrap(byteBlocks).AsLongBuffer().Put(blocks);
+                    long[] values2 = new long[valuesOffset + longIterations * longValueCount];
+                    decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
+                    foreach (long value in values2)
+                    {
+                        Assert.IsTrue(value <= PackedInts.MaxValue(bpv), msg);
+                    }
+                    Assert.AreEqual(values, values2, msg);
+                    // test decoding to int[]
+                    if (bpv <= 32)
+                    {
+                        int[] intValues2 = new int[values2.Length];
+                        decoder.Decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
+                        Assert.IsTrue(Equals(intValues2, values2), msg);
+                    }
 
-                    //// 4. byte[] decoding
-                    //byte[] byteBlocks = new byte[8 * blocks.Length];
-                    //ByteBuffer.Wrap(byteBlocks).AsLongBuffer().Put(blocks);
-                    //long[] values2 = new long[valuesOffset + longIterations * longValueCount];
-                    //decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
-                    //foreach (long value in values2)
-                    //{
-                    //    Assert.IsTrue(value <= PackedInts.MaxValue(bpv), msg);
-                    //}
-                    //Assert.AreEqual(values, values2, msg);
-                    //// test decoding to int[]
-                    //if (bpv <= 32)
-                    //{
-                    //    int[] intValues2 = new int[values2.Length];
-                    //    decoder.Decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
-                    //    Assert.IsTrue(Equals(intValues2, values2), msg);
-                    //}
-
-                    //// 5. byte[] encoding
-                    //byte[] blocks3_ = new byte[8 * (blocksOffset2 + blocksLen)];
-                    //encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
-                    //assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsLongBuffer());
-                    //// test encoding from int[]
-                    //if (bpv <= 32)
-                    //{
-                    //    byte[] blocks4 = new byte[blocks3_.Length];
-                    //    encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
-                    //    Assert.AreEqual(blocks3_, blocks4, msg);
-                    //}
+                    // 5. byte[] encoding
+                    byte[] blocks3_ = new byte[8 * (blocksOffset2 + blocksLen)];
+                    encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
+                    assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsLongBuffer());
+                    // test encoding from int[]
+                    if (bpv <= 32)
+                    {
+                        byte[] blocks4 = new byte[blocks3_.Length];
+                        encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
+                        Assert.AreEqual(blocks3_, blocks4, msg);
+                    }
                 }
             }
         }

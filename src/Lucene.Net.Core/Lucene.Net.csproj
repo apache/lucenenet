@@ -612,10 +612,11 @@
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
-    <Compile Include="Support\BufferUnderflowException.cs" />
+    <Compile Include="Support\BufferExceptions.cs" />
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\ByteArrayOutputStream.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
+    <Compile Include="Support\ByteOrder.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\CharacterIterator.cs" />
@@ -638,6 +639,7 @@
     <Compile Include="Support\IDictionaryExtensions.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\ListExtensions.cs" />
+    <Compile Include="Support\LongBuffer.cs" />
     <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
