@@ -137,7 +137,10 @@ namespace Lucene.Net.Store
         /// <summary>
         /// <code>true</code>, if this platform supports unmapping mmapped files.
         /// </summary>
-        public static readonly bool UNMAP_SUPPORTED;
+        // LUCENENET NOTE: Some JREs had a bug that didn't allow them to unmap.
+        // But according to MSDN, the MemoryMappedFile.Dispose() method will
+        // indeed "release all resources".
+        public static readonly bool UNMAP_SUPPORTED = true;
 
         /*static MMapDirectory()
         {
@@ -200,7 +203,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", c);
         }
@@ -347,7 +350,7 @@ namespace Lucene.Net.Store
 
             if (input.memoryMappedFile == null)
             {
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.Read, null, HandleInheritability.Inheritable, false);
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 1024 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.Inheritable, false);
             }
 
             long bufferStart = 0L;
