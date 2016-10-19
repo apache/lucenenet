@@ -348,18 +348,27 @@ namespace Lucene.Net.Store
                                                         HandleInheritability inheritability, bool leaveOpen)
              */
 
+            long fileCapacity = length == 0 ? ushort.MaxValue : length;
+
             if (input.memoryMappedFile == null)
             {
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 1024 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.Inheritable, false);
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, fileCapacity, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.Inheritable, false);
             }
 
             long bufferStart = 0L;
             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
             {
                 int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
-                //LUCENE TO-DO
-                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor(offset + bufferStart, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
-                //buffers[bufNr] = fc.Map(FileStream.MapMode.READ_ONLY, offset + bufferStart, bufSize);
+
+                // LUCENENET: We get a file access exception if we create a 0 byte file at the end of the range.
+                // We can fix this by moving back 1 byte if the bufSize is 0.
+                int adjust = 0;
+                if (bufSize == 0 && bufNr == (nrBuffers - 1) && (offset + bufferStart) > 0)
+                {
+                    adjust = 1;
+                }
+
+                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
                 bufferStart += bufSize;
             }
 
