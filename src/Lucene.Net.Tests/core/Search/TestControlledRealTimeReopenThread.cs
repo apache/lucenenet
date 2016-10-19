@@ -617,7 +617,7 @@ namespace Lucene.Net.Search
         }
 
         // LUCENE-5461
-        [Test]
+        [Test, Timeout(120000)]
         public virtual void TestCRTReopen()
         {
             //test behaving badly
