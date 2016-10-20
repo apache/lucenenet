@@ -65,7 +65,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
     /// </summary>
 
-    public class TernaryTree : ICloneable
+    public class TernaryTree
+#if !NETSTANDARD
+        : ICloneable
+#endif
     {
         /// <summary>
         /// We use 4 arrays to represent a node. I guess I should have created a proper
@@ -552,7 +555,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private string curkey;
 
-            internal class Item : ICloneable
+            internal class Item
+#if !NETSTANDARD
+                : ICloneable
+#endif
             {
                 internal char parent;
                 internal char child;
