@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -25,18 +23,5 @@ namespace Lucene.Net.Index
         {
             return NewLogMergePolicy(Random());
         }
-
-        #region BaseMergePolicyTestCase
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestForceMergeNotNeeded()
-        {
-            base.TestForceMergeNotNeeded();
-        }
-
-        #endregion
     }
 }
