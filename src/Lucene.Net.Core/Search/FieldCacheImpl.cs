@@ -239,7 +239,12 @@ namespace Lucene.Net.Search
                         ReaderCache[readerKey] = innerCache;
                         Wrapper.InitReader(reader);
                     }
-                    if (!innerCache.TryGetValue(key, out value))
+                    // LUCENENET NOTE: We declare a temp variable here so we 
+                    // don't overwrite value variable with the null
+                    // that will result when this if block succeeds; otherwise
+                    // we won't have a value to put in the cache.
+                    object temp;
+                    if (!innerCache.TryGetValue(key, out temp))
                     {
                         innerCache[key] = value;
                     }
