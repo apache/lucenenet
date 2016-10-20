@@ -1,5 +1,4 @@
-﻿using ICU4NET;
-using ICU4NETExtension;
+﻿using Icu;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -43,12 +42,13 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this tokenizer will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE;
-        private static readonly BreakIterator proto = BreakIterator.CreateWordInstance(Locale.GetUS());
+        private static readonly IEnumerable<Boundary> proto;
         static ThaiTokenizer()
         {
             // check that we have a working dictionary-based break iterator for thai
-            proto.SetText("ภาษาไทย");
-            DBBI_AVAILABLE = proto.IsBoundary(4);
+            proto = BreakIterator.GetWordBoundaries(LocaleUS, "ภาษาไทย", includeSpacesAndPunctuation: false).ToArray();
+            var first = proto.FirstOrDefault();
+            DBBI_AVAILABLE = first != default(Boundary) && first.End == 4;
         }
 
         private readonly ThaiWordBreaker wordBreaker;
@@ -70,13 +70,13 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-              : base(factory, reader, BreakIterator.CreateSentenceInstance(Locale.GetUS()))
+              : base(factory, reader, LocaleUS, BreakIterator.UBreakIteratorType.SENTENCE)
         {
             if (!DBBI_AVAILABLE)
             {
                 throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
             }
-            wordBreaker = new ThaiWordBreaker(BreakIterator.CreateWordInstance(Locale.GetUS()));
+            wordBreaker = new ThaiWordBreaker(LocaleUS);
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Th
 
             // find the next set of boundaries, skipping over non-tokens
             int end = wordBreaker.Next();
-            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Character.CodePointAt(buffer, sentenceStart + start, sentenceEnd)))
+            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Support.Character.CodePointAt(buffer, sentenceStart + start, sentenceEnd)))
             {
                 start = end;
                 end = wordBreaker.Next();
@@ -132,45 +132,62 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     internal class ThaiWordBreaker
     {
-        private readonly BreakIterator wordBreaker;
+        private readonly Locale locale;
+        private IEnumerator<Boundary> wordBreaker;
+        private Boundary[] WordBoundaries;
+        private int currentIndex;
         private string text;
         private readonly IList<int> transitions = new List<int>();
         private readonly static Regex thaiPattern = new Regex(@"\p{IsThai}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public ThaiWordBreaker(BreakIterator wordBreaker) 
+        public ThaiWordBreaker(Locale locale)
         {
-            if (wordBreaker == null)
+            if (locale == null)
             {
-                throw new ArgumentNullException("wordBreaker");
+                throw new ArgumentNullException("locale");
             }
-            this.wordBreaker = wordBreaker;
+
+            this.locale = locale;
+            currentIndex = int.MinValue;
         }
 
         public void SetText(string text)
         {
             this.text = text;
-            wordBreaker.SetText(text);
+            wordBreaker = BreakIterator.GetWordBoundaries(locale, text, includeSpacesAndPunctuation: false).ToList().GetEnumerator();
+            currentIndex = wordBreaker.MoveNext()
+                ? wordBreaker.Current.Start : BreakIterator.DONE;
         }
 
         public int Current()
         {
-            if (transitions.Any())
-            {
-                return transitions.First();
-            }
-            return wordBreaker.Current();
+            return currentIndex;
         }
 
         public int Next()
         {
+            // Tracking whether a transition was returned last time
+            // next was called. If that is the case, and there are no
+            // transitions left, then we return the End index in the
+            // wordbreaker.Current
+            bool transitionReturned = false;
+
             if (transitions.Any())
             {
+                transitionReturned = currentIndex == transitions[0];
                 transitions.RemoveAt(0);
             }
+
             if (transitions.Any())
             {
-                return transitions.First();
+                currentIndex = transitions.First();
+                return currentIndex;
             }
+            else if (transitionReturned)
+            {
+                currentIndex = wordBreaker.Current.End;
+            }
+
             return GetNext();
         }
 
@@ -178,13 +195,37 @@ namespace Lucene.Net.Analysis.Th
         {
             bool isThai = false, isNonThai = false;
             bool prevWasThai = false, prevWasNonThai = false;
-            int prev = wordBreaker.Current();
-            int current = wordBreaker.Next();
 
-            if (current != BreakIterator.DONE && current - prev > 0)
+            int previous = currentIndex;
+            int current;
+
+            if (currentIndex == wordBreaker.Current.Start)
+            {
+                current = wordBreaker.Current.End;
+            }
+            else if (wordBreaker.MoveNext())
+            {
+                // The break iterator works by returning the start and end
+                // boundary of each word it finds. Consider the two words,
+                // 
+                if (currentIndex == wordBreaker.Current.Start)
+                {
+                    current = wordBreaker.Current.End;
+                }
+                else
+                {
+                    current = wordBreaker.Current.Start;
+                }
+            }
+            else
+            {
+                current = BreakIterator.DONE;
+            }
+
+            if (current != BreakIterator.DONE && current - previous > 0)
             {
                 // Find all of the transitions between Thai and non-Thai characters and digits
-                for (int i = prev; i < current; i++)
+                for (int i = previous; i < current; i++)
                 {
                     char c = text[i];
                     isThai = thaiPattern.IsMatch(c.ToString());
@@ -204,11 +245,14 @@ namespace Lucene.Net.Analysis.Th
                 if (transitions.Any())
                 {
                     transitions.Add(current);
-                    return transitions.First();
+                    currentIndex = transitions.First();
+
+                    return currentIndex;
                 }
             }
 
-            return current;
+            currentIndex = current;
+            return currentIndex;
         }
     }
 }

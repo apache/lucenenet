@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
     public abstract class SegmentingTokenizerBase : Tokenizer
     {
         // LUCENENET: Using Icu .NET to get Local_US
-        public static readonly Locale Local_US = new Locale("en-US");
+        public static readonly Locale LocaleUS = new Locale("en-US");
 
         protected internal const int BUFFERMAX = 1024;
         protected internal readonly char[] buffer = new char[BUFFERMAX];
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
 
         private readonly Locale locale;
         private readonly BreakIterator.UBreakIteratorType iteratorType;
-        private IEnumerator<string> enumerator;
+        private IEnumerator<Boundary> enumerator;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewSentenceInstance();
 
         private readonly IOffsetAttribute offsetAtt;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         /// </para>
         /// </summary>
         protected SegmentingTokenizerBase(TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
-            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, Local_US, iteratorType)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, LocaleUS, iteratorType)
         { }
 
         protected SegmentingTokenizerBase(TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Util
         /// Construct a new SegmenterBase, also supplying the AttributeFactory
         /// </summary>
         protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
-            : this(factory, reader, Local_US, iteratorType) 
+            : this(factory, reader, LocaleUS, iteratorType) 
         { }
 
         protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
@@ -194,9 +194,15 @@ namespace Lucene.Net.Analysis.Util
 
             wrapper.SetText(buffer, 0, Math.Max(0, usableLength));
 
-            var text = new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            var text = new string(wrapper.Text, wrapper.Start, wrapper.Length);
 
-            enumerator = BreakIterator.Split(iteratorType, locale, text).GetEnumerator();
+            if (enumerator != null)
+            {
+                enumerator.Dispose();
+                enumerator = null;
+            }
+
+            enumerator = BreakIterator.GetBoundaries(iteratorType, locale, text).ToList().GetEnumerator();
         }
 
         // TODO: refactor to a shared readFully somewhere
@@ -239,7 +245,10 @@ namespace Lucene.Net.Analysis.Util
                     return false;
                 }
 
-                SetNextSentence(enumerator.Current);
+                var current = enumerator.Current;
+
+                SetNextSentence(current.Start, current.End);
+
                 if (IncrementWord())
                 {
                     return true;
@@ -247,9 +256,20 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        public override void Dispose()
+        {
+            if (enumerator != null)
+            {
+                enumerator.Dispose();
+                enumerator = null;
+            }
+
+            base.Dispose();
+        }
+
         /// <summary>
         /// Provides the next input sentence for analysis </summary>
-        protected internal abstract void SetNextSentence(string sentence);
+        protected internal abstract void SetNextSentence(int sentenceStart, int sentenceEnd);
 
         /// <summary>
         /// Returns true if another word is available </summary>

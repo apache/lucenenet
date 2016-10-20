@@ -28,7 +28,6 @@ namespace Lucene.Net.Analysis.Th
     /// Test case for ThaiAnalyzer, modified from TestFrenchAnalyzer
     /// 
     /// </summary>
-
     public class TestThaiAnalyzer : BaseTokenStreamTestCase
     {
 
@@ -164,6 +163,16 @@ namespace Lucene.Net.Analysis.Th
         public virtual void TestTwoSentences()
         {
             AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "This is a test. การที่ได้ต้องแสดงว่างานดี", new string[] { "this", "is", "a", "test", "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 5, 8, 10, 16, 19, 22, 25, 29, 33, 36, 39 }, new int[] { 4, 7, 9, 14, 19, 22, 25, 29, 33, 36, 39, 41 });
+        }
+
+        /// <summary>
+        /// LUCENENET: Tests scenario outlined in <see cref="ThaiWordBreaker"/>
+        /// </summary>
+        [Test]
+        public virtual void TestNumeralBreakages()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            AssertAnalyzesTo(analyzer, "๑๒๓456", new string[] { "๑๒๓", "456" });
         }
     }
 }
