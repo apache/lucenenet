@@ -30823,17 +30823,18 @@ namespace Lucene.Net.Analysis.CharFilters
             this.zzReader = GetBufferedReader(source);
             if (null != escapedTags)
             {
+                var comparer = CultureInfo.InvariantCulture.CompareInfo;
                 foreach (string tag in escapedTags)
                 {
-                    if (tag.Equals("BR", StringComparison.InvariantCultureIgnoreCase))
+                    if (comparer.Compare(tag, "BR", CompareOptions.IgnoreCase) == 0)
                     {
                         escapeBR = true;
                     }
-                    else if (tag.Equals("SCRIPT", StringComparison.InvariantCultureIgnoreCase))
+                    else if (comparer.Compare(tag, "SCRIPT", CompareOptions.IgnoreCase) == 0)
                     {
                         escapeSCRIPT = true;
                     }
-                    else if (tag.Equals("STYLE", StringComparison.InvariantCultureIgnoreCase))
+                    else if (comparer.Compare(tag, "STYLE", CompareOptions.IgnoreCase) == 0)
                     {
                         escapeSTYLE = true;
                     }
