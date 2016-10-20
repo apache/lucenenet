@@ -266,8 +266,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                FieldCache.CacheEntry[] badness = new FieldCache.CacheEntry[badEntries.Count];
-                badness = badEntries.ToArray();//LUCENE TO-DO had param of badness first
+                FieldCache.CacheEntry[] badness = badEntries.ToArray();
 
                 insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for descendants of " + parent.ToString(), badness));
             }
