@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis.Br
                 return null;
             }
 
-            value = value.ToLower(locale);
+            value = locale.TextInfo.ToLower(value);
             for (j = 0; j < value.Length; j++)
             {
                 if ((value[j] == 'á') || (value[j] == 'â') || (value[j] == 'ã'))

@@ -173,7 +173,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (wordCount == 0 && forceFirstLetter)
                 {
-                    buffer[offset] = char.ToUpper(buffer[offset], CultureInfo.InvariantCulture);
+                    buffer[offset] = CultureInfo.InvariantCulture.TextInfo.ToUpper(buffer[offset]);
                 }
                 return;
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             for (int i = 1; i < length; i++)
             {
-                buffer[offset + i] = char.ToLower(buffer[offset + i], CultureInfo.InvariantCulture);
+                buffer[offset + i] = CultureInfo.InvariantCulture.TextInfo.ToLower(buffer[offset + i]);
             }
             //return word.toString();
         }

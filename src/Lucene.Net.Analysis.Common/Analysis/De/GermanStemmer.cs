@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.De
         protected internal virtual string Stem(string term)
         {
             // Use lowercase for medium stemming.
-            term = term.ToLower(locale);
+            term = locale.TextInfo.ToLower(term);
             if (!IsStemmable(term))
             {
                 return term;

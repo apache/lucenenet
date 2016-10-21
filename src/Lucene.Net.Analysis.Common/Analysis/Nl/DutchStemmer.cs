@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Nl
          */
         public virtual string Stem(string term)
         {
-            term = term.ToLower(locale);
+            term = locale.TextInfo.ToLower(term);
             if (!IsStemmable(term))
             {
                 return term;

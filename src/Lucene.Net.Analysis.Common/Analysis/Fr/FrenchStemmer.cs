@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Fr
             }
 
             // Use lowercase for medium stemming.
-            term = term.ToLower(locale);
+            term = locale.TextInfo.ToLower(term);
 
             // Reset the StringBuilder.
             sb.Remove(0, sb.Length);
