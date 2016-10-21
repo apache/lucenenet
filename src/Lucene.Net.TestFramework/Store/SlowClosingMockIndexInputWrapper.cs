@@ -38,7 +38,7 @@ namespace Lucene.Net.Store
             {
                 Thread.Sleep(50);
             }
-#if !NETCORE
+#if !NETSTANDARD
             catch (ThreadInterruptedException ie)
             {
                 throw new ThreadInterruptedException("Thread Interrupted Exception", ie);

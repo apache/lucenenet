@@ -682,12 +682,12 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if !NETCORE
+#if !NETSTANDARD
                     try
                     {
 #endif
                         t.Join();
-#if !NETCORE
+#if !NETSTANDARD
                     }
                     catch (ThreadInterruptedException e)
                     {

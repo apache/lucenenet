@@ -144,12 +144,12 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-#if !NETCORE
+#if !NETSTANDARD
             try
             {
 #endif 
                 Thread.Sleep(TimeSpan.FromMilliseconds(ms));
-#if !NETCORE
+#if !NETSTANDARD
             }
             catch (ThreadInterruptedException e)
             {

@@ -82,6 +82,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
 
-#if !NETCORE
+#if !NETSTANDARD
 [assembly: Timeout(20000)]
 #endif 

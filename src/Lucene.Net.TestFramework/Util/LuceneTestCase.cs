@@ -917,7 +917,7 @@ namespace Lucene.Net.Util
                 int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
                 IConcurrentMergeScheduler mergeScheduler;
 
-#if NETCORE
+#if NETSTANDARD
                 mergeScheduler = new TaskMergeScheduler();
 #else
                 if (r.NextBoolean())
@@ -2802,7 +2802,7 @@ namespace Lucene.Net.Util
         public class ConcurrentMergeSchedulers
         {
             public readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
-#if !NETCORE
+#if !NETSTANDARD
                 new ConcurrentMergeScheduler(),
 #endif
                 new TaskMergeScheduler()
