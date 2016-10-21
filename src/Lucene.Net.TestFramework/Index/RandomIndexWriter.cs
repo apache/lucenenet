@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
-        public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZone timezone)
+        public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
         {
         }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
-        public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZone timezone)
+        public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
         {
         }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
-        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
+        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
