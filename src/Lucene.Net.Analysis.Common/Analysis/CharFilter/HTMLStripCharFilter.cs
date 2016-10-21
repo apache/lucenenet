@@ -30893,9 +30893,14 @@ namespace Lucene.Net.Analysis.CharFilters
             return i > 0 ? i : (len == 0 ? 0 : -1);
         }
 
-        public override void Close()
+        protected virtual void Dispose(bool disposing)
         {
-            YyClose();
+            if (disposing)
+            {
+                YyClose();
+            }
+
+            base.Dispose(disposing);
         }
 
         internal static int InitialBufferSize
