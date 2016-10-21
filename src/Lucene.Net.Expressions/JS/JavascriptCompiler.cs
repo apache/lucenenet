@@ -25,7 +25,7 @@ using Antlr.Runtime.Tree;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
 
-#if NETCORE
+#if NETSTANDARD
 using System.IO;
 using Lucene.Net.Support.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -675,7 +675,7 @@ namespace Lucene.Net.Expressions.JS
 
         private static IEnumerable<KeyValuePair<string, string>> GetDefaultSettings()
         {
-#if NETCORE
+#if NETSTANDARD
             var settingsFile = Path.Combine("Properties", "Settings.settings");
             var configuration = new ConfigurationBuilder().AddConfigFile(settingsFile, optional: false).Build();
 

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if NETCORE
+#if NETSTANDARD
 using Newtonsoft.Json;
 #endif
 
@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
-#if NETCORE
+#if NETSTANDARD
     [JsonConverter(typeof(CharBlockArrayConverter))]
 #else
     [Serializable]
@@ -44,7 +44,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private const int DefaultBlockSize = 32 * 1024; // 32 KB default size
 
-#if !NETCORE
+#if !NETSTANDARD
         [Serializable]
 #endif
         internal sealed class Block
@@ -239,19 +239,22 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal virtual void Flush(Stream @out)
         {
             byte[] bytes = null;
-#if NETCORE
+#if NETSTANDARD
             var json = JsonConvert.SerializeObject(this, new CharBlockArrayConverter());
             bytes = Encoding.UTF8.GetBytes(json);
 #else
             StreamUtils.SerializeToStream(this, @out);
 #endif
-            @out.WriteBytes(bytes, 0, bytes.Length);
+            @out.Write(bytes, 0, bytes.Length);
         }
 
         public static CharBlockArray Open(Stream @in)
         {
-#if NETCORE
-            var json = Encoding.UTF8.GetString(@in.ReadBytes((int)@in.BaseStream.Length));
+#if NETSTANDARD
+            var contents = new byte[@in.Length];
+            @in.Read(contents, 0, (int)@in.Length);
+
+            var json = Encoding.UTF8.GetString(contents);
             var deserialized = JsonConvert.DeserializeObject<CharBlockArray>(json);
 
             return deserialized;
