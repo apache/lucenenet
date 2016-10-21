@@ -175,11 +175,17 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual void LoadPatterns(Stream source, Encoding encoding)
         {
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
-            using (var reader = XmlReader.Create(new StreamReader(source, encoding), new XmlReaderSettings
-            {
-                DtdProcessing = DtdProcessing.Parse,
-                XmlResolver = new PatternParser.DtdResolver()
-            }))
+            var xmlReaderSettings =
+#if !FEATURE_DTD_PROCESSING
+                new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Parse,
+                    XmlResolver = new PatternParser.DtdResolver()
+                }
+#else
+                new XmlReaderSettings();
+#endif
+            using (var reader = XmlReader.Create(new StreamReader(source, encoding)))
             {
                 LoadPatterns(reader);
             }

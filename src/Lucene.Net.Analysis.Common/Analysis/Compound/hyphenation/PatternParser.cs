@@ -79,12 +79,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(string filename)
         {
+            var xmlReaderSettings = GetXmlReaderSettings();
+
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
-            using (var src = XmlReader.Create(filename, new XmlReaderSettings
-            {
-                DtdProcessing = DtdProcessing.Parse,
-                XmlResolver = new DtdResolver()
-            }))
+            using (var src = XmlReader.Create(filename, xmlReaderSettings))
             {
                 Parse(src);
             }
@@ -105,13 +103,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="file"> the pattern file </param>
         public virtual void Parse(FileInfo file, Encoding encoding)
         {
-            using (var src = XmlReader.Create(new StreamReader(file.FullName, encoding), new XmlReaderSettings
-            {
-                DtdProcessing = DtdProcessing.Parse,
-                XmlResolver = new DtdResolver()
-            }))
-            {
+            var xmlReaderSettings = GetXmlReaderSettings();
 
+            using (var src = XmlReader.Create(new StreamReader(file.OpenRead(), encoding), xmlReaderSettings))
+            {
                 Parse(src);
             }
         }
@@ -122,11 +117,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="file"> the pattern file </param>
         public virtual void Parse(Stream xmlStream)
         {
-            using (var src = XmlReader.Create(xmlStream, new XmlReaderSettings
-            {
-                DtdProcessing = DtdProcessing.Parse,
-                XmlResolver = new DtdResolver()
-            }))
+            var xmlReaderSettings = GetXmlReaderSettings();
+
+            using (var src = XmlReader.Create(xmlStream, xmlReaderSettings))
             {
                 Parse(src);
             }
@@ -181,6 +174,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     this.EndElement(uri, name, raw);
                     break;
             }
+        }
+
+        private XmlReaderSettings GetXmlReaderSettings()
+        {
+            return
+#if !FEATURE_DTD_PROCESSING
+                new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Parse,
+                    XmlResolver = new DtdResolver()
+                }
+#else
+                new XmlReaderSettings();
+#endif
         }
 
         private IDictionary<string, string> GetAttributes(XmlReader node)
@@ -352,6 +359,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return il.ToString();
         }
 
+#if FEATURE_XML_RESOLVER
         /// <summary>
         /// LUCENENET specific helper class to force the DTD file to be read from the embedded resource
         /// rather than from the file system.
@@ -370,6 +378,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 return base.GetEntity(absoluteUri, role, ofObjectToReturn);
             }
         }
+#endif
 
         //
         // ContentHandler methods
@@ -477,7 +486,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 word = ReadToken(chars);
             }
-
         }
     }
 }
