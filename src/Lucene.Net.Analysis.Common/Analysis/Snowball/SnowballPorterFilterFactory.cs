@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Tartarus.Snowball;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Snowball
 {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis.Snowball
             // LUCENENET TODO: There should probably be a way to make this an extesibility point so
             // custom extensions can be loaded.
             string className = typeof(SnowballProgram).Namespace + ".Ext." + 
-                language + "Stemmer, " + this.GetType().Assembly.GetName().Name;
+                language + "Stemmer, " + this.GetType().GetTypeInfo().Assembly.GetName().Name;
             stemClass = Type.GetType(className);
 
             if (wordFiles != null)

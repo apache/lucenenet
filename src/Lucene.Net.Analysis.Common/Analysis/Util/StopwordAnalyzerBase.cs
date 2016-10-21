@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Lucene.Net.Util;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -98,7 +99,7 @@ namespace Lucene.Net.Analysis.Util
             TextReader reader = null;
             try
             {
-                reader = IOUtils.GetDecodingReader(aClass.Assembly.GetManifestResourceStream(resource), Encoding.UTF8);
+                reader = IOUtils.GetDecodingReader(aClass.GetTypeInfo().Assembly.GetManifestResourceStream(resource), Encoding.UTF8);
                 return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Tartarus.Snowball;
 using System;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Snowball
 {
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.Snowball
                 // LUCENENET TODO: There should probably be a way to make this an extesibility point so
                 // custom extensions can be loaded.
                 string className = typeof(SnowballProgram).Namespace + ".Ext." +
-                    name + "Stemmer, " + this.GetType().Assembly.GetName().Name;
+                    name + "Stemmer, " + this.GetType().GetTypeInfo().Assembly.GetName().Name;
                 Type stemClass = Type.GetType(className);
 
                 stemmer = (SnowballProgram)Activator.CreateInstance(stemClass);

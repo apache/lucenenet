@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Util
         public Stream OpenResource(string resource)
         {
             var qualifiedResourceName = this.GetQualifiedResourceName(resource);
-            Stream stream = this.clazz.Assembly.GetManifestResourceStream(qualifiedResourceName);
+            Stream stream = this.clazz.GetTypeInfo().Assembly.GetManifestResourceStream(qualifiedResourceName);
             if (stream == null)
             {
                 throw new IOException("Resource not found: " + qualifiedResourceName);
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Util
                     return Type.GetType(cname);
                 }
 
-                return this.clazz.Assembly.GetType(cname, true);
+                return this.clazz.GetTypeInfo().Assembly.GetType(cname, true);
             }
             catch (Exception e)
             {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Util
         private string GetQualifiedResourceName(string resource)
         {
             var namespaceName = this.clazz.Namespace;
-            var assemblyName = clazz.Assembly.GetName().Name;
+            var assemblyName = clazz.GetTypeInfo().Assembly.GetName().Name;
             if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))
                 return namespaceName;
 
