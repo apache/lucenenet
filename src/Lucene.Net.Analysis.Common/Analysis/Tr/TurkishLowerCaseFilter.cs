@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Tr
         public override bool IncrementToken()
         {
             bool iOrAfter = false;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("tr");
+            CultureInfo.CurrentUICulture = new CultureInfo("tr");
 
             if (input.IncrementToken())
             {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Tr
                 {
                     int ch = Character.CodePointAt(buffer, i, length);
 
-                    iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && char.GetUnicodeCategory((char)ch) == UnicodeCategory.NonSpacingMark));
+                    iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && CharUnicodeInfo.GetUnicodeCategory((char)ch) == UnicodeCategory.NonSpacingMark));
 
                     if (iOrAfter) // all the special I turkish handling happens here.
                     {
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Tr
             {
                 int ch = Character.CodePointAt(s, i, len);
                 //if (char.getType(ch) != char.NON_SPACING_MARK)
-                if (char.GetUnicodeCategory((char)ch) != UnicodeCategory.NonSpacingMark)
+                if (CharUnicodeInfo.GetUnicodeCategory((char)ch) != UnicodeCategory.NonSpacingMark)
                 {
                     return false;
                 }

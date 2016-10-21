@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Cn
                 // why not key off token type here assuming ChineseTokenizer comes first?
                 if (!stopTable.Contains(text, 0, termLength))
                 {
-                    switch (char.GetUnicodeCategory(text[0]))
+                    switch (CharUnicodeInfo.GetUnicodeCategory(text[0]))
                     {
 
                         case UnicodeCategory.LowercaseLetter:

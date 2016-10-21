@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Cn
                     c = ioBuffer[bufferIndex++];
                 }
 
-                switch (char.GetUnicodeCategory(c))
+                switch (CharUnicodeInfo.GetUnicodeCategory(c))
                 {
 
                     case UnicodeCategory.DecimalDigitNumber:

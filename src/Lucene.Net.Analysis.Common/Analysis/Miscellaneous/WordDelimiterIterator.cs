@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> Type of the character </returns>
         public static sbyte GetType(int ch)
         {
-            switch (char.GetUnicodeCategory((char)ch))
+            switch (CharUnicodeInfo.GetUnicodeCategory((char)ch))
             {
                 case UnicodeCategory.UppercaseLetter:
                     return WordDelimiterFilter.UPPER;

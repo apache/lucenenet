@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Ckb
                         i--;
                         break;
                     default:
-                        if (char.GetUnicodeCategory(s[i]) == UnicodeCategory.Format)
+                        if (CharUnicodeInfo.GetUnicodeCategory(s[i]) == UnicodeCategory.Format)
                         {
                             len = StemmerUtil.Delete(s, i, len);
                             i--;
