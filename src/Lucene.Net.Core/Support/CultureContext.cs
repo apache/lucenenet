@@ -11,7 +11,7 @@ namespace Lucene.Net.Support
     public class CultureContext : IDisposable
     {
         public CultureContext(int culture)
-            : this(new CultureInfo(culture), Thread.CurrentThread.CurrentUICulture)
+            : this(new CultureInfo(culture), CultureInfo.CurrentUICulture)
         {
         }
 
@@ -21,7 +21,7 @@ namespace Lucene.Net.Support
         }
 
         public CultureContext(string cultureName)
-            : this(new CultureInfo(cultureName), Thread.CurrentThread.CurrentUICulture)
+            : this(new CultureInfo(cultureName), CultureInfo.CurrentUICulture)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
         }
 
         public CultureContext(CultureInfo culture)
-            : this(culture, Thread.CurrentThread.CurrentUICulture)
+            : this(culture, CultureInfo.CurrentUICulture)
         {
         }
 
@@ -45,12 +45,12 @@ namespace Lucene.Net.Support
             this.currentThread = Thread.CurrentThread;
 
             // Record the current culture settings so they can be restored later.
-            this.originalCulture = this.currentThread.CurrentCulture;
-            this.originalUICulture = this.currentThread.CurrentUICulture;
+            this.originalCulture = CultureInfo.CurrentCulture;
+            this.originalUICulture = CultureInfo.CurrentUICulture;
 
             // Set both the culture and UI culture for this context.
-            this.currentThread.CurrentCulture = culture;
-            this.currentThread.CurrentUICulture = uiCulture;
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = uiCulture;
         }
 
         private readonly Thread currentThread;
@@ -70,8 +70,8 @@ namespace Lucene.Net.Support
         public void RestoreOriginalCulture()
         {
             // Restore the culture to the way it was before the constructor was called.
-            this.currentThread.CurrentCulture = this.originalCulture;
-            this.currentThread.CurrentUICulture = this.originalUICulture;
+            CultureInfo.CurrentCulture = this.originalCulture;
+            CultureInfo.CurrentUICulture = this.originalUICulture;
         }
         public void Dispose()
         {
