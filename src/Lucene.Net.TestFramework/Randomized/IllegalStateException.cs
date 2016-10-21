@@ -21,7 +21,9 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Randomized
 {
+#if !NETSTANDARD
     [Serializable]
+#endif
     public class IllegalStateException : Exception
     {
         public IllegalStateException() { }

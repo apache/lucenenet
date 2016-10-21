@@ -19,7 +19,9 @@ using System;
 
 namespace Lucene.Net.Randomized
 {
+#if !NETSTANDARD
     [Serializable]
+#endif
     public class InternalAssumptionViolatedException : NUnit.Framework.InconclusiveException
     {
         public InternalAssumptionViolatedException(string message) :
