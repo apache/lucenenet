@@ -343,8 +343,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public virtual bool Remove(string item)
         {
             // LUCENENET NOTE: According to the documentation header, Remove should not be supported
@@ -490,8 +492,10 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public void IntersectWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();
@@ -500,8 +504,10 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public void ExceptWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();
@@ -510,8 +516,10 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public void SymmetricExceptWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();
@@ -853,7 +861,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        #endregion
+#endregion
     }
 
     /// <summary>
@@ -861,7 +869,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public static class CharArraySetExtensions
     {
-        #region Add
+#region Add
 
         /// <summary>
         /// Add this <see cref="bool"/> into the set
@@ -869,7 +877,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, bool text)
         {
-            return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
+            return set.map.Put(text.ToString());
         }
 
         /// <summary>
@@ -980,9 +988,9 @@ namespace Lucene.Net.Analysis.Util
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
-        #endregion
+#endregion
 
-        #region Contains
+#region Contains
 
         /// <summary>
         /// <c>true</c> if the <see cref="bool"/> is in the set
@@ -1088,9 +1096,9 @@ namespace Lucene.Net.Analysis.Util
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
-        #endregion
+#endregion
 
-        #region UnionWith
+#region UnionWith
 
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
@@ -1416,6 +1424,6 @@ namespace Lucene.Net.Analysis.Util
             return modified;
         }
 
-        #endregion
+#endregion
     }
 }

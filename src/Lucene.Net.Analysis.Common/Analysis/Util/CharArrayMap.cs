@@ -194,8 +194,10 @@ namespace Lucene.Net.Analysis.Util
         /// Not supported. 
         /// </summary>
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public virtual bool Contains(KeyValuePair<string, TValue> item)
         {
             throw new NotSupportedException();
@@ -1378,16 +1380,20 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public virtual bool Remove(string key)
         {
             throw new NotSupportedException();
         }
 
         [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public virtual bool Remove(KeyValuePair<string, TValue> item)
         {
             throw new NotSupportedException();
@@ -1447,8 +1453,10 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// helper for CharArraySet to not produce endless recursion
         /// </summary>
+#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
         public ICollection<string> OriginalKeySet
         {
             get
@@ -1674,8 +1682,10 @@ namespace Lucene.Net.Analysis.Util
             }
 
             [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
             public bool Remove(KeyValuePair<string, TValue> item)
             {
                 throw new NotSupportedException();
@@ -1703,8 +1713,10 @@ namespace Lucene.Net.Analysis.Util
             }
 
             [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
             public bool Contains(KeyValuePair<string, TValue> item)
             {
                 return outerInstance.Contains(item);
@@ -1938,8 +1950,10 @@ namespace Lucene.Net.Analysis.Util
             }
 
             [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
             public override bool Remove(string key)
             {
                 throw new NotSupportedException();
@@ -1986,8 +2000,10 @@ namespace Lucene.Net.Analysis.Util
             }
 
             [Obsolete("Not applicable in this class.")]
+#if !NETSTANDARD
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+#endif
             public override bool Remove(KeyValuePair<string, TValue> item)
             {
                 throw new NotSupportedException();
@@ -2939,6 +2955,6 @@ namespace Lucene.Net.Analysis.Util
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
 
-        #endregion
+#endregion
     }
 }

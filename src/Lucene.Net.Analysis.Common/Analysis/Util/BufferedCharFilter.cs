@@ -426,14 +426,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public override void Close()
-        {
-            if (!isDisposing)
-            {
-                throw new NotSupportedException("Close() is not supported. Call Dispose() instead.");
-            }
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -488,11 +480,21 @@ namespace Lucene.Net.Analysis.Util
             throw new NotImplementedException();
         }
 
+#if !NETSTANDARD
+
+        public override void Close()
+        {
+            if (!isDisposing)
+            {
+                throw new NotSupportedException("Close() is not supported. Call Dispose() instead.");
+            }
+        }
+
         public override object InitializeLifetimeService()
         {
             throw new NotImplementedException();
         }
-
+#endif
         #endregion
     }
 }
