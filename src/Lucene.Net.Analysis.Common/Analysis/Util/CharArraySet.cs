@@ -997,7 +997,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static bool Contains(this CharArraySet set, bool text)
         {
-            return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
+            return set.map.ContainsKey(text.ToString());
         }
 
         /// <summary>

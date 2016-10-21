@@ -2112,7 +2112,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, bool key)
         {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
+            return map.ContainsKey(key.ToString());
         }
 
         /// <summary>
@@ -2232,7 +2232,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static TValue Get<TValue>(this CharArrayMap<TValue> map, bool text)
         {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
+            return map.Get(text.ToString());
         }
 
         /// <summary>
@@ -2340,7 +2340,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, bool text, TValue value)
         {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+            return map.Put(text.ToString(), value);
         }
 
         /// <summary>
@@ -2348,7 +2348,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, byte text, TValue value)
         {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+            return map.Put(text.ToString(), value);
         }
 
         /// <summary>
@@ -2356,7 +2356,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, char text, TValue value)
         {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+            return map.Put(text.ToString(), value);
         }
 
         ///// <summary>
@@ -2452,7 +2452,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Put(kvp.Key.ToString(), kvp.Value);
             }
         }
 
@@ -2622,7 +2622,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Put(kvp.Key.ToString(), kvp.Value);
             }
         }
 
@@ -2796,7 +2796,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, bool key, out TValue value)
         {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
+            return map.TryGetValue(key.ToString(), out value);
         }
 
         /// <summary>
