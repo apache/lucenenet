@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Ext
         /// <param name="f">the default query field</param>
         /// <param name="a">the analyzer used to find terms in a query string</param>
         public ExtendableQueryParser(LuceneVersion matchVersion, string f, Analyzer a)
-            : base(matchVersion, f, a)
+            : this(matchVersion, f, a, DEFAULT_EXTENSION)
         {
         }
 
