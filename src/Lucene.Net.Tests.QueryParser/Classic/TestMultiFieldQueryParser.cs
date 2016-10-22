@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// corresponding static form (qtxt, fields[]).
         /// </summary>
         [Test]
-        public void TestStopwordsParsing()
+        public virtual void TestStopwordsParsing()
         {
             AssertStopQueryEquals("one", "b:one t:one");
             AssertStopQueryEquals("one stop", "b:one t:one");
@@ -66,7 +66,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestSimple()
+        public virtual void TestSimple()
         {
             string[] fields = { "b", "t" };
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()));
@@ -127,7 +127,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestBoostsSimple()
+        public virtual void TestBoostsSimple()
         {
             IDictionary<string, float> boosts = new Dictionary<string, float>();
             boosts["b"] = (float)5;
@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStaticMethod1()
+        public virtual void TestStaticMethod1()
         {
             string[] fields = { "b", "t" };
             string[] queries = { "one", "two" };
@@ -200,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStaticMethod2()
+        public virtual void TestStaticMethod2()
         {
             string[] fields = { "b", "t" };
             BooleanClause.Occur[] flags = { BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT };
@@ -223,7 +223,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStaticMethod2Old()
+        public virtual void TestStaticMethod2Old()
         {
             string[] fields = { "b", "t" };
             //int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
@@ -248,7 +248,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStaticMethod3()
+        public virtual void TestStaticMethod3()
         {
             string[] queries = { "one", "two", "three" };
             string[] fields = { "f1", "f2", "f3" };
@@ -270,7 +270,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStaticMethod3Old()
+        public virtual void TestStaticMethod3Old()
         {
             string[] queries = { "one", "two" };
             string[] fields = { "b", "t" };
@@ -307,7 +307,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestStopWordSearching()
+        public virtual void TestStopWordSearching()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             using (var ramDir = NewDirectory())
@@ -362,7 +362,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestSimpleRegex()
+        public virtual void TestSimpleRegex()
         {
             string[] fields = new string[] { "a", "b" };
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()));

@@ -18,7 +18,7 @@ namespace Lucene.Net.QueryParsers.Classic
         private static int multiToken = 0;
 
         [Test]
-        public void TestMultiAnalyzer()
+        public virtual void TestMultiAnalyzer()
         {
 
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "", new MultiAnalyzer());
@@ -75,7 +75,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestMultiAnalyzerWithSubclassOfQueryParser()
+        public virtual void TestMultiAnalyzerWithSubclassOfQueryParser()
         {
 
             DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer());
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestPosIncrementAnalyzer()
+        public virtual void TestPosIncrementAnalyzer()
         {
 #pragma warning disable 612, 618
             QueryParser qp = new QueryParser(LuceneVersion.LUCENE_40, "", new PosIncrementAnalyzer());

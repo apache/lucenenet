@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         };
 
         [Test]
-        public void Test01Exceptions()
+        public virtual void Test01Exceptions()
         {
             string m = ExceptionQueryTst.GetFailQueries(exceptionQueries, verbose);
             if (m.Length > 0)

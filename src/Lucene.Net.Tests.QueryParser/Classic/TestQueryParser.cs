@@ -50,81 +50,71 @@ namespace Lucene.Net.QueryParsers.Classic
 
         }
 
-        // Moved to QueryParserTestBase
-        //public QueryParser GetParser(Analyzer a)
-        //{
-        //    if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
-        //    QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
-        //    qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
-        //    return qp;
-        //}
+        public virtual QueryParser GetParser(Analyzer a)
+        {
+            if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
+            qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
+            return qp;
+        }
 
-        // Moved to QueryParserTestBase
-        //public override ICommonQueryParserConfiguration GetParserConfig(Analyzer a)
-        //{
-        //    return GetParser(a);
-        //}
+        public override ICommonQueryParserConfiguration GetParserConfig(Analyzer a)
+        {
+            return GetParser(a);
+        }
 
-        // Moved to QueryParserTestBase
-        //public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
-        //{
-        //    Debug.Assert(cqpC != null, "Parameter must not be null");
-        //    Debug.Assert(cqpC is QueryParser, "Parameter must be instance of QueryParser");
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    return qp.Parse(query);
-        //}
+        public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
+        {
+            Debug.Assert(cqpC != null, "Parameter must not be null");
+            Debug.Assert(cqpC is QueryParser, "Parameter must be instance of QueryParser");
+            QueryParser qp = (QueryParser)cqpC;
+            return qp.Parse(query);
+        }
 
-        // Moved to QueryParserTestBase
-        //public override Query GetQuery(string query, Analyzer a)
-        //{
-        //    return GetParser(a).Parse(query);
-        //}
+        public override Query GetQuery(string query, Analyzer a)
+        {
+            return GetParser(a).Parse(query);
+        }
 
-        // Moved to QueryParserTestBase
-        //public override bool IsQueryParserException(Exception exception)
-        //{
-        //    return exception is ParseException;
-        //}
+        public override bool IsQueryParserException(Exception exception)
+        {
+            return exception is ParseException;
+        }
 
-        // Moved to QueryParserTestBase
-        //public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
-        //{
-        //    Debug.Assert(cqpC is QueryParser);
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    qp.DefaultOperator = QueryParserBase.Operator.OR;
-        //}
+        public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
+        {
+            Debug.Assert(cqpC is QueryParser);
+            QueryParser qp = (QueryParser)cqpC;
+            qp.DefaultOperator = QueryParserBase.Operator.OR;
+        }
 
-        // Moved to QueryParserTestBase
-        //public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
-        //{
-        //    Debug.Assert(cqpC is QueryParser);
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    qp.DefaultOperator = QueryParserBase.Operator.AND;
-        //}
+        public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
+        {
+            Debug.Assert(cqpC is QueryParser);
+            QueryParser qp = (QueryParser)cqpC;
+            qp.DefaultOperator = QueryParserBase.Operator.AND;
+        }
 
-        // Moved to QueryParserTestBase
-        //public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
-        //{
-        //    Debug.Assert(cqpC is QueryParser);
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    qp.AnalyzeRangeTerms = (value);
-        //}
+        public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
+        {
+            Debug.Assert(cqpC is QueryParser);
+            QueryParser qp = (QueryParser)cqpC;
+            qp.AnalyzeRangeTerms = (value);
+        }
 
-        // Moved to QueryParserTestBase
-        //public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
-        //{
-        //    Debug.Assert(cqpC is QueryParser);
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    qp.AutoGeneratePhraseQueries = value;
-        //}
+        public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
+        {
+            Debug.Assert(cqpC is QueryParser);
+            QueryParser qp = (QueryParser)cqpC;
+            qp.AutoGeneratePhraseQueries = value;
+        }
 
-        // Moved to QueryParserTestBase
-        //public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value)
-        //{
-        //    Debug.Assert(cqpC is QueryParser);
-        //    QueryParser qp = (QueryParser)cqpC;
-        //    qp.SetDateResolution(field.toString(), value);
-        //}
+        public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value)
+        {
+            Debug.Assert(cqpC is QueryParser);
+            QueryParser qp = (QueryParser)cqpC;
+            qp.SetDateResolution(field.toString(), value);
+        }
 
         [Test]
         public override void TestDefaultOperator()
@@ -149,7 +139,7 @@ namespace Lucene.Net.QueryParsers.Classic
         // This test is here as a safety, in case that ant step
         // doesn't work for some reason.
         [Test]
-        public void TestProtectedCtors()
+        public virtual void TestProtectedCtors()
         {
             try
             {
@@ -195,7 +185,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestFuzzySlopeExtendability()
+        public virtual void TestFuzzySlopeExtendability()
         {
             QueryParser qp = new TestFuzzySlopeExtendabilityQueryParser();
             assertEquals(qp.Parse("a:[11.95 TO 12.95]"), qp.Parse("12.45~1€"));
@@ -273,7 +263,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestCustomQueryParserWildcard()
+        public virtual void TestCustomQueryParserWildcard()
         {
             try
             {
@@ -288,7 +278,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestCustomQueryParserFuzzy()
+        public virtual void TestCustomQueryParserFuzzy()
         {
             try
             {
@@ -321,6 +311,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
         }
 
+        [Test]
         public override void TestNewFieldQuery()
         {
             /** ordinary behavior, synonyms form uncoordinated boolean query */
@@ -363,7 +354,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// simple synonyms test
         /// </summary>
         [Test]
-        public void TestSynonyms()
+        public virtual void TestSynonyms()
         {
             BooleanQuery expected = new BooleanQuery(true);
             expected.Add(new TermQuery(new Index.Term("field", "dogs")), BooleanClause.Occur.SHOULD);
@@ -383,7 +374,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// forms multiphrase query
         /// </summary>
         [Test]
-        public void TestSynonymsPhrase()
+        public virtual void TestSynonymsPhrase()
         {
             MultiPhraseQuery expected = new MultiPhraseQuery();
             expected.Add(new Index.Term("field", "old"));
@@ -450,7 +441,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// simple CJK synonym test
         /// </summary>
         [Test]
-        public void TestCJKSynonym()
+        public virtual void TestCJKSynonym()
         {
             BooleanQuery expected = new BooleanQuery(true);
             expected.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
@@ -467,7 +458,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// synonyms with default OR operator 
         /// </summary>
         [Test]
-        public void TestCJKSynonymsOR()
+        public virtual void TestCJKSynonymsOR()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.SHOULD);
@@ -485,7 +476,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// more complex synonyms with default OR operator
         /// </summary>
         [Test]
-        public void TestCJKSynonymsOR2()
+        public virtual void TestCJKSynonymsOR2()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.SHOULD);
@@ -507,7 +498,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// synonyms with default AND operator
         /// </summary>
         [Test]
-        public void TestCJKSynonymsAND()
+        public virtual void TestCJKSynonymsAND()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.MUST);
@@ -526,7 +517,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// more complex synonyms with default AND operator
         /// </summary>
         [Test]
-        public void TestCJKSynonymsAND2()
+        public virtual void TestCJKSynonymsAND2()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.MUST);
@@ -546,7 +537,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestCJKSynonymsPhrase()
+        public virtual void TestCJKSynonymsPhrase()
         {
             MultiPhraseQuery expected = new MultiPhraseQuery();
             expected.Add(new Index.Term("field", "中"));

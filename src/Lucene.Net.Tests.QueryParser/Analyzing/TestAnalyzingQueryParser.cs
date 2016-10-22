@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestSingleChunkExceptions()
+        public virtual void TestSingleChunkExceptions()
         {
             bool ex = false;
             string termStr = "the*tre";
@@ -129,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestWildcardAlone()
+        public virtual void TestWildcardAlone()
         {
             //seems like crazy edge case, but can be useful in concordance 
             bool pex = false;
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestWildCardEscapes()
+        public virtual void TestWildCardEscapes()
         {
             foreach (var entry in wildcardEscapeHits)
             {
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestWildCardQueryNoLeadingAllowed()
+        public virtual void TestWildCardQueryNoLeadingAllowed()
         {
             bool ex = false;
             try
@@ -190,7 +190,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestWildCardQuery()
+        public virtual void TestWildCardQuery()
         {
             for (int i = 0; i < wildcardInput.Length; i++)
             {
@@ -200,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestPrefixQuery()
+        public virtual void TestPrefixQuery()
         {
             for (int i = 0; i < prefixInput.Length; i++)
             {
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestRangeQuery()
+        public virtual void TestRangeQuery()
         {
             for (int i = 0; i < rangeInput.Length; i++)
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         [Test]
-        public void TestFuzzyQuery()
+        public virtual void TestFuzzyQuery()
         {
             for (int i = 0; i < fuzzyInput.Length; i++)
             {
@@ -296,7 +296,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
 
         // LUCENE-4176
         [Test]
-        public void TestByteTerms()
+        public virtual void TestByteTerms()
         {
             string s = "เข";
             Analyzer analyzer = new MockBytesAnalyzer();
@@ -310,9 +310,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             int hits;
             using (Directory ramDir = NewDirectory())
             {
-                // LUCENENET TODO: It seems the overload this test depends on has been removed from the RandomIndexWriter
-                //using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, analyzer))
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, analyzer)))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, analyzer, Similarity, TimeZone))
                 {
                     Document doc = new Document();
                     FieldType fieldType = new FieldType();

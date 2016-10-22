@@ -58,119 +58,119 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         [Test]
-        public void Test02Terms01()
+        public virtual void Test02Terms01()
         {
             int[] expdnrs = { 0 }; NormalTest1("word1", expdnrs);
         }
         [Test]
-        public void Test02Terms02()
+        public virtual void Test02Terms02()
         {
             int[] expdnrs = { 0, 1, 3 }; NormalTest1("word*", expdnrs);
         }
         [Test]
-        public void Test02Terms03()
+        public virtual void Test02Terms03()
         {
             int[] expdnrs = { 2 }; NormalTest1("ord2", expdnrs);
         }
         [Test]
-        public void Test02Terms04()
+        public virtual void Test02Terms04()
         {
             int[] expdnrs = { }; NormalTest1("kxork*", expdnrs);
         }
         [Test]
-        public void Test02Terms05()
+        public virtual void Test02Terms05()
         {
             int[] expdnrs = { 0, 1, 3 }; NormalTest1("wor*", expdnrs);
         }
         [Test]
-        public void Test02Terms06()
+        public virtual void Test02Terms06()
         {
             int[] expdnrs = { }; NormalTest1("ab", expdnrs);
         }
 
         [Test]
-        public void Test02Terms10()
+        public virtual void Test02Terms10()
         {
             int[] expdnrs = { }; NormalTest1("abc?", expdnrs);
         }
         [Test]
-        public void Test02Terms13()
+        public virtual void Test02Terms13()
         {
             int[] expdnrs = { 0, 1, 3 }; NormalTest1("word?", expdnrs);
         }
         [Test]
-        public void Test02Terms14()
+        public virtual void Test02Terms14()
         {
             int[] expdnrs = { 0, 1, 3 }; NormalTest1("w?rd?", expdnrs);
         }
         [Test]
-        public void Test02Terms20()
+        public virtual void Test02Terms20()
         {
             int[] expdnrs = { 0, 1, 3 }; NormalTest1("w*rd?", expdnrs);
         }
         [Test]
-        public void Test02Terms21()
+        public virtual void Test02Terms21()
         {
             int[] expdnrs = { 3 }; NormalTest1("w*rd??", expdnrs);
         }
         [Test]
-        public void Test02Terms22()
+        public virtual void Test02Terms22()
         {
             int[] expdnrs = { 3 }; NormalTest1("w*?da?", expdnrs);
         }
         [Test]
-        public void Test02Terms23()
+        public virtual void Test02Terms23()
         {
             int[] expdnrs = { }; NormalTest1("w?da?", expdnrs);
         }
 
         [Test]
-        public void Test03And01()
+        public virtual void Test03And01()
         {
             int[] expdnrs = { 0 }; NormalTest1("word1 AND word2", expdnrs);
         }
         [Test]
-        public void Test03And02()
+        public virtual void Test03And02()
         {
             int[] expdnrs = { 3 }; NormalTest1("word* and ord*", expdnrs);
         }
         [Test]
-        public void Test03And03()
+        public virtual void Test03And03()
         {
             int[] expdnrs = { 0 }; NormalTest1("and(word1,word2)", expdnrs);
         }
         [Test]
-        public void Test04Or01()
+        public virtual void Test04Or01()
         {
             int[] expdnrs = { 0, 3 }; NormalTest1("word1 or word2", expdnrs);
         }
         [Test]
-        public void Test04Or02()
+        public virtual void Test04Or02()
         {
             int[] expdnrs = { 0, 1, 2, 3 }; NormalTest1("word* OR ord*", expdnrs);
         }
         [Test]
-        public void Test04Or03()
+        public virtual void Test04Or03()
         {
             int[] expdnrs = { 0, 3 }; NormalTest1("OR (word1, word2)", expdnrs);
         }
         [Test]
-        public void Test05Not01()
+        public virtual void Test05Not01()
         {
             int[] expdnrs = { 3 }; NormalTest1("word2 NOT word1", expdnrs);
         }
         [Test]
-        public void Test05Not02()
+        public virtual void Test05Not02()
         {
             int[] expdnrs = { 0 }; NormalTest1("word2* not ord*", expdnrs);
         }
         [Test]
-        public void Test06AndOr01()
+        public virtual void Test06AndOr01()
         {
             int[] expdnrs = { 0 }; NormalTest1("(word1 or ab)and or(word2,xyz, defg)", expdnrs);
         }
         [Test]
-        public void Test07AndOrNot02()
+        public virtual void Test07AndOrNot02()
         {
             int[] expdnrs = { 0 }; NormalTest1("or( word2* not ord*, and(xyz,def))", expdnrs);
         }

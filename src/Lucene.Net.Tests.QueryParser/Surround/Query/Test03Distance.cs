@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         };
 
         [Test]
-        public void Test00Exceptions()
+        public virtual void Test00Exceptions()
         {
             string m = ExceptionQueryTst.GetFailQueries(exceptionQueries, verbose);
             if (m.Length > 0)
@@ -81,167 +81,167 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             bqt.DoTest();
         }
 
-        public void DistanceTest1(string query, int[] expdnrs)
+        public virtual void DistanceTest1(string query, int[] expdnrs)
         {
             DistanceTst(query, expdnrs, db1);
         }
 
         [Test]
-        public void Test0W01()
+        public virtual void Test0W01()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1 w word2", expdnrs);
         }
         [Test]
-        public void Test0N01()
+        public virtual void Test0N01()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1 n word2", expdnrs);
         }
         [Test]
-        public void Test0N01r()
+        public virtual void Test0N01r()
         { /* r reverse */
             int[] expdnrs = { 0 }; DistanceTest1("word2 n word1", expdnrs);
         }
         [Test]
-        public void Test0W02()
+        public virtual void Test0W02()
         {
             int[] expdnrs = { }; DistanceTest1("word2 w word1", expdnrs);
         }
         [Test]
-        public void Test0W03()
+        public virtual void Test0W03()
         {
             int[] expdnrs = { }; DistanceTest1("word2 2W word1", expdnrs);
         }
         [Test]
-        public void Test0N03()
+        public virtual void Test0N03()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word2 2N word1", expdnrs);
         }
         [Test]
-        public void Test0N03r()
+        public virtual void Test0N03r()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1 2N word2", expdnrs);
         }
 
         [Test]
-        public void Test0W04()
+        public virtual void Test0W04()
         {
             int[] expdnrs = { }; DistanceTest1("word2 3w word1", expdnrs);
         }
 
         [Test]
-        public void Test0N04()
+        public virtual void Test0N04()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word2 3n word1", expdnrs);
         }
         [Test]
-        public void Test0N04r()
+        public virtual void Test0N04r()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1 3n word2", expdnrs);
         }
 
         [Test]
-        public void Test0W05()
+        public virtual void Test0W05()
         {
             int[] expdnrs = { }; DistanceTest1("orda1 w orda3", expdnrs);
         }
         [Test]
-        public void Test0W06()
+        public virtual void Test0W06()
         {
             int[] expdnrs = { 3 }; DistanceTest1("orda1 2w orda3", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc01()
+        public virtual void Test1Wtrunc01()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1* w word2", expdnrs);
         }
         [Test]
-        public void Test1Wtrunc02()
+        public virtual void Test1Wtrunc02()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word* w word2", expdnrs);
         }
         [Test]
-        public void Test1Wtrunc02r()
+        public virtual void Test1Wtrunc02r()
         {
             int[] expdnrs = { 0, 3 }; DistanceTest1("word2 w word*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc02()
+        public virtual void Test1Ntrunc02()
         {
             int[] expdnrs = { 0, 3 }; DistanceTest1("word* n word2", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc02r()
+        public virtual void Test1Ntrunc02r()
         {
             int[] expdnrs = { 0, 3 }; DistanceTest1("word2 n word*", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc03()
+        public virtual void Test1Wtrunc03()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1* w word2*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc03()
+        public virtual void Test1Ntrunc03()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word1* N word2*", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc04()
+        public virtual void Test1Wtrunc04()
         {
             int[] expdnrs = { }; DistanceTest1("kxork* w kxor*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc04()
+        public virtual void Test1Ntrunc04()
         {
             int[] expdnrs = { }; DistanceTest1("kxork* 99n kxor*", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc05()
+        public virtual void Test1Wtrunc05()
         {
             int[] expdnrs = { }; DistanceTest1("word2* 2W word1*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc05()
+        public virtual void Test1Ntrunc05()
         {
             int[] expdnrs = { 0 }; DistanceTest1("word2* 2N word1*", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc06()
+        public virtual void Test1Wtrunc06()
         {
             int[] expdnrs = { 3 }; DistanceTest1("ord* W word*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc06()
+        public virtual void Test1Ntrunc06()
         {
             int[] expdnrs = { 3 }; DistanceTest1("ord* N word*", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc06r()
+        public virtual void Test1Ntrunc06r()
         {
             int[] expdnrs = { 3 }; DistanceTest1("word* N ord*", expdnrs);
         }
 
         [Test]
-        public void Test1Wtrunc07()
+        public virtual void Test1Wtrunc07()
         {
             int[] expdnrs = { 3 }; DistanceTest1("(orda2 OR orda3) W word*", expdnrs);
         }
         [Test]
-        public void Test1Wtrunc08()
+        public virtual void Test1Wtrunc08()
         {
             int[] expdnrs = { 3 }; DistanceTest1("(orda2 OR orda3) W (word2 OR worda3)", expdnrs);
         }
         [Test]
-        public void Test1Wtrunc09()
+        public virtual void Test1Wtrunc09()
         {
             int[] expdnrs = { 3 }; DistanceTest1("(orda2 OR orda3) 2W (word2 OR worda3)", expdnrs);
         }
         [Test]
-        public void Test1Ntrunc09()
+        public virtual void Test1Ntrunc09()
         {
             int[] expdnrs = { 3 }; DistanceTest1("(orda2 OR orda3) 2N (word2 OR worda3)", expdnrs);
         }
@@ -254,62 +254,62 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         SingleFieldTestDb db2;
 
-        public void DistanceTest2(string query, int[] expdnrs)
+        public virtual void DistanceTest2(string query, int[] expdnrs)
         {
             DistanceTst(query, expdnrs, db2);
         }
 
         [Test]
-        public void Test2Wprefix01()
+        public virtual void Test2Wprefix01()
         {
             int[] expdnrs = { 0 }; DistanceTest2("W (w1, w2, w3)", expdnrs);
         }
         [Test]
-        public void Test2Nprefix01a()
+        public virtual void Test2Nprefix01a()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("N(w1, w2, w3)", expdnrs);
         }
         [Test]
-        public void Test2Nprefix01b()
+        public virtual void Test2Nprefix01b()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("N(w3, w1, w2)", expdnrs);
         }
 
         [Test]
-        public void Test2Wprefix02()
+        public virtual void Test2Wprefix02()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("2W(w1,w2,w3)", expdnrs);
         }
 
         [Test]
-        public void Test2Nprefix02a()
+        public virtual void Test2Nprefix02a()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("2N(w1,w2,w3)", expdnrs);
         }
         [Test]
-        public void Test2Nprefix02b()
+        public virtual void Test2Nprefix02b()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("2N(w2,w3,w1)", expdnrs);
         }
 
         [Test]
-        public void Test2Wnested01()
+        public virtual void Test2Wnested01()
         {
             int[] expdnrs = { 0 }; DistanceTest2("w1 W w2 W w3", expdnrs);
         }
         [Test]
-        public void Test2Nnested01()
+        public virtual void Test2Nnested01()
         {
             int[] expdnrs = { 0 }; DistanceTest2("w1 N w2 N w3", expdnrs);
         }
 
         [Test]
-        public void Test2Wnested02()
+        public virtual void Test2Wnested02()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("w1 2W w2 2W w3", expdnrs);
         }
         [Test]
-        public void Test2Nnested02()
+        public virtual void Test2Nnested02()
         {
             int[] expdnrs = { 0, 1 }; DistanceTest2("w1 2N w2 2N w3", expdnrs);
         }
@@ -323,13 +323,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         SingleFieldTestDb db3;
 
-        public void DistanceTest3(string query, int[] expdnrs)
+        public virtual void DistanceTest3(string query, int[] expdnrs)
         {
             DistanceTst(query, expdnrs, db3);
         }
 
         [Test]
-        public void Test3Example01()
+        public virtual void Test3Example01()
         {
             int[] expdnrs = { 0, 2 }; // query does not match doc 1 because "gradient" is in wrong place there.
             DistanceTest3("50n((low w pressure*) or depression*,"

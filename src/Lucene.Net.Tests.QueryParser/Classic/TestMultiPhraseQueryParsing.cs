@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         [Test]
-        public void TestMultiPhraseQueryParsing()
+        public virtual void TestMultiPhraseQueryParsing()
         {
             TokenAndPos[] INCR_0_QUERY_TOKENS_AND = new TokenAndPos[]
             {

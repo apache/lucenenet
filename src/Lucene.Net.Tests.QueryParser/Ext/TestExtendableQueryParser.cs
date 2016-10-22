@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestUnescapedExtDelimiter()
+        public virtual void TestUnescapedExtDelimiter()
         {
             Extensions ext = NewExtensions(':');
             ext.Add("testExt", new ExtensionStub());
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestExtFieldUnqoted()
+        public virtual void TestExtFieldUnqoted()
         {
             for (int i = 0; i < DELIMITERS.Length; i++)
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestExtDefaultField()
+        public virtual void TestExtDefaultField()
         {
             for (int i = 0; i < DELIMITERS.Length; i++)
             {
@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestExtField()
+        public virtual void TestExtField()
         {
             for (int i = 0; i < DELIMITERS.Length; i++)
             {

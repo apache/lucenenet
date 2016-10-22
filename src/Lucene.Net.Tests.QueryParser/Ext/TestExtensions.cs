@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestBuildExtensionField()
+        public virtual void TestBuildExtensionField()
         {
             assertEquals("field\\:key", ext.BuildExtensionField("key", "field"));
             assertEquals("\\:key", ext.BuildExtensionField("key"));
@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestSplitExtensionField()
+        public virtual void TestSplitExtensionField()
         {
             assertEquals("field\\:key", ext.BuildExtensionField("key", "field"));
             assertEquals("\\:key", ext.BuildExtensionField("key"));
@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestAddGetExtension()
+        public virtual void TestAddGetExtension()
         {
             ParserExtension extension = new ExtensionStub();
             assertNull(ext.GetExtension("foo"));
@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestGetExtDelimiter()
+        public virtual void TestGetExtDelimiter()
         {
             assertEquals(Extensions.DEFAULT_EXTENSION_FIELD_DELIMITER, this.ext
                 .ExtensionFieldDelimiter);
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         [Test]
-        public void TestEscapeExtension()
+        public virtual void TestEscapeExtension()
         {
             assertEquals("abc\\:\\?\\{\\}\\[\\]\\\\\\(\\)\\+\\-\\!\\~", ext
                 .EscapeExtensionField("abc:?{}[]\\()+-!~"));
@@ -87,8 +87,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 ext.EscapeExtensionField(null);
                 fail("should throw NPE - escape string is null");
             }
-            //catch (NullPointerException e)
-            catch (Exception /*e*/)
+            catch (NullReferenceException /*e*/)
             {
                 // 
             }

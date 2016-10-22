@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         bool inOrder = true;
 
         [Test]
-        public void TestComplexPhrases()
+        public virtual void TestComplexPhrases()
         {
             CheckMatches("\"john smith\"", "1"); // Simple multi-term still works
             CheckMatches("\"j*   smyth~\"", "1,2"); // wildcards and fuzzies are OK in
@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         }
 
         [Test]
-        public void TestUnOrderedProximitySearches()
+        public virtual void TestUnOrderedProximitySearches()
         {
             inOrder = true;
             CheckMatches("\"smith jo*\"~2", ""); // ordered proximity produces empty set
@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         }
 
         [Test]
-        public void TestFieldedQuery()
+        public virtual void TestFieldedQuery()
         {
             CheckMatches("name:\"john smith\"", "1");
             CheckMatches("name:\"j*   smyth~\"", "1,2");
@@ -142,7 +142,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         }
 
         [Test]
-        public void TestHashcodeEquals()
+        public virtual void TestHashcodeEquals()
         {
             ComplexPhraseQueryParser qp = new ComplexPhraseQueryParser(TEST_VERSION_CURRENT, defaultFieldName, analyzer);
             qp.InOrder = true;

@@ -64,7 +64,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a simple term */
         [Test]
-        public void TestTerm()
+        public virtual void TestTerm()
         {
             Query expected = new TermQuery(new Term("field", "foobar"));
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a fuzzy query */
         [Test]
-        public void TestFuzzy()
+        public virtual void TestFuzzy()
         {
             Query regular = new TermQuery(new Term("field", "foobar"));
             Query expected = new FuzzyQuery(new Term("field", "foobar"), 2);
@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a simple phrase */
         [Test]
-        public void TestPhrase()
+        public virtual void TestPhrase()
         {
             PhraseQuery expected = new PhraseQuery();
             expected.Add(new Term("field", "foo"));
@@ -104,7 +104,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a simple phrase with various slop settings */
         [Test]
-        public void TestPhraseWithSlop()
+        public virtual void TestPhraseWithSlop()
         {
             PhraseQuery expectedWithSlop = new PhraseQuery();
             expectedWithSlop.Add(new Term("field", "foo"));
@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a simple prefix */
         [Test]
-        public void TestPrefix()
+        public virtual void TestPrefix()
         {
             PrefixQuery expected = new PrefixQuery(new Term("field", "foobar"));
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some AND'd terms using '+' operator */
         [Test]
-        public void TestAND()
+        public virtual void TestAND()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST);
@@ -163,7 +163,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some AND'd phrases using '+' operator */
         [Test]
-        public void TestANDPhrase()
+        public virtual void TestANDPhrase()
         {
             PhraseQuery phrase1 = new PhraseQuery();
             phrase1.Add(new Term("field", "foo"));
@@ -180,7 +180,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some AND'd terms (just using whitespace) */
         [Test]
-        public void TestANDImplicit()
+        public virtual void TestANDImplicit()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST);
@@ -191,7 +191,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some OR'd terms */
         [Test]
-        public void TestOR()
+        public virtual void TestOR()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.SHOULD);
@@ -203,7 +203,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some OR'd terms (just using whitespace) */
         [Test]
-        public void TestORImplicit()
+        public virtual void TestORImplicit()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.SHOULD);
@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test some OR'd phrases using '|' operator */
         [Test]
-        public void TestORPhrase()
+        public virtual void TestORPhrase()
         {
             PhraseQuery phrase1 = new PhraseQuery();
             phrase1.Add(new Term("field", "foo"));
@@ -232,7 +232,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test negated term */
         [Test]
-        public void TestNOT()
+        public virtual void TestNOT()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST_NOT);
@@ -245,7 +245,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test crazy prefixes with multiple asterisks */
         [Test]
-        public void TestCrazyPrefixes1()
+        public virtual void TestCrazyPrefixes1()
         {
             Query expected = new PrefixQuery(new Term("field", "st*ar"));
 
@@ -254,7 +254,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test prefixes with some escaping */
         [Test]
-        public void TestCrazyPrefixes2()
+        public virtual void TestCrazyPrefixes2()
         {
             Query expected = new PrefixQuery(new Term("field", "st*ar\\*"));
 
@@ -263,7 +263,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** not a prefix query! the prefix operator is escaped */
         [Test]
-        public void TestTermInDisguise()
+        public virtual void TestTermInDisguise()
         {
             Query expected = new TermQuery(new Term("field", "st*ar\\*"));
 
@@ -276,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Simple
         // input was trying to be
 
         [Test]
-        public void TestGarbageTerm()
+        public virtual void TestGarbageTerm()
         {
             Query expected = new TermQuery(new Term("field", "star"));
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbageEmpty()
+        public virtual void TestGarbageEmpty()
         {
             assertNull(Parse(""));
             assertNull(Parse("  "));
@@ -308,7 +308,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbageAND()
+        public virtual void TestGarbageAND()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
@@ -323,7 +323,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbageOR()
+        public virtual void TestGarbageOR()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.SHOULD);
@@ -336,7 +336,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbageNOT()
+        public virtual void TestGarbageNOT()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST_NOT);
@@ -348,7 +348,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbagePhrase()
+        public virtual void TestGarbagePhrase()
         {
             PhraseQuery expected = new PhraseQuery();
             expected.Add(new Term("field", "star"));
@@ -361,7 +361,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestGarbageSubquery()
+        public virtual void TestGarbageSubquery()
         {
             Query expected = new TermQuery(new Term("field", "star"));
 
@@ -373,7 +373,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestCompoundAnd()
+        public virtual void TestCompoundAnd()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
@@ -386,7 +386,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestCompoundOr()
+        public virtual void TestCompoundOr()
         {
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.SHOULD);
@@ -399,7 +399,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex00()
+        public virtual void TestComplex00()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
@@ -414,7 +414,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex01()
+        public virtual void TestComplex01()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
@@ -429,7 +429,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex02()
+        public virtual void TestComplex02()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
@@ -445,7 +445,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex03()
+        public virtual void TestComplex03()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
@@ -464,7 +464,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex04()
+        public virtual void TestComplex04()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
@@ -483,7 +483,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex05()
+        public virtual void TestComplex05()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner1 = new BooleanQuery();
@@ -513,7 +513,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestComplex06()
+        public virtual void TestComplex06()
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner1 = new BooleanQuery();
@@ -539,7 +539,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a term with field weights */
         [Test]
-        public void TestWeightedTerm()
+        public virtual void TestWeightedTerm()
         {
             IDictionary<string, float> weights = new Dictionary<string, float>();
             weights["field0"] = 5f;
@@ -560,7 +560,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a more complex query with field weights */
         [Test]
-        public void testWeightedOR()
+        public virtual void testWeightedOR()
         {
             IDictionary<string, float> weights = new Dictionary<string, float>();
             weights["field0"] = 5f;
@@ -602,7 +602,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable phrase operator */
         [Test]
-        public void TestDisablePhrase()
+        public virtual void TestDisablePhrase()
         {
             Query expected = new TermQuery(new Term("field", "\"test\""));
             assertEquals(expected, ParseKeyword("\"test\"", ~SimpleQueryParser.PHRASE_OPERATOR));
@@ -610,7 +610,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable prefix operator */
         [Test]
-        public void TestDisablePrefix()
+        public virtual void TestDisablePrefix()
         {
             Query expected = new TermQuery(new Term("field", "test*"));
             assertEquals(expected, ParseKeyword("test*", ~SimpleQueryParser.PREFIX_OPERATOR));
@@ -618,7 +618,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable AND operator */
         [Test]
-        public void TestDisableAND()
+        public virtual void TestDisableAND()
         {
             Query expected = new TermQuery(new Term("field", "foo+bar"));
             assertEquals(expected, ParseKeyword("foo+bar", ~SimpleQueryParser.AND_OPERATOR));
@@ -628,7 +628,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable OR operator */
         [Test]
-        public void TestDisableOR()
+        public virtual void TestDisableOR()
         {
             Query expected = new TermQuery(new Term("field", "foo|bar"));
             assertEquals(expected, ParseKeyword("foo|bar", ~SimpleQueryParser.OR_OPERATOR));
@@ -638,7 +638,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable NOT operator */
         [Test]
-        public void TestDisableNOT()
+        public virtual void TestDisableNOT()
         {
             Query expected = new TermQuery(new Term("field", "-foo"));
             assertEquals(expected, ParseKeyword("-foo", ~SimpleQueryParser.NOT_OPERATOR));
@@ -646,7 +646,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable precedence operators */
         [Test]
-        public void TestDisablePrecedence()
+        public virtual void TestDisablePrecedence()
         {
             Query expected = new TermQuery(new Term("field", "(foo)"));
             assertEquals(expected, ParseKeyword("(foo)", ~SimpleQueryParser.PRECEDENCE_OPERATORS));
@@ -656,7 +656,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test the ability to enable/disable escape operators */
         [Test]
-        public void TestDisableEscape()
+        public virtual void TestDisableEscape()
         {
             Query expected = new TermQuery(new Term("field", "foo\\bar"));
             assertEquals(expected, ParseKeyword("foo\\bar", ~SimpleQueryParser.ESCAPE_OPERATOR));
@@ -665,7 +665,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestDisableWhitespace()
+        public virtual void TestDisableWhitespace()
         {
             Query expected = new TermQuery(new Term("field", "foo foo"));
             assertEquals(expected, ParseKeyword("foo foo", ~SimpleQueryParser.WHITESPACE_OPERATOR));
@@ -676,14 +676,14 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void TestDisableFuzziness()
+        public virtual void TestDisableFuzziness()
         {
             Query expected = new TermQuery(new Term("field", "foo~1"));
             assertEquals(expected, ParseKeyword("foo~1", ~SimpleQueryParser.FUZZY_OPERATOR));
         }
 
         [Test]
-        public void TestDisableSlop()
+        public virtual void TestDisableSlop()
         {
             PhraseQuery expectedPhrase = new PhraseQuery();
             expectedPhrase.Add(new Term("field", "foo"));
@@ -697,7 +697,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         // we aren't supposed to barf on any input...
         [Test]
-        public void TestRandomQueries()
+        public virtual void TestRandomQueries()
         {
             for (int i = 0; i < 1000; i++)
             {
@@ -708,7 +708,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public void testRandomQueries2()
+        public virtual void testRandomQueries2()
         {
             char[] chars = new char[] { 'a', '1', '|', '&', ' ', '(', ')', '"', '-', '~' };
             StringBuilder sb = new StringBuilder();
