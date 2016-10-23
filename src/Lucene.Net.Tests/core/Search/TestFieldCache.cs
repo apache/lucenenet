@@ -11,23 +11,22 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
-
     /*
-    /// Copyright 2004 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
     */
-
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
@@ -75,6 +74,31 @@ namespace Lucene.Net.Search
         private static string[] UnicodeStrings;
         private static BytesRef[][] MultiValued;
         private static Directory Directory;
+
+        /// <summary>
+        /// LUCENENET specific. Ensure we have an infostream attached to the default FieldCache
+        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream() 
+        /// method (which polluted the state of these tests), but we need to make the tests self-contained 
+        /// so they can be run correctly regardless of order. Not setting the InfoStream skips an execution
+        /// path within these tests, so we should do it to make sure we test all of the code.
+        /// </summary>
+        public override void SetUp()
+        {
+            base.SetUp();
+            FieldCache.DEFAULT.InfoStream = new StringWriter();
+        }
+
+        /// <summary>
+        /// LUCENENET specific. See <see cref="SetUp()"/>. Dispose our InfoStream and set it to null
+        /// to avoid polluting the state of other tests.
+        /// </summary>
+        public override void TearDown()
+        {
+            FieldCache.DEFAULT.InfoStream.Dispose();
+            FieldCache.DEFAULT.InfoStream = null;
+            base.TearDown();
+        }
+
 
         // LUCENENET: Changed to non-static because NewIndexWriterConfig is non-static
         [TestFixtureSetUp]
