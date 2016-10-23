@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Index;
@@ -375,8 +376,8 @@ namespace Lucene.Net.Queries
             {
                 buffer.Append('~');
                 buffer.Append("(");
-                buffer.Append(LowFreqMinimumNumberShouldMatch);
-                buffer.Append(HighFreqMinimumNumberShouldMatch);
+                buffer.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#######}", LowFreqMinimumNumberShouldMatch);
+                buffer.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#######}", HighFreqMinimumNumberShouldMatch);
                 buffer.Append(")");
             }
             if (Boost != 1.0f)
@@ -398,7 +399,7 @@ namespace Lucene.Net.Queries
             result = prime * result + Number.FloatToIntBits(maxTermFrequency);
             result = prime * result + Number.FloatToIntBits(LowFreqMinimumNumberShouldMatch);
             result = prime * result + Number.FloatToIntBits(HighFreqMinimumNumberShouldMatch);
-            result = prime * result + ((terms == null) ? 0 : terms.GetHashCode());
+            result = prime * result + ((terms == null) ? 0 : terms.GetValueHashCode());
             return result;
         }
 
