@@ -1154,7 +1154,7 @@ namespace Lucene.Net.Analysis
         {
             using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), IOUtils.CHARSET_UTF_8))
             {
-                TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
+                TokenStream ts = a.TokenStream("field", new StringReader(inputText));
                 ts.Reset();
                 (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();    
             }
