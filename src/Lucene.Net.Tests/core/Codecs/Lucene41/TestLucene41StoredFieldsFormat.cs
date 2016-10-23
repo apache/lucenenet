@@ -85,13 +85,13 @@ namespace Lucene.Net.Codecs.Lucene41
             base.TestReadSkip();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene41
             base.TestWriteReadMerge();
         }
 
-        [Test, Timeout(120000)]
+        [Test, MaxTime(120000)]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

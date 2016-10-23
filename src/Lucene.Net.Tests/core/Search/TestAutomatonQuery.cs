@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, AutomatonQueryNrHits(aq));
         }
 
-        [Test, LongRunningTest, Timeout(40000)]
+        [Test, LongRunningTest, MaxTime(40000)]
         public virtual void TestHashCodeWithThreads()
         {
             AutomatonQuery[] queries = new AutomatonQuery[1000];

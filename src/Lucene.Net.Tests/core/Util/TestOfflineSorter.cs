@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
             CheckSort(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.CHARSET_UTF_8) });
         }
 
-        [Test, LongRunningTest, Timeout(120000)]
+        [Test, LongRunningTest, MaxTime(120000)]
         public virtual void TestIntermediateMerges()
         {
             // Sort 20 mb worth of data with 1mb buffer, binary merging.
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(info.MergeRounds > 10);
         }
 
-        [Test, Timeout(120000), LongRunningTest]
+        [Test, MaxTime(120000), LongRunningTest]
         public virtual void TestSmallRandom()
         {
             // Sort 20 mb worth of data with 1mb buffer.
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
-        [Test, Timeout(300000), LongRunningTest]
+        [Test, MaxTime(300000), LongRunningTest]
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.

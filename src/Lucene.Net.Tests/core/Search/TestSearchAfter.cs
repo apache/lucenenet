@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        [Test, LongRunningTest, Timeout(90000)]
+        [Test, LongRunningTest, MaxTime(90000)]
         public virtual void TestQueries()
         {
             // because the first page has a null 'after', we get a normal collector.

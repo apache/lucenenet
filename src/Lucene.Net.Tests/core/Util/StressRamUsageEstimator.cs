@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
             return s;
         }
 
-        [Test, LongRunningTest, Timeout(300000)]
+        [Test, LongRunningTest, MaxTime(300000)]
         public virtual void TestSimpleByteArrays()
         {
             object[][] all = new object[0][];

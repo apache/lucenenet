@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene40
             base.TestLotsOfFields();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         // different options for the same field
         public override void TestMixedOptions()
         {

@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.TestConcurrentReads();
         }
 
-        [Test, Timeout(120000)]
+        [Test, MaxTime(120000)]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

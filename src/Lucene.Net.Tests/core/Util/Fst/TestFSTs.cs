@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        [Test, LongRunningTest, Timeout(27000000)] // 45 minutes to be on the safe side
+        [Test, LongRunningTest, MaxTime(27000000)] // 45 minutes to be on the safe side
         public virtual void TestRandomWords()
         {
             TestRandomWords(1000, AtLeast(2));

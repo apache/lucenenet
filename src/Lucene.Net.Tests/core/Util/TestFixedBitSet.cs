@@ -548,7 +548,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <seealso cref="BitSet"/>.
         /// </summary>
-        [Test, LongRunningTest, Timeout(150000)]
+        [Test, LongRunningTest, MaxTime(150000)]
         public override void TestAgainstBitSet()
         {
             base.TestAgainstBitSet();

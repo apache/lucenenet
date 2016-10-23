@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-        [Test, LongRunningTest, Timeout(120000)]
+        [Test, LongRunningTest, MaxTime(120000)]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

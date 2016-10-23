@@ -1614,7 +1614,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest, Timeout(40000)]
+        [Test, LongRunningTest, MaxTime(40000)]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

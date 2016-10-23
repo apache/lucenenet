@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(80000)]
+        [Test, MaxTime(80000)]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();

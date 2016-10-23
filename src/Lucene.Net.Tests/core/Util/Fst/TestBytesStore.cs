@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Fst
     public class TestBytesStore : LuceneTestCase
     {
 
-        [Test, LongRunningTest, Timeout(720000)]
+        [Test, LongRunningTest, MaxTime(720000)]
         public virtual void TestRandom()
         {
 

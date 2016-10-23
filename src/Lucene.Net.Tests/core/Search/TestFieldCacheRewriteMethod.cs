@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// test a bunch of random regular expressions </summary>
-        [Test, Timeout(60000)]
+        [Test, MaxTime(60000)]
         public override void TestRegexps()
         {
             base.TestRegexps();

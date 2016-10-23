@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Compressing
             base.TestWriteReadMerge();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

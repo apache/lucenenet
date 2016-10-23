@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
 
         [Ignore("memory hole")] // memory hole
         [Test]
-        [LongRunningTest, Timeout(120000)]
+        [LongRunningTest, MaxTime(120000)]
         public virtual void TestOverflow()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));

@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.Compressing
             base.TestRandom();
         }
 
-        [Test, Timeout(30000)]
+        [Test, MaxTime(30000)]
         public override void TestMerge()
         {
             base.TestMerge();
