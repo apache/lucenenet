@@ -457,7 +457,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 DateTime d1, d2;
                 if (_useJavaStyleDateRangeParsing)
                 {
-                    // TODO: This doesn't emulate java perfectly.
+                    // LUCENENET TODO: This doesn't emulate java perfectly.
                     // Java allows parsing of the string up to the end of the pattern
                     // and then ignores everything else.  .NET will throw an exception, 
                     // so this will fail in those cases, though the code below is clear
@@ -478,11 +478,11 @@ namespace Lucene.Net.QueryParsers.Classic
                     // the time is set to the latest possible time of that date to really
                     // include all documents:
 
-                    // TODO: Try to work out if the Time Zone is pertinent here or
+                    // LUCENENET TODO: Try to work out if the Time Zone is pertinent here or
                     // whether it should just be removed from the API entirely.
                     // In Java:
                     // Calendar cal = Calendar.getInstance(timeZone, locale);
-
+                    
                     var cal = Locale.Calendar;
                     d2 = cal.AddHours(d2, 23);
                     d2 = cal.AddMinutes(d2, 59);

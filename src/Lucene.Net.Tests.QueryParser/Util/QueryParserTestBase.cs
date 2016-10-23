@@ -11,6 +11,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.QueryParsers.Util
 {
@@ -117,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         public abstract void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value);
 
-        public abstract void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value);
+        public abstract void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateTools.Resolution value);
 
         public abstract Query GetQuery(string query, ICommonQueryParserConfiguration cqpC);
 
@@ -661,9 +662,8 @@ namespace Lucene.Net.QueryParsers.Util
 
         private string GetLocalizedDate(int year, int month, int day)
         {
-            // TODO: Is this the right way to get the localized date?
             DateTime d = new DateTime(year, month, day, 23, 59, 59, 999);
-            return d.ToString();
+            return d.ToShortDateString();
 
             //// we use the default Locale/TZ since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
@@ -677,45 +677,46 @@ namespace Lucene.Net.QueryParsers.Util
             //return df.format(calendar.getTime());
         }
 
-        // TODO: Fix this test
         [Test]
         public virtual void TestDateRange()
         {
-            Assert.Fail("Test is not implemented");
+            string startDate = GetLocalizedDate(2002, 1, 1);
+            string endDate = GetLocalizedDate(2002, 1, 4);
 
-        //    string startDate = GetLocalizedDate(2002, 1, 1);
-        //    string endDate = GetLocalizedDate(2002, 1, 4);
-        //    // we use the default Locale/TZ since LuceneTestCase randomizes it
-        //    Calendar endDateExpected = new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault());
-        //    endDateExpected.clear();
-        //    endDateExpected.set(2002, 1, 4, 23, 59, 59);
-        //    endDateExpected.set(Calendar.MILLISECOND, 999);
-        //    string defaultField = "default";
-        //    string monthField = "month";
-        //    string hourField = "hour";
-        //    Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
-        //    CommonQueryParserConfiguration qp = GetParserConfig(a);
+            // we use the default Locale/TZ since LuceneTestCase randomizes it
+            //Calendar endDateExpected = new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault());
+            //endDateExpected.clear();
+            //endDateExpected.set(2002, 1, 4, 23, 59, 59);
+            //endDateExpected.set(Calendar.MILLISECOND, 999);
 
-        //    // set a field specific date resolution
-        //    SetDateResolution(qp, monthField, DateTools.Resolution.MONTH);
+            // we use the default Locale/TZ since LuceneTestCase randomizes it
+            DateTime endDateExpected = new DateTime(2002, 1, 4, 23, 59, 59, 999, new GregorianCalendar());
+            string defaultField = "default";
+            string monthField = "month";
+            string hourField = "hour";
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            ICommonQueryParserConfiguration qp = GetParserConfig(a);
 
-        //    // set default date resolution to MILLISECOND
-        //    qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
+            // set a field specific date resolution
+            SetDateResolution(qp, monthField, DateTools.Resolution.MONTH);
 
-        //    // set second field specific date resolution    
-        //    SetDateResolution(qp, hourField, DateTools.Resolution.HOUR);
+            // set default date resolution to MILLISECOND
+            qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
 
-        //    // for this field no field specific date resolution has been set,
-        //    // so verify if the default resolution is used
-        //    AssertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
-        //            endDateExpected.getTime(), DateTools.Resolution.MILLISECOND);
+            // set second field specific date resolution    
+            SetDateResolution(qp, hourField, DateTools.Resolution.HOUR);
 
-        //    // verify if field specific date resolutions are used for these two fields
-        //    AssertDateRangeQueryEquals(qp, monthField, startDate, endDate,
-        //            endDateExpected.getTime(), DateTools.Resolution.MONTH);
+            // for this field no field specific date resolution has been set,
+            // so verify if the default resolution is used
+            AssertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
+                    endDateExpected /*.getTime()*/, DateTools.Resolution.MILLISECOND);
 
-        //    AssertDateRangeQueryEquals(qp, hourField, startDate, endDate,
-        //            endDateExpected.getTime(), DateTools.Resolution.HOUR);
+            // verify if field specific date resolutions are used for these two fields
+            AssertDateRangeQueryEquals(qp, monthField, startDate, endDate,
+                    endDateExpected /*.getTime()*/, DateTools.Resolution.MONTH);
+
+            AssertDateRangeQueryEquals(qp, hourField, startDate, endDate,
+                    endDateExpected /*.getTime()*/, DateTools.Resolution.HOUR);
         }
 
         public void AssertDateRangeQueryEquals(ICommonQueryParserConfiguration cqpC, string field, string startDate, string endDate,
