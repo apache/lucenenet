@@ -1,5 +1,4 @@
-﻿using System;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
@@ -10,6 +9,8 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using NUnit.Framework;
+using System;
+using System.Globalization;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.Tests.Queries.Function
                             assertEquals(new BytesRef((string)expected), bytes);
                             break;
                         case FieldInfo.DocValuesType_e.NUMERIC:
-                            assertEquals(Number.ToInt64(expected.ToString()), values.LongVal(i));
+                            assertEquals(Convert.ToInt64(expected, CultureInfo.InvariantCulture), values.LongVal(i));
                             break;
                     }
                 }
