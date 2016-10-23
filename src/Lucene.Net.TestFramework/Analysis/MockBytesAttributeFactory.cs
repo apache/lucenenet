@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis
         public override Attribute CreateAttributeInstance<T>()
         {
             var attClass = typeof(T);
-            return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance<T>();
+            return attClass.GetTypeInfo().IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance<T>();
         }
     }
 }

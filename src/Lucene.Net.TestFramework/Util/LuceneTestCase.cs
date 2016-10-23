@@ -966,10 +966,10 @@ namespace Lucene.Net.Util
                 {
                     // Retrieve the package-private setIndexerThreadPool
                     // method:
-                    MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
+                    MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
                     //setIndexerThreadPoolMethod.setAccessible(true);
                     Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
-                    ConstructorInfo ctor = clazz.GetConstructor(new[] { typeof(int), typeof(Random) });
+                    ConstructorInfo ctor = clazz.GetTypeInfo().GetConstructor(new[] { typeof(int), typeof(Random) });
                     //ctor.Accessible = true;
                     // random thread pool
                     setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });

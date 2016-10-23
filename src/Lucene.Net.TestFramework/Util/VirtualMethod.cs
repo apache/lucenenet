@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
 
         private int ReflectImplementationDistance(Type subclazz)
         {
-            if (!BaseClass.IsAssignableFrom(subclazz))
+            if (!BaseClass.GetTypeInfo().IsAssignableFrom(subclazz))
             {
                 throw new System.ArgumentException(subclazz.Name + " is not a subclass of " + BaseClass.Name);
             }

@@ -230,7 +230,7 @@ namespace Lucene.Net
         /// </summary>
         public static Stream getResourceAsStream(this Type t, string name)
         {
-            Assembly assembly = t.Assembly;
+            Assembly assembly = t.GetTypeInfo().Assembly;
             string namespaceSegment = t.Namespace.Replace("Lucene.Net", string.Empty);
             string assemblyName = assembly.GetName().Name;
             string fullResourcePath = string.Concat(assemblyName, namespaceSegment, ".", name);
