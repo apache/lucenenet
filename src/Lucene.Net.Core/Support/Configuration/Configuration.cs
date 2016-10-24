@@ -1,5 +1,7 @@
-﻿#if NETCORE
+﻿#if NETSTANDARD
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Reflection;
 #else
 using System.Configuration;
 #endif
@@ -8,20 +10,34 @@ namespace Lucene.Net.Support.Configuration
 {
     public static class Configuration
     {
-#if NETCORE
+#if NETSTANDARD
         private static IConfigurationRoot _configuration;
 
         static Configuration()
         {
-            var builder = new ConfigurationBuilder().AddConfigFile("App.config", true, new KeyValueParser());
+            var builder = new ConfigurationBuilder();
+            var entryAssembly = Assembly.GetEntryAssembly();
+            var configurationFiles = new string[0];
+
+            if (entryAssembly != null)
+            {
+                var directory = Path.GetDirectoryName(entryAssembly.Location);
+                configurationFiles = Directory.GetFiles(directory, "*.config");
+            }
+
+            foreach (var config in configurationFiles)
+            {
+                builder.AddConfigFile(config, false, new KeyValueParser());
+            }
+
             _configuration = builder.Build();
         }
 #endif
 
         public static string GetAppSetting(string key)
         {
-#if NETCORE
-            
+#if NETSTANDARD
+
             return _configuration.GetAppSetting(key);
 #else
             return ConfigurationManager.AppSettings[key];

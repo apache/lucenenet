@@ -10,6 +10,7 @@ namespace Lucene.Net.Support
     /// </summary>
     public class CultureContext : IDisposable
     {
+#if !NETSTANDARD
         public CultureContext(int culture)
             : this(new CultureInfo(culture), CultureInfo.CurrentUICulture)
         {
@@ -19,6 +20,7 @@ namespace Lucene.Net.Support
             : this(new CultureInfo(culture), new CultureInfo(uiCulture))
         {
         }
+#endif
 
         public CultureContext(string cultureName)
             : this(new CultureInfo(cultureName), CultureInfo.CurrentUICulture)

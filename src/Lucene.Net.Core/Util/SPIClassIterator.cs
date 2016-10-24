@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    foreach (var type in assembly.GetTypes().Where(x => x.IsPublic))
+                    foreach (var type in assembly.GetTypes().Where(x => x.GetTypeInfo().IsPublic))
                     {
                         try
                         {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util
 
         internal static bool IsInvokableSubclassOf<S>(Type type)
         {
-            return typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface;
+            return typeof(S).IsAssignableFrom(type) && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
         }
 
         public static SPIClassIterator<S> Get()

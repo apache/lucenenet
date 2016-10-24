@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Util
                 SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
                 // Ensure there is a default constructor (the SPIClassIterator contains types that don't)
-                foreach (Type c in loader.Where(t => t.GetConstructor(Type.EmptyTypes) != null))
+                foreach (Type c in loader.Where(t => t.GetTypeInfo().GetConstructor(Type.EmptyTypes) != null))
                 {
                     try
                     {

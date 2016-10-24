@@ -619,6 +619,7 @@
     <Compile Include="Support\Configuration\ConfigFileConfigurationExtensions.cs" />
     <Compile Include="Support\Configuration\ConfigFileConfigurationProvider.cs" />
     <Compile Include="Support\Configuration\ConfigFileConfigurationSource.cs" />
+    <Compile Include="Support\Configuration\Configuration.cs" />
     <Compile Include="Support\Configuration\ConfigurationExtensions.cs" />
     <Compile Include="Support\Configuration\IConfigurationParser.cs" />
     <Compile Include="Support\Configuration\KeyValueParser.cs" />
