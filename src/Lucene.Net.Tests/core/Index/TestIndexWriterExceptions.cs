@@ -2114,7 +2114,7 @@ namespace Lucene.Net.Index
                     IMergeScheduler ms = iwc.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)
                     {
-                        ConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this);
+                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this);
 
                         IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
@@ -2364,7 +2364,7 @@ namespace Lucene.Net.Index
         }
 
         private class ConcurrentMergeSchedulerAnonymousInnerClassHelper :
-#if NETCORE
+#if NETSTANDARD
             TaskMergeScheduler
 #else
             ConcurrentMergeScheduler
