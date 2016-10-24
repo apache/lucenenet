@@ -56,7 +56,7 @@ namespace Lucene.Net.Tests
                 this.OuterInstance = outerInstance;
             }
 
-            protected override void HandleMergeException(Exception t)
+            protected internal override void HandleMergeException(Exception t)
             {
                 OuterInstance.ExcCalled = true;
             }

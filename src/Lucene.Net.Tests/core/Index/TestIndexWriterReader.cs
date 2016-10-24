@@ -511,12 +511,12 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < OuterInstance.NumThreads; i++)
                 {
-#if !NETCORE
+#if !NETSTANDARD
                     try
                     {
 #endif
                     Threads[i].Join();
-#if !NETCORE
+#if !NETSTANDARD
                     }
                     catch (ThreadInterruptedException ie)
                     {

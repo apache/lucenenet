@@ -229,12 +229,12 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-#if !NETCORE
+#if !NETSTANDARD
                     try
                     {
 #endif 
                         Thread.Sleep(1);
-#if !NETCORE
+#if !NETSTANDARD
                     }
                     catch (ThreadInterruptedException ie)
                     {

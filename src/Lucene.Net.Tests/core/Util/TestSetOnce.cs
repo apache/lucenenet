@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
                     Set.Set(new int?(Convert.ToInt32(Name.Substring(2))));
                     Success = true;
                 }
-#if !NETCORE
+#if !NETSTANDARD
                 catch (ThreadInterruptedException)
                 {
                     // ignore

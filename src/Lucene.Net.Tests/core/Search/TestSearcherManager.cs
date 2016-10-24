@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader r)
             {
-#if !NETCORE
+#if !NETSTANDARD
                 try
                 {
 #endif
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
                         AwaitEnterWarm.Signal();
                         AwaitClose.Wait();
                     }
-#if !NETCORE
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException e)
                 {

@@ -262,12 +262,12 @@ namespace Lucene.Net.Index
                         Ctrl.WaitIfStalled();
                         if (CheckPoint.Get())
                         {
-#if !NETCORE
+#if !NETSTANDARD
                             try
                             {
 #endif
                                 Assert.IsTrue(Sync.await());
-#if !NETCORE
+#if !NETSTANDARD
                             }
                             catch (ThreadInterruptedException e)
                             {
@@ -321,12 +321,12 @@ namespace Lucene.Net.Index
                         if (CheckPoint.Get())
                         {
                             Sync.UpdateJoin.Signal();
-#if !NETCORE
+#if !NETSTANDARD
                             try
                             {
 #endif
                                 Assert.IsTrue(Sync.await());
-#if !NETCORE
+#if !NETSTANDARD
                             }
                             catch (ThreadInterruptedException e)
                             {

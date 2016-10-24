@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
             internal ListElement Next;
         }
 
-#if !NETCORE // StackOverflowException cannot be caught in .NET Core. This test does not apply.
+#if !NETSTANDARD // StackOverflowException cannot be caught in .NET Core. This test does not apply.
         [Test]
         public virtual void TestOverflowMaxChainLength()
         {
