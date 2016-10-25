@@ -133,8 +133,10 @@ namespace Lucene.Net.Util
             int size = map.Size();
             for (int i = 0; size > 0 && i < 10; i++)
             {
+#if !NETSTANDARD
                 try
                 {
+#endif
                     GC.Collect();
                     int newSize = map.Size();
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
@@ -150,10 +152,12 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException ie)
                 {
                 }
+#endif
             }
 
             map.Clear();
@@ -242,8 +246,10 @@ namespace Lucene.Net.Util
             int size = map.Size();
             for (int i = 0; size > 0 && i < 10; i++)
             {
+#if !NETSTANDARD
                 try
                 {
+#endif
                     GC.Collect();
                     int newSize = map.Size();
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
@@ -259,10 +265,12 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException ie)
                 {
                 }
+#endif
             }
         }
 
