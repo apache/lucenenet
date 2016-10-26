@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputPath>$(OutputPath)\netstandard1.5</OutputPath>
+    <OutputPath>$(OutputPath)\netcoreapp1.0</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="Lucene.Net.Tests.Join.Portable.project.json" />
@@ -65,6 +65,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
-    <NuGetTargetMoniker>.NETStandard,Version=v1.5</NuGetTargetMoniker>
+    <NuGetTargetMoniker>.NETCoreApp,Version=v1.0</NuGetTargetMoniker>
   </PropertyGroup>
 </Project>

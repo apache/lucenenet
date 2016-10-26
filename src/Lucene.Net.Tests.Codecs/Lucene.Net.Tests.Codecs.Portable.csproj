@@ -35,7 +35,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>$(OutputPath)\netstandard1.5</OutputPath>
+    <OutputPath>$(OutputPath)\netcoreapp1.0</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -94,6 +94,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <NuGetTargetMoniker>.NETStandard,Version=v1.5</NuGetTargetMoniker>
+    <NuGetTargetMoniker>.NETCoreApp,Version=v1.0</NuGetTargetMoniker>
   </PropertyGroup>
 </Project>
