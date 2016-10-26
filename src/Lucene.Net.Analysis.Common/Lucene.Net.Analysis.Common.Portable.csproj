@@ -35,7 +35,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
-    <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+    <OutputPath>$(OutputPath)\netstandard1.5</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Analysis\Bg\BulgarianAnalyzer.cs" />
@@ -591,6 +591,6 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 
   <PropertyGroup>
-    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.5</NuGetTargetMoniker>
   </PropertyGroup>
 </Project>

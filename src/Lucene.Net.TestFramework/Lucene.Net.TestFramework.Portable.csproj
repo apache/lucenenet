@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_STACKTRACE</DefineConstants>
-    <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+    <OutputPath>$(OutputPath)\netstandard1.5</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="Lucene.Net.TestFramework.Portable.project.json" />
@@ -489,6 +489,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.5</NuGetTargetMoniker>
   </PropertyGroup>
 </Project>

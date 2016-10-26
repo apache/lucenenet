@@ -35,7 +35,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+    <OutputPath>$(OutputPath)\netstandard1.5</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Analysis\Bg\TestBulgarianAnalyzer.cs" />
@@ -441,6 +441,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.5</NuGetTargetMoniker>
   </PropertyGroup>
 </Project>

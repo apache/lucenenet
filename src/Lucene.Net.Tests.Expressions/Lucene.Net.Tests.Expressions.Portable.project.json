@@ -1,19 +1,14 @@
 ﻿{
   "dependencies": {
     "NETStandard.Library": "1.6.0",
-    "NUnit": "3.5.0",
-    "dotnet-test-nunit": "3.4.0-beta-2"
+    "NUnit": "3.5.0"
   },
 
   "testRunner": "nunit",
 
   "frameworks": {
-    "netstandard1.6": {
-      "imports": [
-        "dnxcore50",
-        "netcoreapp1.0",
-        "portable-net45+win8"
-      ]
+    "netstandard1.5": {
+      "imports": "dnxcore50"
     }
   },
 
