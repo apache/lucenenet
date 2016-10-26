@@ -8,12 +8,8 @@
   "testRunner": "nunit",
 
   "frameworks": {
-    "netstandard1.6": {
-      "imports": [
-        "dnxcore50",
-        "netcoreapp1.0",
-        "portable-net45+win8"
-      ]
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
     }
   },
 
