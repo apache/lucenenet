@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
                 {
                     if (doc == -1)
                     {
-                        expected.Clear(previousDoc + 1, set.Count);
+                        expected.Clear(previousDoc + 1, set.Length);
                         break;
                     }
                     else

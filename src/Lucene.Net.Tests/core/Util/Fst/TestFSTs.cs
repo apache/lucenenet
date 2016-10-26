@@ -612,7 +612,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         for (int iter = 0; iter < 2; iter++)
                         {
-                            @is.Close();
+                            @is.Dispose();
                             @is = new StreamReader(new FileStream(WordsFileIn, FileMode.Open), Encoding.UTF8);
 
                             ord = 0;
