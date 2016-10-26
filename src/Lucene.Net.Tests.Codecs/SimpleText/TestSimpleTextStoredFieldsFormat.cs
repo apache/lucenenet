@@ -75,13 +75,13 @@ namespace Lucene.Net.Codecs.SimpleText
             base.TestReadSkip();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();

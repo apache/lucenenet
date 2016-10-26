@@ -67,6 +67,10 @@
     <Compile Include="SimpleText\TestSimpleTextTermVectorsFormat.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.Portable.csproj">
+      <Project>{f5ab15d4-f83a-4f93-b698-ac39843d7142}</Project>
+      <Name>Lucene.Net.Analysis.Common.Portable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.Portable.csproj">
       <Project>{2796ebeb-8f48-4728-9221-a2c361781bfc}</Project>
       <Name>Lucene.Net.Codecs.Portable</Name>
