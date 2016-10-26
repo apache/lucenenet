@@ -80,12 +80,12 @@ namespace Lucene.Net.Facet
             {
                 sTime = random.Next(sTime);
             }
-#if !NETCORE
+#if !NETSTANDARD
             try
             {
 #endif
             Thread.Sleep(sTime);
-#if !NETCORE
+#if !NETSTANDARD
             }
             catch (ThreadInterruptedException e)
             {
