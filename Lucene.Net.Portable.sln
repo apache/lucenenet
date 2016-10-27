@@ -3,41 +3,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Portable", "src\Lucene.Net.Core\Lucene.Net.Portable.csproj", "{DBC3B677-805C-430E-AF78-A9ABF3975D17}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net", "src\Lucene.Net.Core\Lucene.Net.xproj", "{DBC3B677-805C-430E-AF78-A9ABF3975D17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Classification.Portable", "src\Lucene.Net.Classification\Lucene.Net.Classification.Portable.csproj", "{BA873F14-B93E-473C-9AE3-FB8709472651}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Classification", "src\Lucene.Net.Classification\Lucene.Net.Classification.xproj", "{BA873F14-B93E-473C-9AE3-FB8709472651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Facet.Portable", "src\Lucene.Net.Facet\Lucene.Net.Facet.Portable.csproj", "{C7D049D9-439C-4DE2-BB0B-60B3DACE18EA}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Facet", "src\Lucene.Net.Facet\Lucene.Net.Facet.xproj", "{C7D049D9-439C-4DE2-BB0B-60B3DACE18EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping.Portable", "src\Lucene.Net.Grouping\Lucene.Net.Grouping.Portable.csproj", "{202D4160-72BD-4646-8892-30477BDC6FBF}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Grouping", "src\Lucene.Net.Grouping\Lucene.Net.Grouping.xproj", "{202D4160-72BD-4646-8892-30477BDC6FBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Queries.Portable", "src\Lucene.Net.Queries\Lucene.Net.Queries.Portable.csproj", "{DC3AC85B-8D5A-46FA-B919-DF9FFB7AD8C4}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Queries", "src\Lucene.Net.Queries\Lucene.Net.Queries.xproj", "{DC3AC85B-8D5A-46FA-B919-DF9FFB7AD8C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Analysis.Common.Portable", "src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.Portable.csproj", "{F5AB15D4-F83A-4F93-B698-AC39843D7142}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Analysis.Common", "src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.xproj", "{F5AB15D4-F83A-4F93-B698-AC39843D7142}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.TestFramework.Portable", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.Portable.csproj", "{940EFD2B-D875-4A6F-ADB2-AD711B8440F4}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.TestFramework", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.xproj", "{940EFD2B-D875-4A6F-ADB2-AD711B8440F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join.Portable", "src\Lucene.Net.Join\Lucene.Net.Join.Portable.csproj", "{C6568F19-8277-4EF0-AD89-8B480DB78C2D}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Join", "src\Lucene.Net.Join\Lucene.Net.Join.xproj", "{C6568F19-8277-4EF0-AD89-8B480DB78C2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs.Portable", "src\Lucene.Net.Codecs\Lucene.Net.Codecs.Portable.csproj", "{2796EBEB-8F48-4728-9221-A2C361781BFC}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Codecs", "src\Lucene.Net.Codecs\Lucene.Net.Codecs.xproj", "{2796EBEB-8F48-4728-9221-A2C361781BFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Expressions.Portable", "src\Lucene.Net.Expressions\Lucene.Net.Expressions.Portable.csproj", "{6668140A-5E37-4C15-A0CA-6AAF9C9C287A}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Expressions", "src\Lucene.Net.Expressions\Lucene.Net.Expressions.xproj", "{6668140A-5E37-4C15-A0CA-6AAF9C9C287A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Portable", "src\Lucene.Net.Tests\Lucene.Net.Tests.Portable.csproj", "{91AD3FB7-8BC0-4008-852B-9972CD47E6C0}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests", "src\Lucene.Net.Tests\Lucene.Net.Tests.xproj", "{91AD3FB7-8BC0-4008-852B-9972CD47E6C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.Common.Portable", "src\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.Portable.csproj", "{2C3C4E8A-2E72-4E8F-9790-249D3E343EC3}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Analysis.Common", "src\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.xproj", "{2C3C4E8A-2E72-4E8F-9790-249D3E343EC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Classification.Portable", "src\Lucene.Net.Tests.Classification\Lucene.Net.Tests.Classification.Portable.csproj", "{7AD0D512-7A96-4A53-9298-3A3FA0695DF3}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Classification", "src\Lucene.Net.Tests.Classification\Lucene.Net.Tests.Classification.xproj", "{7AD0D512-7A96-4A53-9298-3A3FA0695DF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Codecs.Portable", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Tests.Codecs.Portable.csproj", "{CC547DAE-CE11-48F1-BEAF-0725CD074095}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Codecs", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Tests.Codecs.xproj", "{CC547DAE-CE11-48F1-BEAF-0725CD074095}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Expressions.Portable", "src\Lucene.Net.Tests.Expressions\Lucene.Net.Tests.Expressions.Portable.csproj", "{ABA067D4-8DF9-4DA8-91DA-B7130CDEF07D}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Expressions", "src\Lucene.Net.Tests.Expressions\Lucene.Net.Tests.Expressions.xproj", "{ABA067D4-8DF9-4DA8-91DA-B7130CDEF07D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Facet.Portable", "src\Lucene.Net.Tests.Facet\Lucene.Net.Tests.Facet.Portable.csproj", "{D6856EFC-6A2B-4375-AB20-CC349869913F}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Facet", "src\Lucene.Net.Tests.Facet\Lucene.Net.Tests.Facet.xproj", "{D6856EFC-6A2B-4375-AB20-CC349869913F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Join.Portable", "src\Lucene.Net.Tests.Join\Lucene.Net.Tests.Join.Portable.csproj", "{11CEC0DC-5E3E-4445-BA78-7D7CF54C1AE7}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Join", "src\Lucene.Net.Tests.Join\Lucene.Net.Tests.Join.xproj", "{11CEC0DC-5E3E-4445-BA78-7D7CF54C1AE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Queries.Portable", "src\Lucene.Net.Tests.Queries\Lucene.Net.Tests.Queries.Portable.csproj", "{0CCF93B7-C394-4A7D-8BB8-E2C199AC9EC6}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Queries", "src\Lucene.Net.Tests.Queries\Lucene.Net.Tests.Queries.xproj", "{0CCF93B7-C394-4A7D-8BB8-E2C199AC9EC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
