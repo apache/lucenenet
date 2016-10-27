@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -164,7 +165,7 @@ namespace Lucene.Net.Search.Grouping
             //    };
 
             private readonly int maxSize;
-            private readonly SortedSet<FacetEntry> facetEntries;
+            private readonly TreeSet<FacetEntry> facetEntries;
             private readonly int totalMissingCount;
             private readonly int totalCount;
 
@@ -172,7 +173,7 @@ namespace Lucene.Net.Search.Grouping
 
             public GroupedFacetResult(int size, int minCount, bool orderByCount, int totalCount, int totalMissingCount)
             {
-                this.facetEntries = new SortedSet<FacetEntry>(orderByCount ? orderByCountAndValue : orderByValue);
+                this.facetEntries = new TreeSet<FacetEntry>(orderByCount ? orderByCountAndValue : orderByValue);
                 this.totalMissingCount = totalMissingCount;
                 this.totalCount = totalCount;
                 maxSize = size;
@@ -189,19 +190,18 @@ namespace Lucene.Net.Search.Grouping
                 FacetEntry facetEntry = new FacetEntry(facetValue, count);
                 if (facetEntries.Count == maxSize)
                 {
-                    // LUCENENET TODO: Add the C5.TreeSet to Support?
-                    // LUCENENET TODO: Finish implementation
-                    //if (facetEntries.Higher(facetEntry) == null)
-                    //{
-                    //    return;
-                    //}
-                    facetEntries.Remove(facetEntries.Last());
+                    FacetEntry temp;
+                    if (!facetEntries.TrySuccessor(facetEntry, out temp))
+                    {
+                        return;
+                    }
+                    facetEntries.DeleteMax();
                 }
                 facetEntries.Add(facetEntry);
 
                 if (facetEntries.Count == maxSize)
                 {
-                    currentMin = facetEntries.Last().Count;
+                    currentMin = facetEntries.FindMax().Count;
                 }
             }
 
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search.Grouping
 
         }
 
-        private class SegmentResultPriorityQueue : PriorityQueue<AbstractSegmentResult>
+        private class SegmentResultPriorityQueue : Util.PriorityQueue<AbstractSegmentResult>
         {
             internal SegmentResultPriorityQueue(int maxSize)
                 : base(maxSize)
