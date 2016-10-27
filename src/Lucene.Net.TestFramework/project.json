@@ -1,0 +1,14 @@
+﻿{
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "NUnit": "3.5.0",
+    "System.Diagnostics.StackTrace": "4.0.0",
+    "System.Diagnostics.TraceSource": "4.0.0",
+    "System.Threading.Thread": "4.0.0"
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50"
+    }
+  }
+}
