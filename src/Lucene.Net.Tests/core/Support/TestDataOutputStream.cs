@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ namespace Lucene.Net.Support
 {
     public class TestDataOutputStream : LuceneTestCase
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCounterOverflow()
         {
             var output = new MemoryStream();
@@ -30,7 +31,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWriteUTF()
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,7 +42,7 @@ namespace Lucene.Net.Support
                 fail("Miscounted bytes in DataOutputStream.");
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestBoundsCheck()
         {
             byte[] data = { 90, 91, 92, 93, 94, 95, 96, 97, 98, 99 };
@@ -135,7 +136,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWrite()
         {
             IDataOutput f = new F(new Sink());
