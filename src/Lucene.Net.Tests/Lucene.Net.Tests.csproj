@@ -473,12 +473,24 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Support\BaseBufferTestCase.cs" />
+    <Compile Include="core\Support\C5\ArrayBase.cs" />
+    <Compile Include="core\Support\C5\ArrayList.cs" />
+    <Compile Include="core\Support\C5\DropMultiplicity.cs" />
+    <Compile Include="core\Support\C5\Events.cs" />
+    <Compile Include="core\Support\C5\GenericCollectionTester.cs" />
+    <Compile Include="core\Support\C5\HashBag.cs" />
+    <Compile Include="core\Support\C5\Sorting.cs" />
+    <Compile Include="core\Support\C5\SupportClasses.cs" />
+    <Compile Include="core\Support\C5\WeakViewList.cs" />
+    <Compile Include="core\Support\C5\Wrappers.cs" />
     <Compile Include="core\Support\TestLongBuffer.cs" />
     <Compile Include="core\Support\TestByteBuffer.cs" />
     <Compile Include="core\Support\TestLurchTable.cs" />
     <Compile Include="core\Support\TestLurchTableThreading.cs" />
     <Compile Include="core\Support\TestDataInputStream.cs" />
     <Compile Include="core\Support\TestDataOutputStream.cs" />
+    <Compile Include="core\Support\TestTreeDictionary.cs" />
+    <Compile Include="core\Support\TestTreeSet.cs" />
     <Compile Include="core\TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>
