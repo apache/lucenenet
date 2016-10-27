@@ -2,10 +2,20 @@
   "version": "4.8.0-alpha",
   "dependencies": {
     "Lucene.Net.Core": "4.8.0-alpha",
-    "icu.net": "54.0.0-alpha",
-    "NETStandard.Library": "1.6.0"
+    "icu.net-x64": "54.0.3-alpha"
   },
   "buildOptions": {
+    "embed": {
+      "include": [ 
+        "Analysis/**/stopwords.txt", 
+        "Analysis/Snowball/*_stop.txt" 
+      ],
+      "includeFiles": [
+        "Analysis/Gl/galician.rslp",
+        "Analysis/Pt/portuguese.rslp",
+        "Analysis/Compound/Hyphenation/hyphenation.dtd"
+      ]
+    },
     "compile": {
       "exclude": [
         "Collation/*"
@@ -15,8 +25,17 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      },
       "buildOptions": {
         "define": [ "NETSTANDARD" ]
+      }
+    },
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0"
       }
     }
   }

@@ -2,6 +2,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace Lucene.Net.Analysis.Tr
 {
@@ -55,8 +56,12 @@ namespace Lucene.Net.Analysis.Tr
         public override bool IncrementToken()
         {
             bool iOrAfter = false;
-            CultureInfo.CurrentUICulture = new CultureInfo("tr");
-
+            var cultureInfo = new CultureInfo("tr");
+#if NET451
+            Thread.CurrentThread.CurrentUICulture = cultureInfo;
+#else
+            CultureInfo.CurrentUICulture = cultureInfo;
+#endif
             if (input.IncrementToken())
             {
                 char[] buffer = termAtt.Buffer();
