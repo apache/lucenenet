@@ -1,10 +1,17 @@
 ﻿{
+  "version": "4.8.0-alpha",
   "dependencies": {
-    "NETStandard.Library": "1.6.0"
+    "Lucene.Net.Core": "4.8.0-alpha",
+    "Lucene.Net.Queries": "4.8.0-alpha"
   },
   "frameworks": {
     "netstandard1.5": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
+    "net451": {
     }
   }
 }
