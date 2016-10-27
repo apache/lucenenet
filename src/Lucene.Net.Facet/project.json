@@ -1,12 +1,22 @@
 ﻿{
+  "version": "4.8.0-alpha",
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
-    "Newtonsoft.Json": "9.0.1",
-    "System.Threading.Thread": "4.0.0"
+    "Lucene.Net.Join": "4.8.0-alpha",
+    "Lucene.Net.Queries": "4.8.0-alpha",
+    "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
     "netstandard1.5": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Threading.Thread": "4.0.0"
+      }
+    },
+    "net451": {
     }
   }
 }
