@@ -51,8 +51,13 @@ namespace Lucene.Net.Support
             this.originalUICulture = CultureInfo.CurrentUICulture;
 
             // Set both the culture and UI culture for this context.
+#if NET451
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = uiCulture;
+#else
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = uiCulture;
+#endif
         }
 
         private readonly Thread currentThread;
@@ -72,8 +77,13 @@ namespace Lucene.Net.Support
         public void RestoreOriginalCulture()
         {
             // Restore the culture to the way it was before the constructor was called.
-            CultureInfo.CurrentCulture = this.originalCulture;
-            CultureInfo.CurrentUICulture = this.originalUICulture;
+#if NET451
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+            Thread.CurrentThread.CurrentUICulture = originalUICulture;
+#else
+            CultureInfo.CurrentCulture = originalCulture;
+            CultureInfo.CurrentUICulture = originalUICulture;
+#endif
         }
         public void Dispose()
         {
