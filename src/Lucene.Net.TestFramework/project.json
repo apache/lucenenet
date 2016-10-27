@@ -1,14 +1,75 @@
 ﻿{
+  "version": "4.8.0-alpha",
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
-    "NUnit": "3.5.0",
-    "System.Diagnostics.StackTrace": "4.0.0",
-    "System.Diagnostics.TraceSource": "4.0.0",
-    "System.Threading.Thread": "4.0.0"
+    "Lucene.Net.Analysis.Common": "4.8.0-alpha",
+    "Lucene.Net.Codecs": "4.8.0-alpha",
+    "NUnit": "3.5.0"
   },
   "frameworks": {
     "netstandard1.5": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Diagnostics.StackTrace": "4.0.0",
+        "System.Diagnostics.TraceSource": "4.0.0",
+        "System.Threading.Thread": "4.0.0"
+      },
+      "buildOptions": {
+        "define": [ "FEATURE_STACKTRACE", "NETSTANDARD" ],
+        "compile": {
+          "excludeFiles": [
+            "Support/SystemProperties.cs",
+            "Util/AbstractBeforeAfterRule.cs",
+            "Util/CloseableDirectory.cs",
+            "Util/FailureMarker.cs",
+            "Util/QuickPatchThreadsFilter.cs",
+            "Util/RemoveUponClose.cs",
+            "Util/RunListenerPrintReproduceInfo.cs",
+            "Util/TestRuleAssertionsRequired.cs",
+            "Util/TestRuleDelegate.cs",
+            "Util/TestRuleFieldCacheSanity.cs",
+            "Util/TestRuleIgnoreAfterMaxFailures.cs",
+            "Util/TestRuleIgnoreTestSuites.cs",
+            "Util/TestRuleMarkFailure.cs",
+            "Util/TestRuleSetupAndRestoreInstanceEnv.cs",
+            "Util/TestRuleSetupTeardownChained.cs",
+            "Util/TestRuleStoreClassName.cs",
+            "Util/TestRuleThreadAndTestName.cs",
+            "Util/TestSecurityManager.cs"
+          ]
+        }
+      }
+    },
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Configuration": "4.0.0.0",
+        "System.IO.Compression": "4.0.0.0",
+        "System.Numerics": "4.0.0.0",
+        "System.ServiceModel": "4.0.0.0"
+      },
+      "buildOptions": {
+        "compile": {
+          "excludeFiles": [
+            "Util/AbstractBeforeAfterRule.cs",
+            "Util/CloseableDirectory.cs",
+            "Util/FailureMarker.cs",
+            "Util/QuickPatchThreadsFilter.cs",
+            "Util/RemoveUponClose.cs",
+            "Util/RunListenerPrintReproduceInfo.cs",
+            "Util/TestRuleAssertionsRequired.cs",
+            "Util/TestRuleDelegate.cs",
+            "Util/TestRuleFieldCacheSanity.cs",
+            "Util/TestRuleIgnoreAfterMaxFailures.cs",
+            "Util/TestRuleIgnoreTestSuites.cs",
+            "Util/TestRuleMarkFailure.cs",
+            "Util/TestRuleSetupAndRestoreInstanceEnv.cs",
+            "Util/TestRuleSetupTeardownChained.cs",
+            "Util/TestRuleStoreClassName.cs",
+            "Util/TestRuleThreadAndTestName.cs",
+            "Util/TestSecurityManager.cs"
+          ]
+        }
+      }
     }
   }
 }
