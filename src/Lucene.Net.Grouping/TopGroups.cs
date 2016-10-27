@@ -1,7 +1,6 @@
 ﻿using System;
-using Lucene.Net.Search;
 
-namespace Lucene.Net.Grouping
+namespace Lucene.Net.Search.Grouping
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,7 +24,7 @@ namespace Lucene.Net.Grouping
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class TopGroups<TGroupValueType>
+    public class TopGroups<TGroupValue>
     {
         /// <summary>
         /// Number of documents matching the search </summary>
@@ -41,7 +40,7 @@ namespace Lucene.Net.Grouping
 
         /// <summary>
         /// Group results in groupSort order </summary>
-        public readonly GroupDocs<TGroupValueType>[] Groups;
+        public readonly GroupDocs<TGroupValue>[] Groups;
 
         /// <summary>
         /// How groups are sorted against each other </summary>
@@ -57,7 +56,7 @@ namespace Lucene.Net.Grouping
         /// </summary>
         public readonly float MaxScore;
 
-        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValueType>[] groups, float maxScore)
+        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValue>[] groups, float maxScore)
         {
             GroupSort = groupSort;
             WithinGroupSort = withinGroupSort;
@@ -68,7 +67,7 @@ namespace Lucene.Net.Grouping
             MaxScore = maxScore;
         }
 
-        public TopGroups(TopGroups<TGroupValueType> oldTopGroups, int? totalGroupCount)
+        public TopGroups(TopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
         {
             GroupSort = oldTopGroups.GroupSort;
             WithinGroupSort = oldTopGroups.WithinGroupSort;

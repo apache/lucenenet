@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Search;
 
-namespace Lucene.Net.Grouping
+namespace Lucene.Net.Search.Grouping
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,13 +24,13 @@ namespace Lucene.Net.Grouping
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class GroupDocs<TGroupValueType>
+    public class GroupDocs<TGroupValue>
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
         /// may be null if hits did not have the groupField. 
         /// </summary>
-        public readonly TGroupValueType GroupValue;
+        public readonly TGroupValue GroupValue;
 
         /// <summary>
         /// Max score in this group
@@ -58,7 +58,7 @@ namespace Lucene.Net.Grouping
         /// </summary>
         public readonly object[] GroupSortValues;
 
-        public GroupDocs(float score, float maxScore, int totalHits, ScoreDoc[] scoreDocs, TGroupValueType groupValue, object[] groupSortValues)
+        public GroupDocs(float score, float maxScore, int totalHits, ScoreDoc[] scoreDocs, TGroupValue groupValue, object[] groupSortValues)
         {
             Score = score;
             MaxScore = maxScore;

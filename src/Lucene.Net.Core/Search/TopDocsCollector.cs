@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search
     /// however, you might want to consider overriding all methods, in order to avoid
     /// a NullPointerException.
     /// </summary>
-    public abstract class TopDocsCollector<T> : Collector where T : ScoreDoc
+    public abstract class TopDocsCollector<T> : Collector, ITopDocsCollector where T : ScoreDoc
     {
         /// <summary>
         /// this is used in case topDocs() is called with illegal parameters, or there
@@ -184,5 +185,24 @@ namespace Lucene.Net.Search
 
             return NewTopDocs(results, start);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to reference <see cref="TopDocsCollector{T}"/>
+    /// without referencing its generic type.
+    /// </summary>
+    public interface ITopDocsCollector
+    {
+        // From TopDocsCollector<T>
+        int TotalHits { get; set; }
+        TopDocs TopDocs();
+        TopDocs TopDocs(int start);
+        TopDocs TopDocs(int start, int howMany);
+
+        // From Collector
+        Scorer Scorer { set; }
+        void Collect(int doc);
+        AtomicReaderContext NextReader { set; }
+        bool AcceptsDocsOutOfOrder();
     }
 }
