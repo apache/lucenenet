@@ -321,19 +321,23 @@ namespace Lucene.Net.Index
                         if (CheckPoint.Get())
                         {
                             Sync.UpdateJoin.Signal();
-#if !NETSTANDARD
                             try
                             {
-#endif
                                 Assert.IsTrue(Sync.await());
-#if !NETSTANDARD
                             }
+#if !NETSTANDARD
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.CurrentCount);
                                 throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                             }
 #endif
+                            catch (Exception e)
+                            {
+                                Console.Write("signal failed with : " + e);
+                                throw e;
+                            }
+
                             Sync.LeftCheckpoint.Signal();
                         }
                         if (Random().NextBoolean())
@@ -348,7 +352,11 @@ namespace Lucene.Net.Index
                     Console.Write(e.StackTrace);
                     Exceptions.Add(e);
                 }
-                Sync.UpdateJoin.Signal();
+
+                if (!Sync.UpdateJoin.IsSet)
+                {
+                    Sync.UpdateJoin.Signal();
+                }
             }
         }
 
