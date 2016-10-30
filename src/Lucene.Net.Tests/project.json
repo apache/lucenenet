@@ -1,14 +1,64 @@
 ﻿{
+  "version": "4.8.0-alpha",
   "dependencies": {
     "dotnet-test-nunit": "3.4.0-beta-2",
-    "NETStandard.Library": "1.6.0",
-    "NUnit": "3.5.0",
+    "Lucene.Net.Codecs": "4.8.0-alpha",
+    "Lucene.Net.Facet": "4.8.0-alpha",
+    "Lucene.Net.Queries" : "4.8.0-alpha",
+    "Lucene.Net.TestFramework": "4.8.0-alpha",
+    "NUnit": "3.5.0"
   },
-  
+  "buildOptions": {
+    "define": [ "NETSTANDARD", "FEATURE_TASKMERGESCHEDULER" ],
+    "compile": {
+      "exclude": [
+        "core/Util/Cache",
+        "core/Util/Junitcompat"
+      ],
+      "excludeFiles": [
+        "core/TestMergeSchedulerExternal.cs",
+        "core/TestWorstCaseTestBehavior.cs",
+        "core/Index/TestBackwardsCompatibility.cs",
+        "core/Index/TestBackwardsCompatibility3x.cs",
+        "core/Index/TestConcurrentMergeScheduler.cs",
+        "core/Index/TestFlushByRamOrCountsPolicy.cs",
+        "core/Index/TestIndexWriterOnJRECrash.cs",
+        "core/Search/TestControlledRealTimeReopenThread.cs",
+        "core/Search/TestFieldCache.cs",
+        "core/Support/BigObject.cs",
+        "core/Support/CollisionTester.cs",
+        "core/Support/SmallObject.cs",
+        "core/Support/TestCase.cs",
+        "core/Support/TestCloseableThreadLocal.cs",
+        "core/Support/TestEquatableList.cs",
+        "core/Support/TestExceptionSerialization.cs",
+        "core/Support/TestHashMap.cs",
+        "core/Support/TestIDisposable.cs",
+        "core/Support/TestLRUCache.cs",
+        "core/Support/TestOldPatches.cs",
+        "core/Support/TestOSClass.cs",
+        "core/Support/TestSerialization.cs",
+        "core/Support/TestSupportClass.cs",
+        "core/Support/TestThreadClass.cs",
+        "core/Support/TestWeakDictionary.cs",
+        "core/Support/TestWeakDictionaryBehavior.cs",
+        "core/Support/TestWeakDictionaryPerformance.cs",
+        "core/Util/TestMathUtil.cs",
+        "core/Util/TestMaxFailuresRule.cs"
+      ]
+
+    }
+  },
   "testRunner": "nunit",
 
   "frameworks": {
     "netcoreapp1.0": {
+      "dependencies": { 
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      },
       "imports": "dnxcore50"
     }
   },
