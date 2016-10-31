@@ -2799,9 +2799,9 @@ namespace Lucene.Net.Util
         /// 
         /// LUCENENET specific
         /// </summary>
-        public class ConcurrentMergeSchedulers
+        public static class ConcurrentMergeSchedulers
         {
-            public readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
+            public static readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
 #if !NETSTANDARD
                 new ConcurrentMergeScheduler(),
 #endif
