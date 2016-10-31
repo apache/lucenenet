@@ -1,6 +1,10 @@
 ﻿{
+  "version": "4.8.0-alpha",
+
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
+    "Lucene.Net.Grouping": "4.8.0-alpha",
+    "Lucene.Net.Join": "4.8.0-alpha",
+    "Lucene.Net.TestFramework": "4.8.0-alpha",
     "NUnit": "3.5.0",
     "dotnet-test-nunit": "3.4.0-beta-2"
   },
@@ -9,7 +13,13 @@
 
   "frameworks": {
     "netcoreapp1.0": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "dependencies": { 
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      }
     }
   },
 
