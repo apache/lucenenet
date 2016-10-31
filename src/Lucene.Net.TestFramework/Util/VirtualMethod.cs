@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Lucene.Net.Util
@@ -79,7 +80,7 @@ namespace Lucene.Net.Util
             this.Parameters = parameters;
             try
             {
-                MethodInfo mi = baseClass.GetMethod(method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameters, null);
+                MethodInfo mi = GetMethod(baseClass, method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, parameters);
                 if (mi == null)
                 {
                     throw new System.ArgumentException(baseClass.Name + " has no such method.");
@@ -129,14 +130,14 @@ namespace Lucene.Net.Util
             }
             bool overridden = false;
             int distance = 0;
-            for (Type clazz = subclazz; clazz != BaseClass && clazz != null; clazz = clazz.BaseType)
+            for (Type clazz = subclazz; clazz != BaseClass && clazz != null; clazz = clazz.GetTypeInfo().BaseType)
             {
                 // lookup method, if success mark as overridden
                 if (!overridden)
                 {
-                    MethodInfo mi = clazz.GetMethod(Method, 
-                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly, 
-                        null, Parameters, null);
+                    MethodInfo mi =  GetMethod(clazz, Method,
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+                        Parameters);
 
                     if (mi != null)
                         overridden = true;
@@ -161,6 +162,32 @@ namespace Lucene.Net.Util
         public static int CompareImplementationDistance(Type clazz, VirtualMethod m1, VirtualMethod m2)
         {
             return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
+        }
+
+        private MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters)
+        {
+#if NETSTANDARD
+            var methods = clazz.GetTypeInfo().GetMethods(bindingFlags).Where(x => {
+                return x.Name.Equals(methodName)
+                    && x.GetParameters().Select(y => y.ParameterType).SequenceEqual(methodParameters);
+                }).ToArray();
+
+            if (methods.Length == 0)
+            {
+                return default(MethodInfo);
+            }
+            else if (methods.Length == 1)
+            {
+                return methods[0];
+            }
+            else
+            {
+                var formatted = string.Format("Found more than one match for type {0}, methodName {1}, bindingFlags {2}, parameters {3}", clazz, methodName, bindingFlags, methodParameters);
+                throw new AmbiguousMatchException(formatted);
+            }
+#else
+            return clazz.GetMethod(methodName, bindingFlags, null, methodParameters, null);
+#endif
         }
     }
 }
