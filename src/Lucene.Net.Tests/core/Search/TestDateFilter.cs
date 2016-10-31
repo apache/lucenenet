@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
     public class TestDateFilter : LuceneTestCase
     {
         ///
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public virtual void TestBefore()
         {
             // create an index

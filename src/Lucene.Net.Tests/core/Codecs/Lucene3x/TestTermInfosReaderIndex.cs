@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// LUCENENET specific
         /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             // NOTE: turn off compound file, this test will open some index files directly.

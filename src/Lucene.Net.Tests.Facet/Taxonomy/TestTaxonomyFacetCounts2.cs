@@ -245,7 +245,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return counts;
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassCountingFacetsAggregatorTest()
         {
             indexDir = NewDirectory();

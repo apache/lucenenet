@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Util
     {
         public static Analyzer qpAnalyzer;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             qpAnalyzer = new QPTestAnalyzer();
