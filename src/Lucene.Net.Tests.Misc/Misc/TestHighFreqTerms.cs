@@ -14,7 +14,7 @@ namespace Lucene.Net.Misc
         private static Directory dir = null;
         private static IndexReader reader = null;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUpClass()
         {
             dir = NewDirectory();

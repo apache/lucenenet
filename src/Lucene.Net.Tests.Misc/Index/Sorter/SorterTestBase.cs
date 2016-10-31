@@ -213,7 +213,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassSorterTestBase()
         {
             dir = NewDirectory();

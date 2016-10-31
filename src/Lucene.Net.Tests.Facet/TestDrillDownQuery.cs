@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet
             config = null;
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassDrillDownQueryTest()
         {
             dir = NewDirectory();

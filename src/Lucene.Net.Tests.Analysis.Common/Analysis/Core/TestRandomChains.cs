@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()

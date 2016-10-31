@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             return null; // never get here
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             Assert.IsFalse(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "test infra is broken!");

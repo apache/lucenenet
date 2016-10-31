@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     {
         internal static Directory Dir;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             Dir = NewFSDirectory(CreateTempDir("2Bdocs"));
