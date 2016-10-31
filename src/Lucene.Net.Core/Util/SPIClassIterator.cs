@@ -71,7 +71,23 @@ namespace Lucene.Net.Util
                 .Where(x => x != null)
                 .Distinct();
 
-            var assembliesToExamine = assembliesLoaded.Concat(referencedAssemblies).Distinct();
+            var assembliesToExamine = assembliesLoaded.Concat(referencedAssemblies).Distinct().ToList();
+
+            // LUCENENET HACK:
+            // Tests such as TestImpersonation.cs expect that the assemblies
+            // are probed in a certain order. NamedSPILoader, lines 68 - 75 adds
+            // the first item it sees with that name. So if you have multiple
+            // codecs, it may not add the right one, depending on the order of
+            // the assemblies that were examined.
+            // This results in many test failures if Types from Lucene.Net.Codecs
+            // are examined and added to NamedSPILoader first before
+            // Lucene.Net.TestFramework.
+            var testFrameworkAssembly = assembliesToExamine.FirstOrDefault(x => string.Equals(x.GetName().Name, "Lucene.Net.TestFramework", StringComparison.Ordinal));
+            if (testFrameworkAssembly != null)
+            {
+                assembliesToExamine.Remove(testFrameworkAssembly);
+                assembliesToExamine.Insert(0, testFrameworkAssembly);
+            }
 
             foreach (var assembly in assembliesToExamine)
             {
