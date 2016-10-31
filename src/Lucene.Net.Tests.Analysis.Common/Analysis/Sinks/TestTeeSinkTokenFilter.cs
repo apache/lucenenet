@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Sinks
             string[] lowerCaseTokens = new string[tokens1.Length];
             for (int i = 0; i < tokens1.Length; i++)
             {
-                lowerCaseTokens[i] = tokens1[i].ToLower(CultureInfo.InvariantCulture);
+                lowerCaseTokens[i] = CultureInfo.InvariantCulture.TextInfo.ToLower(tokens1[i]);
             }
             AssertTokenStreamContents(lowerCasing, lowerCaseTokens);
         }
