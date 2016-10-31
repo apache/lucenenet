@@ -220,9 +220,9 @@ namespace Lucene.Net.Analysis.Hunspell
                 this.outerInstance = outerInstance;
             }
 
-            public override void Close()
+            protected override void Dispose(bool disposing)
             {
-                @delegate.Close();
+                @delegate.Dispose();
             }
 
 

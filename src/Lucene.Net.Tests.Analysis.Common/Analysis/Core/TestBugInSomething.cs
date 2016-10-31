@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Core
                 throw new System.NotSupportedException("Correct(int)");
             }
 
-            public override void Close()
+            protected override void Dispose(bool disposing)
             {
                 throw new System.NotSupportedException("Close()");
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Analysis.Core
 
             try
             {
-                cs.Close();
+                cs.Dispose();
                 fail();
             }
             catch (Exception e)
