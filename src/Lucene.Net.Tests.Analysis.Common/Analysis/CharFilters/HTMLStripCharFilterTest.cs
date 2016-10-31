@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestMSWord14GeneratedHTML()
         {
-            System.IO.Stream stream = this.GetType().getResourceAsStream("MS-Word 14 generated.htm");
+            System.IO.Stream stream = this.GetType().getResourceAsStream("MS-Word14generated.htm");
             HTMLStripCharFilter reader = new HTMLStripCharFilter(new System.IO.StreamReader(stream, Encoding.UTF8));
             string gold = "This is a test";
             StringBuilder builder = new StringBuilder();
