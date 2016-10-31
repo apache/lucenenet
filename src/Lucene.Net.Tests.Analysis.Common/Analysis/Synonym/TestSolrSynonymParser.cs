@@ -73,56 +73,51 @@ namespace Lucene.Net.Analysis.Synonym
         /// <summary>
         /// parse a syn file with bad syntax </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(Exception))]
         public virtual void TestInvalidDoubleMap()
         {
             string testFile = "a => b => c";
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random()));
-            parser.Parse(new StringReader(testFile));
+            Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
         /// <summary>
         /// parse a syn file with bad syntax </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(Exception))]
         public virtual void TestInvalidAnalyzesToNothingOutput()
         {
             string testFile = "a => 1";
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, false));
-            parser.Parse(new StringReader(testFile));
+            Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
         /// <summary>
         /// parse a syn file with bad syntax </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(Exception))]
         public virtual void TestInvalidAnalyzesToNothingInput()
         {
             string testFile = "1 => a";
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, false));
-            parser.Parse(new StringReader(testFile));
+            Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
         /// <summary>
         /// parse a syn file with bad syntax </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(Exception))]
         public virtual void TestInvalidPositionsInput()
         {
             string testFile = "testola => the test";
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new EnglishAnalyzer(TEST_VERSION_CURRENT));
-            parser.Parse(new StringReader(testFile));
+            Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
         /// <summary>
         /// parse a syn file with bad syntax </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(Exception))]
         public virtual void TestInvalidPositionsOutput()
         {
             string testFile = "the test => testola";
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new EnglishAnalyzer(TEST_VERSION_CURRENT));
-            parser.Parse(new StringReader(testFile));
+            Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
         /// <summary>

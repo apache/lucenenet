@@ -71,10 +71,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// checking the validity of constructor arguments
         /// </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments()
         {
-            new LengthFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments")), -4, -1);
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new LengthFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments")), -4, -1));
         }
     }
 }
