@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Spans
             Searcher = NewSearcher(Reader);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Searcher = null;

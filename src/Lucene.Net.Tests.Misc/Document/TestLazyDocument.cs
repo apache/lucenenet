@@ -20,7 +20,7 @@ namespace Lucene.Net.Documents
 
         public Directory dir = NewDirectory();
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void RemoveIndex()
         {
             if (null != dir)

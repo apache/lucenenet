@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Util
             qpAnalyzer = new QPTestAnalyzer();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             qpAnalyzer = null;

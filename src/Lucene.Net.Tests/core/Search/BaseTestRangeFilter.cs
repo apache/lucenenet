@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
             UnsignedIndexReader = Build(Random(), UnsignedIndexDir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassBaseTestRangeFilter()
         {
             SignedIndexReader.Dispose();

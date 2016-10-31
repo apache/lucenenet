@@ -567,7 +567,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return NUMBER_FORMAT.Parse(NUMBER_FORMAT.Format(number));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             searcher = null;

@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             reader.Dispose();

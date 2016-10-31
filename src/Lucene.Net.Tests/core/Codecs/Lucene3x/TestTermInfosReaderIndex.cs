@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             SampleTerms = Sample(Random(), Reader, 1000);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             TermEnum.Dispose();

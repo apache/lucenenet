@@ -223,7 +223,7 @@ namespace Lucene.Net.Index.Sorter
             reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassSorterTestBase()
         {
             reader.Dispose();

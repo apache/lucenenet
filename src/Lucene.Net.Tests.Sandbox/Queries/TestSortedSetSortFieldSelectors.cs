@@ -50,7 +50,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void afterClass()
         {
             Codec.Default = (savedCodec);
