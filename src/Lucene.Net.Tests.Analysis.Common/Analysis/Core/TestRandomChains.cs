@@ -183,9 +183,15 @@ namespace Lucene.Net.Analysis.Core
         [OneTimeSetUp]
         public static void BeforeClass()
         {
-            IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
-                .Where(c => !c.IsAbstract && c.IsPublic && !c.IsInterface && c.IsClass && (c.GetCustomAttribute<ObsoleteAttribute>() == null)
-                && (c.IsSubclassOf(typeof(Tokenizer)) || c.IsSubclassOf(typeof(TokenFilter)) || c.IsSubclassOf(typeof(CharFilter)))).ToArray();
+            IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).GetTypeInfo().Assembly.GetTypes()
+                .Where(c => {
+                    var typeInfo = c.GetTypeInfo();
+
+                    return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface 
+                        && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() == null)
+                        && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
+                })
+                .ToArray();
             tokenizers = new List<ConstructorInfo>();
             tokenfilters = new List<ConstructorInfo>();
             charfilters = new List<ConstructorInfo>();
@@ -198,19 +204,21 @@ namespace Lucene.Net.Analysis.Core
                         continue;
                     }
 
-                    if (c.IsSubclassOf(typeof(Tokenizer)))
+                    var typeInfo = c.GetTypeInfo();
+
+                    if (typeInfo.IsSubclassOf(typeof(Tokenizer)))
                     {
                         assertTrue(ctor.ToString() + " has unsupported parameter types", 
                             allowedTokenizerArgs.containsAll(Arrays.AsList(ctor.GetParameters().Select(p => p.ParameterType).ToArray())));
                         tokenizers.Add(ctor);
                     }
-                    else if (c.IsSubclassOf(typeof(TokenFilter)))
+                    else if (typeInfo.IsSubclassOf(typeof(TokenFilter)))
                     {
                         assertTrue(ctor.ToString() + " has unsupported parameter types", 
                             allowedTokenFilterArgs.containsAll(Arrays.AsList(ctor.GetParameters().Select(p => p.ParameterType).ToArray())));
                         tokenfilters.Add(ctor);
                     }
-                    else if (c.IsSubclassOf(typeof(CharFilter)))
+                    else if (typeInfo.IsSubclassOf(typeof(CharFilter)))
                     {
                         assertTrue(ctor.ToString() + " has unsupported parameter types", 
                             allowedCharFilterArgs.containsAll(Arrays.AsList(ctor.GetParameters().Select(p => p.ParameterType).ToArray())));

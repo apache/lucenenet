@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 using Reader = System.IO.TextReader;
 using Version = Lucene.Net.Util.LuceneVersion;
 
@@ -186,7 +187,7 @@ namespace Lucene.Net.Analysis.Synonym
             object delegator = synFac.Delegator;
 #pragma warning restore 612, 618
             assertNotNull(delegator);
-            assertTrue("delegator not expected class: " + delegator.GetType(), delegatorClass.IsInstanceOfType(delegator));
+            assertTrue("delegator not expected class: " + delegator.GetType(), delegatorClass.GetTypeInfo().IsInstanceOfType(delegator));
 
         }
     }

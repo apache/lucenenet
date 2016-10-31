@@ -73,12 +73,16 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void Test()
         {
-            IList<Type> analysisClasses = new List<Type>(
-                typeof(StandardAnalyzer).Assembly.GetTypes()
-                    .Where(c => !c.IsAbstract && c.IsPublic && !c.IsInterface && c.IsClass && (c.GetCustomAttribute<ObsoleteAttribute>() == null)
-                        && !testComponents.Contains(c) && !crazyComponents.Contains(c) && !oddlyNamedComponents.Contains(c) && !deprecatedDuplicatedComponents.Contains(c)
-                        && (c.IsSubclassOf(typeof(Tokenizer)) || c.IsSubclassOf(typeof(TokenFilter)) || c.IsSubclassOf(typeof(CharFilter)))
-                    ));
+            IList<Type> analysisClasses = typeof(StandardAnalyzer).GetTypeInfo().Assembly.GetTypes()
+                    .Where(c =>
+                    {
+                        var typeInfo = c.GetTypeInfo();
+
+                        return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() == null)
+                            && !testComponents.Contains(c) && !crazyComponents.Contains(c) && !oddlyNamedComponents.Contains(c) && !deprecatedDuplicatedComponents.Contains(c)
+                            && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
+                    })
+                    .ToList();
 
 
             foreach (Type c in analysisClasses)
@@ -87,7 +91,7 @@ namespace Lucene.Net.Analysis.Core
                 IDictionary<string, string> args = new Dictionary<string, string>();
                 args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
 
-                if (c.IsSubclassOf(typeof(Tokenizer)))
+                if (c.GetTypeInfo().IsSubclassOf(typeof(Tokenizer)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("Tokenizer", StringComparison.Ordinal));
@@ -114,7 +118,7 @@ namespace Lucene.Net.Analysis.Core
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
                 }
-                else if (c.IsSubclassOf(typeof(TokenFilter)))
+                else if (c.GetTypeInfo().IsSubclassOf(typeof(TokenFilter)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("Filter", StringComparison.Ordinal));
@@ -146,7 +150,7 @@ namespace Lucene.Net.Analysis.Core
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
                 }
-                else if (c.IsSubclassOf(typeof(CharFilter)))
+                else if (c.GetTypeInfo().IsSubclassOf(typeof(CharFilter)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("CharFilter", StringComparison.Ordinal));
