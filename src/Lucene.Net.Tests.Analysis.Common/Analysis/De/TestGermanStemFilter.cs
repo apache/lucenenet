@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.De
         {
             System.IO.Stream vocOut = this.GetType().getResourceAsStream("data.txt");
             VocabularyAssert.AssertVocabulary(analyzer, vocOut);
-            vocOut.Close();
+            vocOut.Dispose();
         }
 
         // LUCENE-3043: we use keywordtokenizer in this test,

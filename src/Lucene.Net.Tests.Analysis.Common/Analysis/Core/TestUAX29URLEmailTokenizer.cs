@@ -411,7 +411,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 if (null != bufferedReader)
                 {
-                    bufferedReader.Close();
+                    bufferedReader.Dispose();
                 }
             }
             assertTrue(null != emails && emails.Length > 0);
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 if (null != bufferedReader)
                 {
-                    bufferedReader.Close();
+                    bufferedReader.Dispose();
                 }
             }
             assertTrue(null != urls && urls.Length > 0);
