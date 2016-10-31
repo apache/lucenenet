@@ -448,6 +448,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\LuceneTestCaseWithReducedFloatPrecision.cs" />
+    <Compile Include="Util\StackTraceHelper.cs" />
     <Compile Include="Util\TestRuleSetupAndRestoreClassEnv.cs">
       <SubType>Code</SubType>
     </Compile>
