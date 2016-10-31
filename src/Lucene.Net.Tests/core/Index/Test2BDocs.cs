@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
             iw.Dispose();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void AfterClass()
         {
             Dir.Dispose();

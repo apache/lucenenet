@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy
             taxoReader = new DirectoryTaxonomyReader(taxoDir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             reader.Dispose();

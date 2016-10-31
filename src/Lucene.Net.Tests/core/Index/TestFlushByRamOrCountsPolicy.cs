@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             LineDocFile.Dispose();

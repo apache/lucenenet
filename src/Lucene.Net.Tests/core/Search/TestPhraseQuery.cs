@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             Query = new PhraseQuery();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Searcher = null;

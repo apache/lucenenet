@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

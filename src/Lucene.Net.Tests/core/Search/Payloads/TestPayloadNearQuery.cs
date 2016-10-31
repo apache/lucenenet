@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Payloads
             Searcher.Similarity = Similarity;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Searcher = null;

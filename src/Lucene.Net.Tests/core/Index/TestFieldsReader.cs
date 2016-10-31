@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
             FaultyIndexInput.DoFail = false;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Dir.Dispose();

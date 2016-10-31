@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             tokenizers = null;

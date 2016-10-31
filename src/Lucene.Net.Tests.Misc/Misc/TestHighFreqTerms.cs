@@ -26,7 +26,7 @@ namespace Lucene.Net.Misc
             TestUtil.CheckIndex(dir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void TearDownClass()
         {
             reader.Dispose();

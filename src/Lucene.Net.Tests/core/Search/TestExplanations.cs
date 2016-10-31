@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
         // same contents, but no field boost
         public const string ALTFIELD = "alt";
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassTestExplanations()
         {
             Searcher = null;

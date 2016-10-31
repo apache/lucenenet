@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet
         private static FacetsConfig config;
 
       
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassDrillDownQueryTest()
         {
             IOUtils.Close(reader, taxo, dir, taxoDir);

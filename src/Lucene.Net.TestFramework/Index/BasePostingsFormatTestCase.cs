@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             AllTerms = null;

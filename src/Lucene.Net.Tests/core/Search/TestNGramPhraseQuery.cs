@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
             Reader = DirectoryReader.Open(Directory);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();
