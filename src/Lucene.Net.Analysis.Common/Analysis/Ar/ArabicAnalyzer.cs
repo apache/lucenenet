@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Ar
 {
@@ -78,7 +79,8 @@ namespace Lucene.Net.Analysis.Ar
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ArabicAnalyzer), typeof(ArabicAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                    var resource = GetAnalysisResourceName(typeof(ArabicAnalyzer), "Ar", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ArabicAnalyzer), resource, "#");
                 }
                 catch (IOException)
                 {

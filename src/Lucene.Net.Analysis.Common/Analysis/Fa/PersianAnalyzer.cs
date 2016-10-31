@@ -75,8 +75,8 @@ namespace Lucene.Net.Analysis.Fa
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(PersianAnalyzer),
-                        typeof(PersianAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
+                    var resource = GetAnalysisResourceName(typeof(PersianAnalyzer), "Fa", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(PersianAnalyzer), resource, STOPWORDS_COMMENT);
                 }
                 catch (IOException)
                 {

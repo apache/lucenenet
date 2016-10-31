@@ -68,9 +68,10 @@ namespace Lucene.Net.Analysis.Tr
             {
                 try
                 {
+                    var resource = GetAnalysisResourceName(typeof(TurkishAnalyzer), "Tr", DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(
                         false,
-                        typeof(TurkishAnalyzer), typeof(TurkishAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE,
+                        typeof(TurkishAnalyzer), resource,
                         STOPWORDS_COMMENT);
                 }
                 catch (IOException)

@@ -79,7 +79,8 @@ namespace Lucene.Net.Analysis.Ga
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(IrishAnalyzer), typeof(IrishAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                    var resource = GetAnalysisResourceName(typeof(IrishAnalyzer), "Ga", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(IrishAnalyzer), resource, "#");
                 }
                 catch (IOException)
                 {

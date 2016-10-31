@@ -57,7 +57,8 @@ namespace Lucene.Net.Analysis.Id
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(IndonesianAnalyzer), typeof(IndonesianAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                    var resource = GetAnalysisResourceName(typeof(IndonesianAnalyzer), "Id", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(IndonesianAnalyzer), resource, "#");
                 }
                 catch (IOException)
                 {

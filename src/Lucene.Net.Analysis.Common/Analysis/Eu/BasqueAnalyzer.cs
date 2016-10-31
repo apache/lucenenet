@@ -61,8 +61,8 @@ namespace Lucene.Net.Analysis.Eu
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(BasqueAnalyzer), 
-                        typeof(BasqueAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                    var resource = GetAnalysisResourceName(typeof(BasqueAnalyzer), "Eu", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(BasqueAnalyzer), resource, "#");
                 }
                 catch (IOException)
                 {

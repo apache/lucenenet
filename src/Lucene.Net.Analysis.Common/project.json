@@ -29,13 +29,16 @@
         "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "define": [ "NETSTANDARD", "FEATURE_NETCOREEMBEDDEDRESOURCE" ]
       }
     },
     "net451": {
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"
+      },
+      "buildOptions": {
+        "define": [ "FEATURE_NETCOREEMBEDDEDRESOURCE" ]
       }
     }
   }

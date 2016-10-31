@@ -77,8 +77,8 @@ namespace Lucene.Net.Analysis.Ca
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(CatalanAnalyzer),
-                        typeof(CatalanAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                    var resource = GetAnalysisResourceName(typeof(CatalanAnalyzer), "Ca", DEFAULT_STOPWORD_FILE);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(CatalanAnalyzer), resource, "#");
                 }
                 catch (IOException)
                 {

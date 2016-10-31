@@ -99,7 +99,9 @@ namespace Lucene.Net.Analysis.Util
             TextReader reader = null;
             try
             {
-                reader = IOUtils.GetDecodingReader(aClass.GetTypeInfo().Assembly.GetManifestResourceStream(resource), Encoding.UTF8);
+                var resourceNames = aClass.GetTypeInfo().Assembly.GetManifestResourceNames();
+                var resourceStream = aClass.GetTypeInfo().Assembly.GetManifestResourceStream(resource);
+                reader = IOUtils.GetDecodingReader(resourceStream, Encoding.UTF8);
                 return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));
@@ -159,6 +161,23 @@ namespace Lucene.Net.Analysis.Util
             {
                 IOUtils.Close(stopwords);
             }
+        }
+
+        /// <summary>
+        /// LUCENENET specific:
+        /// In .NET Core, resources are embedded with the namespace based on
+        /// the physical location they are located in preceded by the name of
+        /// the assembly.
+        /// For example, the file: Analysis/Bg/stopwords.txt, would have the
+        /// resource name `Lucene.Net.Analysis.Common.Analysis.Bg.stopwords.txt`
+        /// </summary>
+        protected internal static string GetAnalysisResourceName(Type type, string analysisSubfolder, string filename)
+        {
+#if FEATURE_NETCOREEMBEDDEDRESOURCE
+            return string.Format("{0}.Analysis.{1}.{2}", type.GetTypeInfo().Assembly.GetName().Name, analysisSubfolder, filename);
+#else
+            return string.Format("{0}.{1}", type.Namespace, filename);
+#endif
         }
     }
 

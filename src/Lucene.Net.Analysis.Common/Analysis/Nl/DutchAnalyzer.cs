@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Nl
@@ -82,8 +83,9 @@ namespace Lucene.Net.Analysis.Nl
             {
                 try
                 {
+                    var resource = GetAnalysisResourceName(typeof(SnowballFilter), "Snowball", DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
-                        IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+                        IOUtils.GetDecodingReader(typeof(SnowballFilter), resource, Encoding.UTF8),
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
@@ -233,6 +235,19 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(source, result);
             }
+        }
+
+        /// <summary>
+        /// LUCENENET specific: For explanation see:
+        /// <see cref="StopwordAnalyzerBase.GetAnalysisResourceName(Type, string, string)"/>
+        /// </summary>
+        private static string GetAnalysisResourceName(Type type, string analysisSubfolder, string filename)
+        {
+#if FEATURE_NETCOREEMBEDDEDRESOURCE
+            return string.Format("{0}.Analysis.{1}.{2}", type.GetTypeInfo().Assembly.GetName().Name, analysisSubfolder, filename);
+#else
+            return string.Format("{0}.{1}", type.Namespace, filename);
+#endif
         }
     }
 }
