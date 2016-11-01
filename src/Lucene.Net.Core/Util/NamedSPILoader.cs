@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
@@ -56,7 +57,8 @@ namespace Lucene.Net.Util
                 IDictionary<string, S> services = new Dictionary<string, S>(this.Services);
                 SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
-                foreach (Type c in loader)
+                // Ensure there is a default constructor (the SPIClassIterator contains types that don't)
+                foreach (Type c in loader.Where(t => t.GetConstructor(Type.EmptyTypes) != null))
                 {
                     try
                     {

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Search.Suggest.Fst;
+﻿using Lucene.Net.Search.Suggest.Fst;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,11 +23,11 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// An <seealso cref="BytesRefSorter"/> that keeps all the entries in memory.
+    /// An <see cref="IBytesRefSorter"/> that keeps all the entries in memory.
     /// @lucene.experimental
     /// @lucene.internal
     /// </summary>
-    public sealed class InMemorySorter : BytesRefSorter
+    public sealed class InMemorySorter : IBytesRefSorter
     {
         private readonly BytesRefArray buffer = new BytesRefArray(Counter.NewCounter());
         private bool closed = false;
@@ -52,7 +51,7 @@ namespace Lucene.Net.Search.Suggest
             buffer.Append(utf8);
         }
 
-        public BytesRefIterator Iterator()
+        public BytesRefIterator GetEnumerator()
         {
             closed = true;
             return buffer.Iterator(comparator);
@@ -66,5 +65,4 @@ namespace Lucene.Net.Search.Suggest
             }
         }
     }
-
 }

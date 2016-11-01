@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="TrimFilter"/>.
     /// <pre class="prettyprint">
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public TrimFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            updateOffsets = getBoolean(args, "updateOffsets", false);
+            updateOffsets = GetBoolean(args, "updateOffsets", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -50,9 +50,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
+#pragma warning disable 612, 618
             var filter = new TrimFilter(luceneMatchVersion, input, updateOffsets);
+#pragma warning restore 612, 618
             return filter;
         }
     }
-
 }

@@ -1,51 +1,37 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Codecs.Lucene41;
+using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Codecs.SimpleText;
+using Lucene.Net.Codecs.Pulsing;
+using Lucene.Net.Codecs.MockSep;
+using Lucene.Net.Util;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Analysis;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Perfield
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Directory = Lucene.Net.Store.Directory;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-
-    /*using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
-        using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
-        using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;*/
-
-    using Document = Documents.Document;
-    using Field = Field;
-    using FieldType = FieldType;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LogDocMergePolicy = Lucene.Net.Index.LogDocMergePolicy;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = TextField;
-    using TopDocs = Lucene.Net.Search.TopDocs;
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+    using Document = Documents.Document;
 
     //TODO: would be better in this test to pull termsenums and instanceof or something?
     // this way we can verify PFPF is doing the right thing.
@@ -95,103 +81,108 @@ namespace Lucene.Net.Codecs.Perfield
             }
         }
 
-        /*
-         * Test that heterogeneous index segments are merge successfully
-         */
-        /*public virtual void TestMergeUnusedPerFieldCodec()
+        /// <summary>
+        /// Test that heterogeneous index segments are merge successfully
+        /// </summary>
+        [Test]
+        public virtual void TestMergeUnusedPerFieldCodec()
         {
-          Directory dir = NewDirectory();
-          IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
-          IndexWriter writer = NewWriter(dir, iwconf);
-          AddDocs(writer, 10);
-          writer.Commit();
-          AddDocs3(writer, 10);
-          writer.Commit();
-          AddDocs2(writer, 10);
-          writer.Commit();
-          Assert.AreEqual(30, writer.MaxDoc());
-          TestUtil.CheckIndex(dir);
-          writer.ForceMerge(1);
-          Assert.AreEqual(30, writer.MaxDoc());
-          writer.Dispose();
-          dir.Dispose();
-        }*/
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
+                new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
+            IndexWriter writer = NewWriter(dir, iwconf);
+            AddDocs(writer, 10);
+            writer.Commit();
+            AddDocs3(writer, 10);
+            writer.Commit();
+            AddDocs2(writer, 10);
+            writer.Commit();
+            Assert.AreEqual(30, writer.MaxDoc);
+            TestUtil.CheckIndex(dir);
+            writer.ForceMerge(1);
+            Assert.AreEqual(30, writer.MaxDoc);
+            writer.Dispose();
+            dir.Dispose();
+        }
 
-        /*
-         * Test that heterogeneous index segments are merged sucessfully
-         */
+        /// <summary>
+        /// Test that heterogeneous index segments are merged sucessfully
+        /// </summary>
         // TODO: not sure this test is that great, we should probably peek inside PerFieldPostingsFormat or something?!
-        /*public virtual void TestChangeCodecAndMerge()
+        [Test]
+        public virtual void TestChangeCodecAndMerge()
         {
-          Directory dir = NewDirectory();
-          if (VERBOSE)
-          {
-            Console.WriteLine("TEST: make new index");
-          }
-          IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
-          iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
-          //((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
-          IndexWriter writer = NewWriter(dir, iwconf);
+            Directory dir = NewDirectory();
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: make new index");
+            }
+            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
+                new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
+            iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+            // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
+            IndexWriter writer = NewWriter(dir, iwconf);
 
-          AddDocs(writer, 10);
-          writer.Commit();
-          AssertQuery(new Term("content", "aaa"), dir, 10);
-          if (VERBOSE)
-          {
-            Console.WriteLine("TEST: addDocs3");
-          }
-          AddDocs3(writer, 10);
-          writer.Commit();
-          writer.Dispose();
+            AddDocs(writer, 10);
+            writer.Commit();
+            AssertQuery(new Term("content", "aaa"), dir, 10);
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: addDocs3");
+            }
+            AddDocs3(writer, 10);
+            writer.Commit();
+            writer.Dispose();
 
-          AssertQuery(new Term("content", "ccc"), dir, 10);
-          AssertQuery(new Term("content", "aaa"), dir, 10);
-          Codec codec = iwconf.Codec;
+            AssertQuery(new Term("content", "ccc"), dir, 10);
+            AssertQuery(new Term("content", "aaa"), dir, 10);
+            Codec codec = iwconf.Codec;
 
-          iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND).SetCodec(codec);
-          //((LogMergePolicy) iwconf.getMergePolicy()).setNoCFSRatio(0.0);
-          //((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
-          iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+            iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                .SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND).SetCodec(codec);
+            // ((LogMergePolicy)iwconf.getMergePolicy()).setNoCFSRatio(0.0);
+            // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
+            iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 
-          iwconf.SetCodec(new MockCodec2()); // uses standard for field content
-          writer = NewWriter(dir, iwconf);
-          // swap in new codec for currently written segments
-          if (VERBOSE)
-          {
-            Console.WriteLine("TEST: add docs w/ Standard codec for content field");
-          }
-          AddDocs2(writer, 10);
-          writer.Commit();
-          codec = iwconf.Codec;
-          Assert.AreEqual(30, writer.MaxDoc());
-          AssertQuery(new Term("content", "bbb"), dir, 10);
-          AssertQuery(new Term("content", "ccc"), dir, 10); ////
-          AssertQuery(new Term("content", "aaa"), dir, 10);
+            iwconf.SetCodec(new MockCodec2()); // uses standard for field content
+            writer = NewWriter(dir, iwconf);
+            // swap in new codec for currently written segments
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: add docs w/ Standard codec for content field");
+            }
+            AddDocs2(writer, 10);
+            writer.Commit();
+            codec = iwconf.Codec;
+            Assert.AreEqual(30, writer.MaxDoc);
+            AssertQuery(new Term("content", "bbb"), dir, 10);
+            AssertQuery(new Term("content", "ccc"), dir, 10); ////
+            AssertQuery(new Term("content", "aaa"), dir, 10);
 
-          if (VERBOSE)
-          {
-            Console.WriteLine("TEST: add more docs w/ new codec");
-          }
-          AddDocs2(writer, 10);
-          writer.Commit();
-          AssertQuery(new Term("content", "ccc"), dir, 10);
-          AssertQuery(new Term("content", "bbb"), dir, 20);
-          AssertQuery(new Term("content", "aaa"), dir, 10);
-          Assert.AreEqual(40, writer.MaxDoc());
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: add more docs w/ new codec");
+            }
+            AddDocs2(writer, 10);
+            writer.Commit();
+            AssertQuery(new Term("content", "ccc"), dir, 10);
+            AssertQuery(new Term("content", "bbb"), dir, 20);
+            AssertQuery(new Term("content", "aaa"), dir, 10);
+            Assert.AreEqual(40, writer.MaxDoc);
 
-          if (VERBOSE)
-          {
-            Console.WriteLine("TEST: now optimize");
-          }
-          writer.ForceMerge(1);
-          Assert.AreEqual(40, writer.MaxDoc());
-          writer.Dispose();
-          AssertQuery(new Term("content", "ccc"), dir, 10);
-          AssertQuery(new Term("content", "bbb"), dir, 20);
-          AssertQuery(new Term("content", "aaa"), dir, 10);
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: now optimize");
+            }
+            writer.ForceMerge(1);
+            Assert.AreEqual(40, writer.MaxDoc);
+            writer.Dispose();
+            AssertQuery(new Term("content", "ccc"), dir, 10);
+            AssertQuery(new Term("content", "bbb"), dir, 20);
+            AssertQuery(new Term("content", "aaa"), dir, 10);
 
-          dir.Dispose();
-        }*/
+            dir.Dispose();
+        }
 
         public virtual void AssertQuery(Term t, Directory dir, int num)
         {
@@ -206,51 +197,50 @@ namespace Lucene.Net.Codecs.Perfield
             reader.Dispose();
         }
 
-        /*public class MockCodec : Lucene46Codec
+        private class MockCodec : Lucene46Codec
         {
-          internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
-          internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
-          internal readonly PostingsFormat MockSep = new MockSepPostingsFormat();
+            internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
+            internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
+            internal readonly PostingsFormat MockSep = new MockSepPostingsFormat();
 
-          public override PostingsFormat GetPostingsFormatForField(string field)
-          {
-            if (field.Equals("id"))
+            public override PostingsFormat GetPostingsFormatForField(string field)
             {
-              return SimpleText;
+                if (field.Equals("id"))
+                {
+                    return SimpleText;
+                }
+                else if (field.Equals("content"))
+                {
+                    return MockSep;
+                }
+                else
+                {
+                    return Lucene40;
+                }
             }
-            else if (field.Equals("content"))
-            {
-              return MockSep;
-            }
-            else
-            {
-              return Lucene40;
-            }
-          }
-        }*/
+        }
 
-        /*public class MockCodec2 : Lucene46Codec
+        private class MockCodec2 : Lucene46Codec
         {
-          internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
-          internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
+            internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
+            internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
 
-          public override PostingsFormat GetPostingsFormatForField(string field)
-          {
-            if (field.Equals("id"))
+            public override PostingsFormat GetPostingsFormatForField(string field)
             {
-              return SimpleText;
+                if (field.Equals("id"))
+                {
+                    return SimpleText;
+                }
+                else
+                {
+                    return Lucene40;
+                }
             }
-            else
-            {
-              return Lucene40;
-            }
-          }
-        }*/
+        }
 
-        /*
-         * Test per field codec support - adding fields with random codecs
-         */
-
+        /// <summary>
+        /// Test per field codec support - adding fields with random codecs
+        /// </summary>
         [Test]
         public virtual void TestStressPerFieldCodec()
         {
@@ -287,13 +277,14 @@ namespace Lucene.Net.Codecs.Perfield
             dir.Dispose();
         }
 
-        /*public virtual void TestSameCodecDifferentInstance()
+        [Test]
+        public virtual void TestSameCodecDifferentInstance()
         {
-          Codec codec = new Lucene46CodecAnonymousInnerClassHelper(this);
-          DoTestMixedPostings(codec);
-        }*/
+            Codec codec = new Lucene46CodecAnonymousInnerClassHelper(this);
+            DoTestMixedPostings(codec);
+        }
 
-        /*private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
+        private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 OuterInstance;
 
@@ -304,28 +295,29 @@ namespace Lucene.Net.Codecs.Perfield
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-              if ("id".Equals(field))
-              {
-                return new Pulsing41PostingsFormat(1);
-              }
-              else if ("date".Equals(field))
-              {
-                return new Pulsing41PostingsFormat(1);
-              }
-              else
-              {
-                return base.GetPostingsFormatForField(field);
-              }
+                if ("id".Equals(field))
+                {
+                    return new Pulsing41PostingsFormat(1);
+                }
+                else if ("date".Equals(field))
+                {
+                    return new Pulsing41PostingsFormat(1);
+                }
+                else
+                {
+                    return base.GetPostingsFormatForField(field);
+                }
             }
-        }*/
+        }
 
-        /*public virtual void TestSameCodecDifferentParams()
+        [Test]
+        public virtual void TestSameCodecDifferentParams()
         {
           Codec codec = new Lucene46CodecAnonymousInnerClassHelper2(this);
           DoTestMixedPostings(codec);
-        }*/
+        }
 
-        /*private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
+        private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 OuterInstance;
 
@@ -336,23 +328,22 @@ namespace Lucene.Net.Codecs.Perfield
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-              if ("id".Equals(field))
-              {
-                return new Pulsing41PostingsFormat(1);
-              }
-              else if ("date".Equals(field))
-              {
-                return new Pulsing41PostingsFormat(2);
-              }
-              else
-              {
-                return base.GetPostingsFormatForField(field);
-              }
+                if ("id".Equals(field))
+                {
+                    return new Pulsing41PostingsFormat(1);
+                }
+                else if ("date".Equals(field))
+                {
+                    return new Pulsing41PostingsFormat(2);
+                }
+                else
+                {
+                    return base.GetPostingsFormatForField(field);
+                }
             }
-        }*/
+        }
 
-        [Test]
-        private void TestMixedPostings(Codec codec)
+        private void DoTestMixedPostings(Codec codec)
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

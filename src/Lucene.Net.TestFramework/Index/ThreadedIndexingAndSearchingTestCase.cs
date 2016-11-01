@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                         if (Random().NextBoolean())
                         {
                             addedField = "extra" + Random().Next(40);
-                            doc.Add(NewTextField(addedField, "a random field", Field.Store.YES));
+                            doc.Add(OuterInstance.NewTextField(addedField, "a random field", Field.Store.YES));
                         }
                         else
                         {
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
                                     packID = OuterInstance.PackCount.IncrementAndGet() + "";
                                 }
 
-                                Field packIDField = NewStringField("packID", packID, Field.Store.YES);
+                                Field packIDField = OuterInstance.NewStringField("packID", packID, Field.Store.YES);
                                 IList<string> docIDs = new List<string>();
                                 SubDocs subDocs = new SubDocs(packID, docIDs);
                                 IList<Document> docsList = new List<Document>();
@@ -591,8 +591,7 @@ namespace Lucene.Net.Index
             Writer = new IndexWriter(Dir, conf);
             TestUtil.ReduceOpenFiles(Writer);
 
-            //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
-            TaskScheduler es = null;
+            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
 
             DoAfterWriter(es);
 
@@ -801,7 +800,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                IndexSearcher searcher = NewSearcher(reader);
+                IndexSearcher searcher = OuterInstance.NewSearcher(reader);
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 
                 if (VERBOSE)

@@ -1,31 +1,29 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.IO;
 using System.Text;
-using Lucene.Net.Documents;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System;
-    using System.IO;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using Token = Lucene.Net.Analysis.Token;
@@ -211,7 +209,7 @@ namespace Lucene.Net.Document
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
         }
 
         [Test]
@@ -232,7 +230,7 @@ namespace Lucene.Net.Document
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
         }
 
         [Test]
@@ -280,7 +278,7 @@ namespace Lucene.Net.Document
                 field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
                 Assert.AreEqual("baz", field.StringValue);
-                Assert.AreEqual(5f, field.GetBoost(), 0f);
+                Assert.AreEqual(5f, field.Boost, 0f);
             }
         }
 
@@ -303,7 +301,7 @@ namespace Lucene.Net.Document
             field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
             Assert.IsNotNull(field.ReaderValue);
-            Assert.AreEqual(5f, field.GetBoost(), 0f);
+            Assert.AreEqual(5f, field.Boost, 0f);
         }
 
         /* TODO: this is pretty expert and crazy
@@ -332,7 +330,7 @@ namespace Lucene.Net.Document
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+                Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
             }
         }
 

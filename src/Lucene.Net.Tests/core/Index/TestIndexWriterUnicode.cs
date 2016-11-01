@@ -283,7 +283,6 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-510
-        [Ignore]
         [Test]
         public virtual void TestInvalidUTF16()
         {
@@ -317,7 +316,7 @@ namespace Lucene.Net.Index
         {
             Random rnd = Random();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(rnd, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(rnd, dir, Similarity, TimeZone);
             Document d = new Document();
             // Single segment
             Field f = NewStringField("f", "", Field.Store.NO);

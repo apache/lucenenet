@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="ASCIIFoldingFilter"/>.
     /// <pre class="prettyprint">
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class ASCIIFoldingFilterFactory : TokenFilterFactory, MultiTermAwareComponent
+    public class ASCIIFoldingFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
         private readonly bool preserveOriginal;
 
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public ASCIIFoldingFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            preserveOriginal = getBoolean(args, "preserveOriginal", false);
+            preserveOriginal = GetBoolean(args, "preserveOriginal", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -53,10 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual AbstractAnalysisFactory MultiTermComponent
         {
-            get
-            {
-                return this;
-            }
+            get { return this; }
         }
     }
 }

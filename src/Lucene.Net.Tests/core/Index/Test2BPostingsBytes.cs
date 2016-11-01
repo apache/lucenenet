@@ -43,16 +43,16 @@ namespace Lucene.Net.Index
     /// so you get > Integer.MAX_VALUE postings data for the term
     /// @lucene.experimental
     /// </summary>
-    [Ignore]
+    [SuppressCodecs("SimpleText", "Memory", "Direct", "Lucene3x")]
     [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
     // disable Lucene3x: older lucene formats always had this issue.
     // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
     // with some codecs needs more heap space as well.
     {
-        //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
+        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
-        public virtual void Test()
+        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
             if (dir is MockDirectoryWrapper)
@@ -60,8 +60,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                            .SetRAMBufferSizeMB(256.0)
+                            .SetMergeScheduler(scheduler)
+                            .SetMergePolicy(NewLogMergePolicy(false, 10))
+                            .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+            IndexWriter w = new IndexWriter(dir, config);
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)

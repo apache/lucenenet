@@ -1,7 +1,8 @@
-﻿namespace Lucene.Net.Analysis.Miscellaneous
-{
+﻿using System.Globalization;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,346 +19,396 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// A BreakIterator-like API for iterating over subwords in text, according to WordDelimiterFilter rules.
-	/// @lucene.internal
-	/// </summary>
-	public sealed class WordDelimiterIterator
-	{
+    /// <summary>
+    /// A BreakIterator-like API for iterating over subwords in text, according to WordDelimiterFilter rules.
+    /// @lucene.internal
+    /// </summary>
+    public sealed class WordDelimiterIterator
+    {
 
-	  /// <summary>
-	  /// Indicates the end of iteration </summary>
-	  public const int DONE = -1;
+        /// <summary>
+        /// Indicates the end of iteration </summary>
+        public const int DONE = -1;
 
-	  public static readonly sbyte[] DEFAULT_WORD_DELIM_TABLE;
+        public static readonly sbyte[] DEFAULT_WORD_DELIM_TABLE;
 
-	  internal char[] text;
-	  internal int length;
+        internal char[] text;
+        internal int length;
 
-	  /// <summary>
-	  /// start position of text, excluding leading delimiters </summary>
-	  internal int startBounds;
-	  /// <summary>
-	  /// end position of text, excluding trailing delimiters </summary>
-	  internal int endBounds;
+        /// <summary>
+        /// start position of text, excluding leading delimiters </summary>
+        internal int startBounds;
+        /// <summary>
+        /// end position of text, excluding trailing delimiters </summary>
+        internal int endBounds;
 
-	  /// <summary>
-	  /// Beginning of subword </summary>
-	  internal int current;
-	  /// <summary>
-	  /// End of subword </summary>
-	  internal int end;
+        /// <summary>
+        /// Beginning of subword </summary>
+        internal int current;
+        /// <summary>
+        /// End of subword </summary>
+        internal int end;
 
-	  /* does this string end with a possessive such as 's */
-	  private bool hasFinalPossessive = false;
+        /* does this string end with a possessive such as 's */
+        private bool hasFinalPossessive = false;
 
-	  /// <summary>
-	  /// If false, causes case changes to be ignored (subwords will only be generated
-	  /// given SUBWORD_DELIM tokens). (Defaults to true)
-	  /// </summary>
-	  internal readonly bool splitOnCaseChange;
+        /// <summary>
+        /// If false, causes case changes to be ignored (subwords will only be generated
+        /// given SUBWORD_DELIM tokens). (Defaults to true)
+        /// </summary>
+        internal readonly bool splitOnCaseChange;
 
-	  /// <summary>
-	  /// If false, causes numeric changes to be ignored (subwords will only be generated
-	  /// given SUBWORD_DELIM tokens). (Defaults to true)
-	  /// </summary>
-	  internal readonly bool splitOnNumerics;
+        /// <summary>
+        /// If false, causes numeric changes to be ignored (subwords will only be generated
+        /// given SUBWORD_DELIM tokens). (Defaults to true)
+        /// </summary>
+        internal readonly bool splitOnNumerics;
 
-	  /// <summary>
-	  /// If true, causes trailing "'s" to be removed for each subword. (Defaults to true)
-	  /// <p/>
-	  /// "O'Neil's" => "O", "Neil"
-	  /// </summary>
-	  internal readonly bool stemEnglishPossessive;
+        /// <summary>
+        /// If true, causes trailing "'s" to be removed for each subword. (Defaults to true)
+        /// <p/>
+        /// "O'Neil's" => "O", "Neil"
+        /// </summary>
+        internal readonly bool stemEnglishPossessive;
 
-	  private readonly sbyte[] charTypeTable;
+        private readonly sbyte[] charTypeTable;
 
-	  /// <summary>
-	  /// if true, need to skip over a possessive found in the last call to next() </summary>
-	  private bool skipPossessive = false;
+        /// <summary>
+        /// if true, need to skip over a possessive found in the last call to next() </summary>
+        private bool skipPossessive = false;
 
-	  // TODO: should there be a WORD_DELIM category for chars that only separate words (no catenation of subwords will be
-	  // done if separated by these chars?) "," would be an obvious candidate...
-	  static WordDelimiterIterator()
-	  {
-		var tab = new sbyte[256];
-		for (int i = 0; i < 256; i++)
-		{
-		  sbyte code = 0;
-		  if (char.IsLower((char)i))
-		  {
-			code |= (sbyte)WordDelimiterFilter.LOWER;
-		  }
-		  else if (char.IsUpper((char)i))
-		  {
-			code |= (sbyte)WordDelimiterFilter.UPPER;
-		  }
-		  else if (char.IsDigit((char)i))
-		  {
-			code |= (sbyte)WordDelimiterFilter.DIGIT;
-		  }
-		  if (code == 0)
-		  {
-			code = WordDelimiterFilter.SUBWORD_DELIM;
-		  }
-		  tab[i] = code;
-		}
-		DEFAULT_WORD_DELIM_TABLE = tab;
-	  }
+        // TODO: should there be a WORD_DELIM category for chars that only separate words (no catenation of subwords will be
+        // done if separated by these chars?) "," would be an obvious candidate...
+        static WordDelimiterIterator()
+        {
+            var tab = new sbyte[256];
+            for (int i = 0; i < 256; i++)
+            {
+                sbyte code = 0;
+                if (char.IsLower((char)i))
+                {
+                    code |= (sbyte)WordDelimiterFilter.LOWER;
+                }
+                else if (char.IsUpper((char)i))
+                {
+                    code |= (sbyte)WordDelimiterFilter.UPPER;
+                }
+                else if (char.IsDigit((char)i))
+                {
+                    code |= (sbyte)WordDelimiterFilter.DIGIT;
+                }
+                if (code == 0)
+                {
+                    code = WordDelimiterFilter.SUBWORD_DELIM;
+                }
+                tab[i] = code;
+            }
+            DEFAULT_WORD_DELIM_TABLE = tab;
+        }
 
-	  /// <summary>
-	  /// Create a new WordDelimiterIterator operating with the supplied rules.
-	  /// </summary>
-	  /// <param name="charTypeTable"> table containing character types </param>
-	  /// <param name="splitOnCaseChange"> if true, causes "PowerShot" to be two tokens; ("Power-Shot" remains two parts regards) </param>
-	  /// <param name="splitOnNumerics"> if true, causes "j2se" to be three tokens; "j" "2" "se" </param>
-	  /// <param name="stemEnglishPossessive"> if true, causes trailing "'s" to be removed for each subword: "O'Neil's" => "O", "Neil" </param>
-	  internal WordDelimiterIterator(sbyte[] charTypeTable, bool splitOnCaseChange, bool splitOnNumerics, bool stemEnglishPossessive)
-	  {
-		this.charTypeTable = charTypeTable;
-		this.splitOnCaseChange = splitOnCaseChange;
-		this.splitOnNumerics = splitOnNumerics;
-		this.stemEnglishPossessive = stemEnglishPossessive;
-	  }
+        /// <summary>
+        /// Create a new WordDelimiterIterator operating with the supplied rules.
+        /// </summary>
+        /// <param name="charTypeTable"> table containing character types </param>
+        /// <param name="splitOnCaseChange"> if true, causes "PowerShot" to be two tokens; ("Power-Shot" remains two parts regards) </param>
+        /// <param name="splitOnNumerics"> if true, causes "j2se" to be three tokens; "j" "2" "se" </param>
+        /// <param name="stemEnglishPossessive"> if true, causes trailing "'s" to be removed for each subword: "O'Neil's" => "O", "Neil" </param>
+        internal WordDelimiterIterator(sbyte[] charTypeTable, bool splitOnCaseChange, bool splitOnNumerics, bool stemEnglishPossessive)
+        {
+            this.charTypeTable = charTypeTable;
+            this.splitOnCaseChange = splitOnCaseChange;
+            this.splitOnNumerics = splitOnNumerics;
+            this.stemEnglishPossessive = stemEnglishPossessive;
+        }
 
-	  /// <summary>
-	  /// Advance to the next subword in the string.
-	  /// </summary>
-	  /// <returns> index of the next subword, or <seealso cref="#DONE"/> if all subwords have been returned </returns>
-	  internal int next()
-	  {
-		current = end;
-		if (current == DONE)
-		{
-		  return DONE;
-		}
+        /// <summary>
+        /// Advance to the next subword in the string.
+        /// </summary>
+        /// <returns> index of the next subword, or <seealso cref="#DONE"/> if all subwords have been returned </returns>
+        internal int Next()
+        {
+            current = end;
+            if (current == DONE)
+            {
+                return DONE;
+            }
 
-		if (skipPossessive)
-		{
-		  current += 2;
-		  skipPossessive = false;
-		}
+            if (skipPossessive)
+            {
+                current += 2;
+                skipPossessive = false;
+            }
 
-		int lastType = 0;
+            int lastType = 0;
 
-		while (current < endBounds && (WordDelimiterFilter.isSubwordDelim(lastType = charType(text[current]))))
-		{
-		  current++;
-		}
+            while (current < endBounds && (WordDelimiterFilter.IsSubwordDelim(lastType = CharType(text[current]))))
+            {
+                current++;
+            }
 
-		if (current >= endBounds)
-		{
-		  return end = DONE;
-		}
+            if (current >= endBounds)
+            {
+                return end = DONE;
+            }
 
-		for (end = current + 1; end < endBounds; end++)
-		{
-		  int type_Renamed = charType(text[end]);
-		  if (isBreak(lastType, type_Renamed))
-		  {
-			break;
-		  }
-		  lastType = type_Renamed;
-		}
+            for (end = current + 1; end < endBounds; end++)
+            {
+                int type = CharType(text[end]);
+                if (IsBreak(lastType, type))
+                {
+                    break;
+                }
+                lastType = type;
+            }
 
-		if (end < endBounds - 1 && endsWithPossessive(end + 2))
-		{
-		  skipPossessive = true;
-		}
+            if (end < endBounds - 1 && EndsWithPossessive(end + 2))
+            {
+                skipPossessive = true;
+            }
 
-		return end;
-	  }
+            return end;
+        }
 
 
-	  /// <summary>
-	  /// Return the type of the current subword.
-	  /// This currently uses the type of the first character in the subword.
-	  /// </summary>
-	  /// <returns> type of the current word </returns>
-	  internal int type()
-	  {
-		if (end == DONE)
-		{
-		  return 0;
-		}
+        /// <summary>
+        /// Return the type of the current subword.
+        /// This currently uses the type of the first character in the subword.
+        /// </summary>
+        /// <returns> type of the current word </returns>
+        internal int Type
+        {
+            get
+            {
+                if (end == DONE)
+                {
+                    return 0;
+                }
 
-		int type_Renamed = charType(text[current]);
-		switch (type_Renamed)
-		{
-		  // return ALPHA word type for both lower and upper
-		  case WordDelimiterFilter.LOWER:
-		  case WordDelimiterFilter.UPPER:
-			return WordDelimiterFilter.ALPHA;
-		  default:
-			return type_Renamed;
-		}
-	  }
+                int type = CharType(text[current]);
+                switch (type)
+                {
+                    // return ALPHA word type for both lower and upper
+                    case WordDelimiterFilter.LOWER:
+                    case WordDelimiterFilter.UPPER:
+                        return WordDelimiterFilter.ALPHA;
+                    default:
+                        return type;
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Reset the text to a new value, and reset all state
-	  /// </summary>
-	  /// <param name="text"> New text </param>
-	  /// <param name="length"> length of the text </param>
-	  internal void setText(char[] text, int length)
-	  {
-		this.text = text;
-		this.length = this.endBounds = length;
-		current = startBounds = end = 0;
-		skipPossessive = hasFinalPossessive = false;
-		setBounds();
-	  }
+        /// <summary>
+        /// Reset the text to a new value, and reset all state
+        /// </summary>
+        /// <param name="text"> New text </param>
+        /// <param name="length"> length of the text </param>
+        internal void SetText(char[] text, int length)
+        {
+            this.text = text;
+            this.length = this.endBounds = length;
+            current = startBounds = end = 0;
+            skipPossessive = hasFinalPossessive = false;
+            SetBounds();
+        }
 
-	  // ================================================= Helper Methods ================================================
+        // ================================================= Helper Methods ================================================
 
-	  /// <summary>
-	  /// Determines whether the transition from lastType to type indicates a break
-	  /// </summary>
-	  /// <param name="lastType"> Last subword type </param>
-	  /// <param name="type"> Current subword type </param>
-	  /// <returns> {@code true} if the transition indicates a break, {@code false} otherwise </returns>
-	  private bool isBreak(int lastType, int type)
-	  {
-		if ((type & lastType) != 0)
-		{
-		  return false;
-		}
+        /// <summary>
+        /// Determines whether the transition from lastType to type indicates a break
+        /// </summary>
+        /// <param name="lastType"> Last subword type </param>
+        /// <param name="type"> Current subword type </param>
+        /// <returns> {@code true} if the transition indicates a break, {@code false} otherwise </returns>
+        private bool IsBreak(int lastType, int type)
+        {
+            if ((type & lastType) != 0)
+            {
+                return false;
+            }
 
-		if (!splitOnCaseChange && WordDelimiterFilter.isAlpha(lastType) && WordDelimiterFilter.isAlpha(type))
-		{
-		  // ALPHA->ALPHA: always ignore if case isn't considered.
-		  return false;
-		}
-		else if (WordDelimiterFilter.isUpper(lastType) && WordDelimiterFilter.isAlpha(type))
-		{
-		  // UPPER->letter: Don't split
-		  return false;
-		}
-		else if (!splitOnNumerics && ((WordDelimiterFilter.isAlpha(lastType) && WordDelimiterFilter.isDigit(type)) || (WordDelimiterFilter.isDigit(lastType) && WordDelimiterFilter.isAlpha(type))))
-		{
-		  // ALPHA->NUMERIC, NUMERIC->ALPHA :Don't split
-		  return false;
-		}
+            if (!splitOnCaseChange && WordDelimiterFilter.IsAlpha(lastType) && WordDelimiterFilter.IsAlpha(type))
+            {
+                // ALPHA->ALPHA: always ignore if case isn't considered.
+                return false;
+            }
+            else if (WordDelimiterFilter.IsUpper(lastType) && WordDelimiterFilter.IsAlpha(type))
+            {
+                // UPPER->letter: Don't split
+                return false;
+            }
+            else if (!splitOnNumerics && ((WordDelimiterFilter.IsAlpha(lastType) && WordDelimiterFilter.IsDigit(type)) || (WordDelimiterFilter.IsDigit(lastType) && WordDelimiterFilter.IsAlpha(type))))
+            {
+                // ALPHA->NUMERIC, NUMERIC->ALPHA :Don't split
+                return false;
+            }
 
-		return true;
-	  }
+            return true;
+        }
 
-	  /// <summary>
-	  /// Determines if the current word contains only one subword.  Note, it could be potentially surrounded by delimiters
-	  /// </summary>
-	  /// <returns> {@code true} if the current word contains only one subword, {@code false} otherwise </returns>
-	  internal bool SingleWord
-	  {
-		  get
-		  {
-			if (hasFinalPossessive)
-			{
-			  return current == startBounds && end == endBounds - 2;
-			}
-			else
-			{
-			  return current == startBounds && end == endBounds;
-			}
-		  }
-	  }
+        /// <summary>
+        /// Determines if the current word contains only one subword.  Note, it could be potentially surrounded by delimiters
+        /// </summary>
+        /// <returns> {@code true} if the current word contains only one subword, {@code false} otherwise </returns>
+        internal bool SingleWord
+        {
+            get
+            {
+                if (hasFinalPossessive)
+                {
+                    return current == startBounds && end == endBounds - 2;
+                }
+                else
+                {
+                    return current == startBounds && end == endBounds;
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Set the internal word bounds (remove leading and trailing delimiters). Note, if a possessive is found, don't remove
-	  /// it yet, simply note it.
-	  /// </summary>
-	  private void setBounds()
-	  {
-		while (startBounds < length && (WordDelimiterFilter.isSubwordDelim(charType(text[startBounds]))))
-		{
-		  startBounds++;
-		}
+        /// <summary>
+        /// Set the internal word bounds (remove leading and trailing delimiters). Note, if a possessive is found, don't remove
+        /// it yet, simply note it.
+        /// </summary>
+        private void SetBounds()
+        {
+            while (startBounds < length && (WordDelimiterFilter.IsSubwordDelim(CharType(text[startBounds]))))
+            {
+                startBounds++;
+            }
 
-		while (endBounds > startBounds && (WordDelimiterFilter.isSubwordDelim(charType(text[endBounds - 1]))))
-		{
-		  endBounds--;
-		}
-		if (endsWithPossessive(endBounds))
-		{
-		  hasFinalPossessive = true;
-		}
-		current = startBounds;
-	  }
+            while (endBounds > startBounds && (WordDelimiterFilter.IsSubwordDelim(CharType(text[endBounds - 1]))))
+            {
+                endBounds--;
+            }
+            if (EndsWithPossessive(endBounds))
+            {
+                hasFinalPossessive = true;
+            }
+            current = startBounds;
+        }
 
-	  /// <summary>
-	  /// Determines if the text at the given position indicates an English possessive which should be removed
-	  /// </summary>
-	  /// <param name="pos"> Position in the text to check if it indicates an English possessive </param>
-	  /// <returns> {@code true} if the text at the position indicates an English posessive, {@code false} otherwise </returns>
-	  private bool endsWithPossessive(int pos)
-	  {
-		return (stemEnglishPossessive && pos > 2 && text[pos - 2] == '\'' && (text[pos - 1] == 's' || text[pos - 1] == 'S') && WordDelimiterFilter.isAlpha(charType(text[pos - 3])) && (pos == endBounds || WordDelimiterFilter.isSubwordDelim(charType(text[pos]))));
-	  }
+        /// <summary>
+        /// Determines if the text at the given position indicates an English possessive which should be removed
+        /// </summary>
+        /// <param name="pos"> Position in the text to check if it indicates an English possessive </param>
+        /// <returns> {@code true} if the text at the position indicates an English posessive, {@code false} otherwise </returns>
+        private bool EndsWithPossessive(int pos)
+        {
+            return (stemEnglishPossessive && pos > 2 && text[pos - 2] == '\'' && (text[pos - 1] == 's' || text[pos - 1] == 'S') && WordDelimiterFilter.IsAlpha(CharType(text[pos - 3])) && (pos == endBounds || WordDelimiterFilter.IsSubwordDelim(CharType(text[pos]))));
+        }
 
-	  /// <summary>
-	  /// Determines the type of the given character
-	  /// </summary>
-	  /// <param name="ch"> Character whose type is to be determined </param>
-	  /// <returns> Type of the character </returns>
-	  private int charType(int ch)
-	  {
-		if (ch < charTypeTable.Length)
-		{
-		  return charTypeTable[ch];
-		}
-		return getType(ch);
-	  }
+        /// <summary>
+        /// Determines the type of the given character
+        /// </summary>
+        /// <param name="ch"> Character whose type is to be determined </param>
+        /// <returns> Type of the character </returns>
+        private int CharType(int ch)
+        {
+            if (ch < charTypeTable.Length)
+            {
+                return charTypeTable[ch];
+            }
+            return GetType(ch);
+        }
 
-	  /// <summary>
-	  /// Computes the type of the given character
-	  /// </summary>
-	  /// <param name="ch"> Character whose type is to be determined </param>
-	  /// <returns> Type of the character </returns>
-	  public static sbyte getType(int ch)
-	  {
-		switch (char.getType(ch))
-		{
-		  case char.UPPERCASE_LETTER:
-			  return WordDelimiterFilter.UPPER;
-		  case char.LOWERCASE_LETTER:
-			  return WordDelimiterFilter.LOWER;
+        /// <summary>
+        /// Computes the type of the given character
+        /// </summary>
+        /// <param name="ch"> Character whose type is to be determined </param>
+        /// <returns> Type of the character </returns>
+        public static sbyte GetType(int ch)
+        {
+            switch (char.GetUnicodeCategory((char)ch))
+            {
+                case UnicodeCategory.UppercaseLetter:
+                    return WordDelimiterFilter.UPPER;
+                case UnicodeCategory.LowercaseLetter:
+                    return WordDelimiterFilter.LOWER;
 
-		  case char.TITLECASE_LETTER:
-		  case char.MODIFIER_LETTER:
-		  case char.OTHER_LETTER:
-		  case char.NON_SPACING_MARK:
-		  case char.ENCLOSING_MARK: // depends what it encloses?
-		  case char.COMBINING_SPACING_MARK:
-			return WordDelimiterFilter.ALPHA;
+                case UnicodeCategory.TitlecaseLetter:
+                case UnicodeCategory.ModifierLetter:
+                case UnicodeCategory.OtherLetter:
+                case UnicodeCategory.NonSpacingMark:
+                case UnicodeCategory.EnclosingMark: // depends what it encloses?
+                case UnicodeCategory.SpacingCombiningMark:
+                    return WordDelimiterFilter.ALPHA;
 
-		  case char.DECIMAL_DIGIT_NUMBER:
-		  case char.LETTER_NUMBER:
-		  case char.OTHER_NUMBER:
-			return WordDelimiterFilter.DIGIT;
+                case UnicodeCategory.DecimalDigitNumber:
+                case UnicodeCategory.LetterNumber:
+                case UnicodeCategory.OtherNumber:
+                    return WordDelimiterFilter.DIGIT;
 
-		  // case Character.SPACE_SEPARATOR:
-		  // case Character.LINE_SEPARATOR:
-		  // case Character.PARAGRAPH_SEPARATOR:
-		  // case Character.CONTROL:
-		  // case Character.FORMAT:
-		  // case Character.PRIVATE_USE:
+                // case Character.SPACE_SEPARATOR:
+                // case Character.LINE_SEPARATOR:
+                // case Character.PARAGRAPH_SEPARATOR:
+                // case Character.CONTROL:
+                // case Character.FORMAT:
+                // case Character.PRIVATE_USE:
 
-		  case char.SURROGATE: // prevent splitting
-			return WordDelimiterFilter.ALPHA | WordDelimiterFilter.DIGIT;
+                case UnicodeCategory.Surrogate:
+                    return WordDelimiterFilter.ALPHA | WordDelimiterFilter.DIGIT;
 
-		  // case Character.DASH_PUNCTUATION:
-		  // case Character.START_PUNCTUATION:
-		  // case Character.END_PUNCTUATION:
-		  // case Character.CONNECTOR_PUNCTUATION:
-		  // case Character.OTHER_PUNCTUATION:
-		  // case Character.MATH_SYMBOL:
-		  // case Character.CURRENCY_SYMBOL:
-		  // case Character.MODIFIER_SYMBOL:
-		  // case Character.OTHER_SYMBOL:
-		  // case Character.INITIAL_QUOTE_PUNCTUATION:
-		  // case Character.FINAL_QUOTE_PUNCTUATION:
+                // case Character.DASH_PUNCTUATION:
+                // case Character.START_PUNCTUATION:
+                // case Character.END_PUNCTUATION:
+                // case Character.CONNECTOR_PUNCTUATION:
+                // case Character.OTHER_PUNCTUATION:
+                // case Character.MATH_SYMBOL:
+                // case Character.CURRENCY_SYMBOL:
+                // case Character.MODIFIER_SYMBOL:
+                // case Character.OTHER_SYMBOL:
+                // case Character.INITIAL_QUOTE_PUNCTUATION:
+                // case Character.FINAL_QUOTE_PUNCTUATION:
 
-		  default:
-			  return WordDelimiterFilter.SUBWORD_DELIM;
-		}
-	  }
-	}
+                default:
+                    return WordDelimiterFilter.SUBWORD_DELIM;
+
+            }
+
+            //switch (char.getType(ch))
+            //{
+            //  case char.UPPERCASE_LETTER:
+            //	  return WordDelimiterFilter.UPPER;
+            //  case char.LOWERCASE_LETTER:
+            //	  return WordDelimiterFilter.LOWER;
+
+            //  case char.TITLECASE_LETTER:
+            //  case char.MODIFIER_LETTER:
+            //  case char.OTHER_LETTER:
+            //  case char.NON_SPACING_MARK:
+            //  case char.ENCLOSING_MARK: // depends what it encloses?
+            //  case char.COMBINING_SPACING_MARK:
+            //	return WordDelimiterFilter.ALPHA;
+
+            //  case char.DECIMAL_DIGIT_NUMBER:
+            //  case char.LETTER_NUMBER:
+            //  case char.OTHER_NUMBER:
+            //	return WordDelimiterFilter.DIGIT;
+
+            //  // case Character.SPACE_SEPARATOR:
+            //  // case Character.LINE_SEPARATOR:
+            //  // case Character.PARAGRAPH_SEPARATOR:
+            //  // case Character.CONTROL:
+            //  // case Character.FORMAT:
+            //  // case Character.PRIVATE_USE:
+
+            //  case char.SURROGATE: // prevent splitting
+            //	return WordDelimiterFilter.ALPHA | WordDelimiterFilter.DIGIT;
+
+            //  // case Character.DASH_PUNCTUATION:
+            //  // case Character.START_PUNCTUATION:
+            //  // case Character.END_PUNCTUATION:
+            //  // case Character.CONNECTOR_PUNCTUATION:
+            //  // case Character.OTHER_PUNCTUATION:
+            //  // case Character.MATH_SYMBOL:
+            //  // case Character.CURRENCY_SYMBOL:
+            //  // case Character.MODIFIER_SYMBOL:
+            //  // case Character.OTHER_SYMBOL:
+            //  // case Character.INITIAL_QUOTE_PUNCTUATION:
+            //  // case Character.FINAL_QUOTE_PUNCTUATION:
+
+            //  default:
+            //	  return WordDelimiterFilter.SUBWORD_DELIM;
+            //}
+        }
+    }
 }

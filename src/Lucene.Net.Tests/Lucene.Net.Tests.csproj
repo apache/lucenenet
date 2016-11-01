@@ -55,10 +55,53 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="core\App.config" />
+    <EmbeddedResource Include="core\Index\bogus24.upgraded.to.36.zip" />
+    <EmbeddedResource Include="core\Index\index.30.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.30.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.optimized.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.31.optimized.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.32.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.32.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.34.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.34.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.36.surrogates.zip" />
+    <EmbeddedResource Include="core\Index\index.40.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.optimized.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.40.optimized.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.41.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.41.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.42.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.42.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.45.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.45.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\index.461.cfs.zip" />
+    <EmbeddedResource Include="core\Index\index.461.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\moreterms.40.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.19.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.19.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.20.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.20.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.21.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.21.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.22.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.22.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.23.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.23.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.24.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.24.nocfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.29.cfs.zip" />
+    <EmbeddedResource Include="core\Index\unsupported.29.nocfs.zip" />
     <None Include="core\Lucene.Net.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
+      <Name>Lucene.Net.Codecs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
       <Project>{48f7884a-9454-4e88-8413-9d35992cb440}</Project>
       <Name>Lucene.Net.Facet</Name>
@@ -165,6 +208,8 @@
     <Compile Include="core\Index\TestAllFilesHaveChecksumFooter.cs" />
     <Compile Include="core\Index\TestAllFilesHaveCodecHeader.cs" />
     <Compile Include="core\Index\TestAtomicUpdate.cs" />
+    <Compile Include="core\Index\TestBackwardsCompatibility.cs" />
+    <Compile Include="core\Index\TestBackwardsCompatibility3x.cs" />
     <Compile Include="core\Index\TestBagOfPositions.cs" />
     <Compile Include="core\Index\TestBagOfPostings.cs" />
     <Compile Include="core\Index\TestBinaryDocValuesUpdates.cs" />
@@ -199,6 +244,7 @@
     <Compile Include="core\Index\TestFieldsReader.cs" />
     <Compile Include="core\Index\TestFilterAtomicReader.cs" />
     <Compile Include="core\Index\TestFlex.cs" />
+    <Compile Include="core\Index\TestFlushByRamOrCountsPolicy.cs" />
     <Compile Include="core\Index\TestForceMergeForever.cs" />
     <Compile Include="core\Index\TestForTooMuchCloning.cs" />
     <Compile Include="core\Index\TestIndexableField.cs" />
@@ -217,6 +263,7 @@
     <Compile Include="core\Index\TestIndexWriterMerging.cs" />
     <Compile Include="core\Index\TestIndexWriterNRTIsCurrent.cs" />
     <Compile Include="core\Index\TestIndexWriterOnDiskFull.cs" />
+    <Compile Include="core\Index\TestIndexWriterOnJRECrash.cs" />
     <Compile Include="core\Index\TestIndexWriterOutOfFileDescriptors.cs" />
     <Compile Include="core\Index\TestIndexWriterReader.cs" />
     <Compile Include="core\Index\TestIndexWriterUnicode.cs" />
@@ -284,6 +331,7 @@
     <Compile Include="core\Index\TestTransactions.cs" />
     <Compile Include="core\Index\TestTryDelete.cs" />
     <Compile Include="core\Index\TestTwoPhaseCommitTool.cs" />
+    <Compile Include="core\Index\TestUniqueTermCount.cs" />
     <Compile Include="core\RectangularArrays.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -327,6 +375,7 @@
     <Compile Include="core\Search\TestComplexExplanationsOfNonMatches.cs" />
     <Compile Include="core\Search\TestConjunctions.cs" />
     <Compile Include="core\Search\TestConstantScoreQuery.cs" />
+    <Compile Include="core\Search\TestControlledRealTimeReopenThread.cs" />
     <Compile Include="core\Search\TestCustomSearcherSort.cs" />
     <Compile Include="core\Search\TestDateFilter.cs" />
     <Compile Include="core\Search\TestDateSort.cs" />
@@ -339,6 +388,7 @@
     <Compile Include="core\Search\TestEarlyTermination.cs" />
     <Compile Include="core\Search\TestElevationComparator.cs" />
     <Compile Include="core\Search\TestExplanations.cs" />
+    <Compile Include="core\Search\TestFieldCache.cs" />
     <Compile Include="core\Search\TestFieldCacheRangeFilter.cs" />
     <Compile Include="core\Search\TestFieldCacheRewriteMethod.cs" />
     <Compile Include="core\Search\TestFieldCacheTermsFilter.cs" />
@@ -395,6 +445,7 @@
     <Compile Include="core\Search\TestTermRangeQuery.cs" />
     <Compile Include="core\Search\TestTermScorer.cs" />
     <Compile Include="core\Search\TestTermVectors.cs" />
+    <Compile Include="core\Search\TestTimeLimitingCollector.cs" />
     <Compile Include="core\Search\TestTopDocsCollector.cs" />
     <Compile Include="core\Search\TestTopDocsMerge.cs" />
     <Compile Include="core\Search\TestTopFieldCollector.cs" />
@@ -421,12 +472,24 @@
     <Compile Include="core\SupportClassException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Support\BaseBufferTestCase.cs" />
+    <Compile Include="core\Support\TestLongBuffer.cs" />
+    <Compile Include="core\Support\TestByteBuffer.cs" />
+    <Compile Include="core\Support\TestLurchTable.cs" />
+    <Compile Include="core\Support\TestLurchTableThreading.cs" />
+    <Compile Include="core\Support\TestDataInputStream.cs" />
+    <Compile Include="core\Support\TestDataOutputStream.cs" />
     <Compile Include="core\TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\TestDemo.cs" />
+    <Compile Include="core\TestExternalCodecs.cs" />
     <Compile Include="core\TestMergeSchedulerExternal.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\TestSearch.cs" />
+    <Compile Include="core\TestSearchForDuplicates.cs" />
+    <Compile Include="core\TestWorstCaseTestBehavior.cs" />
     <Compile Include="core\Util\Automaton\TestBasicOperations.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -457,12 +520,16 @@
     <Compile Include="core\Util\Fst\Test2BFST.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\Fst\TestBytesStore.cs" />
+    <Compile Include="core\Util\Fst\TestFSTs.cs" />
     <Compile Include="core\Util\Packed\TestEliasFanoDocIdSet.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Util\Packed\TestEliasFanoSequence.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\Packed\TestPackedInts.cs" />
+    <Compile Include="core\Util\StressRamUsageEstimator.cs" />
     <Compile Include="core\Util\Test2BPagedBytes.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -512,6 +579,7 @@
     <Compile Include="core\Util\TestFixedBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestIdentityHashSet.cs" />
     <Compile Include="core\Util\TestIndexableBinaryStringTools.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -530,6 +598,7 @@
     <Compile Include="core\Util\TestLongBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestMathUtil.cs" />
     <Compile Include="core\Util\TestMergedIterator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -539,6 +608,7 @@
     <Compile Include="core\Util\TestNumericUtils.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestOfflineSorter.cs" />
     <Compile Include="core\Util\TestOpenBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -554,6 +624,7 @@
     <Compile Include="core\Util\TestQueryBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestRamUsageEstimator.cs" />
     <Compile Include="core\Util\TestRamUsageEstimatorOnWildAnimals.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -584,6 +655,7 @@
     <Compile Include="core\Util\TestTimSorter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Support\TestToStringUtils.cs" />
     <Compile Include="core\Util\TestUnicodeUtil.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -597,6 +669,7 @@
     <Compile Include="core\Util\TestWAH8DocIdSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestWeakIdentityMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="core\Util\Cache\" />
@@ -604,6 +677,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="core\Support\ReadFully.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

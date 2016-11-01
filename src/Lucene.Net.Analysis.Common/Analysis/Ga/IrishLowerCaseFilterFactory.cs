@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.ga
+namespace Lucene.Net.Analysis.Ga
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,46 +20,41 @@ namespace org.apache.lucene.analysis.ga
 	 * limitations under the License.
 	 */
 
-	using AbstractAnalysisFactory = org.apache.lucene.analysis.util.AbstractAnalysisFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="IrishLowerCaseFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.IrishLowerCaseFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class IrishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="IrishLowerCaseFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.IrishLowerCaseFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class IrishLowerCaseFilterFactory : TokenFilterFactory, MultiTermAwareComponent
-	{
+        /// <summary>
+        /// Creates a new IrishLowerCaseFilterFactory </summary>
+        public IrishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new IrishLowerCaseFilterFactory </summary>
-	  public IrishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        public override TokenStream Create(TokenStream input)
+        {
+            return new IrishLowerCaseFilter(input);
+        }
 
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new IrishLowerCaseFilter(input);
-	  }
-
-	  // this will 'mostly work', except for special cases, just like most other filters
-	  public virtual AbstractAnalysisFactory MultiTermComponent
-	  {
-		  get
-		  {
-			return this;
-		  }
-	  }
-	}
-
+        // this will 'mostly work', except for special cases, just like most other filters
+        public virtual AbstractAnalysisFactory MultiTermComponent
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
 }

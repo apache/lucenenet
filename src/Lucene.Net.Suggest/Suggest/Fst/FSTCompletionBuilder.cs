@@ -1,11 +1,10 @@
-﻿using System;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
+using System;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,41 +28,41 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// <h2>Implementation details</h2>
     /// 
     /// <para>
-    /// The construction step in <seealso cref="#finalize()"/> works as follows:
-    /// <ul>
-    /// <li>A set of input terms and their buckets is given.</li>
-    /// <li>All terms in the input are prefixed with a synthetic pseudo-character
+    /// The construction step in <see cref="Finalize"/> works as follows:
+    /// <list type="bullet">
+    /// <item>A set of input terms and their buckets is given.</item>
+    /// <item>All terms in the input are prefixed with a synthetic pseudo-character
     /// (code) of the weight bucket the term fell into. For example a term
-    /// <code>abc</code> with a discretized weight equal '1' would become
-    /// <code>1abc</code>.</li>
-    /// <li>The terms are then sorted by their raw value of UTF-8 character values
-    /// (including the synthetic bucket code in front).</li>
-    /// <li>A finite state automaton (<seealso cref="FST"/>) is constructed from the input. The
+    /// <c>abc</c> with a discretized weight equal '1' would become
+    /// <c>1abc</c>.</item>
+    /// <item>The terms are then sorted by their raw value of UTF-8 character values
+    /// (including the synthetic bucket code in front).</item>
+    /// <item>A finite state automaton (<see cref="FST"/>) is constructed from the input. The
     /// root node has arcs labeled with all possible weights. We cache all these
-    /// arcs, highest-weight first.</li>
-    /// </ul>
+    /// arcs, highest-weight first.</item>
+    /// </list>
     /// 
     /// </para>
     /// <para>
-    /// At runtime, in <seealso cref="FSTCompletion#lookup(CharSequence, int)"/>, 
+    /// At runtime, in <see cref="FSTCompletion.DoLookup(string, int)"/>, 
     /// the automaton is utilized as follows:
-    /// <ul>
-    /// <li>For each possible term weight encoded in the automaton (cached arcs from
+    /// <list type="bullet">
+    /// <item>For each possible term weight encoded in the automaton (cached arcs from
     /// the root above), starting with the highest one, we descend along the path of
     /// the input key. If the key is not a prefix of a sequence in the automaton
-    /// (path ends prematurely), we exit immediately -- no completions.</li>
-    /// <li>Otherwise, we have found an internal automaton node that ends the key.
+    /// (path ends prematurely), we exit immediately -- no completions.</item>
+    /// <item>Otherwise, we have found an internal automaton node that ends the key.
     /// <b>The entire subautomaton (all paths) starting from this node form the key's
     /// completions.</b> We start the traversal of this subautomaton. Every time we
     /// reach a final state (arc), we add a single suggestion to the list of results
     /// (the weight of this suggestion is constant and equal to the root path we
     /// started from). The tricky part is that because automaton edges are sorted and
     /// we scan depth-first, we can terminate the entire procedure as soon as we
-    /// collect enough suggestions the user requested.</li>
-    /// <li>In case the number of suggestions collected in the step above is still
+    /// collect enough suggestions the user requested.</item>
+    /// <item>In case the number of suggestions collected in the step above is still
     /// insufficient, we proceed to the next (smaller) weight leaving the root node
-    /// and repeat the same algorithm again.</li>
-    /// </ul>
+    /// and repeat the same algorithm again.</item>
+    /// </list>
     /// 
     /// <h2>Runtime behavior and performance characteristic</h2>
     /// 
@@ -103,8 +102,8 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// 
     /// </para>
     /// </summary>
-    /// <seealso cref= FSTCompletion
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="FSTCompletion"/>
+    /// @lucene.experimental
     public class FSTCompletionBuilder
     {
         /// <summary>
@@ -137,10 +136,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// collects all the input entries, their weights and then provides sorted
         /// order.
         /// </summary>
-        private readonly BytesRefSorter sorter;
+        private readonly IBytesRefSorter sorter;
 
         /// <summary>
-        /// Scratch buffer for <seealso cref="#add(BytesRef, int)"/>.
+        /// Scratch buffer for <see cref="Add(BytesRef, int)"/>.
         /// </summary>
         private readonly BytesRef scratch = new BytesRef();
 
@@ -150,12 +149,12 @@ namespace Lucene.Net.Search.Suggest.Fst
         private readonly int shareMaxTailLength;
 
         /// <summary>
-        /// Creates an <seealso cref="FSTCompletion"/> with default options: 10 buckets, exact match
-        /// promoted to first position and <seealso cref="InMemorySorter"/> with a comparator obtained from
-        /// <seealso cref="BytesRef#getUTF8SortedAsUnicodeComparator()"/>.
+        /// Creates an <see cref="FSTCompletion"/> with default options: 10 buckets, exact match
+        /// promoted to first position and <see cref="InMemorySorter"/> with a comparator obtained from
+        /// <see cref="BytesRef.UTF8SortedAsUnicodeComparator"/>.
         /// </summary>
         public FSTCompletionBuilder()
-            : this(DEFAULT_BUCKETS, new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparator), int.MaxValue)
+            : this(DEFAULT_BUCKETS, new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparer), int.MaxValue)
         {
         }
 
@@ -163,23 +162,23 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Creates an FSTCompletion with the specified options. </summary>
         /// <param name="buckets">
         ///          The number of buckets for weight discretization. Buckets are used
-        ///          in <seealso cref="#add(BytesRef, int)"/> and must be smaller than the number
+        ///          in <see cref="Add(BytesRef, int)"/> and must be smaller than the number
         ///          given here.
         /// </param>
         /// <param name="sorter">
-        ///          <seealso cref="BytesRefSorter"/> used for re-sorting input for the automaton.
+        ///          <see cref="IBytesRefSorter"/> used for re-sorting input for the automaton.
         ///          For large inputs, use on-disk sorting implementations. The sorter
-        ///          is closed automatically in <seealso cref="#build()"/> if it implements
-        ///          <seealso cref="Closeable"/>.
+        ///          is closed automatically in <see cref="Build()"/> if it implements
+        ///          <see cref="IDisposable"/>.
         /// </param>
         /// <param name="shareMaxTailLength">
         ///          Max shared suffix sharing length.
         ///          
-        ///          See the description of this parameter in <seealso cref="Builder"/>'s constructor.
+        ///          See the description of this parameter in <see cref="Builder"/>'s constructor.
         ///          In general, for very large inputs you'll want to construct a non-minimal
         ///          automaton which will be larger, but the construction will take far less ram.
-        ///          For minimal automata, set it to <seealso cref="Integer#MAX_VALUE"/>. </param>
-        public FSTCompletionBuilder(int buckets, BytesRefSorter sorter, int shareMaxTailLength)
+        ///          For minimal automata, set it to <see cref="int.MaxValue"/>. </param>
+        public FSTCompletionBuilder(int buckets, IBytesRefSorter sorter, int shareMaxTailLength)
         {
             if (buckets < 1 || buckets > 255)
             {
@@ -220,7 +219,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             scratch.Length = 1;
-            scratch.Bytes[0] = (sbyte)bucket;
+            scratch.Bytes[0] = (byte)bucket;
             scratch.Append(utf8);
             sorter.Add(scratch);
         }
@@ -245,7 +244,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Builds the final automaton from a list of entries.
         /// </summary>
-        private FST<object> BuildAutomaton(BytesRefSorter sorter)
+        private FST<object> BuildAutomaton(IBytesRefSorter sorter)
         {
             // Build the automaton.
             Outputs<object> outputs = NoOutputs.Singleton;
@@ -270,5 +269,4 @@ namespace Lucene.Net.Search.Suggest.Fst
             return count == 0 ? null : builder.Finish();
         }
     }
-
 }

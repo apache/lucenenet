@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -17,7 +16,6 @@
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// This TokenFilter limits the number of tokens while indexing. It is
@@ -62,7 +60,7 @@
         {
             if (maxTokenCount < 1)
             {
-                throw new System.ArgumentException("maxTokenCount must be greater than zero");
+                throw new System.ArgumentOutOfRangeException("maxTokenCount must be greater than zero");
             }
             this.maxTokenCount = maxTokenCount;
             this.consumeAllTokens = consumeAllTokens;
@@ -103,5 +101,4 @@
             exhausted = false;
         }
     }
-
 }

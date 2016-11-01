@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
-namespace org.apache.lucene.analysis.core
+namespace Lucene.Net.Analysis.Core
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -22,100 +26,93 @@ namespace org.apache.lucene.analysis.core
 	 * limitations under the License.
 	 */
 
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using English = org.apache.lucene.util.English;
-	using Version = org.apache.lucene.util.Version;
+    public class TestTypeTokenFilter : BaseTokenStreamTestCase
+    {
 
+        [Test]
+        public virtual void TestTypeFilter()
+        {
+            StringReader reader = new StringReader("121 is palindrome, while 123 is not");
+            ISet<string> stopTypes = AsSet("<NUM>");
+            TokenStream stream =
+#pragma warning disable 612, 618
+                new TypeTokenFilter(
+#pragma warning restore 612, 618
+                    TEST_VERSION_CURRENT, true, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes);
+            AssertTokenStreamContents(stream, new string[] { "is", "palindrome", "while", "is", "not" });
+        }
 
+        /// <summary>
+        /// Test Position increments applied by TypeTokenFilter with and without enabling this option.
+        /// </summary>
+        [Test]
+        public virtual void TestStopPositons()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 10; i < 20; i++)
+            {
+                if (i % 3 != 0)
+                {
+                    sb.Append(i).Append(" ");
+                }
+                else
+                {
+                    string w = English.IntToEnglish(i).Trim();
+                    sb.Append(w).Append(" ");
+                }
+            }
+            log(sb.ToString());
+            string[] stopTypes = new string[] { "<NUM>" };
+            ISet<string> stopSet = AsSet(stopTypes);
 
-	public class TestTypeTokenFilter : BaseTokenStreamTestCase
-	{
+            // with increments
+            StringReader reader = new StringReader(sb.ToString());
+            TypeTokenFilter typeTokenFilter = new TypeTokenFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
+            TestPositons(typeTokenFilter);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTypeFilter() throws java.io.IOException
-	  public virtual void testTypeFilter()
-	  {
-		StringReader reader = new StringReader("121 is palindrome, while 123 is not");
-		ISet<string> stopTypes = asSet("<NUM>");
-		TokenStream stream = new TypeTokenFilter(TEST_VERSION_CURRENT, true, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes);
-		assertTokenStreamContents(stream, new string[]{"is", "palindrome", "while", "is", "not"});
-	  }
+            // without increments
+            reader = new StringReader(sb.ToString());
+            typeTokenFilter =
+#pragma warning disable 612, 618
+                new TypeTokenFilter(LuceneVersion.LUCENE_43, 
+#pragma warning restore 612, 618
+                    false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
+            TestPositons(typeTokenFilter);
 
-	  /// <summary>
-	  /// Test Position increments applied by TypeTokenFilter with and without enabling this option.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStopPositons() throws java.io.IOException
-	  public virtual void testStopPositons()
-	  {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 10; i < 20; i++)
-		{
-		  if (i % 3 != 0)
-		  {
-			sb.Append(i).Append(" ");
-		  }
-		  else
-		  {
-			string w = English.intToEnglish(i).trim();
-			sb.Append(w).Append(" ");
-		  }
-		}
-		log(sb.ToString());
-		string[] stopTypes = new string[]{"<NUM>"};
-		ISet<string> stopSet = asSet(stopTypes);
+        }
 
-		// with increments
-		StringReader reader = new StringReader(sb.ToString());
-		TypeTokenFilter typeTokenFilter = new TypeTokenFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
-		testPositons(typeTokenFilter);
+        private void TestPositons(TypeTokenFilter stpf)
+        {
+            ITypeAttribute typeAtt = stpf.GetAttribute<ITypeAttribute>();
+            ICharTermAttribute termAttribute = stpf.GetAttribute<ICharTermAttribute>();
+            IPositionIncrementAttribute posIncrAtt = stpf.GetAttribute<IPositionIncrementAttribute>();
+            stpf.Reset();
+            bool enablePositionIncrements = stpf.EnablePositionIncrements;
+            while (stpf.IncrementToken())
+            {
+                log("Token: " + termAttribute.ToString() + ": " + typeAtt.Type + " - " + posIncrAtt.PositionIncrement);
+                assertEquals("if position increment is enabled the positionIncrementAttribute value should be 3, otherwise 1", posIncrAtt.PositionIncrement, enablePositionIncrements ? 3 : 1);
+            }
+            stpf.End();
+            stpf.Dispose();
+        }
 
-		// without increments
-		reader = new StringReader(sb.ToString());
-		typeTokenFilter = new TypeTokenFilter(Version.LUCENE_43, false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
-		testPositons(typeTokenFilter);
+        [Test]
+        public virtual void TestTypeFilterWhitelist()
+        {
+            StringReader reader = new StringReader("121 is palindrome, while 123 is not");
+            ISet<string> stopTypes = Collections.Singleton("<NUM>");
+            TokenStream stream = new TypeTokenFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes, true);
+            AssertTokenStreamContents(stream, new string[] { "121", "123" });
+        }
 
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void testPositons(TypeTokenFilter stpf) throws java.io.IOException
-	  private void testPositons(TypeTokenFilter stpf)
-	  {
-		TypeAttribute typeAtt = stpf.getAttribute(typeof(TypeAttribute));
-		CharTermAttribute termAttribute = stpf.getAttribute(typeof(CharTermAttribute));
-		PositionIncrementAttribute posIncrAtt = stpf.getAttribute(typeof(PositionIncrementAttribute));
-		stpf.reset();
-		bool enablePositionIncrements = stpf.EnablePositionIncrements;
-		while (stpf.incrementToken())
-		{
-		  log("Token: " + termAttribute.ToString() + ": " + typeAtt.type() + " - " + posIncrAtt.PositionIncrement);
-		  assertEquals("if position increment is enabled the positionIncrementAttribute value should be 3, otherwise 1", posIncrAtt.PositionIncrement, enablePositionIncrements ? 3 : 1);
-		}
-		stpf.end();
-		stpf.close();
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTypeFilterWhitelist() throws java.io.IOException
-	  public virtual void testTypeFilterWhitelist()
-	  {
-		StringReader reader = new StringReader("121 is palindrome, while 123 is not");
-		ISet<string> stopTypes = Collections.singleton("<NUM>");
-		TokenStream stream = new TypeTokenFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes, true);
-		assertTokenStreamContents(stream, new string[]{"121", "123"});
-	  }
-
-	  // print debug info depending on VERBOSE
-	  private static void log(string s)
-	  {
-		if (VERBOSE)
-		{
-		  Console.WriteLine(s);
-		}
-	  }
-	}
-
+        // print debug info depending on VERBOSE
+        private static void log(string s)
+        {
+            if (VERBOSE)
+            {
+                Console.WriteLine(s);
+            }
+        }
+    }
 }

@@ -1,8 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +17,8 @@
      * limitations under the License.
      */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
+
     /// <summary>
     /// @lucene.experimental
     /// </summary>
@@ -30,5 +29,4 @@
         internal const string PAYLOAD_PARENT = "p";
         internal static readonly BytesRef PAYLOAD_PARENT_BYTES_REF = new BytesRef(PAYLOAD_PARENT);
     }
-
 }

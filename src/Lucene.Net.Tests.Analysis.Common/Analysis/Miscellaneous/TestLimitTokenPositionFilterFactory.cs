@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -19,87 +22,78 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+    public class TestLimitTokenPositionFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
+        [Test]
+        public virtual void TestMaxPosition1()
+        {
+            foreach (bool consumeAll in new bool[] { true, false })
+            {
+                TextReader reader = new StringReader("A1 B2 C3 D4 E5 F6");
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                // if we are consuming all tokens, we can use the checks, otherwise we can't
+                tokenizer.EnableChecks = consumeAll;
+                TokenStream stream = tokenizer;
+                stream = TokenFilterFactory("LimitTokenPosition", LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY, "1", LimitTokenPositionFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).Create(stream);
+                AssertTokenStreamContents(stream, new string[] { "A1" });
+            }
+        }
 
-	public class TestLimitTokenPositionFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestMissingParam()
+        {
+            try
+            {
+                TokenFilterFactory("LimitTokenPosition");
+                fail();
+            }
+            catch (System.ArgumentException e)
+            {
+                assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY));
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMaxPosition1() throws Exception
-	  public virtual void testMaxPosition1()
-	  {
-		foreach (bool consumeAll in new bool[]{true, false})
-		{
-		  Reader reader = new StringReader("A1 B2 C3 D4 E5 F6");
-		  MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		  // if we are consuming all tokens, we can use the checks, otherwise we can't
-		  tokenizer.EnableChecks = consumeAll;
-		  TokenStream stream = tokenizer;
-		  stream = tokenFilterFactory("LimitTokenPosition", LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY, "1", LimitTokenPositionFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).create(stream);
-		  assertTokenStreamContents(stream, new string[]{"A1"});
-		}
-	  }
+        [Test]
+        public virtual void TestMaxPosition1WithShingles()
+        {
+            foreach (bool consumeAll in new bool[] { true, false })
+            {
+                TextReader reader = new StringReader("one two three four five");
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                // if we are consuming all tokens, we can use the checks, otherwise we can't
+                tokenizer.EnableChecks = consumeAll;
+                TokenStream stream = tokenizer;
+                stream = TokenFilterFactory("Shingle", "minShingleSize", "2", "maxShingleSize", "3", "outputUnigrams", "true").Create(stream);
+                stream = TokenFilterFactory("LimitTokenPosition", LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY, "1", LimitTokenPositionFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).Create(stream);
+                AssertTokenStreamContents(stream, new string[] { "one", "one two", "one two three" });
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMissingParam() throws Exception
-	  public virtual void testMissingParam()
-	  {
-		try
-		{
-		  tokenFilterFactory("LimitTokenPosition");
-		  fail();
-		}
-		catch (System.ArgumentException e)
-		{
-		  assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.indexOf(LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY));
-		}
-	  }
+        [Test]
+        public virtual void TestConsumeAllTokens()
+        {
+            TextReader reader = new StringReader("A1 B2 C3 D4 E5 F6");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("LimitTokenPosition", "maxTokenPosition", "3", "consumeAllTokens", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "A1", "B2", "C3" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMaxPosition1WithShingles() throws Exception
-	  public virtual void testMaxPosition1WithShingles()
-	  {
-		foreach (bool consumeAll in new bool[]{true, false})
-		{
-		  Reader reader = new StringReader("one two three four five");
-		  MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		  // if we are consuming all tokens, we can use the checks, otherwise we can't
-		  tokenizer.EnableChecks = consumeAll;
-		  TokenStream stream = tokenizer;
-		  stream = tokenFilterFactory("Shingle", "minShingleSize", "2", "maxShingleSize", "3", "outputUnigrams", "true").create(stream);
-		  stream = tokenFilterFactory("LimitTokenPosition", LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY, "1", LimitTokenPositionFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).create(stream);
-		  assertTokenStreamContents(stream, new string[]{"one", "one two", "one two three"});
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testConsumeAllTokens() throws Exception
-	  public virtual void testConsumeAllTokens()
-	  {
-		Reader reader = new StringReader("A1 B2 C3 D4 E5 F6");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("LimitTokenPosition", "maxTokenPosition", "3", "consumeAllTokens", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"A1", "B2", "C3"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("LimitTokenPosition", "maxTokenPosition", "3", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception
+        /// </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("LimitTokenPosition", "maxTokenPosition", "3", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

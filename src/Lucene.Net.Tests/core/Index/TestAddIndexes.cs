@@ -1,21 +1,36 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
+    /*
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-
-    //using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
@@ -24,29 +39,12 @@ namespace Lucene.Net.Index
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+    using Pulsing41PostingsFormat = Lucene.Net.Codecs.Pulsing.Pulsing41PostingsFormat;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -1131,23 +1129,20 @@ namespace Lucene.Net.Index
 
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
-            //internal readonly PostingsFormat SimpleTextFormat;
+            internal readonly PostingsFormat SimpleTextFormat;
             internal readonly PostingsFormat DefaultFormat;
-
-            //internal readonly PostingsFormat MockSepFormat;
+            internal readonly PostingsFormat MockSepFormat;
 
             public CustomPerFieldCodec()
             {
-                //SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
+                SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
                 DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-                //MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
+                MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                return DefaultFormat;
-                //LUCENE TODO: Other codecs not defined in core
-                /*if (field.Equals("id"))
+                if (field.Equals("id"))
                 {
                     return SimpleTextFormat;
                 }
@@ -1158,7 +1153,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     return DefaultFormat;
-                }*/
+                }
             }
         }
 
@@ -1208,7 +1203,6 @@ namespace Lucene.Net.Index
          * simple test that ensures we getting expected exceptions
          */
         [Test]
-        [Ignore("We don't have all the codecs in place to run this.")]
         public virtual void TestAddIndexMissingCodec()
         {
             BaseDirectoryWrapper toAdd = NewDirectory();
@@ -1228,27 +1222,31 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // LUCENENET TODO: Pulsing41Codec is not in core
-            /*{
-                Directory dir = NewDirectory();
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random().Next(20))));
-                IndexWriter w = new IndexWriter(dir, conf);
-                try
+            {
+                using (Directory dir = NewDirectory())
                 {
-                    w.AddIndexes(toAdd);
-                    Assert.Fail("no such codec");
+                    IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                    conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random().Next(20))));
+                    IndexWriter w = new IndexWriter(dir, conf);
+                    try
+                    {
+                        w.AddIndexes(toAdd);
+                        Assert.Fail("no such codec");
+                    }
+                    catch (System.ArgumentException ex)
+                    {
+                        // expected
+                    }
+                    finally
+                    {
+                        w.Dispose();
+                    }
+                    using (IndexReader open = DirectoryReader.Open(dir))
+                    {
+                        Assert.AreEqual(0, open.NumDocs);
+                    }
                 }
-                catch (System.ArgumentException ex)
-                {
-                    // expected
-                }
-                w.Dispose();
-                IndexReader open = DirectoryReader.Open(dir);
-                Assert.AreEqual(0, open.NumDocs);
-                open.Dispose();
-                dir.Dispose();
-            }*/
+            }
 
             try
             {
@@ -1267,7 +1265,7 @@ namespace Lucene.Net.Index
         public virtual void TestFieldNamesChanged()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d1, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("f1", "doc1 field1", Field.Store.YES));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -1276,7 +1274,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d2 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d2);
+            w = new RandomIndexWriter(Random(), d2, Similarity, TimeZone);
             doc = new Document();
             doc.Add(NewStringField("f2", "doc2 field2", Field.Store.YES));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -1285,7 +1283,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d3 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d3);
+            w = new RandomIndexWriter(Random(), d3, Similarity, TimeZone);
             w.AddIndexes(r1, r2);
             r1.Dispose();
             d1.Dispose();
@@ -1315,7 +1313,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddEmpty()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d1, Similarity, TimeZone);
             MultiReader empty = new MultiReader();
             w.AddIndexes(empty);
             w.Dispose();
@@ -1336,12 +1334,12 @@ namespace Lucene.Net.Index
         public virtual void TestFakeAllDeleted()
         {
             Directory src = NewDirectory(), dest = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), src);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), src, Similarity, TimeZone);
             w.AddDocument(new Document());
             IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.Reader.Leaves[0].Reader);
             w.Dispose();
 
-            w = new RandomIndexWriter(Random(), dest);
+            w = new RandomIndexWriter(Random(), dest, Similarity, TimeZone);
             w.AddIndexes(allDeletedReader);
             w.Dispose();
             DirectoryReader dr = DirectoryReader.Open(src);
@@ -1363,7 +1361,7 @@ namespace Lucene.Net.Index
         public virtual void TestLocksBlock()
         {
             Directory src = NewDirectory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), src);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random(), src, Similarity, TimeZone);
             w1.AddDocument(new Document());
             w1.Commit();
 

@@ -21,9 +21,15 @@
             return value[index];
         }
 
+        // LUCENENET specific - added to .NETify
+        public char this[int index]
+        {
+            get { return value[index]; }
+        }
+
         public ICharSequence SubSequence(int start, int end)
         {
-            return new StringCharSequenceWrapper(value.Substring(start, end));
+            return new StringCharSequenceWrapper(value.Substring(start, end - start));
         }
 
         public override int GetHashCode()

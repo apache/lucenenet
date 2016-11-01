@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private static readonly NoOutputs Singleton_Renamed = new NoOutputs();
+        private static readonly NoOutputs singleton = new NoOutputs();
 
         private NoOutputs()
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                return Singleton_Renamed;
+                return singleton;
             }
         }
 

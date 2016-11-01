@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Compound
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="DictionaryCompoundWordTokenFilter"/>. 
     /// <pre class="prettyprint">
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Compound
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class DictionaryCompoundWordTokenFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class DictionaryCompoundWordTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private CharArraySet dictionary;
         private readonly string dictFile;
@@ -45,19 +45,19 @@ namespace Lucene.Net.Analysis.Compound
         public DictionaryCompoundWordTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
-            dictFile = require(args, "dictionary");
-            minWordSize = getInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
-            minSubwordSize = getInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
-            maxSubwordSize = getInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
-            onlyLongestMatch = getBoolean(args, "onlyLongestMatch", true);
+            AssureMatchVersion();
+            dictFile = Require(args, "dictionary");
+            minWordSize = GetInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
+            minSubwordSize = GetInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
+            maxSubwordSize = GetInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
+            onlyLongestMatch = GetBoolean(args, "onlyLongestMatch", true);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             dictionary = base.GetWordSet(loader, dictFile, false);
         }

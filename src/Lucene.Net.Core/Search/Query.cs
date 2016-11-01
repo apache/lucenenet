@@ -48,17 +48,21 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class Query : ICloneable
     {
-        protected Query()
-        {
-            Boost = 1.0f; // query boost factor
-        }
+        // LUCENENET NOTE: We can't set the default boost in the constructor because the
+        // Boost property can be overridden by subclasses (and possibly throw exceptions).
+        private float boost = 1.0f; // query boost factor
+
 
         /// <summary>
         /// Sets the boost for this query clause to <code>b</code>.  Documents
         /// matching this clause will (in addition to the normal weightings) have
         /// their score multiplied by <code>b</code>.
         /// </summary>
-        public virtual float Boost { get; set; }
+        public virtual float Boost
+        {
+            get { return boost; }
+            set { boost = value; }
+        }
 
         /// <summary>
         /// Prints a query to a string, with <code>field</code> assumed to be the

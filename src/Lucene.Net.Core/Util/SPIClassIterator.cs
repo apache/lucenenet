@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Lucene.Net.Util
 {
@@ -44,17 +47,65 @@ namespace Lucene.Net.Util
             // hoping would be loaded hasn't been loaded yet into the app domain,
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
+            var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies().Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x));
+            var referencedAssemblies = assembliesLoaded
+                .SelectMany(assembly =>
+                {
+                    return assembly
+                        .GetReferencedAssemblies()
+                        .Where(reference => !DotNetFrameworkFilter.IsFrameworkAssembly(reference))
+                        .Select(assemblyName => {
+                            try
+                            {
+                                return Assembly.Load(assemblyName);
+                            }
+                            catch
+                            {
+                                // swallow
+                                return null;
+                            }
+                        });
+                })
+                .Where(x => x != null)
+                .Distinct();
 
-            foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
+            var assembliesToExamine = assembliesLoaded.Concat(referencedAssemblies).Distinct();
+
+            foreach (var assembly in assembliesToExamine)
             {
                 try
                 {
-                    foreach (var type in loadedAssembly.GetTypes())
+                    foreach (var type in assembly.GetTypes().Where(x => x.IsPublic))
                     {
                         try
                         {
-                            if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                            if (!IsInvokableSubclassOf<S>(type))
+                            {
+                                continue;
+                            }
+
+                            // We are looking for types with a default ctor
+                            // (which is used in NamedSPILoader) or has a single parameter
+                            // of type IDictionary<string, string> (for AnalysisSPILoader)
+                            var matchingCtors = type.GetConstructors().Where(ctor =>
+                            {
+                                var parameters = ctor.GetParameters();
+
+                                switch (parameters.Length)
+                                {
+                                    case 0: // default ctor
+                                        return true;
+                                    case 1:
+                                        return typeof(IDictionary<string, string>).IsAssignableFrom(parameters[0].ParameterType);
+                                    default:
+                                        return false;
+                                }
+                            });
+
+                            if (matchingCtors.Any())
+                            {
                                 types.Add(type);
+                            }
                         }
                         catch
                         {
@@ -66,32 +117,12 @@ namespace Lucene.Net.Util
                 {
                     // swallow
                 }
-
-                foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
-                {
-                    try
-                    {
-                        var assembly = Assembly.Load(assemblyName);
-
-                        foreach (var type in assembly.GetTypes())
-                        {
-                            try
-                            {
-                                if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
-                                    types.Add(type);
-                            }
-                            catch
-                            {
-                                // swallow
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // swallow
-                    }
-                }
             }
+        }
+
+        internal static bool IsInvokableSubclassOf<S>(Type type)
+        {
+            return typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface;
         }
 
         public static SPIClassIterator<S> Get()
@@ -107,6 +138,61 @@ namespace Lucene.Net.Util
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        /// <summary>
+        /// Assembly filter logic from:
+        /// https://raw.githubusercontent.com/Microsoft/dotnet-apiport/master/src/Microsoft.Fx.Portability/Analyzer/DotNetFrameworkFilter.cs
+        /// </summary>
+        private static class DotNetFrameworkFilter
+        {
+            /// <summary>
+            /// These keys are a collection of public key tokens derived from all the reference assemblies in
+            /// "%ProgramFiles%\Reference Assemblies\Microsoft" on a Windows 10 machine with VS 2015 installed
+            /// </summary>
+            private static readonly ICollection<string> s_microsoftKeys = new HashSet<string>(new[] 
+            {
+                "b77a5c561934e089", // ECMA
+                "b03f5f7f11d50a3a", // DEVDIV
+                "7cec85d7bea7798e", // SLPLAT
+                "31bf3856ad364e35", // Windows
+                "24eec0d8c86cda1e", // Phone
+                "0738eb9f132ed756", // Mono
+                "ddd0da4d3e678217", // Component model
+                "84e04ff9cfb79065", // Mono Android
+                "842cf8be1de50553"  // Xamarin.iOS
+            }, StringComparer.OrdinalIgnoreCase);
+
+            private static readonly IEnumerable<string> s_frameworkAssemblyNamePrefixes = new[]
+            {
+                "System.",
+                "Microsoft.",
+                "Mono."
+            };
+
+            /// <summary>
+            /// Gets a best guess as to whether this assembly is a .NET Framework assembly or not.
+            /// </summary>
+            public static bool IsFrameworkAssembly(Assembly assembly)
+            {
+                return assembly != null && IsFrameworkAssembly(assembly.GetName());
+            }
+
+            /// <summary>
+            /// Gets a best guess as to whether this assembly is a .NET Framework assembly or not.
+            /// </summary>
+            public static bool IsFrameworkAssembly(AssemblyName assembly)
+            {
+                if (assembly == null)
+                {
+                    return false;
+                }
+
+                var publicKeyToken = string.Concat(assembly.GetPublicKeyToken().Select(i => i.ToString("x2")));
+
+                return s_microsoftKeys.Contains(publicKeyToken)
+                    || s_frameworkAssemblyNamePrefixes.Any(p => assembly.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+            }
         }
     }
 

@@ -1,10 +1,9 @@
-﻿using System;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Abstract base class for TokenFilters that may remove tokens.
     /// You have to implement <seealso cref="#accept"/> and return a boolean if the current
@@ -36,7 +36,10 @@ namespace Lucene.Net.Analysis.Util
 
         private static void CheckPositionIncrement(LuceneVersion version, bool enablePositionIncrements)
         {
-            if (!enablePositionIncrements && version.OnOrAfter(LuceneVersion.LUCENE_44))
+            if (!enablePositionIncrements &&
+#pragma warning disable 612, 618
+                version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 throw new System.ArgumentException("enablePositionIncrements=false is not supported anymore as of Lucene 4.4 as it can create broken token streams");
             }
@@ -58,7 +61,6 @@ namespace Lucene.Net.Analysis.Util
         public FilteringTokenFilter(Lucene.Net.Util.LuceneVersion version, bool enablePositionIncrements, TokenStream input)
             : this(version, input)
         {
-            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             CheckPositionIncrement(version, enablePositionIncrements);
             this.enablePositionIncrements = enablePositionIncrements;
         }
@@ -70,6 +72,7 @@ namespace Lucene.Net.Analysis.Util
         public FilteringTokenFilter(LuceneVersion version, TokenStream @in)
             : base(@in)
         {
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             this.version = version;
             this.enablePositionIncrements = true;
         }
@@ -78,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
         /// Override this method and return if the current input token should be returned by <seealso cref="#incrementToken"/>. </summary>
         protected internal abstract bool Accept();
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (enablePositionIncrements)
             {
@@ -133,6 +136,10 @@ namespace Lucene.Net.Analysis.Util
             {
                 return enablePositionIncrements;
             }
+            // LUCENENET TODO:
+            // deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4
+            // There doesn't appear to be a way to apply [Obsolete] on a property setter only. The only way
+            // to make it show the obsolete warning is to change this back to separate Get and Set methods.
             set
             {
                 CheckPositionIncrement(version, value);

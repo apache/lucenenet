@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDetectClose()
         {
-            DirectoryInfo tempDir = new System.IO.DirectoryInfo("TestDetectClose");// LUCENENET TODO LuceneTestCase.TestClass.SimpleName
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
             Directory[] dirs = new Directory[] { new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir) };
 
             foreach (Directory dir in dirs)
@@ -308,8 +308,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestCopySubdir()
         {
-            //File path = CreateTempDir("testsubdir");
-            var path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "testsubdir"));
+            DirectoryInfo path = CreateTempDir("testsubdir");
             try
             {
                 //path.mkdirs();
@@ -329,8 +328,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNotDirectory()
         {
-            //File path = CreateTempDir("testnotdir");
-            DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "testnotdir"));
+            DirectoryInfo path = CreateTempDir("testnotdir");
             Directory fsDir = new SimpleFSDirectory(path, null);
             try
             {

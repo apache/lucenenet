@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.JavaCompatibility;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -29,7 +28,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = @"field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), rd);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), rd, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, @"value1", Field.Store.NO));
             w.AddDocument(doc);
@@ -54,7 +53,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int num = AtLeast(100);
             var terms = new List<Term>();
             for (int i = 0; i < num; i++)

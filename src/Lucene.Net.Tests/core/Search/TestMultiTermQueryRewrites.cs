@@ -45,15 +45,19 @@ namespace Lucene.Net.Search
         internal static IndexReader Reader, MultiReader, MultiReaderDupls;
         internal static IndexSearcher Searcher, MultiSearcher, MultiSearcherDupls;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because Similarity and TimeZone are not static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Dir = NewDirectory();
             Sdir1 = NewDirectory();
             Sdir2 = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, new MockAnalyzer(Random()));
-            RandomIndexWriter swriter1 = new RandomIndexWriter(Random(), Sdir1, new MockAnalyzer(Random()));
-            RandomIndexWriter swriter2 = new RandomIndexWriter(Random(), Sdir2, new MockAnalyzer(Random()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, new MockAnalyzer(Random()), Similarity, TimeZone);
+            RandomIndexWriter swriter1 = new RandomIndexWriter(Random(), Sdir1, new MockAnalyzer(Random()), Similarity, TimeZone);
+            RandomIndexWriter swriter2 = new RandomIndexWriter(Random(), Sdir2, new MockAnalyzer(Random()), Similarity, TimeZone);
 
             for (int i = 0; i < 10; i++)
             {
@@ -222,7 +226,7 @@ namespace Lucene.Net.Search
 
                 internal readonly IBoostAttribute boostAtt;
 
-                protected override AcceptStatus Accept(BytesRef term)
+                protected internal override AcceptStatus Accept(BytesRef term)
                 {
                     boostAtt.Boost = Convert.ToSingle(term.Utf8ToString());
                     return base.Accept(term);

@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Path
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Path
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="PathHierarchyTokenizer"/>. 
     /// <para>
@@ -78,10 +78,10 @@ namespace Lucene.Net.Analysis.Path
         public PathHierarchyTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
-            delimiter = getChar(args, "delimiter", PathHierarchyTokenizer.DEFAULT_DELIMITER);
-            replacement = getChar(args, "replace", delimiter);
-            reverse = getBoolean(args, "reverse", false);
-            skip = getInt(args, "skip", PathHierarchyTokenizer.DEFAULT_SKIP);
+            delimiter = GetChar(args, "delimiter", PathHierarchyTokenizer.DEFAULT_DELIMITER);
+            replacement = GetChar(args, "replace", delimiter);
+            reverse = GetBoolean(args, "reverse", false);
+            skip = GetInt(args, "skip", PathHierarchyTokenizer.DEFAULT_SKIP);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

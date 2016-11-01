@@ -1,9 +1,8 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,11 +22,9 @@ namespace Lucene.Net.Search.Spell
 
     /// <summary>
     /// Similarity measure for short strings such as person names.
-    /// <para>
-    /// </para>
+    /// See <a href="http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance">http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance</a>
     /// </summary>
-    /// <seealso cref= <a href="http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance">http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance</a> </seealso>
-    public class JaroWinklerDistance : StringDistance
+    public class JaroWinklerDistance : IStringDistance
     {
 
         private float threshold = 0.7f;
@@ -35,7 +32,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Creates a new distance metric with the default threshold
         /// for the Jaro Winkler bonus (0.7) </summary>
-        /// <seealso cref= #setThreshold(float) </seealso>
+        /// <seealso cref="Threshold"/>
         public JaroWinklerDistance()
         {
         }
@@ -127,9 +124,9 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Sets the threshold used to determine when Winkler bonus should be used.
-        /// Set to a negative value to get the Jaro distance. </summary>
-        /// <param name="threshold"> the new value of the threshold </param>
+        /// Gets or sets the threshold used to determine when Winkler bonus should be used.
+        /// The default value is 0.7. Set to a negative value to get the Jaro distance. 
+        /// </summary>
         public virtual float Threshold
         {
             set
@@ -167,7 +164,5 @@ namespace Lucene.Net.Search.Spell
         {
             return "jarowinkler(" + threshold + ")";
         }
-
     }
-
 }

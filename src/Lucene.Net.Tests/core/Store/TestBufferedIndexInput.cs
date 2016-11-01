@@ -71,6 +71,7 @@ namespace Lucene.Net.Store
         // is working as expected.
         // Our input comes from a dynamically generated/ "file" - see
         // MyBufferedIndexInput below.
+        [Test]
         public virtual void TestReadByte()
         {
             MyBufferedIndexInput input = new MyBufferedIndexInput();
@@ -242,7 +243,7 @@ namespace Lucene.Net.Store
                 // an infinite file
             }
 
-            protected override void ReadInternal(byte[] b, int offset, int length)
+            protected internal override void ReadInternal(byte[] b, int offset, int length)
             {
                 for (int i = offset; i < offset + length; i++)
                 {

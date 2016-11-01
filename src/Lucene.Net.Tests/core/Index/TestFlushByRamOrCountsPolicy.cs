@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Lucene.Net.Documents.Document;
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
     using Directory = Lucene.Net.Store.Directory;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
@@ -39,16 +39,12 @@ namespace Lucene.Net.Index
 
         private static LineFileDocs LineDocFile;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
             LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {
@@ -110,7 +106,7 @@ namespace Lucene.Net.Index
             long maxRAMBytes = (long)(iwc.RAMBufferSizeMB * 1024.0 * 1024.0);
             Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due numThreads=" + numThreads);
             Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
-            Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc());
+            Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             Assert.IsTrue(flushPolicy.PeakBytesWithoutFlush <= maxRAMBytes, "peak bytes without flush exceeded watermark");
             AssertActiveBytesAfter(flushControl);
             if (flushPolicy.HasMarkedPending)
@@ -169,7 +165,7 @@ namespace Lucene.Net.Index
 
                 Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due numThreads=" + numThreads[i]);
                 Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
-                Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc());
+                Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 Assert.IsTrue(flushPolicy.PeakDocCountWithoutFlush <= iwc.MaxBufferedDocs, "peak bytes without flush exceeded watermark");
                 AssertActiveBytesAfter(flushControl);
                 writer.Dispose();
@@ -214,26 +210,26 @@ namespace Lucene.Net.Index
             }
             Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due");
             Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
-            Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc());
+            Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             if (flushPolicy.FlushOnRAM() && !flushPolicy.FlushOnDocCount() && !flushPolicy.FlushOnDeleteTerms())
             {
                 long maxRAMBytes = (long)(iwc.RAMBufferSizeMB * 1024.0 * 1024.0);
                 Assert.IsTrue(flushPolicy.PeakBytesWithoutFlush <= maxRAMBytes, "peak bytes without flush exceeded watermark");
                 if (flushPolicy.HasMarkedPending)
                 {
-                    Assert.IsTrue("max: " + maxRAMBytes + " " + flushControl.PeakActiveBytes, maxRAMBytes <= flushControl.PeakActiveBytes);
+                    assertTrue("max: " + maxRAMBytes + " " + flushControl.PeakActiveBytes, maxRAMBytes <= flushControl.PeakActiveBytes);
                 }
             }
             AssertActiveBytesAfter(flushControl);
             writer.Commit();
             Assert.AreEqual(0, flushControl.ActiveBytes());
             IndexReader r = DirectoryReader.Open(dir);
-            Assert.AreEqual(numDocumentsToIndex, r.NumDocs());
-            Assert.AreEqual(numDocumentsToIndex, r.MaxDoc());
+            Assert.AreEqual(numDocumentsToIndex, r.NumDocs);
+            Assert.AreEqual(numDocumentsToIndex, r.MaxDoc);
             if (!flushPolicy.FlushOnRAM())
             {
-                Assert.IsFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled());
-                Assert.IsFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked());
+                assertFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled());
+                assertFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked());
             }
             r.Dispose();
             writer.Dispose();
@@ -279,10 +275,10 @@ namespace Lucene.Net.Index
                 DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
                 Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due");
                 Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
-                Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc());
+                Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 if (numThreads[i] == 1)
                 {
-                    Assert.IsFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked());
+                    assertFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked());
                 }
                 if (docsWriter.FlushControl.PeakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
                 {

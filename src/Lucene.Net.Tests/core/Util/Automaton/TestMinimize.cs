@@ -45,7 +45,6 @@ namespace Lucene.Net.Util.Automaton
         /// we check not only that they are the same, but that #states/#transitions
         /// are the same.
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestAgainstBrzozowski()
         {

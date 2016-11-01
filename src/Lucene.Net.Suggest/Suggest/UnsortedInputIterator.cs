@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -40,7 +39,7 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new iterator, wrapping the specified iterator and
         /// returning elements in a random order.
         /// </summary>
-        public UnsortedInputIterator(InputIterator source)
+        public UnsortedInputIterator(IInputIterator source)
             : base(source)
         {
             ords = new int[entries.Size()];
@@ -67,7 +66,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public BytesRef Next()
+        public override BytesRef Next()
         {
             if (++curPos < entries.Size())
             {
@@ -92,7 +91,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public override HashSet<BytesRef> Contexts
+        public override IEnumerable<BytesRef> Contexts
         {
             get
             {

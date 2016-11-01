@@ -2,39 +2,37 @@
 
 namespace Lucene.Net.Search.Spell
 {
-
-    /// <summary>
-    /// Licensed to the Apache Software Foundation (ASF) under one or more
-    /// contributor license agreements.  See the NOTICE file distributed with
-    /// this work for additional information regarding copyright ownership.
-    /// The ASF licenses this file to You under the Apache License, Version 2.0
-    /// (the "License"); you may not use this file except in compliance with
-    /// the License.  You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    /// </summary>
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// N-Gram version of edit distance based on paper by Grzegorz Kondrak, 
     /// "N-gram similarity and distance". Proceedings of the Twelfth International 
     /// Conference on String Processing and Information Retrieval (SPIRE 2005), pp. 115-126, 
     /// Buenos Aires, Argentina, November 2005. 
-    /// http://www.cs.ualberta.ca/~kondrak/papers/spire05.pdf
+    /// <a href="http://www.cs.ualberta.ca/~kondrak/papers/spire05.pdf">http://www.cs.ualberta.ca/~kondrak/papers/spire05.pdf</a>
     /// 
     /// This implementation uses the position-based optimization to compute partial
     /// matches of n-gram sub-strings and adds a null-character prefix of size n-1 
     /// so that the first character is contained in the same number of n-grams as 
     /// a middle character.  Null-character prefix matches are discounted so that 
     /// strings with no matching characters will return a distance of 0.
-    /// 
     /// </summary>
-    public class NGramDistance : StringDistance
+    public class NGramDistance : IStringDistance
     {
 
         private int n;
@@ -75,9 +73,9 @@ namespace Lucene.Net.Search.Spell
             int cost = 0;
             if (sl < n || tl < n)
             {
-                for (int i = 0, ni = Math.Min(sl, tl); i < ni; i++)
+                for (int i2 = 0, ni = Math.Min(sl, tl); i2 < ni; i2++)
                 {
-                    if (source[i] == target[i])
+                    if (source[i2] == target[i2])
                     {
                         cost++;
                     }
@@ -91,15 +89,15 @@ namespace Lucene.Net.Search.Spell
             float[] _d; //placeholder to assist in swapping p and d
 
             //construct sa with prefix
-            for (int i = 0; i < sa.Length; i++)
+            for (int i2 = 0; i2 < sa.Length; i2++)
             {
-                if (i < n - 1)
+                if (i2 < n - 1)
                 {
-                    sa[i] = (char)0; //add prefix
+                    sa[i2] = (char)0; //add prefix
                 }
                 else
                 {
-                    sa[i] = source[i - n + 1];
+                    sa[i2] = source[i2 - n + 1];
                 }
             }
             p = new float[sl + 1];
@@ -132,7 +130,7 @@ namespace Lucene.Net.Search.Spell
                 }
                 else
                 {
-                    t_j = StringHelperClass.SubstringSpecial(target, j - n, j).ToCharArray();
+                    t_j = target.Substring(j - n, j - (j - n)).ToCharArray();
                 }
                 d[0] = j;
                 for (i = 1; i <= sl; i++)
@@ -191,5 +189,4 @@ namespace Lucene.Net.Search.Spell
             return "ngram(" + n + ")";
         }
     }
-
 }

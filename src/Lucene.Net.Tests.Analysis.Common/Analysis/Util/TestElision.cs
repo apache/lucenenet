@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Fr;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Tokenattributes;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,69 +26,56 @@ namespace org.apache.lucene.analysis.util
 	 */
 
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using FrenchAnalyzer = org.apache.lucene.analysis.fr.FrenchAnalyzer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    public class TestElision : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestElision_()
+        {
+            string test = "Plop, juste pour voir l'embrouille avec O'brian. M'enfin.";
+            Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader(test));
+            CharArraySet articles = new CharArraySet(TEST_VERSION_CURRENT, AsSet("l", "M"), false);
+            TokenFilter filter = new ElisionFilter(tokenizer, articles);
+            IList<string> tas = Filter(filter);
+            assertEquals("embrouille", tas[4]);
+            assertEquals("O'brian", tas[6]);
+            assertEquals("enfin", tas[7]);
+        }
 
-	/// 
-	public class TestElision : BaseTokenStreamTestCase
-	{
+        private IList<string> Filter(TokenFilter filter)
+        {
+            IList<string> tas = new List<string>();
+            ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
+            filter.Reset();
+            while (filter.IncrementToken())
+            {
+                tas.Add(termAtt.ToString());
+            }
+            filter.End();
+            filter.Dispose();
+            return tas;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testElision() throws Exception
-	  public virtual void testElision()
-	  {
-		string test = "Plop, juste pour voir l'embrouille avec O'brian. M'enfin.";
-		Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader(test));
-		CharArraySet articles = new CharArraySet(TEST_VERSION_CURRENT, asSet("l", "M"), false);
-		TokenFilter filter = new ElisionFilter(tokenizer, articles);
-		IList<string> tas = filter(filter);
-		assertEquals("embrouille", tas[4]);
-		assertEquals("O'brian", tas[6]);
-		assertEquals("enfin", tas[7]);
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private java.util.List<String> filter(org.apache.lucene.analysis.TokenFilter filter) throws java.io.IOException
-	  private IList<string> filter(TokenFilter filter)
-	  {
-		IList<string> tas = new List<string>();
-		CharTermAttribute termAtt = filter.getAttribute(typeof(CharTermAttribute));
-		filter.reset();
-		while (filter.incrementToken())
-		{
-		  tas.Add(termAtt.ToString());
-		}
-		filter.end();
-		filter.close();
-		return tas;
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestElision outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestElision outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestElision outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestElision outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new ElisionFilter(tokenizer, FrenchAnalyzer.DEFAULT_ARTICLES));
-		  }
-	  }
-
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new ElisionFilter(tokenizer, FrenchAnalyzer.DEFAULT_ARTICLES));
+            }
+        }
+    }
 }

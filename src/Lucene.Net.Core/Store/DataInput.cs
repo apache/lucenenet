@@ -2,6 +2,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -79,11 +80,15 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads two bytes and returns a short. </summary>
+        /// Reads two bytes and returns a short. 
+        /// 
+        /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
+        /// the value is positive!
+        /// </summary>
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
         public virtual short ReadShort()
         {
-            return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>
@@ -245,8 +250,7 @@ namespace Lucene.Net.Store
             var bytes = new byte[length];
             ReadBytes(bytes, 0, length);
 
-            //return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
-            return IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes);
+            return Encoding.UTF8.GetString(bytes);
         }
 
         /// <summary>
@@ -261,7 +265,16 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual object Clone()
         {
-            return (DataInput)base.MemberwiseClone();
+            DataInput clone = null;
+            try
+            {
+                clone = (DataInput)base.MemberwiseClone();
+            }
+            catch (Exception)
+            {
+            }
+
+            return clone;
         }
 
         /// <summary>

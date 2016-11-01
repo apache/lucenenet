@@ -774,7 +774,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
-                    if (_fieldReader._fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if (_fieldReader._fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // Positions were not indexed:
                         return null;

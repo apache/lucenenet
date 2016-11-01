@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
 
             long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search
             indexStore.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test()
         {
             // noop, required for the before and after tests to run
@@ -109,7 +110,7 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
 
             long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 

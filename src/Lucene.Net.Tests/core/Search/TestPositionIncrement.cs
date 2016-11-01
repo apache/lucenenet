@@ -53,14 +53,15 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestPositionIncrement : LuceneTestCase
     {
-        internal const bool VERBOSE = false;
+        // LUCENENET: This existed in Lucene, but do we really want to override the global setting?
+        //internal const bool VERBOSE = false;
 
         [Test]
         public virtual void TestSetPosition()
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
             Directory store = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), store, analyzer);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), store, analyzer, Similarity, TimeZone);
             Document d = new Document();
             d.Add(NewTextField("field", "bogus", Field.Store.YES));
             writer.AddDocument(d);
@@ -230,7 +231,7 @@ namespace Lucene.Net.Search
         public virtual void TestPayloadsPos0()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockPayloadAnalyzer());
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockPayloadAnalyzer(), Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a a b c d e a f g h i j a b k k")));
             writer.AddDocument(doc);

@@ -1,7 +1,6 @@
-﻿namespace org.apache.lucene.analysis.de
+﻿namespace Lucene.Net.Analysis.De
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +17,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,125 +52,124 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	/// <summary>
-	/// Light Stemmer for German.
-	/// <para>
-	/// This stemmer implements the "UniNE" algorithm in:
-	/// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class GermanLightStemmer
-	{
+    /// <summary>
+    /// Light Stemmer for German.
+    /// <para>
+    /// This stemmer implements the "UniNE" algorithm in:
+    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class GermanLightStemmer
+    {
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'ä':
-			case 'à':
-			case 'á':
-			case 'â':
-				s[i] = 'a';
-				break;
-			case 'ö':
-			case 'ò':
-			case 'ó':
-			case 'ô':
-				s[i] = 'o';
-				break;
-			case 'ï':
-			case 'ì':
-			case 'í':
-			case 'î':
-				s[i] = 'i';
-				break;
-			case 'ü':
-			case 'ù':
-			case 'ú':
-			case 'û':
-				s[i] = 'u';
-				break;
-		  }
-		}
+        public virtual int Stem(char[] s, int len)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'ä':
+                    case 'à':
+                    case 'á':
+                    case 'â':
+                        s[i] = 'a';
+                        break;
+                    case 'ö':
+                    case 'ò':
+                    case 'ó':
+                    case 'ô':
+                        s[i] = 'o';
+                        break;
+                    case 'ï':
+                    case 'ì':
+                    case 'í':
+                    case 'î':
+                        s[i] = 'i';
+                        break;
+                    case 'ü':
+                    case 'ù':
+                    case 'ú':
+                    case 'û':
+                        s[i] = 'u';
+                        break;
+                }
+            }
 
-		len = step1(s, len);
-		return step2(s, len);
-	  }
+            len = Step1(s, len);
+            return Step2(s, len);
+        }
 
-	  private bool stEnding(char ch)
-	  {
-		switch (ch)
-		{
-		  case 'b':
-		  case 'd':
-		  case 'f':
-		  case 'g':
-		  case 'h':
-		  case 'k':
-		  case 'l':
-		  case 'm':
-		  case 'n':
-		  case 't':
-			  return true;
-		  default:
-			  return false;
-		}
-	  }
+        private bool StEnding(char ch)
+        {
+            switch (ch)
+            {
+                case 'b':
+                case 'd':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 't':
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
-	  private int step1(char[] s, int len)
-	  {
-		if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 'r' && s[len - 1] == 'n')
-		{
-		  return len - 3;
-		}
+        private int Step1(char[] s, int len)
+        {
+            if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 'r' && s[len - 1] == 'n')
+            {
+                return len - 3;
+            }
 
-		if (len > 4 && s[len - 2] == 'e')
-		{
-		  switch (s[len - 1])
-		  {
-			case 'm':
-			case 'n':
-			case 'r':
-			case 's':
-				return len - 2;
-		  }
-		}
+            if (len > 4 && s[len - 2] == 'e')
+            {
+                switch (s[len - 1])
+                {
+                    case 'm':
+                    case 'n':
+                    case 'r':
+                    case 's':
+                        return len - 2;
+                }
+            }
 
-		if (len > 3 && s[len - 1] == 'e')
-		{
-		  return len - 1;
-		}
+            if (len > 3 && s[len - 1] == 'e')
+            {
+                return len - 1;
+            }
 
-		if (len > 3 && s[len - 1] == 's' && stEnding(s[len - 2]))
-		{
-		  return len - 1;
-		}
+            if (len > 3 && s[len - 1] == 's' && StEnding(s[len - 2]))
+            {
+                return len - 1;
+            }
 
-		return len;
-	  }
+            return len;
+        }
 
-	  private int step2(char[] s, int len)
-	  {
-		if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 's' && s[len - 1] == 't')
-		{
-		  return len - 3;
-		}
+        private int Step2(char[] s, int len)
+        {
+            if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 's' && s[len - 1] == 't')
+            {
+                return len - 3;
+            }
 
-		if (len > 4 && s[len - 2] == 'e' && (s[len - 1] == 'r' || s[len - 1] == 'n'))
-		{
-		  return len - 2;
-		}
+            if (len > 4 && s[len - 2] == 'e' && (s[len - 1] == 'r' || s[len - 1] == 'n'))
+            {
+                return len - 2;
+            }
 
-		if (len > 4 && s[len - 2] == 's' && s[len - 1] == 't' && stEnding(s[len - 3]))
-		{
-		  return len - 2;
-		}
+            if (len > 4 && s[len - 2] == 's' && s[len - 1] == 't' && StEnding(s[len - 3]))
+            {
+                return len - 2;
+            }
 
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }

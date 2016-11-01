@@ -2,10 +2,10 @@
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +22,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Removes words that are too long or too short from the stream.
     /// <para>
@@ -30,7 +31,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class CodepointCountFilter : FilteringTokenFilter
     {
-
         private readonly int min;
         private readonly int max;
 
@@ -47,6 +47,18 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CodepointCountFilter(LuceneVersion version, TokenStream @in, int min, int max)
             : base(version, @in)
         {
+            // LUCENENET: The guard clauses were copied here from the version of Lucene.
+            // Apparently, the tests were not ported from 4.8.0 because they expected this and the
+            // original tests did not. Adding them anyway because there is no downside to this.
+            if (min < 0)
+            {
+                throw new ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
+            }
+            if (min > max)
+            {
+                throw new ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
+            }
+
             this.min = min;
             this.max = max;
             termAtt = AddAttribute<ICharTermAttribute>();

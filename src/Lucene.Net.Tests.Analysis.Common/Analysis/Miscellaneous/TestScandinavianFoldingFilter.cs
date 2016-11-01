@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,138 +21,126 @@
 	 * limitations under the License.
 	 */
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+    public class TestScandinavianFoldingFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	public class TestScandinavianFoldingFilter : BaseTokenStreamTestCase
-	{
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream stream = new ScandinavianFoldingFilter(tokenizer);
+                return new TokenStreamComponents(tokenizer, stream);
+            }
+        }
 
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        [Test]
+        public virtual void Test()
+        {
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+            CheckOneTerm(analyzer, "aeäaeeea", "aaaeea"); // should not cause ArrayOutOfBoundsException
 
-		  protected internal override TokenStreamComponents createComponents(string field, Reader reader)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.Tokenizer tokenizer = new org.apache.lucene.analysis.MockTokenizer(reader, org.apache.lucene.analysis.MockTokenizer.WHITESPACE, false);
-			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.TokenStream stream = new ScandinavianFoldingFilter(tokenizer);
-			TokenStream stream = new ScandinavianFoldingFilter(tokenizer);
-			return new TokenStreamComponents(tokenizer, stream);
-		  }
-	  }
+            CheckOneTerm(analyzer, "aeäaeeeae", "aaaeea");
+            CheckOneTerm(analyzer, "aeaeeeae", "aaeea");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws Exception
-	  public virtual void test()
-	  {
-
-		checkOneTerm(analyzer, "aeäaeeea", "aaaeea"); // should not cause ArrayOutOfBoundsException
-
-		checkOneTerm(analyzer, "aeäaeeeae", "aaaeea");
-		checkOneTerm(analyzer, "aeaeeeae", "aaeea");
-
-		checkOneTerm(analyzer, "bøen", "boen");
-		checkOneTerm(analyzer, "åene", "aene");
+            CheckOneTerm(analyzer, "bøen", "boen");
+            CheckOneTerm(analyzer, "åene", "aene");
 
 
-		checkOneTerm(analyzer, "blåbærsyltetøj", "blabarsyltetoj");
-		checkOneTerm(analyzer, "blaabaarsyltetoej", "blabarsyltetoj");
-		checkOneTerm(analyzer, "blåbärsyltetöj", "blabarsyltetoj");
+            CheckOneTerm(analyzer, "blåbærsyltetøj", "blabarsyltetoj");
+            CheckOneTerm(analyzer, "blaabaarsyltetoej", "blabarsyltetoj");
+            CheckOneTerm(analyzer, "blåbärsyltetöj", "blabarsyltetoj");
 
-		checkOneTerm(analyzer, "raksmorgas", "raksmorgas");
-		checkOneTerm(analyzer, "räksmörgås", "raksmorgas");
-		checkOneTerm(analyzer, "ræksmørgås", "raksmorgas");
-		checkOneTerm(analyzer, "raeksmoergaas", "raksmorgas");
-		checkOneTerm(analyzer, "ræksmörgaos", "raksmorgas");
-
-
-		checkOneTerm(analyzer, "ab", "ab");
-		checkOneTerm(analyzer, "ob", "ob");
-		checkOneTerm(analyzer, "Ab", "Ab");
-		checkOneTerm(analyzer, "Ob", "Ob");
-
-		checkOneTerm(analyzer, "å", "a");
-
-		checkOneTerm(analyzer, "aa", "a");
-		checkOneTerm(analyzer, "aA", "a");
-		checkOneTerm(analyzer, "ao", "a");
-		checkOneTerm(analyzer, "aO", "a");
-
-		checkOneTerm(analyzer, "AA", "A");
-		checkOneTerm(analyzer, "Aa", "A");
-		checkOneTerm(analyzer, "Ao", "A");
-		checkOneTerm(analyzer, "AO", "A");
-
-		checkOneTerm(analyzer, "æ", "a");
-		checkOneTerm(analyzer, "ä", "a");
-
-		checkOneTerm(analyzer, "Æ", "A");
-		checkOneTerm(analyzer, "Ä", "A");
-
-		checkOneTerm(analyzer, "ae", "a");
-		checkOneTerm(analyzer, "aE", "a");
-
-		checkOneTerm(analyzer, "Ae", "A");
-		checkOneTerm(analyzer, "AE", "A");
+            CheckOneTerm(analyzer, "raksmorgas", "raksmorgas");
+            CheckOneTerm(analyzer, "räksmörgås", "raksmorgas");
+            CheckOneTerm(analyzer, "ræksmørgås", "raksmorgas");
+            CheckOneTerm(analyzer, "raeksmoergaas", "raksmorgas");
+            CheckOneTerm(analyzer, "ræksmörgaos", "raksmorgas");
 
 
-		checkOneTerm(analyzer, "ö", "o");
-		checkOneTerm(analyzer, "ø", "o");
-		checkOneTerm(analyzer, "Ö", "O");
-		checkOneTerm(analyzer, "Ø", "O");
+            CheckOneTerm(analyzer, "ab", "ab");
+            CheckOneTerm(analyzer, "ob", "ob");
+            CheckOneTerm(analyzer, "Ab", "Ab");
+            CheckOneTerm(analyzer, "Ob", "Ob");
+
+            CheckOneTerm(analyzer, "å", "a");
+
+            CheckOneTerm(analyzer, "aa", "a");
+            CheckOneTerm(analyzer, "aA", "a");
+            CheckOneTerm(analyzer, "ao", "a");
+            CheckOneTerm(analyzer, "aO", "a");
+
+            CheckOneTerm(analyzer, "AA", "A");
+            CheckOneTerm(analyzer, "Aa", "A");
+            CheckOneTerm(analyzer, "Ao", "A");
+            CheckOneTerm(analyzer, "AO", "A");
+
+            CheckOneTerm(analyzer, "æ", "a");
+            CheckOneTerm(analyzer, "ä", "a");
+
+            CheckOneTerm(analyzer, "Æ", "A");
+            CheckOneTerm(analyzer, "Ä", "A");
+
+            CheckOneTerm(analyzer, "ae", "a");
+            CheckOneTerm(analyzer, "aE", "a");
+
+            CheckOneTerm(analyzer, "Ae", "A");
+            CheckOneTerm(analyzer, "AE", "A");
 
 
-		checkOneTerm(analyzer, "oo", "o");
-		checkOneTerm(analyzer, "oe", "o");
-		checkOneTerm(analyzer, "oO", "o");
-		checkOneTerm(analyzer, "oE", "o");
+            CheckOneTerm(analyzer, "ö", "o");
+            CheckOneTerm(analyzer, "ø", "o");
+            CheckOneTerm(analyzer, "Ö", "O");
+            CheckOneTerm(analyzer, "Ø", "O");
 
-		checkOneTerm(analyzer, "Oo", "O");
-		checkOneTerm(analyzer, "Oe", "O");
-		checkOneTerm(analyzer, "OO", "O");
-		checkOneTerm(analyzer, "OE", "O");
-	  }
 
-	  /// <summary>
-	  /// check that the empty string doesn't cause issues </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws Exception
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
+            CheckOneTerm(analyzer, "oo", "o");
+            CheckOneTerm(analyzer, "oe", "o");
+            CheckOneTerm(analyzer, "oO", "o");
+            CheckOneTerm(analyzer, "oE", "o");
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestScandinavianFoldingFilter outerInstance;
+            CheckOneTerm(analyzer, "Oo", "O");
+            CheckOneTerm(analyzer, "Oe", "O");
+            CheckOneTerm(analyzer, "OO", "O");
+            CheckOneTerm(analyzer, "OE", "O");
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestScandinavianFoldingFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        /// <summary>
+        /// check that the empty string doesn't cause issues </summary>
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new ScandinavianFoldingFilter(tokenizer));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestScandinavianFoldingFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomData() throws Exception
-	  public virtual void testRandomData()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
+            public AnalyzerAnonymousInnerClassHelper2(TestScandinavianFoldingFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new ScandinavianFoldingFilter(tokenizer));
+            }
+        }
+
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomData()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

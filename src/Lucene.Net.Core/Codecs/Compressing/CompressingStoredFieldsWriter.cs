@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             else
             {
-                bytes = field.BinaryValue();
+                bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     bits = BYTE_ARR;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.Compressing
                     @string = field.StringValue;
                     if (@string == null)
                     {
-                        throw new System.ArgumentException("field " + field.Name() + " is stored but does not have binaryValue, stringValue nor numericValue");
+                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
                     }
                 }
             }

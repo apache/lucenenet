@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.fi
-{
+﻿using Lucene.Net.Analysis.Util;
+using System;
 
-	/*
+namespace Lucene.Net.Analysis.Fi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +20,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,283 +55,278 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Light Stemmer for Finnish.
+    /// <para>
+    /// This stemmer implements the algorithm described in:
+    /// <i>Report on CLEF-2003 Monolingual Tracks</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class FinnishLightStemmer
+    {
 
-	/// <summary>
-	/// Light Stemmer for Finnish.
-	/// <para>
-	/// This stemmer implements the algorithm described in:
-	/// <i>Report on CLEF-2003 Monolingual Tracks</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class FinnishLightStemmer
-	{
+        public virtual int stem(char[] s, int len)
+        {
+            if (len < 4)
+            {
+                return len;
+            }
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 4)
-		{
-		  return len;
-		}
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'ä':
+                    case 'å':
+                        s[i] = 'a';
+                        break;
+                    case 'ö':
+                        s[i] = 'o';
+                        break;
+                }
+            }
 
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'ä':
-			case 'å':
-				s[i] = 'a';
-				break;
-			case 'ö':
-				s[i] = 'o';
-				break;
-		  }
-		}
+            len = step1(s, len);
+            len = step2(s, len);
+            len = step3(s, len);
+            len = norm1(s, len);
+            len = norm2(s, len);
+            return len;
+        }
 
-		len = step1(s, len);
-		len = step2(s, len);
-		len = step3(s, len);
-		len = norm1(s, len);
-		len = norm2(s, len);
-		return len;
-	  }
+        private int step1(char[] s, int len)
+        {
+            if (len > 8)
+            {
+                if (StemmerUtil.EndsWith(s, len, "kin"))
+                {
+                    return step1(s, len - 3);
+                }
+                if (StemmerUtil.EndsWith(s, len, "ko"))
+                {
+                    return step1(s, len - 2);
+                }
+            }
 
-	  private int step1(char[] s, int len)
-	  {
-		if (len > 8)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "kin"))
-		  {
-			return step1(s, len - 3);
-		  }
-		  if (StemmerUtil.EndsWith(s, len, "ko"))
-		  {
-			return step1(s, len - 2);
-		  }
-		}
+            if (len > 11)
+            {
+                if (StemmerUtil.EndsWith(s, len, "dellinen"))
+                {
+                    return len - 8;
+                }
+                if (StemmerUtil.EndsWith(s, len, "dellisuus"))
+                {
+                    return len - 9;
+                }
+            }
+            return len;
+        }
 
-		if (len > 11)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "dellinen"))
-		  {
-			return len - 8;
-		  }
-		  if (StemmerUtil.EndsWith(s, len, "dellisuus"))
-		  {
-			return len - 9;
-		  }
-		}
-		return len;
-	  }
+        private int step2(char[] s, int len)
+        {
+            if (len > 5)
+            {
+                if (StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "tse") || StemmerUtil.EndsWith(s, len, "sti"))
+                {
+                    return len - 3;
+                }
 
-	  private int step2(char[] s, int len)
-	  {
-		if (len > 5)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "tse") || StemmerUtil.EndsWith(s, len, "sti"))
-		  {
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ni"))
+                {
+                    return len - 2;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "ni"))
-		  {
-			return len - 2;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "aa"))
+                {
+                    return len - 1; // aa -> a
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "aa"))
-		  {
-			return len - 1; // aa -> a
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int step3(char[] s, int len)
+        {
+            if (len > 8)
+            {
+                if (StemmerUtil.EndsWith(s, len, "nnen"))
+                {
+                    s[len - 4] = 's';
+                    return len - 3;
+                }
 
-	  private int step3(char[] s, int len)
-	  {
-		if (len > 8)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "nnen"))
-		  {
-			s[len - 4] = 's';
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ntena"))
+                {
+                    s[len - 5] = 's';
+                    return len - 4;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "ntena"))
-		  {
-			s[len - 5] = 's';
-			return len - 4;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "tten"))
+                {
+                    return len - 4;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "tten"))
-		  {
-			return len - 4;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "eiden"))
+                {
+                    return len - 5;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "eiden"))
-		  {
-			return len - 5;
-		  }
-		}
+            if (len > 6)
+            {
+                if (StemmerUtil.EndsWith(s, len, "neen") || StemmerUtil.EndsWith(s, len, "niin") || StemmerUtil.EndsWith(s, len, "seen") || StemmerUtil.EndsWith(s, len, "teen") || StemmerUtil.EndsWith(s, len, "inen"))
+                {
+                    return len - 4;
+                }
 
-		if (len > 6)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "neen") || StemmerUtil.EndsWith(s, len, "niin") || StemmerUtil.EndsWith(s, len, "seen") || StemmerUtil.EndsWith(s, len, "teen") || StemmerUtil.EndsWith(s, len, "inen"))
-		  {
-			  return len - 4;
-		  }
+                if (s[len - 3] == 'h' && isVowel(s[len - 2]) && s[len - 1] == 'n')
+                {
+                    return len - 3;
+                }
 
-		  if (s[len - 3] == 'h' && isVowel(s[len - 2]) && s[len - 1] == 'n')
-		  {
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "den"))
+                {
+                    s[len - 3] = 's';
+                    return len - 2;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "den"))
-		  {
-			s[len - 3] = 's';
-			return len - 2;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ksen"))
+                {
+                    s[len - 4] = 's';
+                    return len - 3;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "ksen"))
-		  {
-			s[len - 4] = 's';
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ssa") || StemmerUtil.EndsWith(s, len, "sta") || StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "lta") || StemmerUtil.EndsWith(s, len, "tta") || StemmerUtil.EndsWith(s, len, "ksi") || StemmerUtil.EndsWith(s, len, "lle"))
+                {
+                    return len - 3;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "ssa") || StemmerUtil.EndsWith(s, len, "sta") || StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "lta") || StemmerUtil.EndsWith(s, len, "tta") || StemmerUtil.EndsWith(s, len, "ksi") || StemmerUtil.EndsWith(s, len, "lle"))
-		  {
-			return len - 3;
-		  }
-		}
+            if (len > 5)
+            {
+                if (StemmerUtil.EndsWith(s, len, "na") || StemmerUtil.EndsWith(s, len, "ne"))
+                {
+                    return len - 2;
+                }
 
-		if (len > 5)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "na") || StemmerUtil.EndsWith(s, len, "ne"))
-		  {
-			return len - 2;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "nei"))
+                {
+                    return len - 3;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "nei"))
-		  {
-			return len - 3;
-		  }
-		}
+            if (len > 4)
+            {
+                if (StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "ta"))
+                {
+                    return len - 2;
+                }
 
-		if (len > 4)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "ta"))
-		  {
-			return len - 2;
-		  }
+                if (s[len - 1] == 'a')
+                {
+                    return len - 1;
+                }
 
-		  if (s[len - 1] == 'a')
-		  {
-			return len - 1;
-		  }
+                if (s[len - 1] == 'n' && isVowel(s[len - 2]))
+                {
+                    return len - 2;
+                }
 
-		  if (s[len - 1] == 'n' && isVowel(s[len - 2]))
-		  {
-			return len - 2;
-		  }
+                if (s[len - 1] == 'n')
+                {
+                    return len - 1;
+                }
+            }
 
-		  if (s[len - 1] == 'n')
-		  {
-			return len - 1;
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int norm1(char[] s, int len)
+        {
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "hde"))
+            {
+                s[len - 3] = 'k';
+                s[len - 2] = 's';
+                s[len - 1] = 'i';
+            }
 
-	  private int norm1(char[] s, int len)
-	  {
-		if (len > 5 && StemmerUtil.EndsWith(s, len, "hde"))
-		{
-			s[len - 3] = 'k';
-			s[len - 2] = 's';
-			s[len - 1] = 'i';
-		}
+            if (len > 4)
+            {
+                if (StemmerUtil.EndsWith(s, len, "ei") || StemmerUtil.EndsWith(s, len, "at"))
+                {
+                    return len - 2;
+                }
+            }
 
-		if (len > 4)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "ei") || StemmerUtil.EndsWith(s, len, "at"))
-		  {
-			return len - 2;
-		  }
-		}
+            if (len > 3)
+            {
+                switch (s[len - 1])
+                {
+                    case 't':
+                    case 's':
+                    case 'j':
+                    case 'e':
+                    case 'a':
+                    case 'i':
+                        return len - 1;
+                }
+            }
 
-		if (len > 3)
-		{
-		  switch (s[len - 1])
-		  {
-			case 't':
-			case 's':
-			case 'j':
-			case 'e':
-			case 'a':
-			case 'i':
-				return len - 1;
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int norm2(char[] s, int len)
+        {
+            if (len > 8)
+            {
+                if (s[len - 1] == 'e' || s[len - 1] == 'o' || s[len - 1] == 'u')
+                {
+                    len--;
+                }
+            }
 
-	  private int norm2(char[] s, int len)
-	  {
-		if (len > 8)
-		{
-		  if (s[len - 1] == 'e' || s[len - 1] == 'o' || s[len - 1] == 'u')
-		  {
-			len--;
-		  }
-		}
+            if (len > 4)
+            {
+                if (s[len - 1] == 'i')
+                {
+                    len--;
+                }
 
-		if (len > 4)
-		{
-		  if (s[len - 1] == 'i')
-		  {
-			len--;
-		  }
+                if (len > 4)
+                {
+                    char ch = s[0];
+                    for (int i = 1; i < len; i++)
+                    {
+                        if (s[i] == ch && (ch == 'k' || ch == 'p' || ch == 't'))
+                        {
+                            len = StemmerUtil.Delete(s, i--, len);
+                        }
+                        else
+                        {
+                            ch = s[i];
+                        }
+                    }
+                }
+            }
 
-		  if (len > 4)
-		  {
-			char ch = s[0];
-			for (int i = 1; i < len; i++)
-			{
-			  if (s[i] == ch && (ch == 'k' || ch == 'p' || ch == 't'))
-			  {
-				len = StemmerUtil.delete(s, i--, len);
-			  }
-			  else
-			  {
-				ch = s[i];
-			  }
-			}
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
-
-	  private bool isVowel(char ch)
-	  {
-		switch (ch)
-		{
-		  case 'a':
-		  case 'e':
-		  case 'i':
-		  case 'o':
-		  case 'u':
-		  case 'y':
-			  return true;
-		  default:
-			  return false;
-		}
-	  }
-	}
-
+        private bool isVowel(char ch)
+        {
+            switch (ch)
+            {
+                case 'a':
+                case 'e':
+                case 'i':
+                case 'o':
+                case 'u':
+                case 'y':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
 }

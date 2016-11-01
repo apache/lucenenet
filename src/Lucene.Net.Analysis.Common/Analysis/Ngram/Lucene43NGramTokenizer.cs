@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System;
 using System.IO;
-using Lucene.Net.Analysis.Tokenattributes;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +20,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Old broken version of <seealso cref="NGramTokenizer"/>.
     /// </summary>
@@ -40,8 +38,8 @@ namespace Lucene.Net.Analysis.Ngram
         private string inStr;
         private bool started;
 
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        private ICharTermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         /// <summary>
         /// Creates NGramTokenizer with given min and max n-grams. </summary>
@@ -51,7 +49,7 @@ namespace Lucene.Net.Analysis.Ngram
         public Lucene43NGramTokenizer(TextReader input, int minGram, int maxGram)
             : base(input)
         {
-            init(minGram, maxGram);
+            Init(minGram, maxGram);
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace Lucene.Net.Analysis.Ngram
         public Lucene43NGramTokenizer(AttributeFactory factory, TextReader input, int minGram, int maxGram)
             : base(factory, input)
         {
-            init(minGram, maxGram);
+            Init(minGram, maxGram);
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace Lucene.Net.Analysis.Ngram
         {
         }
 
-        private void init(int minGram, int maxGram)
+        private void Init(int minGram, int maxGram)
         {
             if (minGram < 1)
             {
@@ -86,6 +84,8 @@ namespace Lucene.Net.Analysis.Ngram
             }
             this.minGram = minGram;
             this.maxGram = maxGram;
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /// <summary>
@@ -170,5 +170,4 @@ namespace Lucene.Net.Analysis.Ngram
             pos = 0;
         }
     }
-
 }

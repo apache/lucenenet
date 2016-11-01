@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,7 @@
         /// <summary>
         /// Generate suggestions only for terms not in the index (default)
         /// </summary>
-        SUGGEST_WHEN_NOT_IN_INDEX,
+        SUGGEST_WHEN_NOT_IN_INDEX = 0, // LUCENENET NOTE: Zero is the default value for an uninitialized enum - http://stackoverflow.com/a/2409671/181087
 
         /// <summary>
         /// Return only suggested words that are as frequent or more frequent than the
@@ -38,9 +37,8 @@
         /// <summary>
         /// Always attempt to offer suggestions (however, other parameters may limit
         /// suggestions. For example, see
-        /// <seealso cref="DirectSpellChecker#setMaxQueryFrequency(float)"/> ).
+        /// <see cref="DirectSpellChecker.MaxQueryFrequency"/> ).
         /// </summary>
         SUGGEST_ALWAYS
     }
-
 }

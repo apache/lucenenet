@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using Lucene.Net.Support;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,130 +22,180 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// LRUHashMap is an extension of Java's HashMap, which has a bounded size();
-    /// When it reaches that size, each time a new element is added, the least
+    /// <see cref="LRUHashMap{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Capacity"/>;
+    /// When it reaches that <see cref="Capacity"/>, each time a new element is added, the least
     /// recently used (LRU) entry is removed.
     /// <para>
-    /// Java makes it very easy to implement LRUHashMap - all its functionality is
-    /// already available from <seealso cref="java.util.LinkedHashMap"/>, and we just need to
-    /// configure that properly.
+    /// Unlike the Java Lucene implementation, this one is thread safe because it is backed by the <see cref="LurchTable{TKey, TValue}"/>.
+    /// Do note that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
+    /// a write operation also takes place to update the element's last access time.
+    /// This is because the LRU order needs to be remembered to determine which element
+    /// to evict when the <see cref="Capacity"/> is exceeded. 
     /// </para>
     /// <para>
-    /// Note that like HashMap, LRUHashMap is unsynchronized, and the user MUST
-    /// synchronize the access to it if used from several threads. Moreover, while
-    /// with HashMap this is only a concern if one of the threads is modifies the
-    /// map, with LURHashMap every read is a modification (because the LRU order
-    /// needs to be remembered) so proper synchronization is always necessary.
-    /// </para>
-    /// <para>
-    /// With the usual synchronization mechanisms available to the user, this
-    /// unfortunately means that LRUHashMap will probably perform sub-optimally under
-    /// heavy contention: while one thread uses the hash table (reads or writes), any
-    /// other thread will be blocked from using it - or even just starting to use it
-    /// (e.g., calculating the hash function). A more efficient approach would be not
-    /// to use LinkedHashMap at all, but rather to use a non-locking (as much as
-    /// possible) thread-safe solution, something along the lines of
-    /// java.util.concurrent.ConcurrentHashMap (though that particular class does not
-    /// support the additional LRU semantics, which will need to be added separately
-    /// using a concurrent linked list or additional storage of timestamps (in an
-    /// array or inside the entry objects), or whatever).
     /// 
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class LRUHashMap<TV, TU> where TU : class //this is implementation of LRU Cache
+    public class LRUHashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
+        private LurchTable<TKey, TValue> cache;
 
-        public int MaxSize { get; set; }
-        private int CleanSize;
-        private TimeSpan MaxDuration;
-
-
-        private readonly ConcurrentDictionary<TV, CacheDataObject<TU>> _cache = new ConcurrentDictionary<TV, CacheDataObject<TU>>();
-
-        public LRUHashMap(int maxSize = 50000, int cleanPercentage = 30, TimeSpan maxDuration = default(TimeSpan))
+        public LRUHashMap(int capacity)
         {
-            MaxSize = maxSize;
-            CleanSize = (int)Math.Max(MaxSize * (1.0 * cleanPercentage / 100), 1);
-            if (maxDuration == default(TimeSpan))
-            {
-                MaxDuration = TimeSpan.FromDays(1);
-            }
-            else
-            {
-                MaxDuration = maxDuration;
-            }
+            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, capacity);
         }
 
-        
-        public bool Put(TV cacheKey, TU value)
+        /// <summary>
+        /// allows changing the map's maximal number of elements
+        /// which was defined at construction time.
+        /// <para>
+        /// Note that if the map is already larger than <see cref="Limit"/>, the current 
+        /// implementation does not shrink it (by removing the oldest elements);
+        /// Rather, the map remains in its current size as new elements are
+        /// added, and will only start shrinking (until settling again on the
+        /// given <see cref="Limit"/>) if existing elements are explicitly deleted.
+        /// </para>
+        /// </summary>
+        public virtual int Limit
         {
-            return AddToCache(cacheKey, value);
-        }
-
-        public bool AddToCache(TV cacheKey, TU value)
-        {
-            var cachedResult = new CacheDataObject<TU>
+            get
             {
-                Usage = 1, //value == null ? 1 : value.Usage + 1,
-                Value = value,
-                Timestamp = DateTime.UtcNow
-            };
-
-            _cache.AddOrUpdate(cacheKey, cachedResult, (_, __) => cachedResult);
-            if (_cache.Count > MaxSize)
+                return cache.Limit;
+            }
+            set
             {
-                foreach (var source in _cache
-                    .OrderByDescending(x => x.Value.Usage)
-                    .ThenBy(x => x.Value.Timestamp)
-                    .Skip(MaxSize - CleanSize))
+                if (value < 1)
                 {
-                    if (EqualityComparer<TV>.Default.Equals(source.Key, cacheKey))
-                        continue; // we don't want to remove the one we just added
-                    CacheDataObject<TU> ignored;
-                    _cache.TryRemove(source.Key, out ignored);
+                    throw new ArgumentOutOfRangeException("Limit must be at least 1");
                 }
+                cache.Limit = value;
             }
-            return true;
         }
 
-        public TU Get(TV cacheKey, bool increment = false)
+        public TValue Put(TKey key, TValue value)
         {
-            CacheDataObject<TU> value;
-            if (_cache.TryGetValue(cacheKey, out value) && (DateTime.UtcNow - value.Timestamp) <= MaxDuration)
+            TValue oldValue = default(TValue);
+            cache.AddOrUpdate(key, value, (k, v) =>
             {
-                if (increment)
-                {
-                    Interlocked.Increment(ref value.Usage);
-                }
-                return value.Value;
+                oldValue = cache[key];
+                return value;
+            });
+            return oldValue;
+        }
+
+        public TValue Get(TKey key)
+        {
+            TValue result;
+            if (!cache.TryGetValue(key, out result))
+            {
+                return default(TValue);
             }
-            return null;
+            return result;
         }
 
-        public bool IsExistInCache(TV cacheKey)
+        #region IDictionary<TKey, TValue> members
+
+        public TValue this[TKey key]
         {
-            return (_cache.ContainsKey(cacheKey));
+            get
+            {
+                return cache[key];
+            }
+            set
+            {
+                cache[key] = value;
+            }
         }
 
-        public int Size()
+        public int Count
         {
-            return _cache.Count;
+            get
+            {
+                return cache.Count;
+            }
         }
 
-        #region Nested type: CacheDataObject
-
-        private class CacheDataObject<T> where T : class
+        public bool IsReadOnly
         {
-            public DateTime Timestamp;
-            public int Usage;
-            public T Value;
+            get
+            {
+                return false;
+            }
+        }
+
+        public ICollection<TKey> Keys
+        {
+            get
+            {
+                return cache.Keys;
+            }
+        }
+
+        public ICollection<TValue> Values
+        {
+            get
+            {
+                return cache.Values;
+            }
+        }
+
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Add(TKey key, TValue value)
+        {
+            cache.Add(key, value);
+        }
+
+        public void Clear()
+        {
+            cache.Clear();
+        }
+
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool ContainsKey(TKey key)
+        {
+            return cache.ContainsKey(key);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return cache.GetEnumerator();
+        }
+
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Remove(TKey key)
+        {
+            return cache.Remove(key);
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            return cache.TryGetValue(key, out value);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return cache.GetEnumerator();
         }
 
         #endregion
-
     }
-
 }

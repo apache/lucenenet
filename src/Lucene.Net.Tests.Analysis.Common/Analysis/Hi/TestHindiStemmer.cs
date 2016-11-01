@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.hi
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,109 +21,98 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test HindiStemmer
+    /// </summary>
+    public class TestHindiStemmer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// Test masc noun inflections
+        /// </summary>
+        [Test]
+        public virtual void TestMasculineNouns()
+        {
+            Check("लडका", "लडक");
+            Check("लडके", "लडक");
+            Check("लडकों", "लडक");
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+            Check("गुरु", "गुर");
+            Check("गुरुओं", "गुर");
 
-	/// <summary>
-	/// Test HindiStemmer
-	/// </summary>
-	public class TestHindiStemmer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// Test masc noun inflections
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMasculineNouns() throws java.io.IOException
-	  public virtual void testMasculineNouns()
-	  {
-		check("लडका", "लडक");
-		check("लडके", "लडक");
-		check("लडकों", "लडक");
+            Check("दोस्त", "दोस्त");
+            Check("दोस्तों", "दोस्त");
+        }
 
-		check("गुरु", "गुर");
-		check("गुरुओं", "गुर");
+        /// <summary>
+        /// Test feminine noun inflections
+        /// </summary>
+        [Test]
+        public virtual void TestFeminineNouns()
+        {
+            Check("लडकी", "लडक");
+            Check("लडकियों", "लडक");
 
-		check("दोस्त", "दोस्त");
-		check("दोस्तों", "दोस्त");
-	  }
+            Check("किताब", "किताब");
+            Check("किताबें", "किताब");
+            Check("किताबों", "किताब");
 
-	  /// <summary>
-	  /// Test feminine noun inflections
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFeminineNouns() throws java.io.IOException
-	  public virtual void testFeminineNouns()
-	  {
-		check("लडकी", "लडक");
-		check("लडकियों", "लडक");
+            Check("आध्यापीका", "आध्यापीक");
+            Check("आध्यापीकाएं", "आध्यापीक");
+            Check("आध्यापीकाओं", "आध्यापीक");
+        }
 
-		check("किताब", "किताब");
-		check("किताबें", "किताब");
-		check("किताबों", "किताब");
+        /// <summary>
+        /// Test some verb forms
+        /// </summary>
+        [Test]
+        public virtual void TestVerbs()
+        {
+            Check("खाना", "खा");
+            Check("खाता", "खा");
+            Check("खाती", "खा");
+            Check("खा", "खा");
+        }
 
-		check("आध्यापीका", "आध्यापीक");
-		check("आध्यापीकाएं", "आध्यापीक");
-		check("आध्यापीकाओं", "आध्यापीक");
-	  }
+        /// <summary>
+        /// From the paper: since the suffix list for verbs includes AI, awA and anI,
+        /// additional suffixes had to be added to the list for noun/adjectives
+        /// ending with these endings.
+        /// </summary>
+        [Test]
+        public virtual void TestExceptions()
+        {
+            Check("कठिनाइयां", "कठिन");
+            Check("कठिन", "कठिन");
+        }
 
-	  /// <summary>
-	  /// Test some verb forms
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVerbs() throws java.io.IOException
-	  public virtual void testVerbs()
-	  {
-		check("खाना", "खा");
-		check("खाता", "खा");
-		check("खाती", "खा");
-		check("खा", "खा");
-	  }
+        private void Check(string input, string output)
+        {
+            Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
+            TokenFilter tf = new HindiStemFilter(tokenizer);
+            AssertTokenStreamContents(tf, new string[] { output });
+        }
 
-	  /// <summary>
-	  /// From the paper: since the suffix list for verbs includes AI, awA and anI,
-	  /// additional suffixes had to be added to the list for noun/adjectives
-	  /// ending with these endings.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExceptions() throws java.io.IOException
-	  public virtual void testExceptions()
-	  {
-		check("कठिनाइयां", "कठिन");
-		check("कठिन", "कठिन");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(String input, String output) throws java.io.IOException
-	  private void check(string input, string output)
-	  {
-		Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
-		TokenFilter tf = new HindiStemFilter(tokenizer);
-		assertTokenStreamContents(tf, new string[] {output});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestHindiStemmer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestHindiStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestHindiStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestHindiStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new HindiStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new HindiStemFilter(tokenizer));
+            }
+        }
+    }
 }

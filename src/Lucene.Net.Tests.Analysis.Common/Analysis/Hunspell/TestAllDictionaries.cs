@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,79 +25,209 @@ namespace org.apache.lucene.analysis.hunspell
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Can be retrieved via:
+    /// wget --mirror -np http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/
+    /// Note some of the files differ only in case. This may be a problem on your operating system!
+    /// 
+    /// LUCENENET NOTE: The above URL is no longer valid. These dictionaries can be retreived via FTP at one of these URLs
+    /// ftp://ftp.us.horde.org/pub/software/openoffice/contrib/dictionaries/
+    /// ftp://mirror.nl.leaseweb.net/openoffice/contrib/dictionaries/
+    /// ftp://mirror.aptus.co.tz/openoffice/contrib/dictionaries/
+    /// 
+    /// Or you can search by file name at:
+    /// http://www.filewatcher.com/
+    /// </summary>
 
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using Ignore = org.junit.Ignore;
+    [Ignore("Enable manually")]
+    public class TestAllDictionaries : LuceneTestCase
+    {
 
-	/// <summary>
-	/// Can be retrieved via:
-	/// wget --mirror -np http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/
-	/// Note some of the files differ only in case. This may be a problem on your operating system!
-	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Ignore("enable manually") public class TestAllDictionaries extends org.apache.lucene.util.LuceneTestCase
-	public class TestAllDictionaries : LuceneTestCase
-	{
+        // set this to the location of where you downloaded all the files
+        internal static readonly DirectoryInfo DICTIONARY_HOME = new DirectoryInfo(@"..\..\..\..\test-files\analysis\data\dictionaries");
 
-	  // set this to the location of where you downloaded all the files
-	  internal static readonly File DICTIONARY_HOME = new File("/data/archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries");
+        internal readonly string[] tests = new string[] 
+        {
+            /* zip file */               /* dictionary */       /* affix */
+            "af_ZA.zip",                 "af_ZA.dic",           "af_ZA.aff",
+            "ak_GH.zip",                 "ak_GH.dic",           "ak_GH.aff",
+            "bg_BG.zip",                 "bg_BG.dic",           "bg_BG.aff",
+            "ca_ANY.zip",                "catalan.dic",         "catalan.aff",
+            "ca_ES.zip",                 "ca_ES.dic",           "ca_ES.aff",
+// BUG: broken flag "cop_EG.zip",                "cop_EG.dic",          "cop_EG.aff",
+            "cs_CZ.zip",                 "cs_CZ.dic",           "cs_CZ.aff",
+            "cy_GB.zip",                 "cy_GB.dic",           "cy_GB.aff",
+            "da_DK.zip",                 "da_DK.dic",           "da_DK.aff",
+            "de_AT.zip",                 "de_AT.dic",           "de_AT.aff",
+            "de_CH.zip",                 "de_CH.dic",           "de_CH.aff",
+            "de_DE.zip",                 "de_DE.dic",           "de_DE.aff",
+            "de_DE_comb.zip",            "de_DE_comb.dic",      "de_DE_comb.aff",
+            "de_DE_frami.zip",           "de_DE_frami.dic",     "de_DE_frami.aff",
+            "de_DE_neu.zip",             "de_DE_neu.dic",       "de_DE_neu.aff",
+            "el_GR.zip",                 "el_GR.dic",           "el_GR.aff",
+            "en_AU.zip",                 "en_AU.dic",           "en_AU.aff",
+            "en_CA.zip",                 "en_CA.dic",           "en_CA.aff",
+            "en_GB-oed.zip",             "en_GB-oed.dic",       "en_GB-oed.aff",
+            "en_GB.zip",                 "en_GB.dic",           "en_GB.aff",
+            "en_NZ.zip",                 "en_NZ.dic",           "en_NZ.aff",
+            "eo.zip",                    "eo_l3.dic",           "eo_l3.aff",
+            "eo_EO.zip",                 "eo_EO.dic",           "eo_EO.aff",
+            "es_AR.zip",                 "es_AR.dic",           "es_AR.aff",
+            "es_BO.zip",                 "es_BO.dic",           "es_BO.aff",
+            "es_CL.zip",                 "es_CL.dic",           "es_CL.aff",
+            "es_CO.zip",                 "es_CO.dic",           "es_CO.aff",
+            "es_CR.zip",                 "es_CR.dic",           "es_CR.aff",
+            "es_CU.zip",                 "es_CU.dic",           "es_CU.aff",
+            "es_DO.zip",                 "es_DO.dic",           "es_DO.aff",
+            "es_EC.zip",                 "es_EC.dic",           "es_EC.aff",
+            "es_ES.zip",                 "es_ES.dic",           "es_ES.aff",
+            "es_GT.zip",                 "es_GT.dic",           "es_GT.aff",
+            "es_HN.zip",                 "es_HN.dic",           "es_HN.aff",
+            "es_MX.zip",                 "es_MX.dic",           "es_MX.aff",
+            "es_NEW.zip",                "es_NEW.dic",          "es_NEW.aff",
+            "es_NI.zip",                 "es_NI.dic",           "es_NI.aff",
+            "es_PA.zip",                 "es_PA.dic",           "es_PA.aff",
+            "es_PE.zip",                 "es_PE.dic",           "es_PE.aff",
+            "es_PR.zip",                 "es_PR.dic",           "es_PR.aff",
+            "es_PY.zip",                 "es_PY.dic",           "es_PY.aff",
+            "es_SV.zip",                 "es_SV.dic",           "es_SV.aff",
+            "es_UY.zip",                 "es_UY.dic",           "es_UY.aff",
+            "es_VE.zip",                 "es_VE.dic",           "es_VE.aff",
+            "et_EE.zip",                 "et_EE.dic",           "et_EE.aff",
+            "fo_FO.zip",                 "fo_FO.dic",           "fo_FO.aff",
+            "fr_FR-1990_1-3-2.zip",      "fr_FR-1990.dic",      "fr_FR-1990.aff",
+            "fr_FR-classique_1-3-2.zip", "fr_FR-classique.dic", "fr_FR-classique.aff",
+            "fr_FR_1-3-2.zip",           "fr_FR.dic",           "fr_FR.aff",
+            "fy_NL.zip",                 "fy_NL.dic",           "fy_NL.aff",
+            "ga_IE.zip",                 "ga_IE.dic",           "ga_IE.aff",
+            "gd_GB.zip",                 "gd_GB.dic",           "gd_GB.aff",
+            "gl_ES.zip",                 "gl_ES.dic",           "gl_ES.aff",
+            "gsc_FR.zip",                "gsc_FR.dic",          "gsc_FR.aff",
+            "gu_IN.zip",                 "gu_IN.dic",           "gu_IN.aff",
+            "he_IL.zip",                 "he_IL.dic",           "he_IL.aff",
+            "hi_IN.zip",                 "hi_IN.dic",           "hi_IN.aff",
+            "hil_PH.zip",                "hil_PH.dic",          "hil_PH.aff",
+            "hr_HR.zip",                 "hr_HR.dic",           "hr_HR.aff",
+            "hu_HU.zip",                 "hu_HU.dic",           "hu_HU.aff",
+            "hu_HU_comb.zip",            "hu_HU.dic",           "hu_HU.aff",
+            "ia.zip",                    "ia.dic",              "ia.aff",
+            "id_ID.zip",                 "id_ID.dic",           "id_ID.aff",
+            "it_IT.zip",                 "it_IT.dic",           "it_IT.aff",
+            "ku_TR.zip",                 "ku_TR.dic",           "ku_TR.aff",
+            "la.zip",                    "la.dic",              "la.aff",
+            "lt_LT.zip",                 "lt_LT.dic",           "lt_LT.aff",
+            "lv_LV.zip",                 "lv_LV.dic",           "lv_LV.aff",
+            "mg_MG.zip",                 "mg_MG.dic",           "mg_MG.aff",
+            "mi_NZ.zip",                 "mi_NZ.dic",           "mi_NZ.aff",
+            "mk_MK.zip",                 "mk_MK.dic",           "mk_MK.aff",
+            "mos_BF.zip",                "mos_BF.dic",          "mos_BF.aff",
+            "mr_IN.zip",                 "mr_IN.dic",           "mr_IN.aff",
+            "ms_MY.zip",                 "ms_MY.dic",           "ms_MY.aff",
+            "nb_NO.zip",                 "nb_NO.dic",           "nb_NO.aff",
+            "ne_NP.zip",                 "ne_NP.dic",           "ne_NP.aff",
+            "nl_NL.zip",                 "nl_NL.dic",           "nl_NL.aff",
+            "nl_med.zip",                "nl_med.dic",          "nl_med.aff",
+            "nn_NO.zip",                 "nn_NO.dic",           "nn_NO.aff",
+            "nr_ZA.zip",                 "nr_ZA.dic",           "nr_ZA.aff",
+            "ns_ZA.zip",                 "ns_ZA.dic",           "ns_ZA.aff",
+            "ny_MW.zip",                 "ny_MW.dic",           "ny_MW.aff",
+            "oc_FR.zip",                 "oc_FR.dic",           "oc_FR.aff",
+            "pl_PL.zip",                 "pl_PL.dic",           "pl_PL.aff",
+            "pt_BR.zip",                 "pt_BR.dic",           "pt_BR.aff",
+            "pt_PT.zip",                 "pt_PT.dic",           "pt_PT.aff",
+            "ro_RO.zip",                 "ro_RO.dic",           "ro_RO.aff",
+            "ru_RU.zip",                 "ru_RU.dic",           "ru_RU.aff",
+            "ru_RU_ye.zip",              "ru_RU_ie.dic",        "ru_RU_ie.aff",
+            "ru_RU_yo.zip",              "ru_RU_yo.dic",        "ru_RU_yo.aff",
+            "rw_RW.zip",                 "rw_RW.dic",           "rw_RW.aff",
+            "sk_SK.zip",                 "sk_SK.dic",           "sk_SK.aff",
+            "sl_SI.zip",                 "sl_SI.dic",           "sl_SI.aff",
+            "sq_AL.zip",                 "sq_AL.dic",           "sq_AL.aff",
+            "ss_ZA.zip",                 "ss_ZA.dic",           "ss_ZA.aff",
+            "st_ZA.zip",                 "st_ZA.dic",           "st_ZA.aff",
+            "sv_SE.zip",                 "sv_SE.dic",           "sv_SE.aff",
+            "sw_KE.zip",                 "sw_KE.dic",           "sw_KE.aff",
+            "tet_ID.zip",                "tet_ID.dic",          "tet_ID.aff",
+            "th_TH.zip",                 "th_TH.dic",           "th_TH.aff",
+            "tl_PH.zip",                 "tl_PH.dic",           "tl_PH.aff",
+            "tn_ZA.zip",                 "tn_ZA.dic",           "tn_ZA.aff",
+            "ts_ZA.zip",                 "ts_ZA.dic",           "ts_ZA.aff",
+            "uk_UA.zip",                 "uk_UA.dic",           "uk_UA.aff",
+            "ve_ZA.zip",                 "ve_ZA.dic",           "ve_ZA.aff",
+            "vi_VN.zip",                 "vi_VN.dic",           "vi_VN.aff",
+            "xh_ZA.zip",                 "xh_ZA.dic",           "xh_ZA.aff",
+            "zu_ZA.zip",                 "zu_ZA.dic",           "zu_ZA.aff",
+        };
 
-	  internal readonly string[] tests = new string[] {"af_ZA.zip", "af_ZA.dic", "af_ZA.aff", "ak_GH.zip", "ak_GH.dic", "ak_GH.aff", "bg_BG.zip", "bg_BG.dic", "bg_BG.aff", "ca_ANY.zip", "catalan.dic", "catalan.aff", "ca_ES.zip", "ca_ES.dic", "ca_ES.aff", "cs_CZ.zip", "cs_CZ.dic", "cs_CZ.aff", "cy_GB.zip", "cy_GB.dic", "cy_GB.aff", "da_DK.zip", "da_DK.dic", "da_DK.aff", "de_AT.zip", "de_AT.dic", "de_AT.aff", "de_CH.zip", "de_CH.dic", "de_CH.aff", "de_DE.zip", "de_DE.dic", "de_DE.aff", "de_DE_comb.zip", "de_DE_comb.dic", "de_DE_comb.aff", "de_DE_frami.zip", "de_DE_frami.dic", "de_DE_frami.aff", "de_DE_neu.zip", "de_DE_neu.dic", "de_DE_neu.aff", "el_GR.zip", "el_GR.dic", "el_GR.aff", "en_AU.zip", "en_AU.dic", "en_AU.aff", "en_CA.zip", "en_CA.dic", "en_CA.aff", "en_GB-oed.zip", "en_GB-oed.dic", "en_GB-oed.aff", "en_GB.zip", "en_GB.dic", "en_GB.aff", "en_NZ.zip", "en_NZ.dic", "en_NZ.aff", "eo.zip", "eo_l3.dic", "eo_l3.aff", "eo_EO.zip", "eo_EO.dic", "eo_EO.aff", "es_AR.zip", "es_AR.dic", "es_AR.aff", "es_BO.zip", "es_BO.dic", "es_BO.aff", "es_CL.zip", "es_CL.dic", "es_CL.aff", "es_CO.zip", "es_CO.dic", "es_CO.aff", "es_CR.zip", "es_CR.dic", "es_CR.aff", "es_CU.zip", "es_CU.dic", "es_CU.aff", "es_DO.zip", "es_DO.dic", "es_DO.aff", "es_EC.zip", "es_EC.dic", "es_EC.aff", "es_ES.zip", "es_ES.dic", "es_ES.aff", "es_GT.zip", "es_GT.dic", "es_GT.aff", "es_HN.zip", "es_HN.dic", "es_HN.aff", "es_MX.zip", "es_MX.dic", "es_MX.aff", "es_NEW.zip", "es_NEW.dic", "es_NEW.aff", "es_NI.zip", "es_NI.dic", "es_NI.aff", "es_PA.zip", "es_PA.dic", "es_PA.aff", "es_PE.zip", "es_PE.dic", "es_PE.aff", "es_PR.zip", "es_PR.dic", "es_PR.aff", "es_PY.zip", "es_PY.dic", "es_PY.aff", "es_SV.zip", "es_SV.dic", "es_SV.aff", "es_UY.zip", "es_UY.dic", "es_UY.aff", "es_VE.zip", "es_VE.dic", "es_VE.aff", "et_EE.zip", "et_EE.dic", "et_EE.aff", "fo_FO.zip", "fo_FO.dic", "fo_FO.aff", "fr_FR-1990_1-3-2.zip", "fr_FR-1990.dic", "fr_FR-1990.aff", "fr_FR-classique_1-3-2.zip", "fr_FR-classique.dic", "fr_FR-classique.aff", "fr_FR_1-3-2.zip", "fr_FR.dic", "fr_FR.aff", "fy_NL.zip", "fy_NL.dic", "fy_NL.aff", "ga_IE.zip", "ga_IE.dic", "ga_IE.aff", "gd_GB.zip", "gd_GB.dic", "gd_GB.aff", "gl_ES.zip", "gl_ES.dic", "gl_ES.aff", "gsc_FR.zip", "gsc_FR.dic", "gsc_FR.aff", "gu_IN.zip", "gu_IN.dic", "gu_IN.aff", "he_IL.zip", "he_IL.dic", "he_IL.aff", "hi_IN.zip", "hi_IN.dic", "hi_IN.aff", "hil_PH.zip", "hil_PH.dic", "hil_PH.aff", "hr_HR.zip", "hr_HR.dic", "hr_HR.aff", "hu_HU.zip", "hu_HU.dic", "hu_HU.aff", "hu_HU_comb.zip", "hu_HU.dic", "hu_HU.aff", "ia.zip", "ia.dic", "ia.aff", "id_ID.zip", "id_ID.dic", "id_ID.aff", "it_IT.zip", "it_IT.dic", "it_IT.aff", "ku_TR.zip", "ku_TR.dic", "ku_TR.aff", "la.zip", "la.dic", "la.aff", "lt_LT.zip", "lt_LT.dic", "lt_LT.aff", "lv_LV.zip", "lv_LV.dic", "lv_LV.aff", "mg_MG.zip", "mg_MG.dic", "mg_MG.aff", "mi_NZ.zip", "mi_NZ.dic", "mi_NZ.aff", "mk_MK.zip", "mk_MK.dic", "mk_MK.aff", "mos_BF.zip", "mos_BF.dic", "mos_BF.aff", "mr_IN.zip", "mr_IN.dic", "mr_IN.aff", "ms_MY.zip", "ms_MY.dic", "ms_MY.aff", "nb_NO.zip", "nb_NO.dic", "nb_NO.aff", "ne_NP.zip", "ne_NP.dic", "ne_NP.aff", "nl_NL.zip", "nl_NL.dic", "nl_NL.aff", "nl_med.zip", "nl_med.dic", "nl_med.aff", "nn_NO.zip", "nn_NO.dic", "nn_NO.aff", "nr_ZA.zip", "nr_ZA.dic", "nr_ZA.aff", "ns_ZA.zip", "ns_ZA.dic", "ns_ZA.aff", "ny_MW.zip", "ny_MW.dic", "ny_MW.aff", "oc_FR.zip", "oc_FR.dic", "oc_FR.aff", "pl_PL.zip", "pl_PL.dic", "pl_PL.aff", "pt_BR.zip", "pt_BR.dic", "pt_BR.aff", "pt_PT.zip", "pt_PT.dic", "pt_PT.aff", "ro_RO.zip", "ro_RO.dic", "ro_RO.aff", "ru_RU.zip", "ru_RU.dic", "ru_RU.aff", "ru_RU_ye.zip", "ru_RU_ie.dic", "ru_RU_ie.aff", "ru_RU_yo.zip", "ru_RU_yo.dic", "ru_RU_yo.aff", "rw_RW.zip", "rw_RW.dic", "rw_RW.aff", "sk_SK.zip", "sk_SK.dic", "sk_SK.aff", "sl_SI.zip", "sl_SI.dic", "sl_SI.aff", "sq_AL.zip", "sq_AL.dic", "sq_AL.aff", "ss_ZA.zip", "ss_ZA.dic", "ss_ZA.aff", "st_ZA.zip", "st_ZA.dic", "st_ZA.aff", "sv_SE.zip", "sv_SE.dic", "sv_SE.aff", "sw_KE.zip", "sw_KE.dic", "sw_KE.aff", "tet_ID.zip", "tet_ID.dic", "tet_ID.aff", "th_TH.zip", "th_TH.dic", "th_TH.aff", "tl_PH.zip", "tl_PH.dic", "tl_PH.aff", "tn_ZA.zip", "tn_ZA.dic", "tn_ZA.aff", "ts_ZA.zip", "ts_ZA.dic", "ts_ZA.aff", "uk_UA.zip", "uk_UA.dic", "uk_UA.aff", "ve_ZA.zip", "ve_ZA.dic", "ve_ZA.aff", "vi_VN.zip", "vi_VN.dic", "vi_VN.aff", "xh_ZA.zip", "xh_ZA.dic", "xh_ZA.aff", "zu_ZA.zip", "zu_ZA.dic", "zu_ZA.aff"};
+        [Test]
+        public virtual void Test()
+        {
+            for (int i = 0; i < tests.Length; i += 3)
+            {
+                FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
+                Debug.Assert(f.Exists);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws Exception
-	  public virtual void test()
-	  {
-		for (int i = 0; i < tests.Length; i += 3)
-		{
-		  File f = new File(DICTIONARY_HOME, tests[i]);
-		  Debug.Assert(f.exists());
+                using (Stream fileStream = f.OpenRead())
+                {
+                    using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
+                    {
+                        ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
+                        Debug.Assert(dicEntry != null);
+                        ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
+                        Debug.Assert(affEntry != null);
 
-		  using (ZipFile zip = new ZipFile(f, StandardCharsets.UTF_8))
-		  {
-			ZipEntry dicEntry = zip.getEntry(tests[i + 1]);
-			Debug.Assert(dicEntry != null);
-			ZipEntry affEntry = zip.getEntry(tests[i + 2]);
-			Debug.Assert(affEntry != null);
+                        using (Stream dictionary = dicEntry.Open())
+                        {
+                            using (Stream affix = affEntry.Open())
+                            {
+                                Dictionary dic = new Dictionary(affix, dictionary);
+                                Console.WriteLine(tests[i] + "\t" + RamUsageEstimator.HumanSizeOf(dic) + "\t(" +
+                                    "words=" + RamUsageEstimator.HumanSizeOf(dic.words) + ", " +
+                                    "flags=" + RamUsageEstimator.HumanSizeOf(dic.flagLookup) + ", " +
+                                    "strips=" + RamUsageEstimator.HumanSizeOf(dic.stripData) + ", " +
+                                    "conditions=" + RamUsageEstimator.HumanSizeOf(dic.patterns) + ", " +
+                                    "affixData=" + RamUsageEstimator.HumanSizeOf(dic.affixData) + ", " +
+                                    "prefixes=" + RamUsageEstimator.HumanSizeOf(dic.prefixes) + ", " +
+                                    "suffixes=" + RamUsageEstimator.HumanSizeOf(dic.suffixes) + ")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-			using (System.IO.Stream dictionary = zip.getInputStream(dicEntry), System.IO.Stream affix = zip.getInputStream(affEntry))
-			{
-			  Dictionary dic = new Dictionary(affix, dictionary);
-			  Console.WriteLine(tests[i] + "\t" + RamUsageEstimator.humanSizeOf(dic) + "\t(" + "words=" + RamUsageEstimator.humanSizeOf(dic.words) + ", " + "flags=" + RamUsageEstimator.humanSizeOf(dic.flagLookup) + ", " + "strips=" + RamUsageEstimator.humanSizeOf(dic.stripData) + ", " + "conditions=" + RamUsageEstimator.humanSizeOf(dic.patterns) + ", " + "affixData=" + RamUsageEstimator.humanSizeOf(dic.affixData) + ", " + "prefixes=" + RamUsageEstimator.humanSizeOf(dic.prefixes) + ", " + "suffixes=" + RamUsageEstimator.humanSizeOf(dic.suffixes) + ")");
-			}
-		  }
-		}
-	  }
+        [Test]
+        public virtual void TestOneDictionary()
+        {
+            string toTest = "hu_HU.zip";
+            for (int i = 0; i < tests.Length; i++)
+            {
+                if (tests[i].Equals(toTest))
+                {
+                    FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
+                    Debug.Assert(f.Exists);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testOneDictionary() throws Exception
-	  public virtual void testOneDictionary()
-	  {
-		string toTest = "hu_HU.zip";
-		for (int i = 0; i < tests.Length; i++)
-		{
-		  if (tests[i].Equals(toTest))
-		  {
-			File f = new File(DICTIONARY_HOME, tests[i]);
-			Debug.Assert(f.exists());
+                    using (Stream fileStream = f.OpenRead())
+                    {
+                        using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
+                        {
+                            ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
+                            Debug.Assert(dicEntry != null);
+                            ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
+                            Debug.Assert(affEntry != null);
 
-			using (ZipFile zip = new ZipFile(f, StandardCharsets.UTF_8))
-			{
-			  ZipEntry dicEntry = zip.getEntry(tests[i + 1]);
-			  Debug.Assert(dicEntry != null);
-			  ZipEntry affEntry = zip.getEntry(tests[i + 2]);
-			  Debug.Assert(affEntry != null);
+                            using (Stream dictionary = dicEntry.Open())
+                            {
+                                using (Stream affix = affEntry.Open())
+                                {
+                                    new Dictionary(affix, dictionary);
+                                }
+                            }
 
-			  using (System.IO.Stream dictionary = zip.getInputStream(dicEntry), System.IO.Stream affix = zip.getInputStream(affEntry))
-			  {
-				  new Dictionary(affix, dictionary);
-			  }
-			}
-		  }
-		}
-	  }
-	}
-
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

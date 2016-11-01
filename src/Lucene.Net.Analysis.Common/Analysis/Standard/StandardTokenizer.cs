@@ -1,28 +1,32 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using Lucene.Net.Analysis.Standard.Std31;
+using Lucene.Net.Analysis.Standard.Std34;
+using Lucene.Net.Analysis.Standard.Std36;
+using Lucene.Net.Analysis.Standard.Std40;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.standard;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System;
 using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Standard
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// A grammar-based tokenizer constructed with JFlex.
     /// <para>
@@ -54,7 +58,7 @@ namespace Lucene.Net.Analysis.Standard
     {
         /// <summary>
         /// A private instance of the JFlex-constructed scanner </summary>
-        private StandardTokenizerInterface scanner;
+        private IStandardTokenizerInterface scanner;
 
         public const int ALPHANUM = 0;
         /// @deprecated (3.1) 
@@ -124,11 +128,6 @@ namespace Lucene.Net.Analysis.Standard
         public StandardTokenizer(Version matchVersion, Reader input)
             : base(input)
         {
-            termAtt = AddAttribute<ICharTermAttribute>();
-            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            offsetAtt = AddAttribute<IOffsetAttribute>();
-            typeAtt = AddAttribute<ITypeAttribute>();
-
             Init(matchVersion);
         }
 
@@ -143,6 +142,7 @@ namespace Lucene.Net.Analysis.Standard
 
         private void Init(Version matchVersion)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(Version.LUCENE_47))
             {
                 this.scanner = new StandardTokenizerImpl(input);
@@ -159,18 +159,24 @@ namespace Lucene.Net.Analysis.Standard
             {
                 this.scanner = new StandardTokenizerImpl31(input);
             }
+#pragma warning restore 612, 618
             else
             {
                 this.scanner = new ClassicTokenizerImpl(input);
             }
+
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
         }
 
         // this tokenizer generates three attributes:
         // term offset, positionIncrement and type
-        private readonly ICharTermAttribute termAtt;
-        private readonly IOffsetAttribute offsetAtt;
-        private readonly IPositionIncrementAttribute posIncrAtt;
-        private readonly ITypeAttribute typeAtt;
+        private ICharTermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private IPositionIncrementAttribute posIncrAtt;
+        private ITypeAttribute typeAtt;
 
         /*
          * (non-Javadoc)
@@ -184,28 +190,30 @@ namespace Lucene.Net.Analysis.Standard
 
             while (true)
             {
-                int tokenType = scanner.NextToken;
+                int tokenType = scanner.GetNextToken();
 
                 if (tokenType == StandardTokenizerInterface_Fields.YYEOF)
                 {
                     return false;
                 }
 
-                if (scanner.yylength() <= maxTokenLength)
+                if (scanner.YyLength <= maxTokenLength)
                 {
                     posIncrAtt.PositionIncrement = skippedPositions + 1;
-                    scanner.getText(termAtt);
+                    scanner.GetText(termAtt);
                     //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int start = scanner.yychar();
-                    int start = scanner.yychar();
-                    offsetAtt.SetOffset(correctOffset(start), correctOffset(start + termAtt.length()));
+                    //ORIGINAL LINE: final int start = scanner.YyChar();
+                    int start = scanner.YyChar;
+                    offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.Length));
                     // This 'if' should be removed in the next release. For now, it converts
                     // invalid acronyms to HOST. When removed, only the 'else' part should
                     // remain.
+#pragma warning disable 612, 618
                     if (tokenType == StandardTokenizer.ACRONYM_DEP)
                     {
                         typeAtt.Type = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HOST];
-                        termAtt.Length = termAtt.length() - 1; // remove extra '.'
+#pragma warning restore 612, 618
+                        termAtt.Length = termAtt.Length - 1; // remove extra '.'
                     }
                     else
                     {
@@ -226,7 +234,7 @@ namespace Lucene.Net.Analysis.Standard
         {
             base.End();
             // set final offset
-            int finalOffset = CorrectOffset(scanner.yychar() + scanner.yylength());
+            int finalOffset = CorrectOffset(scanner.YyChar + scanner.YyLength);
             offsetAtt.SetOffset(finalOffset, finalOffset);
             // adjust any skipped tokens
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
@@ -235,15 +243,14 @@ namespace Lucene.Net.Analysis.Standard
         public override void Dispose()
         {
             base.Dispose();
-            scanner.yyreset(input);
+            scanner.YyReset(input);
         }
 
         public override void Reset()
         {
             base.Reset();
-            scanner.yyreset(input);
+            scanner.YyReset(input);
             skippedPositions = 0;
         }
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net
 {

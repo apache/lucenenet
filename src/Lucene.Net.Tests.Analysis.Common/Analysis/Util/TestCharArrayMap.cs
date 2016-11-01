@@ -1,288 +1,346 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
 using System.Text;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
+    [TestFixture]
+    public class TestCharArrayMap_ : LuceneTestCase
+    {
+        public virtual void DoRandom(int iter, bool ignoreCase)
+        {
+            CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
+            HashMap<string, int?> hmap = new HashMap<string, int?>();
 
-	public class TestCharArrayMap : LuceneTestCase
-	{
-	  public virtual void doRandom(int iter, bool ignoreCase)
-	  {
-		CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
-		Dictionary<string, int?> hmap = new Dictionary<string, int?>();
+            char[] key;
+            for (int i = 0; i < iter; i++)
+            {
+                int len = Random().Next(5);
+                key = new char[len];
+                for (int j = 0; j < key.Length; j++)
+                {
+                    key[j] = (char)Random().Next(127);
+                }
+                string keyStr = new string(key);
+                string hmapKey = ignoreCase ? keyStr.ToLower() : keyStr;
 
-		char[] key;
-		for (int i = 0; i < iter; i++)
-		{
-		  int len = random().Next(5);
-		  key = new char[len];
-		  for (int j = 0; j < key.Length; j++)
-		  {
-			key[j] = (char)random().Next(127);
-		  }
-		  string keyStr = new string(key);
-		  string hmapKey = ignoreCase ? keyStr.ToLower(Locale.ROOT) : keyStr;
+                int val = Random().Next();
 
-		  int val = random().Next();
+                object o1 = map.Put(key, val);
+                object o2 = hmap.Put(hmapKey, val);
+                assertEquals(o1, o2);
 
-		  object o1 = map.put(key, val);
-		  object o2 = hmap[hmapKey].Value = val;
-		  assertEquals(o1,o2);
+                // add it again with the string method
+                assertEquals(val, map.Put(keyStr, val));
 
-		  // add it again with the string method
-		  assertEquals(val, map.put(keyStr,val).intValue());
+                assertEquals(val, map.Get(key, 0, key.Length));
+                assertEquals(val, map.Get(key));
+                assertEquals(val, map.Get(keyStr));
 
-		  assertEquals(val, map.get(key,0,key.Length).intValue());
-		  assertEquals(val, map.get(key).intValue());
-		  assertEquals(val, map.get(keyStr).intValue());
+                assertEquals(hmap.Count, map.size());
+            }
+        }
 
-		  assertEquals(hmap.Count, map.size());
-		}
-	  }
+        [Test]
+        public virtual void TestCharArrayMap()
+        {
+            int num = 5 * RANDOM_MULTIPLIER;
+            for (int i = 0; i < num; i++)
+            { // pump this up for more random testing
+                DoRandom(1000, false);
+                DoRandom(1000, true);
+            }
+        }
 
-	  public virtual void testCharArrayMap()
-	  {
-		int num = 5 * RANDOM_MULTIPLIER;
-		for (int i = 0; i < num; i++)
-		{ // pump this up for more random testing
-		  doRandom(1000,false);
-		  doRandom(1000,true);
-		}
-	  }
+        [Test]
+        public virtual void TestMethods()
+        {
+            CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
+            Dictionary<string, int?> hm = new Dictionary<string, int?>();
+            hm["foo"] = 1;
+            hm["bar"] = 2;
+            cm.PutAll(hm);
+            assertEquals(hm.Count, cm.Count);
+            hm["baz"] = 3;
+            cm.PutAll(hm);
+            assertEquals(hm.Count, cm.Count);
 
-	  public virtual void testMethods()
-	  {
-		CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
-		Dictionary<string, int?> hm = new Dictionary<string, int?>();
-		hm["foo"] = 1;
-		hm["bar"] = 2;
-		cm.putAll(hm);
-		assertEquals(hm.Count, cm.size());
-		hm["baz"] = 3;
-		cm.putAll(hm);
-		assertEquals(hm.Count, cm.size());
+            // LUCENENET: Need to cast here - no implicit conversion.
+            CharArraySet cs = cm.Keys as CharArraySet;
+            int n = 0;
+            foreach (string o in cs)
+            {
+                assertTrue(cm.ContainsKey(o));
+                char[] co = o.ToCharArray();
+                assertTrue(cm.ContainsKey(co, 0, co.Length));
+                n++;
+            }
+            assertEquals(hm.Count, n);
+            assertEquals(hm.Count, cs.Count);
+            assertEquals(cm.Count, cs.Count);
+            cs.Clear();
+            assertEquals(0, cs.Count);
+            assertEquals(0, cm.Count);
+            try
+            {
+                cs.Add("test");
+                fail("keySet() allows adding new keys");
+            }
+            catch (System.NotSupportedException)
+            {
+                // pass
+            }
+            cm.PutAll(hm);
+            assertEquals(hm.Count, cs.Count);
+            assertEquals(cm.Count, cs.Count);
+            // LUCENENET: Need to cast here - no implicit conversion
+            IEnumerator<KeyValuePair<string, int?>> iter1 = (IEnumerator<KeyValuePair<string, int?>>)cm.EntrySet().GetEnumerator();
+            n = 0;
+            while (iter1.MoveNext())
+            {
+                KeyValuePair<string, int?> entry = iter1.Current;
+                object key = entry.Key;
+                int? val = entry.Value;
+                assertEquals(cm.Get(key), val);
+                // LUCENENET: Need a cast to get to this method because it is not part of the IEnumerator<T> interface
+                ((CharArrayMap<int?>.EntryIterator)iter1).SetValue(val * 100);
+                assertEquals(val * 100, (int)cm.Get(key));
+                n++;
+            }
+            assertEquals(hm.Count, n);
+            cm.Clear();
+            cm.PutAll(hm);
+            assertEquals(cm.size(), n);
 
-		CharArraySet cs = cm.Keys;
-		int n = 0;
-		foreach (object o in cs)
-		{
-		  assertTrue(cm.containsKey(o));
-		  char[] co = (char[]) o;
-		  assertTrue(cm.containsKey(co, 0, co.Length));
-		  n++;
-		}
-		assertEquals(hm.Count, n);
-		assertEquals(hm.Count, cs.size());
-		assertEquals(cm.size(), cs.size());
-		cs.clear();
-		assertEquals(0, cs.size());
-		assertEquals(0, cm.size());
-		try
-		{
-		  cs.add("test");
-		  fail("keySet() allows adding new keys");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // pass
-		}
-		cm.putAll(hm);
-		assertEquals(hm.Count, cs.size());
-		assertEquals(cm.size(), cs.size());
+            CharArrayMap<int?>.EntryIterator iter2 = cm.EntrySet().GetEnumerator() as CharArrayMap<int?>.EntryIterator;
+            n = 0;
+            while (iter2.MoveNext())
+            {
+                var keyc = iter2.Current.Key;
+                int? val = iter2.Current.Value;
+                assertEquals(hm[keyc], val);
+                iter2.SetValue(val * 100);
+                assertEquals(val * 100, (int)cm.Get(keyc));
+                n++;
+            }
+            assertEquals(hm.Count, n);
 
-		IEnumerator<KeyValuePair<object, int?>> iter1 = cm.entrySet().GetEnumerator();
-		n = 0;
-		while (iter1.MoveNext())
-		{
-		  KeyValuePair<object, int?> entry = iter1.Current;
-		  object key = entry.Key;
-		  int? val = entry.Value;
-		  assertEquals(cm.get(key), val);
-		  entry.Value = val * 100;
-		  assertEquals(val * 100, (int)cm.get(key));
-		  n++;
-		}
-		assertEquals(hm.Count, n);
-		cm.clear();
-		cm.putAll(hm);
-		assertEquals(cm.size(), n);
+            cm.EntrySet().Clear();
+            assertEquals(0, cm.size());
+            assertEquals(0, cm.EntrySet().size());
+            assertTrue(cm.Count == 0);
+        }
 
-		CharArrayMap<int?>.EntryIterator iter2 = cm.entrySet().GetEnumerator();
-		n = 0;
-		while (iter2.hasNext())
-		{
-		  char[] keyc = iter2.nextKey();
-		  int? val = iter2.currentValue();
-		  assertEquals(hm[new string(keyc)], val);
-		  iter2.Value = val * 100;
-		  assertEquals(val * 100, (int)cm.get(keyc));
-		  n++;
-		}
-		assertEquals(hm.Count, n);
+        [Test]
+        public void TestModifyOnUnmodifiable()
+        {
+            CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
+            map.Put("foo", 1);
+            map.Put("bar", 2);
+            int size = map.Count;
+            assertEquals(2, size);
+            assertTrue(map.ContainsKey("foo"));
+            assertEquals(1, map.Get("foo"));
+            assertTrue(map.ContainsKey("bar"));
+            assertEquals(2, map.Get("bar"));
 
-		cm.entrySet().clear();
-		assertEquals(0, cm.size());
-		assertEquals(0, cm.entrySet().size());
-		assertTrue(cm.Empty);
-	  }
+            map = CharArrayMap.UnmodifiableMap(map);
+            assertEquals("Map size changed due to unmodifiableMap call", size, map.Count);
+            var NOT_IN_MAP = "SirGallahad";
+            assertFalse("Test String already exists in map", map.ContainsKey(NOT_IN_MAP));
+            assertNull("Test String already exists in map", map.Get(NOT_IN_MAP));
 
-	  public virtual void testModifyOnUnmodifiable()
-	  {
-		CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
-		map.put("foo",1);
-		map.put("bar",2);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = map.size();
-		int size = map.size();
-		assertEquals(2, size);
-		assertTrue(map.containsKey("foo"));
-		assertEquals(1, map.get("foo").intValue());
-		assertTrue(map.containsKey("bar"));
-		assertEquals(2, map.get("bar").intValue());
+            try
+            {
+                map.Put(NOT_IN_MAP.ToCharArray(), 3);
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		map = CharArrayMap.unmodifiableMap(map);
-		assertEquals("Map size changed due to unmodifiableMap call", size, map.size());
-		string NOT_IN_MAP = "SirGallahad";
-		assertFalse("Test String already exists in map", map.containsKey(NOT_IN_MAP));
-		assertNull("Test String already exists in map", map.get(NOT_IN_MAP));
+            try
+            {
+                map.Put(NOT_IN_MAP, 3);
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		try
-		{
-		  map.put(NOT_IN_MAP.ToCharArray(), 3);
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertFalse("Test String has been added to unmodifiable map", map.containsKey(NOT_IN_MAP));
-		  assertNull("Test String has been added to unmodifiable map", map.get(NOT_IN_MAP));
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map.Put(new StringBuilder(NOT_IN_MAP), 3);
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		try
-		{
-		  map.put(NOT_IN_MAP, 3);
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertFalse("Test String has been added to unmodifiable map", map.containsKey(NOT_IN_MAP));
-		  assertNull("Test String has been added to unmodifiable map", map.get(NOT_IN_MAP));
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            #region Added for better .NET support
+            try
+            {
+                map.Add(NOT_IN_MAP, 3);
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		try
-		{
-		  map.put(new StringBuilder(NOT_IN_MAP), 3);
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertFalse("Test String has been added to unmodifiable map", map.containsKey(NOT_IN_MAP));
-		  assertNull("Test String has been added to unmodifiable map", map.get(NOT_IN_MAP));
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map.Add(new KeyValuePair<string, int?>(NOT_IN_MAP, 3));
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		try
-		{
-		  map.clear();
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map[new StringBuilder(NOT_IN_MAP)] = 3;
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
 
-		try
-		{
-		  map.entrySet().clear();
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+#pragma warning disable 612, 618
+                map.Remove(new KeyValuePair<string, int?>("foo", 1));
+#pragma warning restore 612, 618
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertEquals("Size of unmodifiable map has changed", size, map.Count);
+            }
+            #endregion
 
-		try
-		{
-		  map.Keys.Clear();
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map.Clear();
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertEquals("Size of unmodifiable map has changed", size, map.size());
+            }
 
-		try
-		{
-		  map.put((object) NOT_IN_MAP, 3);
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertFalse("Test String has been added to unmodifiable map", map.containsKey(NOT_IN_MAP));
-		  assertNull("Test String has been added to unmodifiable map", map.get(NOT_IN_MAP));
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map.EntrySet().Clear();
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertEquals("Size of unmodifiable map has changed", size, map.size());
+            }
 
-		try
-		{
-		  map.putAll(Collections.singletonMap(NOT_IN_MAP, 3));
-		  fail("Modified unmodifiable map");
-		}
-		catch (System.NotSupportedException)
-		{
-		  // expected
-		  assertFalse("Test String has been added to unmodifiable map", map.containsKey(NOT_IN_MAP));
-		  assertNull("Test String has been added to unmodifiable map", map.get(NOT_IN_MAP));
-		  assertEquals("Size of unmodifiable map has changed", size, map.size());
-		}
+            try
+            {
+                map.Keys.Clear();
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertEquals("Size of unmodifiable map has changed", size, map.size());
+            }
 
-		assertTrue(map.containsKey("foo"));
-		assertEquals(1, map.get("foo").intValue());
-		assertTrue(map.containsKey("bar"));
-		assertEquals(2, map.get("bar").intValue());
-	  }
+            try
+            {
+                map.Put((object)NOT_IN_MAP, 3);
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.size());
+            }
 
-	  public virtual void testToString()
-	  {
-		CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.singletonMap("test",1), false);
-		assertEquals("[test]",cm.Keys.ToString());
-		assertEquals("[1]",cm.values().ToString());
-		assertEquals("[test=1]",cm.entrySet().ToString());
-		assertEquals("{test=1}",cm.ToString());
-		cm.put("test2", 2);
-		assertTrue(cm.Keys.ToString().Contains(", "));
-		assertTrue(cm.values().ToString().Contains(", "));
-		assertTrue(cm.entrySet().ToString().Contains(", "));
-		assertTrue(cm.ToString().Contains(", "));
-	  }
-	}
+            try
+            {
+                map.PutAll(Collections.SingletonMap<string, int?>(NOT_IN_MAP, 3));
+                fail("Modified unmodifiable map");
+            }
+            catch (System.NotSupportedException)
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
+                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertEquals("Size of unmodifiable map has changed", size, map.size());
+            }
 
+            assertTrue(map.ContainsKey("foo"));
+            assertEquals(1, map.Get("foo"));
+            assertTrue(map.ContainsKey("bar"));
+            assertEquals(2, map.Get("bar"));
+        }
 
+        [Test]
+        public virtual void TestToString()
+        {
+            CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
+            assertEquals("[test]", cm.Keys.ToString());
+            assertEquals("[1]", cm.Values.ToString());
+            assertEquals("[test=1]", cm.EntrySet().ToString());
+            assertEquals("{test=1}", cm.ToString());
+            cm.Put("test2", 2);
+            assertTrue(cm.Keys.ToString().Contains(", "));
+            assertTrue(cm.Values.ToString().Contains(", "));
+            assertTrue(cm.EntrySet().ToString().Contains(", "));
+            assertTrue(cm.ToString().Contains(", "));
+        }
+    }
 }

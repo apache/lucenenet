@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,91 +22,96 @@ namespace Lucene.Net.Facet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Collects hits for subsequent faceting.  Once you've run
-    ///  a search and collect hits into this, instantiate one of
-    ///  the <seealso cref="Collector"/> subclasses to do the facet
-    ///  counting.  Use the {@code search} utility methods to
-    ///  perform an "ordinary" search but also collect into a
-    ///  <seealso cref="Facets"/>. 
+    /// a search and collect hits into this, instantiate one of
+    /// the <see cref="Collector"/> subclasses to do the facet
+    /// counting.  Use the <see cref="Search"/> utility methods to
+    /// perform an "ordinary" search but also collect into a
+    /// <see cref="Facets"/>. 
     /// </summary>
     public class FacetsCollector : Collector
     {
-
         private AtomicReaderContext context;
         private Scorer scorer;
         private int totalHits;
         private float[] scores;
         private readonly bool keepScores;
-        private readonly IList<MatchingDocs> matchingDocs = new List<MatchingDocs>();
+        private readonly List<MatchingDocs> matchingDocs = new List<MatchingDocs>();
         private Docs docs;
 
         /// <summary>
         /// Used during collection to record matching docs and then return a
-        /// <seealso cref="DocIdSet"/> that contains them.
+        /// <see cref="DocIdSet"/> that contains them.
         /// </summary>
         protected internal abstract class Docs
         {
 
             /// <summary>
-            /// Solr constructor. </summary>
+            /// Sole constructor.
+            /// </summary>
             public Docs()
             {
             }
 
             /// <summary>
-            /// Record the given document. </summary>
+            /// Record the given document.
+            /// </summary>
             public abstract void AddDoc(int docId);
 
             /// <summary>
-            /// Return the <seealso cref="DocIdSet"/> which contains all the recorded docs. </summary>
+            /// Return the <see cref="DocIdSet"/> which contains all the recorded docs.
+            /// </summary>
             public abstract DocIdSet DocIdSet { get; }
         }
 
         /// <summary>
-        /// Holds the documents that were matched in the <seealso cref="AtomicReaderContext"/>.
-        /// If scores were required, then {@code scores} is not null.
+        /// Holds the documents that were matched in the <see cref="AtomicReaderContext"/>.
+        /// If scores were required, then <see cref="Scores"/> is not <c>null</c>.
         /// </summary>
         public sealed class MatchingDocs
         {
 
             /// <summary>
             /// Context for this segment. </summary>
-            public readonly AtomicReaderContext context;
+            public AtomicReaderContext Context { get; private set; }
 
             /// <summary>
             /// Which documents were seen. </summary>
-            public readonly DocIdSet bits;
+            public DocIdSet Bits { get; private set; }
 
             /// <summary>
             /// Non-sparse scores array. </summary>
-            public readonly float[] scores;
+            public float[] Scores { get; private set; }
 
             /// <summary>
             /// Total number of hits </summary>
-            public readonly int totalHits;
+            public int TotalHits { get; private set; }
 
             /// <summary>
-            /// Sole constructor. </summary>
+            /// Sole constructor.
+            /// </summary>
             public MatchingDocs(AtomicReaderContext context, DocIdSet bits, int totalHits, float[] scores)
             {
-                this.context = context;
-                this.bits = bits;
-                this.scores = scores;
-                this.totalHits = totalHits;
+                this.Context = context;
+                this.Bits = bits;
+                this.Scores = scores;
+                this.TotalHits = totalHits;
             }
         }
 
         /// <summary>
-        /// Default constructor </summary>
+        /// Default constructor
+        /// </summary>
         public FacetsCollector()
             : this(false)
         {
         }
 
         /// <summary>
-        /// Create this; if {@code keepScores} is true then a
-        ///  float[] is allocated to hold score of all hits. 
+        /// Create this; if <paramref name="keepScores"/> is <c>true</c> then a
+        /// <see cref="float[]"/> is allocated to hold score of all hits. 
         /// </summary>
         public FacetsCollector(bool keepScores)
         {
@@ -115,9 +119,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Creates a <seealso cref="Docs"/> to record hits. The default uses <seealso cref="FixedBitSet"/>
+        /// Creates a <see cref="Docs"/> to record hits. The default uses <see cref="FixedBitSet"/>
         /// to record hits and you can override to e.g. record the docs in your own
-        /// <seealso cref="DocIdSet"/>.
+        /// <see cref="DocIdSet"/>.
         /// </summary>
         protected virtual Docs CreateDocs(int maxDoc)
         {
@@ -154,7 +158,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// True if scores were saved. </summary>
+        /// True if scores were saved.
+        /// </summary>
         public bool KeepScores
         {
             get
@@ -164,23 +169,20 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Returns the documents matched by the query, one <seealso cref="GetMatchingDocs"/> per
+        /// Returns the documents matched by the query, one <see cref="GetMatchingDocs"/> per
         /// visited segment.
         /// </summary>
-        public virtual IList<MatchingDocs> GetMatchingDocs
+        public virtual List<MatchingDocs> GetMatchingDocs()
         {
-            get
+            if (docs != null)
             {
-                if (docs != null)
-                {
-                    matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
-                    docs = null;
-                    scores = null;
-                    context = null;
-                }
-
-                return matchingDocs;
+                matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
+                docs = null;
+                scores = null;
+                context = null;
             }
+
+            return matchingDocs;
         }
 
         public override sealed bool AcceptsDocsOutOfOrder()
@@ -233,10 +235,9 @@ namespace Lucene.Net.Facet
             }
         }
 
-
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopDocs Search(IndexSearcher searcher, Query q, int n, Collector fc)
         {
@@ -245,7 +246,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Collector fc)
         {
@@ -254,7 +255,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, Collector fc)
         {
@@ -267,7 +268,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, Collector fc)
         {
@@ -280,7 +281,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public virtual TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, int n, Collector fc)
         {
@@ -289,7 +290,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Collector fc)
         {
@@ -298,7 +299,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, Collector fc)
         {
@@ -311,7 +312,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        ///  into the provided <seealso cref="Collector"/>. 
+        /// into the provided <see cref="Collector"/>. 
         /// </summary>
         public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, Collector fc)
         {
@@ -368,5 +369,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

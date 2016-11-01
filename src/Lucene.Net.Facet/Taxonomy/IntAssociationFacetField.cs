@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,36 +19,34 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using Document = Lucene.Net.Documents.Document;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Documents.Document;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> to add
-    ///  a facet label associated with an int.  Use {@link
-    ///  TaxonomyFacetSumIntAssociations} to aggregate int values
-    ///  per facet label at search time.
+    /// Add an instance of this to your <see cref="Document"/> to add
+    /// a facet label associated with an int.  Use <see cref="TaxonomyFacetSumIntAssociations"/>
+    /// to aggregate int values per facet label at search time.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class IntAssociationFacetField : AssociationFacetField
     {
-
         /// <summary>
-        /// Creates this from {@code dim} and {@code path} and an
-        ///  int association 
+        /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
+        /// int association 
         /// </summary>
         public IntAssociationFacetField(int assoc, string dim, params string[] path)
-            : base(intToBytesRef(assoc), dim, path)
+            : base(IntToBytesRef(assoc), dim, path)
         {
         }
 
         /// <summary>
-        /// Encodes an {@code int} as a 4-byte <seealso cref="BytesRef"/>,
-        ///  big-endian. 
+        /// Encodes an <see cref="int"/> as a 4-byte <see cref="BytesRef"/>,
+        /// big-endian. 
         /// </summary>
-        public static BytesRef intToBytesRef(int v)
+        public static BytesRef IntToBytesRef(int v)
         {
-            
+
             byte[] bytes = new byte[4];
             // big-endian:
             bytes[0] = (byte)(v >> 24);
@@ -60,16 +57,17 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Decodes a previously encoded {@code int}. </summary>
-        public static int bytesRefToInt(BytesRef b)
+        /// Decodes a previously encoded <see cref="int"/>.
+        /// </summary>
+        public static int BytesRefToInt(BytesRef b)
         {
-            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
+            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | 
+                ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
         }
 
         public override string ToString()
         {
-            return "IntAssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " value=" + bytesRefToInt(assoc) + ")";
+            return "IntAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " value=" + BytesRefToInt(Assoc) + ")";
         }
     }
-
 }

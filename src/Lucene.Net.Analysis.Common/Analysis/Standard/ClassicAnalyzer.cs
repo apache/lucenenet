@@ -1,12 +1,10 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.standard;
-using Reader = System.IO.TextReader;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Standard
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Analysis.Standard
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Filters <seealso cref="ClassicTokenizer"/> with <seealso cref="ClassicFilter"/>, {@link
     /// LowerCaseFilter} and <seealso cref="StopFilter"/>, using a list of
@@ -47,7 +46,6 @@ namespace Lucene.Net.Analysis.Standard
     /// </summary>
     public sealed class ClassicAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// Default maximum allowed token length </summary>
         public const int DEFAULT_MAX_TOKEN_LENGTH = 255;
@@ -82,12 +80,12 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given reader. </summary>
-        /// <seealso cref= WordlistLoader#getWordSet(Reader, Version) </seealso>
+        /// <seealso cref= WordlistLoader#getWordSet(TextReader, Version) </seealso>
         /// <param name="matchVersion"> Lucene version to match See {@link
         /// <a href="#version">above</a>} </param>
         /// <param name="stopwords"> Reader to read stop words from  </param>
-        public ClassicAnalyzer(LuceneVersion matchVersion, Reader stopwords)
-            : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
+        public ClassicAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
+            : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
         }
 
@@ -99,18 +97,12 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
-            set
-            {
-                maxTokenLength = value;
-            }
-            get
-            {
-                return maxTokenLength;
-            }
+            set { maxTokenLength = value; }
+            get { return maxTokenLength; }
         }
 
 
-        public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             var src = new ClassicTokenizer(matchVersion, reader);
             src.MaxTokenLength = maxTokenLength;
@@ -124,10 +116,10 @@ namespace Lucene.Net.Analysis.Standard
         {
             private readonly ClassicAnalyzer outerInstance;
 
-            private Reader reader;
+            private TextReader reader;
             private ClassicTokenizer src;
 
-            public TokenStreamComponentsAnonymousInnerClassHelper(ClassicAnalyzer outerInstance, ClassicTokenizer src, TokenStream tok, Reader reader)
+            public TokenStreamComponentsAnonymousInnerClassHelper(ClassicAnalyzer outerInstance, ClassicTokenizer src, TokenStream tok, TextReader reader)
                 : base(src, tok)
             {
                 this.outerInstance = outerInstance;
@@ -135,7 +127,7 @@ namespace Lucene.Net.Analysis.Standard
                 this.src = src;
             }
 
-            protected override Reader Reader
+            protected override TextReader Reader
             {
                 set
                 {
@@ -145,5 +137,4 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
     }
-
 }

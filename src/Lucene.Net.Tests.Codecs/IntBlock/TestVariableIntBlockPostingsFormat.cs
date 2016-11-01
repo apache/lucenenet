@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.codecs.intblock
-{
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Codecs.IntBlock
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,26 +21,88 @@
 	 * limitations under the License.
 	 */
 
-	using MockVariableIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockVariableIntBlockPostingsFormat;
-	using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+    //using MockVariableIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockVariableIntBlockPostingsFormat;
+    //using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
+    //using TestUtil = org.apache.lucene.util.TestUtil;
+    //using TestUtil = org.apache.lucene.util.TestUtil;
 
-	/// <summary>
-	/// Basic tests for VariableIntBlock
-	/// </summary>
-	public class TestVariableIntBlockPostingsFormat : BasePostingsFormatTestCase
-	{
-	  // TODO: randomize blocksize
-	  private readonly Codec codec = TestUtil.alwaysPostingsFormat(new MockVariableIntBlockPostingsFormat());
+    /// <summary>
+    /// Basic tests for VariableIntBlock
+    /// </summary>
+    public class TestVariableIntBlockPostingsFormat : BasePostingsFormatTestCase
+    {
+        // TODO: randomize blocksize
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockVariableIntBlockPostingsFormat());
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return codec;
-		  }
-	  }
-	}
+        protected override Codec Codec
+        {
+            get
+            {
+                return codec;
+            }
+        }
 
+
+        #region BasePostingsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestDocsOnly()
+        {
+            base.TestDocsOnly();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqs()
+        {
+            base.TestDocsAndFreqs();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositions()
+        {
+            base.TestDocsAndFreqsAndPositions();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndPayloads();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsets()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsets();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
+    }
 }

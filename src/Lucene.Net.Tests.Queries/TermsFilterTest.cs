@@ -33,7 +33,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = "field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), rd);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), rd, Similarity, TimeZone);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -72,7 +72,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = "field1";
             Directory rd1 = NewDirectory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), rd1);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random(), rd1, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, "content1", Field.Store.YES));
             w1.AddDocument(doc);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Tests.Queries
 
             fieldName = "field2";
             Directory rd2 = NewDirectory();
-            RandomIndexWriter w2 = new RandomIndexWriter(Random(), rd2);
+            RandomIndexWriter w2 = new RandomIndexWriter(Random(), rd2, Similarity, TimeZone);
             doc = new Document();
             doc.Add(NewStringField(fieldName, "content2", Field.Store.YES));
             w2.AddDocument(doc);
@@ -114,7 +114,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestFieldNotPresent()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int num = AtLeast(3);
             int skip = Random().Next(num);
             var terms = new List<Term>();
@@ -150,7 +150,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestSkipField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int num = AtLeast(10);
             var terms = new HashSet<Term>();
             for (int i = 0; i < num; i++)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int num = AtLeast(100);
             bool singleField = Random().NextBoolean();
             IList<Term> terms = new List<Term>();

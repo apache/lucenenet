@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Support;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,15 +19,14 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+    using Bits = Lucene.Net.Util.Bits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
-    using Bits = Lucene.Net.Util.Bits;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// Represents a range over double values.
@@ -44,19 +40,19 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Minimum. </summary>
-        public readonly double Min;
+        public double Min { get; private set; }
 
         /// <summary>
         /// Maximum. </summary>
-        public readonly double Max;
+        public double Max { get; private set; }
 
         /// <summary>
         /// True if the minimum value is inclusive. </summary>
-        public readonly bool MinInclusive;
+        public bool MinInclusive { get; private set; }
 
         /// <summary>
         /// True if the maximum value is inclusive. </summary>
-        public readonly bool MaxInclusive;
+        public bool MaxInclusive { get; private set; }
 
         private const double EPSILON = 1E-14;
         /// <summary>
@@ -104,7 +100,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// True if this range accepts the provided value. </summary>
-        public bool accept(double value)
+        public bool Accept(double value)
         {
             return value >= minIncl && value <= maxIncl;
         }
@@ -138,7 +134,6 @@ namespace Lucene.Net.Facet.Range
                 this.valueSource = valueSource;
             }
 
-
             public override string ToString()
             {
                 return "Filter(" + outerInstance.ToString() + ")";
@@ -152,7 +147,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                var values = valueSource.GetValues(new Dictionary<string,Lucene.Net.Search.Scorer>(), context);
+                var values = valueSource.GetValues(new Dictionary<string, Lucene.Net.Search.Scorer>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 
@@ -183,10 +178,10 @@ namespace Lucene.Net.Facet.Range
             {
                 private readonly FilterAnonymousInnerClassHelper outerInstance;
 
-                private Bits acceptDocs;
-                private FunctionValues values;
-                private int maxDoc;
-                private Bits fastMatchBits;
+                private readonly Bits acceptDocs;
+                private readonly FunctionValues values;
+                private readonly int maxDoc;
+                private readonly Bits fastMatchBits;
 
                 public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper outerInstance, Bits acceptDocs, FunctionValues values, int maxDoc, Bits fastMatchBits)
                 {
@@ -196,7 +191,6 @@ namespace Lucene.Net.Facet.Range
                     this.maxDoc = maxDoc;
                     this.fastMatchBits = fastMatchBits;
                 }
-
 
                 public override Bits GetBits()
                 {
@@ -222,7 +216,7 @@ namespace Lucene.Net.Facet.Range
                         {
                             return false;
                         }
-                        return outerInstance.outerInstance.outerInstance.accept(outerInstance.values.DoubleVal(docID));
+                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.DoubleVal(docID));
                     }
 
                     public virtual int Length()
@@ -238,6 +232,4 @@ namespace Lucene.Net.Facet.Range
             }
         }
     }
-
-
 }

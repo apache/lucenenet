@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ru
+namespace Lucene.Net.Analysis.Ru
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,32 +23,26 @@ namespace org.apache.lucene.analysis.ru
 	 * limitations under the License.
 	 */
 
+    /// @deprecated Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead.
+    ///  This tokenizer has no Russian-specific functionality. 
+    [Obsolete("Use StandardTokenizerFactory instead.")]
+    public class RussianLetterTokenizerFactory : TokenizerFactory
+    {
 
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
+        /// <summary>
+        /// Creates a new RussianLetterTokenizerFactory </summary>
+        public RussianLetterTokenizerFactory(IDictionary<string, string> args) : base(args)
+        {
+            AssureMatchVersion();
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// @deprecated Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead.
-	///  This tokenizer has no Russian-specific functionality. 
-	[Obsolete("Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead.")]
-	public class RussianLetterTokenizerFactory : TokenizerFactory
-	{
-
-	  /// <summary>
-	  /// Creates a new RussianLetterTokenizerFactory </summary>
-	  public RussianLetterTokenizerFactory(IDictionary<string, string> args) : base(args)
-	  {
-		assureMatchVersion();
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override RussianLetterTokenizer create(AttributeFactory factory, Reader @in)
-	  {
-		return new RussianLetterTokenizer(luceneMatchVersion, factory, @in);
-	  }
-	}
-
-
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        {
+            return new RussianLetterTokenizer(luceneMatchVersion, factory, input);
+        }
+    }
 }

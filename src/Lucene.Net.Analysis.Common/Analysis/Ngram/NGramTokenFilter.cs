@@ -2,12 +2,9 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +21,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Tokenizes the input into n-grams of the given size(s).
     /// <a name="version"/>
@@ -64,12 +62,12 @@ namespace Lucene.Net.Analysis.Ngram
         private int tokEnd;
         private bool hasIllegalOffsets; // only if the length changed before this filter
 
-        private readonly Version version;
+        private readonly LuceneVersion version;
         private readonly CharacterUtils charUtils;
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private readonly PositionIncrementAttribute posIncAtt;
-        private readonly PositionLengthAttribute posLenAtt;
-        private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IPositionLengthAttribute posLenAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         /// <summary>
         /// Creates NGramTokenFilter with given min and max n-grams. </summary>
@@ -78,11 +76,15 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
-        public NGramTokenFilter(Version version, TokenStream input, int minGram, int maxGram)
+        public NGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram)
             : base(new CodepointCountFilter(version, input, minGram, int.MaxValue))
         {
             this.version = version;
-            this.charUtils = version.OnOrAfter(Version.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
+            this.charUtils = version.OnOrAfter(
+#pragma warning disable 612, 618
+                LuceneVersion.LUCENE_44) ?
+#pragma warning restore 612, 618
+                CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
             if (minGram < 1)
             {
                 throw new System.ArgumentException("minGram must be greater than zero");
@@ -93,16 +95,20 @@ namespace Lucene.Net.Analysis.Ngram
             }
             this.minGram = minGram;
             this.maxGram = maxGram;
-            if (version.OnOrAfter(Version.LUCENE_44))
+#pragma warning disable 612, 618
+            if (version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
-                posIncAtt = AddAttribute(typeof(PositionIncrementAttribute));
-                posLenAtt = AddAttribute(typeof(PositionLengthAttribute));
+                posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                posLenAtt = AddAttribute<IPositionLengthAttribute>();
             }
             else
             {
                 posIncAtt = new PositionIncrementAttributeAnonymousInnerClassHelper(this);
                 posLenAtt = new PositionLengthAttributeAnonymousInnerClassHelper(this);
             }
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         private class PositionIncrementAttributeAnonymousInnerClassHelper : PositionIncrementAttribute
@@ -152,7 +158,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="version"> Lucene version to enable correct position increments.
         ///                See <a href="#version">above</a> for details. </param>
         /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
-        public NGramTokenFilter(Version version, TokenStream input)
+        public NGramTokenFilter(LuceneVersion version, TokenStream input)
             : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
         {
         }
@@ -172,9 +178,9 @@ namespace Lucene.Net.Analysis.Ngram
                     }
                     else
                     {
-                        curTermBuffer = termAtt.Buffer().Clone();
+                        curTermBuffer = (char[])termAtt.Buffer().Clone();
                         curTermLength = termAtt.Length;
-                        curCodePointCount = charUtils.CodePointCount(termAtt);
+                        curCodePointCount = charUtils.CodePointCount(termAtt.ToString());
                         curGramSize = minGram;
                         curPos = 0;
                         curPosInc = posIncAtt.PositionIncrement;
@@ -186,7 +192,9 @@ namespace Lucene.Net.Analysis.Ngram
                         hasIllegalOffsets = (tokStart + curTermLength) != tokEnd;
                     }
                 }
-                if (version.OnOrAfter(Version.LUCENE_44))
+#pragma warning disable 612, 618
+                if (version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
                 {
                     if (curGramSize > maxGram || (curPos + curGramSize) > curCodePointCount)
                     {
@@ -240,5 +248,4 @@ namespace Lucene.Net.Analysis.Ngram
             curTermBuffer = null;
         }
     }
-
 }

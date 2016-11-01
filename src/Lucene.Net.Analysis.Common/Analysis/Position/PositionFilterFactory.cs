@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Position
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Position
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="PositionFilter"/>.
     /// Set the positionIncrement of all tokens to the "positionIncrement", except the first return token which retains its
@@ -45,12 +45,12 @@ namespace Lucene.Net.Analysis.Position
         public PositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            positionIncrement = getInt(args, "positionIncrement", 0);
+            positionIncrement = GetInt(args, "positionIncrement", 0);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
-            if (luceneMatchVersion != null && luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_44))
+            if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_44))
             {
                 throw new System.ArgumentException("PositionFilter is deprecated as of Lucene 4.4. You should either fix your code to not use it or use Lucene 4.3 version compatibility");
             }

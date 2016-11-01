@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet.SortedSet
 
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesFacetField("a", "foo"));
@@ -105,7 +105,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.SortedSet
                 new SortedSetDocValuesFacetCounts(state, c);
                 Fail("did not hit expected exception");
             }
-            catch (IllegalStateException)
+            catch (InvalidOperationException)
             {
                 // expected
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory indexDir = NewDirectory();
             Directory taxoDir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), indexDir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), indexDir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
             int numDims = TestUtil.NextInt(Random(), 1, 7);
@@ -359,10 +359,10 @@ namespace Lucene.Net.Facet.SortedSet
                     }
                 }
 
-                IList<FacetResult> expected = new List<FacetResult>();
+                List<FacetResult> expected = new List<FacetResult>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    IList<LabelAndValue> labelValues = new List<LabelAndValue>();
+                    List<LabelAndValue> labelValues = new List<LabelAndValue>();
                     int totCount = 0;
                     foreach (KeyValuePair<string, int?> ent in expectedCounts[i])
                     {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Facet.SortedSet
                 // Messy: fixup ties
                 //sortTies(actual);
 
-                Assert.AreEqual(expected, actual);
+                CollectionAssert.AreEqual(expected, actual);
             }
 
             IOUtils.Close(w, searcher.IndexReader, indexDir, taxoDir);

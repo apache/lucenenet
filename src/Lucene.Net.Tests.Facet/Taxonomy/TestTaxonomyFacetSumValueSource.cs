@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
 
             // Reused across documents, to add the necessary facet
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
 
             Document doc = new Document();
@@ -213,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
             config.SetIndexFieldName("a", "$facets2");
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new IntField("num", 10, Field.Store.NO));
@@ -498,7 +498,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), indexDir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), indexDir, Similarity, TimeZone);
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
@@ -541,10 +541,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new List<Dictionary<string, float?>>();
+                var expectedValues = new List<Dictionary<string, float?>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedValues[i] = new Dictionary<string, float?>();
+                    expectedValues.Add(new Dictionary<string, float?>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -555,7 +555,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                float? v = expectedValues[j][doc.dims[j]];
+                                float? v = expectedValues[j].ContainsKey(doc.dims[j]) ? expectedValues[j][doc.dims[j]] : null;
                                 if (v == null)
                                 {
                                     expectedValues[j][doc.dims[j]] = doc.value;
@@ -569,10 +569,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                 }
 
-                IList<FacetResult> expected = new List<FacetResult>();
+                List<FacetResult> expected = new List<FacetResult>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    IList<LabelAndValue> labelValues = new List<LabelAndValue>();
+                    List<LabelAndValue> labelValues = new List<LabelAndValue>();
                     float totValue = 0;
                     foreach (KeyValuePair<string, float?> ent in expectedValues[i])
                     {

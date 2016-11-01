@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.CharFilters;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,237 +25,244 @@ namespace org.apache.lucene.analysis.util
 	 * limitations under the License.
 	 */
 
+    public class TestAnalysisSPILoader : LuceneTestCase
+    {
 
-	using HTMLStripCharFilterFactory = org.apache.lucene.analysis.charfilter.HTMLStripCharFilterFactory;
-	using LowerCaseFilterFactory = org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-	using WhitespaceTokenizerFactory = org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
-	using RemoveDuplicatesTokenFilterFactory = org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilterFactory;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
+        private IDictionary<string, string> VersionArgOnly()
+        {
+            return new HashMapAnonymousInnerClassHelper(this);
+        }
 
-	public class TestAnalysisSPILoader : LuceneTestCase
-	{
+        private class HashMapAnonymousInnerClassHelper : Dictionary<string, string>
+        {
+            private readonly TestAnalysisSPILoader outerInstance;
 
-	  private IDictionary<string, string> versionArgOnly()
-	  {
-		return new HashMapAnonymousInnerClassHelper(this);
-	  }
+            public HashMapAnonymousInnerClassHelper(TestAnalysisSPILoader outerInstance)
+            {
+                this.outerInstance = outerInstance;
 
-	  private class HashMapAnonymousInnerClassHelper : Dictionary<string, string>
-	  {
-		  private readonly TestAnalysisSPILoader outerInstance;
+                this["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
+            }
 
-		  public HashMapAnonymousInnerClassHelper(TestAnalysisSPILoader outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
+        }
 
-			  this.put("luceneMatchVersion", TEST_VERSION_CURRENT.ToString());
-		  }
+        [Test]
+        public virtual void TestLookupTokenizer()
+        {
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.ForName("Whitespace", VersionArgOnly()).GetType());
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.ForName("WHITESPACE", VersionArgOnly()).GetType());
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.ForName("whitespace", VersionArgOnly()).GetType());
+        }
 
-	  }
+        [Test]
+        public virtual void TestBogusLookupTokenizer()
+        {
+            try
+            {
+                TokenizerFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-	  public virtual void testLookupTokenizer()
-	  {
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.forName("Whitespace", versionArgOnly()).GetType());
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.forName("WHITESPACE", versionArgOnly()).GetType());
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.forName("whitespace", versionArgOnly()).GetType());
-	  }
+            try
+            {
+                TokenizerFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupTokenizer()
-	  {
-		try
-		{
-		  TokenizerFactory.forName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
+        [Test]
+        public virtual void TestLookupTokenizerClass()
+        {
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.LookupClass("Whitespace"));
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.LookupClass("WHITESPACE"));
+            assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.LookupClass("whitespace"));
+        }
 
-		try
-		{
-		  TokenizerFactory.forName("!(**#$U*#$*", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
+        [Test]
+        public virtual void TestBogusLookupTokenizerClass()
+        {
+            try
+            {
+                TokenizerFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-	  public virtual void testLookupTokenizerClass()
-	  {
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.lookupClass("Whitespace"));
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.lookupClass("WHITESPACE"));
-		assertSame(typeof(WhitespaceTokenizerFactory), TokenizerFactory.lookupClass("whitespace"));
-	  }
+            try
+            {
+                TokenizerFactory.LookupClass("!(**#$U*#$*");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupTokenizerClass()
-	  {
-		try
-		{
-		  TokenizerFactory.lookupClass("sdfsdfsdfdsfsdfsdf");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
+        [Test]
+        public virtual void TestAvailableTokenizers()
+        {
+            assertTrue(TokenizerFactory.AvailableTokenizers.Contains("whitespace"));
+        }
 
-		try
-		{
-		  TokenizerFactory.lookupClass("!(**#$U*#$*");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
+        [Test]
+        public virtual void TestLookupTokenFilter()
+        {
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.ForName("Lowercase", VersionArgOnly()).GetType());
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.ForName("LOWERCASE", VersionArgOnly()).GetType());
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.ForName("lowercase", VersionArgOnly()).GetType());
 
-	  public virtual void testAvailableTokenizers()
-	  {
-		assertTrue(TokenizerFactory.availableTokenizers().contains("whitespace"));
-	  }
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.ForName("RemoveDuplicates", VersionArgOnly()).GetType());
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.ForName("REMOVEDUPLICATES", VersionArgOnly()).GetType());
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.ForName("removeduplicates", VersionArgOnly()).GetType());
+        }
 
-	  public virtual void testLookupTokenFilter()
-	  {
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.forName("Lowercase", versionArgOnly()).GetType());
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.forName("LOWERCASE", versionArgOnly()).GetType());
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.forName("lowercase", versionArgOnly()).GetType());
+        [Test]
+        public virtual void TestBogusLookupTokenFilter()
+        {
+            try
+            {
+                TokenFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.forName("RemoveDuplicates", versionArgOnly()).GetType());
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.forName("REMOVEDUPLICATES", versionArgOnly()).GetType());
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.forName("removeduplicates", versionArgOnly()).GetType());
-	  }
+            try
+            {
+                TokenFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupTokenFilter()
-	  {
-		try
-		{
-		  TokenFilterFactory.forName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
+        [Test]
+        public virtual void TestLookupTokenFilterClass()
+        {
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.LookupClass("Lowercase"));
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.LookupClass("LOWERCASE"));
+            assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.LookupClass("lowercase"));
 
-		try
-		{
-		  TokenFilterFactory.forName("!(**#$U*#$*", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.LookupClass("RemoveDuplicates"));
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.LookupClass("REMOVEDUPLICATES"));
+            assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.LookupClass("removeduplicates"));
+        }
 
-	  public virtual void testLookupTokenFilterClass()
-	  {
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.lookupClass("Lowercase"));
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.lookupClass("LOWERCASE"));
-		assertSame(typeof(LowerCaseFilterFactory), TokenFilterFactory.lookupClass("lowercase"));
+        [Test]
+        public virtual void TestBogusLookupTokenFilterClass()
+        {
+            try
+            {
+                TokenFilterFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.lookupClass("RemoveDuplicates"));
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.lookupClass("REMOVEDUPLICATES"));
-		assertSame(typeof(RemoveDuplicatesTokenFilterFactory), TokenFilterFactory.lookupClass("removeduplicates"));
-	  }
+            try
+            {
+                TokenFilterFactory.LookupClass("!(**#$U*#$*");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupTokenFilterClass()
-	  {
-		try
-		{
-		  TokenFilterFactory.lookupClass("sdfsdfsdfdsfsdfsdf");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
+        [Test]
+        public virtual void TestAvailableTokenFilters()
+        {
+            assertTrue(TokenFilterFactory.AvailableTokenFilters.Contains("lowercase"));
+            assertTrue(TokenFilterFactory.AvailableTokenFilters.Contains("removeduplicates"));
+        }
 
-		try
-		{
-		  TokenFilterFactory.lookupClass("!(**#$U*#$*");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
+        [Test]
+        public virtual void TestLookupCharFilter()
+        {
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("HTMLStrip", VersionArgOnly()).GetType());
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("HTMLSTRIP", VersionArgOnly()).GetType());
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("htmlstrip", VersionArgOnly()).GetType());
+        }
 
-	  public virtual void testAvailableTokenFilters()
-	  {
-		assertTrue(TokenFilterFactory.availableTokenFilters().contains("lowercase"));
-		assertTrue(TokenFilterFactory.availableTokenFilters().contains("removeduplicates"));
-	  }
+        [Test]
+        public virtual void TestBogusLookupCharFilter()
+        {
+            try
+            {
+                CharFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-	  public virtual void testLookupCharFilter()
-	  {
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.forName("HTMLStrip", versionArgOnly()).GetType());
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.forName("HTMLSTRIP", versionArgOnly()).GetType());
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.forName("htmlstrip", versionArgOnly()).GetType());
-	  }
+            try
+            {
+                CharFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupCharFilter()
-	  {
-		try
-		{
-		  CharFilterFactory.forName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
+        [Test]
+        public virtual void TestLookupCharFilterClass()
+        {
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLStrip"));
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLSTRIP"));
+            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("htmlstrip"));
+        }
 
-		try
-		{
-		  CharFilterFactory.forName("!(**#$U*#$*", new Dictionary<string, string>());
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
+        [Test]
+        public virtual void TestBogusLookupCharFilterClass()
+        {
+            try
+            {
+                CharFilterFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
 
-	  public virtual void testLookupCharFilterClass()
-	  {
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.lookupClass("HTMLStrip"));
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.lookupClass("HTMLSTRIP"));
-		assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.lookupClass("htmlstrip"));
-	  }
+            try
+            {
+                CharFilterFactory.LookupClass("!(**#$U*#$*");
+                fail();
+            }
+            catch (System.ArgumentException)
+            {
+                //
+            }
+        }
 
-	  public virtual void testBogusLookupCharFilterClass()
-	  {
-		try
-		{
-		  CharFilterFactory.lookupClass("sdfsdfsdfdsfsdfsdf");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-
-		try
-		{
-		  CharFilterFactory.lookupClass("!(**#$U*#$*");
-		  fail();
-		}
-		catch (System.ArgumentException)
-		{
-		  //
-		}
-	  }
-
-	  public virtual void testAvailableCharFilters()
-	  {
-		assertTrue(CharFilterFactory.availableCharFilters().contains("htmlstrip"));
-	  }
-	}
-
+        [Test]
+        public virtual void TestAvailableCharFilters()
+        {
+            assertTrue(CharFilterFactory.AvailableCharFilters.Contains("htmlstrip"));
+        }
+    }
 }

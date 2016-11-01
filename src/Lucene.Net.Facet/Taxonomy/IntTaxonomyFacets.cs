@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,46 +20,46 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using DimConfig = Lucene.Net.Facet.FacetsConfig.DimConfig;
 
     /// <summary>
     /// Base class for all taxonomy-based facets that aggregate
-    ///  to a per-ords int[]. 
+    /// to a per-ords <see cref="int[]"/>. 
     /// </summary>
 
     public abstract class IntTaxonomyFacets : TaxonomyFacets
     {
-
         /// <summary>
         /// Per-ordinal value. </summary>
         protected internal readonly int[] values;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         protected internal IntTaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
             : base(indexFieldName, taxoReader, config)
         {
-            values = new int[taxoReader.Size];
+            values = new int[taxoReader.Count];
         }
 
         /// <summary>
-        /// Rolls up any single-valued hierarchical dimensions. </summary>
+        /// Rolls up any single-valued hierarchical dimensions.
+        /// </summary>
         protected virtual void Rollup()
         {
             // Rollup any necessary dims:
-            foreach (KeyValuePair<string, FacetsConfig.DimConfig> ent in Config.DimConfigs)
+            foreach (KeyValuePair<string, FacetsConfig.DimConfig> ent in config.DimConfigs)
             {
                 string dim = ent.Key;
                 FacetsConfig.DimConfig ft = ent.Value;
                 if (ft.Hierarchical && ft.MultiValued == false)
                 {
-                    int dimRootOrd = TaxoReader.GetOrdinal(new FacetLabel(dim));
+                    int dimRootOrd = taxoReader.GetOrdinal(new FacetLabel(dim));
                     // It can be -1 if this field was declared in the
                     // config but never indexed:
                     if (dimRootOrd > 0)
                     {
-                        values[dimRootOrd] += Rollup(Children[dimRootOrd]);
+                        values[dimRootOrd] += Rollup(children[dimRootOrd]);
                     }
                 }
             }
@@ -71,10 +70,10 @@ namespace Lucene.Net.Facet.Taxonomy
             int sum = 0;
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
-                int childValue = values[ord] + Rollup(Children[ord]);
+                int childValue = values[ord] + Rollup(children[ord]);
                 values[ord] = childValue;
                 sum += childValue;
-                ord = Siblings[ord];
+                ord = siblings[ord];
             }
             return sum;
         }
@@ -97,7 +96,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     throw new System.ArgumentException("cannot return dimension-level value alone; use getTopChildren instead");
                 }
             }
-            int ord = TaxoReader.GetOrdinal(new FacetLabel(dim, path));
+            int ord = taxoReader.GetOrdinal(new FacetLabel(dim, path));
             if (ord < 0)
             {
                 return -1;
@@ -113,17 +112,17 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             var dimConfig = VerifyDim(dim);
             FacetLabel cp = new FacetLabel(dim, path);
-            int dimOrd = TaxoReader.GetOrdinal(cp);
+            int dimOrd = taxoReader.GetOrdinal(cp);
             if (dimOrd == -1)
             {
                 return null;
             }
 
-            TopOrdAndIntQueue q = new TopOrdAndIntQueue(Math.Min(TaxoReader.Size, topN));
+            TopOrdAndIntQueue q = new TopOrdAndIntQueue(Math.Min(taxoReader.Count, topN));
 
             int bottomValue = 0;
 
-            int ord = Children[dimOrd];
+            int ord = children[dimOrd];
             int totValue = 0;
             int childCount = 0;
 
@@ -150,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                 }
 
-                ord = Siblings[ord];
+                ord = siblings[ord];
             }
 
             if (totValue == 0)
@@ -179,7 +178,7 @@ namespace Lucene.Net.Facet.Taxonomy
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
                 TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();
-                FacetLabel child = TaxoReader.GetPath(ordAndValue.Ord);
+                FacetLabel child = taxoReader.GetPath(ordAndValue.Ord);
                 labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
             }
 

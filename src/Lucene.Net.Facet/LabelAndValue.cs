@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Support;
+﻿using System;
+using System.Globalization;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,45 +22,66 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Single label and its value, usually contained in a
-    ///  <seealso cref="FacetResult"/>. 
+    /// <see cref="FacetResult"/>. 
     /// </summary>
     public sealed class LabelAndValue
     {
         /// <summary>
         /// Facet's label. </summary>
-        public readonly string label;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Value associated with this label. </summary>
-        public readonly float value;
+        public float Value { get; private set; }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// The original data type of <see cref="Value"/> that was passed through the constructor.
+        /// </summary>
+        public Type TypeOfValue { get; private set; }
+
+        /// <summary>
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
+        /// </summary>
         public LabelAndValue(string label, float value)
         {
-            this.label = label;
-            this.value = value;
+            this.Label = label;
+            this.Value = value;
+            this.TypeOfValue = typeof(float);
+        }
+
+        /// <summary>
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
+        /// </summary>
+        public LabelAndValue(string label, int value)
+        {
+            this.Label = label;
+            this.Value = value;
+            this.TypeOfValue = typeof(int);
         }
 
         public override string ToString()
         {
-            return label + " (" + value + ")";
+            string valueString = (TypeOfValue == typeof(int))
+                ? Value.ToString("0", CultureInfo.InvariantCulture)
+                : Value.ToString("0.0#####", CultureInfo.InvariantCulture);
+            return Label + " (" + valueString + ")";
         }
 
-        public override bool Equals(object _other)
+        public override bool Equals(object other)
         {
-            if ((_other is LabelAndValue) == false)
+            if ((other is LabelAndValue) == false)
             {
                 return false;
             }
-            LabelAndValue other = (LabelAndValue)_other;
-            return label.Equals(other.label) && value.Equals(other.value);
+            LabelAndValue _other = (LabelAndValue)other;
+            return Label.Equals(_other.Label) && Value.Equals(_other.Value);
         }
 
         public override int GetHashCode()
         {
-            return label.GetHashCode() + 1439 * value.GetHashCode();
+            return Label.GetHashCode() + 1439 * Value.GetHashCode();
         }
     }
-
 }

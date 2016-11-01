@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicLong()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -149,7 +149,7 @@ namespace Lucene.Net.Facet.Range
         {
 
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestOverlappedEndStart()
         {
             Directory d = NewDirectory();
-            var w = new RandomIndexWriter(Random(), d);
+            var w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestMixedRangeAndNonRangeTaxonomy()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Directory td = NewDirectory();
             DirectoryTaxonomyWriter tw = new DirectoryTaxonomyWriter(td, IndexWriterConfig.OpenMode_e.CREATE);
 
@@ -331,7 +331,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicDouble()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             DoubleDocValuesField field = new DoubleDocValuesField("field", 0.0);
             doc.Add(field);
@@ -358,7 +358,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicFloat()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             FloatDocValuesField field = new FloatDocValuesField("field", 0.0f);
             doc.Add(field);
@@ -386,7 +386,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomLongs()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir);
+            var w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int numDocs = AtLeast(1000);
             if (VERBOSE)
@@ -433,11 +433,11 @@ namespace Lucene.Net.Facet.Range
                         LongRange prevRange = ranges[Random().Next(rangeID)];
                         if (Random().NextBoolean())
                         {
-                            min = prevRange.min;
+                            min = prevRange.Min;
                         }
                         else
                         {
-                            min = prevRange.max;
+                            min = prevRange.Max;
                         }
                     }
                     else
@@ -451,11 +451,11 @@ namespace Lucene.Net.Facet.Range
                         LongRange prevRange = ranges[Random().Next(rangeID)];
                         if (Random().NextBoolean())
                         {
-                            max = prevRange.min;
+                            max = prevRange.Min;
                         }
                         else
                         {
-                            max = prevRange.max;
+                            max = prevRange.Max;
                         }
                     }
                     else
@@ -546,8 +546,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     LongRange range = ranges[rangeID];
 
@@ -557,11 +557,11 @@ namespace Lucene.Net.Facet.Range
                     {
                         if (Random().NextBoolean())
                         {
-                            ddq.Add("field", NumericRangeFilter.NewLongRange("field", range.min, range.max, range.minInclusive, range.maxInclusive));
+                            ddq.Add("field", NumericRangeFilter.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                         else
                         {
-                            ddq.Add("field", NumericRangeQuery.NewLongRange("field", range.min, range.max, range.minInclusive, range.maxInclusive));
+                            ddq.Add("field", NumericRangeQuery.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                     }
                     else
@@ -579,7 +579,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomFloats()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int numDocs = AtLeast(1000);
             float[] values = new float[numDocs];
@@ -751,8 +751,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("TEST: verify range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     DoubleRange range = ranges[rangeID];
 
@@ -784,7 +784,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomDoubles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int numDocs = AtLeast(1000);
             double[] values = new double[numDocs];
@@ -937,8 +937,8 @@ namespace Lucene.Net.Facet.Range
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
                     LabelAndValue subNode = result.LabelValues[rangeID];
-                    Assert.AreEqual("r" + rangeID, subNode.label);
-                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.value);
+                    Assert.AreEqual("r" + rangeID, subNode.Label);
+                    Assert.AreEqual(expectedCounts[rangeID], (int)subNode.Value);
 
                     DoubleRange range = ranges[rangeID];
 
@@ -973,7 +973,7 @@ namespace Lucene.Net.Facet.Range
         {
             AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestCustomDoublesValueSource()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             writer.AddDocument(doc);
@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Facet.Range
             private Filter fastMatchFilter;
 
 
-            public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts testRangeFacetCounts, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
+            public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
                 : base(indexSearcher, facetsConfig, org)
             {
                 this.outerInstance = outerInstance;

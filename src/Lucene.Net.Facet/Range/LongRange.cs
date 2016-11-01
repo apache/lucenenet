@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +19,13 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+    using Bits = Lucene.Net.Util.Bits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
-    using Bits = Lucene.Net.Util.Bits;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
     /// Represents a range over long values.
@@ -42,19 +39,19 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Minimum. </summary>
-        public readonly long min;
+        public long Min { get; private set; }
 
         /// <summary>
         /// Maximum. </summary>
-        public readonly long max;
+        public long Max { get; private set; }
 
         /// <summary>
         /// True if the minimum value is inclusive. </summary>
-        public readonly bool minInclusive;
+        public bool MinInclusive { get; private set; }
 
         /// <summary>
         /// True if the maximum value is inclusive. </summary>
-        public readonly bool maxInclusive;
+        public bool MaxInclusive { get; private set; }
 
         // TODO: can we require fewer args? (same for
         // Double/FloatRange too)
@@ -64,10 +61,10 @@ namespace Lucene.Net.Facet.Range
         public LongRange(string label, long minIn, bool minInclusive, long maxIn, bool maxInclusive)
             : base(label)
         {
-            this.min = minIn;
-            this.max = maxIn;
-            this.minInclusive = minInclusive;
-            this.maxInclusive = maxInclusive;
+            this.Min = minIn;
+            this.Max = maxIn;
+            this.MinInclusive = minInclusive;
+            this.MaxInclusive = maxInclusive;
 
             if (!minInclusive)
             {
@@ -104,7 +101,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// True if this range accepts the provided value. </summary>
-        public bool accept(long value)
+        public bool Accept(long value)
         {
             return value >= minIncl && value <= maxIncl;
         }
@@ -123,8 +120,8 @@ namespace Lucene.Net.Facet.Range
         {
             private readonly LongRange outerInstance;
 
-            private Filter fastMatchFilter;
-            private ValueSource valueSource;
+            private readonly Filter fastMatchFilter;
+            private readonly ValueSource valueSource;
 
             public FilterAnonymousInnerClassHelper(LongRange outerInstance, Filter fastMatchFilter, ValueSource valueSource)
             {
@@ -147,7 +144,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                FunctionValues values = valueSource.GetValues(new Dictionary<string,object>(), context);
+                FunctionValues values = valueSource.GetValues(new Dictionary<string, object>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 
@@ -178,10 +175,10 @@ namespace Lucene.Net.Facet.Range
             {
                 private readonly FilterAnonymousInnerClassHelper outerInstance;
 
-                private Bits acceptDocs;
-                private FunctionValues values;
-                private int maxDoc;
-                private Bits fastMatchBits;
+                private readonly Bits acceptDocs;
+                private readonly FunctionValues values;
+                private readonly int maxDoc;
+                private readonly Bits fastMatchBits;
 
                 public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper outerInstance, Bits acceptDocs, FunctionValues values, int maxDoc, Bits fastMatchBits)
                 {
@@ -217,10 +214,10 @@ namespace Lucene.Net.Facet.Range
                         {
                             return false;
                         }
-                        return outerInstance.outerInstance.outerInstance.accept(outerInstance.values.LongVal(docID));
+                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.LongVal(docID));
                     }
 
-                    
+
                     public virtual int Length()
                     {
                         return outerInstance.maxDoc;
@@ -231,9 +228,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     throw new System.NotSupportedException("this filter can only be accessed via bits()");
                 }
-
             }
         }
     }
-
 }

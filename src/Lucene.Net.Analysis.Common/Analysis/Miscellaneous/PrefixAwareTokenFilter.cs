@@ -1,11 +1,8 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Joins two token streams and leaves the last token of the first stream available
     /// to be used when updating the token values in the second stream based on that token.
@@ -78,7 +76,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private bool prefixExhausted;
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             Token nextToken = null;
             if (!prefixExhausted)
@@ -210,7 +208,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.prefix = value;
             }
         }
-
 
         public virtual TokenStream Suffix
         {

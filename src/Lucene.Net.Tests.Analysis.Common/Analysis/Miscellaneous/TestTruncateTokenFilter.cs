@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,30 +21,25 @@
 	 * limitations under the License.
 	 */
 
-	using Test = org.junit.Test;
+    /// <summary>
+    /// Test the truncate token filter.
+    /// </summary>
+    public class TestTruncateTokenFilter : BaseTokenStreamTestCase
+    {
 
-	/// <summary>
-	/// Test the truncate token filter.
-	/// </summary>
-	public class TestTruncateTokenFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestTruncating()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("abcdefg 1234567 ABCDEFG abcde abc 12345 123"), MockTokenizer.WHITESPACE, false);
+            stream = new TruncateTokenFilter(stream, 5);
+            AssertTokenStreamContents(stream, new string[] { "abcde", "12345", "ABCDE", "abcde", "abc", "12345", "123" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTruncating() throws Exception
-	  public virtual void testTruncating()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("abcdefg 1234567 ABCDEFG abcde abc 12345 123"), MockTokenizer.WHITESPACE, false);
-		stream = new TruncateTokenFilter(stream, 5);
-		assertTokenStreamContents(stream, new string[]{"abcde", "12345", "ABCDE", "abcde", "abc", "12345", "123"});
-	  }
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected = IllegalArgumentException.class) public void testNonPositiveLength() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public virtual void testNonPositiveLength()
-	  {
-		new TruncateTokenFilter(new MockTokenizer(new StringReader("length must be a positive number")), -48);
-	  }
-	}
-
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public virtual void TestNonPositiveLength()
+        {
+            new TruncateTokenFilter(new MockTokenizer(new StringReader("length must be a positive number")), -48);
+        }
+    }
 }

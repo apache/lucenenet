@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ga
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Ga
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,40 +21,34 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Irish lowercase filter factory is working.
+    /// </summary>
+    public class TestIrishLowerCaseFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestCasing()
+        {
+            TextReader reader = new StringReader("nAthair tUISCE hARD");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("IrishLowerCase").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "n-athair", "t-uisce", "hard" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Irish lowercase filter factory is working.
-	/// </summary>
-	public class TestIrishLowerCaseFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCasing() throws Exception
-	  public virtual void testCasing()
-	  {
-		Reader reader = new StringReader("nAthair tUISCE hARD");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("IrishLowerCase").create(stream);
-		assertTokenStreamContents(stream, new string[] {"n-athair", "t-uisce", "hard"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("IrishLowerCase", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("IrishLowerCase", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

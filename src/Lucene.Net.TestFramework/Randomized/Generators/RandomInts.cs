@@ -39,12 +39,12 @@ namespace Lucene.Net.Randomized.Generators
 
         public static T RandomFrom<T>(Random rand, ISet<T> set)
         {
-            return set.ElementAt(rand.Next(0, set.Count));
+            return set.ElementAt(rand.Next(0, set.Count - 1));
         }
 
         public static T RandomFrom<T>(Random rand, IList<T> set)
         {
-            return set.ElementAt(rand.Next(0, set.Count));
+            return set.ElementAt(rand.Next(0, set.Count - 1));
         }
     }
 }

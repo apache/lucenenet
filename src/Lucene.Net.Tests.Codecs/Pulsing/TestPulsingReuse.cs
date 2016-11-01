@@ -1,9 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Codecs.NestedPulsing;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.codecs.pulsing
+namespace Lucene.Net.Codecs.Pulsing
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,115 +27,95 @@ namespace org.apache.lucene.codecs.pulsing
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tests that pulsing codec reuses its enums and wrapped enums
+    /// </summary>
+    public class TestPulsingReuse : LuceneTestCase
+    {
+        // TODO: this is a basic test. this thing is complicated, add more
+        [Test]
+        public virtual void TestSophisticatedReuse()
+        {
+            // we always run this test with pulsing codec.
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1));
+            Directory dir = NewDirectory();
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            Document doc = new Document();
+            doc.Add(new TextField("foo", "a b b c c c d e f g g h i i j j k", Field.Store.NO));
+            iw.AddDocument(doc);
+            DirectoryReader ir = iw.Reader;
+            iw.Dispose();
 
-	using MockAnalyzer = org.apache.lucene.analysis.MockAnalyzer;
-	using NestedPulsingPostingsFormat = org.apache.lucene.codecs.nestedpulsing.NestedPulsingPostingsFormat;
-	using Document = org.apache.lucene.document.Document;
-	using Field = org.apache.lucene.document.Field;
-	using TextField = org.apache.lucene.document.TextField;
-	using AtomicReader = org.apache.lucene.index.AtomicReader;
-	using DirectoryReader = org.apache.lucene.index.DirectoryReader;
-	using DocsAndPositionsEnum = org.apache.lucene.index.DocsAndPositionsEnum;
-	using DocsEnum = org.apache.lucene.index.DocsEnum;
-	using RandomIndexWriter = org.apache.lucene.index.RandomIndexWriter;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using BaseDirectoryWrapper = org.apache.lucene.store.BaseDirectoryWrapper;
-	using Directory = org.apache.lucene.store.Directory;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+            AtomicReader segment = GetOnlySegmentReader(ir);
+            DocsEnum reuse = null;
+            IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
+            TermsEnum te = segment.Terms("foo").Iterator(null);
+            while (te.Next() != null)
+            {
+                reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
+                allEnums[reuse] = true;
+            }
 
-	/// <summary>
-	/// Tests that pulsing codec reuses its enums and wrapped enums
-	/// </summary>
-	public class TestPulsingReuse : LuceneTestCase
-	{
-	  // TODO: this is a basic test. this thing is complicated, add more
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSophisticatedReuse() throws Exception
-	  public virtual void testSophisticatedReuse()
-	  {
-		// we always run this test with pulsing codec.
-		Codec cp = TestUtil.alwaysPostingsFormat(new Pulsing41PostingsFormat(1));
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
-		Document doc = new Document();
-		doc.add(new TextField("foo", "a b b c c c d e f g g h i i j j k", Field.Store.NO));
-		iw.addDocument(doc);
-		DirectoryReader ir = iw.Reader;
-		iw.close();
+            assertEquals(2, allEnums.Count);
 
-		AtomicReader segment = getOnlySegmentReader(ir);
-		DocsEnum reuse = null;
-		IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
-		TermsEnum te = segment.terms("foo").iterator(null);
-		while (te.next() != null)
-		{
-		  reuse = te.docs(null, reuse, DocsEnum.FLAG_NONE);
-		  allEnums[reuse] = true;
-		}
+            allEnums.Clear();
+            DocsAndPositionsEnum posReuse = null;
+            te = segment.Terms("foo").Iterator(null);
+            while (te.Next() != null)
+            {
+                posReuse = te.DocsAndPositions(null, posReuse);
+                allEnums[posReuse] = true;
+            }
 
-		assertEquals(2, allEnums.Count);
+            assertEquals(2, allEnums.Count);
 
-		allEnums.Clear();
-		DocsAndPositionsEnum posReuse = null;
-		te = segment.terms("foo").iterator(null);
-		while (te.next() != null)
-		{
-		  posReuse = te.docsAndPositions(null, posReuse);
-		  allEnums[posReuse] = true;
-		}
+            ir.Dispose();
+            dir.Dispose();
+        }
 
-		assertEquals(2, allEnums.Count);
+        /// <summary>
+        /// tests reuse with Pulsing1(Pulsing2(Standard)) </summary>
+        [Test]
+        public virtual void TestNestedPulsing()
+        {
+            // we always run this test with pulsing codec.
+            Codec cp = TestUtil.AlwaysPostingsFormat(new NestedPulsingPostingsFormat());
+            BaseDirectoryWrapper dir = NewDirectory();
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            Document doc = new Document();
+            doc.Add(new TextField("foo", "a b b c c c d e f g g g h i i j j k l l m m m", Field.Store.NO));
+            // note: the reuse is imperfect, here we would have 4 enums (lost reuse when we get an enum for 'm')
+            // this is because we only track the 'last' enum we reused (not all).
+            // but this seems 'good enough' for now.
+            iw.AddDocument(doc);
+            DirectoryReader ir = iw.Reader;
+            iw.Dispose();
 
-		ir.close();
-		dir.close();
-	  }
+            AtomicReader segment = GetOnlySegmentReader(ir);
+            DocsEnum reuse = null;
+            IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
+            TermsEnum te = segment.Terms("foo").Iterator(null);
+            while (te.Next() != null)
+            {
+                reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
+                allEnums[reuse] = true;
+            }
 
-	  /// <summary>
-	  /// tests reuse with Pulsing1(Pulsing2(Standard)) </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNestedPulsing() throws Exception
-	  public virtual void testNestedPulsing()
-	  {
-		// we always run this test with pulsing codec.
-		Codec cp = TestUtil.alwaysPostingsFormat(new NestedPulsingPostingsFormat());
-		BaseDirectoryWrapper dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
-		Document doc = new Document();
-		doc.add(new TextField("foo", "a b b c c c d e f g g g h i i j j k l l m m m", Field.Store.NO));
-		// note: the reuse is imperfect, here we would have 4 enums (lost reuse when we get an enum for 'm')
-		// this is because we only track the 'last' enum we reused (not all).
-		// but this seems 'good enough' for now.
-		iw.addDocument(doc);
-		DirectoryReader ir = iw.Reader;
-		iw.close();
+            assertEquals(4, allEnums.Count);
 
-		AtomicReader segment = getOnlySegmentReader(ir);
-		DocsEnum reuse = null;
-		IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
-		TermsEnum te = segment.terms("foo").iterator(null);
-		while (te.next() != null)
-		{
-		  reuse = te.docs(null, reuse, DocsEnum.FLAG_NONE);
-		  allEnums[reuse] = true;
-		}
+            allEnums.Clear();
+            DocsAndPositionsEnum posReuse = null;
+            te = segment.Terms("foo").Iterator(null);
+            while (te.Next() != null)
+            {
+                posReuse = te.DocsAndPositions(null, posReuse);
+                allEnums[posReuse] = true;
+            }
 
-		assertEquals(4, allEnums.Count);
+            assertEquals(4, allEnums.Count);
 
-		allEnums.Clear();
-		DocsAndPositionsEnum posReuse = null;
-		te = segment.terms("foo").iterator(null);
-		while (te.next() != null)
-		{
-		  posReuse = te.docsAndPositions(null, posReuse);
-		  allEnums[posReuse] = true;
-		}
-
-		assertEquals(4, allEnums.Count);
-
-		ir.close();
-		dir.close();
-	  }
-	}
-
+            ir.Dispose();
+            dir.Dispose();
+        }
+    }
 }

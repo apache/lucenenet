@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Creates new instances of <seealso cref="EdgeNGramTokenFilter"/>.
     /// <pre class="prettyprint">
@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis.Ngram
         public EdgeNGramFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            minGramSize = getInt(args, "minGramSize", EdgeNGramTokenFilter.DEFAULT_MIN_GRAM_SIZE);
-            maxGramSize = getInt(args, "maxGramSize", EdgeNGramTokenFilter.DEFAULT_MAX_GRAM_SIZE);
-            side = get(args, "side", EdgeNGramTokenFilter.Side.FRONT.Label);
+            minGramSize = GetInt(args, "minGramSize", EdgeNGramTokenFilter.DEFAULT_MIN_GRAM_SIZE);
+            maxGramSize = GetInt(args, "maxGramSize", EdgeNGramTokenFilter.DEFAULT_MAX_GRAM_SIZE);
+            side = Get(args, "side", EdgeNGramTokenFilter.Side.FRONT.ToString());
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -52,7 +52,9 @@ namespace Lucene.Net.Analysis.Ngram
 
         public override TokenStream Create(TokenStream input)
         {
+#pragma warning disable 612, 618
             return new EdgeNGramTokenFilter(luceneMatchVersion, input, side, minGramSize, maxGramSize);
+#pragma warning restore 612, 618
         }
     }
 }

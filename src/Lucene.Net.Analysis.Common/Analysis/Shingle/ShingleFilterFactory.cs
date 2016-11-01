@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using System;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.shingle
+namespace Lucene.Net.Analysis.Shingle
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,66 +21,62 @@ namespace org.apache.lucene.analysis.shingle
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ShingleFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_shingle" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="2"
+    ///             outputUnigrams="true" outputUnigramsIfNoShingles="false" tokenSeparator=" " fillerToken="_"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class ShingleFilterFactory : TokenFilterFactory
+    {
+        private readonly int minShingleSize;
+        private readonly int maxShingleSize;
+        private readonly bool outputUnigrams;
+        private readonly bool outputUnigramsIfNoShingles;
+        private readonly string tokenSeparator;
+        private readonly string fillerToken;
 
-	/// <summary>
-	/// Factory for <seealso cref="ShingleFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_shingle" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="2"
-	///             outputUnigrams="true" outputUnigramsIfNoShingles="false" tokenSeparator=" " fillerToken="_"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class ShingleFilterFactory : TokenFilterFactory
-	{
-	  private readonly int minShingleSize;
-	  private readonly int maxShingleSize;
-	  private readonly bool outputUnigrams;
-	  private readonly bool outputUnigramsIfNoShingles;
-	  private readonly string tokenSeparator;
-	  private readonly string fillerToken;
+        /// <summary>
+        /// Creates a new ShingleFilterFactory </summary>
+        public ShingleFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            maxShingleSize = GetInt(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
+            if (maxShingleSize < 2)
+            {
+                throw new ArgumentOutOfRangeException("Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2");
+            }
+            minShingleSize = GetInt(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
+            if (minShingleSize < 2)
+            {
+                throw new ArgumentOutOfRangeException("Invalid minShingleSize (" + minShingleSize + ") - must be at least 2");
+            }
+            if (minShingleSize > maxShingleSize)
+            {
+                throw new ArgumentOutOfRangeException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")");
+            }
+            outputUnigrams = GetBoolean(args, "outputUnigrams", true);
+            outputUnigramsIfNoShingles = GetBoolean(args, "outputUnigramsIfNoShingles", false);
+            tokenSeparator = Get(args, "tokenSeparator", ShingleFilter.DEFAULT_TOKEN_SEPARATOR);
+            fillerToken = Get(args, "fillerToken", ShingleFilter.DEFAULT_FILLER_TOKEN);
+            if (args.Count > 0)
+            {
+                throw new ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new ShingleFilterFactory </summary>
-	  public ShingleFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		maxShingleSize = getInt(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
-		if (maxShingleSize < 2)
-		{
-		  throw new System.ArgumentException("Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2");
-		}
-		minShingleSize = getInt(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
-		if (minShingleSize < 2)
-		{
-		  throw new System.ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be at least 2");
-		}
-		if (minShingleSize > maxShingleSize)
-		{
-		  throw new System.ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")");
-		}
-		outputUnigrams = getBoolean(args, "outputUnigrams", true);
-		outputUnigramsIfNoShingles = getBoolean(args, "outputUnigramsIfNoShingles", false);
-		tokenSeparator = get(args, "tokenSeparator", ShingleFilter.DEFAULT_TOKEN_SEPARATOR);
-		fillerToken = get(args, "fillerToken", ShingleFilter.DEFAULT_FILLER_TOKEN);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ShingleFilter create(TokenStream input)
-	  {
-		ShingleFilter r = new ShingleFilter(input, minShingleSize, maxShingleSize);
-		r.OutputUnigrams = outputUnigrams;
-		r.OutputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
-		r.TokenSeparator = tokenSeparator;
-		r.FillerToken = fillerToken;
-		return r;
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream input)
+        {
+            ShingleFilter r = new ShingleFilter(input, minShingleSize, maxShingleSize);
+            r.OutputUnigrams = outputUnigrams;
+            r.OutputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
+            r.TokenSeparator = tokenSeparator;
+            r.FillerToken = fillerToken;
+            return r;
+        }
+    }
 }

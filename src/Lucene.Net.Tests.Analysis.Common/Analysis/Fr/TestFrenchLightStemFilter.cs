@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.fr
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,240 +23,225 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="FrenchLightStemFilter"/>
+    /// </summary>
+    public class TestFrenchLightStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new FrenchLightStemFilter(source));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="FrenchLightStemFilter"/>
-	/// </summary>
-	public class TestFrenchLightStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test some examples from the paper </summary>
+        [Test]
+        public virtual void TestExamples()
+        {
+            CheckOneTerm(analyzer, "chevaux", "cheval");
+            CheckOneTerm(analyzer, "cheval", "cheval");
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+            CheckOneTerm(analyzer, "hiboux", "hibou");
+            CheckOneTerm(analyzer, "hibou", "hibou");
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new FrenchLightStemFilter(source));
-		  }
-	  }
+            CheckOneTerm(analyzer, "chantés", "chant");
+            CheckOneTerm(analyzer, "chanter", "chant");
+            CheckOneTerm(analyzer, "chante", "chant");
+            CheckOneTerm(analyzer, "chant", "chant");
 
-	  /// <summary>
-	  /// Test some examples from the paper </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExamples() throws java.io.IOException
-	  public virtual void testExamples()
-	  {
-		checkOneTerm(analyzer, "chevaux", "cheval");
-		checkOneTerm(analyzer, "cheval", "cheval");
+            CheckOneTerm(analyzer, "baronnes", "baron");
+            CheckOneTerm(analyzer, "barons", "baron");
+            CheckOneTerm(analyzer, "baron", "baron");
 
-		checkOneTerm(analyzer, "hiboux", "hibou");
-		checkOneTerm(analyzer, "hibou", "hibou");
+            CheckOneTerm(analyzer, "peaux", "peau");
+            CheckOneTerm(analyzer, "peau", "peau");
 
-		checkOneTerm(analyzer, "chantés", "chant");
-		checkOneTerm(analyzer, "chanter", "chant");
-		checkOneTerm(analyzer, "chante", "chant");
-		checkOneTerm(analyzer, "chant", "chant");
+            CheckOneTerm(analyzer, "anneaux", "aneau");
+            CheckOneTerm(analyzer, "anneau", "aneau");
 
-		checkOneTerm(analyzer, "baronnes", "baron");
-		checkOneTerm(analyzer, "barons", "baron");
-		checkOneTerm(analyzer, "baron", "baron");
+            CheckOneTerm(analyzer, "neveux", "neveu");
+            CheckOneTerm(analyzer, "neveu", "neveu");
 
-		checkOneTerm(analyzer, "peaux", "peau");
-		checkOneTerm(analyzer, "peau", "peau");
+            CheckOneTerm(analyzer, "affreux", "afreu");
+            CheckOneTerm(analyzer, "affreuse", "afreu");
 
-		checkOneTerm(analyzer, "anneaux", "aneau");
-		checkOneTerm(analyzer, "anneau", "aneau");
+            CheckOneTerm(analyzer, "investissement", "investi");
+            CheckOneTerm(analyzer, "investir", "investi");
 
-		checkOneTerm(analyzer, "neveux", "neveu");
-		checkOneTerm(analyzer, "neveu", "neveu");
+            CheckOneTerm(analyzer, "assourdissant", "asourdi");
+            CheckOneTerm(analyzer, "assourdir", "asourdi");
 
-		checkOneTerm(analyzer, "affreux", "afreu");
-		checkOneTerm(analyzer, "affreuse", "afreu");
+            CheckOneTerm(analyzer, "pratiquement", "pratiqu");
+            CheckOneTerm(analyzer, "pratique", "pratiqu");
 
-		checkOneTerm(analyzer, "investissement", "investi");
-		checkOneTerm(analyzer, "investir", "investi");
+            CheckOneTerm(analyzer, "administrativement", "administratif");
+            CheckOneTerm(analyzer, "administratif", "administratif");
 
-		checkOneTerm(analyzer, "assourdissant", "asourdi");
-		checkOneTerm(analyzer, "assourdir", "asourdi");
+            CheckOneTerm(analyzer, "justificatrice", "justifi");
+            CheckOneTerm(analyzer, "justificateur", "justifi");
+            CheckOneTerm(analyzer, "justifier", "justifi");
 
-		checkOneTerm(analyzer, "pratiquement", "pratiqu");
-		checkOneTerm(analyzer, "pratique", "pratiqu");
+            CheckOneTerm(analyzer, "educatrice", "eduqu");
+            CheckOneTerm(analyzer, "eduquer", "eduqu");
 
-		checkOneTerm(analyzer, "administrativement", "administratif");
-		checkOneTerm(analyzer, "administratif", "administratif");
+            CheckOneTerm(analyzer, "communicateur", "comuniqu");
+            CheckOneTerm(analyzer, "communiquer", "comuniqu");
 
-		checkOneTerm(analyzer, "justificatrice", "justifi");
-		checkOneTerm(analyzer, "justificateur", "justifi");
-		checkOneTerm(analyzer, "justifier", "justifi");
+            CheckOneTerm(analyzer, "accompagnatrice", "acompagn");
+            CheckOneTerm(analyzer, "accompagnateur", "acompagn");
 
-		checkOneTerm(analyzer, "educatrice", "eduqu");
-		checkOneTerm(analyzer, "eduquer", "eduqu");
+            CheckOneTerm(analyzer, "administrateur", "administr");
+            CheckOneTerm(analyzer, "administrer", "administr");
 
-		checkOneTerm(analyzer, "communicateur", "comuniqu");
-		checkOneTerm(analyzer, "communiquer", "comuniqu");
+            CheckOneTerm(analyzer, "productrice", "product");
+            CheckOneTerm(analyzer, "producteur", "product");
 
-		checkOneTerm(analyzer, "accompagnatrice", "acompagn");
-		checkOneTerm(analyzer, "accompagnateur", "acompagn");
+            CheckOneTerm(analyzer, "acheteuse", "achet");
+            CheckOneTerm(analyzer, "acheteur", "achet");
 
-		checkOneTerm(analyzer, "administrateur", "administr");
-		checkOneTerm(analyzer, "administrer", "administr");
+            CheckOneTerm(analyzer, "planteur", "plant");
+            CheckOneTerm(analyzer, "plante", "plant");
 
-		checkOneTerm(analyzer, "productrice", "product");
-		checkOneTerm(analyzer, "producteur", "product");
+            CheckOneTerm(analyzer, "poreuse", "poreu");
+            CheckOneTerm(analyzer, "poreux", "poreu");
 
-		checkOneTerm(analyzer, "acheteuse", "achet");
-		checkOneTerm(analyzer, "acheteur", "achet");
+            CheckOneTerm(analyzer, "plieuse", "plieu");
 
-		checkOneTerm(analyzer, "planteur", "plant");
-		checkOneTerm(analyzer, "plante", "plant");
+            CheckOneTerm(analyzer, "bijoutière", "bijouti");
+            CheckOneTerm(analyzer, "bijoutier", "bijouti");
 
-		checkOneTerm(analyzer, "poreuse", "poreu");
-		checkOneTerm(analyzer, "poreux", "poreu");
+            CheckOneTerm(analyzer, "caissière", "caisi");
+            CheckOneTerm(analyzer, "caissier", "caisi");
 
-		checkOneTerm(analyzer, "plieuse", "plieu");
+            CheckOneTerm(analyzer, "abrasive", "abrasif");
+            CheckOneTerm(analyzer, "abrasif", "abrasif");
 
-		checkOneTerm(analyzer, "bijoutière", "bijouti");
-		checkOneTerm(analyzer, "bijoutier", "bijouti");
+            CheckOneTerm(analyzer, "folle", "fou");
+            CheckOneTerm(analyzer, "fou", "fou");
 
-		checkOneTerm(analyzer, "caissière", "caisi");
-		checkOneTerm(analyzer, "caissier", "caisi");
+            CheckOneTerm(analyzer, "personnelle", "person");
+            CheckOneTerm(analyzer, "personne", "person");
 
-		checkOneTerm(analyzer, "abrasive", "abrasif");
-		checkOneTerm(analyzer, "abrasif", "abrasif");
+            // algo bug: too short length
+            //CheckOneTerm(analyzer, "personnel", "person");
 
-		checkOneTerm(analyzer, "folle", "fou");
-		checkOneTerm(analyzer, "fou", "fou");
+            CheckOneTerm(analyzer, "complète", "complet");
+            CheckOneTerm(analyzer, "complet", "complet");
 
-		checkOneTerm(analyzer, "personnelle", "person");
-		checkOneTerm(analyzer, "personne", "person");
+            CheckOneTerm(analyzer, "aromatique", "aromat");
 
-		// algo bug: too short length
-		//checkOneTerm(analyzer, "personnel", "person");
+            CheckOneTerm(analyzer, "faiblesse", "faibl");
+            CheckOneTerm(analyzer, "faible", "faibl");
 
-		checkOneTerm(analyzer, "complète", "complet");
-		checkOneTerm(analyzer, "complet", "complet");
+            CheckOneTerm(analyzer, "patinage", "patin");
+            CheckOneTerm(analyzer, "patin", "patin");
 
-		checkOneTerm(analyzer, "aromatique", "aromat");
+            CheckOneTerm(analyzer, "sonorisation", "sono");
 
-		checkOneTerm(analyzer, "faiblesse", "faibl");
-		checkOneTerm(analyzer, "faible", "faibl");
+            CheckOneTerm(analyzer, "ritualisation", "rituel");
+            CheckOneTerm(analyzer, "rituel", "rituel");
 
-		checkOneTerm(analyzer, "patinage", "patin");
-		checkOneTerm(analyzer, "patin", "patin");
+            // algo bug: masked by rules above
+            //CheckOneTerm(analyzer, "colonisateur", "colon");
 
-		checkOneTerm(analyzer, "sonorisation", "sono");
+            CheckOneTerm(analyzer, "nomination", "nomin");
 
-		checkOneTerm(analyzer, "ritualisation", "rituel");
-		checkOneTerm(analyzer, "rituel", "rituel");
+            CheckOneTerm(analyzer, "disposition", "dispos");
+            CheckOneTerm(analyzer, "dispose", "dispos");
 
-		// algo bug: masked by rules above
-		//checkOneTerm(analyzer, "colonisateur", "colon");
+            // SOLR-3463 : abusive compression of repeated characters in numbers
+            // Trailing repeated char elision :
+            CheckOneTerm(analyzer, "1234555", "1234555");
+            // Repeated char within numbers with more than 4 characters :
+            CheckOneTerm(analyzer, "12333345", "12333345");
+            // Short numbers weren't affected already:
+            CheckOneTerm(analyzer, "1234", "1234");
+            // Ensure behaviour is preserved for words!
+            // Trailing repeated char elision :
+            CheckOneTerm(analyzer, "abcdeff", "abcdef");
+            // Repeated char within words with more than 4 characters :
+            CheckOneTerm(analyzer, "abcccddeef", "abcdef");
+            CheckOneTerm(analyzer, "créées", "cre");
+            // Combined letter and digit repetition
+            CheckOneTerm(analyzer, "22hh00", "22h00"); // 10:00pm
+        }
 
-		checkOneTerm(analyzer, "nomination", "nomin");
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("frlighttestdata.zip"), "frlight.txt");
+        }
 
-		checkOneTerm(analyzer, "disposition", "dispos");
-		checkOneTerm(analyzer, "dispose", "dispos");
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("chevaux"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
 
-		// SOLR-3463 : abusive compression of repeated characters in numbers
-		// Trailing repeated char elision :
-		checkOneTerm(analyzer, "1234555", "1234555");
-		// Repeated char within numbers with more than 4 characters :
-		checkOneTerm(analyzer, "12333345", "12333345");
-		// Short numbers weren't affected already:
-		checkOneTerm(analyzer, "1234", "1234");
-		// Ensure behaviour is preserved for words!
-		// Trailing repeated char elision :
-		checkOneTerm(analyzer, "abcdeff", "abcdef");
-		// Repeated char within words with more than 4 characters :
-		checkOneTerm(analyzer, "abcccddeef", "abcdef");
-		checkOneTerm(analyzer, "créées", "cre");
-		// Combined letter and digit repetition
-		checkOneTerm(analyzer, "22hh00", "22h00"); // 10:00pm
-	  }
+            CheckOneTerm(a, "chevaux", "chevaux");
+        }
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("frlighttestdata.zip"), "frlight.txt");
-	  }
+        internal class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestFrenchLightStemFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("chevaux"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("chevaux"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-		checkOneTerm(a, "chevaux", "chevaux");
-	  }
+            private CharArraySet exclusionSet;
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestFrenchLightStemFilter outerInstance;
+            public AnalyzerAnonymousInnerClassHelper2(TestFrenchLightStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-		  private CharArraySet exclusionSet;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new TokenStreamComponents(source, new FrenchLightStemFilter(sink));
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestFrenchLightStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new TokenStreamComponents(source, new FrenchLightStemFilter(sink));
-		  }
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+        internal class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestFrenchLightStemFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestFrenchLightStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestFrenchLightStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestFrenchLightStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new FrenchLightStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new FrenchLightStemFilter(tokenizer));
+            }
+        }
+    }
 }

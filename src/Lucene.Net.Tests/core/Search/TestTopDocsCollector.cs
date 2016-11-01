@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+            protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 if (results == null)
                 {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             // populate an index with 30 documents, this should be enough for the test.
             // The documents have no content - the test uses MatchAllDocsQuery().
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
             for (int i = 0; i < 30; i++)
             {
                 writer.AddDocument(new Document());

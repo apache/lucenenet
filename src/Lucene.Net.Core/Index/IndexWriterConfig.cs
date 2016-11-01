@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                 // such as line numbers, message throughput, ...
                 clone.infoStream = (InfoStream)infoStream.Clone();
                 clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
-                clone.mergeScheduler = (MergeScheduler)mergeScheduler.Clone();
+                clone.mergeScheduler = mergeScheduler.Clone();
 
                 return clone;
             }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
         ///
         /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
-        public IndexWriterConfig SetMergeScheduler(MergeScheduler mergeScheduler)
+        public IndexWriterConfig SetMergeScheduler(IMergeScheduler mergeScheduler)
         {
             if (mergeScheduler == null)
             {
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override MergeScheduler MergeScheduler
+        public override IMergeScheduler MergeScheduler
         {
             get
             {

@@ -23,8 +23,12 @@ namespace Lucene.Net.Codecs.Lucene41
 
     public class TestLucene41StoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
@@ -33,8 +37,97 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             get
             {
-                return new Lucene41RWCodec();
+                return new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             }
         }
+
+
+        #region BaseStoredFieldsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestRandomStoredFields()
+        {
+            base.TestRandomStoredFields();
+        }
+
+        [Test]
+        // LUCENE-1727: make sure doc fields are stored in order
+        public override void TestStoredFieldsOrder()
+        {
+            base.TestStoredFieldsOrder();
+        }
+
+        [Test]
+        // LUCENE-1219
+        public override void TestBinaryFieldOffsetLength()
+        {
+            base.TestBinaryFieldOffsetLength();
+        }
+
+        [Test]
+        public override void TestNumericField()
+        {
+            base.TestNumericField();
+        }
+
+        [Test]
+        public override void TestIndexedBit()
+        {
+            base.TestIndexedBit();
+        }
+
+        [Test]
+        public override void TestReadSkip()
+        {
+            base.TestReadSkip();
+        }
+
+        [Test, Timeout(300000)]
+        public override void TestEmptyDocs()
+        {
+            base.TestEmptyDocs();
+        }
+
+        [Test, Timeout(300000)]
+        public override void TestConcurrentReads()
+        {
+            base.TestConcurrentReads();
+        }
+
+        [Test]
+        public override void TestWriteReadMerge()
+        {
+            base.TestWriteReadMerge();
+        }
+
+        [Test, Timeout(120000)]
+        public override void TestBigDocuments()
+        {
+            base.TestBigDocuments();
+        }
+
+        [Test]
+        public override void TestBulkMergeWithDeletes()
+        {
+            base.TestBulkMergeWithDeletes();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
     }
 }

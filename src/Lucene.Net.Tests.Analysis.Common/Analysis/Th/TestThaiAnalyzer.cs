@@ -1,9 +1,13 @@
 ﻿using System;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Core;
 
-namespace org.apache.lucene.analysis.th
+namespace Lucene.Net.Analysis.Th
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,164 +24,146 @@ namespace org.apache.lucene.analysis.th
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test case for ThaiAnalyzer, modified from TestFrenchAnalyzer
+    /// 
+    /// </summary>
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using StopAnalyzer = org.apache.lucene.analysis.core.StopAnalyzer;
-	using FlagsAttribute = org.apache.lucene.analysis.tokenattributes.FlagsAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+    public class TestThaiAnalyzer : BaseTokenStreamTestCase
+    {
 
-	/// <summary>
-	/// Test case for ThaiAnalyzer, modified from TestFrenchAnalyzer
-	/// 
-	/// </summary>
+        public override void SetUp()
+        {
+            base.SetUp();
+            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
+        }
+        /*
+         * testcase for offsets
+         */
+        [Test]
+        public virtual void TestOffsets()
+        {
+            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
+        }
 
-	public class TestThaiAnalyzer : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestStopWords()
+        {
+            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT), "การที่ได้ต้องแสดงว่างานดี", new string[] { "แสดง", "งาน", "ดี" }, new int[] { 13, 20, 23 }, new int[] { 17, 23, 25 }, new int[] { 5, 2, 1 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void setUp() throws Exception
-	  public override void setUp()
-	  {
-		base.setUp();
-		assumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
-	  }
-	  /*
-	   * testcase for offsets
-	   */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testOffsets() throws Exception
-	  public virtual void testOffsets()
-	  {
-		assertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "การที่ได้ต้องแสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"}, new int[] {0, 3, 6, 9, 13, 17, 20, 23}, new int[] {3, 6, 9, 13, 17, 20, 23, 25});
-	  }
+        [Test]
+        public virtual void TestBackwardsStopWords()
+        {
+            AssertAnalyzesTo(
+#pragma warning disable 612, 618
+                new ThaiAnalyzer(LuceneVersion.LUCENE_35),
+#pragma warning restore 612, 618
+                "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStopWords() throws Exception
-	  public virtual void testStopWords()
-	  {
-		assertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT), "การที่ได้ต้องแสดงว่างานดี", new string[] {"แสดง", "งาน", "ดี"}, new int[] {13, 20, 23}, new int[] {17, 23, 25}, new int[] {5, 2, 1});
-	  }
+        /// <summary>
+        /// Thai numeric tokens were typed as <ALPHANUM> instead of <NUM>. </summary>
+        /// @deprecated (3.1) testing backwards behavior 
+        [Test]
+        [Obsolete("(3.1) testing backwards behavior")]
+        public virtual void TestBuggyTokenType30()
+        {
+            AssertAnalyzesTo(new ThaiAnalyzer(LuceneVersion.LUCENE_30), "การที่ได้ต้องแสดงว่างานดี ๑๒๓", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี", "๑๒๓" }, new string[] { "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBackwardsStopWords() throws Exception
-	  public virtual void testBackwardsStopWords()
-	  {
-		 assertAnalyzesTo(new ThaiAnalyzer(Version.LUCENE_35), "การที่ได้ต้องแสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"}, new int[] {0, 3, 6, 9, 13, 17, 20, 23}, new int[] {3, 6, 9, 13, 17, 20, 23, 25});
-	  }
+        /// @deprecated (3.1) testing backwards behavior 
+        [Test]
+        [Obsolete("(3.1) testing backwards behavior")]
+        public virtual void TestAnalyzer30()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(LuceneVersion.LUCENE_30);
 
-	  /// <summary>
-	  /// Thai numeric tokens were typed as <ALPHANUM> instead of <NUM>. </summary>
-	  /// @deprecated (3.1) testing backwards behavior 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) testing backwards behavior") public void testBuggyTokenType30() throws Exception
-	  [Obsolete("(3.1) testing backwards behavior")]
-	  public virtual void testBuggyTokenType30()
-	  {
-		assertAnalyzesTo(new ThaiAnalyzer(Version.LUCENE_30), "การที่ได้ต้องแสดงว่างานดี ๑๒๓", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี", "๑๒๓"}, new string[] {"<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>"});
-	  }
+            AssertAnalyzesTo(analyzer, "", new string[] { });
 
-	  /// @deprecated (3.1) testing backwards behavior 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) testing backwards behavior") public void testAnalyzer30() throws Exception
-	  [Obsolete("(3.1) testing backwards behavior")]
-	  public virtual void testAnalyzer30()
-	  {
-			ThaiAnalyzer analyzer = new ThaiAnalyzer(Version.LUCENE_30);
+            AssertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" });
 
-		assertAnalyzesTo(analyzer, "", new string[] {});
+            AssertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] { "บริษัท", "ชื่อ", "xy&z", "คุย", "กับ", "xyz@demo.com" });
 
-		assertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"});
+            // English stop words
+            AssertAnalyzesTo(analyzer, "ประโยคว่า The quick brown fox jumped over the lazy dogs", new string[] { "ประโยค", "ว่า", "quick", "brown", "fox", "jumped", "over", "lazy", "dogs" });
+        }
 
-		assertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] {"บริษัท", "ชื่อ", "xy&z", "คุย", "กับ", "xyz@demo.com"});
+        /*
+         * Test that position increments are adjusted correctly for stopwords.
+         */
+        // note this test uses stopfilter's stopset
+        [Test]
+        public virtual void TestPositionIncrements()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            AssertAnalyzesTo(analyzer, "การที่ได้ต้อง the แสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 18, 22, 25, 28 }, new int[] { 3, 6, 9, 13, 22, 25, 28, 30 }, new int[] { 1, 1, 1, 1, 2, 1, 1, 1 });
 
-		// English stop words
-		assertAnalyzesTo(analyzer, "ประโยคว่า The quick brown fox jumped over the lazy dogs", new string[] {"ประโยค", "ว่า", "quick", "brown", "fox", "jumped", "over", "lazy", "dogs"});
-	  }
+            // case that a stopword is adjacent to thai text, with no whitespace
+            AssertAnalyzesTo(analyzer, "การที่ได้ต้องthe แสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 17, 21, 24, 27 }, new int[] { 3, 6, 9, 13, 21, 24, 27, 29 }, new int[] { 1, 1, 1, 1, 2, 1, 1, 1 });
+        }
 
-	  /*
-	   * Test that position increments are adjusted correctly for stopwords.
-	   */
-	  // note this test uses stopfilter's stopset
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPositionIncrements() throws Exception
-	  public virtual void testPositionIncrements()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, org.apache.lucene.analysis.core.StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-		ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-		assertAnalyzesTo(analyzer, "การที่ได้ต้อง the แสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"}, new int[] {0, 3, 6, 9, 18, 22, 25, 28}, new int[] {3, 6, 9, 13, 22, 25, 28, 30}, new int[] {1, 1, 1, 1, 2, 1, 1, 1});
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            AssertAnalyzesTo(analyzer, "", new string[] { });
 
-		// case that a stopword is adjacent to thai text, with no whitespace
-		assertAnalyzesTo(analyzer, "การที่ได้ต้องthe แสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"}, new int[] {0, 3, 6, 9, 17, 21, 24, 27}, new int[] {3, 6, 9, 13, 21, 24, 27, 29}, new int[] {1, 1, 1, 1, 2, 1, 1, 1});
-	  }
+            AssertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" });
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-	  public virtual void testReusableTokenStream()
-	  {
-		ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
-		assertAnalyzesTo(analyzer, "", new string[] {});
+            AssertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] { "บริษัท", "ชื่อ", "xy", "z", "คุย", "กับ", "xyz", "demo.com" });
+        }
 
-		  assertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"});
+        /// @deprecated (3.1) for version back compat 
+        [Test]
+        [Obsolete("(3.1) for version back compat")]
+        public virtual void TestReusableTokenStream30()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(LuceneVersion.LUCENE_30);
+            AssertAnalyzesTo(analyzer, "", new string[] { });
 
-		  assertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] {"บริษัท", "ชื่อ", "xy", "z", "คุย", "กับ", "xyz", "demo.com"});
-	  }
+            AssertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" });
 
-	  /// @deprecated (3.1) for version back compat 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) for version back compat") public void testReusableTokenStream30() throws Exception
-	  [Obsolete("(3.1) for version back compat")]
-	  public virtual void testReusableTokenStream30()
-	  {
-		  ThaiAnalyzer analyzer = new ThaiAnalyzer(Version.LUCENE_30);
-		  assertAnalyzesTo(analyzer, "", new string[] {});
+            AssertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] { "บริษัท", "ชื่อ", "xy&z", "คุย", "กับ", "xyz@demo.com" });
+        }
 
-		  assertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"});
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  assertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] {"บริษัท", "ชื่อ", "xy&z", "คุย", "กับ", "xyz@demo.com"});
-	  }
+        /// <summary>
+        /// blast some random large strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomHugeStrings()
+        {
+            Random random = Random();
+            CheckRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
+        // LUCENE-3044
+        [Test]
+        public virtual void TestAttributeReuse()
+        {
+#pragma warning disable 612, 618
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
+            // just consume
+            TokenStream ts = analyzer.TokenStream("dummy", "ภาษาไทย");
+            AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });
+            // this consumer adds flagsAtt, which this analyzer does not use. 
+            ts = analyzer.TokenStream("dummy", "ภาษาไทย");
+            ts.AddAttribute<IFlagsAttribute>();
+            AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });
+        }
 
-	  /// <summary>
-	  /// blast some random large strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomHugeStrings() throws Exception
-	  public virtual void testRandomHugeStrings()
-	  {
-		Random random = random();
-		checkRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
-	  }
-
-	  // LUCENE-3044
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAttributeReuse() throws Exception
-	  public virtual void testAttributeReuse()
-	  {
-		ThaiAnalyzer analyzer = new ThaiAnalyzer(Version.LUCENE_30);
-		// just consume
-		TokenStream ts = analyzer.tokenStream("dummy", "ภาษาไทย");
-		assertTokenStreamContents(ts, new string[] {"ภาษา", "ไทย"});
-		// this consumer adds flagsAtt, which this analyzer does not use. 
-		ts = analyzer.tokenStream("dummy", "ภาษาไทย");
-		ts.addAttribute(typeof(FlagsAttribute));
-		assertTokenStreamContents(ts, new string[] {"ภาษา", "ไทย"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTwoSentences() throws Exception
-	  public virtual void testTwoSentences()
-	  {
-		assertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "This is a test. การที่ได้ต้องแสดงว่างานดี", new string[] {"this", "is", "a", "test", "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"}, new int[] {0, 5, 8, 10, 16, 19, 22, 25, 29, 33, 36, 39}, new int[] {4, 7, 9, 14, 19, 22, 25, 29, 33, 36, 39, 41});
-	  }
-	}
-
+        [Test]
+        public virtual void TestTwoSentences()
+        {
+            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "This is a test. การที่ได้ต้องแสดงว่างานดี", new string[] { "this", "is", "a", "test", "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 5, 8, 10, 16, 19, 22, 25, 29, 33, 36, 39 }, new int[] { 4, 7, 9, 14, 19, 22, 25, 29, 33, 36, 39, 41 });
+        }
+    }
 }

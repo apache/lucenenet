@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Sinks
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Sinks
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Adds a token to the sink if it has a specific type.
     /// </summary>

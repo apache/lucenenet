@@ -1,9 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,55 +21,45 @@ namespace org.apache.lucene.analysis.util
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Fake resource loader for tests: works if you want to fake reading a single file </summary>
+    public class StringMockResourceLoader : IResourceLoader
+    {
+        internal string text;
 
-	/// <summary>
-	/// Fake resource loader for tests: works if you want to fake reading a single file </summary>
-	public class StringMockResourceLoader : ResourceLoader
-	{
-	  internal string text;
+        public StringMockResourceLoader(string text)
+        {
+            this.text = text;
+        }
 
-	  public StringMockResourceLoader(string text)
-	  {
-		this.text = text;
-	  }
+        public Type FindClass(string cname)
+        {
+            try
+            {
+                return Type.GetType(cname);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Cannot load class: " + cname, e);
+            }
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override public <T> Class<? extends T> findClass(String cname, Class<T> expectedType)
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override public <T> Class<? extends T> findClass(String cname, Class<T> expectedType)
-	  public override Type<?> findClass<T>(string cname, Type<T> expectedType) where ? : T
-	  {
-		try
-		{
-		  return Type.GetType(cname).asSubclass(expectedType);
-		}
-		catch (Exception e)
-		{
-		  throw new Exception("Cannot load class: " + cname, e);
-		}
-	  }
+        public T NewInstance<T>(string cname)
+        {
+            Type clazz = FindClass(cname);
+            try
+            {
+                return (T)Activator.CreateInstance(clazz);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Cannot create instance: " + cname, e);
+            }
+        }
 
-	  public override T newInstance<T>(string cname, Type<T> expectedType)
-	  {
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: Class<? extends T> clazz = findClass(cname, expectedType);
-		Type<?> clazz = findClass(cname, expectedType);
-		try
-		{
-		  return clazz.newInstance();
-		}
-		catch (Exception e)
-		{
-		  throw new Exception("Cannot create instance: " + cname, e);
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.io.InputStream openResource(String resource) throws java.io.IOException
-	  public override System.IO.Stream openResource(string resource)
-	  {
-		return new ByteArrayInputStream(text.GetBytes(StandardCharsets.UTF_8));
-	  }
-	}
-
+        public Stream OpenResource(string resource)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(text));
+        }
+    }
 }

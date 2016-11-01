@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -110,6 +112,16 @@ namespace Lucene.Net.Util
             CollectionAssert.AreEqual(a1, a2);
         }
 
+        protected static void assertSame(Object expected, Object actual)
+        {
+            Assert.AreSame(expected, actual);
+        }
+
+        protected static void assertSame(string message, Object expected, Object actual)
+        {
+            Assert.AreSame(expected, actual, message);
+        }
+
         protected static void fail()
         {
             Assert.Fail();
@@ -118,6 +130,12 @@ namespace Lucene.Net.Util
         protected static void fail(string message)
         {
             Assert.Fail(message);
+        }
+
+
+        protected static ISet<T> AsSet<T>(params T[] args)
+        {
+            return new HashSet<T>(args);
         }
     }
 }

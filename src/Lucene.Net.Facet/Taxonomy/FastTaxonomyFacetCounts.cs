@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,24 +19,22 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using MatchingDocs = FacetsCollector.MatchingDocs;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
     /// Computes facets counts, assuming the default encoding
-    ///  into DocValues was used.
+    /// into DocValues was used.
     /// 
     /// @lucene.experimental 
     /// </summary>
     public class FastTaxonomyFacetCounts : IntTaxonomyFacets
     {
-
         /// <summary>
-        /// Create {@code FastTaxonomyFacetCounts}, which also
-        ///  counts all facet labels. 
+        /// Create <see cref="FastTaxonomyFacetCounts"/>, which also
+        /// counts all facet labels. 
         /// </summary>
         public FastTaxonomyFacetCounts(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -47,35 +42,35 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Create {@code FastTaxonomyFacetCounts}, using the
-        ///  specified {@code indexFieldName} for ordinals.  Use
-        ///  this if you had set {@link
-        ///  FacetsConfig#setIndexFieldName} to change the index
-        ///  field name for certain dimensions. 
+        /// Create <see cref="FastTaxonomyFacetCounts"/>, using the
+        /// specified <paramref name="indexFieldName"/> for ordinals.  Use
+        /// this if you had set <see cref="FacetsConfig.SetIndexFieldName"/>
+        /// to change the index
+        /// field name for certain dimensions. 
         /// </summary>
         public FastTaxonomyFacetCounts(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)
         {
-            Count(fc.GetMatchingDocs);
+            Count(fc.GetMatchingDocs());
         }
 
         private void Count(IList<FacetsCollector.MatchingDocs> matchingDocs)
         {
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                BinaryDocValues dv = hits.context.AtomicReader.GetBinaryDocValues(IndexFieldName);
+                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(indexFieldName);
                 if (dv == null) // this reader does not have DocValues for the requested category list
                 {
                     continue;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 BytesRef bytesRef = new BytesRef();
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    dv.Get(doc,bytesRef);
+                    dv.Get(doc, bytesRef);
                     var bytes = bytesRef.Bytes;
                     int end = bytesRef.Offset + bytesRef.Length;
                     int ord = 0;
@@ -101,5 +96,4 @@ namespace Lucene.Net.Facet.Taxonomy
             Rollup();
         }
     }
-
 }

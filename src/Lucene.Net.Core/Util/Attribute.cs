@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public string ReflectAsString(bool prependAttClass)
+        public virtual string ReflectAsString(bool prependAttClass)
         {
             StringBuilder buffer = new StringBuilder();
 

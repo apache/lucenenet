@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.en
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.En
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,78 +21,71 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="EnglishMinimalStemFilter"/>
+    /// </summary>
+    public class TestEnglishMinimalStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="EnglishMinimalStemFilter"/>
-	/// </summary>
-	public class TestEnglishMinimalStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new EnglishMinimalStemFilter(source));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Test some examples from various papers about this technique </summary>
+        [Test]
+        public virtual void TestExamples()
+        {
+            CheckOneTerm(analyzer, "queries", "query");
+            CheckOneTerm(analyzer, "phrases", "phrase");
+            CheckOneTerm(analyzer, "corpus", "corpus");
+            CheckOneTerm(analyzer, "stress", "stress");
+            CheckOneTerm(analyzer, "kings", "king");
+            CheckOneTerm(analyzer, "panels", "panel");
+            CheckOneTerm(analyzer, "aerodynamics", "aerodynamic");
+            CheckOneTerm(analyzer, "congress", "congress");
+            CheckOneTerm(analyzer, "serious", "serious");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new EnglishMinimalStemFilter(source));
-		  }
-	  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-	  /// <summary>
-	  /// Test some examples from various papers about this technique </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExamples() throws java.io.IOException
-	  public virtual void testExamples()
-	  {
-		checkOneTerm(analyzer, "queries", "query");
-		checkOneTerm(analyzer, "phrases", "phrase");
-		checkOneTerm(analyzer, "corpus", "corpus");
-		checkOneTerm(analyzer, "stress", "stress");
-		checkOneTerm(analyzer, "kings", "king");
-		checkOneTerm(analyzer, "panels", "panel");
-		checkOneTerm(analyzer, "aerodynamics", "aerodynamic");
-		checkOneTerm(analyzer, "congress", "congress");
-		checkOneTerm(analyzer, "serious", "serious");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestEnglishMinimalStemFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestEnglishMinimalStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestEnglishMinimalStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestEnglishMinimalStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new EnglishMinimalStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new EnglishMinimalStemFilter(tokenizer));
+            }
+        }
+    }
 }

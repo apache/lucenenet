@@ -141,8 +141,6 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNoDir()
         {
-            // LUCENENET TODO mysterious failure - FSDirectory recreates the folder by design, not sure why this passes for Java Lucene
-
             var tempDir = CreateTempDir("doesnotexist").FullName;
             System.IO.Directory.Delete(tempDir, true);
             using (Directory dir = new NRTCachingDirectory(NewFSDirectory(new DirectoryInfo(tempDir)), 2.0, 25.0))

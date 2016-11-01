@@ -88,7 +88,7 @@ namespace Lucene.Net.Documents
             {
                 IndexableField field = fields[i];
 
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
                     fields.RemoveAt(i);
                     return;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Documents
             {
                 IndexableField field = fields[i];
 
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
                     fields.RemoveAt(i);
                 }
@@ -132,9 +132,9 @@ namespace Lucene.Net.Documents
 
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue();
+                    BytesRef bytes = field.BinaryValue;
 
                     if (bytes != null)
                     {
@@ -158,9 +158,9 @@ namespace Lucene.Net.Documents
         {
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue();
+                    BytesRef bytes = field.BinaryValue;
                     if (bytes != null)
                     {
                         return bytes;
@@ -179,7 +179,7 @@ namespace Lucene.Net.Documents
         {
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
                     return field;
                 }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Documents
             var result = new List<IndexableField>();
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name))
+                if (field.Name.Equals(name))
                 {
                     result.Add(field);
                 }
@@ -239,7 +239,7 @@ namespace Lucene.Net.Documents
             var result = new List<string>();
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name) && field.StringValue != null)
+                if (field.Name.Equals(name) && field.StringValue != null)
                 {
                     result.Add(field.StringValue);
                 }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Documents
         {
             foreach (IndexableField field in fields)
             {
-                if (field.Name().Equals(name) && field.StringValue != null)
+                if (field.Name.Equals(name, System.StringComparison.Ordinal) && field.StringValue != null)
                 {
                     return field.StringValue;
                 }

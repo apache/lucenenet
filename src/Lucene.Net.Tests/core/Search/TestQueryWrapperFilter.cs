@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         public virtual void TestRandom()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             w.w.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
             HashSet<string> aDocs = new HashSet<string>();
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         public virtual void TestThousandDocuments()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();

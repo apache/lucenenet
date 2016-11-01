@@ -18,6 +18,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This TokenFilter limits its emitted tokens to those with positions that
     /// are not greater than the configured limit.
@@ -53,7 +54,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LimitTokenPositionFilter(TokenStream @in, int maxTokenPosition)
             : this(@in, maxTokenPosition, false)
         {
-            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -72,6 +72,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             this.maxTokenPosition = maxTokenPosition;
             this.consumeAllTokens = consumeAllTokens;
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         public override bool IncrementToken()

@@ -73,8 +73,13 @@ namespace Lucene.Net.Search
             Directory = null;
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig, NewTextField and
+        /// NewStringField are no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClassTestExplanations()
+        public void BeforeClassTestExplanations()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -99,7 +104,7 @@ namespace Lucene.Net.Search
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
-            CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs);
+            CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs, Similarity);
         }
 
         /// <summary>
@@ -256,7 +261,7 @@ namespace Lucene.Net.Search
         /// Placeholder: JUnit freaks if you don't have one test ... making
         /// class abstract doesn't help
         /// </summary>
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestNoop()
         {
             /* NOOP */

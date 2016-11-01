@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.misc
+namespace Lucene.Net.Misc
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,210 +24,193 @@ namespace org.apache.lucene.misc
 	 * limitations under the License.
 	 */
 
-	using DirectoryReader = org.apache.lucene.index.DirectoryReader;
-	using IndexReader = org.apache.lucene.index.IndexReader;
-	using MultiFields = org.apache.lucene.index.MultiFields;
-	using Fields = org.apache.lucene.index.Fields;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using Terms = org.apache.lucene.index.Terms;
-	using Directory = org.apache.lucene.store.Directory;
-	using FSDirectory = org.apache.lucene.store.FSDirectory;
-	using PriorityQueue = org.apache.lucene.util.PriorityQueue;
-	using BytesRef = org.apache.lucene.util.BytesRef;
+    /// <summary>
+    /// <see cref="HighFreqTerms"/> class extracts the top n most frequent terms
+    /// (by document frequency) from an existing Lucene index and reports their
+    /// document frequency.
+    /// <para>
+    /// If the -t flag is given, both document frequency and total tf (total
+    /// number of occurrences) are reported, ordered by descending total tf.
+    /// 
+    /// </para>
+    /// </summary>
+    public class HighFreqTerms
+    {
 
+        // The top numTerms will be displayed
+        public const int DEFAULT_NUMTERMS = 100;
 
-	/// <summary>
-	/// <code>HighFreqTerms</code> class extracts the top n most frequent terms
-	/// (by document frequency) from an existing Lucene index and reports their
-	/// document frequency.
-	/// <para>
-	/// If the -t flag is given, both document frequency and total tf (total
-	/// number of occurrences) are reported, ordered by descending total tf.
-	/// 
-	/// </para>
-	/// </summary>
-	public class HighFreqTerms
-	{
+        public static void Main(string[] args)
+        {
+            string field = null;
+            int numTerms = DEFAULT_NUMTERMS;
 
-	  // The top numTerms will be displayed
-	  public const int DEFAULT_NUMTERMS = 100;
+            if (args.Length == 0 || args.Length > 4)
+            {
+                Usage();
+                Environment.Exit(1);
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static void main(String[] args) throws Exception
-	  public static void Main(string[] args)
-	  {
-		string field = null;
-		int numTerms = DEFAULT_NUMTERMS;
+            Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
 
-		if (args.Length == 0 || args.Length > 4)
-		{
-		  usage();
-		  Environment.Exit(1);
-		}
+            IComparer<TermStats> comparator = new DocFreqComparator();
 
-		Directory dir = FSDirectory.open(new File(args[0]));
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (args[i].Equals("-t"))
+                {
+                    comparator = new TotalTermFreqComparator();
+                }
+                else
+                {
+                    try
+                    {
+                        numTerms = Convert.ToInt32(args[i]);
+                    }
+                    catch (FormatException)
+                    {
+                        field = args[i];
+                    }
+                }
+            }
 
-		IComparer<TermStats> comparator = new DocFreqComparator();
+            using (IndexReader reader = DirectoryReader.Open(dir))
+            {
+                TermStats[] terms = GetHighFreqTerms(reader, numTerms, field, comparator);
 
-		for (int i = 1; i < args.Length; i++)
-		{
-		  if (args[i].Equals("-t"))
-		  {
-			comparator = new TotalTermFreqComparator();
-		  }
-		  else
-		  {
-			try
-			{
-			  numTerms = Convert.ToInt32(args[i]);
-			}
-			catch (NumberFormatException)
-			{
-			  field = args[i];
-			}
-		  }
-		}
+                for (int i = 0; i < terms.Length; i++)
+                {
+                    Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", terms[i].Field, terms[i].TermText, terms[i].TotalTermFreq, terms[i].DocFreq);
+                }
+            }
+        }
 
-		IndexReader reader = DirectoryReader.open(dir);
-		TermStats[] terms = getHighFreqTerms(reader, numTerms, field, comparator);
+        private static void Usage()
+        {
+            // LUCENENET TODO: Usage depends on packaging this into an assembly executable.
+            Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
+        }
 
-		for (int i = 0; i < terms.Length; i++)
-		{
-		  System.out.printf(Locale.ROOT, "%s:%s \t totalTF = %,d \t docFreq = %,d \n", terms[i].field, terms[i].termtext.utf8ToString(), terms[i].totalTermFreq, terms[i].docFreq);
-		}
-		reader.close();
-	  }
+        /// <summary>
+        /// Returns <see cref="TermStats[]"/> ordered by the specified comparator
+        /// </summary>
+        public static TermStats[] GetHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparator)
+        {
+            TermStatsQueue tiq = null;
 
-	  private static void usage()
-	  {
-		Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
-	  }
+            if (field != null)
+            {
+                Fields fields = MultiFields.GetFields(reader);
+                if (fields == null)
+                {
+                    throw new Exception("field " + field + " not found");
+                }
+                Terms terms = fields.Terms(field);
+                if (terms != null)
+                {
+                    TermsEnum termsEnum = terms.Iterator(null);
+                    tiq = new TermStatsQueue(numTerms, comparator);
+                    tiq.Fill(field, termsEnum);
+                }
+            }
+            else
+            {
+                Fields fields = MultiFields.GetFields(reader);
+                if (fields == null)
+                {
+                    throw new Exception("no fields found for this index");
+                }
+                tiq = new TermStatsQueue(numTerms, comparator);
+                foreach (string fieldName in fields)
+                {
+                    Terms terms = fields.Terms(fieldName);
+                    if (terms != null)
+                    {
+                        tiq.Fill(fieldName, terms.Iterator(null));
+                    }
+                }
+            }
 
-	  /// <summary>
-	  /// Returns TermStats[] ordered by the specified comparator
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static TermStats[] getHighFreqTerms(org.apache.lucene.index.IndexReader reader, int numTerms, String field, java.util.Comparator<TermStats> comparator) throws Exception
-	  public static TermStats[] getHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparator)
-	  {
-		TermStatsQueue tiq = null;
+            TermStats[] result = new TermStats[tiq.Size()];
+            // we want highest first so we read the queue and populate the array
+            // starting at the end and work backwards
+            int count = tiq.Size() - 1;
+            while (tiq.Size() != 0)
+            {
+                result[count] = tiq.Pop();
+                count--;
+            }
+            return result;
+        }
 
-		if (field != null)
-		{
-		  Fields fields = MultiFields.getFields(reader);
-		  if (fields == null)
-		  {
-			throw new Exception("field " + field + " not found");
-		  }
-		  Terms terms = fields.terms(field);
-		  if (terms != null)
-		  {
-			TermsEnum termsEnum = terms.iterator(null);
-			tiq = new TermStatsQueue(numTerms, comparator);
-			tiq.fill(field, termsEnum);
-		  }
-		}
-		else
-		{
-		  Fields fields = MultiFields.getFields(reader);
-		  if (fields == null)
-		  {
-			throw new Exception("no fields found for this index");
-		  }
-		  tiq = new TermStatsQueue(numTerms, comparator);
-		  foreach (string fieldName in fields)
-		  {
-			Terms terms = fields.terms(fieldName);
-			if (terms != null)
-			{
-			  tiq.fill(fieldName, terms.iterator(null));
-			}
-		  }
-		}
+        /// <summary>
+        /// Compares terms by <see cref="TermStats.DocFreq"/>
+        /// </summary>
+        public sealed class DocFreqComparator : IComparer<TermStats>
+        {
 
-		TermStats[] result = new TermStats[tiq.size()];
-		// we want highest first so we read the queue and populate the array
-		// starting at the end and work backwards
-		int count = tiq.size() - 1;
-		while (tiq.size() != 0)
-		{
-		  result[count] = tiq.pop();
-		  count--;
-		}
-		return result;
-	  }
+            public int Compare(TermStats a, TermStats b)
+            {
+                int res = a.DocFreq.CompareTo(b.DocFreq);
+                if (res == 0)
+                {
+                    res = a.Field.CompareTo(b.Field);
+                    if (res == 0)
+                    {
+                        res = a.termtext.CompareTo(b.termtext);
+                    }
+                }
+                return res;
+            }
+        }
 
-	  /// <summary>
-	  /// Compares terms by docTermFreq
-	  /// </summary>
-	  public sealed class DocFreqComparator : IComparer<TermStats>
-	  {
+        /// <summary>
+        /// Compares terms by <see cref="TermStats.TotalTermFreq"/> 
+        /// </summary>
+        public sealed class TotalTermFreqComparator : IComparer<TermStats>
+        {
+            public int Compare(TermStats a, TermStats b)
+            {
+                int res = a.TotalTermFreq.CompareTo(b.TotalTermFreq);
+                if (res == 0)
+                {
+                    res = a.Field.CompareTo(b.Field);
+                    if (res == 0)
+                    {
+                        res = a.termtext.CompareTo(b.termtext);
+                    }
+                }
+                return res;
+            }
+        }
 
-		public int Compare(TermStats a, TermStats b)
-		{
-		  int res = long.compare(a.docFreq, b.docFreq);
-		  if (res == 0)
-		  {
-			res = a.field.CompareTo(b.field);
-			if (res == 0)
-			{
-			  res = a.termtext.compareTo(b.termtext);
-			}
-		  }
-		  return res;
-		}
-	  }
+        /// <summary>
+        /// Priority queue for <see cref="TermStats"/> objects
+        /// 
+        /// </summary>
+        internal sealed class TermStatsQueue : PriorityQueue<TermStats>
+        {
+            internal readonly IComparer<TermStats> comparator;
 
-	  /// <summary>
-	  /// Compares terms by totalTermFreq
-	  /// </summary>
-	  public sealed class TotalTermFreqComparator : IComparer<TermStats>
-	  {
+            internal TermStatsQueue(int size, IComparer<TermStats> comparator) 
+                : base(size)
+            {
+                this.comparator = comparator;
+            }
 
-		public int Compare(TermStats a, TermStats b)
-		{
-		  int res = long.compare(a.totalTermFreq, b.totalTermFreq);
-		  if (res == 0)
-		  {
-			res = a.field.CompareTo(b.field);
-			if (res == 0)
-			{
-			  res = a.termtext.compareTo(b.termtext);
-			}
-		  }
-		  return res;
-		}
-	  }
+            public override bool LessThan(TermStats termInfoA, TermStats termInfoB)
+            {
+                return comparator.Compare(termInfoA, termInfoB) < 0;
+            }
 
-	  /// <summary>
-	  /// Priority queue for TermStats objects
-	  /// 
-	  /// </summary>
-	  internal sealed class TermStatsQueue : PriorityQueue<TermStats>
-	  {
-		internal readonly IComparer<TermStats> comparator;
-
-		internal TermStatsQueue(int size, IComparer<TermStats> comparator) : base(size)
-		{
-		  this.comparator = comparator;
-		}
-
-		protected internal override bool lessThan(TermStats termInfoA, TermStats termInfoB)
-		{
-		  return comparator.Compare(termInfoA, termInfoB) < 0;
-		}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void fill(String field, org.apache.lucene.index.TermsEnum termsEnum) throws java.io.IOException
-		protected internal void fill(string field, TermsEnum termsEnum)
-		{
-		  BytesRef term = null;
-		  while ((term = termsEnum.next()) != null)
-		  {
-			insertWithOverflow(new TermStats(field, term, termsEnum.docFreq(), termsEnum.totalTermFreq()));
-		  }
-		}
-	  }
-	}
-
+            internal void Fill(string field, TermsEnum termsEnum)
+            {
+                BytesRef term = null;
+                while ((term = termsEnum.Next()) != null)
+                {
+                    InsertWithOverflow(new TermStats(field, term, termsEnum.DocFreq(), termsEnum.TotalTermFreq()));
+                }
+            }
+        }
+    }
 }

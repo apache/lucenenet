@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Pattern
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,200 +21,197 @@ namespace Lucene.Net.Analysis.Pattern
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// CaptureGroup uses Java regexes to emit multiple tokens - one for each capture
-	/// group in one or more patterns.
-	/// 
-	/// <para>
-	/// For example, a pattern like:
-	/// </para>
-	/// 
-	/// <para>
-	/// <code>"(https?://([a-zA-Z\-_0-9.]+))"</code>
-	/// </para>
-	/// 
-	/// <para>
-	/// when matched against the string "http://www.foo.com/index" would return the
-	/// tokens "https://www.foo.com" and "www.foo.com".
-	/// </para>
-	/// 
-	/// <para>
-	/// If none of the patterns match, or if preserveOriginal is true, the original
-	/// token will be preserved.
-	/// </para>
-	/// <para>
-	/// Each pattern is matched as often as it can be, so the pattern
-	/// <code> "(...)"</code>, when matched against <code>"abcdefghi"</code> would
-	/// produce <code>["abc","def","ghi"]</code>
-	/// </para>
-	/// <para>
-	/// A camelCaseFilter could be written as:
-	/// </para>
-	/// <para>
-	/// <code>
-	///   "([A-Z]{2,})",                                 <br />
-	///   "(?&lt;![A-Z])([A-Z][a-z]+)",                     <br />
-	///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)", <br />
-	///   "([0-9]+)"
-	/// </code>
-	/// </para>
-	/// <para>
-	/// plus if <seealso cref="#preserveOriginal"/> is true, it would also return
-	/// <code>"camelCaseFilter</code>
-	/// </para>
-	/// </summary>
-	public sealed class PatternCaptureGroupTokenFilter : TokenFilter
-	{
+    /// CaptureGroup uses Java regexes to emit multiple tokens - one for each capture
+    /// group in one or more patterns.
+    /// 
+    /// <para>
+    /// For example, a pattern like:
+    /// </para>
+    /// 
+    /// <para>
+    /// <code>"(https?://([a-zA-Z\-_0-9.]+))"</code>
+    /// </para>
+    /// 
+    /// <para>
+    /// when matched against the string "http://www.foo.com/index" would return the
+    /// tokens "https://www.foo.com" and "www.foo.com".
+    /// </para>
+    /// 
+    /// <para>
+    /// If none of the patterns match, or if preserveOriginal is true, the original
+    /// token will be preserved.
+    /// </para>
+    /// <para>
+    /// Each pattern is matched as often as it can be, so the pattern
+    /// <code> "(...)"</code>, when matched against <code>"abcdefghi"</code> would
+    /// produce <code>["abc","def","ghi"]</code>
+    /// </para>
+    /// <para>
+    /// A camelCaseFilter could be written as:
+    /// </para>
+    /// <para>
+    /// <code>
+    ///   "([A-Z]{2,})",                                 <br />
+    ///   "(?&lt;![A-Z])([A-Z][a-z]+)",                     <br />
+    ///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)", <br />
+    ///   "([0-9]+)"
+    /// </code>
+    /// </para>
+    /// <para>
+    /// plus if <seealso cref="#preserveOriginal"/> is true, it would also return
+    /// <code>"camelCaseFilter</code>
+    /// </para>
+    /// </summary>
+    public sealed class PatternCaptureGroupTokenFilter : TokenFilter
+    {
 
-	  private readonly ICharTermAttribute charTermAttr = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute posAttr = addAttribute(typeof(PositionIncrementAttribute));
-	  private State state;
-	  private readonly Matcher[] matchers;
-	  private readonly CharsRef spare = new CharsRef();
-	  private readonly int[] groupCounts;
-	  private readonly bool preserveOriginal;
-	  private int[] currentGroup;
-	  private int currentMatcher;
+        private readonly ICharTermAttribute charTermAttr;
+        private readonly IPositionIncrementAttribute posAttr;
+        private State state;
+        private readonly Match[] matchers;
+        private readonly Regex[] patterns;
+        private readonly CharsRef spare = new CharsRef();
+        private readonly int[] groupCounts;
+        private readonly bool preserveOriginal;
+        private int[] currentGroup;
+        private int currentMatcher;
 
-	  /// <param name="input">
-	  ///          the input <seealso cref="TokenStream"/> </param>
-	  /// <param name="preserveOriginal">
-	  ///          set to true to return the original token even if one of the
-	  ///          patterns matches </param>
-	  /// <param name="patterns">
-	  ///          an array of <seealso cref="Pattern"/> objects to match against each token </param>
+        /// <param name="input">
+        ///          the input <seealso cref="TokenStream"/> </param>
+        /// <param name="preserveOriginal">
+        ///          set to true to return the original token even if one of the
+        ///          patterns matches </param>
+        /// <param name="patterns">
+        ///          an array of <seealso cref="Pattern"/> objects to match against each token </param>
 
-	  public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Pattern[] patterns) : base(input)
-	  {
-		this.preserveOriginal = preserveOriginal;
-		this.matchers = new Matcher[patterns.Length];
-		this.groupCounts = new int[patterns.Length];
-		this.currentGroup = new int[patterns.Length];
-		for (int i = 0; i < patterns.Length; i++)
-		{
-		  this.matchers[i] = patterns[i].matcher("");
-		  this.groupCounts[i] = this.matchers[i].groupCount();
-		  this.currentGroup[i] = -1;
-		}
-	  }
+        public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns) : base(input)
+        {
+            this.preserveOriginal = preserveOriginal;
+            this.matchers = new Match[patterns.Length];
+            this.groupCounts = new int[patterns.Length];
+            this.currentGroup = new int[patterns.Length];
+            this.patterns = patterns;
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                this.groupCounts[i] = patterns[i].GetGroupNumbers().Length;
+                this.currentGroup[i] = -1;
+                this.matchers[i] = null; // Reset to null so we can tell we are at the head of the chain
+            }
+            this.charTermAttr = AddAttribute<ICharTermAttribute>();
+            this.posAttr = AddAttribute<IPositionIncrementAttribute>();
+        }
 
-	  private bool nextCapture()
-	  {
-		int min_offset = int.MaxValue;
-		currentMatcher = -1;
-		Matcher matcher;
+        private bool NextCapture()
+        {
+            int min_offset = int.MaxValue;
+            currentMatcher = -1;
+            Match matcher;
 
-		for (int i = 0; i < matchers.Length; i++)
-		{
-		  matcher = matchers[i];
-		  if (currentGroup[i] == -1)
-		  {
-			currentGroup[i] = matcher.find() ? 1 : 0;
-		  }
-		  if (currentGroup[i] != 0)
-		  {
-			while (currentGroup[i] < groupCounts[i] + 1)
-			{
-			  int start = matcher.start(currentGroup[i]);
-			  int end = matcher.end(currentGroup[i]);
-			  if (start == end || preserveOriginal && start == 0 && spare.length == end)
-			  {
-				currentGroup[i]++;
-				continue;
-			  }
-			  if (start < min_offset)
-			  {
-				min_offset = start;
-				currentMatcher = i;
-			  }
-			  break;
-			}
-			if (currentGroup[i] == groupCounts[i] + 1)
-			{
-			  currentGroup[i] = -1;
-			  i--;
-			}
-		  }
-		}
-		return currentMatcher != -1;
-	  }
+            for (int i = 0; i < matchers.Length; i++)
+            {
+                if (currentGroup[i] == -1)
+                {
+                    if (matchers[i] == null)
+                        matchers[i] = patterns[i].Match(new string(spare.Chars, spare.Offset, spare.Length)); 
+                    else
+                        matchers[i] = matchers[i].NextMatch();
+                    currentGroup[i] = matchers[i].Success ? 1 : 0;
+                }
+                matcher = matchers[i];
+                if (currentGroup[i] != 0)
+                {
+                    while (currentGroup[i] < groupCounts[i] + 1)
+                    {
+                        int start = matcher.Groups[currentGroup[i]].Index;
+                        int end = matcher.Groups[currentGroup[i]].Index + matcher.Groups[currentGroup[i]].Length;
+                        if (start == end || preserveOriginal && start == 0 && spare.Length == end)
+                        {
+                            currentGroup[i]++;
+                            continue;
+                        }
+                        if (start < min_offset)
+                        {
+                            min_offset = start;
+                            currentMatcher = i;
+                        }
+                        break;
+                    }
+                    if (currentGroup[i] == groupCounts[i] + 1)
+                    {
+                        currentGroup[i] = -1;
+                        i--;
+                    }
+                }
+            }
+            return currentMatcher != -1;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
+        public override bool IncrementToken()
+        {
 
-		if (currentMatcher != -1 && nextCapture())
-		{
-		  Debug.Assert(state != null);
-		  clearAttributes();
-		  restoreState(state);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = matchers[currentMatcher].start(currentGroup[currentMatcher]);
-		  int start = matchers[currentMatcher].start(currentGroup[currentMatcher]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = matchers[currentMatcher].end(currentGroup[currentMatcher]);
-		  int end = matchers[currentMatcher].end(currentGroup[currentMatcher]);
+            if (currentMatcher != -1 && NextCapture())
+            {
+                Debug.Assert(state != null);
+                ClearAttributes();
+                RestoreState(state);
+                int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;
+                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index + 
+                    matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Length;
 
-		  posAttr.PositionIncrement = 0;
-		  charTermAttr.copyBuffer(spare.chars, start, end - start);
-		  currentGroup[currentMatcher]++;
-		  return true;
-		}
+                posAttr.PositionIncrement = 0;
+                charTermAttr.CopyBuffer(spare.Chars, start, end - start);
+                currentGroup[currentMatcher]++;
+                return true;
+            }
 
-		if (!input.incrementToken())
-		{
-		  return false;
-		}
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
 
-		char[] buffer = charTermAttr.buffer();
-		int length = charTermAttr.length();
-		spare.CopyChars(buffer, 0, length);
-		state = CaptureState();
+            char[] buffer = charTermAttr.Buffer();
+            int length = charTermAttr.Length;
+            spare.CopyChars(buffer, 0, length);
+            state = CaptureState();
 
-		for (int i = 0; i < matchers.Length; i++)
-		{
-		  matchers[i].reset(spare);
-		  currentGroup[i] = -1;
-		}
+            for (int i = 0; i < matchers.Length; i++)
+            {
+                matchers[i] = null;
+                currentGroup[i] = -1;
+            }
 
-		if (preserveOriginal)
-		{
-		  currentMatcher = 0;
-		}
-		else if (nextCapture())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = matchers[currentMatcher].start(currentGroup[currentMatcher]);
-		  int start = matchers[currentMatcher].start(currentGroup[currentMatcher]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = matchers[currentMatcher].end(currentGroup[currentMatcher]);
-		  int end = matchers[currentMatcher].end(currentGroup[currentMatcher]);
+            if (preserveOriginal)
+            {
+                currentMatcher = 0;
+            }
+            else if (NextCapture())
+            {
+                int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;
+                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index + 
+                    matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Length;
 
-		  // if we start at 0 we can simply set the length and save the copy
-		  if (start == 0)
-		  {
-			charTermAttr.Length = end;
-		  }
-		  else
-		  {
-			charTermAttr.copyBuffer(spare.chars, start, end - start);
-		  }
-		  currentGroup[currentMatcher]++;
-		}
-		return true;
+                // if we start at 0 we can simply set the length and save the copy
+                if (start == 0)
+                {
+                    charTermAttr.Length = end;
+                }
+                else
+                {
+                    charTermAttr.CopyBuffer(spare.Chars, start, end - start);
+                }
+                currentGroup[currentMatcher]++;
+            }
+            return true;
 
-	  }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
-	  {
-		base.reset();
-		state = null;
-		currentMatcher = -1;
-	  }
-
-	}
-
+        public override void Reset()
+        {
+            base.Reset();
+            state = null;
+            currentMatcher = -1;
+        }
+    }
 }

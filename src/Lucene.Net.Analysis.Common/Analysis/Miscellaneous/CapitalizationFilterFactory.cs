@@ -4,7 +4,6 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="CapitalizationFilter"/>.
     /// <p/>
@@ -75,16 +75,16 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CapitalizationFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
-            bool ignoreCase = getBoolean(args, KEEP_IGNORE_CASE, false);
-            HashSet<string> k = getSet(args, KEEP);
+            AssureMatchVersion();
+            bool ignoreCase = GetBoolean(args, KEEP_IGNORE_CASE, false);
+            IEnumerable<string> k = GetSet(args, KEEP);
             if (k != null)
             {
                 keep = new CharArraySet(luceneMatchVersion, 10, ignoreCase);
-                keep.AddAll(k);
+                keep.UnionWith(k);
             }
 
-            k = getSet(args, OK_PREFIX);
+            k = GetSet(args, OK_PREFIX);
             if (k != null)
             {
                 okPrefix = new List<char[]>();
@@ -94,11 +94,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
             }
 
-            minWordLength = getInt(args, MIN_WORD_LENGTH, 0);
-            maxWordCount = getInt(args, MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT);
-            maxTokenLength = getInt(args, MAX_TOKEN_LENGTH, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
-            onlyFirstWord = getBoolean(args, ONLY_FIRST_WORD, true);
-            forceFirstLetter = getBoolean(args, FORCE_FIRST_LETTER, true);
+            minWordLength = GetInt(args, MIN_WORD_LENGTH, 0);
+            maxWordCount = GetInt(args, MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT);
+            maxTokenLength = GetInt(args, MAX_TOKEN_LENGTH, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
+            onlyFirstWord = GetBoolean(args, ONLY_FIRST_WORD, true);
+            forceFirstLetter = GetBoolean(args, FORCE_FIRST_LETTER, true);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

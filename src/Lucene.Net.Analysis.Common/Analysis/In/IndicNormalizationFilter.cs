@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.@in
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.In
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,35 +20,32 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndicNormalizer"/> to normalize text
+    /// in Indian Languages.
+    /// </summary>
+    public sealed class IndicNormalizationFilter : TokenFilter
+    {
+        private readonly ICharTermAttribute termAtt;
+        private readonly IndicNormalizer normalizer = new IndicNormalizer();
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndicNormalizer"/> to normalize text
-	/// in Indian Languages.
-	/// </summary>
-	public sealed class IndicNormalizationFilter : TokenFilter
-	{
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly IndicNormalizer normalizer = new IndicNormalizer();
+        public IndicNormalizationFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
 
-	  public IndicNormalizationFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  termAtt.Length = normalizer.normalize(termAtt.buffer(), termAtt.length());
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                termAtt.Length = normalizer.Normalize(termAtt.Buffer(), termAtt.Length);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

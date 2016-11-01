@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Util;
+using Lucene.Net.Analysis.Tokenattributes;
 
-namespace org.apache.lucene.analysis.cn
+namespace Lucene.Net.Analysis.Cn
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,132 +24,118 @@ namespace org.apache.lucene.analysis.cn
 	 * limitations under the License.
 	 */
 
+    /// @deprecated Remove this test when ChineseAnalyzer is removed. 
+    [Obsolete("Remove this test when ChineseAnalyzer is removed.")]
+    public class TestChineseTokenizer : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestOtherLetterOffset()
+        {
+            string s = "a天b";
+            ChineseTokenizer tokenizer = new ChineseTokenizer(new StringReader(s));
 
-	using org.apache.lucene.analysis;
-	using WhitespaceTokenizer = org.apache.lucene.analysis.core.WhitespaceTokenizer;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using Version = org.apache.lucene.util.Version;
+            int correctStartOffset = 0;
+            int correctEndOffset = 1;
+            IOffsetAttribute offsetAtt = tokenizer.GetAttribute<IOffsetAttribute>();
+            tokenizer.Reset();
+            while (tokenizer.IncrementToken())
+            {
+                assertEquals(correctStartOffset, offsetAtt.StartOffset());
+                assertEquals(correctEndOffset, offsetAtt.EndOffset());
+                correctStartOffset++;
+                correctEndOffset++;
+            }
+            tokenizer.End();
+            tokenizer.Dispose();
+        }
 
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer a = new ChineseAnalyzer();
+            AssertAnalyzesTo(a, "中华人民共和国", new string[] { "中", "华", "人", "民", "共", "和", "国" }, new int[] { 0, 1, 2, 3, 4, 5, 6 }, new int[] { 1, 2, 3, 4, 5, 6, 7 });
+            AssertAnalyzesTo(a, "北京市", new string[] { "北", "京", "市" }, new int[] { 0, 1, 2 }, new int[] { 1, 2, 3 });
+        }
 
-	/// @deprecated Remove this test when ChineseAnalyzer is removed. 
-	[Obsolete("Remove this test when ChineseAnalyzer is removed.")]
-	public class TestChineseTokenizer : BaseTokenStreamTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testOtherLetterOffset() throws java.io.IOException
-		public virtual void testOtherLetterOffset()
-		{
-			string s = "a天b";
-			ChineseTokenizer tokenizer = new ChineseTokenizer(new StringReader(s));
-
-			int correctStartOffset = 0;
-			int correctEndOffset = 1;
-			OffsetAttribute offsetAtt = tokenizer.getAttribute(typeof(OffsetAttribute));
-			tokenizer.reset();
-			while (tokenizer.incrementToken())
-			{
-			  assertEquals(correctStartOffset, offsetAtt.startOffset());
-			  assertEquals(correctEndOffset, offsetAtt.endOffset());
-			  correctStartOffset++;
-			  correctEndOffset++;
-			}
-			tokenizer.end();
-			tokenizer.close();
-		}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-		public virtual void testReusableTokenStream()
-		{
-		  Analyzer a = new ChineseAnalyzer();
-		  assertAnalyzesTo(a, "中华人民共和国", new string[] {"中", "华", "人", "民", "共", "和", "国"}, new int[] {0, 1, 2, 3, 4, 5, 6}, new int[] {1, 2, 3, 4, 5, 6, 7});
-		  assertAnalyzesTo(a, "北京市", new string[] {"北", "京", "市"}, new int[] {0, 1, 2}, new int[] {1, 2, 3});
-		}
-
-		/*
+        /*
 		 * Analyzer that just uses ChineseTokenizer, not ChineseFilter.
 		 * convenience to show the behavior of the tokenizer
 		 */
-		private class JustChineseTokenizerAnalyzer : Analyzer
-		{
-			private readonly TestChineseTokenizer outerInstance;
+        private class JustChineseTokenizerAnalyzer : Analyzer
+        {
+            private readonly TestChineseTokenizer outerInstance;
 
-			public JustChineseTokenizerAnalyzer(TestChineseTokenizer outerInstance)
-			{
-				this.outerInstance = outerInstance;
-			}
+            public JustChineseTokenizerAnalyzer(TestChineseTokenizer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			return new TokenStreamComponents(new ChineseTokenizer(reader));
-		  }
-		}
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                return new TokenStreamComponents(new ChineseTokenizer(reader));
+            }
+        }
 
-		/*
+        /*
 		 * Analyzer that just uses ChineseFilter, not ChineseTokenizer.
 		 * convenience to show the behavior of the filter.
 		 */
-		private class JustChineseFilterAnalyzer : Analyzer
-		{
-			private readonly TestChineseTokenizer outerInstance;
+        private class JustChineseFilterAnalyzer : Analyzer
+        {
+            private readonly TestChineseTokenizer outerInstance;
 
-			public JustChineseFilterAnalyzer(TestChineseTokenizer outerInstance)
-			{
-				this.outerInstance = outerInstance;
-			}
+            public JustChineseFilterAnalyzer(TestChineseTokenizer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new WhitespaceTokenizer(Version.LUCENE_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, new ChineseFilter(tokenizer));
-		  }
-		}
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, new ChineseFilter(tokenizer));
+            }
+        }
 
-		/*
+        /*
 		 * ChineseTokenizer tokenizes numbers as one token, but they are filtered by ChineseFilter
 		 */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNumerics() throws Exception
-		public virtual void testNumerics()
-		{
-		  Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
-		  assertAnalyzesTo(justTokenizer, "中1234", new string[] {"中", "1234"});
+        [Test]
+        public virtual void TestNumerics()
+        {
+            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
+            AssertAnalyzesTo(justTokenizer, "中1234", new string[] { "中", "1234" });
 
-		  // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.
-		  Analyzer a = new ChineseAnalyzer();
-		  assertAnalyzesTo(a, "中1234", new string[] {"中"});
-		}
+            // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.
+            Analyzer a = new ChineseAnalyzer();
+            AssertAnalyzesTo(a, "中1234", new string[] { "中" });
+        }
 
-		/*
+        /*
 		 * ChineseTokenizer tokenizes english similar to SimpleAnalyzer.
 		 * it will lowercase terms automatically.
 		 * 
 		 * ChineseFilter has an english stopword list, it also removes any single character tokens.
 		 * the stopword list is case-sensitive.
 		 */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEnglish() throws Exception
-		public virtual void testEnglish()
-		{
-		  Analyzer chinese = new ChineseAnalyzer();
-		  assertAnalyzesTo(chinese, "This is a Test. b c d", new string[] {"test"});
+        [Test]
+        public virtual void TestEnglish()
+        {
+            Analyzer chinese = new ChineseAnalyzer();
+            AssertAnalyzesTo(chinese, "This is a Test. b c d", new string[] { "test" });
 
-		  Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
-		  assertAnalyzesTo(justTokenizer, "This is a Test. b c d", new string[] {"this", "is", "a", "test", "b", "c", "d"});
+            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
+            AssertAnalyzesTo(justTokenizer, "This is a Test. b c d", new string[] { "this", "is", "a", "test", "b", "c", "d" });
 
-		  Analyzer justFilter = new JustChineseFilterAnalyzer(this);
-		  assertAnalyzesTo(justFilter, "This is a Test. b c d", new string[] {"This", "Test."});
-		}
+            Analyzer justFilter = new JustChineseFilterAnalyzer(this);
+            AssertAnalyzesTo(justFilter, "This is a Test. b c d", new string[] { "This", "Test." });
+        }
 
-		/// <summary>
-		/// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-		public virtual void testRandomStrings()
-		{
-		  checkRandomData(random(), new ChineseAnalyzer(), 10000 * RANDOM_MULTIPLIER);
-		}
-
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new ChineseAnalyzer(), 10000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

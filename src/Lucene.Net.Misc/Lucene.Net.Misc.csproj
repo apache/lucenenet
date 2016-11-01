@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Misc</RootNamespace>
     <AssemblyName>Lucene.Net.Misc</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ByteBuffer.cs" />
     <Compile Include="Document\LazyDocument.cs" />
     <Compile Include="Index\CompoundFileExtractor.cs" />
     <Compile Include="Index\IndexSplitter.cs" />
@@ -56,11 +58,26 @@
     <Compile Include="Misc\SweetSpotSimilarity.cs" />
     <Compile Include="Misc\TermStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Store\NativePosixUtil.cs" />
-    <Compile Include="Store\NativeUnixDirectory.cs" />
-    <Compile Include="Store\WindowsDirectory.cs" />
     <Compile Include="Util\Fst\ListOfOutputs.cs" />
     <Compile Include="Util\Fst\UpToTwoPositiveIntOutputs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Misc\doc-files\ss.baselineTf.svg" />
+    <None Include="Misc\doc-files\ss.computeLengthNorm.svg" />
+    <None Include="Misc\doc-files\ss.hyperbolicTf.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Misc\doc-files\ss.gnuplot" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

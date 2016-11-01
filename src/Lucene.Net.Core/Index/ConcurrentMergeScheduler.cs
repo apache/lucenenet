@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     ///  incoming threads by pausing until one more more merges
     ///  complete.</p>
     /// </summary>
-    public class ConcurrentMergeScheduler : MergeScheduler
+    public class ConcurrentMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {
         private int MergeThreadPriority_Renamed = -1;
 
@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
             return sb.ToString();
         }
 
-        public override object Clone()
+        public override IMergeScheduler Clone()
         {
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
             clone.Writer = null;

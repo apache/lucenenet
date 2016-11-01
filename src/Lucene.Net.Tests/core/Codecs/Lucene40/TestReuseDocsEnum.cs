@@ -46,8 +46,12 @@ namespace Lucene.Net.Codecs.Lucene40
     [TestFixture]
     public class TestReuseDocsEnum : LuceneTestCase
     {
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
@@ -56,7 +60,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestReuseDocsEnumNoReuse()
         {
             Directory dir = NewDirectory();
-            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat(OLD_FORMAT_IMPERSONATION_IS_ACTIVE));
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
             int numdocs = AtLeast(20);
             CreateRandomIndex(numdocs, writer, Random());
@@ -86,7 +90,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestReuseDocsEnumSameBitsOrNull()
         {
             Directory dir = NewDirectory();
-            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat(OLD_FORMAT_IMPERSONATION_IS_ACTIVE));
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
             int numdocs = AtLeast(20);
             CreateRandomIndex(numdocs, writer, Random());
@@ -135,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestReuseDocsEnumDifferentReader()
         {
             Directory dir = NewDirectory();
-            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+            Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat(OLD_FORMAT_IMPERSONATION_IS_ACTIVE));
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 

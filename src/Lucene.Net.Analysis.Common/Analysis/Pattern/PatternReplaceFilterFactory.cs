@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
-namespace org.apache.lucene.analysis.pattern
+namespace Lucene.Net.Analysis.Pattern
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,44 +22,40 @@ namespace org.apache.lucene.analysis.pattern
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="PatternReplaceFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.PatternReplaceFilterFactory" pattern="([^a-z])" replacement=""
+    ///             replace="all"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    /// <seealso cref= PatternReplaceFilter </seealso>
+    public class PatternReplaceFilterFactory : TokenFilterFactory
+    {
+        internal readonly Regex pattern;
+        internal readonly string replacement;
+        internal readonly bool replaceAll;
 
+        /// <summary>
+        /// Creates a new PatternReplaceFilterFactory </summary>
+        public PatternReplaceFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            pattern = GetPattern(args, "pattern");
+            replacement = Get(args, "replacement");
+            replaceAll = "all".Equals(Get(args, "replace", Arrays.AsList("all", "first"), "all"));
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="PatternReplaceFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.PatternReplaceFilterFactory" pattern="([^a-z])" replacement=""
-	///             replace="all"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	/// <seealso cref= PatternReplaceFilter </seealso>
-	public class PatternReplaceFilterFactory : TokenFilterFactory
-	{
-	  internal readonly Pattern pattern;
-	  internal readonly string replacement;
-	  internal readonly bool replaceAll;
-
-	  /// <summary>
-	  /// Creates a new PatternReplaceFilterFactory </summary>
-	  public PatternReplaceFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		pattern = getPattern(args, "pattern");
-		replacement = get(args, "replacement");
-		replaceAll = "all".Equals(get(args, "replace", Arrays.asList("all", "first"), "all"));
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override PatternReplaceFilter create(TokenStream input)
-	  {
-		return new PatternReplaceFilter(input, pattern, replacement, replaceAll);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new PatternReplaceFilter(input, pattern, replacement, replaceAll);
+        }
+    }
 }

@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
                     InitialSeekTerm = new BytesRef("");
                 }
 
-                protected override AcceptStatus Accept(BytesRef term)
+                protected internal override AcceptStatus Accept(BytesRef term)
                 {
                     return StringHelper.StartsWith(term, Prefix) ? AcceptStatus.YES : AcceptStatus.NO;
                 }

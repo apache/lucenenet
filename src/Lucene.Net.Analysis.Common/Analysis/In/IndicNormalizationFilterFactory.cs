@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.@in
+namespace Lucene.Net.Analysis.In
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,45 +21,40 @@ namespace org.apache.lucene.analysis.@in
 	 * limitations under the License.
 	 */
 
-	using AbstractAnalysisFactory = org.apache.lucene.analysis.util.AbstractAnalysisFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="IndicNormalizationFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_innormal" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.IndicNormalizationFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class IndicNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="IndicNormalizationFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_innormal" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.IndicNormalizationFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class IndicNormalizationFilterFactory : TokenFilterFactory, MultiTermAwareComponent
-	{
+        /// <summary>
+        /// Creates a new IndicNormalizationFilterFactory </summary>
+        public IndicNormalizationFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new IndicNormalizationFilterFactory </summary>
-	  public IndicNormalizationFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        public override TokenStream Create(TokenStream input)
+        {
+            return new IndicNormalizationFilter(input);
+        }
 
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new IndicNormalizationFilter(input);
-	  }
-
-	  public virtual AbstractAnalysisFactory MultiTermComponent
-	  {
-		  get
-		  {
-			return this;
-		  }
-	  }
-	}
-
+        public virtual AbstractAnalysisFactory MultiTermComponent
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
 }

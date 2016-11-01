@@ -796,7 +796,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, joinValue);
-                    var joinScore = JoinValueToJoinScores[joinValue];
+                    var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
                     if (joinScore == null)
                     {
                         JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
@@ -855,7 +855,7 @@ namespace Lucene.Net.Tests.Join
                     return;
                 }
 
-                var joinScore = JoinValueToJoinScores[joinValue];
+                var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
                 if (joinScore == null)
                 {
                     JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
@@ -892,7 +892,7 @@ namespace Lucene.Net.Tests.Join
             private readonly IDictionary<int, JoinScore> _docToJoinScore;
 
             private SortedSetDocValues docTermOrds;
-            private readonly BytesRef scratch;
+            private readonly BytesRef scratch = new BytesRef();
             private int docBase;
 
             public CollectorAnonymousInnerClassHelper5(TestJoinUtil testJoinUtil, IndexIterationContext context, 
@@ -912,7 +912,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, scratch);
-                    JoinScore joinScore = _joinValueToJoinScores[scratch];
+                    JoinScore joinScore = _joinValueToJoinScores.ContainsKey(scratch) ? _joinValueToJoinScores[scratch] : null;
                     if (joinScore == null)
                     {
                         continue;
@@ -958,7 +958,7 @@ namespace Lucene.Net.Tests.Join
 
             private BinaryDocValues terms;
             private int docBase;
-            private readonly BytesRef spare;
+            private readonly BytesRef spare = new BytesRef();
 
             public CollectorAnonymousInnerClassHelper6(TestJoinUtil testJoinUtil, 
                 IndexIterationContext context, string toField, 
@@ -974,7 +974,7 @@ namespace Lucene.Net.Tests.Join
             public override void Collect(int doc)
             {
                 terms.Get(doc, spare);
-                JoinScore joinScore = JoinValueToJoinScores[spare];
+                JoinScore joinScore = JoinValueToJoinScores.ContainsKey(spare) ? JoinValueToJoinScores[spare] : null;
                 if (joinScore == null)
                 {
                     return;
@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Tests.Join
             }
 
             FixedBitSet expectedResult = new FixedBitSet(topLevelReader.MaxDoc);
-            IList<RandomDoc> matchingDocs = randomValueDocs[queryValue];
+            IList<RandomDoc> matchingDocs = randomValueDocs.ContainsKey(queryValue) ? randomValueDocs[queryValue] : null;
             if (matchingDocs == null)
             {
                 return new FixedBitSet(topLevelReader.MaxDoc);
@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Tests.Join
             {
                 foreach (string linkValue in matchingDoc.LinkValues)
                 {
-                    IList<RandomDoc> otherMatchingDocs = linkValueDocuments[linkValue];
+                    IList<RandomDoc> otherMatchingDocs = linkValueDocuments.ContainsKey(linkValue) ? linkValueDocuments[linkValue] : null;
                     if (otherMatchingDocs == null)
                     {
                         continue;

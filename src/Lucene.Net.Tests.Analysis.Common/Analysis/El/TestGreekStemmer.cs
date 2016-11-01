@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.el
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.El
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,537 +21,527 @@
 	 * limitations under the License.
 	 */
 
-
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-
-	public class TestGreekStemmer : BaseTokenStreamTestCase
+    public class TestGreekStemmer : BaseTokenStreamTestCase
 	{
 	  internal Analyzer a = new GreekAnalyzer(TEST_VERSION_CURRENT);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMasculineNouns() throws Exception
-	  public virtual void testMasculineNouns()
+        [Test]
+        public virtual void TestMasculineNouns()
 	  {
 		// -ος
-		checkOneTerm(a, "άνθρωπος", "ανθρωπ");
-		checkOneTerm(a, "ανθρώπου", "ανθρωπ");
-		checkOneTerm(a, "άνθρωπο", "ανθρωπ");
-		checkOneTerm(a, "άνθρωπε", "ανθρωπ");
-		checkOneTerm(a, "άνθρωποι", "ανθρωπ");
-		checkOneTerm(a, "ανθρώπων", "ανθρωπ");
-		checkOneTerm(a, "ανθρώπους", "ανθρωπ");
-		checkOneTerm(a, "άνθρωποι", "ανθρωπ");
+		CheckOneTerm(a, "άνθρωπος", "ανθρωπ");
+		CheckOneTerm(a, "ανθρώπου", "ανθρωπ");
+		CheckOneTerm(a, "άνθρωπο", "ανθρωπ");
+		CheckOneTerm(a, "άνθρωπε", "ανθρωπ");
+		CheckOneTerm(a, "άνθρωποι", "ανθρωπ");
+		CheckOneTerm(a, "ανθρώπων", "ανθρωπ");
+		CheckOneTerm(a, "ανθρώπους", "ανθρωπ");
+		CheckOneTerm(a, "άνθρωποι", "ανθρωπ");
 
 		// -ης
-		checkOneTerm(a, "πελάτης", "πελατ");
-		checkOneTerm(a, "πελάτη", "πελατ");
-		checkOneTerm(a, "πελάτες", "πελατ");
-		checkOneTerm(a, "πελατών", "πελατ");
+		CheckOneTerm(a, "πελάτης", "πελατ");
+		CheckOneTerm(a, "πελάτη", "πελατ");
+		CheckOneTerm(a, "πελάτες", "πελατ");
+		CheckOneTerm(a, "πελατών", "πελατ");
 
 		// -ας/-ες
-		checkOneTerm(a, "ελέφαντας", "ελεφαντ");
-		checkOneTerm(a, "ελέφαντα", "ελεφαντ");
-		checkOneTerm(a, "ελέφαντες", "ελεφαντ");
-		checkOneTerm(a, "ελεφάντων", "ελεφαντ");
+		CheckOneTerm(a, "ελέφαντας", "ελεφαντ");
+		CheckOneTerm(a, "ελέφαντα", "ελεφαντ");
+		CheckOneTerm(a, "ελέφαντες", "ελεφαντ");
+		CheckOneTerm(a, "ελεφάντων", "ελεφαντ");
 
 		// -ας/-αδες
-		checkOneTerm(a, "μπαμπάς", "μπαμπ");
-		checkOneTerm(a, "μπαμπά", "μπαμπ");
-		checkOneTerm(a, "μπαμπάδες", "μπαμπ");
-		checkOneTerm(a, "μπαμπάδων", "μπαμπ");
+		CheckOneTerm(a, "μπαμπάς", "μπαμπ");
+		CheckOneTerm(a, "μπαμπά", "μπαμπ");
+		CheckOneTerm(a, "μπαμπάδες", "μπαμπ");
+		CheckOneTerm(a, "μπαμπάδων", "μπαμπ");
 
 		// -ης/-ηδες
-		checkOneTerm(a, "μπακάλης", "μπακαλ");
-		checkOneTerm(a, "μπακάλη", "μπακαλ");
-		checkOneTerm(a, "μπακάληδες", "μπακαλ");
-		checkOneTerm(a, "μπακάληδων", "μπακαλ");
+		CheckOneTerm(a, "μπακάλης", "μπακαλ");
+		CheckOneTerm(a, "μπακάλη", "μπακαλ");
+		CheckOneTerm(a, "μπακάληδες", "μπακαλ");
+		CheckOneTerm(a, "μπακάληδων", "μπακαλ");
 
 		// -ες
-		checkOneTerm(a, "καφές", "καφ");
-		checkOneTerm(a, "καφέ", "καφ");
-		checkOneTerm(a, "καφέδες", "καφ");
-		checkOneTerm(a, "καφέδων", "καφ");
+		CheckOneTerm(a, "καφές", "καφ");
+		CheckOneTerm(a, "καφέ", "καφ");
+		CheckOneTerm(a, "καφέδες", "καφ");
+		CheckOneTerm(a, "καφέδων", "καφ");
 
 		// -έας/είς
-		checkOneTerm(a, "γραμματέας", "γραμματε");
-		checkOneTerm(a, "γραμματέα", "γραμματε");
+		CheckOneTerm(a, "γραμματέας", "γραμματε");
+		CheckOneTerm(a, "γραμματέα", "γραμματε");
 		// plural forms conflate w/ each other, not w/ the sing forms
-		checkOneTerm(a, "γραμματείς", "γραμματ");
-		checkOneTerm(a, "γραμματέων", "γραμματ");
+		CheckOneTerm(a, "γραμματείς", "γραμματ");
+		CheckOneTerm(a, "γραμματέων", "γραμματ");
 
 		// -ους/οι
-		checkOneTerm(a, "απόπλους", "αποπλ");
-		checkOneTerm(a, "απόπλου", "αποπλ");
-		checkOneTerm(a, "απόπλοι", "αποπλ");
-		checkOneTerm(a, "απόπλων", "αποπλ");
+		CheckOneTerm(a, "απόπλους", "αποπλ");
+		CheckOneTerm(a, "απόπλου", "αποπλ");
+		CheckOneTerm(a, "απόπλοι", "αποπλ");
+		CheckOneTerm(a, "απόπλων", "αποπλ");
 
 		// -ους/-ουδες
-		checkOneTerm(a, "παππούς", "παππ");
-		checkOneTerm(a, "παππού", "παππ");
-		checkOneTerm(a, "παππούδες", "παππ");
-		checkOneTerm(a, "παππούδων", "παππ");
+		CheckOneTerm(a, "παππούς", "παππ");
+		CheckOneTerm(a, "παππού", "παππ");
+		CheckOneTerm(a, "παππούδες", "παππ");
+		CheckOneTerm(a, "παππούδων", "παππ");
 
 		// -ης/-εις
-		checkOneTerm(a, "λάτρης", "λατρ");
-		checkOneTerm(a, "λάτρη", "λατρ");
-		checkOneTerm(a, "λάτρεις", "λατρ");
-		checkOneTerm(a, "λάτρεων", "λατρ");
+		CheckOneTerm(a, "λάτρης", "λατρ");
+		CheckOneTerm(a, "λάτρη", "λατρ");
+		CheckOneTerm(a, "λάτρεις", "λατρ");
+		CheckOneTerm(a, "λάτρεων", "λατρ");
 
 		// -υς
-		checkOneTerm(a, "πέλεκυς", "πελεκ");
-		checkOneTerm(a, "πέλεκυ", "πελεκ");
-		checkOneTerm(a, "πελέκεις", "πελεκ");
-		checkOneTerm(a, "πελέκεων", "πελεκ");
+		CheckOneTerm(a, "πέλεκυς", "πελεκ");
+		CheckOneTerm(a, "πέλεκυ", "πελεκ");
+		CheckOneTerm(a, "πελέκεις", "πελεκ");
+		CheckOneTerm(a, "πελέκεων", "πελεκ");
 
 		// -ωρ
 		// note: nom./voc. doesn't conflate w/ the rest
-		checkOneTerm(a, "μέντωρ", "μεντωρ");
-		checkOneTerm(a, "μέντορος", "μεντορ");
-		checkOneTerm(a, "μέντορα", "μεντορ");
-		checkOneTerm(a, "μέντορες", "μεντορ");
-		checkOneTerm(a, "μεντόρων", "μεντορ");
+		CheckOneTerm(a, "μέντωρ", "μεντωρ");
+		CheckOneTerm(a, "μέντορος", "μεντορ");
+		CheckOneTerm(a, "μέντορα", "μεντορ");
+		CheckOneTerm(a, "μέντορες", "μεντορ");
+		CheckOneTerm(a, "μεντόρων", "μεντορ");
 
 		// -ων
-		checkOneTerm(a, "αγώνας", "αγων");
-		checkOneTerm(a, "αγώνος", "αγων");
-		checkOneTerm(a, "αγώνα", "αγων");
-		checkOneTerm(a, "αγώνα", "αγων");
-		checkOneTerm(a, "αγώνες", "αγων");
-		checkOneTerm(a, "αγώνων", "αγων");
+		CheckOneTerm(a, "αγώνας", "αγων");
+		CheckOneTerm(a, "αγώνος", "αγων");
+		CheckOneTerm(a, "αγώνα", "αγων");
+		CheckOneTerm(a, "αγώνα", "αγων");
+		CheckOneTerm(a, "αγώνες", "αγων");
+		CheckOneTerm(a, "αγώνων", "αγων");
 
 		// -ας/-ηδες
-		checkOneTerm(a, "αέρας", "αερ");
-		checkOneTerm(a, "αέρα", "αερ");
-		checkOneTerm(a, "αέρηδες", "αερ");
-		checkOneTerm(a, "αέρηδων", "αερ");
+		CheckOneTerm(a, "αέρας", "αερ");
+		CheckOneTerm(a, "αέρα", "αερ");
+		CheckOneTerm(a, "αέρηδες", "αερ");
+		CheckOneTerm(a, "αέρηδων", "αερ");
 
 		// -ης/-ητες
-		checkOneTerm(a, "γόης", "γο");
-		checkOneTerm(a, "γόη", "γοη"); // too short
+		CheckOneTerm(a, "γόης", "γο");
+		CheckOneTerm(a, "γόη", "γοη"); // too short
 		// the two plural forms conflate
-		checkOneTerm(a, "γόητες", "γοητ");
-		checkOneTerm(a, "γοήτων", "γοητ");
+		CheckOneTerm(a, "γόητες", "γοητ");
+		CheckOneTerm(a, "γοήτων", "γοητ");
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFeminineNouns() throws Exception
-	  public virtual void testFeminineNouns()
+        [Test]
+        public virtual void TestFeminineNouns()
 	  {
 		// -α/-ες,-ών
-		checkOneTerm(a, "φορά", "φορ");
-		checkOneTerm(a, "φοράς", "φορ");
-		checkOneTerm(a, "φορές", "φορ");
-		checkOneTerm(a, "φορών", "φορ");
+		CheckOneTerm(a, "φορά", "φορ");
+		CheckOneTerm(a, "φοράς", "φορ");
+		CheckOneTerm(a, "φορές", "φορ");
+		CheckOneTerm(a, "φορών", "φορ");
 
 		// -α/-ες,-ων
-		checkOneTerm(a, "αγελάδα", "αγελαδ");
-		checkOneTerm(a, "αγελάδας", "αγελαδ");
-		checkOneTerm(a, "αγελάδες", "αγελαδ");
-		checkOneTerm(a, "αγελάδων", "αγελαδ");
+		CheckOneTerm(a, "αγελάδα", "αγελαδ");
+		CheckOneTerm(a, "αγελάδας", "αγελαδ");
+		CheckOneTerm(a, "αγελάδες", "αγελαδ");
+		CheckOneTerm(a, "αγελάδων", "αγελαδ");
 
 		// -η/-ες
-		checkOneTerm(a, "ζάχαρη", "ζαχαρ");
-		checkOneTerm(a, "ζάχαρης", "ζαχαρ");
-		checkOneTerm(a, "ζάχαρες", "ζαχαρ");
-		checkOneTerm(a, "ζαχάρεων", "ζαχαρ");
+		CheckOneTerm(a, "ζάχαρη", "ζαχαρ");
+		CheckOneTerm(a, "ζάχαρης", "ζαχαρ");
+		CheckOneTerm(a, "ζάχαρες", "ζαχαρ");
+		CheckOneTerm(a, "ζαχάρεων", "ζαχαρ");
 
 		// -η/-εις
-		checkOneTerm(a, "τηλεόραση", "τηλεορασ");
-		checkOneTerm(a, "τηλεόρασης", "τηλεορασ");
-		checkOneTerm(a, "τηλεοράσεις", "τηλεορασ");
-		checkOneTerm(a, "τηλεοράσεων", "τηλεορασ");
+		CheckOneTerm(a, "τηλεόραση", "τηλεορασ");
+		CheckOneTerm(a, "τηλεόρασης", "τηλεορασ");
+		CheckOneTerm(a, "τηλεοράσεις", "τηλεορασ");
+		CheckOneTerm(a, "τηλεοράσεων", "τηλεορασ");
 
 		// -α/-αδες
-		checkOneTerm(a, "μαμά", "μαμ");
-		checkOneTerm(a, "μαμάς", "μαμ");
-		checkOneTerm(a, "μαμάδες", "μαμ");
-		checkOneTerm(a, "μαμάδων", "μαμ");
+		CheckOneTerm(a, "μαμά", "μαμ");
+		CheckOneTerm(a, "μαμάς", "μαμ");
+		CheckOneTerm(a, "μαμάδες", "μαμ");
+		CheckOneTerm(a, "μαμάδων", "μαμ");
 
 		// -ος
-		checkOneTerm(a, "λεωφόρος", "λεωφορ");
-		checkOneTerm(a, "λεωφόρου", "λεωφορ");
-		checkOneTerm(a, "λεωφόρο", "λεωφορ");
-		checkOneTerm(a, "λεωφόρε", "λεωφορ");
-		checkOneTerm(a, "λεωφόροι", "λεωφορ");
-		checkOneTerm(a, "λεωφόρων", "λεωφορ");
-		checkOneTerm(a, "λεωφόρους", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρος", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρου", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρο", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρε", "λεωφορ");
+		CheckOneTerm(a, "λεωφόροι", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρων", "λεωφορ");
+		CheckOneTerm(a, "λεωφόρους", "λεωφορ");
 
 		// -ου
-		checkOneTerm(a, "αλεπού", "αλεπ");
-		checkOneTerm(a, "αλεπούς", "αλεπ");
-		checkOneTerm(a, "αλεπούδες", "αλεπ");
-		checkOneTerm(a, "αλεπούδων", "αλεπ");
+		CheckOneTerm(a, "αλεπού", "αλεπ");
+		CheckOneTerm(a, "αλεπούς", "αλεπ");
+		CheckOneTerm(a, "αλεπούδες", "αλεπ");
+		CheckOneTerm(a, "αλεπούδων", "αλεπ");
 
 		// -έας/είς
 		// note: not all forms conflate
-		checkOneTerm(a, "γραμματέας", "γραμματε");
-		checkOneTerm(a, "γραμματέως", "γραμματ");
-		checkOneTerm(a, "γραμματέα", "γραμματε");
-		checkOneTerm(a, "γραμματείς", "γραμματ");
-		checkOneTerm(a, "γραμματέων", "γραμματ");
+		CheckOneTerm(a, "γραμματέας", "γραμματε");
+		CheckOneTerm(a, "γραμματέως", "γραμματ");
+		CheckOneTerm(a, "γραμματέα", "γραμματε");
+		CheckOneTerm(a, "γραμματείς", "γραμματ");
+		CheckOneTerm(a, "γραμματέων", "γραμματ");
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNeuterNouns() throws Exception
-	  public virtual void testNeuterNouns()
+        [Test]
+        public virtual void TestNeuterNouns()
 	  {
 		// ending with -ο
 		// note: nom doesnt conflate
-		checkOneTerm(a, "βιβλίο", "βιβλι");
-		checkOneTerm(a, "βιβλίου", "βιβλ");
-		checkOneTerm(a, "βιβλία", "βιβλ");
-		checkOneTerm(a, "βιβλίων", "βιβλ");
+		CheckOneTerm(a, "βιβλίο", "βιβλι");
+		CheckOneTerm(a, "βιβλίου", "βιβλ");
+		CheckOneTerm(a, "βιβλία", "βιβλ");
+		CheckOneTerm(a, "βιβλίων", "βιβλ");
 
 		// ending with -ι
-		checkOneTerm(a, "πουλί", "πουλ");
-		checkOneTerm(a, "πουλιού", "πουλ");
-		checkOneTerm(a, "πουλιά", "πουλ");
-		checkOneTerm(a, "πουλιών", "πουλ");
+		CheckOneTerm(a, "πουλί", "πουλ");
+		CheckOneTerm(a, "πουλιού", "πουλ");
+		CheckOneTerm(a, "πουλιά", "πουλ");
+		CheckOneTerm(a, "πουλιών", "πουλ");
 
 		// ending with -α
 		// note: nom. doesnt conflate
-		checkOneTerm(a, "πρόβλημα", "προβλημ");
-		checkOneTerm(a, "προβλήματος", "προβλημα");
-		checkOneTerm(a, "προβλήματα", "προβλημα");
-		checkOneTerm(a, "προβλημάτων", "προβλημα");
+		CheckOneTerm(a, "πρόβλημα", "προβλημ");
+		CheckOneTerm(a, "προβλήματος", "προβλημα");
+		CheckOneTerm(a, "προβλήματα", "προβλημα");
+		CheckOneTerm(a, "προβλημάτων", "προβλημα");
 
 		// ending with -ος/-ους
-		checkOneTerm(a, "πέλαγος", "πελαγ");
-		checkOneTerm(a, "πελάγους", "πελαγ");
-		checkOneTerm(a, "πελάγη", "πελαγ");
-		checkOneTerm(a, "πελάγων", "πελαγ");
+		CheckOneTerm(a, "πέλαγος", "πελαγ");
+		CheckOneTerm(a, "πελάγους", "πελαγ");
+		CheckOneTerm(a, "πελάγη", "πελαγ");
+		CheckOneTerm(a, "πελάγων", "πελαγ");
 
 		// ending with -ός/-ότος
-		checkOneTerm(a, "γεγονός", "γεγον");
-		checkOneTerm(a, "γεγονότος", "γεγον");
-		checkOneTerm(a, "γεγονότα", "γεγον");
-		checkOneTerm(a, "γεγονότων", "γεγον");
+		CheckOneTerm(a, "γεγονός", "γεγον");
+		CheckOneTerm(a, "γεγονότος", "γεγον");
+		CheckOneTerm(a, "γεγονότα", "γεγον");
+		CheckOneTerm(a, "γεγονότων", "γεγον");
 
 		// ending with -υ/-ιου
-		checkOneTerm(a, "βράδυ", "βραδ");
-		checkOneTerm(a, "βράδι", "βραδ");
-		checkOneTerm(a, "βραδιού", "βραδ");
-		checkOneTerm(a, "βράδια", "βραδ");
-		checkOneTerm(a, "βραδιών", "βραδ");
+		CheckOneTerm(a, "βράδυ", "βραδ");
+		CheckOneTerm(a, "βράδι", "βραδ");
+		CheckOneTerm(a, "βραδιού", "βραδ");
+		CheckOneTerm(a, "βράδια", "βραδ");
+		CheckOneTerm(a, "βραδιών", "βραδ");
 
 		// ending with -υ/-ατος
 		// note: nom. doesnt conflate
-		checkOneTerm(a, "δόρυ", "δορ");
-		checkOneTerm(a, "δόρατος", "δορατ");
-		checkOneTerm(a, "δόρατα", "δορατ");
-		checkOneTerm(a, "δοράτων", "δορατ");
+		CheckOneTerm(a, "δόρυ", "δορ");
+		CheckOneTerm(a, "δόρατος", "δορατ");
+		CheckOneTerm(a, "δόρατα", "δορατ");
+		CheckOneTerm(a, "δοράτων", "δορατ");
 
 		// ending with -ας
-		checkOneTerm(a, "κρέας", "κρε");
-		checkOneTerm(a, "κρέατος", "κρε");
-		checkOneTerm(a, "κρέατα", "κρε");
-		checkOneTerm(a, "κρεάτων", "κρε");
+		CheckOneTerm(a, "κρέας", "κρε");
+		CheckOneTerm(a, "κρέατος", "κρε");
+		CheckOneTerm(a, "κρέατα", "κρε");
+		CheckOneTerm(a, "κρεάτων", "κρε");
 
 		// ending with -ως
-		checkOneTerm(a, "λυκόφως", "λυκοφω");
-		checkOneTerm(a, "λυκόφωτος", "λυκοφω");
-		checkOneTerm(a, "λυκόφωτα", "λυκοφω");
-		checkOneTerm(a, "λυκοφώτων", "λυκοφω");
+		CheckOneTerm(a, "λυκόφως", "λυκοφω");
+		CheckOneTerm(a, "λυκόφωτος", "λυκοφω");
+		CheckOneTerm(a, "λυκόφωτα", "λυκοφω");
+		CheckOneTerm(a, "λυκοφώτων", "λυκοφω");
 
 		// ending with -ον/-ου
 		// note: nom. doesnt conflate
-		checkOneTerm(a, "μέσον", "μεσον");
-		checkOneTerm(a, "μέσου", "μεσ");
-		checkOneTerm(a, "μέσα", "μεσ");
-		checkOneTerm(a, "μέσων", "μεσ");
+		CheckOneTerm(a, "μέσον", "μεσον");
+		CheckOneTerm(a, "μέσου", "μεσ");
+		CheckOneTerm(a, "μέσα", "μεσ");
+		CheckOneTerm(a, "μέσων", "μεσ");
 
 		// ending in -ον/-οντος
 		// note: nom. doesnt conflate
-		checkOneTerm(a, "ενδιαφέρον", "ενδιαφερον");
-		checkOneTerm(a, "ενδιαφέροντος", "ενδιαφεροντ");
-		checkOneTerm(a, "ενδιαφέροντα", "ενδιαφεροντ");
-		checkOneTerm(a, "ενδιαφερόντων", "ενδιαφεροντ");
+		CheckOneTerm(a, "ενδιαφέρον", "ενδιαφερον");
+		CheckOneTerm(a, "ενδιαφέροντος", "ενδιαφεροντ");
+		CheckOneTerm(a, "ενδιαφέροντα", "ενδιαφεροντ");
+		CheckOneTerm(a, "ενδιαφερόντων", "ενδιαφεροντ");
 
 		// ending with -εν/-εντος
-		checkOneTerm(a, "ανακοινωθέν", "ανακοινωθεν");
-		checkOneTerm(a, "ανακοινωθέντος", "ανακοινωθεντ");
-		checkOneTerm(a, "ανακοινωθέντα", "ανακοινωθεντ");
-		checkOneTerm(a, "ανακοινωθέντων", "ανακοινωθεντ");
+		CheckOneTerm(a, "ανακοινωθέν", "ανακοινωθεν");
+		CheckOneTerm(a, "ανακοινωθέντος", "ανακοινωθεντ");
+		CheckOneTerm(a, "ανακοινωθέντα", "ανακοινωθεντ");
+		CheckOneTerm(a, "ανακοινωθέντων", "ανακοινωθεντ");
 
 		// ending with -αν/-αντος
-		checkOneTerm(a, "σύμπαν", "συμπ");
-		checkOneTerm(a, "σύμπαντος", "συμπαντ");
-		checkOneTerm(a, "σύμπαντα", "συμπαντ");
-		checkOneTerm(a, "συμπάντων", "συμπαντ");
+		CheckOneTerm(a, "σύμπαν", "συμπ");
+		CheckOneTerm(a, "σύμπαντος", "συμπαντ");
+		CheckOneTerm(a, "σύμπαντα", "συμπαντ");
+		CheckOneTerm(a, "συμπάντων", "συμπαντ");
 
 		// ending with  -α/-ακτος
-		checkOneTerm(a, "γάλα", "γαλ");
-		checkOneTerm(a, "γάλακτος", "γαλακτ");
-		checkOneTerm(a, "γάλατα", "γαλατ");
-		checkOneTerm(a, "γαλάκτων", "γαλακτ");
+		CheckOneTerm(a, "γάλα", "γαλ");
+		CheckOneTerm(a, "γάλακτος", "γαλακτ");
+		CheckOneTerm(a, "γάλατα", "γαλατ");
+		CheckOneTerm(a, "γαλάκτων", "γαλακτ");
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAdjectives() throws Exception
-	  public virtual void testAdjectives()
+        [Test]
+        public virtual void TestAdjectives()
 	  {
 		// ending with -ής, -ές/-είς, -ή
-		checkOneTerm(a, "συνεχής", "συνεχ");
-		checkOneTerm(a, "συνεχούς", "συνεχ");
-		checkOneTerm(a, "συνεχή", "συνεχ");
-		checkOneTerm(a, "συνεχών", "συνεχ");
-		checkOneTerm(a, "συνεχείς", "συνεχ");
-		checkOneTerm(a, "συνεχές", "συνεχ");
+		CheckOneTerm(a, "συνεχής", "συνεχ");
+		CheckOneTerm(a, "συνεχούς", "συνεχ");
+		CheckOneTerm(a, "συνεχή", "συνεχ");
+		CheckOneTerm(a, "συνεχών", "συνεχ");
+		CheckOneTerm(a, "συνεχείς", "συνεχ");
+		CheckOneTerm(a, "συνεχές", "συνεχ");
 
 		// ending with -ης, -ες/-εις, -η
-		checkOneTerm(a, "συνήθης", "συνηθ");
-		checkOneTerm(a, "συνήθους", "συνηθ");
-		checkOneTerm(a, "συνήθη", "συνηθ");
+		CheckOneTerm(a, "συνήθης", "συνηθ");
+		CheckOneTerm(a, "συνήθους", "συνηθ");
+		CheckOneTerm(a, "συνήθη", "συνηθ");
 		// note: doesn't conflate
-		checkOneTerm(a, "συνήθεις", "συν");
-		checkOneTerm(a, "συνήθων", "συνηθ");
-		checkOneTerm(a, "σύνηθες", "συνηθ");
+		CheckOneTerm(a, "συνήθεις", "συν");
+		CheckOneTerm(a, "συνήθων", "συνηθ");
+		CheckOneTerm(a, "σύνηθες", "συνηθ");
 
 		// ending with -υς, -υ/-εις, -ια
-		checkOneTerm(a, "βαθύς", "βαθ");
-		checkOneTerm(a, "βαθέος", "βαθε");
-		checkOneTerm(a, "βαθύ", "βαθ");
-		checkOneTerm(a, "βαθείς", "βαθ");
-		checkOneTerm(a, "βαθέων", "βαθ");
+		CheckOneTerm(a, "βαθύς", "βαθ");
+		CheckOneTerm(a, "βαθέος", "βαθε");
+		CheckOneTerm(a, "βαθύ", "βαθ");
+		CheckOneTerm(a, "βαθείς", "βαθ");
+		CheckOneTerm(a, "βαθέων", "βαθ");
 
-		checkOneTerm(a, "βαθιά", "βαθ");
-		checkOneTerm(a, "βαθιάς", "βαθι");
-		checkOneTerm(a, "βαθιές", "βαθι");
-		checkOneTerm(a, "βαθιών", "βαθ");
+		CheckOneTerm(a, "βαθιά", "βαθ");
+		CheckOneTerm(a, "βαθιάς", "βαθι");
+		CheckOneTerm(a, "βαθιές", "βαθι");
+		CheckOneTerm(a, "βαθιών", "βαθ");
 
-		checkOneTerm(a, "βαθέα", "βαθε");
+		CheckOneTerm(a, "βαθέα", "βαθε");
 
 		// comparative/superlative
-		checkOneTerm(a, "ψηλός", "ψηλ");
-		checkOneTerm(a, "ψηλότερος", "ψηλ");
-		checkOneTerm(a, "ψηλότατος", "ψηλ");
+		CheckOneTerm(a, "ψηλός", "ψηλ");
+		CheckOneTerm(a, "ψηλότερος", "ψηλ");
+		CheckOneTerm(a, "ψηλότατος", "ψηλ");
 
-		checkOneTerm(a, "ωραίος", "ωραι");
-		checkOneTerm(a, "ωραιότερος", "ωραι");
-		checkOneTerm(a, "ωραιότατος", "ωραι");
+		CheckOneTerm(a, "ωραίος", "ωραι");
+		CheckOneTerm(a, "ωραιότερος", "ωραι");
+		CheckOneTerm(a, "ωραιότατος", "ωραι");
 
-		checkOneTerm(a, "επιεικής", "επιεικ");
-		checkOneTerm(a, "επιεικέστερος", "επιεικ");
-		checkOneTerm(a, "επιεικέστατος", "επιεικ");
+		CheckOneTerm(a, "επιεικής", "επιεικ");
+		CheckOneTerm(a, "επιεικέστερος", "επιεικ");
+		CheckOneTerm(a, "επιεικέστατος", "επιεικ");
 	  }
 
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVerbs() throws Exception
-	  public virtual void testVerbs()
+        [Test]
+        public virtual void TestVerbs()
 	  {
 		// note, past/present verb stems will not conflate (from the paper)
 		//-ω,-α/-.ω,-.α
-		checkOneTerm(a, "ορίζω", "οριζ");
-		checkOneTerm(a, "όριζα", "οριζ");
-		checkOneTerm(a, "όριζε", "οριζ");
-		checkOneTerm(a, "ορίζοντας", "οριζ");
-		checkOneTerm(a, "ορίζομαι", "οριζ");
-		checkOneTerm(a, "οριζόμουν", "οριζ");
-		checkOneTerm(a, "ορίζεσαι", "οριζ");
+		CheckOneTerm(a, "ορίζω", "οριζ");
+		CheckOneTerm(a, "όριζα", "οριζ");
+		CheckOneTerm(a, "όριζε", "οριζ");
+		CheckOneTerm(a, "ορίζοντας", "οριζ");
+		CheckOneTerm(a, "ορίζομαι", "οριζ");
+		CheckOneTerm(a, "οριζόμουν", "οριζ");
+		CheckOneTerm(a, "ορίζεσαι", "οριζ");
 
-		checkOneTerm(a, "όρισα", "ορισ");
-		checkOneTerm(a, "ορίσω", "ορισ");
-		checkOneTerm(a, "όρισε", "ορισ");
-		checkOneTerm(a, "ορίσει", "ορισ");
+		CheckOneTerm(a, "όρισα", "ορισ");
+		CheckOneTerm(a, "ορίσω", "ορισ");
+		CheckOneTerm(a, "όρισε", "ορισ");
+		CheckOneTerm(a, "ορίσει", "ορισ");
 
-		checkOneTerm(a, "ορίστηκα", "οριστ");
-		checkOneTerm(a, "οριστώ", "οριστ");
-		checkOneTerm(a, "οριστείς", "οριστ");
-		checkOneTerm(a, "οριστεί", "οριστ");
+		CheckOneTerm(a, "ορίστηκα", "οριστ");
+		CheckOneTerm(a, "οριστώ", "οριστ");
+		CheckOneTerm(a, "οριστείς", "οριστ");
+		CheckOneTerm(a, "οριστεί", "οριστ");
 
-		checkOneTerm(a, "ορισμένο", "ορισμεν");
-		checkOneTerm(a, "ορισμένη", "ορισμεν");
-		checkOneTerm(a, "ορισμένος", "ορισμεν");
+		CheckOneTerm(a, "ορισμένο", "ορισμεν");
+		CheckOneTerm(a, "ορισμένη", "ορισμεν");
+		CheckOneTerm(a, "ορισμένος", "ορισμεν");
 
 		// -ω,-α/-ξω,-ξα
-		checkOneTerm(a, "ανοίγω", "ανοιγ");
-		checkOneTerm(a, "άνοιγα", "ανοιγ");
-		checkOneTerm(a, "άνοιγε", "ανοιγ");
-		checkOneTerm(a, "ανοίγοντας", "ανοιγ");
-		checkOneTerm(a, "ανοίγομαι", "ανοιγ");
-		checkOneTerm(a, "ανοιγόμουν", "ανοιγ");
+		CheckOneTerm(a, "ανοίγω", "ανοιγ");
+		CheckOneTerm(a, "άνοιγα", "ανοιγ");
+		CheckOneTerm(a, "άνοιγε", "ανοιγ");
+		CheckOneTerm(a, "ανοίγοντας", "ανοιγ");
+		CheckOneTerm(a, "ανοίγομαι", "ανοιγ");
+		CheckOneTerm(a, "ανοιγόμουν", "ανοιγ");
 
-		checkOneTerm(a, "άνοιξα", "ανοιξ");
-		checkOneTerm(a, "ανοίξω", "ανοιξ");
-		checkOneTerm(a, "άνοιξε", "ανοιξ");
-		checkOneTerm(a, "ανοίξει", "ανοιξ");
+		CheckOneTerm(a, "άνοιξα", "ανοιξ");
+		CheckOneTerm(a, "ανοίξω", "ανοιξ");
+		CheckOneTerm(a, "άνοιξε", "ανοιξ");
+		CheckOneTerm(a, "ανοίξει", "ανοιξ");
 
-		checkOneTerm(a, "ανοίχτηκα", "ανοιχτ");
-		checkOneTerm(a, "ανοιχτώ", "ανοιχτ");
-		checkOneTerm(a, "ανοίχτηκα", "ανοιχτ");
-		checkOneTerm(a, "ανοιχτείς", "ανοιχτ");
-		checkOneTerm(a, "ανοιχτεί", "ανοιχτ");
+		CheckOneTerm(a, "ανοίχτηκα", "ανοιχτ");
+		CheckOneTerm(a, "ανοιχτώ", "ανοιχτ");
+		CheckOneTerm(a, "ανοίχτηκα", "ανοιχτ");
+		CheckOneTerm(a, "ανοιχτείς", "ανοιχτ");
+		CheckOneTerm(a, "ανοιχτεί", "ανοιχτ");
 
-		checkOneTerm(a, "ανοίξου", "ανοιξ");
+		CheckOneTerm(a, "ανοίξου", "ανοιξ");
 
 		//-ώ/-άω,-ούσα/-άσω,-ασα
-		checkOneTerm(a, "περνώ", "περν");
-		checkOneTerm(a, "περνάω", "περν");
-		checkOneTerm(a, "περνούσα", "περν");
-		checkOneTerm(a, "πέρναγα", "περν");
-		checkOneTerm(a, "πέρνα", "περν");
-		checkOneTerm(a, "περνώντας", "περν");
+		CheckOneTerm(a, "περνώ", "περν");
+		CheckOneTerm(a, "περνάω", "περν");
+		CheckOneTerm(a, "περνούσα", "περν");
+		CheckOneTerm(a, "πέρναγα", "περν");
+		CheckOneTerm(a, "πέρνα", "περν");
+		CheckOneTerm(a, "περνώντας", "περν");
 
-		checkOneTerm(a, "πέρασα", "περασ");
-		checkOneTerm(a, "περάσω", "περασ");
-		checkOneTerm(a, "πέρασε", "περασ");
-		checkOneTerm(a, "περάσει", "περασ");
+		CheckOneTerm(a, "πέρασα", "περασ");
+		CheckOneTerm(a, "περάσω", "περασ");
+		CheckOneTerm(a, "πέρασε", "περασ");
+		CheckOneTerm(a, "περάσει", "περασ");
 
-		checkOneTerm(a, "περνιέμαι", "περν");
-		checkOneTerm(a, "περνιόμουν", "περν");
+		CheckOneTerm(a, "περνιέμαι", "περν");
+		CheckOneTerm(a, "περνιόμουν", "περν");
 
-		checkOneTerm(a, "περάστηκα", "περαστ");
-		checkOneTerm(a, "περαστώ", "περαστ");
-		checkOneTerm(a, "περαστείς", "περαστ");
-		checkOneTerm(a, "περαστεί", "περαστ");
+		CheckOneTerm(a, "περάστηκα", "περαστ");
+		CheckOneTerm(a, "περαστώ", "περαστ");
+		CheckOneTerm(a, "περαστείς", "περαστ");
+		CheckOneTerm(a, "περαστεί", "περαστ");
 
-		checkOneTerm(a, "περασμένο", "περασμεν");
-		checkOneTerm(a, "περασμένη", "περασμεν");
-		checkOneTerm(a, "περασμένος", "περασμεν");
+		CheckOneTerm(a, "περασμένο", "περασμεν");
+		CheckOneTerm(a, "περασμένη", "περασμεν");
+		CheckOneTerm(a, "περασμένος", "περασμεν");
 
 		// -ώ/-άω,-ούσα/-άξω,-αξα
-		checkOneTerm(a, "πετώ", "πετ");
-		checkOneTerm(a, "πετάω", "πετ");
-		checkOneTerm(a, "πετούσα", "πετ");
-		checkOneTerm(a, "πέταγα", "πετ");
-		checkOneTerm(a, "πέτα", "πετ");
-		checkOneTerm(a, "πετώντας", "πετ");
-		checkOneTerm(a, "πετιέμαι", "πετ");
-		checkOneTerm(a, "πετιόμουν", "πετ");
+		CheckOneTerm(a, "πετώ", "πετ");
+		CheckOneTerm(a, "πετάω", "πετ");
+		CheckOneTerm(a, "πετούσα", "πετ");
+		CheckOneTerm(a, "πέταγα", "πετ");
+		CheckOneTerm(a, "πέτα", "πετ");
+		CheckOneTerm(a, "πετώντας", "πετ");
+		CheckOneTerm(a, "πετιέμαι", "πετ");
+		CheckOneTerm(a, "πετιόμουν", "πετ");
 
-		checkOneTerm(a, "πέταξα", "πεταξ");
-		checkOneTerm(a, "πετάξω", "πεταξ");
-		checkOneTerm(a, "πέταξε", "πεταξ");
-		checkOneTerm(a, "πετάξει", "πεταξ");
+		CheckOneTerm(a, "πέταξα", "πεταξ");
+		CheckOneTerm(a, "πετάξω", "πεταξ");
+		CheckOneTerm(a, "πέταξε", "πεταξ");
+		CheckOneTerm(a, "πετάξει", "πεταξ");
 
-		checkOneTerm(a, "πετάχτηκα", "πεταχτ");
-		checkOneTerm(a, "πεταχτώ", "πεταχτ");
-		checkOneTerm(a, "πεταχτείς", "πεταχτ");
-		checkOneTerm(a, "πεταχτεί", "πεταχτ");
+		CheckOneTerm(a, "πετάχτηκα", "πεταχτ");
+		CheckOneTerm(a, "πεταχτώ", "πεταχτ");
+		CheckOneTerm(a, "πεταχτείς", "πεταχτ");
+		CheckOneTerm(a, "πεταχτεί", "πεταχτ");
 
-		checkOneTerm(a, "πεταμένο", "πεταμεν");
-		checkOneTerm(a, "πεταμένη", "πεταμεν");
-		checkOneTerm(a, "πεταμένος", "πεταμεν");
+		CheckOneTerm(a, "πεταμένο", "πεταμεν");
+		CheckOneTerm(a, "πεταμένη", "πεταμεν");
+		CheckOneTerm(a, "πεταμένος", "πεταμεν");
 
 		// -ώ/-άω,-ούσα / -έσω,-εσα
-		checkOneTerm(a, "καλώ", "καλ");
-		checkOneTerm(a, "καλούσα", "καλ");
-		checkOneTerm(a, "καλείς", "καλ");
-		checkOneTerm(a, "καλώντας", "καλ");
+		CheckOneTerm(a, "καλώ", "καλ");
+		CheckOneTerm(a, "καλούσα", "καλ");
+		CheckOneTerm(a, "καλείς", "καλ");
+		CheckOneTerm(a, "καλώντας", "καλ");
 
-		checkOneTerm(a, "καλούμαι", "καλ");
+		CheckOneTerm(a, "καλούμαι", "καλ");
 		// pass. imperfect /imp. progressive doesnt conflate
-		checkOneTerm(a, "καλούμουν", "καλουμ");
-		checkOneTerm(a, "καλείσαι", "καλεισα");
+		CheckOneTerm(a, "καλούμουν", "καλουμ");
+		CheckOneTerm(a, "καλείσαι", "καλεισα");
 
-		checkOneTerm(a, "καλέστηκα", "καλεστ");
-		checkOneTerm(a, "καλεστώ", "καλεστ");
-		checkOneTerm(a, "καλεστείς", "καλεστ");
-		checkOneTerm(a, "καλεστεί", "καλεστ");
+		CheckOneTerm(a, "καλέστηκα", "καλεστ");
+		CheckOneTerm(a, "καλεστώ", "καλεστ");
+		CheckOneTerm(a, "καλεστείς", "καλεστ");
+		CheckOneTerm(a, "καλεστεί", "καλεστ");
 
-		checkOneTerm(a, "καλεσμένο", "καλεσμεν");
-		checkOneTerm(a, "καλεσμένη", "καλεσμεν");
-		checkOneTerm(a, "καλεσμένος", "καλεσμεν");
+		CheckOneTerm(a, "καλεσμένο", "καλεσμεν");
+		CheckOneTerm(a, "καλεσμένη", "καλεσμεν");
+		CheckOneTerm(a, "καλεσμένος", "καλεσμεν");
 
-		checkOneTerm(a, "φορώ", "φορ");
-		checkOneTerm(a, "φοράω", "φορ");
-		checkOneTerm(a, "φορούσα", "φορ");
-		checkOneTerm(a, "φόραγα", "φορ");
-		checkOneTerm(a, "φόρα", "φορ");
-		checkOneTerm(a, "φορώντας", "φορ");
-		checkOneTerm(a, "φοριέμαι", "φορ");
-		checkOneTerm(a, "φοριόμουν", "φορ");
-		checkOneTerm(a, "φοριέσαι", "φορ");
+		CheckOneTerm(a, "φορώ", "φορ");
+		CheckOneTerm(a, "φοράω", "φορ");
+		CheckOneTerm(a, "φορούσα", "φορ");
+		CheckOneTerm(a, "φόραγα", "φορ");
+		CheckOneTerm(a, "φόρα", "φορ");
+		CheckOneTerm(a, "φορώντας", "φορ");
+		CheckOneTerm(a, "φοριέμαι", "φορ");
+		CheckOneTerm(a, "φοριόμουν", "φορ");
+		CheckOneTerm(a, "φοριέσαι", "φορ");
 
-		checkOneTerm(a, "φόρεσα", "φορεσ");
-		checkOneTerm(a, "φορέσω", "φορεσ");
-		checkOneTerm(a, "φόρεσε", "φορεσ");
-		checkOneTerm(a, "φορέσει", "φορεσ");
+		CheckOneTerm(a, "φόρεσα", "φορεσ");
+		CheckOneTerm(a, "φορέσω", "φορεσ");
+		CheckOneTerm(a, "φόρεσε", "φορεσ");
+		CheckOneTerm(a, "φορέσει", "φορεσ");
 
-		checkOneTerm(a, "φορέθηκα", "φορεθ");
-		checkOneTerm(a, "φορεθώ", "φορεθ");
-		checkOneTerm(a, "φορεθείς", "φορεθ");
-		checkOneTerm(a, "φορεθεί", "φορεθ");
+		CheckOneTerm(a, "φορέθηκα", "φορεθ");
+		CheckOneTerm(a, "φορεθώ", "φορεθ");
+		CheckOneTerm(a, "φορεθείς", "φορεθ");
+		CheckOneTerm(a, "φορεθεί", "φορεθ");
 
-		checkOneTerm(a, "φορεμένο", "φορεμεν");
-		checkOneTerm(a, "φορεμένη", "φορεμεν");
-		checkOneTerm(a, "φορεμένος", "φορεμεν");
+		CheckOneTerm(a, "φορεμένο", "φορεμεν");
+		CheckOneTerm(a, "φορεμένη", "φορεμεν");
+		CheckOneTerm(a, "φορεμένος", "φορεμεν");
 
 		// -ώ/-άω,-ούσα / -ήσω,-ησα
-		checkOneTerm(a, "κρατώ", "κρατ");
-		checkOneTerm(a, "κρατάω", "κρατ");
-		checkOneTerm(a, "κρατούσα", "κρατ");
-		checkOneTerm(a, "κράταγα", "κρατ");
-		checkOneTerm(a, "κράτα", "κρατ");
-		checkOneTerm(a, "κρατώντας", "κρατ");
+		CheckOneTerm(a, "κρατώ", "κρατ");
+		CheckOneTerm(a, "κρατάω", "κρατ");
+		CheckOneTerm(a, "κρατούσα", "κρατ");
+		CheckOneTerm(a, "κράταγα", "κρατ");
+		CheckOneTerm(a, "κράτα", "κρατ");
+		CheckOneTerm(a, "κρατώντας", "κρατ");
 
-		checkOneTerm(a, "κράτησα", "κρατ");
-		checkOneTerm(a, "κρατήσω", "κρατ");
-		checkOneTerm(a, "κράτησε", "κρατ");
-		checkOneTerm(a, "κρατήσει", "κρατ");
+		CheckOneTerm(a, "κράτησα", "κρατ");
+		CheckOneTerm(a, "κρατήσω", "κρατ");
+		CheckOneTerm(a, "κράτησε", "κρατ");
+		CheckOneTerm(a, "κρατήσει", "κρατ");
 
-		checkOneTerm(a, "κρατούμαι", "κρατ");
-		checkOneTerm(a, "κρατιέμαι", "κρατ");
+		CheckOneTerm(a, "κρατούμαι", "κρατ");
+		CheckOneTerm(a, "κρατιέμαι", "κρατ");
 		// this imperfect form doesnt conflate 
-		checkOneTerm(a, "κρατούμουν", "κρατουμ");
-		checkOneTerm(a, "κρατιόμουν", "κρατ");
+		CheckOneTerm(a, "κρατούμουν", "κρατουμ");
+		CheckOneTerm(a, "κρατιόμουν", "κρατ");
 		// this imp. prog form doesnt conflate
-		checkOneTerm(a, "κρατείσαι", "κρατεισα");
+		CheckOneTerm(a, "κρατείσαι", "κρατεισα");
 
-		checkOneTerm(a, "κρατήθηκα", "κρατ");
-		checkOneTerm(a, "κρατηθώ", "κρατ");
-		checkOneTerm(a, "κρατηθείς", "κρατ");
-		checkOneTerm(a, "κρατηθεί", "κρατ");
-		checkOneTerm(a, "κρατήσου", "κρατ");
+		CheckOneTerm(a, "κρατήθηκα", "κρατ");
+		CheckOneTerm(a, "κρατηθώ", "κρατ");
+		CheckOneTerm(a, "κρατηθείς", "κρατ");
+		CheckOneTerm(a, "κρατηθεί", "κρατ");
+		CheckOneTerm(a, "κρατήσου", "κρατ");
 
-		checkOneTerm(a, "κρατημένο", "κρατημεν");
-		checkOneTerm(a, "κρατημένη", "κρατημεν");
-		checkOneTerm(a, "κρατημένος", "κρατημεν");
+		CheckOneTerm(a, "κρατημένο", "κρατημεν");
+		CheckOneTerm(a, "κρατημένη", "κρατημεν");
+		CheckOneTerm(a, "κρατημένος", "κρατημεν");
 
 		// -.μαι,-.μουν / -.ώ,-.ηκα
-		checkOneTerm(a, "κοιμάμαι", "κοιμ");
-		checkOneTerm(a, "κοιμόμουν", "κοιμ");
-		checkOneTerm(a, "κοιμάσαι", "κοιμ");
+		CheckOneTerm(a, "κοιμάμαι", "κοιμ");
+		CheckOneTerm(a, "κοιμόμουν", "κοιμ");
+		CheckOneTerm(a, "κοιμάσαι", "κοιμ");
 
-		checkOneTerm(a, "κοιμήθηκα", "κοιμ");
-		checkOneTerm(a, "κοιμηθώ", "κοιμ");
-		checkOneTerm(a, "κοιμήσου", "κοιμ");
-		checkOneTerm(a, "κοιμηθεί", "κοιμ");
+		CheckOneTerm(a, "κοιμήθηκα", "κοιμ");
+		CheckOneTerm(a, "κοιμηθώ", "κοιμ");
+		CheckOneTerm(a, "κοιμήσου", "κοιμ");
+		CheckOneTerm(a, "κοιμηθεί", "κοιμ");
 
-		checkOneTerm(a, "κοιμισμένο", "κοιμισμεν");
-		checkOneTerm(a, "κοιμισμένη", "κοιμισμεν");
-		checkOneTerm(a, "κοιμισμένος", "κοιμισμεν");
+		CheckOneTerm(a, "κοιμισμένο", "κοιμισμεν");
+		CheckOneTerm(a, "κοιμισμένη", "κοιμισμεν");
+		CheckOneTerm(a, "κοιμισμένος", "κοιμισμεν");
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExceptions() throws Exception
-	  public virtual void testExceptions()
+        [Test]
+        public virtual void TestExceptions()
 	  {
-		checkOneTerm(a, "καθεστώτα", "καθεστ");
-		checkOneTerm(a, "καθεστώτος", "καθεστ");
-		checkOneTerm(a, "καθεστώς", "καθεστ");
-		checkOneTerm(a, "καθεστώτων", "καθεστ");
+		CheckOneTerm(a, "καθεστώτα", "καθεστ");
+		CheckOneTerm(a, "καθεστώτος", "καθεστ");
+		CheckOneTerm(a, "καθεστώς", "καθεστ");
+		CheckOneTerm(a, "καθεστώτων", "καθεστ");
 
-		checkOneTerm(a, "χουμε", "χουμ");
-		checkOneTerm(a, "χουμ", "χουμ");
+		CheckOneTerm(a, "χουμε", "χουμ");
+		CheckOneTerm(a, "χουμ", "χουμ");
 
-		checkOneTerm(a, "υποταγεσ", "υποταγ");
-		checkOneTerm(a, "υποταγ", "υποταγ");
+		CheckOneTerm(a, "υποταγεσ", "υποταγ");
+		CheckOneTerm(a, "υποταγ", "υποταγ");
 
-		checkOneTerm(a, "εμετε", "εμετ");
-		checkOneTerm(a, "εμετ", "εμετ");
+		CheckOneTerm(a, "εμετε", "εμετ");
+		CheckOneTerm(a, "εμετ", "εμετ");
 
-		checkOneTerm(a, "αρχοντασ", "αρχοντ");
-		checkOneTerm(a, "αρχοντων", "αρχοντ");
+		CheckOneTerm(a, "αρχοντασ", "αρχοντ");
+		CheckOneTerm(a, "αρχοντων", "αρχοντ");
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
+        [Test]
+        public virtual void TestEmptyTerm()
 	  {
 		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
+		CheckOneTerm(a, "", "");
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -560,12 +553,11 @@
 			  this.outerInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new KeywordTokenizer(reader);
 			return new TokenStreamComponents(tokenizer, new GreekStemFilter(tokenizer));
 		  }
 	  }
 	}
-
 }

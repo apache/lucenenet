@@ -50,6 +50,10 @@
     <Compile Include="Utils\DataSplitterTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Classification\Lucene.Net.Classification.csproj">
       <Project>{E067B8BB-D8E7-4040-BEB8-EFF8BB4149BD}</Project>
       <Name>Lucene.Net.Classification</Name>
@@ -66,7 +70,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

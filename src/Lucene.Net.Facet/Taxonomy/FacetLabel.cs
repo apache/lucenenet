@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -41,21 +40,22 @@ namespace Lucene.Net.Facet.Taxonomy
          * be on the safe side.
          */
         /// <summary>
-        /// The maximum number of characters a <seealso cref="FacetLabel"/> can have.
+        /// The maximum number of characters a <see cref="FacetLabel"/> can have.
         /// </summary>
         public static readonly int MAX_CATEGORY_PATH_LENGTH = (BYTE_BLOCK_SIZE - 2) / 4;
 
         /// <summary>
-        /// The components of this <seealso cref="FacetLabel"/>. Note that this array may be
-        /// shared with other <seealso cref="FacetLabel"/> instances, e.g. as a result of
-        /// <seealso cref="#subpath(int)"/>, therefore you should traverse the array up to
-        /// <seealso cref="#length"/> for this path's components.
+        /// The components of this <see cref="FacetLabel"/>. Note that this array may be
+        /// shared with other <see cref="FacetLabel"/> instances, e.g. as a result of
+        /// <see cref="Subpath(int)"/>, therefore you should traverse the array up to
+        /// <see cref="Length"/> for this path's components.
         /// </summary>
-        public readonly string[] Components;
+        public string[] Components { get; private set; }
 
         /// <summary>
-        /// The number of components of this <seealso cref="FacetLabel"/>. </summary>
-        public readonly int Length;
+        /// The number of components of this <see cref="FacetLabel"/>.
+        /// </summary>
+        public int Length { get; private set; }
 
         // Used by subpath
         private FacetLabel(FacetLabel copyFrom, int prefixLen)
@@ -69,7 +69,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Construct from the given path components. </summary>
+        /// Construct from the given path components.
+        /// </summary>
         public FacetLabel(params string[] components)
         {
             this.Components = components;
@@ -78,7 +79,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Construct from the dimension plus the given path components. </summary>
+        /// Construct from the dimension plus the given path components.
+        /// </summary>
         public FacetLabel(string dim, string[] path)
         {
             Components = new string[1 + path.Length];
@@ -107,7 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Compares this path with another <seealso cref="FacetLabel"/> for lexicographic
+        /// Compares this path with another <see cref="FacetLabel"/> for lexicographic
         /// order.
         /// </summary>
         public virtual int CompareTo(FacetLabel other)
@@ -115,7 +117,7 @@ namespace Lucene.Net.Facet.Taxonomy
             int len = Length < other.Length ? Length : other.Length;
             for (int i = 0, j = 0; i < len; i++, j++)
             {
-                int cmp = Components[i].CompareTo(other.Components[j]);
+                int cmp = Components[i].CompareToOrdinal(other.Components[j]);
                 if (cmp < 0)
                 {
                     return -1; // this is 'before'
@@ -162,15 +164,19 @@ namespace Lucene.Net.Facet.Taxonomy
                 return 0;
             }
 
-            return Arrays.GetHashCode(Components);
+            int hash = Length;
+            for (int i = 0; i < Length; i++)
+            {
+                hash = hash * 31 + Components[i].GetHashCode();
+            }
+            return hash;
         }
 
         /// <summary>
         /// Calculate a 64-bit hash function for this path.  This
-        ///  is necessary for <seealso cref="NameHashIntCacheLRU"/> (the
-        ///  default cache impl for {@link
-        ///  LruTaxonomyWriterCache}) to reduce the chance of
-        ///  "silent but deadly" collisions. 
+        /// is necessary for <see cref="NameHashIntCacheLRU"/> (the
+        /// default cache impl for <see cref="LruTaxonomyWriterCache"/>) 
+        /// to reduce the chance of "silent but deadly" collisions. 
         /// </summary>
         public virtual long LongHashCode()
         {
@@ -188,16 +194,17 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Returns a sub-path of this path up to {@code length} components. </summary>
-        public virtual FacetLabel Subpath(int len)
+        /// Returns a sub-path of this path up to <paramref name="length"/> components.
+        /// </summary>
+        public virtual FacetLabel Subpath(int length)
         {
-            if (len >= this.Length || len < 0)
+            if (length >= this.Length || length < 0)
             {
                 return this;
             }
             else
             {
-                return new FacetLabel(this, len);
+                return new FacetLabel(this, length);
             }
         }
 
@@ -215,5 +222,4 @@ namespace Lucene.Net.Facet.Taxonomy
             return "FacetLabel: [" + Arrays.ToString(parts) + "]";
         }
     }
-
 }

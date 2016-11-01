@@ -1,14 +1,11 @@
-﻿using System;
+﻿using ICU4NET;
+using Lucene.Net.Analysis.Tokenattributes;
+using System;
 using System.Diagnostics;
 using System.IO;
-using ICU4NET;
-using Lucene.Net.Analysis.Tokenattributes;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -70,7 +67,7 @@ namespace Lucene.Net.Analysis.Util
         /// be provided to this constructor.
         /// </para>
         /// </summary>
-        protected SegmentingTokenizerBase(Reader reader, BreakIterator iterator)
+        protected SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, iterator)
         {
         }
@@ -78,14 +75,14 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Construct a new SegmenterBase, also supplying the AttributeFactory
         /// </summary>
-        protected SegmentingTokenizerBase(AttributeFactory factory, Reader reader, BreakIterator iterator)
+        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
             : base(factory, reader)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();
             this.iterator = iterator;
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (length == 0 || !IncrementWord())
             {
@@ -106,7 +103,7 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             wrapper.SetText(buffer, 0, 0);
-            iterator.SetText(new string(buffer, 0, 0));
+            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
             length = usableLength = offset = 0;
         }
 
@@ -177,7 +174,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             wrapper.SetText(buffer, 0, Math.Max(0, usableLength));
-            iterator.SetText(new string(wrapper.Text, 0, Math.Max(0, usableLength)));
+            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
         }
 
         // TODO: refactor to a shared readFully somewhere

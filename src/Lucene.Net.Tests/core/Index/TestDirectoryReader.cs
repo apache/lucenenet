@@ -389,8 +389,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             IndexableField b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue() != null);
-            BytesRef bytesRef = b1.BinaryValue();
+            Assert.IsTrue(b1.BinaryValue != null);
+            BytesRef bytesRef = b1.BinaryValue;
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {
@@ -408,8 +408,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue() != null);
-            bytesRef = b1.BinaryValue();
+            Assert.IsTrue(b1.BinaryValue != null);
+            bytesRef = b1.BinaryValue;
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {
@@ -497,7 +497,12 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal static void AddDocumentWithFields(IndexWriter writer)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewStringField, NewTextField, NewField methods
+        /// are no longer static.
+        /// </summary>
+        internal void AddDocumentWithFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -510,7 +515,12 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocumentWithDifferentFields(IndexWriter writer)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewStringField, NewTextField, NewField methods
+        /// are no longer static.
+        /// </summary>
+        internal void AddDocumentWithDifferentFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -523,7 +533,12 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocumentWithTermVectorFields(IndexWriter writer)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewTextField, NewField methods are no longer
+        /// static.
+        /// </summary>
+        internal void AddDocumentWithTermVectorFields(IndexWriter writer)
         {
             Document doc = new Document();
             FieldType customType5 = new FieldType(TextField.TYPE_STORED);
@@ -547,7 +562,11 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDoc(IndexWriter writer, string value)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewTextField is no longer static.
+        /// </summary>
+        internal void AddDoc(IndexWriter writer, string value)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", value, Field.Store.NO));
@@ -620,7 +639,7 @@ namespace Lucene.Net.Index
                         Field curField1 = (Field)itField1.Current;
                         itField2.MoveNext();
                         Field curField2 = (Field)itField2.Current;
-                        Assert.AreEqual(curField1.Name(), curField2.Name(), "Different fields names for doc " + i + ".");
+                        Assert.AreEqual(curField1.Name, curField2.Name, "Different fields names for doc " + i + ".");
                         Assert.AreEqual(curField1.StringValue, curField2.StringValue, "Different field values for doc " + i + ".");
                     }
                 }
@@ -718,7 +737,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        internal static Document CreateDocument(string id)
+        internal Document CreateDocument(string id)
         {
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -1206,7 +1225,7 @@ namespace Lucene.Net.Index
         public virtual void TestLoadCertainFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("field1", "foobar", Field.Store.YES));
             doc.Add(NewStringField("field2", "foobaz", Field.Store.YES));

@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,11 +22,12 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Levenstein edit distance class.
     /// </summary>
-    public sealed class LevensteinDistance : StringDistance
+    // LUCENENET NOTE: This class is misspelled: It should be Levenshtein
+    public sealed class LevensteinDistance : IStringDistance
     {
 
         /// <summary>
-        /// Optimized to run a bit faster than the static getDistance().
+        /// Optimized to run a bit faster than the static GetDistance().
         /// In one benchmark times were 5.3sec using ctr vs 8.5sec w/ static method, thus 37% faster.
         /// </summary>
         public LevensteinDistance()

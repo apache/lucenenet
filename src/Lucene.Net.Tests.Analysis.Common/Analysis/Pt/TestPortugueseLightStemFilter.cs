@@ -1,7 +1,13 @@
-﻿namespace org.apache.lucene.analysis.pt
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Miscellaneous;
 
-	/*
+namespace Lucene.Net.Analysis.Pt
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,150 +24,130 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="PortugueseLightStemFilter"/>
+    /// </summary>
+    public class TestPortugueseLightStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using TokenStreamComponents = org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using LowerCaseFilter = org.apache.lucene.analysis.core.LowerCaseFilter;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+                TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
+                return new Analyzer.TokenStreamComponents(source, new PortugueseLightStemFilter(result));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="PortugueseLightStemFilter"/>
-	/// </summary>
-	public class TestPortugueseLightStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test the example from the paper "Assessing the impact of stemming accuracy
+        /// on information retrieval"
+        /// </summary>
+        [Test]
+        public virtual void TestExamples()
+        {
+            AssertAnalyzesTo(analyzer, "O debate político, pelo menos o que vem a público, parece, de modo nada " + "surpreendente, restrito a temas menores. Mas há, evidentemente, " + "grandes questões em jogo nas eleições que se aproximam.", new string[] { "o", "debat", "politic", "pelo", "meno", "o", "que", "vem", "a", "public", "parec", "de", "modo", "nada", "surpreendent", "restrit", "a", "tema", "menor", "mas", "há", "evident", "grand", "questa", "em", "jogo", "nas", "eleica", "que", "se", "aproximam" });
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Test examples from the c implementation
+        /// </summary>
+        [Test]
+        public virtual void TestMoreExamples()
+        {
+            CheckOneTerm(analyzer, "doutores", "doutor");
+            CheckOneTerm(analyzer, "doutor", "doutor");
 
-		  protected internal override Analyzer.TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-			TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
-			return new Analyzer.TokenStreamComponents(source, new PortugueseLightStemFilter(result));
-		  }
-	  }
+            CheckOneTerm(analyzer, "homens", "homem");
+            CheckOneTerm(analyzer, "homem", "homem");
 
-	  /// <summary>
-	  /// Test the example from the paper "Assessing the impact of stemming accuracy
-	  /// on information retrieval"
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExamples() throws java.io.IOException
-	  public virtual void testExamples()
-	  {
-		assertAnalyzesTo(analyzer, "O debate político, pelo menos o que vem a público, parece, de modo nada " + "surpreendente, restrito a temas menores. Mas há, evidentemente, " + "grandes questões em jogo nas eleições que se aproximam.", new string[] {"o", "debat", "politic", "pelo", "meno", "o", "que", "vem", "a", "public", "parec", "de", "modo", "nada", "surpreendent", "restrit", "a", "tema", "menor", "mas", "há", "evident", "grand", "questa", "em", "jogo", "nas", "eleica", "que", "se", "aproximam"});
-	  }
+            CheckOneTerm(analyzer, "papéis", "papel");
+            CheckOneTerm(analyzer, "papel", "papel");
 
-	  /// <summary>
-	  /// Test examples from the c implementation
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMoreExamples() throws java.io.IOException
-	  public virtual void testMoreExamples()
-	  {
-		 checkOneTerm(analyzer, "doutores", "doutor");
-		 checkOneTerm(analyzer, "doutor", "doutor");
+            CheckOneTerm(analyzer, "normais", "normal");
+            CheckOneTerm(analyzer, "normal", "normal");
 
-		 checkOneTerm(analyzer, "homens", "homem");
-		 checkOneTerm(analyzer, "homem", "homem");
+            CheckOneTerm(analyzer, "lencóis", "lencol");
+            CheckOneTerm(analyzer, "lencol", "lencol");
 
-		 checkOneTerm(analyzer, "papéis", "papel");
-		 checkOneTerm(analyzer, "papel", "papel");
+            CheckOneTerm(analyzer, "barris", "barril");
+            CheckOneTerm(analyzer, "barril", "barril");
 
-		 checkOneTerm(analyzer, "normais", "normal");
-		 checkOneTerm(analyzer, "normal", "normal");
+            CheckOneTerm(analyzer, "botões", "bota");
+            CheckOneTerm(analyzer, "botão", "bota");
+        }
 
-		 checkOneTerm(analyzer, "lencóis", "lencol");
-		 checkOneTerm(analyzer, "lencol", "lencol");
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("ptlighttestdata.zip"), "ptlight.txt");
+        }
 
-		 checkOneTerm(analyzer, "barris", "barril");
-		 checkOneTerm(analyzer, "barril", "barril");
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("quilométricas"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
+            CheckOneTerm(a, "quilométricas", "quilométricas");
+        }
 
-		 checkOneTerm(analyzer, "botões", "bota");
-		 checkOneTerm(analyzer, "botão", "bota");
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestPortugueseLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("ptlighttestdata.zip"), "ptlight.txt");
-	  }
+            private CharArraySet exclusionSet;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("quilométricas"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("quilométricas"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-		checkOneTerm(a, "quilométricas", "quilométricas");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestPortugueseLightStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestPortugueseLightStemFilter outerInstance;
+            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new Analyzer.TokenStreamComponents(source, new PortugueseLightStemFilter(sink));
+            }
+        }
 
-		  private CharArraySet exclusionSet;
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestPortugueseLightStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		  protected internal override Analyzer.TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new Analyzer.TokenStreamComponents(source, new PortugueseLightStemFilter(sink));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestPortugueseLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestPortugueseLightStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestPortugueseLightStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestPortugueseLightStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override Analyzer.TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new Analyzer.TokenStreamComponents(tokenizer, new PortugueseLightStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new Analyzer.TokenStreamComponents(tokenizer, new PortugueseLightStemFilter(tokenizer));
+            }
+        }
+    }
 }

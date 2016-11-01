@@ -93,7 +93,11 @@ namespace Lucene.Net.Codecs.Memory
                     int docCount = @in.ReadVInt();
                     int longsSize = @in.ReadVInt();
                     TermsReader current = new TermsReader(this, fieldInfo, @in, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize);
-                    TermsReader previous = fields[fieldInfo.Name] = current;
+                    TermsReader previous;
+                    // LUCENENET NOTE: This simulates a put operation in Java,
+                    // getting the prior value first before setting it.
+                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, @in, current, previous);
                 }
                 success = true;
@@ -396,7 +400,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 // Update current enum according to FSTEnum
-                internal void UpdateEnum(BytesRefFSTEnum<FSTTermOutputs.TermData>.InputOutput<FSTTermOutputs.TermData> pair)
+                internal void UpdateEnum(BytesRefFSTEnum.InputOutput<FSTTermOutputs.TermData> pair)
                 {
                     if (pair == null)
                     {
@@ -582,7 +586,7 @@ namespace Lucene.Net.Codecs.Memory
                         next.Output = fstOutputs.Add(next.Output, last.Output);
                         last = next;
                     }
-                    if (last.Final)
+                    if (last.IsFinal)
                     {
                         meta = fstOutputs.Add(last.Output, last.NextFinalOutput);
                     }
@@ -738,7 +742,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         return null;
                     }
-                    while (!frame.fstArc.Last)
+                    while (!frame.fstArc.IsLast)
                     {
                         frame.fstArc = fst.ReadNextRealArc(frame.fstArc, fstReader);
                         frame.fsaState = fsa.Step(top.fsaState, frame.fstArc.Label);
@@ -762,7 +766,7 @@ namespace Lucene.Net.Codecs.Memory
                 internal Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {
                     FST.Arc<FSTTermOutputs.TermData> arc = frame.fstArc;
-                    arc = Util.readCeilArc(label, fst, top.fstArc, arc, fstReader);
+                    arc = Util.ReadCeilArc(label, fst, top.fstArc, arc, fstReader);
                     if (arc == null)
                     {
                         return null;
@@ -778,7 +782,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
-                    return fsa.IsAccept(frame.fsaState) && frame.fstArc.Final;
+                    return fsa.IsAccept(frame.fsaState) && frame.fstArc.IsFinal;
                 }
                 internal bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
                 {
@@ -790,7 +794,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 internal bool CanRewind(Frame frame) // can jump to sibling
                 {
-                    return !frame.fstArc.Last;
+                    return !frame.fstArc.IsLast;
                 }
 
                 internal void PushFrame(Frame frame)
@@ -882,7 +886,7 @@ namespace Lucene.Net.Codecs.Memory
                     while (true)
                     {
                         queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.Last)
+                        if (arc.IsLast)
                         {
                             break;
                         }

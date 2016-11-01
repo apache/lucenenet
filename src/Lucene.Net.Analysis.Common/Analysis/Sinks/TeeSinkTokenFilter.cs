@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Sinks
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Analysis.Sinks
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This TokenFilter provides the ability to set aside attribute states
     /// that have already been analyzed.  This is useful in situations where multiple fields share
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Sinks
                 throw new System.ArgumentException("The supplied sink is not compatible to this tee");
             }
             // add eventually missing attribute impls to the existing sink
-            for (var it = CloneAttributes().AttributeImplsIterator; it.MoveNext(); )
+            for (var it = CloneAttributes().AttributeImplsIterator; it.MoveNext();)
             {
                 sink.AddAttributeImpl(it.Current);
             }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// </summary>
         public sealed class SinkTokenStream : TokenStream
         {
-            internal readonly ICollection<AttributeSource.State> cachedStates = new LinkedList<AttributeSource.State>();
+            internal readonly IList<AttributeSource.State> cachedStates = new List<AttributeSource.State>();
             internal AttributeSource.State finalState;
             internal IEnumerator<AttributeSource.State> it = null;
             internal SinkFilter filter;
@@ -271,7 +271,5 @@ namespace Lucene.Net.Analysis.Sinks
                 return true;
             }
         }
-
     }
-
 }

@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.en
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.En
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,57 +20,51 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestEnglishAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        public virtual void TestResourcesAvailable()
+        {
+            new EnglishAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestEnglishAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new EnglishAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new EnglishAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "books", "book");
+            CheckOneTerm(a, "book", "book");
+            // stopword
+            AssertAnalyzesTo(a, "the", new string[] { });
+            // possessive removal
+            CheckOneTerm(a, "steven's", "steven");
+            CheckOneTerm(a, "steven\u2019s", "steven");
+            CheckOneTerm(a, "steven\uFF07s", "steven");
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new EnglishAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "books", "book");
-		checkOneTerm(a, "book", "book");
-		// stopword
-		assertAnalyzesTo(a, "the", new string[] {});
-		// possessive removal
-		checkOneTerm(a, "steven's", "steven");
-		checkOneTerm(a, "steven\u2019s", "steven");
-		checkOneTerm(a, "steven\uFF07s", "steven");
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("books"), false);
+            Analyzer a = new EnglishAnalyzer(TEST_VERSION_CURRENT, EnglishAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "books", "books");
+            CheckOneTerm(a, "book", "book");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("books"), false);
-		Analyzer a = new EnglishAnalyzer(TEST_VERSION_CURRENT, EnglishAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "books", "books");
-		checkOneTerm(a, "book", "book");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new EnglishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new EnglishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

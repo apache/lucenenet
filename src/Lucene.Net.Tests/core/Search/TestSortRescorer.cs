@@ -37,6 +37,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestSortRescorer : LuceneTestCase
     {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -121,7 +122,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int[] idToNum = new int[numDocs];
             int maxValue = TestUtil.NextInt(Random(), 10, 1000000);

@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.ar
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ar
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,210 +23,182 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Arabic Normalization Filter
+    /// 
+    /// </summary>
+    public class TestArabicStemFilter : BaseTokenStreamTestCase
+    {
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        [Test]
+        public virtual void TestAlPrefix()
+        {
+            Check("الحسن", "حسن");
+        }
 
-	/// <summary>
-	/// Test the Arabic Normalization Filter
-	/// 
-	/// </summary>
-	public class TestArabicStemFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestWalPrefix()
+        {
+            Check("والحسن", "حسن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAlPrefix() throws java.io.IOException
-	  public virtual void testAlPrefix()
-	  {
-		check("الحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestBalPrefix()
+        {
+            Check("بالحسن", "حسن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWalPrefix() throws java.io.IOException
-	  public virtual void testWalPrefix()
-	  {
-		check("والحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestKalPrefix()
+        {
+            Check("كالحسن", "حسن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBalPrefix() throws java.io.IOException
-	  public virtual void testBalPrefix()
-	  {
-		check("بالحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestFalPrefix()
+        {
+            Check("فالحسن", "حسن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKalPrefix() throws java.io.IOException
-	  public virtual void testKalPrefix()
-	  {
-		check("كالحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestLlPrefix()
+        {
+            Check("للاخر", "اخر");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFalPrefix() throws java.io.IOException
-	  public virtual void testFalPrefix()
-	  {
-		check("فالحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestWaPrefix()
+        {
+            Check("وحسن", "حسن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLlPrefix() throws java.io.IOException
-	  public virtual void testLlPrefix()
-	  {
-		check("للاخر", "اخر");
-	  }
+        [Test]
+        public virtual void TestAhSuffix()
+        {
+            Check("زوجها", "زوج");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWaPrefix() throws java.io.IOException
-	  public virtual void testWaPrefix()
-	  {
-		check("وحسن", "حسن");
-	  }
+        [Test]
+        public virtual void TestAnSuffix()
+        {
+            Check("ساهدان", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAhSuffix() throws java.io.IOException
-	  public virtual void testAhSuffix()
-	  {
-		check("زوجها", "زوج");
-	  }
+        [Test]
+        public virtual void TestAtSuffix()
+        {
+            Check("ساهدات", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAnSuffix() throws java.io.IOException
-	  public virtual void testAnSuffix()
-	  {
-		check("ساهدان", "ساهد");
-	  }
+        [Test]
+        public virtual void TestWnSuffix()
+        {
+            Check("ساهدون", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAtSuffix() throws java.io.IOException
-	  public virtual void testAtSuffix()
-	  {
-		check("ساهدات", "ساهد");
-	  }
+        [Test]
+        public virtual void TestYnSuffix()
+        {
+            Check("ساهدين", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWnSuffix() throws java.io.IOException
-	  public virtual void testWnSuffix()
-	  {
-		check("ساهدون", "ساهد");
-	  }
+        [Test]
+        public virtual void TestYhSuffix()
+        {
+            Check("ساهديه", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testYnSuffix() throws java.io.IOException
-	  public virtual void testYnSuffix()
-	  {
-		check("ساهدين", "ساهد");
-	  }
+        [Test]
+        public virtual void TestYpSuffix()
+        {
+            Check("ساهدية", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testYhSuffix() throws java.io.IOException
-	  public virtual void testYhSuffix()
-	  {
-		check("ساهديه", "ساهد");
-	  }
+        [Test]
+        public virtual void TestHSuffix()
+        {
+            Check("ساهده", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testYpSuffix() throws java.io.IOException
-	  public virtual void testYpSuffix()
-	  {
-		check("ساهدية", "ساهد");
-	  }
+        [Test]
+        public virtual void TestPSuffix()
+        {
+            Check("ساهدة", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHSuffix() throws java.io.IOException
-	  public virtual void testHSuffix()
-	  {
-		check("ساهده", "ساهد");
-	  }
+        [Test]
+        public virtual void TestYSuffix()
+        {
+            Check("ساهدي", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPSuffix() throws java.io.IOException
-	  public virtual void testPSuffix()
-	  {
-		check("ساهدة", "ساهد");
-	  }
+        [Test]
+        public virtual void TestComboPrefSuf()
+        {
+            Check("وساهدون", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testYSuffix() throws java.io.IOException
-	  public virtual void testYSuffix()
-	  {
-		check("ساهدي", "ساهد");
-	  }
+        [Test]
+        public virtual void TestComboSuf()
+        {
+            Check("ساهدهات", "ساهد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testComboPrefSuf() throws java.io.IOException
-	  public virtual void testComboPrefSuf()
-	  {
-		check("وساهدون", "ساهد");
-	  }
+        [Test]
+        public virtual void TestShouldntStem()
+        {
+            Check("الو", "الو");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testComboSuf() throws java.io.IOException
-	  public virtual void testComboSuf()
-	  {
-		check("ساهدهات", "ساهد");
-	  }
+        [Test]
+        public virtual void TestNonArabic()
+        {
+            Check("English", "English");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testShouldntStem() throws java.io.IOException
-	  public virtual void testShouldntStem()
-	  {
-		check("الو", "الو");
-	  }
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("ساهدهات");
+#pragma warning disable 612, 618
+            ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader("ساهدهات"));
+#pragma warning restore 612, 618
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNonArabic() throws java.io.IOException
-	  public virtual void testNonArabic()
-	  {
-		check("English", "English");
-	  }
+            ArabicStemFilter filter = new ArabicStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
+            AssertTokenStreamContents(filter, new string[] { "ساهدهات" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("ساهدهات");
-		ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader("ساهدهات"));
+        private void Check(string input, string expected)
+        {
+#pragma warning disable 612, 618
+            ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
+#pragma warning restore 612, 618
+            ArabicStemFilter filter = new ArabicStemFilter(tokenStream);
+            AssertTokenStreamContents(filter, new string[] { expected });
+        }
 
-		ArabicStemFilter filter = new ArabicStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
-		assertTokenStreamContents(filter, new string[]{"ساهدهات"});
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(final String input, final String expected) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void check(string input, string expected)
-	  {
-		ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
-		ArabicStemFilter filter = new ArabicStemFilter(tokenStream);
-		assertTokenStreamContents(filter, new string[]{expected});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestArabicStemFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestArabicStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestArabicStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestArabicStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new ArabicStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new ArabicStemFilter(tokenizer));
+            }
+        }
+    }
 }

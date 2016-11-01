@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.tr
-{
+﻿using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Tr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,20 +20,16 @@
 	 * limitations under the License.
 	 */
 
+    public class TestApostropheFilter_ : BaseTokenStreamTestCase
+    {
 
-
-	public class TestApostropheFilter : BaseTokenStreamTestCase
-	{
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testApostropheFilter() throws Exception
-	  public virtual void testApostropheFilter()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("Türkiye'de 2003'te Van Gölü'nü gördüm"), MockTokenizer.WHITESPACE, false);
-		stream = new TurkishLowerCaseFilter(stream);
-		stream = new ApostropheFilter(stream);
-		assertTokenStreamContents(stream, new string[]{"türkiye", "2003", "van", "gölü", "gördüm"});
-	  }
-	}
-
+        [Test]
+        public virtual void TestApostropheFilter()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("Türkiye'de 2003'te Van Gölü'nü gördüm"), MockTokenizer.WHITESPACE, false);
+            stream = new TurkishLowerCaseFilter(stream);
+            stream = new ApostropheFilter(stream);
+            AssertTokenStreamContents(stream, new string[] { "türkiye", "2003", "van", "gölü", "gördüm" });
+        }
+    }
 }

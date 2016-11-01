@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,46 +20,39 @@
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using ClasspathResourceLoader = org.apache.lucene.analysis.util.ClasspathResourceLoader;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
+    public class TestKeepFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	public class TestKeepFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestInform()
+        {
+            IResourceLoader loader = new ClasspathResourceLoader(this.GetType());
+            assertTrue("loader is null and it shouldn't be", loader != null);
+            KeepWordFilterFactory factory = (KeepWordFilterFactory)TokenFilterFactory("KeepWord", "words", "keep-1.txt", "ignoreCase", "true");
+            CharArraySet words = factory.Words;
+            assertTrue("words is null and it shouldn't be", words != null);
+            assertTrue("words Size: " + words.size() + " is not: " + 2, words.size() == 2);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInform() throws Exception
-	  public virtual void testInform()
-	  {
-		ResourceLoader loader = new ClasspathResourceLoader(this.GetType());
-		assertTrue("loader is null and it shouldn't be", loader != null);
-		KeepWordFilterFactory factory = (KeepWordFilterFactory) tokenFilterFactory("KeepWord", "words", "keep-1.txt", "ignoreCase", "true");
-		CharArraySet words = factory.Words;
-		assertTrue("words is null and it shouldn't be", words != null);
-		assertTrue("words Size: " + words.size() + " is not: " + 2, words.size() == 2);
+            factory = (KeepWordFilterFactory)TokenFilterFactory("KeepWord", "words", "keep-1.txt, keep-2.txt", "ignoreCase", "true");
+            words = factory.Words;
+            assertTrue("words is null and it shouldn't be", words != null);
+            assertTrue("words Size: " + words.size() + " is not: " + 4, words.size() == 4);
+        }
 
-		factory = (KeepWordFilterFactory) tokenFilterFactory("KeepWord", "words", "keep-1.txt, keep-2.txt", "ignoreCase", "true");
-		words = factory.Words;
-		assertTrue("words is null and it shouldn't be", words != null);
-		assertTrue("words Size: " + words.size() + " is not: " + 4, words.size() == 4);
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("KeepWord", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("KeepWord", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

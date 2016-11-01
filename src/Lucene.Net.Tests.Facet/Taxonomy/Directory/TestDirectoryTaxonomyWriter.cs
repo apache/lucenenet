@@ -13,7 +13,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Lucene.Net.Documents.Document;
     using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -48,13 +48,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class TestDirectoryTaxonomyWriter : FacetTestCase
     {
 
-        // A No-Op TaxonomyWriterCache which always discards all given categories, and
+        // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static TaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : TaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
         {
-            public virtual void Close()
+            public virtual void Dispose()
             {
             }
             public virtual int Get(FacetLabel categoryPath)
@@ -65,7 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 return true;
             }
-            public virtual bool Full
+            public virtual bool IsFull
             {
                 get
                 {
@@ -193,7 +193,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        [Test]
         private void TouchTaxo(DirectoryTaxonomyWriter taxoWriter, FacetLabel cp)
         {
             taxoWriter.AddCategory(cp);
@@ -273,7 +272,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Directory dir = NewDirectory();
             var values = new ConcurrentDictionary<string, string>();
             double d = Random().NextDouble();
-            TaxonomyWriterCache cache;
+            ITaxonomyWriterCache cache;
             if (d < 0.7)
             {
                 // this is the fastest, yet most memory consuming
@@ -313,7 +312,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             DirectoryTaxonomyReader dtr = new DirectoryTaxonomyReader(dir);
             // +1 for root category
-            if (values.Count + 1 != dtr.Size)
+            if (values.Count + 1 != dtr.Count)
             {
                 foreach (string value in values.Keys)
                 {
@@ -326,7 +325,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 Fail("mismatch number of categories");
             }
 
-            int[] parents = dtr.ParallelTaxonomyArrays.Parents();
+            int[] parents = dtr.ParallelTaxonomyArrays.Parents;
             foreach (string cat in values.Keys)
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
@@ -420,7 +419,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // LUCENE-4633: make sure that category "a" is not added again in any case
             taxoWriter.AddTaxonomy(input, new MemoryOrdinalMap());
-            Assert.AreEqual(2, taxoWriter.Size, "no categories should have been added"); // root + 'a'
+            Assert.AreEqual(2, taxoWriter.Count, "no categories should have been added"); // root + 'a'
             Assert.AreEqual(ordA, taxoWriter.AddCategory(new FacetLabel("a")), "category 'a' received new ordinal?");
 
             // add the same category again -- it should not receive the same ordinal !

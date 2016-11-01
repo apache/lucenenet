@@ -36,7 +36,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>
@@ -51,6 +51,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
@@ -122,6 +123,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Attributes\LongRunningTestAttribute.cs" />
+    <Compile Include="Attributes\LuceneNetSpecificAttribute.cs" />
     <Compile Include="Codecs\asserting\AssertingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -140,6 +142,7 @@
     <Compile Include="Codecs\asserting\AssertingTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
     <Compile Include="Codecs\compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -227,6 +230,7 @@
     <Compile Include="Codecs\lucene40\Lucene40SkipListWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\Lucene41Ords\Lucene41WithOrds.cs" />
     <Compile Include="Codecs\lucene41\Lucene41RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -248,6 +252,13 @@
     <Compile Include="Codecs\MissingOrdRemapper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\MockIntBlock\MockFixedIntBlockPostingsFormat.cs" />
+    <Compile Include="Codecs\MockIntBlock\MockVariableIntBlockPostingsFormat.cs" />
+    <Compile Include="Codecs\MockSep\MockSepPostingsFormat.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntFactory.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntIndexOutput.cs" />
+    <Compile Include="Codecs\NestedPulsing\NestedPulsingPostingsFormat.cs" />
     <Compile Include="Codecs\ramonly\RAMOnlyPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -468,6 +479,14 @@
     <Compile Include="Util\VirtualMethod.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
+      <Name>Lucene.Net.Codecs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>

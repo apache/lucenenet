@@ -47,6 +47,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// tests BooleanScorer2's minShouldMatch </summary>
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41")]
     [TestFixture]
     public class TestMinShouldMatch2 : LuceneTestCase
     {
@@ -60,11 +61,15 @@ namespace Lucene.Net.Search
         internal static readonly string[] MediumTerms = new string[] { "e", "f", "g" };
         internal static readonly string[] RareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because Similarity and TimeZone are not static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {

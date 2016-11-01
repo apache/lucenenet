@@ -17,6 +17,7 @@
 
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
@@ -101,6 +102,8 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using Analysis;
+    using Search.Similarities;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -196,8 +199,9 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
             String directory = Paths.TempDirectory;
-
             TEMP_DIR = new System.IO.FileInfo(directory);
         }
 
@@ -250,12 +254,11 @@ namespace Lucene.Net.Util
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         public class SuppressCodecs : System.Attribute
         {
-            private string[] value;
-
-            public string[] Value()
+            public SuppressCodecs(params string[] value)
             {
-                return value;
+                this.Value = value;
             }
+            public string[] Value { get; private set; }
         }
 
         /// <summary>
@@ -286,13 +289,13 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <p><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
+        public static readonly LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
+        public static readonly bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
 #if DEBUG
  true
 #else
@@ -302,70 +305,68 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
+        public static readonly string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
+        public static readonly string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
 
         /// <summary>
         /// the line file used by LineFileDocs </summary>
-        public static string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         /// <summary>
         /// Whether or not <seealso cref="Nightly"/> tests should run. </summary>
-        public static bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Weekly"/> tests should run. </summary>
-        public static bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="AwaitsFix"/> tests should run. </summary>
-        public static bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Slow"/> tests should run. </summary>
-        public static bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
+        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
 
         /// <summary>
         /// Throttling, see <seealso cref="MockDirectoryWrapper#setThrottling(Throttling)"/>. </summary>
-        public static MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
+        public static readonly MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
-        public static bool LEAVE_TEMPORARY;
+        public static readonly bool LEAVE_TEMPORARY;
 
         static LuceneTestCase()
         {
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-
             bool defaultValue = false;
             foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
             {
@@ -400,17 +401,17 @@ namespace Lucene.Net.Util
         /// <seealso> cref= SystemPropertiesInvariantRule </seealso>
         /// <seealso> cref= #ruleChain </seealso>
         /// <seealso> cref= #classRules </seealso>
-        private static string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
+        private static readonly string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
 
         /// <summary>
         /// Filesystem-based <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
+        private static readonly IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
 
         /// <summary>
         /// All <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> CORE_DIRECTORIES;
+        private static readonly IList<string> CORE_DIRECTORIES;
 
-        protected static HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
+        protected static readonly HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
 
         // -----------------------------------------------------------------
         // Fields initialized in class or instance rules.
@@ -422,8 +423,11 @@ namespace Lucene.Net.Util
         /// specific tests on demand.
         ///
         /// @lucene.internal
+        /// 
+        /// LUCENENET specific
+        /// Is non-static to remove inter-class dependencies on this variable
         /// </summary>
-        public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+        public bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE { get; protected set; }
 
         // -----------------------------------------------------------------
         // Class level (suite) rules.
@@ -436,14 +440,35 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Class environment setup rule.
+        /// 
+        /// LUCENENET specific
+        /// Is non-static to remove inter-class dependencies on this variable
         /// </summary>
-        private static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
+        internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
+
+        /// <summary>
+        /// Gets the Similarity from the Class Environment setup rule
+        /// 
+        /// LUCENENET specific
+        /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
+        /// internal and this field is needed by other classes.
+        /// </summary>
+        public Similarity Similarity { get { return ClassEnvRule.Similarity; } }
+
+        /// <summary>
+        /// Gets the Timezone from the Class Environment setup rule
+        /// 
+        /// LUCENENET specific
+        /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
+        /// internal and this field is needed by other classes.
+        /// </summary>
+        public TimeZone TimeZone { get { return ClassEnvRule.TimeZone; } }
 
         // LUCENENET TODO
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
         /// </summary>
-        public static /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        public static readonly /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
 
         /// <summary>
         /// Ignore tests after hitting a designated number of initial failures. this
@@ -473,7 +498,7 @@ namespace Lucene.Net.Util
         /// Max 10mb of static data stored in a test suite class after the suite is complete.
         /// Prevents static data structures leaking and causing OOMs in subsequent tests.
         /// </summary>
-        private static long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
 
         /// <summary>
         /// By-name list of ignored types like loggers etc. </summary>
@@ -566,7 +591,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
 
         /// <summary>
@@ -841,18 +865,36 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
+        /// create a new index writer config with random defaults
+        /// 
+        /// LUCENENET specific
+        /// Non-static so that we do not depend on any hidden static dependencies
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
         /// <summary>
-        /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        /// LUCENENET specific
+        /// Non-static so that we do not depend on any hidden static dependencies
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        {
+            return NewIndexWriterConfig(r, v, a, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+        }
+
+        /// <summary>
+        /// create a new index writer config with random defaults using the specified random
+        /// 
+        /// LUCENENET specific
+        /// This is the only static ctor for IndexWriterConfig because it removes the dependency
+        /// on ClassEnvRule by using parameters Similarity and TimeZone.
+        /// </summary>
+        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
-            c.SetSimilarity(ClassEnvRule.Similarity);
+            c.SetSimilarity(similarity);
             if (VERBOSE)
             {
                 // Even though TestRuleSetupAndRestoreClassEnv calls
@@ -872,9 +914,19 @@ namespace Lucene.Net.Util
             {
                 int maxThreadCount = TestUtil.NextInt(Random(), 1, 4);
                 int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
-                ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-                cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
-                c.SetMergeScheduler(cms);
+                IConcurrentMergeScheduler mergeScheduler;
+
+                if (r.NextBoolean())
+                {
+                    mergeScheduler = new ConcurrentMergeScheduler();
+                }
+                else
+                {
+                    mergeScheduler = new TaskMergeScheduler();
+                }
+
+                mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
+                c.SetMergeScheduler(mergeScheduler);
             }
             if (r.NextBoolean())
             {
@@ -925,7 +977,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            c.SetMergePolicy(NewMergePolicy(r));
+            c.SetMergePolicy(NewMergePolicy(r, timezone));
 
             if (Rarely(r))
             {
@@ -938,7 +990,11 @@ namespace Lucene.Net.Util
             return c;
         }
 
-        public static MergePolicy NewMergePolicy(Random r)
+        /// <param name="timezone">
+        /// LUCENENET specific
+        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
+        /// </param>
+        public static MergePolicy NewMergePolicy(Random r, TimeZone timezone)
         {
             if (Rarely(r))
             {
@@ -950,14 +1006,18 @@ namespace Lucene.Net.Util
             }
             else if (r.Next(5) == 0)
             {
-                return NewAlcoholicMergePolicy(r, ClassEnvRule.TimeZone);
+                return NewAlcoholicMergePolicy(r, timezone);
             }
             return NewLogMergePolicy(r);
         }
 
-        public static MergePolicy NewMergePolicy()
+        /// <param name="timezone">
+        /// LUCENENET specific
+        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
+        /// </param>
+        public static MergePolicy NewMergePolicy(TimeZone timezone)
         {
-            return NewMergePolicy(Random());
+            return NewMergePolicy(Random(), timezone);
         }
 
         public static LogMergePolicy NewLogMergePolicy()
@@ -970,7 +1030,7 @@ namespace Lucene.Net.Util
             return NewTieredMergePolicy(Random());
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random(), ClassEnvRule.TimeZone);
         }
@@ -983,7 +1043,7 @@ namespace Lucene.Net.Util
         public static LogMergePolicy NewLogMergePolicy(Random r)
         {
             LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
-            
+
             logmp.CalibrateSizeByDeletes = r.NextBoolean();
             if (Rarely(r))
             {
@@ -1234,32 +1294,62 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static Field NewStringField(string name, string value, Field.Store stored)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
+        public Field NewStringField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(string name, string value, Field.Store stored)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
+        public Field NewTextField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewStringField(Random random, string name, string value, Field.Store stored)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
+        public Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(Random random, string name, string value, Field.Store stored)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is also non-static to reduce hidden dependencies on this variable.
+        /// </summary>
+        public Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewField(string name, string value, FieldType type)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
+        public Field NewField(string name, string value, FieldType type)
         {
             return NewField(Random(), name, value, type);
         }
 
-        public static Field NewField(Random random, string name, string value, FieldType type)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
+        public Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
             if (Usually(random) || !type.Indexed)
@@ -1534,19 +1624,40 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
+        /// 
+        /// LUCENENET specific
+        /// Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r)
+        public IndexSearcher NewSearcher(IndexReader r)
         {
-            return NewSearcher(r, true);
+            return NewSearcher(r, ClassEnvRule.Similarity);
+        }
+
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static IndexSearcher NewSearcher(IndexReader r, Similarity similarity)
+        {
+            return NewSearcher(r, true, similarity);
         }
 
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, Similarity similarity)
         {
-            return NewSearcher(r, maybeWrap, true);
+            return NewSearcher(r, maybeWrap, true, similarity);
+        }
+
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        {
+            return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.Similarity);
         }
 
         /// <summary>
@@ -1556,7 +1667,11 @@ namespace Lucene.Net.Util
         /// <code>wrapWithAssertions</code> is true, this searcher might be an
         /// <seealso cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
         {
             Random random = Random();
             if (Usually())
@@ -1582,32 +1697,33 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r) : new IndexSearcher(r.Context);
                 }
-                ret.Similarity = ClassEnvRule.Similarity;
+                ret.Similarity = similarity;
                 return ret;
             }
             else
             {
                 int threads = 0;
                 TaskScheduler ex;
-                /*if (random.NextBoolean())
-                {*/
+                if (random.NextBoolean())
+                {
                 ex = null;
-                /*}
+                }
                 else
                 {
                     threads = TestUtil.NextInt(random, 1, 8);
-                    ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
+                    ex = new LimitedConcurrencyLevelTaskScheduler(threads);
+                    //ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
                     // uncomment to intensify LUCENE-3840
                     // ex.prestartAllCoreThreads();
-                }*/
-                /*if (ex != null)
+                }
+                if (ex != null)
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(ex));
-                }*/
+                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(ex));
+                }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
                 {
@@ -1617,7 +1733,7 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r, ex) : new IndexSearcher(r.Context, ex);
                 }
-                ret.Similarity = ClassEnvRule.Similarity;
+                ret.Similarity = similarity;
                 return ret;
             }
         }
@@ -1627,11 +1743,12 @@ namespace Lucene.Net.Util
         /// be used, if a real file is needed. To get a stream, code should prefer
         /// <seealso cref="Class#getResourceAsStream"/> using {@code this.getClass()}.
         /// </summary>
-        protected FileInfo GetDataFile(string name)
+        protected Stream GetDataFile(string name)
         {
             try
             {
-                return new FileInfo(Path.GetFileName(name));
+                var resourceLoader = new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
+                return resourceLoader.OpenResource(name);
             }
             catch (Exception e)
             {
@@ -2196,7 +2313,7 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IndexableField> comp = (a, b) => String.Compare(a.Name(), b.Name(), StringComparison.Ordinal);
+                Comparison<IndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
@@ -2216,8 +2333,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
         {
-            Assert.AreEqual(leftField.Name(), rightField.Name(), info);
-            Assert.AreEqual(leftField.BinaryValue(), rightField.BinaryValue(), info);
+            Assert.AreEqual(leftField.Name, rightField.Name, info);
+            Assert.AreEqual(leftField.BinaryValue, rightField.BinaryValue, info);
             Assert.AreEqual(leftField.StringValue, rightField.StringValue, info);
             Assert.AreEqual(leftField.NumericValue, rightField.NumericValue, info);
             // TODO: should we check the FT at all?
@@ -2552,7 +2669,7 @@ namespace Lucene.Net.Util
 
                 try
                 {
-                    if (!f.Exists)
+                    if (!System.IO.Directory.Exists(f.FullName))
                     {
                         f.Create();
                         iterate = false;
@@ -2675,6 +2792,19 @@ namespace Lucene.Net.Util
                 }
             }
         }
+
+        /// <summary>
+        /// Contains a list of all the IConcurrentMergeSchedulers to be tested.
+        /// 
+        /// LUCENENET specific
+        /// </summary>
+        public class ConcurrentMergeSchedulers
+        {
+            public readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
+                new ConcurrentMergeScheduler(),
+                new TaskMergeScheduler()
+            };
+        }
     }
 
     /*internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
@@ -2703,7 +2833,7 @@ namespace Lucene.Net.Util
 
         public virtual int Compare(object arg0, object arg1)
         {
-            return System.String.Compare(((IndexableField)arg0).Name(), ((IndexableField)arg1).Name(), System.StringComparison.Ordinal);
+            return System.String.Compare(((IndexableField)arg0).Name, ((IndexableField)arg1).Name, System.StringComparison.Ordinal);
         }
     }
 }

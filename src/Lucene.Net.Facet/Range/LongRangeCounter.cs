@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,17 +21,14 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Counts how many times each range was seen;
-    ///  per-hit it's just a binary search (<seealso cref="#add"/>)
-    ///  against the elementary intervals, and in the end we
-    ///  rollup back to the original ranges. 
+    /// per-hit it's just a binary search (<see cref="Add"/>)
+    /// against the elementary intervals, and in the end we
+    /// rollup back to the original ranges. 
     /// </summary>
-
     internal sealed class LongRangeCounter
     {
-
         internal readonly LongRangeNode root;
         internal readonly long[] boundaries;
         internal readonly int[] leafCounts;
@@ -56,7 +52,7 @@ namespace Lucene.Net.Facet.Range
             foreach (LongRange range in ranges)
             {
                 int? cur;
-                if (!endsMap.TryGetValue(range.minIncl,out cur))
+                if (!endsMap.TryGetValue(range.minIncl, out cur))
                 {
                     endsMap[range.minIncl] = 1;
                 }
@@ -64,8 +60,8 @@ namespace Lucene.Net.Facet.Range
                 {
                     endsMap[range.minIncl] = (int)cur | 1;
                 }
-                
-                if (!endsMap.TryGetValue(range.maxIncl,out cur))
+
+                if (!endsMap.TryGetValue(range.maxIncl, out cur))
                 {
                     endsMap[range.maxIncl] = 2;
                 }
@@ -95,7 +91,7 @@ namespace Lucene.Net.Facet.Range
 
             while (upto0 < endsList.Count)
             {
-                v = endsList[upto0].HasValue ?  endsList[upto0].Value : 0;
+                v = endsList[upto0].HasValue ? endsList[upto0].Value : 0;
                 int flags = endsMap[v].HasValue ? endsMap[v].Value : 0;
                 //System.out.println("  v=" + v + " flags=" + flags);
                 if (flags == 3)
@@ -138,7 +134,7 @@ namespace Lucene.Net.Facet.Range
             // each node in the tree:
             for (int i = 0; i < ranges.Length; i++)
             {
-                root.addOutputs(i, ranges[i]);
+                root.AddOutputs(i, ranges[i]);
             }
 
             // Set boundaries (ends of each elementary interval):
@@ -156,7 +152,7 @@ namespace Lucene.Net.Facet.Range
             //System.out.println("root:\n" + root);
         }
 
-        public void add(long v)
+        public void Add(long v)
         {
             //System.out.println("add v=" + v);
 
@@ -208,26 +204,26 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Fills counts corresponding to the original input
-        ///  ranges, returning the missing count (how many hits
-        ///  didn't match any ranges). 
+        /// ranges, returning the missing count (how many hits
+        /// didn't match any ranges). 
         /// </summary>
-        public int fillCounts(int[] counts)
+        public int FillCounts(int[] counts)
         {
             //System.out.println("  rollup");
             missingCount = 0;
             leafUpto = 0;
-            rollup(root, counts, false);
+            Rollup(root, counts, false);
             return missingCount;
         }
 
-        private int rollup(LongRangeNode node, int[] counts, bool sawOutputs)
+        private int Rollup(LongRangeNode node, int[] counts, bool sawOutputs)
         {
             int count;
             sawOutputs |= node.outputs != null;
             if (node.left != null)
             {
-                count = rollup(node.left, counts, sawOutputs);
-                count += rollup(node.right, counts, sawOutputs);
+                count = Rollup(node.left, counts, sawOutputs);
+                count += Rollup(node.right, counts, sawOutputs);
             }
             else
             {
@@ -288,7 +284,8 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Holds one node of the segment tree. </summary>
+        /// Holds one node of the segment tree.
+        /// </summary>
         public sealed class LongRangeNode
         {
             internal readonly LongRangeNode left;
@@ -322,7 +319,7 @@ namespace Lucene.Net.Facet.Range
                 return sb.ToString();
             }
 
-            internal static void indent(StringBuilder sb, int depth)
+            internal static void Indent(StringBuilder sb, int depth)
             {
                 for (int i = 0; i < depth; i++)
                 {
@@ -331,31 +328,32 @@ namespace Lucene.Net.Facet.Range
             }
 
             /// <summary>
-            /// Recursively assigns range outputs to each node. </summary>
-            internal void addOutputs(int index, LongRange range)
-		{
-		  if (start >= range.minIncl && end <= range.maxIncl)
-		  {
-			// Our range is fully included in the incoming
-			// range; add to our output list:
-			if (outputs == null)
-			{
-			  outputs = new List<int?>();
-			}
-			outputs.Add(index);
-		  }
-		  else if (left != null)
-		  {
-			Debug.Assert(right != null);
-			// Recurse:
-			left.addOutputs(index, range);
-			right.addOutputs(index, range);
-		  }
-		}
+            /// Recursively assigns range outputs to each node.
+            /// </summary>
+            internal void AddOutputs(int index, LongRange range)
+            {
+                if (start >= range.minIncl && end <= range.maxIncl)
+                {
+                    // Our range is fully included in the incoming
+                    // range; add to our output list:
+                    if (outputs == null)
+                    {
+                        outputs = new List<int?>();
+                    }
+                    outputs.Add(index);
+                }
+                else if (left != null)
+                {
+                    Debug.Assert(right != null);
+                    // Recurse:
+                    left.AddOutputs(index, range);
+                    right.AddOutputs(index, range);
+                }
+            }
 
             internal void ToString(StringBuilder sb, int depth)
             {
-                indent(sb, depth);
+                Indent(sb, depth);
                 if (left == null)
                 {
                     Debug.Assert(right == null);
@@ -381,5 +379,4 @@ namespace Lucene.Net.Facet.Range
             }
         }
     }
-
 }

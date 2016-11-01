@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.it
-{
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.It
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,77 +21,70 @@
 	 * limitations under the License.
 	 */
 
+    public class TestItalianAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new ItalianAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "abbandonata", "abbandonat");
+            CheckOneTerm(a, "abbandonati", "abbandonat");
+            // stopword
+            AssertAnalyzesTo(a, "dallo", new string[] { });
+        }
 
-	public class TestItalianAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new ItalianAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("abbandonata"), false);
+            Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT, ItalianAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "abbandonata", "abbandonata");
+            CheckOneTerm(a, "abbandonati", "abbandonat");
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "abbandonata", "abbandonat");
-		checkOneTerm(a, "abbandonati", "abbandonat");
-		// stopword
-		assertAnalyzesTo(a, "dallo", new string[] {});
-	  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new ItalianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("abbandonata"), false);
-		Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT, ItalianAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "abbandonata", "abbandonata");
-		checkOneTerm(a, "abbandonati", "abbandonat");
-	  }
+        /// <summary>
+        /// test that the elisionfilter is working </summary>
+        [Test]
+        public virtual void TestContractions()
+        {
+            Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "dell'Italia", new string[] { "ital" });
+            AssertAnalyzesTo(a, "l'Italiano", new string[] { "italian" });
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new ItalianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-
-	  /// <summary>
-	  /// test that the elisionfilter is working </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testContractions() throws java.io.IOException
-	  public virtual void testContractions()
-	  {
-		Analyzer a = new ItalianAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "dell'Italia", new string[] {"ital"});
-		assertAnalyzesTo(a, "l'Italiano", new string[] {"italian"});
-	  }
-
-	  /// <summary>
-	  /// test that we don't enable this before 3.2 </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testContractionsBackwards() throws java.io.IOException
-	  public virtual void testContractionsBackwards()
-	  {
-		Analyzer a = new ItalianAnalyzer(Version.LUCENE_31);
-		assertAnalyzesTo(a, "dell'Italia", new string[] {"dell'ital"});
-		assertAnalyzesTo(a, "l'Italiano", new string[] {"l'ital"});
-	  }
-	}
-
+        /// <summary>
+        /// test that we don't enable this before 3.2 </summary>
+        [Test]
+        public virtual void TestContractionsBackwards()
+        {
+#pragma warning disable 612, 618
+            Analyzer a = new ItalianAnalyzer(LuceneVersion.LUCENE_31);
+#pragma warning restore 612, 618
+            AssertAnalyzesTo(a, "dell'Italia", new string[] { "dell'ital" });
+            AssertAnalyzesTo(a, "l'Italiano", new string[] { "l'ital" });
+        }
+    }
 }

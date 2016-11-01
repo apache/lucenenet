@@ -40,6 +40,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterCommit : LuceneTestCase
     {
+        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+
         /*
          * Simple test for "commit on close": open writer then
          * add a bunch of docs, making sure reader does not see
@@ -53,7 +55,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             for (int i = 0; i < 14; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
             writer.Dispose();
 
@@ -71,7 +73,7 @@ namespace Lucene.Net.Index
             {
                 for (int j = 0; j < 11; j++)
                 {
-                    TestIndexWriter.AddDoc(writer);
+                    AddDoc(writer);
                 }
                 IndexReader r = DirectoryReader.Open(dir);
                 searcher = NewSearcher(r);
@@ -110,7 +112,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10));
             for (int i = 0; i < 14; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
             writer.Dispose();
 
@@ -124,7 +126,7 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10));
             for (int j = 0; j < 17; j++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
             // Delete all docs:
             writer.DeleteDocuments(searchTerm);
@@ -161,7 +163,7 @@ namespace Lucene.Net.Index
             {
                 for (int j = 0; j < 17; j++)
                 {
-                    TestIndexWriter.AddDoc(writer);
+                    AddDoc(writer);
                 }
                 IndexReader r = DirectoryReader.Open(dir);
                 searcher = NewSearcher(r);
@@ -217,7 +219,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
             for (int j = 0; j < 30; j++)
             {
-                TestIndexWriter.AddDocWithIndex(writer, j);
+                AddDocWithIndex(writer, j);
             }
             writer.Dispose();
             dir.ResetMaxUsedSizeInBytes();
@@ -227,7 +229,7 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
             for (int j = 0; j < 1470; j++)
             {
-                TestIndexWriter.AddDocWithIndex(writer, j);
+                AddDocWithIndex(writer, j);
             }
             long midDiskUsage = dir.MaxUsedSizeInBytes;
             dir.ResetMaxUsedSizeInBytes();
@@ -303,7 +305,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(10)));
             for (int j = 0; j < 17; j++)
             {
-                TestIndexWriter.AddDocWithIndex(writer, j);
+                AddDocWithIndex(writer, j);
             }
             writer.Dispose();
 
@@ -370,7 +372,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 int finalI = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(dir, w, failed, endTime, finalI);
+                threads[i] = new ThreadAnonymousInnerClassHelper(dir, w, failed, endTime, finalI, NewStringField);
                 threads[i].Start();
             }
             for (int i = 0; i < NUM_THREADS; i++)
@@ -384,14 +386,21 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
             private Directory Dir;
             private RandomIndexWriter w;
             private AtomicBoolean Failed;
             private long EndTime;
             private int FinalI;
 
-            public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI)
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// This is passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
+            public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI, Func<string, string, Field.Store, Field> newStringField)
             {
+                NewStringField = newStringField;
                 this.Dir = dir;
                 this.w = w;
                 this.Failed = failed;
@@ -449,7 +458,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 23; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -463,7 +472,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 17; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
             Assert.AreEqual(23, reader2.NumDocs);
             reader2.Dispose();
@@ -573,7 +582,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 23; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -596,7 +605,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 17; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
 
             Assert.AreEqual(23, reader3.NumDocs);
@@ -634,7 +643,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 23; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -657,7 +666,7 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             for (int i = 0; i < 17; i++)
             {
-                TestIndexWriter.AddDoc(writer);
+                AddDoc(writer);
             }
 
             reader = DirectoryReader.Open(dir);
@@ -703,7 +712,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
             for (int j = 0; j < 17; j++)
             {
-                TestIndexWriter.AddDoc(w);
+                AddDoc(w);
             }
             w.Dispose();
 
@@ -715,7 +724,7 @@ namespace Lucene.Net.Index
             w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
             for (int j = 0; j < 17; j++)
             {
-                TestIndexWriter.AddDoc(w);
+                AddDoc(w);
             }
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["label"] = "test1";
@@ -732,5 +741,31 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
+
+        /// <summary>
+        /// LUCENENET specific
+        /// Copied from <see cref="TestIndexWriter.AddDoc(IndexWriter)"/>
+        /// to remove inter-class dependency on <see cref="TestIndexWriter"/>
+        /// </summary>
+        private void AddDoc(IndexWriter writer)
+        {
+            Document doc = new Document();
+            doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+            writer.AddDocument(doc);
+        }
+
+        /// <summary>
+        /// LUCENENET specific
+        /// Copied from <seealso cref="TestIndexWriter.AddDocWithIndex(IndexWriter, int)"/>
+        /// to remove inter-class dependency on <see cref="TestIndexWriter"/>.
+        /// </summary>
+        private void AddDocWithIndex(IndexWriter writer, int index)
+        {
+            Document doc = new Document();
+            doc.Add(NewField("content", "aaa " + index, StoredTextType));
+            doc.Add(NewField("id", "" + index, StoredTextType));
+            writer.AddDocument(doc);
+        }
+
     }
 }

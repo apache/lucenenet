@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
 
         public ByteArrayDataInput()
         {
-            Reset((byte[])(Array)BytesRef.EMPTY_BYTES);
+            Reset(BytesRef.EMPTY_BYTES);
         }
 
         public void Reset(byte[] bytes)
@@ -94,9 +94,13 @@ namespace Lucene.Net.Store
             Pos += (int)count;
         }
 
+        /// <summary>
+        /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
+        /// the value is positive!
+        /// </summary>
         public override short ReadShort()
         {
-            return (short)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));
+            return (short)(ushort)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));
         }
 
         public override int ReadInt()

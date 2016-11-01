@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
 
         private int Search(Query q)
         {
-            QueryUtils.Check(Random(), q, Searcher);
+            QueryUtils.Check(Random(), q, Searcher, Similarity);
             return Searcher.Search(q, null, 1000).TotalHits;
         }
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
 
             //
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
 
             //
             Document d = new Document();

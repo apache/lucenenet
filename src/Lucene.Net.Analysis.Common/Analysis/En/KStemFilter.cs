@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.en
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.En
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,64 +19,59 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+    /// <summary>
+    /// A high-performance kstem filter for english.
+    /// <p/>
+    /// See <a href="http://ciir.cs.umass.edu/pubfiles/ir-35.pdf">
+    /// "Viewing Morphology as an Inference Process"</a>
+    /// (Krovetz, R., Proceedings of the Sixteenth Annual International ACM SIGIR
+    /// Conference on Research and Development in Information Retrieval, 191-203, 1993).
+    /// <p/>
+    /// All terms must already be lowercased for this filter to work correctly.
+    /// 
+    /// <para>
+    /// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
+    /// certain terms from being passed to the stemmer
+    /// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// in a previous <seealso cref="TokenStream"/>.
+    /// 
+    /// Note: For including the original term as well as the stemmed version, see
+    /// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// </para>
+    /// 
+    /// 
+    /// </summary>
+    public sealed class KStemFilter : TokenFilter
+    {
+        private readonly KStemmer stemmer = new KStemmer();
+        private readonly ICharTermAttribute termAttribute;
+        private readonly IKeywordAttribute keywordAtt;
 
-	/// <summary>
-	/// A high-performance kstem filter for english.
-	/// <p/>
-	/// See <a href="http://ciir.cs.umass.edu/pubfiles/ir-35.pdf">
-	/// "Viewing Morphology as an Inference Process"</a>
-	/// (Krovetz, R., Proceedings of the Sixteenth Annual International ACM SIGIR
-	/// Conference on Research and Development in Information Retrieval, 191-203, 1993).
-	/// <p/>
-	/// All terms must already be lowercased for this filter to work correctly.
-	/// 
-	/// <para>
-	/// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
-	/// certain terms from being passed to the stemmer
-	/// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
-	/// in a previous <seealso cref="TokenStream"/>.
-	/// 
-	/// Note: For including the original term as well as the stemmed version, see
-	/// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
-	/// </para>
-	/// 
-	/// 
-	/// </summary>
+        public KStemFilter(TokenStream @in) : base(@in)
+        {
+            termAttribute = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
+        }
 
-	public sealed class KStemFilter : TokenFilter
-	{
-	  private readonly KStemmer stemmer = new KStemmer();
-	  private readonly CharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
+        /// <summary>
+        /// Returns the next, stemmed, input Token. </summary>
+        ///  <returns> The stemmed form of a token. </returns>
+        ///  <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        public override bool IncrementToken()
+        {
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
 
-	  public KStemFilter(TokenStream @in) : base(@in)
-	  {
-	  }
+            char[] term = termAttribute.Buffer();
+            int len = termAttribute.Length;
+            if ((!keywordAtt.Keyword) && stemmer.Stem(term, len))
+            {
+                termAttribute.SetEmpty().Append(stemmer.AsCharSequence());
+            }
 
-	  /// <summary>
-	  /// Returns the next, stemmed, input Token. </summary>
-	  ///  <returns> The stemmed form of a token. </returns>
-	  ///  <exception cref="IOException"> If there is a low-level I/O error. </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (!input.incrementToken())
-		{
-		  return false;
-		}
-
-		char[] term = termAttribute.buffer();
-		int len = termAttribute.length();
-		if ((!keywordAtt.Keyword) && stemmer.stem(term, len))
-		{
-		  termAttribute.setEmpty().append(stemmer.asCharSequence());
-		}
-
-		return true;
-	  }
-	}
-
+            return true;
+        }
+    }
 }

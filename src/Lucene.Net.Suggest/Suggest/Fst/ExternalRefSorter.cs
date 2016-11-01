@@ -1,15 +1,32 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.IO;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using System.Collections.Generic;
 
     /// <summary>
     /// Builds and iterates over sequences stored on disk.
     /// </summary>
-    public class ExternalRefSorter : BytesRefSorter, IDisposable
+    public class ExternalRefSorter : IBytesRefSorter, IDisposable
     {
         private readonly OfflineSorter sort;
         private OfflineSorter.ByteSequencesWriter writer;
@@ -26,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.writer = new OfflineSorter.ByteSequencesWriter(input);
         }
 
-        public void Add(BytesRef utf8)
+        public virtual void Add(BytesRef utf8)
         {
             if (writer == null)
             {
@@ -35,7 +52,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             writer.Write(utf8);
         }
 
-        public BytesRefIterator Iterator()
+        public virtual BytesRefIterator GetEnumerator()
         {
             if (sorted == null)
             {
@@ -71,7 +88,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Removes any written temporary files.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             try
             {
@@ -105,7 +122,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 this.comparator = comparator;
             }
 
-            public BytesRef Next()
+            public virtual BytesRef Next()
             {
                 if (scratch == null)
                 {
@@ -114,7 +131,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 bool success = false;
                 try
                 {
-                    sbyte[] next = reader.Read();
+                    byte[] next = reader.Read();
                     if (next != null)
                     {
                         scratch.Bytes = next;
@@ -138,7 +155,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
             }
 
-            public IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparator
             {
                 get
                 {

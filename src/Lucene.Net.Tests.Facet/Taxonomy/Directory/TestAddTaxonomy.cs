@@ -13,7 +13,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
     using DiskOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.DiskOrdinalMap;
     using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
-    using OrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.OrdinalMap;
+    using IOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.IOrdinalMap;
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
             var tw1 = new DirectoryTaxonomyWriter(dirs[0]);
-            OrdinalMap map = randomOrdinalMap();
+            IOrdinalMap map = randomOrdinalMap();
             tw1.AddTaxonomy(dirs[1], map);
             tw1.Dispose();
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
 
-        private OrdinalMap randomOrdinalMap()
+        private IOrdinalMap randomOrdinalMap()
         {
             if (Random().NextBoolean())
             {
@@ -120,19 +120,19 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        private void validate(Directory dest, Directory src, OrdinalMap ordMap)
+        private void validate(Directory dest, Directory src, IOrdinalMap ordMap)
         {
             var destTr = new DirectoryTaxonomyReader(dest);
             try
             {
-                int destSize = destTr.Size;
+                int destSize = destTr.Count;
                 var srcTR = new DirectoryTaxonomyReader(src);
                 try
                 {
                     var map = ordMap.Map;
 
                     // validate taxo sizes
-                    int srcSize = srcTR.Size;
+                    int srcSize = srcTR.Count;
                     Assert.True(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
 
                     // validate that all source categories exist in destination, and their
@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Directory src = NewDirectory();
             (new DirectoryTaxonomyWriter(src)).Dispose(); // create an empty taxonomy
 
-            OrdinalMap map = randomOrdinalMap();
+            IOrdinalMap map = randomOrdinalMap();
             destTW.AddTaxonomy(src, map);
             destTW.Dispose();
 
@@ -189,7 +189,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             srcTW.Dispose();
 
             DirectoryTaxonomyWriter destTW = new DirectoryTaxonomyWriter(dest);
-            OrdinalMap map = randomOrdinalMap();
+            IOrdinalMap map = randomOrdinalMap();
             destTW.AddTaxonomy(src, map);
             destTW.Dispose();
 
@@ -234,7 +234,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             tw2.AddCategory(new FacetLabel("Aardvarks", "Bob"));
             tw2.Dispose();
 
-            OrdinalMap map = randomOrdinalMap();
+            IOrdinalMap map = randomOrdinalMap();
 
             tw1.AddTaxonomy(src, map);
             tw1.Dispose();
@@ -266,7 +266,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ThreadClass t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTw);
             t.Start();
 
-            OrdinalMap map = new MemoryOrdinalMap();
+            IOrdinalMap map = new MemoryOrdinalMap();
             destTw.AddTaxonomy(src, map);
             t.Join();
             destTw.Dispose();
@@ -275,9 +275,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var dtr = new DirectoryTaxonomyReader(dest);
             // +2 to account for the root category + "a"
-            Assert.AreEqual(numCategories + 2, dtr.Size);
+            Assert.AreEqual(numCategories + 2, dtr.Count);
             var categories = new HashSet<FacetLabel>();
-            for (int i = 1; i < dtr.Size; i++)
+            for (int i = 1; i < dtr.Count; i++)
             {
                 FacetLabel cat = dtr.GetPath(i);
                 Assert.True(categories.Add(cat), "category " + cat + " already existed");

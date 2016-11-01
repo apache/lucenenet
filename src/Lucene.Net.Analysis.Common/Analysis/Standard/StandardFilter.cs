@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Standard
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Standard
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Normalizes tokens extracted with <seealso cref="StandardTokenizer"/>.
     /// </summary>
@@ -42,9 +42,11 @@ namespace Lucene.Net.Analysis.Standard
         private readonly ITypeAttribute typeAtt;
         private readonly ICharTermAttribute termAtt;
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 return input.IncrementToken(); // TODO: add some niceties for the new grammar
             }
@@ -87,5 +89,4 @@ namespace Lucene.Net.Analysis.Standard
             return true;
         }
     }
-
 }

@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,65 +22,50 @@
 	 * limitations under the License.
 	 */
 
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TermToBytesRefAttribute = org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-	using Document = org.apache.lucene.document.Document;
-	using Field = org.apache.lucene.document.Field;
-	using StringField = org.apache.lucene.document.StringField;
-	using TextField = org.apache.lucene.document.TextField;
-	using IndexWriter = org.apache.lucene.index.IndexWriter;
-	using IndexWriterConfig = org.apache.lucene.index.IndexWriterConfig;
-	using Directory = org.apache.lucene.store.Directory;
+    public class TestEmptyTokenStream : BaseTokenStreamTestCase
+    {
 
-	public class TestEmptyTokenStream : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestConsume()
+        {
+            TokenStream ts = new EmptyTokenStream();
+            ts.Reset();
+            assertFalse(ts.IncrementToken());
+            ts.End();
+            ts.Dispose();
+            // try again with reuse:
+            ts.Reset();
+            assertFalse(ts.IncrementToken());
+            ts.End();
+            ts.Dispose();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testConsume() throws java.io.IOException
-	  public virtual void testConsume()
-	  {
-		TokenStream ts = new EmptyTokenStream();
-		ts.reset();
-		assertFalse(ts.incrementToken());
-		ts.end();
-		ts.close();
-		// try again with reuse:
-		ts.reset();
-		assertFalse(ts.incrementToken());
-		ts.end();
-		ts.close();
-	  }
+        [Test]
+        public virtual void TestConsume2()
+        {
+            BaseTokenStreamTestCase.AssertTokenStreamContents(new EmptyTokenStream(), new string[0]);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testConsume2() throws java.io.IOException
-	  public virtual void testConsume2()
-	  {
-		BaseTokenStreamTestCase.assertTokenStreamContents(new EmptyTokenStream(), new string[0]);
-	  }
+        [Test]
+        public virtual void TestIndexWriter_LUCENE4656()
+        {
+            Store.Directory directory = NewDirectory();
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIndexWriter_LUCENE4656() throws java.io.IOException
-	  public virtual void testIndexWriter_LUCENE4656()
-	  {
-		Directory directory = newDirectory();
-		IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, null));
+            TokenStream ts = new EmptyTokenStream();
+            assertFalse(ts.HasAttribute<ITermToBytesRefAttribute>());
 
-		TokenStream ts = new EmptyTokenStream();
-		assertFalse(ts.hasAttribute(typeof(TermToBytesRefAttribute)));
+            Document doc = new Document();
+            doc.Add(new StringField("id", "0", Field.Store.YES));
+            doc.Add(new TextField("description", ts));
 
-		Document doc = new Document();
-		doc.add(new StringField("id", "0", Field.Store.YES));
-		doc.add(new TextField("description", ts));
+            // this should not fail because we have no TermToBytesRefAttribute
+            writer.AddDocument(doc);
 
-		// this should not fail because we have no TermToBytesRefAttribute
-		writer.addDocument(doc);
+            assertEquals(1, writer.NumDocs());
 
-		assertEquals(1, writer.numDocs());
-
-		writer.close();
-		directory.close();
-	  }
-
-	}
-
+            writer.Dispose();
+            directory.Dispose();
+        }
+    }
 }

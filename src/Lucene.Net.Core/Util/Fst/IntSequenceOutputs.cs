@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Fst
     public sealed class IntSequenceOutputs : Outputs<IntsRef>
     {
         private static readonly IntsRef NO_OUTPUT = new IntsRef();
-        private static readonly IntSequenceOutputs Singleton_Renamed = new IntSequenceOutputs();
+        private static readonly IntSequenceOutputs singleton = new IntSequenceOutputs();
 
         private IntSequenceOutputs()
         {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                return Singleton_Renamed;
+                return singleton;
             }
         }
 

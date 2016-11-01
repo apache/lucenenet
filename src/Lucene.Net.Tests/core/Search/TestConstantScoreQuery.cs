@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             try
             {
                 directory = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
 
                 Document doc = new Document();
                 doc.Add(NewStringField("field", "term", Field.Store.NO));
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
         public virtual void TestConstantScoreQueryAndFilter()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("field", "a", Field.Store.NO));
             w.AddDocument(doc);
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
         public virtual void TestQueryWrapperFilter()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("field", "a", Field.Store.NO));
             w.AddDocument(doc);

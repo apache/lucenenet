@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Globalization;
+using System.IO;
 
-namespace org.apache.lucene.analysis.@in
+namespace Lucene.Net.Analysis.In
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,29 +24,31 @@ namespace org.apache.lucene.analysis.@in
 	 * limitations under the License.
 	 */
 
-	using CharTokenizer = org.apache.lucene.analysis.util.CharTokenizer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer; // javadocs
-	using Version = org.apache.lucene.util.Version;
+    /// <summary>
+    /// Simple Tokenizer for text in Indian Languages. </summary>
+    /// @deprecated (3.6) Use <seealso cref="StandardTokenizer"/> instead. 
+    [Obsolete("(3.6) Use StandardTokenizer instead.")]
+    public sealed class IndicTokenizer : CharTokenizer
+    {
 
-	/// <summary>
-	/// Simple Tokenizer for text in Indian Languages. </summary>
-	/// @deprecated (3.6) Use <seealso cref="StandardTokenizer"/> instead. 
-	[Obsolete("(3.6) Use <seealso cref="StandardTokenizer"/> instead.")]
-	public sealed class IndicTokenizer : CharTokenizer
-	{
+        public IndicTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
+              : base(matchVersion, factory, input)
+        {
+        }
 
-	  public IndicTokenizer(Version matchVersion, AttributeFactory factory, Reader input) : base(matchVersion, factory, input)
-	  {
-	  }
+        public IndicTokenizer(LuceneVersion matchVersion, TextReader input)
+              : base(matchVersion, input)
+        {
+        }
 
-	  public IndicTokenizer(Version matchVersion, Reader input) : base(matchVersion, input)
-	  {
-	  }
+        protected override bool IsTokenChar(int c)
+        {
+            UnicodeCategory category = Character.GetType(c);
 
-	  protected internal override bool isTokenChar(int c)
-	  {
-		return char.IsLetter(c) || char.getType(c) == char.NON_SPACING_MARK || char.getType(c) == char.FORMAT || char.getType(c) == char.COMBINING_SPACING_MARK;
-	  }
-	}
-
+            return Character.IsLetter(c) ||
+                category == UnicodeCategory.NonSpacingMark ||
+                category == UnicodeCategory.Format ||
+                category == UnicodeCategory.SpacingCombiningMark;
+        }
+    }
 }

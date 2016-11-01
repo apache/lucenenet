@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.payloads
+namespace Lucene.Net.Analysis.Payloads
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,40 +20,36 @@ namespace org.apache.lucene.analysis.payloads
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="NumericPayloadTokenFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_numpayload" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.NumericPayloadTokenFilterFactory" payload="24" typeMatch="word"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class NumericPayloadTokenFilterFactory : TokenFilterFactory
+    {
+        private readonly float payload;
+        private readonly string typeMatch;
 
-	/// <summary>
-	/// Factory for <seealso cref="NumericPayloadTokenFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_numpayload" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.NumericPayloadTokenFilterFactory" payload="24" typeMatch="word"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class NumericPayloadTokenFilterFactory : TokenFilterFactory
-	{
-	  private readonly float payload;
-	  private readonly string typeMatch;
+        /// <summary>
+        /// Creates a new NumericPayloadTokenFilterFactory </summary>
+        public NumericPayloadTokenFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            payload = RequireFloat(args, "payload");
+            typeMatch = Require(args, "typeMatch");
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new NumericPayloadTokenFilterFactory </summary>
-	  public NumericPayloadTokenFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		payload = requireFloat(args, "payload");
-		typeMatch = require(args, "typeMatch");
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override NumericPayloadTokenFilter create(TokenStream input)
-	  {
-		return new NumericPayloadTokenFilter(input,payload,typeMatch);
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new NumericPayloadTokenFilter(input, payload, typeMatch);
+        }
+    }
 }

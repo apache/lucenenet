@@ -19,6 +19,7 @@ namespace Lucene.Net.Codecs.SimpleText
 {
 
     using System;
+    using System.Globalization;
 
 	using FieldInfo = Index.FieldInfo;
 	using FieldInfos = Index.FieldInfos;
@@ -85,11 +86,11 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void StartDocument(int numStoredFields)
 	    {
 	        Write(DOC);
-	        Write(Convert.ToString(_numDocsWritten));
+	        Write(Convert.ToString(_numDocsWritten, CultureInfo.InvariantCulture));
 	        NewLine();
 
 	        Write(NUM);
-	        Write(Convert.ToString(numStoredFields));
+	        Write(Convert.ToString(numStoredFields, CultureInfo.InvariantCulture));
 	        NewLine();
 
 	        _numDocsWritten++;
@@ -98,11 +99,11 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void WriteField(FieldInfo info, IndexableField field)
         {
             Write(FIELD);
-            Write(Convert.ToString(info.Number));
+            Write(info.Number.ToString(CultureInfo.InvariantCulture));
             NewLine();
 
             Write(NAME);
-            Write(field.Name());
+            Write(field.Name);
             NewLine();
 
             Write(TYPE);
@@ -117,7 +118,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(Convert.ToString((int) n));
+                    Write(((int)n).ToString(CultureInfo.InvariantCulture));
                     NewLine();
                 }
                 else if (n is long?)
@@ -126,7 +127,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(Convert.ToString((long) n));
+                    Write(((long)n).ToString(CultureInfo.InvariantCulture));
                     NewLine();
                 }
                 else if (n is float?)
@@ -135,7 +136,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(Convert.ToString((float) n));
+                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
+                    Write(((float)n).ToString("R", CultureInfo.InvariantCulture));
                     NewLine();
                 }
                 else if (n is double?)
@@ -144,7 +146,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(Convert.ToString((double) n));
+                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
+                    Write(((double)n).ToString("R", CultureInfo.InvariantCulture));
                     NewLine();
                 }
                 else
@@ -154,7 +157,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             else
             {
-                BytesRef bytes = field.BinaryValue();
+                BytesRef bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     Write(TYPE_BINARY);
@@ -166,7 +169,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else if (field.StringValue == null)
                 {
-                    throw new ArgumentException("field " + field.Name() +
+                    throw new ArgumentException("field " + field.Name +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");
                 }
                 else
@@ -209,7 +212,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
 	    protected override void Dispose(bool disposing)
 	    {
-	        if (disposing) return;
+	        if (!disposing) return;
 	        try
 	        {
 	            IOUtils.Close(_output);

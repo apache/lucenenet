@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,8 @@ namespace Lucene.Net.Util
     //using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
     using NUnit.Framework;
     using System.IO;
+    using System.IO.Compression;
+    using System.Text.RegularExpressions;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValuesField = BinaryDocValuesField;
@@ -79,6 +82,22 @@ namespace Lucene.Net.Util
     /// </summary>
     public static class TestUtil
     {
+        public static void Rm(params DirectoryInfo[] locations)
+        {
+            HashSet<FileSystemInfo> unremoved = Rm(new HashSet<FileSystemInfo>(), locations);
+            if (unremoved.Any())
+            {
+                StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
+                foreach (var f in unremoved)
+                {
+                    b.append("   ")
+                     .append(f.FullName)
+                     .append("\n");
+                }
+                throw new IOException(b.toString());
+            }
+        }
+
         private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params DirectoryInfo[] locations)
         {
             foreach (DirectoryInfo location in locations)
@@ -123,16 +142,38 @@ namespace Lucene.Net.Util
             return unremoved;
         }
 
+        public static void Unzip(Stream zipFileStream, DirectoryInfo destDir)
+        {
+            Rm(destDir);
+            destDir.Create();
+
+            using (ZipArchive zip = new ZipArchive(zipFileStream))
+            {
+                foreach (var entry in zip.Entries)
+                {
+                    using (Stream input = entry.Open())
+                    {
+                        FileInfo targetFile = new FileInfo(Path.Combine(destDir.FullName, entry.FullName));
+
+                        using (Stream output = new FileStream(targetFile.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+                        {
+                            input.CopyTo(output);
+                        }
+                    }
+                }
+            }
+        }
+
         public static void SyncConcurrentMerges(IndexWriter writer)
         {
             SyncConcurrentMerges(writer.Config.MergeScheduler);
         }
 
-        public static void SyncConcurrentMerges(MergeScheduler ms)
+        public static void SyncConcurrentMerges(IMergeScheduler ms)
         {
-            if (ms is ConcurrentMergeScheduler)
+            if (ms is IConcurrentMergeScheduler)
             {
-                ((ConcurrentMergeScheduler)ms).Sync();
+                ((IConcurrentMergeScheduler)ms).Sync();
             }
         }
 
@@ -916,11 +957,11 @@ namespace Lucene.Net.Util
                 tmp.SegmentsPerTier = Math.Min(5, tmp.SegmentsPerTier);
                 tmp.NoCFSRatio = 1.0;
             }
-            MergeScheduler ms = w.Config.MergeScheduler;
-            if (ms is ConcurrentMergeScheduler)
+            IMergeScheduler ms = w.Config.MergeScheduler;
+            if (ms is IConcurrentMergeScheduler)
             {
                 // wtf... shouldnt it be even lower since its 1 by default?!?!
-                ((ConcurrentMergeScheduler)ms).SetMaxMergesAndThreads(3, 2);
+                ((IConcurrentMergeScheduler)ms).SetMaxMergesAndThreads(3, 2);
             }
         }
 
@@ -993,22 +1034,22 @@ namespace Lucene.Net.Util
             {
                 Field field1 = (Field)f;
                 Field field2;
-                DocValuesType_e? dvType = field1.FieldType().DocValueType;
-                NumericType? numType = field1.FieldType().NumericTypeValue;
+                DocValuesType_e? dvType = field1.FieldType.DocValueType;
+                NumericType? numType = field1.FieldType.NumericTypeValue;
                 if (dvType != null)
                 {
                     switch (dvType)
                     {
                         case DocValuesType_e.NUMERIC:
-                            field2 = new NumericDocValuesField(field1.Name(), (long)field1.NumericValue);
+                            field2 = new NumericDocValuesField(field1.Name, (long)field1.NumericValue);
                             break;
 
                         case DocValuesType_e.BINARY:
-                            field2 = new BinaryDocValuesField(field1.Name(), field1.BinaryValue());
+                            field2 = new BinaryDocValuesField(field1.Name, field1.BinaryValue);
                             break;
 
                         case DocValuesType_e.SORTED:
-                            field2 = new SortedDocValuesField(field1.Name(), field1.BinaryValue());
+                            field2 = new SortedDocValuesField(field1.Name, field1.BinaryValue);
                             break;
 
                         default:
@@ -1020,19 +1061,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT:
-                            field2 = new IntField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new IntField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.FLOAT:
-                            field2 = new FloatField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new FloatField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.LONG:
-                            field2 = new LongField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new LongField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new DoubleField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         default:
@@ -1041,7 +1082,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    field2 = new Field(field1.Name(), field1.StringValue, (FieldType)field1.FieldType());
+                    field2 = new Field(field1.Name, field1.StringValue, (FieldType)field1.FieldType);
                 }
                 doc2.Add(field2);
             }
@@ -1151,40 +1192,30 @@ namespace Lucene.Net.Util
         /// Returns a valid (compiling) Pattern instance with random stuff inside. Be careful
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
-        /// </summary>
-        /* LUCENE TODO: not called as of now
-        public static Pattern RandomPattern(Random random)
+        /// </summary>        
+        public static Regex RandomPattern(Random random)
         {
-          const string nonBmpString = "AB\uD840\uDC00C";
-          while (true)
-          {
-            try
+            const string nonBmpString = "AB\uD840\uDC00C";
+            while (true)
             {
-              Pattern p = Pattern.compile(TestUtil.RandomRegexpishString(random));
-              string replacement = null;
-              // ignore bugs in Sun's regex impl
-              try
-              {
-                replacement = p.matcher(nonBmpString).replaceAll("_");
-              }
-              catch (IndexOutOfRangeException jdkBug)
-              {
-                Console.WriteLine("WARNING: your jdk is buggy!");
-                Console.WriteLine("Pattern.compile(\"" + p.pattern() + "\").matcher(\"AB\\uD840\\uDC00C\").replaceAll(\"_\"); should not throw IndexOutOfBounds!");
-              }
-              // Make sure the result of applying the pattern to a string with extended
-              // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
-              if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
-              {
-                return p;
-              }
+                try
+                {
+                    Regex p = new Regex(TestUtil.RandomRegexpishString(random), RegexOptions.Compiled);
+                    string replacement = p.Replace(nonBmpString, "_");
+
+                    // Make sure the result of applying the pattern to a string with extended
+                    // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
+                    if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
+                    {
+                        return p;
+                    }
+                }
+                catch (Exception ignored)
+                {
+                    // Loop trying until we hit something that compiles.
+                }
             }
-            catch (PatternSyntaxException ignored)
-            {
-              // Loop trying until we hit something that compiles.
-            }
-          }
-        }*/
+        }
 
         public static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random)
         {
@@ -1217,7 +1248,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
             {
                 return LuceneTestCase.Random().NextBoolean();
             }

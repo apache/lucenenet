@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A6511598-3008-4A3B-AE68-2D1DA792CA8A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Tests.Suggest</RootNamespace>
+    <AssemblyName>Lucene.Net.Tests.Suggest</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spell\TestDirectSpellChecker.cs" />
+    <Compile Include="Spell\TestJaroWinklerDistance.cs" />
+    <Compile Include="Spell\TestLevenshteinDistance.cs" />
+    <Compile Include="Spell\TestLuceneDictionary.cs" />
+    <Compile Include="Spell\TestNGramDistance.cs" />
+    <Compile Include="Spell\TestPlainTextDictionary.cs" />
+    <Compile Include="Spell\TestSpellChecker.cs" />
+    <Compile Include="Spell\TestWordBreakSpellChecker.cs" />
+    <Compile Include="Suggest\Analyzing\AnalyzingInfixSuggesterTest.cs" />
+    <Compile Include="Suggest\Analyzing\AnalyzingSuggesterTest.cs" />
+    <Compile Include="Suggest\Analyzing\BlendedInfixSuggesterTest.cs" />
+    <Compile Include="Suggest\Analyzing\FuzzySuggesterTest.cs" />
+    <Compile Include="Suggest\Analyzing\TestFreeTextSuggester.cs" />
+    <Compile Include="Suggest\Analyzing\TestSuggestStopFilter.cs" />
+    <Compile Include="Suggest\Average.cs" />
+    <Compile Include="Suggest\DocumentDictionaryTest.cs" />
+    <Compile Include="Suggest\DocumentValueSourceDictionaryTest.cs" />
+    <Compile Include="Suggest\FileDictionaryTest.cs" />
+    <Compile Include="Suggest\Fst\BytesRefSortersTest.cs" />
+    <Compile Include="Suggest\Fst\FSTCompletionTest.cs" />
+    <Compile Include="Suggest\Fst\LargeInputFST.cs" />
+    <Compile Include="Suggest\Fst\WFSTCompletionTest.cs" />
+    <Compile Include="Suggest\Input.cs" />
+    <Compile Include="Suggest\InputArrayIterator.cs" />
+    <Compile Include="Suggest\LookupBenchmarkTest.cs" />
+    <Compile Include="Suggest\PersistenceTest.cs" />
+    <Compile Include="Suggest\TestHighFrequencyDictionary.cs" />
+    <Compile Include="Suggest\TestInputIterator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj">
+      <Project>{fbd2eb4d-eac9-409c-a23d-64d27df23576}</Project>
+      <Name>Lucene.Net.Suggest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
+      <Name>Lucene.Net.TestFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <EmbeddedResource Include="Suggest\Top50KWiki.utf8" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

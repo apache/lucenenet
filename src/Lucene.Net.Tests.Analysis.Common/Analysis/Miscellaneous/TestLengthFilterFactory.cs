@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.IO;
+using Reader = System.IO.TextReader;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,68 +23,62 @@
 	 * limitations under the License.
 	 */
 
+    public class TestLengthFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using ClasspathResourceLoader = org.apache.lucene.analysis.util.ClasspathResourceLoader;
-	using Version = org.apache.lucene.util.Version;
+        [Test]
+        public virtual void Test()
+        {
+            Reader reader = new StringReader("foo foobar super-duper-trooper");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
+            stream = TokenFilterFactory("Length", LuceneVersion.LUCENE_43,
+#pragma warning restore 612, 618
+                new ClasspathResourceLoader(this.GetType()), "min", "4", "max", "10", "enablePositionIncrements", "false").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "foobar" }, new int[] { 1 });
+        }
 
-	public class TestLengthFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestPositionIncrements()
+        {
+            Reader reader = new StringReader("foo foobar super-duper-trooper");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "4", LengthFilterFactory.MAX_KEY, "10").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "foobar" }, new int[] { 2 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws Exception
-	  public virtual void test()
-	  {
-		Reader reader = new StringReader("foo foobar super-duper-trooper");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Length", Version.LUCENE_43, new ClasspathResourceLoader(this.GetType()), "min", "4", "max", "10", "enablePositionIncrements", "false").create(stream);
-		assertTokenStreamContents(stream, new string[] {"foobar"}, new int[] {1});
-	  }
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "4", LengthFilterFactory.MAX_KEY, "5", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPositionIncrements() throws Exception
-	  public virtual void testPositionIncrements()
-	  {
-		Reader reader = new StringReader("foo foobar super-duper-trooper");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "4", LengthFilterFactory.MAX_KEY, "10").create(stream);
-		assertTokenStreamContents(stream, new string[] {"foobar"}, new int[] {2});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "4", LengthFilterFactory.MAX_KEY, "5", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-
-	  /// <summary>
-	  /// Test that invalid arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidArguments() throws Exception
-	  public virtual void testInvalidArguments()
-	  {
-		try
-		{
-		  Reader reader = new StringReader("foo foobar super-duper-trooper");
-		  TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		  tokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "5", LengthFilterFactory.MAX_KEY, "4").create(stream);
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("maximum length must not be greater than minimum length"));
-		}
-	  }
-	}
+        /// <summary>
+        /// Test that invalid arguments result in exception </summary>
+        [Test]
+        public virtual void TestInvalidArguments()
+        {
+            try
+            {
+                Reader reader = new StringReader("foo foobar super-duper-trooper");
+                TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "5", LengthFilterFactory.MAX_KEY, "4").Create(stream);
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("maximum length must not be greater than minimum length"));
+            }
+        }
+    }
 }

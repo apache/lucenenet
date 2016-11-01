@@ -89,13 +89,30 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringFieldFunc;
+            private readonly Func<string, string, Field.Store, Field> NewTextFieldFunc;
+
             internal IndexWriter Writer;
             internal int NextID;
 
-            public IndexerThread(IndexWriter writer, TimedThread[] threads)
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
+            /// <param name="newTextField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
+            public IndexerThread(IndexWriter writer, TimedThread[] threads,
+                Func<string, string, Field.Store, Field> newStringField,
+                Func<string, string, Field.Store, Field> newTextField)
                 : base(threads)
             {
                 this.Writer = writer;
+                NewStringFieldFunc = newStringField;
+                NewTextFieldFunc = newTextField;
             }
 
             public override void DoWork()
@@ -105,8 +122,8 @@ namespace Lucene.Net.Index
                 {
                     Documents.Document d = new Documents.Document();
                     int n = Random().Next();
-                    d.Add(NewStringField("id", Convert.ToString(NextID++), Field.Store.YES));
-                    d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(NewStringFieldFunc("id", Convert.ToString(NextID++), Field.Store.YES));
+                    d.Add(NewTextFieldFunc("contents", English.IntToEnglish(n), Field.Store.NO));
                     Writer.AddDocument(d);
                 }
 
@@ -123,10 +140,17 @@ namespace Lucene.Net.Index
         private class SearcherThread : TimedThread
         {
             internal Directory Directory;
+            private readonly LuceneTestCase OuterInstance;
 
-            public SearcherThread(Directory directory, TimedThread[] threads)
+            /// <param name="outerInstance">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewSearcher(IndexReader)"/>
+            /// is no longer static.
+            /// </param>
+            public SearcherThread(Directory directory, TimedThread[] threads, LuceneTestCase outerInstance)
                 : base(threads)
             {
+                OuterInstance = outerInstance;
                 this.Directory = directory;
             }
 
@@ -135,7 +159,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < 100; i++)
                 {
                     IndexReader ir = DirectoryReader.Open(Directory);
-                    IndexSearcher @is = NewSearcher(ir);
+                    IndexSearcher @is = OuterInstance.NewSearcher(ir);
                     ir.Dispose();
                 }
                 Count += 100;
@@ -147,7 +171,7 @@ namespace Lucene.Net.Index
           stress test.
         */
 
-        public virtual void RunStressTest(Directory directory, MergeScheduler mergeScheduler)
+        public virtual void RunStressTest(Directory directory, IConcurrentMergeScheduler mergeScheduler)
         {
             IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
             modifier.Commit();
@@ -157,21 +181,21 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 
             // Two searchers that constantly just re-instantiate the
             // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread1 = new SearcherThread(directory, threads, this);
             threads[numThread++] = searcherThread1;
             searcherThread1.Start();
 
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread2 = new SearcherThread(directory, threads, this);
             threads[numThread++] = searcherThread2;
             searcherThread2.Start();
 
@@ -198,7 +222,7 @@ namespace Lucene.Net.Index
         */
 
         [Test]
-        public virtual void TestStressIndexAndSearching()
+        public virtual void TestStressIndexAndSearching([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory directory = NewDirectory();
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
@@ -207,7 +231,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnrefencedFilesOnClose = true;
             }
 
-            RunStressTest(directory, new ConcurrentMergeScheduler());
+            RunStressTest(directory, scheduler);
             directory.Dispose();
         }
     }

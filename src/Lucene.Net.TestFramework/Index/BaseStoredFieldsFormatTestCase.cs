@@ -74,6 +74,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandomStoredFields()
         {
             Directory dir = NewDirectory();
@@ -178,7 +179,7 @@ namespace Lucene.Net.Index
                         Document docExp = docs[testID];
                         for (int i = 0; i < fieldCount; i++)
                         {
-                            Assert.AreEqual("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.Get("f" + i), doc.Get("f" + i));
+                            assertEquals("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.Get("f" + i), doc.Get("f" + i));
                         }
                     }
                     r.Dispose();
@@ -189,9 +190,9 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // LUCENE-1727: make sure doc fields are stored in order
-        public void TestStoredFieldsOrder()
+        public virtual void TestStoredFieldsOrder()
         {
             Directory d = NewDirectory();
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -208,17 +209,17 @@ namespace Lucene.Net.Index
             IEnumerator<IndexableField> it = doc2.Fields.GetEnumerator();
             Assert.IsTrue(it.MoveNext());
             Field f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
+            Assert.AreEqual(f.Name, "zzz");
             Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "aaa");
+            Assert.AreEqual(f.Name, "aaa");
             Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
+            Assert.AreEqual(f.Name, "zzz");
             Assert.AreEqual(f.StringValue, "1 2 3");
             Assert.IsFalse(it.MoveNext());
             r.Dispose();
@@ -226,9 +227,9 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // LUCENE-1219
-        public void TestBinaryFieldOffsetLength()
+        public virtual void TestBinaryFieldOffsetLength()
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -240,11 +241,11 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             Field f = new StoredField("binary", b, 10, 17);
-            var bx = f.BinaryValue().Bytes;
+            var bx = f.BinaryValue.Bytes;
             Assert.IsTrue(bx != null);
             Assert.AreEqual(50, bx.Length);
-            Assert.AreEqual(10, f.BinaryValue().Offset);
-            Assert.AreEqual(17, f.BinaryValue().Length);
+            Assert.AreEqual(10, f.BinaryValue.Offset);
+            Assert.AreEqual(17, f.BinaryValue.Length);
             doc.Add(f);
             w.AddDocument(doc);
             w.Dispose();
@@ -252,7 +253,7 @@ namespace Lucene.Net.Index
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
             IndexableField f2 = doc2.GetField("binary");
-            b = f2.BinaryValue().Bytes;
+            b = f2.BinaryValue.Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
             Assert.AreEqual(87, b[0]);
@@ -260,10 +261,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        public void TestNumericField()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestNumericField()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir);
+            var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             var numDocs = AtLeast(500);
             var answers = new object[numDocs];
             FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
@@ -344,11 +346,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
-        public void TestIndexedBit()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestIndexedBit()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             FieldType onlyStored = new FieldType();
             onlyStored.Stored = true;
@@ -357,14 +359,14 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();
-            Assert.IsFalse(r.Document(0).GetField("field").FieldType().Indexed);
-            Assert.IsTrue(r.Document(0).GetField("field2").FieldType().Indexed);
+            Assert.IsFalse(r.Document(0).GetField("field").FieldType.Indexed);
+            Assert.IsTrue(r.Document(0).GetField("field2").FieldType.Indexed);
             r.Dispose();
             dir.Dispose();
         }
 
-        [Test]
-        public void TestReadSkip()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestReadSkip()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -400,12 +402,12 @@ namespace Lucene.Net.Index
             int docID = Random().Next(100);
             foreach (Field fld in fields)
             {
-                string fldName = fld.Name();
+                string fldName = fld.Name;
                 Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
                 IndexableField sField = sDoc.GetField(fldName);
                 if (typeof(Field) == fld.GetType())
                 {
-                    Assert.AreEqual(fld.BinaryValue(), sField.BinaryValue());
+                    Assert.AreEqual(fld.BinaryValue, sField.BinaryValue);
                     Assert.AreEqual(fld.StringValue, sField.StringValue);
                 }
                 else
@@ -418,8 +420,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(300000)]
-        public void TestEmptyDocs()
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -447,8 +449,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(300000)]
-        public void TestConcurrentReads()
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestConcurrentReads()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -562,7 +564,7 @@ namespace Lucene.Net.Index
             return result;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestWriteReadMerge()
         {
             // get another codec, other than the default: so we are merging segments across different codecs
@@ -668,8 +670,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
-        public void TestBigDocuments()
+        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"
             // for this test we force a FS dir
@@ -737,7 +739,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(docs[i].GetFields("fld").Length, fieldValues.Length);
                 if (fieldValues.Length > 0)
                 {
-                    Assert.AreEqual(docs[i].GetFields("fld")[0].BinaryValue(), fieldValues[0].BinaryValue());
+                    Assert.AreEqual(docs[i].GetFields("fld")[0].BinaryValue, fieldValues[0].BinaryValue);
                 }
             }
             rd.Dispose();
@@ -745,8 +747,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
-        public void TestBulkMergeWithDeletes()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestBulkMergeWithDeletes()
         {
             int numDocs = AtLeast(200);
             Directory dir = NewDirectory();
@@ -766,7 +768,7 @@ namespace Lucene.Net.Index
             }
             w.Commit();
             w.Dispose();
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             w.ForceMerge(TestUtil.NextInt(Random(), 1, 3));
             w.Commit();
             w.Dispose();

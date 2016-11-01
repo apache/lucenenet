@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Search.Suggest.Analyzing;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,10 +22,10 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// Interface for enumerating term,weight,payload triples for suggester consumption;
-    /// currently only <seealso cref="AnalyzingSuggester"/>, {@link
-    /// FuzzySuggester} and <seealso cref="AnalyzingInfixSuggester"/> support payloads.
+    /// currently only <see cref="Analyzing.AnalyzingSuggester"/>, <see cref="Analyzing.FuzzySuggester"/>
+    /// and <see cref="Analyzing.AnalyzingInfixSuggester"/> support payloads.
     /// </summary>
-    public interface InputIterator : BytesRefIterator
+    public interface IInputIterator : BytesRefIterator
     {
 
         /// <summary>
@@ -36,8 +34,8 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// An arbitrary byte[] to record per suggestion.  See
-        ///  <seealso cref="Lookup.LookupResult#payload"/> to retrieve the payload
-        ///  for each suggestion. 
+        /// <see cref="Lookup.LookupResult.payload"/> to retrieve the payload
+        /// for each suggestion. 
         /// </summary>
         BytesRef Payload { get; }
 
@@ -49,7 +47,7 @@ namespace Lucene.Net.Search.Suggest
         /// A term's contexts context can be used to filter suggestions.
         /// May return null, if suggest entries do not have any context
         /// </summary>
-        HashSet<BytesRef> Contexts { get; }
+        IEnumerable<BytesRef> Contexts { get; }
 
         /// <summary>
         /// Returns true if the iterator has contexts </summary>
@@ -57,24 +55,24 @@ namespace Lucene.Net.Search.Suggest
     }
 
     /// <summary>
-    /// Singleton InputIterator that iterates over 0 BytesRefs.
+    /// Singleton <see cref="IInputIterator"/> that iterates over 0 BytesRefs.
     /// </summary>
     public static class EmptyInputIterator
     {
-        public static readonly InputIterator Instance = new InputIteratorWrapper(EmptyBytesRefIterator.Instance);
+        public static readonly IInputIterator Instance = new InputIteratorWrapper(EmptyBytesRefIterator.Instance);
     }
 
     /// <summary>
-    /// Wraps a BytesRefIterator as a suggester InputIterator, with all weights
-    /// set to <code>1</code> and carries no payload
+    /// Wraps a <see cref="BytesRefIterator"/> as a suggester <see cref="IInputIterator"/>, with all weights
+    /// set to <c>1</c> and carries no payload
     /// </summary>
-    public class InputIteratorWrapper : InputIterator
+    public class InputIteratorWrapper : IInputIterator
     {
         internal readonly BytesRefIterator wrapped;
 
         /// <summary>
         /// Creates a new wrapper, wrapping the specified iterator and 
-        /// specifying a weight value of <code>1</code> for all terms 
+        /// specifying a weight value of <c>1</c> for all terms 
         /// and nullifies associated payloads.
         /// </summary>
         public InputIteratorWrapper(BytesRefIterator wrapped)
@@ -87,7 +85,7 @@ namespace Lucene.Net.Search.Suggest
             get { return 1; }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             return wrapped.Next();
         }
@@ -102,7 +100,7 @@ namespace Lucene.Net.Search.Suggest
             get { return false; }
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {
@@ -110,7 +108,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual HashSet<BytesRef> Contexts
+        public virtual IEnumerable<BytesRef> Contexts
         {
             get { return null; }
         }
@@ -120,5 +118,4 @@ namespace Lucene.Net.Search.Suggest
             get { return false; }
         }
     }
-
 }

@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,24 +22,23 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using Accountable = Lucene.Net.Util.Accountable;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IntsRef = Lucene.Net.Util.IntsRef;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
     /// A per-segment cache of documents' facet ordinals. Every
-    /// <seealso cref="CachedOrds"/> holds the ordinals in a raw {@code
-    /// int[]}, and therefore consumes as much RAM as the total
+    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="int[]"/>, 
+    /// and therefore consumes as much RAM as the total
     /// number of ordinals found in the segment, but saves the
     /// CPU cost of decoding ordinals during facet counting.
     /// 
     /// <para>
-    /// <b>NOTE:</b> every <seealso cref="CachedOrds"/> is limited to 2.1B
+    /// <b>NOTE:</b> every <see cref="CachedOrds"/> is limited to 2.1B
     /// total ordinals. If that is a limitation for you then
     /// consider limiting the segment size to fewer documents, or
     /// use an alternative cache which pages through the category
@@ -49,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </para>
     /// <para>
     /// <b>NOTE:</b> when using this cache, it is advised to use
-    /// a <seealso cref="DocValuesFormat"/> that does not cache the data in
+    /// a <see cref="DocValuesFormat"/> that does not cache the data in
     /// memory, at least for the category lists fields, or
     /// otherwise you'll be doing double-caching.
     /// 
@@ -62,7 +60,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class CachedOrdinalsReader : OrdinalsReader, Accountable
     {
-
         private readonly OrdinalsReader source;
 
         private readonly IDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
@@ -118,32 +115,34 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Get(int docID, IntsRef ordinals)
             {
-                ordinals.Ints = cachedOrds.ordinals;
-                ordinals.Offset = cachedOrds.offsets[docID];
-                ordinals.Length = cachedOrds.offsets[docID + 1] - ordinals.Offset;
+                ordinals.Ints = cachedOrds.Ordinals;
+                ordinals.Offset = cachedOrds.Offsets[docID];
+                ordinals.Length = cachedOrds.Offsets[docID + 1] - ordinals.Offset;
             }
         }
 
         /// <summary>
-        /// Holds the cached ordinals in two parallel {@code int[]} arrays. </summary>
+        /// Holds the cached ordinals in two parallel <see cref="int[]"/> arrays.
+        /// </summary>
         public sealed class CachedOrds : Accountable
         {
+            /// <summary>
+            /// Index into <see cref="Ordinals"/> for each document.
+            /// </summary>
+            public int[] Offsets { get; private set; }
 
             /// <summary>
-            /// Index into <seealso cref="#ordinals"/> for each document. </summary>
-            public readonly int[] offsets;
+            /// Holds ords for all docs.
+            /// </summary>
+            public int[] Ordinals { get; private set; }
 
             /// <summary>
-            /// Holds ords for all docs. </summary>
-            public readonly int[] ordinals;
-
-            /// <summary>
-            /// Creates a new <seealso cref="CachedOrds"/> from the <seealso cref="BinaryDocValues"/>.
-            /// Assumes that the <seealso cref="BinaryDocValues"/> is not {@code null}.
+            /// Creates a new <see cref="CachedOrds"/> from the <see cref="BinaryDocValues"/>.
+            /// Assumes that the <see cref="BinaryDocValues"/> is not <c>null</c>.
             /// </summary>
             public CachedOrds(OrdinalsSegmentReader source, int maxDoc)
             {
-                offsets = new int[maxDoc + 1];
+                Offsets = new int[maxDoc + 1];
                 int[] ords = new int[maxDoc]; // let's assume one ordinal per-document as an initial size
 
                 // this aggregator is limited to Integer.MAX_VALUE total ordinals.
@@ -151,7 +150,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 IntsRef values = new IntsRef(32);
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
-                    offsets[docID] = (int)totOrds;
+                    Offsets[docID] = (int)totOrds;
                     source.Get(docID, values);
                     long nextLength = totOrds + values.Length;
                     if (nextLength > ords.Length)
@@ -165,26 +164,26 @@ namespace Lucene.Net.Facet.Taxonomy
                     Array.Copy(values.Ints, 0, ords, (int)totOrds, values.Length);
                     totOrds = nextLength;
                 }
-                offsets[maxDoc] = (int)totOrds;
+                Offsets[maxDoc] = (int)totOrds;
 
                 // if ords array is bigger by more than 10% of what we really need, shrink it
                 if ((double)totOrds / ords.Length < 0.9)
                 {
-                    this.ordinals = new int[(int)totOrds];
-                    Array.Copy(ords, 0, this.ordinals, 0, (int)totOrds);
+                    this.Ordinals = new int[(int)totOrds];
+                    Array.Copy(ords, 0, this.Ordinals, 0, (int)totOrds);
                 }
                 else
                 {
-                    this.ordinals = ords;
+                    this.Ordinals = ords;
                 }
             }
 
             public long RamBytesUsed()
             {
-                long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.SizeOf(offsets);
-                if (offsets != ordinals)
+                long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.SizeOf(Offsets);
+                if (Offsets != Ordinals)
                 {
-                    mem += RamUsageEstimator.SizeOf(ordinals);
+                    mem += RamUsageEstimator.SizeOf(Ordinals);
                 }
                 return mem;
             }
@@ -204,5 +203,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

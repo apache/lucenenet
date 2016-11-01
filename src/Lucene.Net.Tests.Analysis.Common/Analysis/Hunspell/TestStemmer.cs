@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,71 +19,68 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
+    public class TestStemmer : StemmerTestBase
+    {
 
-	public class TestStemmer : StemmerTestBase
-	{
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("simple.aff", "simple.dic");
+        }
+        [Test]
+        public virtual void TestSimpleSuffix()
+        {
+            AssertStemsTo("lucene", "lucene", "lucen");
+            AssertStemsTo("mahoute", "mahout");
+        }
+        [Test]
+        public virtual void TestSimplePrefix()
+        {
+            AssertStemsTo("solr", "olr");
+        }
+        [Test]
+        public virtual void TestRecursiveSuffix()
+        {
+            // we should not recurse here, as the suffix has no continuation!
+            AssertStemsTo("abcd");
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("simple.aff", "simple.dic");
-	  }
+        // all forms unmunched from dictionary
+        [Test]
+        public virtual void TestAllStems()
+        {
+            AssertStemsTo("ab", "ab");
+            AssertStemsTo("abc", "ab");
+            AssertStemsTo("apach", "apach");
+            AssertStemsTo("apache", "apach");
+            AssertStemsTo("foo", "foo", "foo");
+            AssertStemsTo("food", "foo");
+            AssertStemsTo("foos", "foo");
+            AssertStemsTo("lucen", "lucen");
+            AssertStemsTo("lucene", "lucen", "lucene");
+            AssertStemsTo("mahout", "mahout");
+            AssertStemsTo("mahoute", "mahout");
+            AssertStemsTo("moo", "moo");
+            AssertStemsTo("mood", "moo");
+            AssertStemsTo("olr", "olr");
+            AssertStemsTo("solr", "olr");
+        }
 
-	  public virtual void testSimpleSuffix()
-	  {
-		assertStemsTo("lucene", "lucene", "lucen");
-		assertStemsTo("mahoute", "mahout");
-	  }
-
-	  public virtual void testSimplePrefix()
-	  {
-		assertStemsTo("solr", "olr");
-	  }
-
-	  public virtual void testRecursiveSuffix()
-	  {
-		// we should not recurse here, as the suffix has no continuation!
-		assertStemsTo("abcd");
-	  }
-
-	  // all forms unmunched from dictionary
-	  public virtual void testAllStems()
-	  {
-		assertStemsTo("ab", "ab");
-		assertStemsTo("abc", "ab");
-		assertStemsTo("apach", "apach");
-		assertStemsTo("apache", "apach");
-		assertStemsTo("foo", "foo", "foo");
-		assertStemsTo("food", "foo");
-		assertStemsTo("foos", "foo");
-		assertStemsTo("lucen", "lucen");
-		assertStemsTo("lucene", "lucen", "lucene");
-		assertStemsTo("mahout", "mahout");
-		assertStemsTo("mahoute", "mahout");
-		assertStemsTo("moo", "moo");
-		assertStemsTo("mood", "moo");
-		assertStemsTo("olr", "olr");
-		assertStemsTo("solr", "olr");
-	  }
-
-	  // some bogus stuff that should not stem (empty lists)!
-	  public virtual void testBogusStems()
-	  {
-		assertStemsTo("abs");
-		assertStemsTo("abe");
-		assertStemsTo("sab");
-		assertStemsTo("sapach");
-		assertStemsTo("sapache");
-		assertStemsTo("apachee");
-		assertStemsTo("sfoo");
-		assertStemsTo("sfoos");
-		assertStemsTo("fooss");
-		assertStemsTo("lucenee");
-		assertStemsTo("solre");
-	  }
-	}
-
+        // some bogus stuff that should not stem (empty lists)!
+        [Test]
+        public virtual void TestBogusStems()
+        {
+            AssertStemsTo("abs");
+            AssertStemsTo("abe");
+            AssertStemsTo("sab");
+            AssertStemsTo("sapach");
+            AssertStemsTo("sapache");
+            AssertStemsTo("apachee");
+            AssertStemsTo("sfoo");
+            AssertStemsTo("sfoos");
+            AssertStemsTo("fooss");
+            AssertStemsTo("lucenee");
+            AssertStemsTo("solre");
+        }
+    }
 }

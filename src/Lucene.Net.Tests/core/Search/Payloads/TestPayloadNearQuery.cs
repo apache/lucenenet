@@ -110,8 +110,12 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadNearQuery(clauses, 0, inOrder, function);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity));

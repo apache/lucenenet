@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Standard
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Standard
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Filters <seealso cref="StandardTokenizer"/> with <seealso cref="StandardFilter"/>, {@link
     /// LowerCaseFilter} and <seealso cref="StopFilter"/>, using a list of
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <a href="#version">above</a>} </param>
         /// <param name="stopwords"> Reader to read stop words from  </param>
         public StandardAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
-            : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
+            : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
         }
 
@@ -145,5 +145,4 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
     }
-
 }

@@ -41,6 +41,7 @@ namespace Lucene.Net.Index
     using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestLongPostings : LuceneTestCase
     {

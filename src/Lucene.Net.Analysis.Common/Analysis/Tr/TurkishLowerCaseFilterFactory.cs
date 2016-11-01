@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.tr
+namespace Lucene.Net.Analysis.Tr
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,45 +20,40 @@ namespace org.apache.lucene.analysis.tr
 	 * limitations under the License.
 	 */
 
-	using AbstractAnalysisFactory = org.apache.lucene.analysis.util.AbstractAnalysisFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="TurkishLowerCaseFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_trlwr" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class TurkishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="TurkishLowerCaseFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_trlwr" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class TurkishLowerCaseFilterFactory : TokenFilterFactory, MultiTermAwareComponent
-	{
+        /// <summary>
+        /// Creates a new TurkishLowerCaseFilterFactory </summary>
+        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new TurkishLowerCaseFilterFactory </summary>
-	  public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        public override TokenStream Create(TokenStream input)
+        {
+            return new TurkishLowerCaseFilter(input);
+        }
 
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new TurkishLowerCaseFilter(input);
-	  }
-
-	  public virtual AbstractAnalysisFactory MultiTermComponent
-	  {
-		  get
-		  {
-			return this;
-		  }
-	  }
-	}
-
+        public virtual AbstractAnalysisFactory MultiTermComponent
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
 }

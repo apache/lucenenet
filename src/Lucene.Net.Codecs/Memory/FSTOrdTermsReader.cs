@@ -84,8 +84,11 @@ namespace Lucene.Net.Codecs.Memory
                     var index = new FST<long?>(indexIn, PositiveIntOutputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
-            
-                    var previous = fields[fieldInfo.Name] = current;
+                    TermsReader previous;
+                    // LUCENENET NOTE: This simulates a put operation in Java,
+                    // getting the prior value first before setting it.
+                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, indexIn, blockIn, current, previous);
                 }
                 if (version >= FSTOrdTermsWriter.TERMS_VERSION_CHECKSUM)
@@ -531,7 +534,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 // Update current enum according to FSTEnum
-                private void UpdateEnum(BytesRefFSTEnum<long?>.InputOutput<long?> pair)
+                private void UpdateEnum(BytesRefFSTEnum.InputOutput<long?> pair)
                 {
                     if (pair == null)
                     {
@@ -824,7 +827,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         return null;
                     }
-                    while (!frame.arc.Last)
+                    while (!frame.arc.IsLast)
                     {
                         frame.arc = fst.ReadNextRealArc(frame.arc, fstReader);
                         frame.state = fsa.Step(top.state, frame.arc.Label);
@@ -848,7 +851,7 @@ namespace Lucene.Net.Codecs.Memory
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {
                     var arc = frame.arc;
-                    arc = Util.readCeilArc(label, fst, top.arc, arc, fstReader);
+                    arc = Util.ReadCeilArc(label, fst, top.arc, arc, fstReader);
                     if (arc == null)
                     {
                         return null;
@@ -864,7 +867,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 private bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
-                    return fsa.IsAccept(frame.state) && frame.arc.Final;
+                    return fsa.IsAccept(frame.state) && frame.arc.IsFinal;
                 }
 
                 private bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
@@ -879,7 +882,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 private bool CanRewind(Frame frame) // can jump to sibling
                 {
-                    return !frame.arc.Last;
+                    return !frame.arc.IsLast;
                 }
 
                 private void PushFrame(Frame frame)
@@ -974,7 +977,7 @@ namespace Lucene.Net.Codecs.Memory
                     while (true)
                     {
                         queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.Last)
+                        if (arc.IsLast)
                         {
                             break;
                         }

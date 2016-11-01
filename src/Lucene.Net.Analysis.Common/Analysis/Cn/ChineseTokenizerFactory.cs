@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.cn
+namespace Lucene.Net.Analysis.Cn
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,32 +23,27 @@ namespace org.apache.lucene.analysis.cn
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="ChineseTokenizer"/> </summary>
+    /// @deprecated Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead. 
+    [Obsolete("Use StandardTokenizerFactory instead.")]
+    public class ChineseTokenizerFactory : TokenizerFactory
+    {
 
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
+        /// <summary>
+        /// Creates a new ChineseTokenizerFactory </summary>
+        public ChineseTokenizerFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="ChineseTokenizer"/> </summary>
-	/// @deprecated Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead. 
-	[Obsolete("Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead.")]
-	public class ChineseTokenizerFactory : TokenizerFactory
-	{
-
-	  /// <summary>
-	  /// Creates a new ChineseTokenizerFactory </summary>
-	  public ChineseTokenizerFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ChineseTokenizer create(AttributeFactory factory, Reader @in)
-	  {
-		return new ChineseTokenizer(factory, @in);
-	  }
-	}
-
-
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        {
+            return new ChineseTokenizer(factory, input);
+        }
+    }
 }

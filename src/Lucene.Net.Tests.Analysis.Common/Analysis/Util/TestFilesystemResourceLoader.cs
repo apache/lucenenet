@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Text;
+using NUnit.Framework;
+using Lucene.Net.Util;
+using System.IO;
+using System.Linq;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,101 +24,87 @@ namespace org.apache.lucene.analysis.util
 	 * limitations under the License.
 	 */
 
+    public class TestFilesystemResourceLoader : LuceneTestCase
+    {
+        private void assertNotFound(IResourceLoader rl)
+        {
+            try
+            {
+                IOUtils.CloseWhileHandlingException(rl.OpenResource("/this-directory-really-really-really-should-not-exist/foo/bar.txt"));
+                fail("The resource does not exist, should fail!");
+            }
+            catch (IOException)
+            {
+                // pass
+            }
+            try
+            {
+                rl.NewInstance<TokenFilterFactory>("org.apache.lucene.analysis.FooBarFilterFactory");
+                fail("The class does not exist, should fail!");
+            }
+            catch (Exception)
+            {
+                // pass
+            }
+        }
 
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+        private void assertClasspathDelegation(IResourceLoader rl)
+        {
+            // try a stopwords file from classpath
+            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(System.IO.Path.GetFullPath(@"..\..\..\Lucene.Net.Analysis.Common\Analysis\Snowball\english_stop.txt")), Encoding.UTF8), TEST_VERSION_CURRENT);
+            assertTrue(set.contains("you"));
+            // try to load a class; we use string comparison because classloader may be different...
+            assertEquals("Lucene.Net.Analysis.Util.RollingCharBuffer", rl.NewInstance<object>("Lucene.Net.Analysis.Util.RollingCharBuffer").ToString());
+            // theoretically classes should also be loadable:
+            //IOUtils.CloseWhileHandlingException(rl.OpenResource("java/lang/String.class")); // LUCENENET TODO: Not sure what the equivalent to this is (or if there is one).
+        }
 
-	public class TestFilesystemResourceLoader : LuceneTestCase
-	{
+        [Test]
+        public virtual void TestBaseDir()
+        {
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderBase");
+            try
+            {
+                TextWriter os = new System.IO.StreamWriter(new System.IO.FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), System.IO.FileMode.Create, System.IO.FileAccess.Write), Encoding.UTF8);
+                try
+                {
+                    os.Write("foobar\n");
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(os);
+                }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void assertNotFound(ResourceLoader rl) throws Exception
-	  private void assertNotFound(ResourceLoader rl)
-	  {
-		try
-		{
-		  IOUtils.closeWhileHandlingException(rl.openResource("/this-directory-really-really-really-should-not-exist/foo/bar.txt"));
-		  fail("The resource does not exist, should fail!");
-		}
-		catch (IOException)
-		{
-		  // pass
-		}
-		try
-		{
-		  rl.newInstance("org.apache.lucene.analysis.FooBarFilterFactory", typeof(TokenFilterFactory));
-		  fail("The class does not exist, should fail!");
-		}
-		catch (Exception)
-		{
-		  // pass
-		}
-	  }
+                IResourceLoader rl = new FilesystemResourceLoader(@base);
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
+                // Same with full path name:
+                string fullPath = (new FileInfo(System.IO.Path.Combine(@base.FullName, "template.txt"))).ToString();
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource(fullPath), Encoding.UTF8).First());
+                assertClasspathDelegation(rl);
+                assertNotFound(rl);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void assertClasspathDelegation(ResourceLoader rl) throws Exception
-	  private void assertClasspathDelegation(ResourceLoader rl)
-	  {
-		// try a stopwords file from classpath
-		CharArraySet set = WordlistLoader.getSnowballWordSet(new System.IO.StreamReader(rl.openResource("org/apache/lucene/analysis/snowball/english_stop.txt"), Encoding.UTF8), TEST_VERSION_CURRENT);
-		assertTrue(set.contains("you"));
-		// try to load a class; we use string comparison because classloader may be different...
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
-		assertEquals("org.apache.lucene.analysis.util.RollingCharBuffer", rl.newInstance("org.apache.lucene.analysis.util.RollingCharBuffer", typeof(object)).GetType().FullName);
-		// theoretically classes should also be loadable:
-		IOUtils.closeWhileHandlingException(rl.openResource("java/lang/String.class"));
-	  }
+                // now use RL without base dir:
+                rl = new FilesystemResourceLoader();
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource(new FileInfo(System.IO.Path.Combine(@base.FullName, "template.txt")).FullName), Encoding.UTF8).First());
+                assertClasspathDelegation(rl);
+                assertNotFound(rl);
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in @base.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                @base.Delete();
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBaseDir() throws Exception
-	  public virtual void testBaseDir()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.File super = createTempDir("fsResourceLoaderBase").getAbsoluteFile();
-		File @base = createTempDir("fsResourceLoaderBase").AbsoluteFile;
-		try
-		{
-		  @base.mkdirs();
-		  Writer os = new System.IO.StreamWriter(new System.IO.FileStream(@base, "template.txt", System.IO.FileMode.Create, System.IO.FileAccess.Write), Encoding.UTF8);
-		  try
-		  {
-			os.write("foobar\n");
-		  }
-		  finally
-		  {
-			IOUtils.closeWhileHandlingException(os);
-		  }
-
-		  ResourceLoader rl = new FilesystemResourceLoader(@base);
-		  assertEquals("foobar", WordlistLoader.getLines(rl.openResource("template.txt"), StandardCharsets.UTF_8).get(0));
-		  // Same with full path name:
-		  string fullPath = (new File(@base, "template.txt")).ToString();
-		  assertEquals("foobar", WordlistLoader.getLines(rl.openResource(fullPath), StandardCharsets.UTF_8).get(0));
-		  assertClasspathDelegation(rl);
-		  assertNotFound(rl);
-
-		  // now use RL without base dir:
-		  rl = new FilesystemResourceLoader();
-		  assertEquals("foobar", WordlistLoader.getLines(rl.openResource((new File(@base, "template.txt")).ToString()), StandardCharsets.UTF_8).get(0));
-		  assertClasspathDelegation(rl);
-		  assertNotFound(rl);
-		}
-		finally
-		{
-		  TestUtil.rm(@base);
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDelegation() throws Exception
-	  public virtual void testDelegation()
-	  {
-		ResourceLoader rl = new FilesystemResourceLoader(null, new StringMockResourceLoader("foobar\n"));
-		assertEquals("foobar", WordlistLoader.getLines(rl.openResource("template.txt"), StandardCharsets.UTF_8).get(0));
-	  }
-
-	}
-
+        [Test]
+        public virtual void TestDelegation()
+        {
+            IResourceLoader rl = new FilesystemResourceLoader(null, new StringMockResourceLoader("foobar\n"));
+            assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
+        }
+    }
 }

@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    bb = ByteBuffer.Wrap((byte[])(Array)b, offset, len);
+                    bb = ByteBuffer.Wrap(b, offset, len);
                 }
 
                 int readOffset = bb.Position;

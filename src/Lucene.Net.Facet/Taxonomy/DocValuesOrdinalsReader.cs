@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,29 +17,31 @@
      * limitations under the License.
      */
 
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocValues = Lucene.Net.Index.DocValues;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocValues = Lucene.Net.Index.DocValues;
     using IntsRef = Lucene.Net.Util.IntsRef;
 
     /// <summary>
-    /// Decodes ordinals previously indexed into a BinaryDocValues field </summary>
-
+    /// Decodes ordinals previously indexed into a <see cref="BinaryDocValues"/> field
+    /// </summary>
     public class DocValuesOrdinalsReader : OrdinalsReader
     {
         private readonly string field;
 
         /// <summary>
-        /// Default constructor. </summary>
+        /// Default constructor.
+        /// </summary>
         public DocValuesOrdinalsReader()
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME)
         {
         }
 
         /// <summary>
-        /// Create this, with the specified indexed field name. </summary>
+        /// Create this, with the specified indexed field name.
+        /// </summary>
         public DocValuesOrdinalsReader(string field)
         {
             this.field = field;
@@ -88,7 +89,8 @@
         }
 
         /// <summary>
-        /// Subclass & override if you change the encoding. </summary>
+        /// Subclass & override if you change the encoding.
+        /// </summary>
         protected virtual void Decode(BytesRef buf, IntsRef ordinals)
         {
 
@@ -126,5 +128,4 @@
             }
         }
     }
-
 }

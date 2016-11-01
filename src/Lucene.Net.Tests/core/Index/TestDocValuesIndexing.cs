@@ -45,6 +45,7 @@ namespace Lucene.Net.Index
     /// Tests DocValues integration into IndexWriter
     ///
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocValuesIndexing : LuceneTestCase
     {
@@ -57,7 +58,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddIndexes()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d1, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv", 1));
@@ -66,7 +67,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d2 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d2);
+            w = new RandomIndexWriter(Random(), d2, Similarity, TimeZone);
             doc = new Document();
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv", 2));
@@ -75,7 +76,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d3 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d3);
+            w = new RandomIndexWriter(Random(), d3, Similarity, TimeZone);
             w.AddIndexes(SlowCompositeReaderWrapper.Wrap(r1), SlowCompositeReaderWrapper.Wrap(r2));
             r1.Dispose();
             d1.Dispose();
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
         public virtual void TestMultiValuedDocValuesField()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             Field f = new NumericDocValuesField("field", 17);
             // Index doc values are single-valued so we should not
@@ -129,7 +130,7 @@ namespace Lucene.Net.Index
         public virtual void TestDifferentTypedDocValuesField()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             // Index doc values are single-valued so we should not
             // be able to add same field more than once:
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
         public virtual void TestDifferentTypedDocValuesField2()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             // Index doc values are single-valued so we should not
             // be able to add same field more than once:

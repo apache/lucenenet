@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Fst
                         int upto = 0;
                         while (true)
                         {
-                            IntsRefFSTEnum<object>.InputOutput<object> pair = fstEnum.Next();
+                            IntsRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Util.Fst
                         int upto = 0;
                         while (true)
                         {
-                            IntsRefFSTEnum<BytesRef>.InputOutput<BytesRef> pair = fstEnum.Next();
+                            IntsRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util.Fst
                         output = 1;
                         while (true)
                         {
-                            IntsRefFSTEnum<long?>.InputOutput<long?> pair = fstEnum.Next();
+                            IntsRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;

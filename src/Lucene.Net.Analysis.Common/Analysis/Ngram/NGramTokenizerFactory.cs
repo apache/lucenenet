@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="NGramTokenizer"/>.
     /// <pre class="prettyprint">
@@ -42,8 +41,8 @@ namespace Lucene.Net.Analysis.Ngram
         public NGramTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
-            minGramSize = getInt(args, "minGramSize", NGramTokenizer.DEFAULT_MIN_NGRAM_SIZE);
-            maxGramSize = getInt(args, "maxGramSize", NGramTokenizer.DEFAULT_MAX_NGRAM_SIZE);
+            minGramSize = GetInt(args, "minGramSize", NGramTokenizer.DEFAULT_MIN_NGRAM_SIZE);
+            maxGramSize = GetInt(args, "maxGramSize", NGramTokenizer.DEFAULT_MAX_NGRAM_SIZE);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -51,18 +50,21 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates the <seealso cref="TokenStream"/> of n-grams from the given <seealso cref="Reader"/> and <seealso cref="AttributeSource.AttributeFactory"/>. </summary>
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, Reader input)
+        /// Creates the <seealso cref="TokenStream"/> of n-grams from the given <seealso cref="TextReader"/> and <seealso cref="AttributeSource.AttributeFactory"/>. </summary>
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            if (luceneMatchVersion.OnOrAfter(Version.LUCENE_44))
+#pragma warning disable 612, 618
+            if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 return new NGramTokenizer(luceneMatchVersion, factory, input, minGramSize, maxGramSize);
             }
             else
             {
+#pragma warning disable 612, 618
                 return new Lucene43NGramTokenizer(factory, input, minGramSize, maxGramSize);
+#pragma warning restore 612, 618
             }
         }
     }
-
 }

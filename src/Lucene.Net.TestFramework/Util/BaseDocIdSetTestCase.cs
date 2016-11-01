@@ -77,8 +77,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=0.
         /// </summary>
-        [Test]
-        public void TestNoBit()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void TestNoBit()
         {
             BitArray bs = new BitArray(1);
             T copy = CopyOf(bs, 0);
@@ -88,8 +88,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=1.
         /// </summary>
-        [Test]
-        public void Test1Bit()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void Test1Bit()
         {
             BitArray bs = new BitArray(1);
             if (Random().NextBoolean())
@@ -103,8 +103,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=2.
         /// </summary>
-        [Test]
-        public void Test2Bits()
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        public virtual void Test2Bits()
         {
             BitArray bs = new BitArray(2);
             if (Random().NextBoolean())
@@ -122,9 +122,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <seealso cref="BitSet"/>.
         /// </summary>
-        [Test, Timeout(150000)]
-        [LongRunningTest]
-        public void TestAgainstBitSet()
+        // [Test, Timeout(150000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        //[LongRunningTest]
+        public virtual void TestAgainstBitSet()
         {
             int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
             // test various random sets with various load factors

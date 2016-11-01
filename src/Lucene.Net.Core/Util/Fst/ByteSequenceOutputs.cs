@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Fst
     public sealed class ByteSequenceOutputs : Outputs<BytesRef>
     {
         private static readonly BytesRef NO_OUTPUT = new BytesRef();
-        private static readonly ByteSequenceOutputs Singleton_Renamed = new ByteSequenceOutputs();
+        private static readonly ByteSequenceOutputs singleton = new ByteSequenceOutputs();
 
         private ByteSequenceOutputs()
         {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                return Singleton_Renamed;
+                return singleton;
             }
         }
 

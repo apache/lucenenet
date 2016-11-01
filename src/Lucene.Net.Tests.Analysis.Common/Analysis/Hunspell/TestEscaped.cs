@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,27 +19,22 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
-
-	public class TestEscaped : StemmerTestBase
-	{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("escaped.aff", "escaped.dic");
-	  }
-
-	  public virtual void testStemming()
-	  {
-		assertStemsTo("works", "work");
-		assertStemsTo("work", "work");
-		assertStemsTo("R2/D2", "R2/D2");
-		assertStemsTo("R2/D2s", "R2/D2");
-		assertStemsTo("N/A", "N/A");
-		assertStemsTo("N/As");
-	  }
-	}
-
+    public class TestEscaped : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("escaped.aff", "escaped.dic");
+        }
+        [Test]
+        public virtual void TestStemming()
+        {
+            AssertStemsTo("works", "work");
+            AssertStemsTo("work", "work");
+            AssertStemsTo("R2/D2", "R2/D2");
+            AssertStemsTo("R2/D2s", "R2/D2");
+            AssertStemsTo("N/A", "N/A");
+            AssertStemsTo("N/As");
+        }
+    }
 }

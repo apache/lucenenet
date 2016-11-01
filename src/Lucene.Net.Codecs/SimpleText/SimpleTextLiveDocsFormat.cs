@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using System.Diagnostics;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using Support;
 
 	using IndexFileNames = Index.IndexFileNames;
@@ -133,13 +134,13 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 output = dir.CreateOutput(fileName, context);
                 SimpleTextUtil.Write(output, SIZE);
-                SimpleTextUtil.Write(output, Convert.ToString(size), scratch);
+                SimpleTextUtil.Write(output, Convert.ToString(size, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 for (int i = set.NextSetBit(0); i >= 0; i = set.NextSetBit(i + 1))
                 {
                     SimpleTextUtil.Write(output, DOC);
-                    SimpleTextUtil.Write(output, Convert.ToString(i), scratch);
+                    SimpleTextUtil.Write(output, Convert.ToString(i, CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
                 }
 

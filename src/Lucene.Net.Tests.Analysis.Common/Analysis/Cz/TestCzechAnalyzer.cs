@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 
-namespace org.apache.lucene.analysis.cz
+namespace Lucene.Net.Analysis.Cz
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,72 +22,62 @@ namespace org.apache.lucene.analysis.cz
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+    /// <summary>
+    /// Test the CzechAnalyzer
+    /// 
+    /// Before Lucene 3.1, CzechAnalyzer was a StandardAnalyzer with a custom 
+    /// stopword list. As of 3.1 it also includes a stemmer.
+    /// 
+    /// </summary>
+    public class TestCzechAnalyzer : BaseTokenStreamTestCase
+    {
+        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
+        [Test]
+        [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
+        public virtual void TestStopWordLegacy()
+        {
+            AssertAnalyzesTo(new CzechAnalyzer(LuceneVersion.LUCENE_30), "Pokud mluvime o volnem", new string[] { "mluvime", "volnem" });
+        }
 
-	/// <summary>
-	/// Test the CzechAnalyzer
-	/// 
-	/// Before Lucene 3.1, CzechAnalyzer was a StandardAnalyzer with a custom 
-	/// stopword list. As of 3.1 it also includes a stemmer.
-	/// 
-	/// </summary>
-	public class TestCzechAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) Remove this test when support for 3.0 indexes is no longer needed.") public void testStopWordLegacy() throws Exception
-	  [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
-	  public virtual void testStopWordLegacy()
-	  {
-		assertAnalyzesTo(new CzechAnalyzer(Version.LUCENE_30), "Pokud mluvime o volnem", new string[] {"mluvime", "volnem"});
-	  }
+        [Test]
+        public virtual void TestStopWord()
+        {
+            AssertAnalyzesTo(new CzechAnalyzer(TEST_VERSION_CURRENT), "Pokud mluvime o volnem", new string[] { "mluvim", "voln" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStopWord() throws Exception
-	  public virtual void testStopWord()
-	  {
-		assertAnalyzesTo(new CzechAnalyzer(TEST_VERSION_CURRENT), "Pokud mluvime o volnem", new string[] {"mluvim", "voln"});
-	  }
+        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
+        [Test]
+        [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
+        public virtual void TestReusableTokenStreamLegacy()
+        {
+            Analyzer analyzer = new CzechAnalyzer(LuceneVersion.LUCENE_30);
+            AssertAnalyzesTo(analyzer, "Pokud mluvime o volnem", new string[] { "mluvime", "volnem" });
+            AssertAnalyzesTo(analyzer, "Česká Republika", new string[] { "česká", "republika" });
+        }
 
-	  /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) Remove this test when support for 3.0 indexes is no longer needed.") public void testReusableTokenStreamLegacy() throws Exception
-	  [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
-	  public virtual void testReusableTokenStreamLegacy()
-	  {
-		Analyzer analyzer = new CzechAnalyzer(Version.LUCENE_30);
-		assertAnalyzesTo(analyzer, "Pokud mluvime o volnem", new string[] {"mluvime", "volnem"});
-		assertAnalyzesTo(analyzer, "Česká Republika", new string[] {"česká", "republika"});
-	  }
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer analyzer = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(analyzer, "Pokud mluvime o volnem", new string[] { "mluvim", "voln" });
+            AssertAnalyzesTo(analyzer, "Česká Republika", new string[] { "česk", "republik" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-	  public virtual void testReusableTokenStream()
-	  {
-		Analyzer analyzer = new CzechAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(analyzer, "Pokud mluvime o volnem", new string[] {"mluvim", "voln"});
-		assertAnalyzesTo(analyzer, "Česká Republika", new string[] {"česk", "republik"});
-	  }
+        [Test]
+        public virtual void TestWithStemExclusionSet()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("hole");
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            AssertAnalyzesTo(cz, "hole desek", new string[] { "hole", "desk" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithStemExclusionSet() throws java.io.IOException
-	  public virtual void testWithStemExclusionSet()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("hole");
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
-		assertAnalyzesTo(cz, "hole desek", new string[] {"hole", "desk"});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new CzechAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new CzechAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

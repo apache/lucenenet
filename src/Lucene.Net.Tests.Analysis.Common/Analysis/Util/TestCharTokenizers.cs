@@ -4,13 +4,13 @@ using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
+namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,6 +27,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Testcase for <seealso cref="CharTokenizer"/> subclasses
     /// </summary>
@@ -56,7 +57,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
             // internal buffer size is 1024 make sure we have a surrogate pair right at the border
             builder.Insert(1023, "\ud801\udc1c");
             var tokenizer = new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader(builder.ToString()));
-            AssertTokenStreamContents(tokenizer, builder.ToString().ToLowerInvariant().Split(' '));
+            AssertTokenStreamContents(tokenizer, builder.ToString().ToLowerInvariant().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
         }
 
         /*
@@ -239,6 +240,50 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 }
             }
         }
-    }
 
+        /// <summary>
+        /// LUCENENET: Added this test as proof that making the IsTokenChar parameter a char
+        /// is not going to work 100% of the time because of surrogate pairs.
+        /// </summary>
+
+        [Test]
+        public virtual void TestSurrogates()
+        {
+            var analyzer = new AnalyzerAnonymousInnerClassHelper3();
+
+            AssertAnalyzesTo(analyzer, "bar 123" + (char)55404 + (char)56321 + "34 5te 987", new string[] { "123𫀁34", "5", "987" });
+            AssertAnalyzesTo(analyzer, "787 " + (char)55297 + (char)56388 + "6" + (char)55404 + (char)56321 + " art true 734", new string[] { "787", "𐑄6𫀁", "734" });
+        }
+
+        private sealed class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper3()
+            { }
+
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new NumberAndSurrogatePairTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+
+            private sealed class NumberAndSurrogatePairTokenizer : CharTokenizer
+            {
+                public NumberAndSurrogatePairTokenizer(LuceneVersion matchVersion, TextReader reader)
+                    : base(matchVersion, reader)
+                {
+                }
+
+                protected override bool IsTokenChar(int c)
+                {
+                    if (char.IsNumber((char)c))
+                    {
+                        return true;
+                    }
+
+                    string character = char.ConvertFromUtf32(c);
+                    return char.IsSurrogatePair(character, 0);
+                }
+            }
+        }
+    }
 }

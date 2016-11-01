@@ -10,7 +10,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
 
     using Document = Lucene.Net.Documents.Document;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -38,18 +38,18 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class TestConcurrentFacetedIndexing : FacetTestCase
     {
 
-        // A No-Op TaxonomyWriterCache which always discards all given categories, and
+        // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static TaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : TaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
         {
             public TaxonomyWriterCacheAnonymousInnerClassHelper()
             {
             }
 
 
-            public virtual void Close()
+            public virtual void Dispose()
             {
             }
             public virtual int Get(FacetLabel categoryPath)
@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 return true;
             }
-            public virtual bool Full
+            public virtual bool IsFull
             {
                 get
                 {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             return new FacetField(l1, l2, l3);
         }
 
-        internal static TaxonomyWriterCache NewTaxoWriterCache(int ndocs)
+        internal static ITaxonomyWriterCache NewTaxoWriterCache(int ndocs)
         {
             double d = Random().NextDouble();
             if (d < 0.7)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             var tr = new DirectoryTaxonomyReader(tw);
             // +1 for root category
-            if (values.Count + 1 != tr.Size)
+            if (values.Count + 1 != tr.Count)
             {
                 foreach (string value in values.Keys)
                 {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 Fail("mismatch number of categories");
             }
-            int[] parents = tr.ParallelTaxonomyArrays.Parents();
+            int[] parents = tr.ParallelTaxonomyArrays.Parents;
             foreach (string cat in values.Keys)
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
@@ -203,7 +203,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             FacetField ff = NewCategory();
                             doc.Add(ff);
 
-                            FacetLabel label = new FacetLabel(ff.dim, ff.path);
+                            FacetLabel label = new FacetLabel(ff.Dim, ff.Path);
                             // add all prefixes to values
                             int level = label.Length;
                             while (level > 0)

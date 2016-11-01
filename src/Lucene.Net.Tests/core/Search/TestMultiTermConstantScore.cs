@@ -50,8 +50,12 @@ namespace Lucene.Net.Search
             Assert.AreEqual(e, a, m);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
@@ -127,7 +131,6 @@ namespace Lucene.Net.Search
             return query;
         }
 
-        [Ignore]
         [Test]
         public virtual void TestBasics()
         {
@@ -548,5 +551,19 @@ namespace Lucene.Net.Search
             result = search.Search(Csrq("rand", maxRP, null, T, F), null, numDocs).ScoreDocs;
             AssertEquals("max,nul,T,T", 1, result.Length);
         }
+
+
+        #region SorterTestBase
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestPad()
+        {
+            base.TestPad();
+        }
+
+        #endregion
     }
 }

@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis
 
         protected internal abstract T NewPosition();
 
-        protected internal Util.RollingBuffer<LookaheadTokenFilter.Position> positions;
+        protected internal Lucene.Net.Util.RollingBuffer<LookaheadTokenFilter.Position> positions;
 
         private class RollingBufferAnonymousInnerClassHelper : Lucene.Net.Util.RollingBuffer<LookaheadTokenFilter.Position>
         {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis
                 OuterInstance = outerInstance;
             }
 
-            protected override LookaheadTokenFilter.Position NewInstance()
+            protected internal override LookaheadTokenFilter.Position NewInstance()
             {
                 return OuterInstance.NewPosition();
             }

@@ -52,20 +52,20 @@ namespace Lucene.Net.Search.Suggest.Tst
         internal string token;
         internal object val;
 
-        internal virtual long sizeInBytes()
+        internal virtual long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             if (loKid != null)
             {
-                mem += loKid.sizeInBytes();
+                mem += loKid.GetSizeInBytes();
             }
             if (eqKid != null)
             {
-                mem += eqKid.sizeInBytes();
+                mem += eqKid.GetSizeInBytes();
             }
             if (hiKid != null)
             {
-                mem += hiKid.sizeInBytes();
+                mem += hiKid.GetSizeInBytes();
             }
             if (token != null)
             {

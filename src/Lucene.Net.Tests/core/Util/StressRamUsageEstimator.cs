@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
+using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Globalization;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -50,8 +51,6 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestChainedEstimation()
         {
-            MemoryMXBean memoryMXBean = ManagementFactory.MemoryMXBean;
-
             Random rnd = Random();
             Entry first = new Entry();
             try
@@ -59,9 +58,9 @@ namespace Lucene.Net.Util
                 while (true)
                 {
                     // Check the current memory consumption and provide the estimate.
-                    long jvmUsed = memoryMXBean.HeapMemoryUsage.Used;
-                    long estimated = RamUsageEstimator.sizeOf(first);
-                    Console.WriteLine(string.format(Locale.ROOT, "%10d, %10d", jvmUsed, estimated));
+                    long jvmUsed = GC.GetTotalMemory(false);
+                    long estimated = RamUsageEstimator.SizeOf(first);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:0000000000}, {1:0000000000}", jvmUsed, estimated));
 
                     // Make a batch of objects.
                     for (int i = 0; i < 5000; i++)
@@ -82,52 +81,48 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestLargeSetOfByteArrays()
         {
-            MemoryMXBean memoryMXBean = ManagementFactory.MemoryMXBean;
-
             CauseGc();
-            long before = memoryMXBean.HeapMemoryUsage.Used;
+            long before = GC.GetTotalMemory(false);
             object[] all = new object[1000000];
             for (int i = 0; i < all.Length; i++)
             {
                 all[i] = new sbyte[Random().Next(3)];
             }
             CauseGc();
-            long after = memoryMXBean.HeapMemoryUsage.Used;
-            Console.WriteLine("mx:  " + RamUsageEstimator.humanReadableUnits(after - before));
-            Console.WriteLine("rue: " + RamUsageEstimator.humanReadableUnits(ShallowSizeOf(all)));
+            long after = GC.GetTotalMemory(false);
+            Console.WriteLine("mx:  " + RamUsageEstimator.HumanReadableUnits(after - before));
+            Console.WriteLine("rue: " + RamUsageEstimator.HumanReadableUnits(ShallowSizeOf(all)));
 
             Guard = all;
         }
 
         private long ShallowSizeOf(object[] all)
         {
-            long s = RamUsageEstimator.shallowSizeOf(all);
+            long s = RamUsageEstimator.ShallowSizeOf(all);
             foreach (object o in all)
             {
-                s += RamUsageEstimator.shallowSizeOf(o);
+                s += RamUsageEstimator.ShallowSizeOf(o);
             }
             return s;
         }
 
         private long ShallowSizeOf(object[][] all)
         {
-            long s = RamUsageEstimator.shallowSizeOf(all);
+            long s = RamUsageEstimator.ShallowSizeOf(all);
             foreach (object[] o in all)
             {
-                s += RamUsageEstimator.shallowSizeOf(o);
+                s += RamUsageEstimator.ShallowSizeOf(o);
                 foreach (object o2 in o)
                 {
-                    s += RamUsageEstimator.shallowSizeOf(o2);
+                    s += RamUsageEstimator.ShallowSizeOf(o2);
                 }
             }
             return s;
         }
 
-        [Test]
+        [Test, LongRunningTest, Timeout(300000)]
         public virtual void TestSimpleByteArrays()
         {
-            MemoryMXBean memoryMXBean = ManagementFactory.MemoryMXBean;
-
             object[][] all = new object[0][];
             try
             {
@@ -135,18 +130,18 @@ namespace Lucene.Net.Util
                 {
                     // Check the current memory consumption and provide the estimate.
                     CauseGc();
-                    MemoryUsage mu = memoryMXBean.HeapMemoryUsage;
+                    
                     long estimated = ShallowSizeOf(all);
                     if (estimated > 50 * RamUsageEstimator.ONE_MB)
                     {
                         break;
                     }
 
-                    Console.WriteLine(string.format(Locale.ROOT, "%10s\t%10s\t%10s", RamUsageEstimator.humanReadableUnits(mu.Used), RamUsageEstimator.humanReadableUnits(mu.Max), RamUsageEstimator.humanReadableUnits(estimated)));
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0}\t{1}\t{2}", RamUsageEstimator.HumanReadableUnits(GC.GetTotalMemory(false)).PadLeft(10, ' '), RamUsageEstimator.HumanReadableUnits(GC.MaxGeneration).PadLeft(10, ' '), RamUsageEstimator.HumanReadableUnits(estimated).PadLeft(10, ' ')));
 
                     // Make another batch of objects.
                     object[] seg = new object[10000];
-                    all = Arrays.copyOf(all, all.Length + 1);
+                    all = Arrays.CopyOf(all, all.Length + 1);
                     all[all.Length - 1] = seg;
                     for (int i = 0; i < seg.Length; i++)
                     {
@@ -166,23 +161,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private void CauseGc()
         {
-            IList<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.GarbageCollectorMXBeans;
-            IList<long?> ccounts = new List<long?>();
-            foreach (GarbageCollectorMXBean g in garbageCollectorMXBeans)
-            {
-                ccounts.Add(g.CollectionCount);
-            }
-            IList<long?> ccounts2 = new List<long?>();
-            do
-            {
-                System.gc();
-                ccounts.Clear();
-                foreach (GarbageCollectorMXBean g in garbageCollectorMXBeans)
-                {
-                    ccounts2.Add(g.CollectionCount);
-                }
-            } while (ccounts2.Equals(ccounts));
+            GC.Collect();
         }
     }
-
 }

@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.bg
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.Bg
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,51 +19,43 @@
 	 * limitations under the License.
 	 */
 
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter; // for javadoc
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="BulgarianStemmer"/> to stem Bulgarian
+    /// words.
+    /// <para>
+    /// To prevent terms from being stemmed use an instance of
+    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
+    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </para>
+    /// </summary>
+    public sealed class BulgarianStemFilter : TokenFilter
+    {
+        private readonly BulgarianStemmer stemmer = new BulgarianStemmer();
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAttr;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="BulgarianStemmer"/> to stem Bulgarian
-	/// words.
-	/// <para>
-	/// To prevent terms from being stemmed use an instance of
-	/// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-	/// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-	/// </para>
-	/// </summary>
-	public sealed class BulgarianStemFilter : TokenFilter
-	{
-	  private readonly BulgarianStemmer stemmer = new BulgarianStemmer();
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAttr = addAttribute(typeof(KeywordAttribute));
+        public BulgarianStemFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public BulgarianStemFilter(final org.apache.lucene.analysis.TokenStream input)
-	  public BulgarianStemFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAttr.Keyword)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newlen = stemmer.stem(termAtt.buffer(), termAtt.length());
-			int newlen = stemmer.stem(termAtt.buffer(), termAtt.length());
-			termAtt.Length = newlen;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAttr.Keyword)
+                {
+                    int newlen = stemmer.Stem(termAtt.Buffer(), termAtt.Length);
+                    termAtt.Length = newlen;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
+    <AssemblyName>Lucene.Net.QueryParser</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analyzing\AnalyzingQueryParser.cs" />
+    <Compile Include="Classic\CharStream.cs" />
+    <Compile Include="Classic\FastCharStream.cs" />
+    <Compile Include="Classic\MultiFieldQueryParser.cs" />
+    <Compile Include="Classic\ParseException.cs" />
+    <Compile Include="Classic\QueryParser.cs" />
+    <Compile Include="Classic\QueryParserBase.cs" />
+    <Compile Include="Classic\QueryParserConstants.cs" />
+    <Compile Include="Classic\QueryParserTokenManager.cs" />
+    <Compile Include="Classic\Token.cs" />
+    <Compile Include="Classic\TokenMgrError.cs" />
+    <Compile Include="ComplexPhrase\ComplexPhraseQueryParser.cs" />
+    <Compile Include="Ext\ExtendableQueryParser.cs" />
+    <Compile Include="Ext\ExtensionQuery.cs" />
+    <Compile Include="Ext\Extensions.cs" />
+    <Compile Include="Ext\ParserExtension.cs" />
+    <Compile Include="Flexible\Standard\CommonQueryParserConfiguration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simple\SimpleQueryParser.cs" />
+    <Compile Include="Surround\Parser\CharStream.cs" />
+    <Compile Include="Surround\Parser\FastCharStream.cs" />
+    <Compile Include="Surround\Parser\ParseException.cs" />
+    <Compile Include="Surround\Parser\QueryParser.cs" />
+    <Compile Include="Surround\Parser\QueryParserConstants.cs" />
+    <Compile Include="Surround\Parser\QueryParserTokenManager.cs" />
+    <Compile Include="Surround\Parser\Token.cs" />
+    <Compile Include="Surround\Parser\TokenMgrError.cs" />
+    <Compile Include="Surround\Query\AndQuery.cs" />
+    <Compile Include="Surround\Query\BasicQueryFactory.cs" />
+    <Compile Include="Surround\Query\ComposedQuery.cs" />
+    <Compile Include="Surround\Query\DistanceQuery.cs" />
+    <Compile Include="Surround\Query\DistanceRewriteQuery.cs" />
+    <Compile Include="Surround\Query\DistanceSubQuery.cs" />
+    <Compile Include="Surround\Query\FieldsQuery.cs" />
+    <Compile Include="Surround\Query\NotQuery.cs" />
+    <Compile Include="Surround\Query\OrQuery.cs" />
+    <Compile Include="Surround\Query\RewriteQuery.cs" />
+    <Compile Include="Surround\Query\SimpleTerm.cs" />
+    <Compile Include="Surround\Query\SimpleTermRewriteQuery.cs" />
+    <Compile Include="Surround\Query\SpanNearClauseFactory.cs" />
+    <Compile Include="Surround\Query\SrndBooleanQuery.cs" />
+    <Compile Include="Surround\Query\SrndPrefixQuery.cs" />
+    <Compile Include="Surround\Query\SrndQuery.cs" />
+    <Compile Include="Surround\Query\SrndTermQuery.cs" />
+    <Compile Include="Surround\Query\SrndTruncQuery.cs" />
+    <Compile Include="Surround\Query\TooManyBasicQueries.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

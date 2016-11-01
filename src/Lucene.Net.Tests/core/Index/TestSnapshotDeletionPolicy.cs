@@ -118,7 +118,6 @@ namespace Lucene.Net.Index
             this.Snapshots = new List<IndexCommit>();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestSnapshotDeletionPolicy_Mem()
         {
@@ -148,7 +147,7 @@ namespace Lucene.Net.Index
             dp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
             writer.Commit();
 
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(stopTime, writer);
+            ThreadClass t = new ThreadAnonymousInnerClassHelper(stopTime, writer, NewField);
 
             t.Start();
 
@@ -183,11 +182,18 @@ namespace Lucene.Net.Index
         {
             private long StopTime;
             private IndexWriter Writer;
+            private readonly Func<string, string, FieldType, Field> _newFieldFunc;
 
-            public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer)
+            /// <param name="newFieldFunc">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
+            /// is no longer static. 
+            /// </param>
+            public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
             {
                 this.StopTime = stopTime;
                 this.Writer = writer;
+                _newFieldFunc = newFieldFunc;
             }
 
             public override void Run()
@@ -197,7 +203,7 @@ namespace Lucene.Net.Index
                 customType.StoreTermVectors = true;
                 customType.StoreTermVectorPositions = true;
                 customType.StoreTermVectorOffsets = true;
-                doc.Add(NewField("content", "aaa", customType));
+                doc.Add(_newFieldFunc("content", "aaa", customType));
                 do
                 {
                     for (int i = 0; i < 27; i++)

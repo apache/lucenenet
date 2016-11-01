@@ -64,16 +64,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.outerInstance = outerInstance;
                 this.terms = terms;
                 lastDocRequested = -1;
+                Reset();
             }
 
             private DocsEnum docs;
             private int atDoc;
             private int lastDocRequested;
-
-            //JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
-            //	  {
-            //		  reset();
-            //	  }
 
             public virtual void Reset()
             {

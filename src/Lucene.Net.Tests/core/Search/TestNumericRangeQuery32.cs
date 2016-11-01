@@ -61,8 +61,12 @@ namespace Lucene.Net.Search
         private static IndexReader Reader = null;
         private static IndexSearcher Searcher = null;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             NoDocs = AtLeast(4096);
             Distance = (1 << 30) / NoDocs;
@@ -316,6 +320,7 @@ namespace Lucene.Net.Search
             TestRightOpenRange(4);
         }
 
+        [Test]
         public virtual void TestRightOpenRange_2bit()
         {
             TestRightOpenRange(2);

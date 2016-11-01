@@ -34,6 +34,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterForceMerge : LuceneTestCase
     {
+        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+
         [Test]
         public virtual void TestPartialMerge()
         {
@@ -81,7 +83,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestMaxNumSegments2()
+        public virtual void TestMaxNumSegments2([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
 
@@ -91,7 +93,11 @@ namespace Lucene.Net.Index
             LogDocMergePolicy ldmp = new LogDocMergePolicy();
             ldmp.MinMergeDocs = 1;
             ldmp.MergeFactor = 4;
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(ldmp).SetMergeScheduler(new ConcurrentMergeScheduler()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(2)
+                            .SetMergePolicy(ldmp)
+                            .SetMergeScheduler(scheduler);
+            IndexWriter writer = new IndexWriter(dir, config);
 
             for (int iter = 0; iter < 10; iter++)
             {
@@ -146,13 +152,13 @@ namespace Lucene.Net.Index
 
             for (int j = 0; j < 500; j++)
             {
-                TestIndexWriter.AddDocWithIndex(writer, j);
+                AddDocWithIndex(writer, j);
             }
             int termIndexInterval = writer.Config.TermIndexInterval;
             // force one extra segment w/ different doc store so
             // we see the doc stores get merged
             writer.Commit();
-            TestIndexWriter.AddDocWithIndex(writer, 500);
+            AddDocWithIndex(writer, 500);
             writer.Dispose();
 
             if (VERBOSE)
@@ -229,5 +235,27 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
+
+        /// <summary>
+        /// LUCENENET specific
+        ///
+        /// Copied from <seealso cref="TestIndexWriter.AddDoc(IndexWriter)"/>
+        /// to remove inter-class dependency on TestIndexWriter.
+        /// </summary>
+        private void AddDoc(IndexWriter writer)
+        {
+            Document doc = new Document();
+            doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+            writer.AddDocument(doc);
+        }
+
+        private void AddDocWithIndex(IndexWriter writer, int index)
+        {
+            Document doc = new Document();
+            doc.Add(NewField("content", "aaa " + index, StoredTextType));
+            doc.Add(NewField("id", "" + index, StoredTextType));
+            writer.AddDocument(doc);
+        }
+
     }
 }

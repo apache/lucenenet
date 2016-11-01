@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.payloads;
 
 namespace Lucene.Net.Analysis.Payloads
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +19,7 @@ namespace Lucene.Net.Analysis.Payloads
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="DelimitedPayloadTokenFilter"/>.
     /// <pre class="prettyprint">
@@ -31,7 +30,7 @@ namespace Lucene.Net.Analysis.Payloads
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class DelimitedPayloadTokenFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class DelimitedPayloadTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         public const string ENCODER_ATTR = "encoder";
         public const string DELIMITER_ATTR = "delimiter";
@@ -39,15 +38,15 @@ namespace Lucene.Net.Analysis.Payloads
         private readonly string encoderClass;
         private readonly char delimiter;
 
-        private PayloadEncoder encoder;
+        private IPayloadEncoder encoder;
 
         /// <summary>
         /// Creates a new DelimitedPayloadTokenFilterFactory </summary>
         public DelimitedPayloadTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            encoderClass = require(args, ENCODER_ATTR);
-            delimiter = getChar(args, DELIMITER_ATTR, '|');
+            encoderClass = Require(args, ENCODER_ATTR);
+            delimiter = GetChar(args, DELIMITER_ATTR, '|');
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -59,7 +58,7 @@ namespace Lucene.Net.Analysis.Payloads
             return new DelimitedPayloadTokenFilter(input, delimiter, encoder);
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             if (encoderClass.Equals("float"))
             {
@@ -75,7 +74,7 @@ namespace Lucene.Net.Analysis.Payloads
             }
             else
             {
-                encoder = loader.NewInstance(encoderClass, typeof(PayloadEncoder));
+                encoder = loader.NewInstance<IPayloadEncoder>(encoderClass /*, typeof(PayloadEncoder)*/);
             }
         }
     }

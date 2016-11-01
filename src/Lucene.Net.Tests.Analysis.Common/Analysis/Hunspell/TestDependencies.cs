@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,30 +19,25 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
-
-	public class TestDependencies : StemmerTestBase
-	{
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("dependencies.aff", "dependencies.dic");
-	  }
-
-	  public virtual void testDependencies()
-	  {
-		assertStemsTo("drink", "drink", "drink");
-		assertStemsTo("drinks", "drink", "drink");
-		assertStemsTo("drinkable", "drink");
-		assertStemsTo("drinkables", "drink");
-		assertStemsTo("undrinkable", "drink");
-		assertStemsTo("undrinkables", "drink");
-		assertStemsTo("undrink");
-		assertStemsTo("undrinks");
-	  }
-	}
+    public class TestDependencies_ : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("dependencies.aff", "dependencies.dic");
+        }
+        [Test]
+        public virtual void TestDependencies()
+        {
+            AssertStemsTo("drink", "drink", "drink");
+            AssertStemsTo("drinks", "drink", "drink");
+            AssertStemsTo("drinkable", "drink");
+            AssertStemsTo("drinkables", "drink");
+            AssertStemsTo("undrinkable", "drink");
+            AssertStemsTo("undrinkables", "drink");
+            AssertStemsTo("undrink");
+            AssertStemsTo("undrinks");
+        }
+    }
 
 }

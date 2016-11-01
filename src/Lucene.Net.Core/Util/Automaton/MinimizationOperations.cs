@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Automaton
             State[] states = a.NumberedStates;
             int sigmaLen = sigma.Length, statesLen = states.Length;
             List<State>[,] reverse = new List<State>[statesLen, sigmaLen];
-            HashSet<State>[] partition = new HashSet<State>[statesLen];
+            HashSet<State>[] partition = new ValueHashSet<State>[statesLen];
             List<State>[] splitblock = new List<State>[statesLen];
             int[] block = new int[statesLen];
             StateList[,] active = new StateList[statesLen, sigmaLen];
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util.Automaton
             for (int q = 0; q < statesLen; q++)
             {
                 splitblock[q] = new List<State>();
-                partition[q] = new HashSet<State>();
+                partition[q] = new ValueHashSet<State>();
                 for (int x = 0; x < sigmaLen; x++)
                 {
                     active[q, x] = new StateList();

@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Util;
+using System.IO;
+using NUnit.Framework;
+using Reader = System.IO.TextReader;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,98 +23,86 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the keyword marker filter factory is working.
+    /// </summary>
+    public class TestKeywordMarkerFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using StringMockResourceLoader = org.apache.lucene.analysis.util.StringMockResourceLoader;
+        [Test]
+        public virtual void TestKeywords()
+        {
+            Reader reader = new StringReader("dogs cats");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the keyword marker filter factory is working.
-	/// </summary>
-	public class TestKeywordMarkerFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestKeywords2()
+        {
+            Reader reader = new StringReader("dogs cats");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", "pattern", "cats|Dogs").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywords() throws Exception
-	  public virtual void testKeywords()
-	  {
-		Reader reader = new StringReader("dogs cats");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats"});
-	  }
+        [Test]
+        public virtual void TestKeywordsMixed()
+        {
+            Reader reader = new StringReader("dogs cats birds");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "pattern", "birds|Dogs").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats", "birds" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywords2() throws Exception
-	  public virtual void testKeywords2()
-	  {
-		Reader reader = new StringReader("dogs cats");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", "pattern", "cats|Dogs").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats"});
-	  }
+        [Test]
+        public virtual void TestKeywordsCaseInsensitive()
+        {
+            Reader reader = new StringReader("dogs cats Cats");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "ignoreCase", "true").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats", "Cats" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywordsMixed() throws Exception
-	  public virtual void testKeywordsMixed()
-	  {
-		Reader reader = new StringReader("dogs cats birds");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "pattern", "birds|Dogs").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats", "birds"});
-	  }
+        [Test]
+        public virtual void TestKeywordsCaseInsensitive2()
+        {
+            Reader reader = new StringReader("dogs cats Cats");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", "pattern", "Cats", "ignoreCase", "true").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats", "Cats" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywordsCaseInsensitive() throws Exception
-	  public virtual void testKeywordsCaseInsensitive()
-	  {
-		Reader reader = new StringReader("dogs cats Cats");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "ignoreCase", "true").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats", "Cats"});
-	  }
+        [Test]
+        public virtual void TestKeywordsCaseInsensitiveMixed()
+        {
+            Reader reader = new StringReader("dogs cats Cats Birds birds");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "pattern", "birds", "ignoreCase", "true").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dog", "cats", "Cats", "Birds", "birds" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywordsCaseInsensitive2() throws Exception
-	  public virtual void testKeywordsCaseInsensitive2()
-	  {
-		Reader reader = new StringReader("dogs cats Cats");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", "pattern", "Cats", "ignoreCase", "true").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats", "Cats"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywordsCaseInsensitiveMixed() throws Exception
-	  public virtual void testKeywordsCaseInsensitiveMixed()
-	  {
-		Reader reader = new StringReader("dogs cats Cats Birds birds");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("KeywordMarker", TEST_VERSION_CURRENT, new StringMockResourceLoader("cats"), "protected", "protwords.txt", "pattern", "birds", "ignoreCase", "true").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dog", "cats", "Cats", "Birds", "birds"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("KeywordMarker", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("KeywordMarker", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

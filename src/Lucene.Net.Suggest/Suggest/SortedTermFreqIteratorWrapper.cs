@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Search.Spell;
+﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,16 +23,17 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparator.
     /// @lucene.experimental
     /// </summary>
-    public class SortedTermFreqIteratorWrapper : TermFreqIterator
+    public class SortedTermFreqIteratorWrapper : ITermFreqIterator
     {
 
-        private readonly TermFreqIterator source;
-        private File tempInput;
-        private File tempSorted;
+        private readonly ITermFreqIterator source;
+        private FileInfo tempInput;
+        private FileInfo tempSorted;
         private readonly OfflineSorter.ByteSequencesReader reader;
         private readonly IComparer<BytesRef> comparator;
         private bool done = false;
@@ -40,14 +42,11 @@ namespace Lucene.Net.Search.Suggest
         private readonly BytesRef scratch = new BytesRef();
 
         /// <summary>
-        /// Creates a new sorted wrapper, using {@link
-        /// BytesRef#getUTF8SortedAsUnicodeComparator} for
-        /// sorting. 
+        /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
+        /// for sorting. 
         /// </summary>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: public SortedTermFreqIteratorWrapper(org.apache.lucene.search.spell.TermFreqIterator source) throws java.io.IOException
-        public SortedTermFreqIteratorWrapper(TermFreqIterator source)
-            : this(source, BytesRef.UTF8SortedAsUnicodeComparator)
+        public SortedTermFreqIteratorWrapper(ITermFreqIterator source)
+            : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
         {
         }
 
@@ -55,16 +54,15 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new sorted wrapper, sorting by BytesRef
         /// (ascending) then cost (ascending).
         /// </summary>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: public SortedTermFreqIteratorWrapper(org.apache.lucene.search.spell.TermFreqIterator source, java.util.Comparator<org.apache.lucene.util.BytesRef> comparator) throws java.io.IOException
-        public SortedTermFreqIteratorWrapper(TermFreqIterator source, IComparer<BytesRef> comparator)
+        public SortedTermFreqIteratorWrapper(ITermFreqIterator source, IComparer<BytesRef> comparator)
         {
             this.source = source;
             this.comparator = comparator;
             this.reader = Sort();
+            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {
@@ -72,7 +70,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             bool success = false;
             if (done)
@@ -88,7 +86,7 @@ namespace Lucene.Net.Search.Suggest
                     success = true;
                     return scratch;
                 }
-                close();
+                Dispose();
                 success = done = true;
                 return null;
             }
@@ -97,7 +95,7 @@ namespace Lucene.Net.Search.Suggest
                 if (!success)
                 {
                     done = true;
-                    close();
+                    Dispose();
                 }
             }
         }
@@ -110,14 +108,15 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending).
         /// </summary>
-        private readonly IComparer<BytesRef> tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper();
+        private readonly IComparer<BytesRef> tieBreakByCostComparator;
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparatorAnonymousInnerClassHelper(SortedTermFreqIteratorWrapper outerInstance)
             {
+                this.outerInstance = outerInstance;
             }
-
+            private readonly SortedTermFreqIteratorWrapper outerInstance;
 
             private readonly BytesRef leftScratch = new BytesRef();
             private readonly BytesRef rightScratch = new BytesRef();
@@ -126,36 +125,36 @@ namespace Lucene.Net.Search.Suggest
             public virtual int Compare(BytesRef left, BytesRef right)
             {
                 // Make shallow copy in case decode changes the BytesRef:
-                leftScratch.bytes = left.bytes;
-                leftScratch.offset = left.offset;
-                leftScratch.length = left.length;
-                rightScratch.bytes = right.bytes;
-                rightScratch.offset = right.offset;
-                rightScratch.length = right.length;
-                long leftCost = outerInstance.decode(leftScratch, input);
-                long rightCost = outerInstance.decode(rightScratch, input);
+                leftScratch.Bytes = left.Bytes;
+                leftScratch.Offset = left.Offset;
+                leftScratch.Length = left.Length;
+                rightScratch.Bytes = right.Bytes;
+                rightScratch.Offset = right.Offset;
+                rightScratch.Length = right.Length;
+                long leftCost = outerInstance.Decode(leftScratch, input);
+                long rightCost = outerInstance.Decode(rightScratch, input);
                 int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
                     return cmp;
                 }
-                return long.Compare(leftCost, rightCost);
+                return leftCost.CompareTo(rightCost);
             }
         }
 
         private OfflineSorter.ByteSequencesReader Sort()
         {
             string prefix = this.GetType().Name;
-            File directory = OfflineSorter.DefaultTempDir();
-            tempInput = File.createTempFile(prefix, ".input", directory);
-            tempSorted = File.createTempFile(prefix, ".sorted", directory);
+            DirectoryInfo directory = OfflineSorter.DefaultTempDir();
+            tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
+            tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
 
             var writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             bool success = false;
             try
             {
                 BytesRef spare;
-                sbyte[] buffer = new sbyte[0];
+                byte[] buffer = new byte[0];
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
 
                 while ((spare = source.Next()) != null)
@@ -183,29 +182,30 @@ namespace Lucene.Net.Search.Suggest
                     }
                     finally
                     {
-                        Close();
+                        Dispose();
                     }
                 }
             }
         }
 
-        private void Close()
+        private void Dispose()
         {
             IOUtils.Close(reader);
             if (tempInput != null)
             {
-                tempInput.delete();
+                tempInput.Delete();
             }
             if (tempSorted != null)
             {
-                tempSorted.delete();
+                tempSorted.Delete();
             }
         }
 
         /// <summary>
         /// encodes an entry (bytes+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, sbyte[] buffer, BytesRef spare, long weight)
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, 
+            ByteArrayDataOutput output, byte[] buffer, BytesRef spare, long weight)
         {
             if (spare.Length + 8 >= buffer.Length)
             {

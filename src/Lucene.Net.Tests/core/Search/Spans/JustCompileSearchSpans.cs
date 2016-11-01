@@ -157,12 +157,12 @@ namespace Lucene.Net.Search.Spans
 
         internal sealed class JustCompileSpanScorer : SpanScorer
         {
-            protected internal JustCompileSpanScorer(Spans spans, Weight weight, Similarity.SimScorer docScorer)
+            internal JustCompileSpanScorer(Spans spans, Weight weight, Similarity.SimScorer docScorer)
                 : base(spans, weight, docScorer)
             {
             }
 
-            protected override bool SetFreqCurrentDoc()
+            protected internal override bool SetFreqCurrentDoc()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

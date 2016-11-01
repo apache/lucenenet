@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using System;
+using System.Text;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,30 +20,111 @@
 	 * limitations under the License.
 	 */
 
+    // LUCENENET NOTE: This class was refactored from its Java counterpart.
 
-	// many hunspell dictionaries use this encoding, yet java does not have it?!?!
-	internal sealed class ISO8859_14Decoder : CharsetDecoder
-	{
+    // many hunspell dictionaries use this encoding, yet java/.NET does not have it?!?!
+    internal sealed class ISO8859_14Encoding : Encoding
+    {
+        private static readonly Decoder decoder = new ISO8859_14Decoder();
+        public override Decoder GetDecoder()
+        {
+            return new ISO8859_14Decoder();
+        }
 
-	  internal static readonly char[] TABLE = new char[] {0x00A0, 0x1E02, 0x1E03, 0x00A3, 0x010A, 0x010B, 0x1E0A, 0x00A7, 0x1E80, 0x00A9, 0x1E82, 0x1E0B, 0x1EF2, 0x00AD, 0x00AE, 0x0178, 0x1E1E, 0x1E1F, 0x0120, 0x0121, 0x1E40, 0x1E41, 0x00B6, 0x1E56, 0x1E81, 0x1E57, 0x1E83, 0x1E60, 0x1EF3, 0x1E84, 0x1E85, 0x1E61, 0x00C0, 0x00C1, 0x00C2, 0x00C3, 0x00C4, 0x00C5, 0x00C6, 0x00C7, 0x00C8, 0x00C9, 0x00CA, 0x00CB, 0x00CC, 0x00CD, 0x00CE, 0x00CF, 0x0174, 0x00D1, 0x00D2, 0x00D3, 0x00D4, 0x00D5, 0x00D6, 0x1E6A, 0x00D8, 0x00D9, 0x00DA, 0x00DB, 0x00DC, 0x00DD, 0x0176, 0x00DF, 0x00E0, 0x00E1, 0x00E2, 0x00E3, 0x00E4, 0x00E5, 0x00E6, 0x00E7, 0x00E8, 0x00E9, 0x00EA, 0x00EB, 0x00EC, 0x00ED, 0x00EE, 0x00EF, 0x0175, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x1E6B, 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x0177, 0x00FF};
+        public override string EncodingName
+        {
+            get
+            {
+                return "iso-8859-14";
+            }
+        }
 
-	  internal ISO8859_14Decoder() : base(StandardCharsets.ISO_88591, 1f, 1f); / / fake with similar properties
-	  {
-	  }
+        public override int CodePage
+        {
+            get
+            {
+                return 28604;
+            }
+        }
 
-	  protected internal override CoderResult decodeLoop(ByteBuffer @in, CharBuffer @out)
-	  {
-		while (@in.hasRemaining() && @out.hasRemaining())
-		{
-		  char ch = (char)(@in.get() & 0xff);
-		  if (ch >= 0xA0)
-		  {
-			ch = TABLE[ch - 0xA0];
-		  }
-		  @out.put(ch);
-		}
-		return @in.hasRemaining() ? CoderResult.OVERFLOW : CoderResult.UNDERFLOW;
-	  }
-	}
+        public override int GetCharCount(byte[] bytes, int index, int count)
+        {
+            return decoder.GetCharCount(bytes, index, count);
+        }
 
+        public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
+        {
+            return decoder.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
+        }
+
+        public override int GetMaxCharCount(int byteCount)
+        {
+            return byteCount;
+        }
+
+
+        #region Encoding Not Implemented
+        public override int GetByteCount(char[] chars, int index, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetMaxByteCount(int charCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    internal sealed class ISO8859_14Decoder : Decoder
+    {
+        internal static readonly char[] TABLE = new char[]
+        {
+            (char)0x00A0, (char)0x1E02, (char)0x1E03, (char)0x00A3, (char)0x010A, (char)0x010B, (char)0x1E0A, (char)0x00A7,
+            (char)0x1E80, (char)0x00A9, (char)0x1E82, (char)0x1E0B, (char)0x1EF2, (char)0x00AD, (char)0x00AE, (char)0x0178,
+            (char)0x1E1E, (char)0x1E1F, (char)0x0120, (char)0x0121, (char)0x1E40, (char)0x1E41, (char)0x00B6, (char)0x1E56,
+            (char)0x1E81, (char)0x1E57, (char)0x1E83, (char)0x1E60, (char)0x1EF3, (char)0x1E84, (char)0x1E85, (char)0x1E61,
+            (char)0x00C0, (char)0x00C1, (char)0x00C2, (char)0x00C3, (char)0x00C4, (char)0x00C5, (char)0x00C6, (char)0x00C7,
+            (char)0x00C8, (char)0x00C9, (char)0x00CA, (char)0x00CB, (char)0x00CC, (char)0x00CD, (char)0x00CE, (char)0x00CF,
+            (char)0x0174, (char)0x00D1, (char)0x00D2, (char)0x00D3, (char)0x00D4, (char)0x00D5, (char)0x00D6, (char)0x1E6A,
+            (char)0x00D8, (char)0x00D9, (char)0x00DA, (char)0x00DB, (char)0x00DC, (char)0x00DD, (char)0x0176, (char)0x00DF,
+            (char)0x00E0, (char)0x00E1, (char)0x00E2, (char)0x00E3, (char)0x00E4, (char)0x00E5, (char)0x00E6, (char)0x00E7,
+            (char)0x00E8, (char)0x00E9, (char)0x00EA, (char)0x00EB, (char)0x00EC, (char)0x00ED, (char)0x00EE, (char)0x00EF,
+            (char)0x0175, (char)0x00F1, (char)0x00F2, (char)0x00F3, (char)0x00F4, (char)0x00F5, (char)0x00F6, (char)0x1E6B,
+            (char)0x00F8, (char)0x00F9, (char)0x00FA, (char)0x00FB, (char)0x00FC, (char)0x00FD, (char)0x0177, (char)0x00FF
+        };
+
+        public override int GetCharCount(byte[] bytes, int index, int count)
+        {
+            return count;
+        }
+
+        public override int GetChars(byte[] bytesIn, int byteIndex, int byteCount, char[] charsOut, int charIndex)
+        {
+            int writeCount = 0;
+            int charPointer = charIndex;
+
+            for (int i = byteIndex; i < (byteIndex + byteCount); i++)
+            {
+                // Decode the value
+                char ch = (char)(bytesIn[i] & 0xff);
+                if (ch >= 0xA0)
+                {
+                    ch = TABLE[ch - 0xA0];
+                }
+                // write the value to the correct buffer slot
+                charsOut[charPointer] = ch;
+                writeCount++;
+                charPointer++;
+            }
+
+            return writeCount;
+        }
+    }
 }

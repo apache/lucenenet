@@ -57,6 +57,10 @@ namespace Lucene.Net.Search
         protected internal static Analyzer Analyzer;
         protected internal static string Stopword; // we always pick a character as a stopword
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because ClassEnvRule is no longer static.
+        /// </summary>
         [SetUp]
         public void BeforeClass()
         {
@@ -65,7 +69,7 @@ namespace Lucene.Net.Search
             Stopword = "" + RandomChar();
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(Stopword));
             Analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
-            RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer);
+            RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             Field field = new TextField("field", "", Field.Store.NO);

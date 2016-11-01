@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.bg
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Bg
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,249 +23,235 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Bulgarian Stemmer
+    /// </summary>
+    public class TestBulgarianStemmer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// Test showing how masculine noun forms conflate. An example noun for each
+        /// common (and some rare) plural pattern is listed.
+        /// </summary>
+        [Test]
+        public virtual void TestMasculineNouns()
+        {
+            BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+            // -и pattern
+            AssertAnalyzesTo(a, "град", new string[] { "град" });
+            AssertAnalyzesTo(a, "града", new string[] { "град" });
+            AssertAnalyzesTo(a, "градът", new string[] { "град" });
+            AssertAnalyzesTo(a, "градове", new string[] { "град" });
+            AssertAnalyzesTo(a, "градовете", new string[] { "град" });
 
-	/// <summary>
-	/// Test the Bulgarian Stemmer
-	/// </summary>
-	public class TestBulgarianStemmer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// Test showing how masculine noun forms conflate. An example noun for each
-	  /// common (and some rare) plural pattern is listed.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMasculineNouns() throws java.io.IOException
-	  public virtual void testMasculineNouns()
-	  {
-		BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            // -ове pattern
+            AssertAnalyzesTo(a, "народ", new string[] { "народ" });
+            AssertAnalyzesTo(a, "народа", new string[] { "народ" });
+            AssertAnalyzesTo(a, "народът", new string[] { "народ" });
+            AssertAnalyzesTo(a, "народи", new string[] { "народ" });
+            AssertAnalyzesTo(a, "народите", new string[] { "народ" });
+            AssertAnalyzesTo(a, "народе", new string[] { "народ" });
 
-		// -и pattern
-		assertAnalyzesTo(a, "град", new string[] {"град"});
-		assertAnalyzesTo(a, "града", new string[] {"град"});
-		assertAnalyzesTo(a, "градът", new string[] {"град"});
-		assertAnalyzesTo(a, "градове", new string[] {"град"});
-		assertAnalyzesTo(a, "градовете", new string[] {"град"});
+            // -ища pattern
+            AssertAnalyzesTo(a, "път", new string[] { "път" });
+            AssertAnalyzesTo(a, "пътя", new string[] { "път" });
+            AssertAnalyzesTo(a, "пътят", new string[] { "път" });
+            AssertAnalyzesTo(a, "пътища", new string[] { "път" });
+            AssertAnalyzesTo(a, "пътищата", new string[] { "път" });
 
-		// -ове pattern
-		assertAnalyzesTo(a, "народ", new string[] {"народ"});
-		assertAnalyzesTo(a, "народа", new string[] {"народ"});
-		assertAnalyzesTo(a, "народът", new string[] {"народ"});
-		assertAnalyzesTo(a, "народи", new string[] {"народ"});
-		assertAnalyzesTo(a, "народите", new string[] {"народ"});
-		assertAnalyzesTo(a, "народе", new string[] {"народ"});
+            // -чета pattern
+            AssertAnalyzesTo(a, "градец", new string[] { "градец" });
+            AssertAnalyzesTo(a, "градеца", new string[] { "градец" });
+            AssertAnalyzesTo(a, "градецът", new string[] { "градец" });
+            /* note the below forms conflate with each other, but not the rest */
+            AssertAnalyzesTo(a, "градовце", new string[] { "градовц" });
+            AssertAnalyzesTo(a, "градовцете", new string[] { "градовц" });
 
-		// -ища pattern
-		assertAnalyzesTo(a, "път", new string[] {"път"});
-		assertAnalyzesTo(a, "пътя", new string[] {"път"});
-		assertAnalyzesTo(a, "пътят", new string[] {"път"});
-		assertAnalyzesTo(a, "пътища", new string[] {"път"});
-		assertAnalyzesTo(a, "пътищата", new string[] {"път"});
+            // -овци pattern
+            AssertAnalyzesTo(a, "дядо", new string[] { "дяд" });
+            AssertAnalyzesTo(a, "дядото", new string[] { "дяд" });
+            AssertAnalyzesTo(a, "дядовци", new string[] { "дяд" });
+            AssertAnalyzesTo(a, "дядовците", new string[] { "дяд" });
 
-		// -чета pattern
-		assertAnalyzesTo(a, "градец", new string[] {"градец"});
-		assertAnalyzesTo(a, "градеца", new string[] {"градец"});
-		assertAnalyzesTo(a, "градецът", new string[] {"градец"});
-		/* note the below forms conflate with each other, but not the rest */
-		assertAnalyzesTo(a, "градовце", new string[] {"градовц"});
-		assertAnalyzesTo(a, "градовцете", new string[] {"градовц"});
+            // -е pattern
+            AssertAnalyzesTo(a, "мъж", new string[] { "мъж" });
+            AssertAnalyzesTo(a, "мъжа", new string[] { "мъж" });
+            AssertAnalyzesTo(a, "мъже", new string[] { "мъж" });
+            AssertAnalyzesTo(a, "мъжете", new string[] { "мъж" });
+            AssertAnalyzesTo(a, "мъжо", new string[] { "мъж" });
+            /* word is too short, will not remove -ът */
+            AssertAnalyzesTo(a, "мъжът", new string[] { "мъжът" });
 
-		// -овци pattern
-		assertAnalyzesTo(a, "дядо", new string[] {"дяд"});
-		assertAnalyzesTo(a, "дядото", new string[] {"дяд"});
-		assertAnalyzesTo(a, "дядовци", new string[] {"дяд"});
-		assertAnalyzesTo(a, "дядовците", new string[] {"дяд"});
+            // -а pattern
+            AssertAnalyzesTo(a, "крак", new string[] { "крак" });
+            AssertAnalyzesTo(a, "крака", new string[] { "крак" });
+            AssertAnalyzesTo(a, "кракът", new string[] { "крак" });
+            AssertAnalyzesTo(a, "краката", new string[] { "крак" });
 
-		// -е pattern
-		assertAnalyzesTo(a, "мъж", new string[] {"мъж"});
-		assertAnalyzesTo(a, "мъжа", new string[] {"мъж"});
-		assertAnalyzesTo(a, "мъже", new string[] {"мъж"});
-		assertAnalyzesTo(a, "мъжете", new string[] {"мъж"});
-		assertAnalyzesTo(a, "мъжо", new string[] {"мъж"});
-		/* word is too short, will not remove -ът */
-		assertAnalyzesTo(a, "мъжът", new string[] {"мъжът"});
+            // брат
+            AssertAnalyzesTo(a, "брат", new string[] { "брат" });
+            AssertAnalyzesTo(a, "брата", new string[] { "брат" });
+            AssertAnalyzesTo(a, "братът", new string[] { "брат" });
+            AssertAnalyzesTo(a, "братя", new string[] { "брат" });
+            AssertAnalyzesTo(a, "братята", new string[] { "брат" });
+            AssertAnalyzesTo(a, "брате", new string[] { "брат" });
+        }
 
-		// -а pattern
-		assertAnalyzesTo(a, "крак", new string[] {"крак"});
-		assertAnalyzesTo(a, "крака", new string[] {"крак"});
-		assertAnalyzesTo(a, "кракът", new string[] {"крак"});
-		assertAnalyzesTo(a, "краката", new string[] {"крак"});
+        /// <summary>
+        /// Test showing how feminine noun forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestFeminineNouns()
+        {
+            BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
 
-		// брат
-		assertAnalyzesTo(a, "брат", new string[] {"брат"});
-		assertAnalyzesTo(a, "брата", new string[] {"брат"});
-		assertAnalyzesTo(a, "братът", new string[] {"брат"});
-		assertAnalyzesTo(a, "братя", new string[] {"брат"});
-		assertAnalyzesTo(a, "братята", new string[] {"брат"});
-		assertAnalyzesTo(a, "брате", new string[] {"брат"});
-	  }
+            AssertAnalyzesTo(a, "вест", new string[] { "вест" });
+            AssertAnalyzesTo(a, "вестта", new string[] { "вест" });
+            AssertAnalyzesTo(a, "вести", new string[] { "вест" });
+            AssertAnalyzesTo(a, "вестите", new string[] { "вест" });
+        }
 
-	  /// <summary>
-	  /// Test showing how feminine noun forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFeminineNouns() throws java.io.IOException
-	  public virtual void testFeminineNouns()
-	  {
-		BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+        /// <summary>
+        /// Test showing how neuter noun forms conflate an example noun for each common
+        /// plural pattern is listed
+        /// </summary>
+        [Test]
+        public virtual void TestNeuterNouns()
+        {
+            BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
 
-		assertAnalyzesTo(a, "вест", new string[] {"вест"});
-		assertAnalyzesTo(a, "вестта", new string[] {"вест"});
-		assertAnalyzesTo(a, "вести", new string[] {"вест"});
-		assertAnalyzesTo(a, "вестите", new string[] {"вест"});
-	  }
+            // -а pattern
+            AssertAnalyzesTo(a, "дърво", new string[] { "дърв" });
+            AssertAnalyzesTo(a, "дървото", new string[] { "дърв" });
+            AssertAnalyzesTo(a, "дърва", new string[] { "дърв" });
+            AssertAnalyzesTo(a, "дървета", new string[] { "дърв" });
+            AssertAnalyzesTo(a, "дървата", new string[] { "дърв" });
+            AssertAnalyzesTo(a, "дърветата", new string[] { "дърв" });
 
-	  /// <summary>
-	  /// Test showing how neuter noun forms conflate an example noun for each common
-	  /// plural pattern is listed
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNeuterNouns() throws java.io.IOException
-	  public virtual void testNeuterNouns()
-	  {
-		BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            // -та pattern
+            AssertAnalyzesTo(a, "море", new string[] { "мор" });
+            AssertAnalyzesTo(a, "морето", new string[] { "мор" });
+            AssertAnalyzesTo(a, "морета", new string[] { "мор" });
+            AssertAnalyzesTo(a, "моретата", new string[] { "мор" });
 
-		// -а pattern
-		assertAnalyzesTo(a, "дърво", new string[] {"дърв"});
-		assertAnalyzesTo(a, "дървото", new string[] {"дърв"});
-		assertAnalyzesTo(a, "дърва", new string[] {"дърв"});
-		assertAnalyzesTo(a, "дървета", new string[] {"дърв"});
-		assertAnalyzesTo(a, "дървата", new string[] {"дърв"});
-		assertAnalyzesTo(a, "дърветата", new string[] {"дърв"});
+            // -я pattern
+            AssertAnalyzesTo(a, "изключение", new string[] { "изключени" });
+            AssertAnalyzesTo(a, "изключението", new string[] { "изключени" });
+            AssertAnalyzesTo(a, "изключенията", new string[] { "изключени" });
+            /* note the below form in this example does not conflate with the rest */
+            AssertAnalyzesTo(a, "изключения", new string[] { "изключн" });
+        }
 
-		// -та pattern
-		assertAnalyzesTo(a, "море", new string[] {"мор"});
-		assertAnalyzesTo(a, "морето", new string[] {"мор"});
-		assertAnalyzesTo(a, "морета", new string[] {"мор"});
-		assertAnalyzesTo(a, "моретата", new string[] {"мор"});
+        /// <summary>
+        /// Test showing how adjectival forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestAdjectives()
+        {
+            BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "красив", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красивия", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красивият", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красива", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красивата", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красиво", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красивото", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красиви", new string[] { "красив" });
+            AssertAnalyzesTo(a, "красивите", new string[] { "красив" });
+        }
 
-		// -я pattern
-		assertAnalyzesTo(a, "изключение", new string[] {"изключени"});
-		assertAnalyzesTo(a, "изключението", new string[] {"изключени"});
-		assertAnalyzesTo(a, "изключенията", new string[] {"изключени"});
-		/* note the below form in this example does not conflate with the rest */
-		assertAnalyzesTo(a, "изключения", new string[] {"изключн"});
-	  }
+        /// <summary>
+        /// Test some exceptional rules, implemented as rewrites.
+        /// </summary>
+        [Test]
+        public virtual void TestExceptions()
+        {
+            BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
 
-	  /// <summary>
-	  /// Test showing how adjectival forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAdjectives() throws java.io.IOException
-	  public virtual void testAdjectives()
-	  {
-		BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "красив", new string[] {"красив"});
-		assertAnalyzesTo(a, "красивия", new string[] {"красив"});
-		assertAnalyzesTo(a, "красивият", new string[] {"красив"});
-		assertAnalyzesTo(a, "красива", new string[] {"красив"});
-		assertAnalyzesTo(a, "красивата", new string[] {"красив"});
-		assertAnalyzesTo(a, "красиво", new string[] {"красив"});
-		assertAnalyzesTo(a, "красивото", new string[] {"красив"});
-		assertAnalyzesTo(a, "красиви", new string[] {"красив"});
-		assertAnalyzesTo(a, "красивите", new string[] {"красив"});
-	  }
+            // ци -> к
+            AssertAnalyzesTo(a, "собственик", new string[] { "собственик" });
+            AssertAnalyzesTo(a, "собственика", new string[] { "собственик" });
+            AssertAnalyzesTo(a, "собственикът", new string[] { "собственик" });
+            AssertAnalyzesTo(a, "собственици", new string[] { "собственик" });
+            AssertAnalyzesTo(a, "собствениците", new string[] { "собственик" });
 
-	  /// <summary>
-	  /// Test some exceptional rules, implemented as rewrites.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExceptions() throws java.io.IOException
-	  public virtual void testExceptions()
-	  {
-		BulgarianAnalyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            // зи -> г
+            AssertAnalyzesTo(a, "подлог", new string[] { "подлог" });
+            AssertAnalyzesTo(a, "подлога", new string[] { "подлог" });
+            AssertAnalyzesTo(a, "подлогът", new string[] { "подлог" });
+            AssertAnalyzesTo(a, "подлози", new string[] { "подлог" });
+            AssertAnalyzesTo(a, "подлозите", new string[] { "подлог" });
 
-		// ци -> к
-		assertAnalyzesTo(a, "собственик", new string[] {"собственик"});
-		assertAnalyzesTo(a, "собственика", new string[] {"собственик"});
-		assertAnalyzesTo(a, "собственикът", new string[] {"собственик"});
-		assertAnalyzesTo(a, "собственици", new string[] {"собственик"});
-		assertAnalyzesTo(a, "собствениците", new string[] {"собственик"});
+            // си -> х
+            AssertAnalyzesTo(a, "кожух", new string[] { "кожух" });
+            AssertAnalyzesTo(a, "кожуха", new string[] { "кожух" });
+            AssertAnalyzesTo(a, "кожухът", new string[] { "кожух" });
+            AssertAnalyzesTo(a, "кожуси", new string[] { "кожух" });
+            AssertAnalyzesTo(a, "кожусите", new string[] { "кожух" });
 
-		// зи -> г
-		assertAnalyzesTo(a, "подлог", new string[] {"подлог"});
-		assertAnalyzesTo(a, "подлога", new string[] {"подлог"});
-		assertAnalyzesTo(a, "подлогът", new string[] {"подлог"});
-		assertAnalyzesTo(a, "подлози", new string[] {"подлог"});
-		assertAnalyzesTo(a, "подлозите", new string[] {"подлог"});
+            // ъ deletion
+            AssertAnalyzesTo(a, "център", new string[] { "центр" });
+            AssertAnalyzesTo(a, "центъра", new string[] { "центр" });
+            AssertAnalyzesTo(a, "центърът", new string[] { "центр" });
+            AssertAnalyzesTo(a, "центрове", new string[] { "центр" });
+            AssertAnalyzesTo(a, "центровете", new string[] { "центр" });
 
-		// си -> х
-		assertAnalyzesTo(a, "кожух", new string[] {"кожух"});
-		assertAnalyzesTo(a, "кожуха", new string[] {"кожух"});
-		assertAnalyzesTo(a, "кожухът", new string[] {"кожух"});
-		assertAnalyzesTo(a, "кожуси", new string[] {"кожух"});
-		assertAnalyzesTo(a, "кожусите", new string[] {"кожух"});
+            // е*и -> я*
+            AssertAnalyzesTo(a, "промяна", new string[] { "промян" });
+            AssertAnalyzesTo(a, "промяната", new string[] { "промян" });
+            AssertAnalyzesTo(a, "промени", new string[] { "промян" });
+            AssertAnalyzesTo(a, "промените", new string[] { "промян" });
 
-		// ъ deletion
-		assertAnalyzesTo(a, "център", new string[] {"центр"});
-		assertAnalyzesTo(a, "центъра", new string[] {"центр"});
-		assertAnalyzesTo(a, "центърът", new string[] {"центр"});
-		assertAnalyzesTo(a, "центрове", new string[] {"центр"});
-		assertAnalyzesTo(a, "центровете", new string[] {"центр"});
+            // ен -> н
+            AssertAnalyzesTo(a, "песен", new string[] { "песн" });
+            AssertAnalyzesTo(a, "песента", new string[] { "песн" });
+            AssertAnalyzesTo(a, "песни", new string[] { "песн" });
+            AssertAnalyzesTo(a, "песните", new string[] { "песн" });
 
-		// е*и -> я*
-		assertAnalyzesTo(a, "промяна", new string[] {"промян"});
-		assertAnalyzesTo(a, "промяната", new string[] {"промян"});
-		assertAnalyzesTo(a, "промени", new string[] {"промян"});
-		assertAnalyzesTo(a, "промените", new string[] {"промян"});
+            // -еве -> й
+            // note: this is the only word i think this rule works for.
+            // most -еве pluralized nouns are monosyllabic,
+            // and the stemmer requires length > 6...
+            AssertAnalyzesTo(a, "строй", new string[] { "строй" });
+            AssertAnalyzesTo(a, "строеве", new string[] { "строй" });
+            AssertAnalyzesTo(a, "строевете", new string[] { "строй" });
+            /* note the below forms conflate with each other, but not the rest */
+            AssertAnalyzesTo(a, "строя", new string[] { "стр" });
+            AssertAnalyzesTo(a, "строят", new string[] { "стр" });
+        }
 
-		// ен -> н
-		assertAnalyzesTo(a, "песен", new string[] {"песн"});
-		assertAnalyzesTo(a, "песента", new string[] {"песн"});
-		assertAnalyzesTo(a, "песни", new string[] {"песн"});
-		assertAnalyzesTo(a, "песните", new string[] {"песн"});
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("строеве");
+            MockTokenizer tokenStream = new MockTokenizer(new StringReader("строевете строеве"), MockTokenizer.WHITESPACE, false);
 
-		// -еве -> й
-		// note: this is the only word i think this rule works for.
-		// most -еве pluralized nouns are monosyllabic,
-		// and the stemmer requires length > 6...
-		assertAnalyzesTo(a, "строй", new string[] {"строй"});
-		assertAnalyzesTo(a, "строеве", new string[] {"строй"});
-		assertAnalyzesTo(a, "строевете", new string[] {"строй"});
-		/* note the below forms conflate with each other, but not the rest */
-		assertAnalyzesTo(a, "строя", new string[] {"стр"});
-		assertAnalyzesTo(a, "строят", new string[] {"стр"});
-	  }
+            BulgarianStemFilter filter = new BulgarianStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
+            AssertTokenStreamContents(filter, new string[] { "строй", "строеве" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("строеве");
-		MockTokenizer tokenStream = new MockTokenizer(new StringReader("строевете строеве"), MockTokenizer.WHITESPACE, false);
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		BulgarianStemFilter filter = new BulgarianStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
-		assertTokenStreamContents(filter, new string[] {"строй", "строеве"});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestBulgarianStemmer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestBulgarianStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestBulgarianStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestBulgarianStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new BulgarianStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new BulgarianStemFilter(tokenizer));
+            }
+        }
+    }
 }

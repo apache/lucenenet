@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = new IndexSearcher(reader);
-            Query query = new TermQuery(new Term("body", "body"));
+            Search.Query query = new TermQuery(new Term("body", "body"));
 
             // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
             // orders the U+0698 character before the U+0633 character, so the single
@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
             IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = new IndexSearcher(reader);
 
-            Query query = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
+            Search.Query query = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
 
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis
             // index Term below should NOT be returned by a TermRangeQuery
             // with a Farsi Collator (or an Arabic one for the case when Farsi is
             // not supported).
-            Query csrq = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
+            Search.Query csrq = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
             ScoreDoc[] result = search.Search(csrq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, result.Length, "The index Term should not be included.");
 
@@ -215,8 +215,8 @@ namespace Lucene.Net.Analysis
             IndexSearcher searcher = new IndexSearcher(reader);
 
             Sort sort = new Sort();
-            Query queryX = new TermQuery(new Term("contents", "x"));
-            Query queryY = new TermQuery(new Term("contents", "y"));
+            Search.Query queryX = new TermQuery(new Term("contents", "x"));
+            Search.Query queryY = new TermQuery(new Term("contents", "y"));
 
             sort.SetSort(new SortField("US", SortField.Type_e.STRING));
             AssertMatches(searcher, queryY, sort, usResult);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Analysis
 
         // Make sure the documents returned by the search match the expected list
         // Copied from TestSort.java
-        private void AssertMatches(IndexSearcher searcher, Query query, Sort sort, string expectedResult)
+        private void AssertMatches(IndexSearcher searcher, Search.Query query, Sort sort, string expectedResult)
         {
             ScoreDoc[] result = searcher.Search(query, null, 1000, sort).ScoreDocs;
             StringBuilder buff = new StringBuilder(10);

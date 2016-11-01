@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-using Lucene.Net.Util.Fst;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,13 +24,14 @@ namespace Lucene.Net.Search.Suggest.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Suggester based on a weighted FST: it first traverses the prefix, 
     /// then walks the <i>n</i> shortest paths to retrieve top-ranked
     /// suggestions.
     /// <para>
     /// <b>NOTE</b>:
-    /// Input weights must be between 0 and <seealso cref="Integer#MAX_VALUE"/>, any
+    /// Input weights must be between 0 and <see cref="int.MaxValue"/>, any
     /// other values will be rejected.
     /// 
     /// @lucene.experimental
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         private long count = 0;
 
         /// <summary>
-        /// Calls <seealso cref="#WFSTCompletionLookup(boolean) WFSTCompletionLookup(true)"/>
+        /// Calls <see cref="WFSTCompletionLookup(bool)">WFSTCompletionLookup(true)</see>
         /// </summary>
         public WFSTCompletionLookup()
             : this(true)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.exactFirst = exactFirst;
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasPayloads)
             {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             count = 0;
             var scratch = new BytesRef();
-            InputIterator iter = new WFSTInputIterator(this, iterator);
+            IInputIterator iter = new WFSTInputIterator(this, iterator);
             var scratchInts = new IntsRef();
             BytesRef previous = null;
             var outputs = PositiveIntOutputs.Singleton;
@@ -126,13 +126,13 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         public override bool Load(DataInput input)
-	  {
-		count = input.ReadVLong();
-		this.fst = new FST<>(input, PositiveIntOutputs.Singleton);
-		return true;
-	  }
+        {
+            count = input.ReadVLong();
+            this.fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
+            return true;
+        }
 
-        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (fst == null)
             {
-                return Collections.EmptyList<LookupResult>();
+                return new List<LookupResult>();
             }
 
             BytesRef scratch = new BytesRef(key);
@@ -162,21 +162,21 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus);
+                throw new Exception(bogus.Message, bogus);
             }
 
             if (prefixOutput == null)
             {
-                return Collections.EmptyList();
+                return new List<LookupResult>();
             }
 
-            IList<LookupResult> results = new List<LookupResult>(num);
+            List<LookupResult> results = new List<LookupResult>(num);
             CharsRef spare = new CharsRef();
-            if (exactFirst && arc.Final)
+            if (exactFirst && arc.IsFinal)
             {
-                spare.grow(scratch.length);
+                spare.Grow(scratch.Length);
                 UnicodeUtil.UTF8toUTF16(scratch, spare);
-                results.Add(new LookupResult(spare.ToString(), decodeWeight(prefixOutput + arc.NextFinalOutput)));
+                results.Add(new LookupResult(spare.ToString(), DecodeWeight(prefixOutput.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault())));
                 if (--num == 0)
                 {
                     return results; // that was quick
@@ -187,24 +187,24 @@ namespace Lucene.Net.Search.Suggest.Fst
             Util.Fst.Util.TopResults<long?> completions = null;
             try
             {
-                completions = Util.ShortestPaths(fst, arc, prefixOutput, weightComparator, num, !exactFirst);
+                completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparator, num, !exactFirst);
                 Debug.Assert(completions.IsComplete);
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus);
+                throw new Exception(bogus.Message, bogus);
             }
 
             BytesRef suffix = new BytesRef(8);
             foreach (Util.Fst.Util.Result<long?> completion in completions)
             {
-                scratch.length = prefixLength;
+                scratch.Length = prefixLength;
                 // append suffix
-                Util.ToBytesRef(completion.input, suffix);
+                Lucene.Net.Util.Fst.Util.ToBytesRef(completion.Input, suffix);
                 scratch.Append(suffix);
                 spare.Grow(scratch.Length);
                 UnicodeUtil.UTF8toUTF16(scratch, spare);
-                results.Add(new LookupResult(spare.ToString(), decodeWeight(completion.output)));
+                results.Add(new LookupResult(spare.ToString(), DecodeWeight(completion.Output.GetValueOrDefault())));
             }
             return results;
         }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             fst.GetFirstArc(arc);
 
-            sbyte[] bytes = scratch.Bytes;
+            byte[] bytes = scratch.Bytes;
             int pos = scratch.Offset;
             int end = pos + scratch.Length;
             while (pos < end)
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 return null;
             }
-            Arc<long?> arc = new Arc<long?>();
+            FST.Arc<long?> arc = new FST.Arc<long?>();
             long? result = null;
             try
             {
@@ -253,28 +253,28 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus);
+                throw new Exception(bogus.Message, bogus);
             }
-            if (result == null || !arc.Final)
+            if (result == null || !arc.IsFinal)
             {
                 return null;
             }
             else
             {
-                return Convert.ToInt32(decodeWeight(result + arc.NextFinalOutput));
+                return Convert.ToInt32(DecodeWeight(result.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault()));
             }
         }
 
         /// <summary>
         /// cost -> weight </summary>
-        private static int decodeWeight(long encoded)
+        private static int DecodeWeight(long encoded)
         {
             return (int)(int.MaxValue - encoded);
         }
 
         /// <summary>
         /// weight -> cost </summary>
-        private static int encodeWeight(long value)
+        private static int EncodeWeight(long value)
         {
             if (value < 0 || value > int.MaxValue)
             {
@@ -288,14 +288,14 @@ namespace Lucene.Net.Search.Suggest.Fst
             private readonly WFSTCompletionLookup outerInstance;
 
 
-            internal WFSTInputIterator(WFSTCompletionLookup outerInstance, InputIterator source)
+            internal WFSTInputIterator(WFSTCompletionLookup outerInstance, IInputIterator source)
                 : base(source)
             {
                 this.outerInstance = outerInstance;
                 Debug.Assert(source.HasPayloads == false);
             }
 
-            protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, sbyte[] buffer, BytesRef spare, BytesRef payload, HashSet<BytesRef> contexts, long weight)
+            protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, IEnumerable<BytesRef> contexts, long weight)
             {
                 if (spare.Length + 4 >= buffer.Length)
                 {
@@ -303,7 +303,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
                 output.Reset(buffer);
                 output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
-                output.WriteInt(encodeWeight(weight));
+                output.WriteInt(EncodeWeight(weight));
                 writer.Write(buffer, 0, output.Position);
             }
 
@@ -326,13 +326,13 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             public virtual int Compare(long? left, long? right)
             {
-                return left.CompareTo(right);
+                return Comparer<long?>.Default.Compare(left, right);
             }
         }
 
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
             return (fst == null) ? 0 : fst.SizeInBytes();
         }

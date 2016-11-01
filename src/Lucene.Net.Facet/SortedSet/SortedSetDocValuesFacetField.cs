@@ -1,6 +1,5 @@
 ﻿namespace Lucene.Net.Facet.SortedSet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,14 +21,13 @@
     using FieldType = Lucene.Net.Documents.FieldType;
 
     /// <summary>
-    /// Add an instance of this to your Document for every facet
-    ///  label to be indexed via SortedSetDocValues. 
+    /// Add an instance of this to your <see cref="Documents.Document"/> for every facet
+    /// label to be indexed via <see cref="Index.SortedSetDocValues"/>. 
     /// </summary>
     public class SortedSetDocValuesFacetField : Field
     {
-
         /// <summary>
-        /// Indexed <seealso cref="FieldType"/>. </summary>
+        /// Indexed <see cref="FieldType"/>. </summary>
         public static readonly FieldType TYPE = new FieldType();
         static SortedSetDocValuesFacetField()
         {
@@ -39,11 +37,11 @@
 
         /// <summary>
         /// Dimension. </summary>
-        public readonly string Dim;
+        public string Dim { get; private set; }
 
         /// <summary>
         /// Label. </summary>
-        public readonly string Label;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -61,5 +59,4 @@
             return "SortedSetDocValuesFacetField(dim=" + Dim + " label=" + Label + ")";
         }
     }
-
 }

@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using SortedDocValuesField = SortedDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestDocValuesWithThreads : LuceneTestCase
     {
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
             Random random = Random();
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(random, dir, Similarity, TimeZone);
             bool allowDups = random.NextBoolean();
             HashSet<string> seen = new HashSet<string>();
             if (VERBOSE)

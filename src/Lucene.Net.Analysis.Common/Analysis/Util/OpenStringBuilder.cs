@@ -1,10 +1,9 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,184 +20,190 @@ namespace Lucene.Net.Analysis.Util
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// A StringBuilder that allows one to access the array.
-	/// </summary>
-	public class OpenStringBuilder : IAppendable, ICharSequence
-	{
-	  protected internal char[] buf;
-	  protected internal int len;
+    /// <summary>
+    /// A StringBuilder that allows one to access the array.
+    /// </summary>
+    public class OpenStringBuilder : ICharSequence
+    {
+        protected internal char[] buf;
+        protected internal int len;
 
-	  public OpenStringBuilder() : this(32)
-	  {
-	  }
+        public OpenStringBuilder() : this(32)
+        {
+        }
 
-	  public OpenStringBuilder(int size)
-	  {
-		buf = new char[size];
-	  }
+        public OpenStringBuilder(int size)
+        {
+            buf = new char[size];
+        }
 
-	  public OpenStringBuilder(char[] arr, int len)
-	  {
-		set(arr, len);
-	  }
+        public OpenStringBuilder(char[] arr, int len)
+        {
+            Set(arr, len);
+        }
 
-	  public virtual int Length
-	  {
-		  set
-		  {
-			  this.len = value;
-		  }
-          get { return len; }
-	  }
+        public virtual int Length
+        {
+            set
+            {
+                this.len = value;
+            }
+            get { return len; }
+        }
 
-	  public virtual void set(char[] arr, int end)
-	  {
-		this.buf = arr;
-		this.len = end;
-	  }
+        public virtual void Set(char[] arr, int end)
+        {
+            this.buf = arr;
+            this.len = end;
+        }
 
-	  public virtual char[] Array
-	  {
-		  get
-		  {
-			  return buf;
-		  }
-	  }
-	  public virtual int Size()
-	  {
-		  return len;
-	  }
+        public virtual char[] Array
+        {
+            get
+            {
+                return buf;
+            }
+        }
+        public virtual int Size()
+        {
+            return len;
+        }
 
-	  public virtual int Capacity()
-	  {
-		  return buf.Length;
-	  }
+        public virtual int Capacity()
+        {
+            return buf.Length;
+        }
 
-	  public override Appendable append(CharSequence csq)
-	  {
-		return append(csq, 0, csq.length());
-	  }
+        public virtual OpenStringBuilder Append(string csq)
+        {
+            return Append(csq, 0, csq.Length);
+        }
 
-	  public override Appendable append(CharSequence csq, int start, int end)
-	  {
-		reserve(end - start);
-		for (int i = start; i < end; i++)
-		{
-		  unsafeWrite(csq.charAt(i));
-		}
-		return this;
-	  }
+        public virtual OpenStringBuilder Append(string csq, int start, int end)
+        {
+            Reserve(end - start);
+            for (int i = start; i < end; i++)
+            {
+                UnsafeWrite(csq[i]);
+            }
+            return this;
+        }
 
-	  public override Appendable append(char c)
-	  {
-		write(c);
-		return this;
-	  }
+        public virtual OpenStringBuilder Append(char c)
+        {
+            Write(c);
+            return this;
+        }
 
-	  public override char CharAt(int index)
-	  {
-		return buf[index];
-	  }
+        public virtual char CharAt(int index)
+        {
+            return buf[index];
+        }
 
-	  public virtual void SetCharAt(int index, char ch)
-	  {
-		buf[index] = ch;
-	  }
+        public virtual void SetCharAt(int index, char ch)
+        {
+            buf[index] = ch;
+        }
 
-	  public override CharSequence subSequence(int start, int end)
-	  {
-		throw new System.NotSupportedException(); // todo
-	  }
+        // LUCENENET specific - added to .NETify
+        public virtual char this[int index]
+        {
+            get { return buf[index]; }
+            set { buf[index] = value; }
+        }
 
-	  public virtual void unsafeWrite(char b)
-	  {
-		buf[len++] = b;
-	  }
+        public virtual ICharSequence SubSequence(int start, int end)
+        {
+            throw new System.NotSupportedException(); // todo
+        }
 
-	  public virtual void unsafeWrite(int b)
-	  {
-		  unsafeWrite((char)b);
-	  }
+        public virtual void UnsafeWrite(char b)
+        {
+            buf[len++] = b;
+        }
 
-	  public virtual void unsafeWrite(char[] b, int off, int len)
-	  {
-		Array.Copy(b, off, buf, this.len, len);
-		this.len += len;
-	  }
+        public virtual void UnsafeWrite(int b)
+        {
+            UnsafeWrite((char)b);
+        }
 
-	  protected internal virtual void resize(int len)
-	  {
-		char[] newbuf = new char[Math.Max(buf.Length << 1, len)];
-		Array.Copy(buf, 0, newbuf, 0, Size());
-		buf = newbuf;
-	  }
+        public virtual void UnsafeWrite(char[] b, int off, int len)
+        {
+            System.Array.Copy(b, off, buf, this.len, len);
+            this.len += len;
+        }
 
-	  public virtual void reserve(int num)
-	  {
-		if (len + num > buf.Length)
-		{
-			resize(len + num);
-		}
-	  }
+        protected internal virtual void Resize(int len)
+        {
+            char[] newbuf = new char[Math.Max(buf.Length << 1, len)];
+            System.Array.Copy(buf, 0, newbuf, 0, Size());
+            buf = newbuf;
+        }
 
-	  public virtual void write(char b)
-	  {
-		if (len >= buf.Length)
-		{
-		  resize(len + 1);
-		}
-		unsafeWrite(b);
-	  }
+        public virtual void Reserve(int num)
+        {
+            if (len + num > buf.Length)
+            {
+                Resize(len + num);
+            }
+        }
 
-	  public virtual void write(int b)
-	  {
-		  write((char)b);
-	  }
+        public virtual void Write(char b)
+        {
+            if (len >= buf.Length)
+            {
+                Resize(len + 1);
+            }
+            UnsafeWrite(b);
+        }
 
-	  public void write(char[] b)
-	  {
-		write(b,0,b.Length);
-	  }
+        public virtual void Write(int b)
+        {
+            Write((char)b);
+        }
 
-	  public virtual void write(char[] b, int off, int len)
-	  {
-		reserve(len);
-		unsafeWrite(b, off, len);
-	  }
+        public void Write(char[] b)
+        {
+            Write(b, 0, b.Length);
+        }
 
-	  public void write(OpenStringBuilder arr)
-	  {
-		write(arr.buf, 0, len);
-	  }
+        public virtual void Write(char[] b, int off, int len)
+        {
+            Reserve(len);
+            UnsafeWrite(b, off, len);
+        }
 
-	  public virtual void write(string s)
-	  {
-		reserve(s.Length);
-		s.CopyTo(0, buf, len, s.Length - 0);
-		len += s.Length;
-	  }
+        public void Write(OpenStringBuilder arr)
+        {
+            Write(arr.buf, 0, len);
+        }
 
-	  public virtual void flush()
-	  {
-	  }
+        public virtual void Write(string s)
+        {
+            Reserve(s.Length);
+            s.CopyTo(0, buf, len, s.Length - 0);
+            len += s.Length;
+        }
 
-	  public void reset()
-	  {
-		len = 0;
-	  }
+        public virtual void Flush()
+        {
+        }
 
-	  public virtual char[] ToCharArray()
-	  {
-		char[] newbuf = new char[Size()];
-		Array.Copy(buf, 0, newbuf, 0, Size());
-		return newbuf;
-	  }
+        public void Reset()
+        {
+            len = 0;
+        }
 
-	  public override string ToString()
-	  {
-		return new string(buf, 0, Size());
-	  }
-	}
+        public virtual char[] ToCharArray()
+        {
+            char[] newbuf = new char[Size()];
+            System.Array.Copy(buf, 0, newbuf, 0, Size());
+            return newbuf;
+        }
 
+        public override string ToString()
+        {
+            return new string(buf, 0, Size());
+        }
+    }
 }

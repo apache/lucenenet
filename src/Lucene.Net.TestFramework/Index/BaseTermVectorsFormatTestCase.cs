@@ -421,10 +421,14 @@ namespace Lucene.Net.Index
                 HashSet<string> usedFileNames = new HashSet<string>();
                 for (int i = 0; i < fieldCount; ++i)
                 {
-                    do
-                    {
-                        this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
-                    } while (usedFileNames.Contains(this.FieldNames[i]));
+                    // LUCENENET NOTE: Using a simple Linq query to filter rather than using brute force makes this a lot
+                    // faster (and won't infinitely retry due to poor random distribution).
+                    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames.Except(usedFileNames).ToArray());
+                    //do
+                    //{
+                    //    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
+                    //} while (usedFileNames.Contains(this.FieldNames[i]));
+
                     usedFileNames.Add(this.FieldNames[i]);
                     TokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt(Random(), 1, maxTermCount), sampleTerms, sampleTermBytes);
                 }
@@ -664,7 +668,7 @@ namespace Lucene.Net.Index
             return (new IndexSearcher(reader)).Search(new TermQuery(new Term("id", id)), 1).ScoreDocs[0].Doc;
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // only one doc with vectors
         public virtual void TestRareVectors()
         {
@@ -675,7 +679,7 @@ namespace Lucene.Net.Index
                 int docWithVectors = Random().Next(numDocs);
                 Document emptyDoc = new Document();
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
                 RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), 20, options);
                 for (int i = 0; i < numDocs; ++i)
                 {
@@ -711,7 +715,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestHighFreqs()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 3, 5);
@@ -722,7 +726,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone))
                 {
                     RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 2), AtLeast(20000),
                         options);
@@ -733,14 +737,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestLotsOfFields()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
             foreach (Options options in ValidOptions())
             {
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
                 RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
                 writer.AddDocument(doc.ToDocument());
                 IndexReader reader = writer.Reader;
@@ -751,7 +755,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, Timeout(300000)]
+        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // different options for the same field
         public virtual void TestMixedOptions()
         {
@@ -767,7 +771,7 @@ namespace Lucene.Net.Index
                     }
                     using (Directory dir = NewDirectory())
                     {
-                        using (var writer = new RandomIndexWriter(Random(), dir))
+                        using (var writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone))
                         {
                             RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
                             RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
@@ -786,7 +790,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandom()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
@@ -797,7 +801,7 @@ namespace Lucene.Net.Index
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), TestUtil.NextInt(Random(), 10, 50), RandomOptions());
             }
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             for (int i = 0; i < numDocs; ++i)
             {
                 writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -813,7 +817,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMerge()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
@@ -832,7 +836,7 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -862,7 +866,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // run random tests from different threads to make sure the per-thread clones
         // don't share mutable data
         public virtual void TestClone()
@@ -877,7 +881,7 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));

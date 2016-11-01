@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.sv
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Sv
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +20,48 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestSwedishAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new SwedishAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestSwedishAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new SwedishAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new SwedishAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "jaktkarlarne", "jaktkarl");
+            CheckOneTerm(a, "jaktkarlens", "jaktkarl");
+            // stopword
+            AssertAnalyzesTo(a, "och", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new SwedishAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "jaktkarlarne", "jaktkarl");
-		checkOneTerm(a, "jaktkarlens", "jaktkarl");
-		// stopword
-		assertAnalyzesTo(a, "och", new string[] {});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("jaktkarlarne"), false);
+            Analyzer a = new SwedishAnalyzer(TEST_VERSION_CURRENT, SwedishAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "jaktkarlarne", "jaktkarlarne");
+            CheckOneTerm(a, "jaktkarlens", "jaktkarl");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("jaktkarlarne"), false);
-		Analyzer a = new SwedishAnalyzer(TEST_VERSION_CURRENT, SwedishAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "jaktkarlarne", "jaktkarlarne");
-		checkOneTerm(a, "jaktkarlens", "jaktkarl");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new SwedishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new SwedishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

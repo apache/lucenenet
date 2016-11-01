@@ -128,7 +128,7 @@ namespace Lucene.Net.Tests.Join
             StringAssert.Contains(ToChildBlockJoinQuery.InvalidQueryMessage, ex.Message);
         }
 
-        private static IList<Document> CreateDocsForSegment(int segmentNumber)
+        private IList<Document> CreateDocsForSegment(int segmentNumber)
         {
             IList<IList<Document>> blocks = new List<IList<Document>>(AMOUNT_OF_PARENT_DOCS);
             for (int i = 0; i < AMOUNT_OF_PARENT_DOCS; i++)
@@ -143,7 +143,7 @@ namespace Lucene.Net.Tests.Join
             return result;
         }
 
-        private static IList<Document> CreateParentDocWithChildren(int segmentNumber, int parentNumber)
+        private IList<Document> CreateParentDocWithChildren(int segmentNumber, int parentNumber)
         {
             IList<Document> result = new List<Document>(AMOUNT_OF_CHILD_DOCS + 1);
             for (int i = 0; i < AMOUNT_OF_CHILD_DOCS; i++)
@@ -154,7 +154,7 @@ namespace Lucene.Net.Tests.Join
             return result;
         }
 
-        private static Document CreateParentDoc(int segmentNumber, int parentNumber)
+        private Document CreateParentDoc(int segmentNumber, int parentNumber)
         {
             Document result = new Document();
             result.Add(NewStringField("id", CreateFieldValue(segmentNumber * AMOUNT_OF_PARENT_DOCS + parentNumber), Field.Store.YES));
@@ -162,7 +162,7 @@ namespace Lucene.Net.Tests.Join
             return result;
         }
 
-        private static Document CreateChildDoc(int segmentNumber, int parentNumber, int childNumber)
+        private Document CreateChildDoc(int segmentNumber, int parentNumber, int childNumber)
         {
             Document result = new Document();
             result.Add(NewStringField("id", CreateFieldValue(segmentNumber * AMOUNT_OF_PARENT_DOCS + parentNumber, childNumber), Field.Store.YES));

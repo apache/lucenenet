@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.bg
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Bg
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,83 +20,74 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+    /// <summary>
+    /// Test the Bulgarian analyzer
+    /// </summary>
+    public class TestBulgarianAnalyzer : BaseTokenStreamTestCase
+    {
 
-	/// <summary>
-	/// Test the Bulgarian analyzer
-	/// </summary>
-	public class TestBulgarianAnalyzer : BaseTokenStreamTestCase
-	{
+        /// <summary>
+        /// This test fails with NPE when the stopwords file is missing in classpath
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	  /// <summary>
-	  /// This test fails with NPE when the stopwords file is missing in classpath
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new BulgarianAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        [Test]
+        public virtual void TestStopwords()
+        {
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "Как се казваш?", new string[] { "казваш" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStopwords() throws java.io.IOException
-	  public virtual void testStopwords()
-	  {
-		Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "Как се казваш?", new string[] {"казваш"});
-	  }
+        [Test]
+        public virtual void TestCustomStopwords()
+        {
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            AssertAnalyzesTo(a, "Как се казваш?", new string[] { "как", "се", "казваш" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCustomStopwords() throws java.io.IOException
-	  public virtual void testCustomStopwords()
-	  {
-		Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
-		assertAnalyzesTo(a, "Как се казваш?", new string[] {"как", "се", "казваш"});
-	  }
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "документи", new string[] { "документ" });
+            AssertAnalyzesTo(a, "документ", new string[] { "документ" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws java.io.IOException
-	  public virtual void testReusableTokenStream()
-	  {
-		Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "документи", new string[] {"документ"});
-		assertAnalyzesTo(a, "документ", new string[] {"документ"});
-	  }
+        /// <summary>
+        /// Test some examples from the paper
+        /// </summary>
+        [Test]
+        public virtual void TestBasicExamples()
+        {
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "енергийни кризи", new string[] { "енергийн", "криз" });
+            AssertAnalyzesTo(a, "Атомната енергия", new string[] { "атомн", "енерг" });
 
-	  /// <summary>
-	  /// Test some examples from the paper
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasicExamples() throws java.io.IOException
-	  public virtual void testBasicExamples()
-	  {
-		Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "енергийни кризи", new string[] {"енергийн", "криз"});
-		assertAnalyzesTo(a, "Атомната енергия", new string[] {"атомн", "енерг"});
+            AssertAnalyzesTo(a, "компютри", new string[] { "компютр" });
+            AssertAnalyzesTo(a, "компютър", new string[] { "компютр" });
 
-		assertAnalyzesTo(a, "компютри", new string[] {"компютр"});
-		assertAnalyzesTo(a, "компютър", new string[] {"компютр"});
+            AssertAnalyzesTo(a, "градове", new string[] { "град" });
+        }
 
-		assertAnalyzesTo(a, "градове", new string[] {"град"});
-	  }
+        [Test]
+        public virtual void TestWithStemExclusionSet()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("строеве");
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            AssertAnalyzesTo(a, "строевете строеве", new string[] { "строй", "строеве" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithStemExclusionSet() throws java.io.IOException
-	  public virtual void testWithStemExclusionSet()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("строеве");
-		Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
-		assertAnalyzesTo(a, "строевете строеве", new string[] {"строй", "строеве"});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new BulgarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new BulgarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Automaton;
+using Lucene.Net.Util.Fst;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Analysis;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-using Lucene.Net.Util.Automaton;
-using Lucene.Net.Util.Fst;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// suggestion "The Ghost of Christmas Past". Note that
     /// position increments MUST NOT be preserved for this example
     /// to work, so you should call the constructor with 
-    /// <code>preservePositionIncrements</code> parameter set to 
+    /// <paramref name="preservePositionIncrements"/> parameter set to 
     /// false
     /// 
     /// </para>
@@ -63,24 +63,24 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// </para>
     /// <para>
     /// There are some limitations:
-    /// <ul>
+    /// <list type="number">
     /// 
-    ///   <li> A lookup from a query like "net" in English won't
+    ///   <item> A lookup from a query like "net" in English won't
     ///        be any different than "net " (ie, user added a
     ///        trailing space) because analyzers don't reflect
     ///        when they've seen a token separator and when they
-    ///        haven't.
+    ///        haven't.</item>
     /// 
-    ///   <li> If you're using {@code StopFilter}, and the user will
+    ///   <item> If you're using <see cref="Analysis.Core.StopFilter"/>, and the user will
     ///        type "fast apple", but so far all they've typed is
     ///        "fast a", again because the analyzer doesn't convey whether
     ///        it's seen a token separator after the "a",
-    ///        {@code StopFilter} will remove that "a" causing
-    ///        far more matches than you'd expect.
+    ///        <see cref="Analysis.Core.StopFilter"/> will remove that "a" causing
+    ///        far more matches than you'd expect.</item>
     /// 
-    ///   <li> Lookups with the empty string return no results
-    ///        instead of all results.
-    /// </ul>
+    ///   <item> Lookups with the empty string return no results
+    ///        instead of all results.</item>
+    /// </list>
     /// 
     /// @lucene.experimental
     /// </para>
@@ -89,10 +89,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     {
 
         /// <summary>
-        /// FST<Weight,Surface>: 
-        ///  input is the analyzed form, with a null byte between terms
-        ///  weights are encoded as costs: (Integer.MAX_VALUE-weight)
-        ///  surface is the original, unanalyzed form.
+        /// FST(Weight,Surface):
+        /// input is the analyzed form, with a null byte between terms
+        /// weights are encoded as costs: (<see cref="int.MaxValue"/> - weight)
+        /// surface is the original, unanalyzed form.
         /// </summary>
         private FST<PairOutputs<long?, BytesRef>.Pair> fst = null;
 
@@ -119,24 +119,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool preserveSep;
 
         /// <summary>
-        /// Include this flag in the options parameter to {@link
-        ///  #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)} to always
-        ///  return the exact match first, regardless of score.  This
-        ///  has no performance impact but could result in
-        ///  low-quality suggestions. 
-        /// </summary>
-        public const int EXACT_FIRST = 1;
-
-        /// <summary>
-        /// Include this flag in the options parameter to {@link
-        ///  #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)} to preserve
-        ///  token separators when matching. 
-        /// </summary>
-        public const int PRESERVE_SEP = 2;
-
-        /// <summary>
         /// Represents the separation between tokens, if
-        ///  PRESERVE_SEP was specified 
+        /// <see cref="SuggesterOptions.PRESERVE_SEP"/> was specified 
         /// </summary>
         private const int SEP_LABEL = '\u001F';
 
@@ -180,22 +164,22 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private long count = 0;
 
         /// <summary>
-        /// Calls {@link #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)
-        /// AnalyzingSuggester(analyzer, analyzer, EXACT_FIRST |
-        /// PRESERVE_SEP, 256, -1, true)}
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// AnalyzingSuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
+        /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer analyzer)
-            : this(analyzer, analyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+            : this(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         {
         }
 
         /// <summary>
-        /// Calls {@link #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)
-        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, EXACT_FIRST |
-        /// PRESERVE_SEP, 256, -1, true)}
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
+        /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
-            : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+            : this(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         {
         }
 
@@ -206,7 +190,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///   analyzing suggestions while building the index. </param>
         /// <param name="queryAnalyzer"> Analyzer that will be used for
         ///   analyzing query text during lookup </param>
-        /// <param name="options"> see <seealso cref="#EXACT_FIRST"/>, <seealso cref="#PRESERVE_SEP"/> </param>
+        /// <param name="options"> see <see cref="SuggesterOptions.EXACT_FIRST"/>, <see cref="SuggesterOptions.PRESERVE_SEP"/> </param>
         /// <param name="maxSurfaceFormsPerAnalyzedForm"> Maximum number of
         ///   surface forms to keep for a single analyzed form.
         ///   When there are too many surface forms we discard the
@@ -216,18 +200,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///   no limit. </param>
         /// <param name="preservePositionIncrements"> Whether position holes
         ///   should appear in the automata </param>
-        public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options,
+        public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, SuggesterOptions options,
             int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements)
         {
             this.indexAnalyzer = indexAnalyzer;
             this.queryAnalyzer = queryAnalyzer;
-            if ((options & ~(EXACT_FIRST | PRESERVE_SEP)) != 0)
+            if ((options & ~(SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP)) != 0)
             {
-                throw new System.ArgumentException("options should only contain EXACT_FIRST and PRESERVE_SEP; got " +
+                throw new System.ArgumentException("options should only contain SuggesterOptions.EXACT_FIRST and SuggesterOptions.PRESERVE_SEP; got " +
                                                    options);
             }
-            this.exactFirst = (options & EXACT_FIRST) != 0;
-            this.preserveSep = (options & PRESERVE_SEP) != 0;
+            this.exactFirst = (options & SuggesterOptions.EXACT_FIRST) != 0;
+            this.preserveSep = (options & SuggesterOptions.PRESERVE_SEP) != 0;
 
             // NOTE: this is just an implementation limitation; if
             // somehow this is a problem we could fix it by using
@@ -251,12 +235,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
-            return fst == null ? 0 : fst.SizeInBytes();
+            return fst == null ? 0 : fst.SizeInBytes(); // LUCENENET TODO: Rename FST.SizeInBytes() to FST.GetSizeInBytes() because this can be intensive and it should be a method (with a verb)
         }
 
-        private void copyDestTransitions(State from, State to, IList<Transition> transitions)
+        private void CopyDestTransitions(State from, State to, IList<Transition> transitions)
         {
             if (to.Accept)
             {
@@ -293,7 +277,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         else
                         {
-                            copyDestTransitions(state, t.Dest, newTransitions);
+                            CopyDestTransitions(state, t.Dest, newTransitions);
                             a.Deterministic = false;
                         }
                     }
@@ -307,7 +291,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         // that's somehow a problem we can always map HOLE
                         // to a dedicated byte (and escape it in the
                         // input).
-                        copyDestTransitions(state, t.Dest, newTransitions);
+                        CopyDestTransitions(state, t.Dest, newTransitions);
                         a.Deterministic = false;
                     }
                     else
@@ -323,7 +307,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Used by subclass to change the lookup automaton, if
         ///  necessary. 
         /// </summary>
-        protected virtual Automaton ConvertAutomaton(Automaton a)
+        protected internal virtual Automaton ConvertAutomaton(Automaton a)
         {
             return a;
         }
@@ -332,7 +316,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
-                return new TokenStreamToAutomaton {PreservePositionIncrements = preservePositionIncrements};
+                return new TokenStreamToAutomaton { PreservePositionIncrements = preservePositionIncrements };
             }
         }
 
@@ -355,13 +339,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 // First by analyzed form:
                 readerA.Reset(a.Bytes, a.Offset, a.Length);
-                scratchA.Length = readerA.ReadShort();
+                scratchA.Length = (ushort)readerA.ReadShort();
                 scratchA.Bytes = a.Bytes;
                 scratchA.Offset = readerA.Position;
 
                 readerB.Reset(b.Bytes, b.Offset, b.Length);
                 scratchB.Bytes = b.Bytes;
-                scratchB.Length = readerB.ReadShort();
+                scratchB.Length = (ushort)readerB.ReadShort();
                 scratchB.Offset = readerB.Position;
 
                 int cmp = scratchA.CompareTo(scratchB);
@@ -389,8 +373,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Finally by surface form:
                 if (hasPayloads)
                 {
-                    scratchA.Length = readerA.ReadShort();
-                    scratchB.Length = readerB.ReadShort();
+                    scratchA.Length = (ushort)readerA.ReadShort();
+                    scratchB.Length = (ushort)readerB.ReadShort();
                     scratchA.Offset = readerA.Position;
                     scratchB.Offset = readerB.Position;
                 }
@@ -406,7 +390,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasContexts)
             {
@@ -414,8 +398,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             string prefix = this.GetType().Name;
             var directory = OfflineSorter.DefaultTempDir();
-            var tempInput = File.CreateTempFile(prefix, ".input", directory);
-            var tempSorted = File.CreateTempFile(prefix, ".sorted", directory);
+            var tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
+            var tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
 
             hasPayloads = iterator.HasPayloads;
 
@@ -427,7 +411,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             bool success = false;
             count = 0;
-            sbyte[] buffer = new sbyte[8];
+            byte[] buffer = new byte[8];
             try
             {
                 var output = new ByteArrayDataOutput(buffer);
@@ -435,7 +419,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 while ((surfaceForm = iterator.Next()) != null)
                 {
-                    HashSet<IntsRef> paths = ToFiniteStrings(surfaceForm, ts2a);
+                    ISet<IntsRef> paths = ToFiniteStrings(surfaceForm, ts2a);
 
                     maxAnalyzedPathsForOneInput = Math.Max(maxAnalyzedPathsForOneInput, paths.Count);
 
@@ -445,12 +429,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         Util.Fst.Util.ToBytesRef(path, scratch);
 
                         // length of the analyzed text (FST input)
-                        if (scratch.Length > short.MaxValue - 2)
+                        if (scratch.Length > ushort.MaxValue - 2)
                         {
-                            throw new System.ArgumentException("cannot handle analyzed forms > " + (short.MaxValue - 2) +
+                            throw new System.ArgumentException("cannot handle analyzed forms > " + (ushort.MaxValue - 2) +
                                                                " in length (got " + scratch.Length + ")");
                         }
-                        short analyzedLength = (short) scratch.Length;
+                        ushort analyzedLength = (ushort)scratch.Length;
 
                         // compute the required length:
                         // analyzed sequence + weight (4) + surface + analyzedLength (short)
@@ -460,9 +444,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         if (hasPayloads)
                         {
-                            if (surfaceForm.Length > (short.MaxValue - 2))
+                            if (surfaceForm.Length > (ushort.MaxValue - 2))
                             {
-                                throw new ArgumentException("cannot handle surface form > " + (short.MaxValue - 2) +
+                                throw new ArgumentException("cannot handle surface form > " + (ushort.MaxValue - 2) +
                                                             " in length (got " + surfaceForm.Length + ")");
                             }
                             payload = iterator.Payload;
@@ -478,7 +462,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         output.Reset(buffer);
 
-                        output.WriteShort(analyzedLength);
+                        output.WriteShort((short)analyzedLength);
 
                         output.WriteBytes(scratch.Bytes, scratch.Offset, scratch.Length);
 
@@ -494,7 +478,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                         "surface form cannot contain unit separator character U+001F; this character is reserved");
                                 }
                             }
-                            output.WriteShort((short) surfaceForm.Length);
+                            output.WriteShort((short)surfaceForm.Length);
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                             output.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
                         }
@@ -540,7 +524,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (reader.Read(scratch))
                 {
                     input.Reset(scratch.Bytes, scratch.Offset, scratch.Length);
-                    short analyzedLength = input.ReadShort();
+                    ushort analyzedLength = (ushort)input.ReadShort();
                     analyzed.Grow(analyzedLength + 2);
                     input.ReadBytes(analyzed.Bytes, 0, analyzedLength);
                     analyzed.Length = analyzedLength;
@@ -550,7 +534,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     surface.Bytes = scratch.Bytes;
                     if (hasPayloads)
                     {
-                        surface.Length = input.ReadShort();
+                        surface.Length = (ushort)input.ReadShort();
                         surface.Offset = input.Position;
                     }
                     else
@@ -597,7 +581,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // NOTE: must be byte 0 so we sort before whatever
                     // is next
                     analyzed.Bytes[analyzed.Offset + analyzed.Length] = 0;
-                    analyzed.Bytes[analyzed.Offset + analyzed.Length + 1] = (sbyte) dedup;
+                    analyzed.Bytes[analyzed.Offset + analyzed.Length + 1] = (byte)dedup;
                     analyzed.Length += 2;
 
                     Util.Fst.Util.ToIntsRef(analyzed, scratchInts);
@@ -650,7 +634,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             fst.Save(output);
             output.WriteVInt(maxAnalyzedPathsForOneInput);
-            output.WriteByte((sbyte) (hasPayloads ? 1 : 0));
+            output.WriteByte((byte)(hasPayloads ? 1 : 0));
             return true;
         }
 
@@ -721,7 +705,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             Debug.Assert(num > 0);
 
@@ -735,7 +719,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             if (fst == null)
             {
-                return Collections.EmptyList<LookupResult>();
+                return new List<LookupResult>();
             }
 
             //System.out.println("lookup key=" + key + " num=" + num);
@@ -773,9 +757,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
 
-                IList<LookupResult> results = new List<LookupResult>();
+                List<LookupResult> results = new List<LookupResult>();
 
-                IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
+                List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
                     FSTUtil.IntersectPrefixPaths(ConvertAutomaton(lookupAutomaton), fst);
 
                 if (exactFirst)
@@ -794,9 +778,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Searcher just to find the single exact only
                     // match, if present:
-                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
-                    searcher = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
-                        count*maxSurfaceFormsPerAnalyzedForm, weightComparator);
+                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher_Renamed;
+                    searcher_Renamed = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
+                        count * maxSurfaceFormsPerAnalyzedForm, weightComparator);
 
                     // NOTE: we could almost get away with only using
                     // the first start node.  The only catch is if
@@ -809,13 +793,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             // This node has END_BYTE arc leaving, meaning it's an
                             // "exact" match:
-                            searcher.AddStartPaths(scratchArc, fst.Outputs.Add(path.output, scratchArc.Output), false,
+                            searcher_Renamed.AddStartPaths(scratchArc, fst.Outputs.Add(path.output, scratchArc.Output), false,
                                 path.input);
                         }
                     }
 
-                    var completions = searcher.Search();
-                    Debug.Assert(completions.IsComplete);
+                    var completions_Renamed = searcher_Renamed.Search();
+                    Debug.Assert(completions_Renamed.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
                     // every matching "exactly the same analyzed form"
@@ -829,7 +813,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // seach: it's bounded by how many prefix start
                     // nodes we have and the
                     // maxSurfaceFormsPerAnalyzedForm:
-                    foreach (var completion in completions)
+                    foreach (var completion in completions_Renamed)
                     {
                         BytesRef output2 = completion.Output.Output2;
                         if (SameSurfaceForm(utf8Key, output2))
@@ -848,7 +832,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
                 searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
-                    num*maxAnalyzedPathsForOneInput, weightComparator, utf8Key, results);
+                    num * maxAnalyzedPathsForOneInput, weightComparator, utf8Key, results);
 
                 prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
 
@@ -881,7 +865,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 return results;
             }
-            catch (IOException bogus)
+            catch (IOException /*bogus*/)
             {
                 throw;
             }
@@ -894,8 +878,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             private readonly BytesRef utf8Key;
             private readonly IList<LookupResult> results;
 
-            public TopNSearcherAnonymousInnerClassHelper(AnalyzingSuggester outerInstance, FST<PairOutputs<long?, BytesRef>.Pair> fst, int topN, int maxQueueDepth, object comparator, BytesRef utf8Key, IList<LookupResult> results)
-                : base(fst, topN, maxQueueDepth, comparator)         
+            public TopNSearcherAnonymousInnerClassHelper(
+                AnalyzingSuggester outerInstance,
+                FST<PairOutputs<long?, BytesRef>.Pair> fst,
+                int topN,
+                int maxQueueDepth,
+                IComparer<PairOutputs<long?, BytesRef>.Pair> comparator,
+                BytesRef utf8Key,
+                IList<LookupResult> results)
+                : base(fst, topN, maxQueueDepth, comparator)
             {
                 this.outerInstance = outerInstance;
                 this.utf8Key = utf8Key;
@@ -903,7 +894,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 seen = new HashSet<BytesRef>();
             }
 
-            private readonly HashSet<BytesRef> seen;            
+            private readonly HashSet<BytesRef> seen;
 
             protected override bool AcceptResult(IntsRef input, PairOutputs<long?, BytesRef>.Pair output)
             {
@@ -948,14 +939,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Returns all prefix paths to initialize the search.
         /// </summary>
-        protected internal virtual IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
-            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
+        protected internal virtual List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
+            List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
             FST<PairOutputs<long?, BytesRef>.Pair> fst)
         {
             return prefixPaths;
         }
 
-        internal HashSet<IntsRef> ToFiniteStrings(BytesRef surfaceForm, TokenStreamToAutomaton ts2a)
+        internal ISet<IntsRef> ToFiniteStrings(BytesRef surfaceForm, TokenStreamToAutomaton ts2a)
         {
             // Analyze surface form:
             Automaton automaton = null;
@@ -993,7 +984,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: is there a Reader from a CharSequence?
             // Turn tokenstream into automaton:
             Automaton automaton = null;
-            TokenStream ts = queryAnalyzer.TokenStream("", key.ToString());
+            TokenStream ts = queryAnalyzer.TokenStream("", key);
             try
             {
                 automaton = (TokenStreamToAutomaton).ToAutomaton(ts);
@@ -1030,7 +1021,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// cost -> weight </summary>
         private static int DecodeWeight(long encoded)
         {
-            return (int) (int.MaxValue - encoded);
+            return (int)(int.MaxValue - encoded);
         }
 
         /// <summary>
@@ -1041,7 +1032,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 throw new System.NotSupportedException("cannot encode value: " + value);
             }
-            return int.MaxValue - (int) value;
+            return int.MaxValue - (int)value;
         }
 
         internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparator =
@@ -1051,7 +1042,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             public int Compare(PairOutputs<long?, BytesRef>.Pair left, PairOutputs<long?, BytesRef>.Pair right)
             {
-                return left.Output1.CompareTo(right.Output1);
+                return Comparer<long?>.Default.Compare(left.Output1, right.Output1);
             }
         }
     }

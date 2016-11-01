@@ -1,18 +1,10 @@
-using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
 using System.Text;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
-    using NUnit.Framework;
-    using System;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Directory = Lucene.Net.Store.Directory;
-    using IndexableField = Lucene.Net.Index.IndexableField;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,6 +21,13 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
     /// <summary>
     /// Tests <seealso cref="Document"/> class.
@@ -61,7 +60,7 @@ namespace Lucene.Net.Document
             /// add the doc to a ram index </summary>
             Directory dir = NewDirectory();
             Random r = Random();
-            RandomIndexWriter writer = new RandomIndexWriter(r, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(r, dir, Similarity, TimeZone);
             writer.AddDocument(doc);
 
             /// <summary>
@@ -98,7 +97,7 @@ namespace Lucene.Net.Document
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone))
             {
                 writer.AddDocument(doc);
 

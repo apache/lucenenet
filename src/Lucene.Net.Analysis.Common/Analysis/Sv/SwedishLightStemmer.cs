@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.sv
-{
+﻿using Lucene.Net.Analysis.Util;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Sv
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +20,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,62 +55,57 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Light Stemmer for Swedish.
+    /// <para>
+    /// This stemmer implements the algorithm described in:
+    /// <i>Report on CLEF-2003 Monolingual Tracks</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class SwedishLightStemmer
+    {
 
-	/// <summary>
-	/// Light Stemmer for Swedish.
-	/// <para>
-	/// This stemmer implements the algorithm described in:
-	/// <i>Report on CLEF-2003 Monolingual Tracks</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class SwedishLightStemmer
-	{
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len > 4 && s[len - 1] == 's')
+            {
+                len--;
+            }
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len > 4 && s[len - 1] == 's')
-		{
-		  len--;
-		}
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "elser") || StemmerUtil.EndsWith(s, len, "heten")))
+            {
+                return len - 5;
+            }
 
-		if (len > 7 && (StemmerUtil.EndsWith(s, len, "elser") || StemmerUtil.EndsWith(s, len, "heten")))
-		{
-		  return len - 5;
-		}
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "arne") || StemmerUtil.EndsWith(s, len, "erna") || StemmerUtil.EndsWith(s, len, "ande") || StemmerUtil.EndsWith(s, len, "else") || StemmerUtil.EndsWith(s, len, "aste") || StemmerUtil.EndsWith(s, len, "orna") || StemmerUtil.EndsWith(s, len, "aren")))
+            {
+                return len - 4;
+            }
 
-		if (len > 6 && (StemmerUtil.EndsWith(s, len, "arne") || StemmerUtil.EndsWith(s, len, "erna") || StemmerUtil.EndsWith(s, len, "ande") || StemmerUtil.EndsWith(s, len, "else") || StemmerUtil.EndsWith(s, len, "aste") || StemmerUtil.EndsWith(s, len, "orna") || StemmerUtil.EndsWith(s, len, "aren")))
-		{
-		  return len - 4;
-		}
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "are") || StemmerUtil.EndsWith(s, len, "ast") || StemmerUtil.EndsWith(s, len, "het")))
+            {
+                return len - 3;
+            }
 
-		if (len > 5 && (StemmerUtil.EndsWith(s, len, "are") || StemmerUtil.EndsWith(s, len, "ast") || StemmerUtil.EndsWith(s, len, "het")))
-		{
-		  return len - 3;
-		}
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "ar") || StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "or") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "te") || StemmerUtil.EndsWith(s, len, "et")))
+            {
+                return len - 2;
+            }
 
-		if (len > 4 && (StemmerUtil.EndsWith(s, len, "ar") || StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "or") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "te") || StemmerUtil.EndsWith(s, len, "et")))
-		{
-		  return len - 2;
-		}
+            if (len > 3)
+            {
+                switch (s[len - 1])
+                {
+                    case 't':
+                    case 'a':
+                    case 'e':
+                    case 'n':
+                        return len - 1;
+                }
+            }
 
-		if (len > 3)
-		{
-		  switch (s[len - 1])
-		  {
-			case 't':
-			case 'a':
-			case 'e':
-			case 'n':
-				return len - 1;
-		  }
-		}
-
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }

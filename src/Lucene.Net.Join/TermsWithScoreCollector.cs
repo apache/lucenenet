@@ -56,8 +56,6 @@ namespace Lucene.Net.Join
             }
         }
 
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: @Override public void setScorer(org.apache.lucene.search.Scorer scorer) throws java.io.IOException
         public override Scorer Scorer
         {
             set
@@ -261,19 +259,12 @@ namespace Lucene.Net.Join
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public void setNextReader(org.apache.lucene.index.AtomicReaderContext context) throws java.io.IOException
             public override AtomicReaderContext NextReader
             {
                 set
                 {
                     _fromDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, _field);
                 }
-            }
-
-            public override bool AcceptsDocsOutOfOrder()
-            {
-                throw new NotImplementedException();
             }
 
             internal class Avg : Mv

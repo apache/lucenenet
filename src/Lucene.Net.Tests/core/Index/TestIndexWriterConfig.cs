@@ -229,15 +229,18 @@ namespace Lucene.Net.Index
             Assert.AreEqual(DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR);
         }
 
-        //LUCENE TODO: Compilation problems
-        /*[Test]
+        [Test]
         public virtual void TestToString()
         {
             string str = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).ToString();
-            foreach (Field f in typeof(IndexWriterConfig).DeclaredFields)
+            foreach (System.Reflection.FieldInfo f in (typeof(IndexWriterConfig).GetFields(
+                BindingFlags.Instance |
+                BindingFlags.NonPublic |
+                BindingFlags.Public |
+                BindingFlags.DeclaredOnly |
+                BindingFlags.Static)))
             {
-                int modifiers = f.Modifiers;
-                if (Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers))
+                if (f.IsStatic)
                 {
                     // Skip static final fields, they are only constants
                     continue;
@@ -254,7 +257,7 @@ namespace Lucene.Net.Index
                 }
                 Assert.IsTrue(str.IndexOf(f.Name) != -1, f.Name + " not found in toString");
             }
-        }*/
+        }
 
         [Test]
         public virtual void TestClone()
@@ -279,8 +282,8 @@ namespace Lucene.Net.Index
             MergePolicy mergePolicyClone = clone.MergePolicy;
             Assert.IsTrue(mergePolicy.GetType() == mergePolicyClone.GetType() && (mergePolicy != mergePolicyClone || mergePolicy.Clone() == mergePolicyClone.Clone()));
 
-            MergeScheduler mergeSched = conf.MergeScheduler;
-            MergeScheduler mergeSchedClone = clone.MergeScheduler;
+            IMergeScheduler mergeSched = conf.MergeScheduler;
+            IMergeScheduler mergeSchedClone = clone.MergeScheduler;
             Assert.IsTrue(mergeSched.GetType() == mergeSchedClone.GetType() && (mergeSched != mergeSchedClone || mergeSched.Clone() == mergeSchedClone.Clone()));
 
             conf.SetMergeScheduler(new SerialMergeScheduler());

@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,33 +23,34 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <para>
     /// Dictionary with terms, weights, payload (optional) and contexts (optional)
     /// information taken from stored/indexed fields in a Lucene index.
     /// </para>
     /// <b>NOTE:</b> 
-    ///  <ul>
-    ///    <li>
+    ///  <list type="bullet">
+    ///    <item>
     ///      The term and (optionally) payload fields have to be
     ///      stored
-    ///    </li>
-    ///    <li>
-    ///      The weight field can be stored or can be a <seealso cref="NumericDocValues"/>.
-    ///      If the weight field is not defined, the value of the weight is <code>0</code>
-    ///    </li>
-    ///    <li>
+    ///    </item>
+    ///    <item>
+    ///      The weight field can be stored or can be a <see cref="NumericDocValues"/>.
+    ///      If the weight field is not defined, the value of the weight is <c>0</c>
+    ///    </item>
+    ///    <item>
     ///      if any of the term or (optionally) payload fields supplied
     ///      do not have a value for a document, then the document is 
     ///      skipped by the dictionary
-    ///    </li>
-    ///  </ul>
+    ///    </item>
+    ///  </list>
     /// </summary>
-    public class DocumentDictionary : Dictionary
+    public class DocumentDictionary : IDictionary
     {
 
         /// <summary>
-        /// <seealso cref="IndexReader"/> to load documents from </summary>
+        /// <see cref="IndexReader"/> to load documents from </summary>
         protected internal readonly IndexReader reader;
 
         /// <summary>
@@ -62,8 +63,8 @@ namespace Lucene.Net.Search.Suggest
         private readonly string weightField;
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms and <code>weightField</code> for the weights that will be used for
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms and <paramref name="weightField"/> for the weights that will be used for
         /// the corresponding terms.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField)
@@ -72,9 +73,9 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>weightField</code> for the weights that will be used for the 
-        /// the corresponding terms and <code>payloadField</code> for the corresponding payloads
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// the corresponding terms and <paramref name="payloadField"/> for the corresponding payloads
         /// for the entry.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField)
@@ -83,10 +84,10 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>weightField</code> for the weights that will be used for the 
-        /// the corresponding terms, <code>payloadField</code> for the corresponding payloads
-        /// for the entry and <code>contextsFeild</code> for associated contexts.
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// the corresponding terms, <paramref name="payloadField"/> for the corresponding payloads
+        /// for the entry and <paramref name="contextsFeild"/> for associated contexts.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField, string contextsField)
         {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search.Suggest
             this.contextsField = contextsField;
         }
 
-        public virtual InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {
@@ -106,27 +107,27 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Implements <seealso cref="InputIterator"/> from stored fields. </summary>
-        protected internal class DocumentInputIterator : InputIterator
+        /// Implements <see cref="IInputIterator"/> from stored fields. </summary>
+        protected internal class DocumentInputIterator : IInputIterator
         {
             private readonly DocumentDictionary outerInstance;
 
 
-            internal readonly int docCount;
-            internal readonly HashSet<string> relevantFields;
-            internal readonly bool hasPayloads;
-            internal readonly bool hasContexts;
-            internal readonly Bits liveDocs;
-            internal int currentDocId = -1;
-            internal long currentWeight;
-            internal BytesRef currentPayload;
-            internal HashSet<BytesRef> currentContexts;
-            internal readonly NumericDocValues weightValues;
+            private readonly int docCount;
+            private readonly HashSet<string> relevantFields;
+            private readonly bool hasPayloads;
+            private readonly bool hasContexts;
+            private readonly Bits liveDocs;
+            private int currentDocId = -1;
+            private long currentWeight;
+            private BytesRef currentPayload;
+            private HashSet<BytesRef> currentContexts;
+            private readonly NumericDocValues weightValues;
 
 
             /// <summary>
             /// Creates an iterator over term, weight and payload fields from the lucene
-            /// index. setting <code>withPayload</code> to false, implies an iterator
+            /// index. setting <see cref="HasPayloads"/> to false, implies an iterator
             /// over only term and weight.
             /// </summary>
             public DocumentInputIterator(DocumentDictionary outerInstance, bool hasPayloads, bool hasContexts)
@@ -134,9 +135,9 @@ namespace Lucene.Net.Search.Suggest
                 this.outerInstance = outerInstance;
                 this.hasPayloads = hasPayloads;
                 this.hasContexts = hasContexts;
-                docCount = outerInstance.reader.MaxDoc() - 1;
+                docCount = outerInstance.reader.MaxDoc - 1;
                 weightValues = (outerInstance.weightField != null) ? MultiDocValues.GetNumericValues(outerInstance.reader, outerInstance.weightField) : null;
-                liveDocs = (outerInstance.reader.Leaves().Count > 0) ? MultiFields.GetLiveDocs(outerInstance.reader) : null;
+                liveDocs = (outerInstance.reader.Leaves.Count > 0) ? MultiFields.GetLiveDocs(outerInstance.reader) : null;
                 relevantFields = GetRelevantFields(new string[] { outerInstance.field, outerInstance.weightField, outerInstance.payloadField, outerInstance.contextsField });
             }
 
@@ -145,7 +146,7 @@ namespace Lucene.Net.Search.Suggest
                 get { return currentWeight; }
             }
 
-            public IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparator
             {
                 get
                 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public BytesRef Next()
+            public virtual BytesRef Next()
             {
                 while (currentDocId < docCount)
                 {
@@ -172,11 +173,11 @@ namespace Lucene.Net.Search.Suggest
                     if (hasPayloads)
                     {
                         IndexableField payload = doc.GetField(outerInstance.payloadField);
-                        if (payload == null || (payload.BinaryValue() == null && payload.StringValue == null))
+                        if (payload == null || (payload.BinaryValue == null && payload.StringValue == null))
                         {
                             continue;
                         }
-                        tempPayload = payload.BinaryValue() ?? new BytesRef(payload.StringValue);
+                        tempPayload = payload.BinaryValue ?? new BytesRef(payload.StringValue);
                     }
 
                     if (hasContexts)
@@ -184,23 +185,23 @@ namespace Lucene.Net.Search.Suggest
                         IndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
                         foreach (IndexableField contextField in contextFields)
                         {
-                            if (contextField.BinaryValue() == null && contextField.StringValue == null)
+                            if (contextField.BinaryValue == null && contextField.StringValue == null)
                             {
                                 continue;
                             }
                             else
                             {
-                                tempContexts.Add(contextField.BinaryValue() ?? new BytesRef(contextField.StringValue));
+                                tempContexts.Add(contextField.BinaryValue ?? new BytesRef(contextField.StringValue));
                             }
                         }
                     }
 
                     IndexableField fieldVal = doc.GetField(outerInstance.field);
-                    if (fieldVal == null || (fieldVal.BinaryValue() == null && fieldVal.StringValue == null))
+                    if (fieldVal == null || (fieldVal.BinaryValue == null && fieldVal.StringValue == null))
                     {
                         continue;
                     }
-                    tempTerm = (fieldVal.StringValue != null) ? new BytesRef(fieldVal.StringValue) : fieldVal.BinaryValue();
+                    tempTerm = (fieldVal.StringValue != null) ? new BytesRef(fieldVal.StringValue) : fieldVal.BinaryValue;
 
                     currentPayload = tempPayload;
                     currentContexts = tempContexts;
@@ -222,9 +223,9 @@ namespace Lucene.Net.Search.Suggest
             }
 
             /// <summary>
-            /// Returns the value of the <code>weightField</code> for the current document.
-            /// Retrieves the value for the <code>weightField</code> if its stored (using <code>doc</code>)
-            /// or if its indexed as <seealso cref="NumericDocValues"/> (using <code>docId</code>) for the document.
+            /// Returns the value of the <see cref="Weight"/> property for the current document.
+            /// Retrieves the value for the <see cref="Weight"/> property if its stored (using <paramref name="doc"/>)
+            /// or if its indexed as <see cref="NumericDocValues"/> (using <paramref name="docId"/>) for the document.
             /// If no value is found, then the weight is 0.
             /// </summary>
             protected internal virtual long GetWeight(Document doc, int docId)
@@ -232,7 +233,9 @@ namespace Lucene.Net.Search.Suggest
                 IndexableField weight = doc.GetField(outerInstance.weightField);
                 if (weight != null) // found weight as stored
                 {
-                    return (weight.NumericValue != null) ? (long)weight.NumericValue : 0;
+                    // LUCENENET TODO: See if we can make NumericValue into Decimal (which can be converted to any other type of number)
+                    // rather than using object.
+                    return (weight.NumericValue != null) ? Convert.ToInt64(weight.NumericValue) : 0;
                 } // found weight as NumericDocValue
                 else if (weightValues != null)
                 {
@@ -244,7 +247,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            internal HashSet<string> GetRelevantFields(params string[] fields)
+            private HashSet<string> GetRelevantFields(params string[] fields)
             {
                 var relevantFields = new HashSet<string>();
                 foreach (string relevantField in fields)
@@ -257,7 +260,7 @@ namespace Lucene.Net.Search.Suggest
                 return relevantFields;
             }
 
-            public virtual HashSet<BytesRef> Contexts
+            public virtual IEnumerable<BytesRef> Contexts
             {
                 get
                 {

@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.SortedSet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,33 +22,28 @@ namespace Lucene.Net.Facet.SortedSet
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
-    using OrdRange = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState.OrdRange;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MultiDocValues = Lucene.Net.Index.MultiDocValues;
-    using MultiSortedSetDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedSetDocValues;
+    using OrdRange = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState.OrdRange;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LongValues = Lucene.Net.Util.LongValues;
 
     /// <summary>
     /// Compute facets counts from previously
-    ///  indexed <seealso cref="SortedSetDocValuesFacetField"/>,
-    ///  without require a separate taxonomy index.  Faceting is
-    ///  a bit slower (~25%), and there is added cost on every
-    ///  <seealso cref="IndexReader"/> open to create a new {@link
-    ///  SortedSetDocValuesReaderState}.  Furthermore, this does
-    ///  not support hierarchical facets; only flat (dimension +
-    ///  label) facets, but it uses quite a bit less RAM to do
-    ///  so.
+    /// indexed <see cref="SortedSetDocValuesFacetField"/>,
+    /// without require a separate taxonomy index.  Faceting is
+    /// a bit slower (~25%), and there is added cost on every
+    /// <see cref="IndexReader"/> open to create a new 
+    /// <see cref="SortedSetDocValuesReaderState"/>.  Furthermore, this does
+    /// not support hierarchical facets; only flat (dimension +
+    /// label) facets, but it uses quite a bit less RAM to do
+    /// so.
     /// 
-    ///  <para><b>NOTE</b>: this class should be instantiated and
-    ///  then used from a single thread, because it holds a
-    ///  thread-private instance of <seealso cref="SortedSetDocValues"/>.
+    /// <para><b>NOTE</b>: this class should be instantiated and
+    /// then used from a single thread, because it holds a
+    /// thread-private instance of <see cref="SortedSetDocValues"/>.
     /// 
     /// </para>
     /// <para><b>NOTE:</b>: tie-break is by unicode sort order
@@ -60,7 +53,6 @@ namespace Lucene.Net.Facet.SortedSet
     /// </summary>
     public class SortedSetDocValuesFacetCounts : Facets
     {
-
         internal readonly SortedSetDocValuesReaderState state;
         internal readonly SortedSetDocValues dv;
         internal readonly string field;
@@ -68,16 +60,16 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Sparse faceting: returns any dimension that had any
-        ///  hits, topCount labels per dimension. 
+        /// hits, topCount labels per dimension. 
         /// </summary>
         public SortedSetDocValuesFacetCounts(SortedSetDocValuesReaderState state, FacetsCollector hits)
         {
             this.state = state;
             this.field = state.Field;
             dv = state.DocValues;
-            counts = new int[state.Size];
+            counts = new int[state.Count];
             //System.out.println("field=" + field);
-            Count(hits.GetMatchingDocs);
+            Count(hits.GetMatchingDocs());
         }
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
@@ -100,7 +92,6 @@ namespace Lucene.Net.Facet.SortedSet
 
         private FacetResult GetDim(string dim, OrdRange ordRange, int topN)
         {
-
             TopOrdAndIntQueue q = null;
 
             int bottomCount = 0;
@@ -182,16 +173,15 @@ namespace Lucene.Net.Facet.SortedSet
 
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-
-                var reader = hits.context.AtomicReader;
+                var reader = hits.Context.AtomicReader;
                 //System.out.println("  reader=" + reader);
                 // LUCENE-5090: make sure the provided reader context "matches"
                 // the top-level reader passed to the
                 // SortedSetDocValuesReaderState, else cryptic
                 // AIOOBE can happen:
-                if (!Equals(ReaderUtil.GetTopLevelContext(hits.context).Reader, origReader))
+                if (!Equals(ReaderUtil.GetTopLevelContext(hits.Context).Reader, origReader))
                 {
-                    throw new ThreadStateException("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
+                    throw new InvalidOperationException("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
                 }
 
                 SortedSetDocValues segValues = reader.GetSortedSetDocValues(field);
@@ -200,7 +190,7 @@ namespace Lucene.Net.Facet.SortedSet
                     continue;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 // TODO: yet another option is to count all segs
                 // first, only in seg-ord space, and then do a
@@ -213,11 +203,11 @@ namespace Lucene.Net.Facet.SortedSet
                 // segs)
                 if (ordinalMap != null)
                 {
-                    int segOrd = hits.context.Ord;
+                    int segOrd = hits.Context.Ord;
 
                     int numSegOrds = (int)segValues.ValueCount;
 
-                    if (hits.totalHits < numSegOrds / 10)
+                    if (hits.TotalHits < numSegOrds / 10)
                     {
                         //System.out.println("    remap as-we-go");
                         // Remap every ord to global ord as we iterate:
@@ -301,9 +291,8 @@ namespace Lucene.Net.Facet.SortedSet
             return counts[ord];
         }
 
-        public override IList<FacetResult> GetAllDims(int topN)
+        public override List<FacetResult> GetAllDims(int topN)
         {
-
             IList<FacetResult> results = new List<FacetResult>();
             foreach (KeyValuePair<string, OrdRange> ent in state.PrefixToOrdRange)
             {
@@ -314,9 +303,9 @@ namespace Lucene.Net.Facet.SortedSet
                 }
             }
 
-            var resultArray = results.ToArray();
+            var resultArray = results.ToList();
             // Sort by highest count:
-            Array.Sort(resultArray, new ComparatorAnonymousInnerClassHelper(this));
+            resultArray.Sort(new ComparatorAnonymousInnerClassHelper(this));
             return resultArray;
         }
 
@@ -341,10 +330,9 @@ namespace Lucene.Net.Facet.SortedSet
                 }
                 else
                 {
-                    return a.Dim.CompareTo(b.Dim);
+                    return a.Dim.CompareToOrdinal(b.Dim);
                 }
             }
         }
     }
-
 }

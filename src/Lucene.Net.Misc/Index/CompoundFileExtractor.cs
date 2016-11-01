@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Util;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.index
+namespace Lucene.Net.Index
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,146 +22,136 @@ namespace org.apache.lucene.index
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Prints the filename and size of each file within a given compound file.
-	/// Add the -extract flag to extract files to the current working directory.
-	/// In order to make the extracted version of the index work, you have to copy
-	/// the segments file from the compound index into the directory where the extracted files are stored. </summary>
-	/// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
+    /// <summary>
+    /// Prints the filename and size of each file within a given compound file.
+    /// Add the -extract flag to extract files to the current working directory.
+    /// In order to make the extracted version of the index work, you have to copy
+    /// the segments file from the compound index into the directory where the extracted files are stored. </summary>
+    /// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
 
+    /// <summary>
+    /// Command-line tool for extracting sub-files out of a compound file.
+    /// </summary>
+    public class CompoundFileExtractor
+    {
 
-	using CompoundFileDirectory = org.apache.lucene.store.CompoundFileDirectory;
-	using Directory = org.apache.lucene.store.Directory;
-	using FSDirectory = org.apache.lucene.store.FSDirectory;
-	using IOContext = org.apache.lucene.store.IOContext;
-	using IndexInput = org.apache.lucene.store.IndexInput;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using CommandLineUtil = org.apache.lucene.util.CommandLineUtil;
+        public static void Main(string[] args)
+        {
+            string filename = null;
+            bool extract = false;
+            string dirImpl = null;
 
-	/// <summary>
-	/// Command-line tool for extracting sub-files out of a compound file.
-	/// </summary>
-	public class CompoundFileExtractor
-	{
+            int j = 0;
+            while (j < args.Length)
+            {
+                string arg = args[j];
+                if ("-extract".Equals(arg))
+                {
+                    extract = true;
+                }
+                else if ("-dir-impl".Equals(arg))
+                {
+                    if (j == args.Length - 1)
+                    {
+                        Console.WriteLine("ERROR: missing value for -dir-impl option");
+                        Environment.Exit(1);
+                    }
+                    j++;
+                    dirImpl = args[j];
+                }
+                else if (filename == null)
+                {
+                    filename = arg;
+                }
+                j++;
+            }
 
-	  public static void Main(string[] args)
-	  {
-		string filename = null;
-		bool extract = false;
-		string dirImpl = null;
+            if (filename == null)
+            {
+                Console.WriteLine("Usage: org.apache.lucene.index.CompoundFileExtractor [-extract] [-dir-impl X] <cfsfile>");
+                return;
+            }
 
-		int j = 0;
-		while (j < args.Length)
-		{
-		  string arg = args[j];
-		  if ("-extract".Equals(arg))
-		  {
-			extract = true;
-		  }
-		  else if ("-dir-impl".Equals(arg))
-		  {
-			if (j == args.Length - 1)
-			{
-			  Console.WriteLine("ERROR: missing value for -dir-impl option");
-			  Environment.Exit(1);
-			}
-			j++;
-			dirImpl = args[j];
-		  }
-		  else if (filename == null)
-		  {
-			filename = arg;
-		  }
-		  j++;
-		}
+            Store.Directory dir = null;
+            CompoundFileDirectory cfr = null;
+            IOContext context = IOContext.READ;
 
-		if (filename == null)
-		{
-		  Console.WriteLine("Usage: org.apache.lucene.index.CompoundFileExtractor [-extract] [-dir-impl X] <cfsfile>");
-		  return;
-		}
+            try
+            {
+                FileInfo file = new FileInfo(filename);
+                string dirname = file.DirectoryName;
+                filename = file.Name;
+                if (dirImpl == null)
+                {
+                    dir = FSDirectory.Open(new DirectoryInfo(dirname));
+                }
+                else
+                {
+                    dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(dirname));
+                }
 
-		Directory dir = null;
-		CompoundFileDirectory cfr = null;
-		IOContext context = IOContext.READ;
+                cfr = new CompoundFileDirectory(dir, filename, IOContext.DEFAULT, false);
 
-		try
-		{
-		  File file = new File(filename);
-		  string dirname = file.AbsoluteFile.Parent;
-		  filename = file.Name;
-		  if (dirImpl == null)
-		  {
-			dir = FSDirectory.open(new File(dirname));
-		  }
-		  else
-		  {
-			dir = CommandLineUtil.newFSDirectory(dirImpl, new File(dirname));
-		  }
+                string[] files = cfr.ListAll();
+                ArrayUtil.TimSort(files); // sort the array of filename so that the output is more readable
 
-		  cfr = new CompoundFileDirectory(dir, filename, IOContext.DEFAULT, false);
+                for (int i = 0; i < files.Length; ++i)
+                {
+                    long len = cfr.FileLength(files[i]);
 
-		  string[] files = cfr.listAll();
-		  ArrayUtil.timSort(files); // sort the array of filename so that the output is more readable
+                    if (extract)
+                    {
+                        Console.WriteLine("extract " + files[i] + " with " + len + " bytes to local directory...");
+                        using (IndexInput ii = cfr.OpenInput(files[i], context))
+                        {
 
-		  for (int i = 0; i < files.Length; ++i)
-		  {
-			long len = cfr.fileLength(files[i]);
+                            using (FileStream f = new FileStream(files[i], FileMode.Open, FileAccess.ReadWrite))
+                            {
 
-			if (extract)
-			{
-			  Console.WriteLine("extract " + files[i] + " with " + len + " bytes to local directory...");
-			  IndexInput ii = cfr.openInput(files[i], context);
+                                // read and write with a small buffer, which is more effective than reading byte by byte
+                                byte[] buffer = new byte[1024];
+                                int chunk = buffer.Length;
+                                while (len > 0)
+                                {
+                                    int bufLen = (int)Math.Min(chunk, len);
+                                    ii.ReadBytes(buffer, 0, bufLen);
+                                    f.Write(buffer, 0, bufLen);
+                                    len -= bufLen;
+                                }
 
-			  FileOutputStream f = new FileOutputStream(files[i]);
-
-			  // read and write with a small buffer, which is more effective than reading byte by byte
-			  sbyte[] buffer = new sbyte[1024];
-			  int chunk = buffer.Length;
-			  while (len > 0)
-			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bufLen = (int) Math.min(chunk, len);
-				int bufLen = (int) Math.Min(chunk, len);
-				ii.readBytes(buffer, 0, bufLen);
-				f.write(buffer, 0, bufLen);
-				len -= bufLen;
-			  }
-
-			  f.close();
-			  ii.close();
-			}
-			else
-			{
-			  Console.WriteLine(files[i] + ": " + len + " bytes");
-			}
-		  }
-		}
-		catch (IOException ioe)
-		{
-		  Console.WriteLine(ioe.ToString());
-		  Console.Write(ioe.StackTrace);
-		}
-		finally
-		{
-		  try
-		  {
-			if (dir != null)
-			{
-			  dir.close();
-			}
-			if (cfr != null)
-			{
-			  cfr.close();
-			}
-		  }
-		  catch (IOException ioe)
-		  {
-			Console.WriteLine(ioe.ToString());
-			Console.Write(ioe.StackTrace);
-		  }
-		}
-	  }
-	}
-
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(files[i] + ": " + len + " bytes");
+                    }
+                }
+            }
+            catch (IOException ioe)
+            {
+                Console.WriteLine(ioe.ToString());
+                Console.Write(ioe.StackTrace);
+            }
+            finally
+            {
+                try
+                {
+                    if (dir != null)
+                    {
+                        dir.Dispose();
+                    }
+                    if (cfr != null)
+                    {
+                        cfr.Dispose();
+                    }
+                }
+                catch (IOException ioe)
+                {
+                    Console.WriteLine(ioe.ToString());
+                    Console.Write(ioe.StackTrace);
+                }
+            }
+        }
+    }
 }

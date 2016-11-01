@@ -1,12 +1,10 @@
-﻿using System;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Removes words that are too long or too short from the stream.
     /// <para>
@@ -35,22 +34,23 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly int min;
         private readonly int max;
 
-        private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;
 
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
-        public LengthFilter(Version version, bool enablePositionIncrements, TokenStream @in, int min, int max)
+        public LengthFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream @in, int min, int max)
             : base(version, enablePositionIncrements, @in)
         {
             if (min < 0)
             {
-                throw new System.ArgumentException("minimum length must be greater than or equal to zero");
+                throw new System.ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
             }
             if (min > max)
             {
-                throw new System.ArgumentException("maximum length must not be greater than minimum length");
+                throw new System.ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
             }
             this.min = min;
             this.max = max;
+            this.termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         /// <summary>
@@ -61,19 +61,20 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
         /// <param name="min">     the minimum length </param>
         /// <param name="max">     the maximum length </param>
-        public LengthFilter(Version version, TokenStream @in, int min, int max)
+        public LengthFilter(LuceneVersion version, TokenStream @in, int min, int max)
             : base(version, @in)
         {
             if (min < 0)
             {
-                throw new System.ArgumentException("minimum length must be greater than or equal to zero");
+                throw new ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
             }
             if (min > max)
             {
-                throw new System.ArgumentException("maximum length must not be greater than minimum length");
+                throw new ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
             }
             this.min = min;
             this.max = max;
+            this.termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         protected internal override bool Accept()
@@ -82,5 +83,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return (len >= min && len <= max);
         }
     }
-
 }

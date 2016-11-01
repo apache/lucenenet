@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,7 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Interface for enumerating term,weight pairs.
     /// </summary>
-    public interface TermFreqIterator : BytesRefIterator
+    public interface ITermFreqIterator : BytesRefIterator
     {
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace Lucene.Net.Search.Spell
     /// Wraps a BytesRefIterator as a TermFreqIterator, with all weights
     /// set to <code>1</code>
     /// </summary>
-    public class TermFreqIteratorWrapper : TermFreqIterator
+    public class TermFreqIteratorWrapper : ITermFreqIterator
     {
         internal BytesRefIterator wrapped;
 
@@ -55,12 +54,12 @@ namespace Lucene.Net.Search.Spell
             get { return 1; }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             return wrapped.Next();
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get { return wrapped.Comparator; }
         }

@@ -5,6 +5,7 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
+    using Attributes;
     using NUnit.Framework;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "this is document one 2345", Field.Store.NO);
@@ -222,7 +223,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, AutomatonQueryNrHits(aq));
         }
 
-        [Test]
+        [Test, LongRunningTest, Timeout(40000)]
         public virtual void TestHashCodeWithThreads()
         {
             AutomatonQuery[] queries = new AutomatonQuery[1000];

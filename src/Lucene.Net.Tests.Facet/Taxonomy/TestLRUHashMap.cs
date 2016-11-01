@@ -30,28 +30,28 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestLru()
         {
-            LRUHashMap<string, string> lru = new LRUHashMap<string, string>(3,1);
-            Assert.AreEqual(0, lru.Size());
+            LRUHashMap<string, string> lru = new LRUHashMap<string, string>(3);
+            Assert.AreEqual(0, lru.Count);
             lru.Put("one", "Hello world");
-            Assert.AreEqual(1, lru.Size());
+            Assert.AreEqual(1, lru.Count);
             lru.Put("two", "Hi man");
-            Assert.AreEqual(2, lru.Size());
+            Assert.AreEqual(2, lru.Count);
             lru.Put("three", "Bonjour");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             lru.Put("four", "Shalom");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.NotNull(lru.Get("three"));
             Assert.NotNull(lru.Get("two"));
             Assert.NotNull(lru.Get("four"));
             Assert.Null(lru.Get("one"));
             lru.Put("five", "Yo!");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.Null(lru.Get("three")); // three was last used, so it got removed
             Assert.NotNull(lru.Get("five"));
             lru.Get("four");
             lru.Put("six", "hi");
             lru.Put("seven", "hey dude");
-            Assert.AreEqual(3, lru.Size());
+            Assert.AreEqual(3, lru.Count);
             Assert.Null(lru.Get("one"));
             Assert.Null(lru.Get("two"));
             Assert.Null(lru.Get("three"));
@@ -59,6 +59,12 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.Null(lru.Get("five"));
             Assert.NotNull(lru.Get("six"));
             Assert.NotNull(lru.Get("seven"));
+
+            // LUCENENET specific tests to ensure Put is implemented correctly
+            Assert.Null(lru.Put("ten", "oops"));
+            assertEquals("oops", lru.Put("ten", "not oops"));
+            assertEquals("not oops", lru.Put("ten", "new value"));
+            assertEquals("new value", lru.Put("ten", "new value2"));
         }
     }
 

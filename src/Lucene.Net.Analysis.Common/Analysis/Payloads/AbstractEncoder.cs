@@ -1,9 +1,8 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Util;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-
-	using BytesRef = org.apache.lucene.util.BytesRef;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,20 +19,17 @@
 	 * limitations under the License.
 	 */
 
-
-
-	/// <summary>
-	/// Base class for payload encoders.
-	/// 
-	/// 
-	/// </summary>
-	public abstract class AbstractEncoder : PayloadEncoder
-	{
-		public abstract BytesRef encode(char[] buffer, int offset, int length);
-	  public virtual BytesRef encode(char[] buffer)
-	  {
-		return encode(buffer, 0, buffer.Length);
-	  }
-	}
-
+    /// <summary>
+    /// Base class for payload encoders.
+    /// 
+    /// 
+    /// </summary>
+    public abstract class AbstractEncoder : IPayloadEncoder
+    {
+        public abstract BytesRef Encode(char[] buffer, int offset, int length);
+        public virtual BytesRef encode(char[] buffer)
+        {
+            return Encode(buffer, 0, buffer.Length);
+        }
+    }
 }

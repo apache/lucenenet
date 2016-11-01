@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
     /// These are mostly like TestSort's tests, except each test
     /// indexes the field up-front as docvalues, and checks no fieldcaches were made
     /// </summary>
+    [SuppressCodecs("Lucene3x", "Appending", "Lucene40", "Lucene41", "Lucene42")] // avoid codecs that don't support "missing"
     [TestFixture]
     public class TestSortDocValues : LuceneTestCase
     {
@@ -62,7 +63,7 @@ namespace Lucene.Net.Search
         public virtual void TestString()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
@@ -94,7 +95,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("value", "bar", Field.Store.YES));
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringVal()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("value", new BytesRef("foo")));
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("value", "bar", Field.Store.YES));
@@ -190,7 +191,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValSorted()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
@@ -222,7 +223,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValReverseSorted()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("value", "bar", Field.Store.YES));
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search
         public virtual void TestByte()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 23));
             doc.Add(NewStringField("value", "23", Field.Store.YES));
@@ -291,7 +292,7 @@ namespace Lucene.Net.Search
         public virtual void TestByteReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 23));
             doc.Add(NewStringField("value", "23", Field.Store.YES));
@@ -328,7 +329,7 @@ namespace Lucene.Net.Search
         public virtual void TestShort()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 300));
             doc.Add(NewStringField("value", "300", Field.Store.YES));
@@ -365,7 +366,7 @@ namespace Lucene.Net.Search
         public virtual void TestShortReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 300));
             doc.Add(NewStringField("value", "300", Field.Store.YES));
@@ -402,7 +403,7 @@ namespace Lucene.Net.Search
         public virtual void TestInt()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 300000));
             doc.Add(NewStringField("value", "300000", Field.Store.YES));
@@ -439,7 +440,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 300000));
             doc.Add(NewStringField("value", "300000", Field.Store.YES));
@@ -476,7 +477,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -510,7 +511,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -546,7 +547,7 @@ namespace Lucene.Net.Search
         public virtual void TestLong()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 3000000000L));
             doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
@@ -583,7 +584,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("value", 3000000000L));
             doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
@@ -620,7 +621,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -654,7 +655,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -690,7 +691,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloat()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new FloatDocValuesField("value", 30.1F));
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
@@ -727,7 +728,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new FloatDocValuesField("value", 30.1F));
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
@@ -764,7 +765,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -798,7 +799,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -834,7 +835,7 @@ namespace Lucene.Net.Search
         public virtual void TestDouble()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new DoubleDocValuesField("value", 30.1));
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
@@ -876,7 +877,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleSignedZero()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new DoubleDocValuesField("value", +0D));
             doc.Add(NewStringField("value", "+0", Field.Store.YES));
@@ -908,7 +909,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new DoubleDocValuesField("value", 30.1));
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
@@ -950,7 +951,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -989,7 +990,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();

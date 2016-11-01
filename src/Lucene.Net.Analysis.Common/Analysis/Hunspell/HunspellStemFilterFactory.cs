@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,97 +23,88 @@ namespace org.apache.lucene.analysis.hunspell
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// TokenFilterFactory that creates instances of <seealso cref="HunspellStemFilter"/>.
+    /// Example config for British English:
+    /// <pre class="prettyprint">
+    /// &lt;filter class=&quot;solr.HunspellStemFilterFactory&quot;
+    ///         dictionary=&quot;en_GB.dic,my_custom.dic&quot;
+    ///         affix=&quot;en_GB.aff&quot; 
+    ///         ignoreCase=&quot;false&quot;
+    ///         longestOnly=&quot;false&quot; /&gt;</pre>
+    /// Both parameters dictionary and affix are mandatory.
+    /// Dictionaries for many languages are available through the OpenOffice project.
+    /// 
+    /// See <a href="http://wiki.apache.org/solr/Hunspell">http://wiki.apache.org/solr/Hunspell</a>
+    /// @lucene.experimental
+    /// </summary>
+    public class HunspellStemFilterFactory : TokenFilterFactory, IResourceLoaderAware
+    {
+        private const string PARAM_DICTIONARY = "dictionary";
+        private const string PARAM_AFFIX = "affix";
+        private const string PARAM_RECURSION_CAP = "recursionCap";
+        private const string PARAM_IGNORE_CASE = "ignoreCase";
+        private const string PARAM_LONGEST_ONLY = "longestOnly";
 
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
-	using ResourceLoaderAware = org.apache.lucene.analysis.util.ResourceLoaderAware;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
-	using IOUtils = org.apache.lucene.util.IOUtils;
+        private readonly string dictionaryFiles;
+        private readonly string affixFile;
+        private readonly bool ignoreCase;
+        private readonly bool longestOnly;
+        private Dictionary dictionary;
 
-	/// <summary>
-	/// TokenFilterFactory that creates instances of <seealso cref="HunspellStemFilter"/>.
-	/// Example config for British English:
-	/// <pre class="prettyprint">
-	/// &lt;filter class=&quot;solr.HunspellStemFilterFactory&quot;
-	///         dictionary=&quot;en_GB.dic,my_custom.dic&quot;
-	///         affix=&quot;en_GB.aff&quot; 
-	///         ignoreCase=&quot;false&quot;
-	///         longestOnly=&quot;false&quot; /&gt;</pre>
-	/// Both parameters dictionary and affix are mandatory.
-	/// Dictionaries for many languages are available through the OpenOffice project.
-	/// 
-	/// See <a href="http://wiki.apache.org/solr/Hunspell">http://wiki.apache.org/solr/Hunspell</a>
-	/// @lucene.experimental
-	/// </summary>
-	public class HunspellStemFilterFactory : TokenFilterFactory, ResourceLoaderAware
-	{
-	  private const string PARAM_DICTIONARY = "dictionary";
-	  private const string PARAM_AFFIX = "affix";
-	  private const string PARAM_RECURSION_CAP = "recursionCap";
-	  private const string PARAM_IGNORE_CASE = "ignoreCase";
-	  private const string PARAM_LONGEST_ONLY = "longestOnly";
+        /// <summary>
+        /// Creates a new HunspellStemFilterFactory </summary>
+        public HunspellStemFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            dictionaryFiles = Require(args, PARAM_DICTIONARY);
+            affixFile = Get(args, PARAM_AFFIX);
+            ignoreCase = GetBoolean(args, PARAM_IGNORE_CASE, false);
+            longestOnly = GetBoolean(args, PARAM_LONGEST_ONLY, false);
+            // this isnt necessary: we properly load all dictionaries.
+            // but recognize and ignore for back compat
+            GetBoolean(args, "strictAffixParsing", true);
+            // this isn't necessary: multi-stage stripping is fixed and 
+            // flags like COMPLEXPREFIXES in the data itself control this.
+            // but recognize and ignore for back compat
+            GetInt(args, "recursionCap", 0);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  private readonly string dictionaryFiles;
-	  private readonly string affixFile;
-	  private readonly bool ignoreCase;
-	  private readonly bool longestOnly;
-	  private Dictionary dictionary;
+        public virtual void Inform(IResourceLoader loader)
+        {
+            string[] dicts = dictionaryFiles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-	  /// <summary>
-	  /// Creates a new HunspellStemFilterFactory </summary>
-	  public HunspellStemFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		dictionaryFiles = require(args, PARAM_DICTIONARY);
-		affixFile = get(args, PARAM_AFFIX);
-		ignoreCase = getBoolean(args, PARAM_IGNORE_CASE, false);
-		longestOnly = getBoolean(args, PARAM_LONGEST_ONLY, false);
-		// this isnt necessary: we properly load all dictionaries.
-		// but recognize and ignore for back compat
-		getBoolean(args, "strictAffixParsing", true);
-		// this isn't necessary: multi-stage stripping is fixed and 
-		// flags like COMPLEXPREFIXES in the data itself control this.
-		// but recognize and ignore for back compat
-		getInt(args, "recursionCap", 0);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+            Stream affix = null;
+            IList<Stream> dictionaries = new List<Stream>();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void inform(org.apache.lucene.analysis.util.ResourceLoader loader) throws java.io.IOException
-	  public virtual void inform(ResourceLoader loader)
-	  {
-		string[] dicts = dictionaryFiles.Split(",", true);
+            try
+            {
+                dictionaries = new List<Stream>();
+                foreach (string file in dicts)
+                {
+                    dictionaries.Add(loader.OpenResource(file));
+                }
+                affix = loader.OpenResource(affixFile);
 
-		InputStream affix = null;
-		IList<InputStream> dictionaries = new List<InputStream>();
+                this.dictionary = new Dictionary(affix, dictionaries, ignoreCase);
+            }
+            catch (Exception e)
+            {
+                throw new IOException("Unable to load hunspell data! [dictionary=" + dictionaries + ",affix=" + affixFile + "]", e);
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(affix);
+                IOUtils.CloseWhileHandlingException(dictionaries);
+            }
+        }
 
-		try
-		{
-		  dictionaries = new List<>();
-		  foreach (string file in dicts)
-		  {
-			dictionaries.Add(loader.openResource(file));
-		  }
-		  affix = loader.openResource(affixFile);
-
-		  this.dictionary = new Dictionary(affix, dictionaries, ignoreCase);
-		}
-		catch (ParseException e)
-		{
-		  throw new IOException("Unable to load hunspell data! [dictionary=" + dictionaries + ",affix=" + affixFile + "]", e);
-		}
-		finally
-		{
-		  IOUtils.closeWhileHandlingException(affix);
-		  IOUtils.closeWhileHandlingException(dictionaries);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream tokenStream)
-	  {
-		return new HunspellStemFilter(tokenStream, dictionary, true, longestOnly);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream tokenStream)
+        {
+            return new HunspellStemFilter(tokenStream, dictionary, true, longestOnly);
+        }
+    }
 }

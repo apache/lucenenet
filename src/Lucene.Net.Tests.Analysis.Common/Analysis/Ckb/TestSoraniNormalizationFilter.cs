@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,105 +21,93 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tests normalization for Sorani (this is more critical than stemming...)
+    /// </summary>
+    public class TestSoraniNormalizationFilter : BaseTokenStreamTestCase
+    {
+        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Tests normalization for Sorani (this is more critical than stemming...)
-	/// </summary>
-	public class TestSoraniNormalizationFilter : BaseTokenStreamTestCase
-	{
-	  internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new SoraniNormalizationFilter(tokenizer));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        [Test]
+        public virtual void TestY()
+        {
+            CheckOneTerm(a, "\u064A", "\u06CC");
+            CheckOneTerm(a, "\u0649", "\u06CC");
+            CheckOneTerm(a, "\u06CC", "\u06CC");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new SoraniNormalizationFilter(tokenizer));
-		  }
-	  }
+        [Test]
+        public virtual void TestK()
+        {
+            CheckOneTerm(a, "\u0643", "\u06A9");
+            CheckOneTerm(a, "\u06A9", "\u06A9");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testY() throws Exception
-	  public virtual void testY()
-	  {
-		checkOneTerm(a, "\u064A", "\u06CC");
-		checkOneTerm(a, "\u0649", "\u06CC");
-		checkOneTerm(a, "\u06CC", "\u06CC");
-	  }
+        [Test]
+        public virtual void TestH()
+        {
+            // initial
+            CheckOneTerm(a, "\u0647\u200C", "\u06D5");
+            // medial
+            CheckOneTerm(a, "\u0647\u200C\u06A9", "\u06D5\u06A9");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testK() throws Exception
-	  public virtual void testK()
-	  {
-		checkOneTerm(a, "\u0643", "\u06A9");
-		checkOneTerm(a, "\u06A9", "\u06A9");
-	  }
+            CheckOneTerm(a, "\u06BE", "\u0647");
+            CheckOneTerm(a, "\u0629", "\u06D5");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testH() throws Exception
-	  public virtual void testH()
-	  {
-		// initial
-		checkOneTerm(a, "\u0647\u200C", "\u06D5");
-		// medial
-		checkOneTerm(a, "\u0647\u200C\u06A9", "\u06D5\u06A9");
+        [Test]
+        public virtual void TestFinalH()
+        {
+            // always (and in final form by def), so frequently omitted
+            CheckOneTerm(a, "\u0647\u0647\u0647", "\u0647\u0647\u06D5");
+        }
 
-		checkOneTerm(a, "\u06BE", "\u0647");
-		checkOneTerm(a, "\u0629", "\u06D5");
-	  }
+        [Test]
+        public virtual void TestRR()
+        {
+            CheckOneTerm(a, "\u0692", "\u0695");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFinalH() throws Exception
-	  public virtual void testFinalH()
-	  {
-		// always (and in final form by def), so frequently omitted
-		checkOneTerm(a, "\u0647\u0647\u0647", "\u0647\u0647\u06D5");
-	  }
+        [Test]
+        public virtual void TestInitialRR()
+        {
+            // always, so frequently omitted
+            CheckOneTerm(a, "\u0631\u0631\u0631", "\u0695\u0631\u0631");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRR() throws Exception
-	  public virtual void testRR()
-	  {
-		checkOneTerm(a, "\u0692", "\u0695");
-	  }
+        [Test]
+        public virtual void TestRemove()
+        {
+            CheckOneTerm(a, "\u0640", "");
+            CheckOneTerm(a, "\u064B", "");
+            CheckOneTerm(a, "\u064C", "");
+            CheckOneTerm(a, "\u064D", "");
+            CheckOneTerm(a, "\u064E", "");
+            CheckOneTerm(a, "\u064F", "");
+            CheckOneTerm(a, "\u0650", "");
+            CheckOneTerm(a, "\u0651", "");
+            CheckOneTerm(a, "\u0652", "");
+            // we peek backwards in this case to look for h+200C, ensure this works
+            CheckOneTerm(a, "\u200C", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInitialRR() throws Exception
-	  public virtual void testInitialRR()
-	  {
-		// always, so frequently omitted
-		checkOneTerm(a, "\u0631\u0631\u0631", "\u0695\u0631\u0631");
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRemove() throws Exception
-	  public virtual void testRemove()
-	  {
-		checkOneTerm(a, "\u0640", "");
-		checkOneTerm(a, "\u064B", "");
-		checkOneTerm(a, "\u064C", "");
-		checkOneTerm(a, "\u064D", "");
-		checkOneTerm(a, "\u064E", "");
-		checkOneTerm(a, "\u064F", "");
-		checkOneTerm(a, "\u0650", "");
-		checkOneTerm(a, "\u0651", "");
-		checkOneTerm(a, "\u0652", "");
-		// we peek backwards in this case to look for h+200C, ensure this works
-		checkOneTerm(a, "\u200C", "");
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		checkOneTerm(a, "", "");
-	  }
-	}
-
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            CheckOneTerm(a, "", "");
+        }
+    }
 }

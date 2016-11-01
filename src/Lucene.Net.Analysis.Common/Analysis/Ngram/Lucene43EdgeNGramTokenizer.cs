@@ -1,12 +1,10 @@
-﻿using System;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Old version of <seealso cref="EdgeNGramTokenizer"/> which doesn't handle correctly
     /// supplementary characters.
@@ -34,9 +33,9 @@ namespace Lucene.Net.Analysis.Ngram
         public const int DEFAULT_MAX_GRAM_SIZE = 1;
         public const int DEFAULT_MIN_GRAM_SIZE = 1;
 
-        private readonly CharTermAttribute termAtt;
-        private readonly OffsetAttribute offsetAtt;
-        private readonly PositionIncrementAttribute posIncrAtt;
+        private ICharTermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private IPositionIncrementAttribute posIncrAtt;
 
         /// <summary>
         /// Specifies which side of the input the n-gram should be generated from </summary>
@@ -52,26 +51,15 @@ namespace Lucene.Net.Analysis.Ngram
             BACK,
         }
 
-        private static string GetSideLabel(Side side)
-        {
-            if (side == Side.FRONT) return "front";
-            if (side == Side.BACK) return "back";
-            return null;
-        }
-
-
         // Get the appropriate Side from a string
-        internal static Side? GetSide(String sideName)
+        internal static Side GetSide(string sideName)
         {
-            if (GetSideLabel(Side.FRONT).Equals(sideName))
+            Side result;
+            if (!Enum.TryParse(sideName, true, out result))
             {
-                return Side.FRONT;
+                result = Side.FRONT;
             }
-            if (GetSideLabel(Side.BACK).Equals(sideName))
-            {
-                return Side.BACK;
-            }
-            return null;
+            return result;
         }
 
         private int minGram;
@@ -93,10 +81,10 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
-        public Lucene43EdgeNGramTokenizer(Version version, Reader input, Side side, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, TextReader input, Side side, int minGram, int maxGram)
             : base(input)
         {
-            init(version, side, minGram, maxGram);
+            Init(version, side, minGram, maxGram);
         }
 
         /// <summary>
@@ -109,10 +97,10 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
-        public Lucene43EdgeNGramTokenizer(Version version, AttributeFactory factory, Reader input, Side side, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, Side side, int minGram, int maxGram)
             : base(factory, input)
         {
-            init(version, side, minGram, maxGram);
+            Init(version, side, minGram, maxGram);
         }
 
         /// <summary>
@@ -124,7 +112,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
-        public Lucene43EdgeNGramTokenizer(Version version, Reader input, string sideLabel, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, TextReader input, string sideLabel, int minGram, int maxGram)
             : this(version, input, GetSide(sideLabel), minGram, maxGram)
         {
         }
@@ -139,7 +127,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
-        public Lucene43EdgeNGramTokenizer(Version version, AttributeFactory factory, Reader input, string sideLabel, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, string sideLabel, int minGram, int maxGram)
             : this(version, factory, input, GetSide(sideLabel), minGram, maxGram)
         {
         }
@@ -151,7 +139,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
-        public Lucene43EdgeNGramTokenizer(Version version, Reader input, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram)
             : this(version, input, Side.FRONT, minGram, maxGram)
         {
         }
@@ -164,19 +152,19 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
-        public Lucene43EdgeNGramTokenizer(Version version, AttributeFactory factory, Reader input, int minGram, int maxGram)
+        public Lucene43EdgeNGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram)
             : this(version, factory, input, Side.FRONT, minGram, maxGram)
         {
         }
 
-        private void init(Version version, Side side, int minGram, int maxGram)
+        private void Init(LuceneVersion version, Side side, int minGram, int maxGram)
         {
-            if (version == null)
-            {
-                throw new System.ArgumentException("version must not be null");
-            }
+            //if (version == null)
+            //{
+            //    throw new System.ArgumentException("version must not be null");
+            //}
 
-            if (side == null)
+            if (!Enum.IsDefined(typeof(Side), side))
             {
                 throw new System.ArgumentException("sideLabel must be either front or back");
             }
@@ -191,7 +179,7 @@ namespace Lucene.Net.Analysis.Ngram
                 throw new System.ArgumentException("minGram must not be greater than maxGram");
             }
 
-            if (version.OnOrAfter(Version.LUCENE_44))
+            if (version.OnOrAfter(LuceneVersion.LUCENE_44))
             {
                 if (side == Side.BACK)
                 {
@@ -206,6 +194,9 @@ namespace Lucene.Net.Analysis.Ngram
             this.minGram = minGram;
             this.maxGram = maxGram;
             this.side = side;
+            this.termAtt = AddAttribute<ICharTermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
+            this.posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -304,5 +295,4 @@ namespace Lucene.Net.Analysis.Ngram
             started = false;
         }
     }
-
 }

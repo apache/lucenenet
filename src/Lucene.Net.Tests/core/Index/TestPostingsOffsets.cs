@@ -50,6 +50,7 @@ namespace Lucene.Net.Index
     // TODO: we really need to test indexingoffsets, but then getting only docs / docs + freqs.
     // not all codecs store prx separate...
     // TODO: fix sep codec to index offsets so we can greatly reduce this list!
+    [SuppressCodecs("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom")]
     [TestFixture]
     public class TestPostingsOffsets : LuceneTestCase
     {
@@ -438,7 +439,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddFieldTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType customType3 = new FieldType(TextField.TYPE_STORED);
             customType3.StoreTermVectors = true;

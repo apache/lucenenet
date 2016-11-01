@@ -3,11 +3,10 @@ using ICU4NET;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using CharacterIterator = Lucene.Net.Analysis.Util.CharacterIterator;
+using CharacterIterator = Lucene.Net.Support.CharacterIterator;
 
-namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
+namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     [TestFixture]
     public class TestCharArrayIterator : LuceneTestCase
     {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
             assertEquals(0, ci.BeginIndex);
             assertEquals(7, ci.EndIndex);
             assertEquals(0, ci.Index);
-            assertEquals('t', ci.Current());
+            assertEquals('t', ci.Current);
             assertEquals('e', ci.Next());
             assertEquals('g', ci.Last());
             assertEquals('n', ci.Previous());
@@ -135,11 +135,11 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
             // current()
             // Gets the character at the current position (as returned by getIndex()). 
             ci.SetText("testing".ToCharArray(), 0, "testing".Length);
-            assertEquals('t', ci.Current());
+            assertEquals('t', ci.Current);
             ci.Last();
             ci.Next();
             // or DONE if the current position is off the end of the text.
-            assertEquals(CharacterIterator.DONE, ci.Current());
+            assertEquals(CharacterIterator.DONE, ci.Current);
 
             // next()
             ci.SetText("te".ToCharArray(), 0, 2);

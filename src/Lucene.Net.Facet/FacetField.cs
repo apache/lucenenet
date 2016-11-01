@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,11 +24,11 @@ namespace Lucene.Net.Facet
     using FieldType = Lucene.Net.Documents.FieldType;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> for every facet label.
+    /// Add an instance of this to your <see cref="Document"/> for every facet label.
     /// 
     /// <para>
-    /// <b>NOTE:</b> you must call <seealso cref="FacetsConfig#build(Document)"/> before
-    /// you add the document to IndexWriter.
+    /// <b>NOTE:</b> you must call <see cref="FacetsConfig.Build(Document)"/> before
+    /// you add the document to <see cref="Index.IndexWriter"/>.
     /// </para>
     /// </summary>
     public class FacetField : Field
@@ -42,16 +41,18 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Dimension for this field. </summary>
-        public readonly string dim;
+        /// Dimension for this field.
+        /// </summary>
+        public string Dim { get; private set; }
 
         /// <summary>
-        /// Path for this field. </summary>
-        public readonly string[] path;
+        /// Path for this field.
+        /// </summary>
+        public string[] Path { get; private set; }
 
         /// <summary>
-        /// Creates the this from {@code dim} and
-        ///  {@code path}. 
+        /// Creates the this from <paramref name="dim"/> and
+        /// <paramref name="path"/>. 
         /// </summary>
         public FacetField(string dim, params string[] path)
             : base("dummy", TYPE)
@@ -61,17 +62,17 @@ namespace Lucene.Net.Facet
             {
                 VerifyLabel(label);
             }
-            this.dim = dim;
+            this.Dim = dim;
             if (path.Length == 0)
             {
                 throw new System.ArgumentException("path must have at least one element");
             }
-            this.path = path;
+            this.Path = path;
         }
 
         public override string ToString()
         {
-            return "FacetField(dim=" + dim + " path=[" + Arrays.ToString(path) + "])";
+            return "FacetField(dim=" + Dim + " path=[" + Arrays.ToString(Path) + "])";
         }
 
         /// <summary>
@@ -87,5 +88,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

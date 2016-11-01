@@ -1,7 +1,13 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,82 +24,72 @@
 	 * limitations under the License.
 	 */
 
+    public class TestCodepointCountFilter : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestFilterWithPosIncr()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
+            CodepointCountFilter filter = new CodepointCountFilter(TEST_VERSION_CURRENT, stream, 2, 6);
+            AssertTokenStreamContents(filter, new string[] { "short", "ab", "foo" }, new int[] { 1, 4, 2 });
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using Test = org.junit.Test;
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	public class TestCodepointCountFilter : BaseTokenStreamTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFilterWithPosIncr() throws Exception
-	  public virtual void testFilterWithPosIncr()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
-		CodepointCountFilter filter = new CodepointCountFilter(TEST_VERSION_CURRENT, stream, 2, 6);
-		assertTokenStreamContents(filter, new string[]{"short", "ab", "foo"}, new int[]{1, 4, 2});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestCodepointCountFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestCodepointCountFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestCodepointCountFilter outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new CodepointCountFilter(TEST_VERSION_CURRENT, tokenizer, 0, 5));
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper(TestCodepointCountFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                string text = TestUtil.RandomUnicodeString(Random(), 100);
+                int min = TestUtil.NextInt(Random(), 0, 100);
+                int max = TestUtil.NextInt(Random(), 0, 100);
+                int count = Character.CodePointCount(text, 0, text.Length);// text.codePointCount(0, text.Length);
+                if (min > max)
+                {
+                    int temp = min;
+                    min = max;
+                    max = temp;
+                }
+                bool expected = count >= min && count <= max;
+                TokenStream stream = new KeywordTokenizer(new StringReader(text));
+                stream = new CodepointCountFilter(TEST_VERSION_CURRENT, stream, min, max);
+                stream.Reset();
+                assertEquals(expected, stream.IncrementToken());
+                stream.End();
+                stream.Dispose();
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new CodepointCountFilter(TEST_VERSION_CURRENT, tokenizer, 0, 5));
-		  }
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws java.io.IOException
-	  public virtual void testRandomStrings()
-	  {
-		for (int i = 0; i < 10000; i++)
-		{
-		  string text = TestUtil.randomUnicodeString(random(), 100);
-		  int min = TestUtil.Next(random(), 0, 100);
-		  int max = TestUtil.Next(random(), 0, 100);
-		  int count = text.codePointCount(0, text.Length);
-		  if (min > max)
-		  {
-			int temp = min;
-			min = max;
-			max = temp;
-		  }
-		  bool expected = count >= min && count <= max;
-		  TokenStream stream = new KeywordTokenizer(new StringReader(text));
-		  stream = new CodepointCountFilter(TEST_VERSION_CURRENT, stream, min, max);
-		  stream.reset();
-		  assertEquals(expected, stream.incrementToken());
-		  stream.end();
-		  stream.close();
-		}
-	  }
-
-	  /// <summary>
-	  /// checking the validity of constructor arguments
-	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected = IllegalArgumentException.class) public void testIllegalArguments() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public virtual void testIllegalArguments()
-	  {
-		new CodepointCountFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), 4, 1);
-	  }
-	}
-
+        /// <summary>
+        /// checking the validity of constructor arguments
+        /// </summary>
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public virtual void TestIllegalArguments()
+        {
+            new CodepointCountFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), 4, 1);
+        }
+    }
 }

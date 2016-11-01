@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.no
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.No
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,64 +21,56 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Norwegian Minimal stem factory is working.
+    /// </summary>
+    public class TestNorwegianMinimalStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("eple eplet epler eplene eplets eplenes");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("NorwegianMinimalStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "epl", "epl", "epl", "epl", "epl", "epl" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        /// <summary>
+        /// Test stemming with variant set explicitly to Bokmål </summary>
+        [Test]
+        public virtual void TestBokmaalStemming()
+        {
+            TextReader reader = new StringReader("eple eplet epler eplene eplets eplenes");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("NorwegianMinimalStem", "variant", "nb").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "epl", "epl", "epl", "epl", "epl", "epl" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Norwegian Minimal stem factory is working.
-	/// </summary>
-	public class TestNorwegianMinimalStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("eple eplet epler eplene eplets eplenes");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("NorwegianMinimalStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"epl", "epl", "epl", "epl", "epl", "epl"});
-	  }
+        /// <summary>
+        /// Test stemming with variant set explicitly to Nynorsk </summary>
+        [Test]
+        public virtual void TestNynorskStemming()
+        {
+            TextReader reader = new StringReader("gut guten gutar gutane gutens gutanes");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("NorwegianMinimalStem", "variant", "nn").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "gut", "gut", "gut", "gut", "gut", "gut" });
+        }
 
-	  /// <summary>
-	  /// Test stemming with variant set explicitly to Bokmål </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBokmaalStemming() throws Exception
-	  public virtual void testBokmaalStemming()
-	  {
-		Reader reader = new StringReader("eple eplet epler eplene eplets eplenes");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("NorwegianMinimalStem", "variant", "nb").create(stream);
-		assertTokenStreamContents(stream, new string[] {"epl", "epl", "epl", "epl", "epl", "epl"});
-	  }
-
-	  /// <summary>
-	  /// Test stemming with variant set explicitly to Nynorsk </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNynorskStemming() throws Exception
-	  public virtual void testNynorskStemming()
-	  {
-		Reader reader = new StringReader("gut guten gutar gutane gutens gutanes");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("NorwegianMinimalStem", "variant", "nn").create(stream);
-		assertTokenStreamContents(stream, new string[] {"gut", "gut", "gut", "gut", "gut", "gut"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("NorwegianMinimalStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("NorwegianMinimalStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

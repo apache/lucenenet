@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Range
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,35 +19,31 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
-    using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField; // javadocs
-    using FloatDocValuesField = Lucene.Net.Documents.FloatDocValuesField; // javadocs
-    using MatchingDocs = FacetsCollector.MatchingDocs;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
-    using FloatFieldSource = Lucene.Net.Queries.Function.ValueSources.FloatFieldSource; // javadocs
-    using DocIdSet = Lucene.Net.Search.DocIdSet;
-    using Filter = Lucene.Net.Search.Filter;
     using Bits = Lucene.Net.Util.Bits;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
+    using Filter = Lucene.Net.Search.Filter;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
-    /// <seealso cref="Facets"/> implementation that computes counts for
-    ///  dynamic double ranges from a provided {@link
-    ///  ValueSource}, using <seealso cref="FunctionValues#doubleVal"/>.  Use
+    /// <see cref="Facets"/> implementation that computes counts for
+    ///  dynamic double ranges from a provided <see cref="ValueSource"/>, 
+    ///  using <see cref="FunctionValues.DoubleVal"/>.  Use
     ///  this for dimensions that change in real-time (e.g. a
     ///  relative time based dimension like "Past day", "Past 2
     ///  days", etc.) or that change for each request (e.g.
-    ///  distance from the user's location, "< 1 km", "< 2 km",
+    ///  distance from the user's location, "&lt; 1 km", "&lt; 2 km",
     ///  etc.).
     /// 
-    ///  <para> If you had indexed your field using {@link
-    ///  FloatDocValuesField} then pass <seealso cref="FloatFieldSource"/>
-    ///  as the <seealso cref="ValueSource"/>; if you used {@link
-    ///  DoubleDocValuesField} then pass {@link
-    ///  DoubleFieldSource} (this is the default used when you
+    ///  <para> If you had indexed your field using <see cref="Documents.FloatDocValuesField"/> 
+    ///  then pass <see cref="Queries.Function.ValueSources.FloatFieldSource"/>
+    ///  as the <see cref="ValueSource"/>; if you used 
+    ///  <see cref="Documents.DoubleDocValuesField"/> then pass 
+    ///  <see cref="DoubleFieldSource"/> (this is the default used when you
     ///  pass just a the field name).
     /// 
     ///  @lucene.experimental 
@@ -58,10 +51,9 @@ namespace Lucene.Net.Facet.Range
     /// </summary>
     public class DoubleRangeFacetCounts : RangeFacetCounts
     {
-
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using {@link
-        ///  DoubleFieldSource} from the specified field. 
+        /// Create <see cref="RangeFacetCounts"/>, using 
+        /// <see cref="DoubleFieldSource"/> from the specified field. 
         /// </summary>
         public DoubleRangeFacetCounts(string field, FacetsCollector hits, params DoubleRange[] ranges)
             : this(field, new DoubleFieldSource(field), hits, ranges)
@@ -69,8 +61,8 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>. 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>. 
         /// </summary>
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params DoubleRange[] ranges)
             : this(field, valueSource, hits, null, ranges)
@@ -78,22 +70,22 @@ namespace Lucene.Net.Facet.Range
         }
 
         /// <summary>
-        /// Create {@code RangeFacetCounts}, using the provided
-        ///  <seealso cref="ValueSource"/>, and using the provided Filter as
-        ///  a fastmatch: only documents passing the filter are
-        ///  checked for the matching ranges.  The filter must be
-        ///  random access (implement <seealso cref="DocIdSet#bits"/>). 
+        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// <see cref="ValueSource"/>, and using the provided Filter as
+        /// a fastmatch: only documents passing the filter are
+        /// checked for the matching ranges.  The filter must be
+        /// random access (implement <see cref="DocIdSet.GetBits()"/>). 
         /// </summary>
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, DoubleRange[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
-            Count(valueSource, hits.GetMatchingDocs);
+            Count(valueSource, hits.GetMatchingDocs());
         }
 
         private void Count(ValueSource valueSource, IEnumerable<MatchingDocs> matchingDocs)
         {
 
-            DoubleRange[] ranges = (DoubleRange[])this.Ranges;
+            DoubleRange[] ranges = (DoubleRange[])this.ranges;
 
             LongRange[] longRanges = new LongRange[ranges.Length];
             for (int i = 0; i < ranges.Length; i++)
@@ -107,13 +99,13 @@ namespace Lucene.Net.Facet.Range
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)
             {
-                FunctionValues fv = valueSource.GetValues(new Dictionary<string,object>(), hits.context);
+                FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.Context);
 
-                TotCount += hits.totalHits;
+                totCount += hits.TotalHits;
                 Bits bits;
-                if (FastMatchFilter != null)
+                if (fastMatchFilter != null)
                 {
-                    DocIdSet dis = FastMatchFilter.GetDocIdSet(hits.context, null);
+                    DocIdSet dis = fastMatchFilter.GetDocIdSet(hits.Context, null);
                     if (dis == null)
                     {
                         // No documents match
@@ -130,7 +122,7 @@ namespace Lucene.Net.Facet.Range
                     bits = null;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -143,7 +135,7 @@ namespace Lucene.Net.Facet.Range
                     // Skip missing docs:
                     if (fv.Exists(doc))
                     {
-                        counter.add(NumericUtils.DoubleToSortableLong(fv.DoubleVal(doc)));
+                        counter.Add(NumericUtils.DoubleToSortableLong(fv.DoubleVal(doc)));
                     }
                     else
                     {
@@ -152,9 +144,8 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            missingCount += counter.fillCounts(Counts);
-            TotCount -= missingCount;
+            missingCount += counter.FillCounts(counts);
+            totCount -= missingCount;
         }
     }
-
 }

@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
         }
 
-        public int PositionIncrement
+        public virtual int PositionIncrement
         {
             set
             {

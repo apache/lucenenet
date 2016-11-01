@@ -6,21 +6,13 @@ namespace Lucene.Net.Support
     internal sealed class MemoryMappedFileByteBuffer : ByteBuffer, IDisposable
     {
         private MemoryMappedViewAccessor _accessor;
+        private readonly int offset; // always 0 (add constructors to fix this)
+        new private bool bigEndian = true;
 
         public MemoryMappedFileByteBuffer(MemoryMappedViewAccessor accessor, int mark, int pos, int lim, int cap)
             : base(mark, pos, lim, cap)
         {
             _accessor = accessor;
-        }
-
-        public override bool IsDirect
-        {
-            get { return true; }
-        }
-
-        public override bool IsReadOnly
-        {
-            get { return false; }
         }
 
         public override ByteBuffer Slice()
@@ -30,7 +22,7 @@ namespace Lucene.Net.Support
 
         public override ByteBuffer Duplicate()
         {
-            return new MemoryMappedFileByteBuffer(_accessor, Mark, Position, Limit, Capacity);
+            return new MemoryMappedFileByteBuffer(_accessor, MarkValue, Position, Limit, Capacity);
         }
 
         public override ByteBuffer AsReadOnlyBuffer()
@@ -38,25 +30,41 @@ namespace Lucene.Net.Support
             throw new NotImplementedException();
         }
 
-        public override byte Get()
+
+        private int Ix(int i)
         {
-            return _accessor.ReadByte(Position++);
+            return i + offset;
         }
 
-        public override ByteBuffer Put(byte b)
+        public override byte Get()
         {
-            _accessor.Write(Position++, b);
-            return this;
+            return _accessor.ReadByte(Ix(NextGetIndex()));
         }
 
         public override byte Get(int index)
         {
-            return _accessor.ReadByte(index);
+            return _accessor.ReadByte(Ix(CheckIndex(index)));
+        }
+
+        public override bool IsDirect
+        {
+            get { return false; }
+        }
+
+        public override bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public override ByteBuffer Put(byte b)
+        {
+            _accessor.Write(Ix(NextPutIndex()), b);
+            return this;
         }
 
         public override ByteBuffer Put(int index, byte b)
         {
-            _accessor.Write(index, b);
+            _accessor.Write(Ix(CheckIndex(index)), b);
             return this;
         }
 
@@ -65,206 +73,238 @@ namespace Lucene.Net.Support
             throw new NotSupportedException();
         }
 
-        public override char GetChar()
+        internal override byte _get(int i)
         {
-            char c = _accessor.ReadChar(Position);
-            Position += 2;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+            throw new NotSupportedException();
         }
 
-        public override ByteBuffer PutChar(char value)
+        internal override void _put(int i, byte b)
         {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 2;
+            throw new NotSupportedException();
+        }
 
-            return this;
+
+        public override char GetChar()
+        {
+            var littleEndian = _accessor.ReadChar(Ix(NextGetIndex(2)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
 
         public override char GetChar(int index)
         {
-            var c = _accessor.ReadChar(index);
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+            var littleEndian = _accessor.ReadChar(Ix(CheckIndex(index, 2)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
+
+        public override ByteBuffer PutChar(char value)
+        {
+            _accessor.Write(Ix(NextPutIndex(2)), bigEndian ? Number.FlipEndian(value) : value);
+            return this;
+        }
+
+        
 
         public override ByteBuffer PutChar(int index, char value)
         {
-            _accessor.Write(index, Number.FlipEndian(value));
-
+            _accessor.Write(Ix(CheckIndex(index, 2)), bigEndian ? Number.FlipEndian(value) : value);
             return this;
         }
 
         public override short GetShort()
         {
-            var c = _accessor.ReadInt16(Position);
-            Position += 2;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
-        }
-
-        public override ByteBuffer PutShort(short value)
-        {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 2;
-
-            return this;
+            var littleEndian = _accessor.ReadInt16(Ix(NextGetIndex(2)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
 
         public override short GetShort(int index)
         {
-            var c = _accessor.ReadInt16(index);
+            var littleEndian = _accessor.ReadInt16(Ix(CheckIndex(index, 2)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
+        }
 
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+        public override ByteBuffer PutShort(short value)
+        {
+            _accessor.Write(Ix(NextPutIndex(2)), bigEndian ? Number.FlipEndian(value) : value);
+            return this;
         }
 
         public override ByteBuffer PutShort(int index, short value)
         {
-            //conform to how the index was written
-            _accessor.Write(index, Number.FlipEndian(value));
-
+            _accessor.Write(Ix(CheckIndex(index, 2)), bigEndian ? Number.FlipEndian(value) : value);
             return this;
         }
 
         public override int GetInt()
         {
-            var c = _accessor.ReadInt32(Position);
-            Position += 4;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
-        }
-
-        public override ByteBuffer PutInt(int value)
-        {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 4;
-
-            return this;
+            var littleEndian = _accessor.ReadInt32(Ix(NextGetIndex(4)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
 
         public override int GetInt(int index)
         {
-            var c = _accessor.ReadInt32(index);
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+            var littleEndian = _accessor.ReadInt32(Ix(CheckIndex(index, 4)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
+
+        public override ByteBuffer PutInt(int value)
+        {
+            _accessor.Write(Ix(NextPutIndex(4)), bigEndian ? Number.FlipEndian(value) : value);
+            return this;
+        }
+
+        
 
         public override ByteBuffer PutInt(int index, int value)
         {
-            //conform to how the index was written
-            _accessor.Write(index, Number.FlipEndian(value));
-
+            _accessor.Write(Ix(CheckIndex(index, 4)), bigEndian ? Number.FlipEndian(value) : value);
             return this;
         }
 
         public override long GetLong()
         {
-            var c = _accessor.ReadInt64(Position);
-            Position += 8;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
-        }
-
-        public override ByteBuffer PutLong(long value)
-        {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 8;
-
-            return this;
+            var littleEndian = _accessor.ReadInt64(Ix(NextGetIndex(8)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
 
         public override long GetLong(int index)
         {
-            var c = _accessor.ReadInt64(index);
+            var littleEndian = _accessor.ReadInt64(Ix(CheckIndex(index, 8)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
+        }
 
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+        public override ByteBuffer PutLong(long value)
+        {
+            _accessor.Write(Ix(NextPutIndex(8)), bigEndian ? Number.FlipEndian(value) : value);
+            return this;
         }
 
         public override ByteBuffer PutLong(int index, long value)
         {
-            //conform to how the index was written
-            _accessor.Write(index, Number.FlipEndian(value));
-
+            _accessor.Write(Ix(CheckIndex(index, 8)), bigEndian ? Number.FlipEndian(value) : value);
             return this;
         }
 
         public override float GetFloat()
         {
-            var c = _accessor.ReadSingle(Position);
-            Position += 4;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
-        }
-
-        public override ByteBuffer PutFloat(float value)
-        {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 4;
-
-            return this;
+            byte[] temp = new byte[4];
+            temp[0] = _accessor.ReadByte(Ix(NextGetIndex()));
+            temp[1] = _accessor.ReadByte(Ix(NextGetIndex()));
+            temp[2] = _accessor.ReadByte(Ix(NextGetIndex()));
+            temp[3] = _accessor.ReadByte(Ix(NextGetIndex()));
+            if (bigEndian)
+            {
+                System.Array.Reverse(temp);
+            }
+            return BitConverter.ToSingle(temp, 0);
         }
 
         public override float GetFloat(int index)
         {
-            var c = _accessor.ReadSingle(index);
+            byte[] temp = new byte[4];
+            temp[0] = _accessor.ReadByte(Ix(NextGetIndex(index)));
+            temp[1] = _accessor.ReadByte(Ix(NextGetIndex()));
+            temp[2] = _accessor.ReadByte(Ix(NextGetIndex()));
+            temp[3] = _accessor.ReadByte(Ix(NextGetIndex()));
+            if (bigEndian)
+            {
+                System.Array.Reverse(temp);
+            }
+            return BitConverter.ToSingle(temp, 0);
+        }
 
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+        public override ByteBuffer PutFloat(float value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+
+            if (bigEndian)
+            {
+                System.Array.Reverse(bytes);
+            }
+
+            _accessor.Write(Ix(NextPutIndex()), bytes[0]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[1]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[2]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[3]);
+            return this;
         }
 
         public override ByteBuffer PutFloat(int index, float value)
         {
-            //conform to how the index was written
-            _accessor.Write(index, Number.FlipEndian(value));
+            var bytes = BitConverter.GetBytes(value);
 
+            if (bigEndian)
+            {
+                System.Array.Reverse(bytes);
+            }
+
+            _accessor.Write(Ix(NextPutIndex(index)), bytes[0]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[1]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[2]);
+            _accessor.Write(Ix(NextPutIndex()), bytes[3]);
             return this;
         }
 
         public override double GetDouble()
         {
-            var c = _accessor.ReadDouble(Position);
-            Position += 4;
-
-            //conform to how the index was written
-            return Number.FlipEndian(c);
-        }
-
-        public override ByteBuffer PutDouble(double value)
-        {
-            //conform to how the index was written
-            _accessor.Write(Position, Number.FlipEndian(value));
-            Position += 8;
-
-            return this;
+            var littleEndian = _accessor.ReadDouble(Ix(NextGetIndex(8)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
         }
 
         public override double GetDouble(int index)
         {
-            var c = _accessor.ReadDouble(index);
+            var littleEndian = _accessor.ReadDouble(Ix(CheckIndex(index, 8)));
+            if (bigEndian)
+            {
+                return Number.FlipEndian(littleEndian);
+            }
+            return littleEndian;
+        }
 
-            //conform to how the index was written
-            return Number.FlipEndian(c);
+        public override ByteBuffer PutDouble(double value)
+        {
+            _accessor.Write(Ix(NextPutIndex(8)), bigEndian ? Number.FlipEndian(value) : value);
+            return this;
         }
 
         public override ByteBuffer PutDouble(int index, double value)
         {
-            //conform to how the index was written
-            _accessor.Write(index, Number.FlipEndian(value));
-
+            _accessor.Write(Ix(CheckIndex(index, 8)), bigEndian ? Number.FlipEndian(value) : value);
             return this;
         }
 
@@ -274,6 +314,11 @@ namespace Lucene.Net.Support
                 _accessor.Dispose();
 
             _accessor = null;
+        }
+
+        public override LongBuffer AsLongBuffer()
+        {
+            throw new NotSupportedException();
         }
     }
 }

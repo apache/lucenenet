@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 
             string[] values = new string[] { "1", "2", "3", "4" };
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
             for (int i = 0; i < values.Length; i++)
             {
                 Document doc = new Document();
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             // changes, we have a test to back it up.
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
             writer.Commit();
             IndexReader ir = writer.Reader;
             writer.Dispose();
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
         public virtual void TestMoreThan32ProhibitedClauses()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("field", "0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33", Field.Store.NO));
             w.AddDocument(doc);
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
         public virtual void TestEmbeddedBooleanScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "doctors are people who prescribe medicines of which they know little, to cure diseases of which they know less, in human beings of whom they know nothing", Field.Store.NO));
             w.AddDocument(doc);

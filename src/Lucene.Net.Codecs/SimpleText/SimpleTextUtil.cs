@@ -1,4 +1,6 @@
-﻿/*
+﻿using System.Globalization;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -90,7 +92,7 @@ namespace Lucene.Net.Codecs.SimpleText
             // Pad with zeros so different checksum values use the
             // same number of bytes
             // (BaseIndexFileFormatTestCase.testMergeStability cares):
-            var checksum = string.Format("{0:D}", output.Checksum);
+            var checksum = string.Format(CultureInfo.InvariantCulture, "{0:D20}", output.Checksum);
             Write(output, CHECKSUM);
             Write(output, checksum, scratch);
             WriteNewline(output);
@@ -99,7 +101,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public static void CheckFooter(ChecksumIndexInput input)
         {
             var scratch = new BytesRef();
-            var expectedChecksum = string.Format("{0:D}", input.Checksum);
+            var expectedChecksum = string.Format(CultureInfo.InvariantCulture, "{0:D20}", input.Checksum);
             ReadLine(input, scratch);
 
             if (StringHelper.StartsWith(scratch, CHECKSUM) == false)

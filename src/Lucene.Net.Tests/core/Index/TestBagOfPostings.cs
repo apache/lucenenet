@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
     /// Simple test that adds numeric terms, where each term has the
     /// docFreq of its integer value, and checks that the docFreq is correct.
     /// </summary>
+    [SuppressCodecs("Direct", "Memory")]
     [TestFixture]
     public class TestBagOfPostings : LuceneTestCase // at night this makes like 200k/300k docs and will make Direct's heart beat!
     {
@@ -151,7 +152,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document document = new Document();
-                    Field field = NewTextField("field", "", Field.Store.NO);
+                    Field field = OuterInstance.NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
                     StartingGun.Wait();
                     while (!(Postings.Count == 0))

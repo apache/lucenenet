@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
     /// Wraps a Scorer with additional checks </summary>
     public class AssertingBulkScorer : BulkScorer
     {
-        private static readonly VirtualMethod<BulkScorer> SCORE_COLLECTOR = new VirtualMethod<BulkScorer>(typeof(BulkScorer), "Score", typeof(Collector));
-        private static readonly VirtualMethod<BulkScorer> SCORE_COLLECTOR_RANGE = new VirtualMethod<BulkScorer>(typeof(BulkScorer), "Score", typeof(Collector), typeof(int));
+        private static readonly VirtualMethod SCORE_COLLECTOR = new VirtualMethod(typeof(BulkScorer), "Score", typeof(Collector));
+        private static readonly VirtualMethod SCORE_COLLECTOR_RANGE = new VirtualMethod(typeof(BulkScorer), "Score", typeof(Collector), typeof(int));
 
         public static BulkScorer Wrap(Random random, BulkScorer other)
         {

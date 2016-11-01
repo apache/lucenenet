@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.pattern
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Pattern
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,41 +21,34 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple Tests to ensure this factory is working </summary>
+    public class TestPatternTokenizerFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestFactory()
+        {
+            TextReader reader = new StringReader("Günther Günther is here");
+            // create PatternTokenizer
+            TokenStream stream = TokenizerFactory("Pattern", "pattern", "[,;/\\s]+").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "Günther", "Günther", "is", "here" });
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        }
 
-	/// <summary>
-	/// Simple Tests to ensure this factory is working </summary>
-	public class TestPatternTokenizerFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFactory() throws Exception
-	  public virtual void testFactory()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.Reader reader = new java.io.StringReader("Günther Günther is here");
-		Reader reader = new StringReader("Günther Günther is here");
-		// create PatternTokenizer
-		TokenStream stream = tokenizerFactory("Pattern", "pattern", "[,;/\\s]+").create(reader);
-		assertTokenStreamContents(stream, new string[] {"Günther", "Günther", "is", "here"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenizerFactory("Pattern", "pattern", "something", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenizerFactory("Pattern", "pattern", "something", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

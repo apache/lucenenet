@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Lucene.Net.Facet;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.SortedSet
 {
@@ -24,24 +23,23 @@ namespace Lucene.Net.Facet.SortedSet
 	 */
 
     /// <summary>
-    /// Default implementation of <seealso cref="SortedSetDocValuesFacetCounts"/>
+    /// Default implementation of <see cref="SortedSetDocValuesFacetCounts"/>
     /// </summary>
     public class DefaultSortedSetDocValuesReaderState : SortedSetDocValuesReaderState
     {
-
         private readonly string field;
         private readonly AtomicReader topReader;
         private readonly int valueCount;
 
         /// <summary>
-        /// <seealso cref="IndexReader"/> passed to the constructor. </summary>
-        public readonly IndexReader origReader;
+        /// <see cref="IndexReader"/> passed to the constructor. </summary>
+        private readonly IndexReader origReader;
 
         private readonly IDictionary<string, OrdRange> prefixToOrdRange = new Dictionary<string, OrdRange>();
 
         /// <summary>
         /// Creates this, pulling doc values from the specified
-        ///  field. 
+        /// field. 
         /// </summary>
         public DefaultSortedSetDocValuesReaderState(IndexReader reader, string field = FacetsConfig.DEFAULT_INDEX_FIELD_NAME)
         {
@@ -63,7 +61,7 @@ namespace Lucene.Net.Facet.SortedSet
             valueCount = (int)dv.ValueCount;
 
             // TODO: we can make this more efficient if eg we can be
-            // "involved" when OrdinalMap is being created?  Ie see
+            // "involved" when IOrdinalMap is being created?  Ie see
             // each term/ord it's assigning as it goes...
             string lastDim = null;
             int startOrd = -1;
@@ -99,7 +97,8 @@ namespace Lucene.Net.Facet.SortedSet
         }
 
         /// <summary>
-        /// Return top-level doc values. </summary>
+        /// Return top-level doc values.
+        /// </summary>
         public override SortedSetDocValues DocValues
         {
             get
@@ -109,7 +108,8 @@ namespace Lucene.Net.Facet.SortedSet
         }
 
         /// <summary>
-        /// Returns mapping from prefix to <seealso cref="SortedSetDocValuesReaderState.OrdRange"/>. </summary>
+        /// Returns mapping from prefix to <see cref="SortedSetDocValuesReaderState.OrdRange"/>.
+        /// </summary>
         public override IDictionary<string, OrdRange> PrefixToOrdRange
         {
             get
@@ -119,14 +119,16 @@ namespace Lucene.Net.Facet.SortedSet
         }
 
         /// <summary>
-        /// Returns the <seealso cref="SortedSetDocValuesReaderState.OrdRange"/> for this dimension. </summary>
+        /// Returns the <see cref="SortedSetDocValuesReaderState.OrdRange"/> for this dimension.
+        /// </summary>
         public override OrdRange GetOrdRange(string dim)
         {
             return prefixToOrdRange[dim];
         }
 
         /// <summary>
-        /// Indexed field we are reading. </summary>
+        /// Indexed field we are reading.
+        /// </summary>
         public override string Field
         {
             get
@@ -144,15 +146,14 @@ namespace Lucene.Net.Facet.SortedSet
         }
 
         /// <summary>
-        /// Number of unique labels. </summary>
-        public override int Size
+        /// Number of unique labels.
+        /// </summary>
+        public override int Count
         {
             get
             {
                 return valueCount;
             }
         }
-
     }
-
 }

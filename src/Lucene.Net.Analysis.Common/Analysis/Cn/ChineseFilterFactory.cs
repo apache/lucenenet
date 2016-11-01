@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.cn
+namespace Lucene.Net.Analysis.Cn
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,31 +21,26 @@ namespace org.apache.lucene.analysis.cn
 	 * limitations under the License.
 	 */
 
-	using StopFilterFactory = org.apache.lucene.analysis.core.StopFilterFactory; // javadocs
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ChineseFilter"/> </summary>
+    /// @deprecated Use <seealso cref="StopFilterFactory"/> instead. 
+    [Obsolete("Use StopFilterFactory instead.")]
+    public class ChineseFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="ChineseFilter"/> </summary>
-	/// @deprecated Use <seealso cref="StopFilterFactory"/> instead. 
-	[Obsolete("Use <seealso cref="StopFilterFactory"/> instead.")]
-	public class ChineseFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new ChineseFilterFactory </summary>
+        public ChineseFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new ChineseFilterFactory </summary>
-	  public ChineseFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ChineseFilter create(TokenStream @in)
-	  {
-		return new ChineseFilter(@in);
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream @in)
+        {
+            return new ChineseFilter(@in);
+        }
+    }
 }

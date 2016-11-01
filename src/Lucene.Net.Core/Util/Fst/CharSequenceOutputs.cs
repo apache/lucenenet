@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Fst
     public sealed class CharSequenceOutputs : Outputs<CharsRef>
     {
         private static readonly CharsRef NO_OUTPUT = new CharsRef();
-        private static readonly CharSequenceOutputs Singleton_Renamed = new CharSequenceOutputs();
+        private static readonly CharSequenceOutputs singleton = new CharSequenceOutputs();
 
         private CharSequenceOutputs()
         {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                return Singleton_Renamed;
+                return singleton;
             }
         }
 

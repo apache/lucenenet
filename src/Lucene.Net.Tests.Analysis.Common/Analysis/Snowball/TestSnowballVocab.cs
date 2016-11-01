@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.snowball
+namespace Lucene.Net.Analysis.Snowball
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,87 +23,75 @@ namespace org.apache.lucene.analysis.snowball
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the snowball filters against the snowball data tests
+    /// </summary>
+    public class TestSnowballVocab : LuceneTestCase
+    {
+        /// <summary>
+        /// Run all languages against their snowball vocabulary tests.
+        /// </summary>
+        [Test]
+        public virtual void TestStemmers()
+        {
+            AssertCorrectOutput("Danish", "danish");
+            AssertCorrectOutput("Dutch", "dutch");
+            AssertCorrectOutput("English", "english");
+            // disabled due to snowball java code generation bug: 
+            // see http://article.gmane.org/gmane.comp.search.snowball/1139
+            // assertCorrectOutput("Finnish", "finnish");
+            AssertCorrectOutput("French", "french");
+            AssertCorrectOutput("German", "german");
+            AssertCorrectOutput("German2", "german2");
+            AssertCorrectOutput("Hungarian", "hungarian");
+            AssertCorrectOutput("Italian", "italian");
+            AssertCorrectOutput("Kp", "kraaij_pohlmann");
+            // disabled due to snowball java code generation bug: 
+            // see http://article.gmane.org/gmane.comp.search.snowball/1139
+            // assertCorrectOutput("Lovins", "lovins");
+            AssertCorrectOutput("Norwegian", "norwegian");
+            AssertCorrectOutput("Porter", "porter");
+            AssertCorrectOutput("Portuguese", "portuguese");
+            AssertCorrectOutput("Romanian", "romanian");
+            AssertCorrectOutput("Russian", "russian");
+            AssertCorrectOutput("Spanish", "spanish");
+            AssertCorrectOutput("Swedish", "swedish");
+            AssertCorrectOutput("Turkish", "turkish");
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
+        /// <summary>
+        /// For the supplied language, run the stemmer against all strings in voc.txt
+        /// The output should be the same as the string in output.txt
+        /// </summary>
+        private void AssertCorrectOutput(string snowballLanguage, string dataDirectory)
+        {
+            if (VERBOSE)
+            {
+                Console.WriteLine("checking snowball language: " + snowballLanguage);
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, snowballLanguage);
 
-	/// <summary>
-	/// Test the snowball filters against the snowball data tests
-	/// </summary>
-	public class TestSnowballVocab : LuceneTestCase
-	{
-	  /// <summary>
-	  /// Run all languages against their snowball vocabulary tests.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemmers() throws java.io.IOException
-	  public virtual void testStemmers()
-	  {
-		assertCorrectOutput("Danish", "danish");
-		assertCorrectOutput("Dutch", "dutch");
-		assertCorrectOutput("English", "english");
-		// disabled due to snowball java code generation bug: 
-		// see http://article.gmane.org/gmane.comp.search.snowball/1139
-		// assertCorrectOutput("Finnish", "finnish");
-		assertCorrectOutput("French", "french");
-		assertCorrectOutput("German", "german");
-		assertCorrectOutput("German2", "german2");
-		assertCorrectOutput("Hungarian", "hungarian");
-		assertCorrectOutput("Italian", "italian");
-		assertCorrectOutput("Kp", "kraaij_pohlmann");
-		// disabled due to snowball java code generation bug: 
-		// see http://article.gmane.org/gmane.comp.search.snowball/1139
-		// assertCorrectOutput("Lovins", "lovins");
-		assertCorrectOutput("Norwegian", "norwegian");
-		assertCorrectOutput("Porter", "porter");
-		assertCorrectOutput("Portuguese", "portuguese");
-		assertCorrectOutput("Romanian", "romanian");
-		assertCorrectOutput("Russian", "russian");
-		assertCorrectOutput("Spanish", "spanish");
-		assertCorrectOutput("Swedish", "swedish");
-		assertCorrectOutput("Turkish", "turkish");
-	  }
+            VocabularyAssert.AssertVocabulary(a, GetDataFile("TestSnowballVocabData.zip"), dataDirectory + "/voc.txt", dataDirectory + "/output.txt");
+        }
 
-	  /// <summary>
-	  /// For the supplied language, run the stemmer against all strings in voc.txt
-	  /// The output should be the same as the string in output.txt
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void assertCorrectOutput(final String snowballLanguage, String dataDirectory) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void assertCorrectOutput(string snowballLanguage, string dataDirectory)
-	  {
-		if (VERBOSE)
-		{
-			Console.WriteLine("checking snowball language: " + snowballLanguage);
-		}
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestSnowballVocab outerInstance;
 
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, snowballLanguage);
+            private string snowballLanguage;
 
-		assertVocabulary(a, getDataFile("TestSnowballVocabData.zip"), dataDirectory + "/voc.txt", dataDirectory + "/output.txt");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestSnowballVocab outerInstance, string snowballLanguage)
+            {
+                this.outerInstance = outerInstance;
+                this.snowballLanguage = snowballLanguage;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestSnowballVocab outerInstance;
-
-		  private string snowballLanguage;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestSnowballVocab outerInstance, string snowballLanguage)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.snowballLanguage = snowballLanguage;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer t = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer t = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));
+            }
+        }
+    }
 }

@@ -1,11 +1,27 @@
-using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System.IO;
 using System.Text;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
-    using NUnit.Framework;
-    using System.IO;
+    /*
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -15,24 +31,6 @@ namespace Lucene.Net.Document
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using Query = Lucene.Net.Search.Query;
@@ -68,9 +66,9 @@ namespace Lucene.Net.Document
 
             Assert.AreEqual(2, doc.Fields.Count);
 
-            Assert.IsTrue(binaryFld.BinaryValue() != null);
-            Assert.IsTrue(binaryFld.FieldType().Stored);
-            Assert.IsFalse(binaryFld.FieldType().Indexed);
+            Assert.IsTrue(binaryFld.BinaryValue != null);
+            Assert.IsTrue(binaryFld.FieldType.Stored);
+            Assert.IsFalse(binaryFld.FieldType.Indexed);
 
             string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
             Assert.IsTrue(binaryTest.Equals(BinaryVal));
@@ -190,7 +188,7 @@ namespace Lucene.Net.Document
         public virtual void TestGetValuesForIndexedDocument()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -223,7 +221,7 @@ namespace Lucene.Net.Document
         public virtual void TestPositionIncrementMultiFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -303,7 +301,7 @@ namespace Lucene.Net.Document
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(doc);
             field.StringValue = "id2";
             writer.AddDocument(doc);
@@ -366,7 +364,7 @@ namespace Lucene.Net.Document
         public virtual void TestTransitionAPI()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Documents.Document doc = new Documents.Document();
             doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
@@ -443,7 +441,7 @@ namespace Lucene.Net.Document
             Assert.AreEqual(new string[] { "5", "4" }, doc.GetValues("int"));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.Reader;
             Documents.Document sdoc = ir.Document(0);

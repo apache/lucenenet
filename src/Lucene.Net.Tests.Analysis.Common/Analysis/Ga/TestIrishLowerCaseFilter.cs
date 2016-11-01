@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ga
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Core;
 
-	/*
+namespace Lucene.Net.Analysis.Ga
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,50 +21,44 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Irish lowercase filter.
+    /// </summary>
+    public class TestIrishLowerCaseFilter : BaseTokenStreamTestCase
+    {
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        /// <summary>
+        /// Test lowercase
+        /// </summary>
+        [Test]
+        public virtual void TestIrishLowerCaseFilter_()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("nAthair tUISCE hARD"), MockTokenizer.WHITESPACE, false);
+            IrishLowerCaseFilter filter = new IrishLowerCaseFilter(stream);
+            AssertTokenStreamContents(filter, new string[] { "n-athair", "t-uisce", "hard" });
+        }
 
-	/// <summary>
-	/// Test the Irish lowercase filter.
-	/// </summary>
-	public class TestIrishLowerCaseFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// Test lowercase
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIrishLowerCaseFilter() throws Exception
-	  public virtual void testIrishLowerCaseFilter()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("nAthair tUISCE hARD"), MockTokenizer.WHITESPACE, false);
-		IrishLowerCaseFilter filter = new IrishLowerCaseFilter(stream);
-		assertTokenStreamContents(filter, new string[] {"n-athair", "t-uisce", "hard"});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestIrishLowerCaseFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestIrishLowerCaseFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestIrishLowerCaseFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestIrishLowerCaseFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new IrishLowerCaseFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IrishLowerCaseFilter(tokenizer));
+            }
+        }
+    }
 }

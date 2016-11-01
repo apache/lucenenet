@@ -1,9 +1,13 @@
 ﻿using System;
+using NUnit.Framework;
+using System.IO;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Core;
 
-namespace org.apache.lucene.analysis.no
+namespace Lucene.Net.Analysis.No
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,137 +24,117 @@ namespace org.apache.lucene.analysis.no
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="NorwegianMinimalStemFilter"/>
+    /// </summary>
+    public class TestNorwegianMinimalStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.BOKMAAL;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.NYNORSK;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianLightStemmer.BOKMAAL));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="NorwegianMinimalStemFilter"/>
-	/// </summary>
-	public class TestNorwegianMinimalStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test against a Bokmål vocabulary file </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("nb_minimal.txt"));
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Test against a Nynorsk vocabulary file </summary>
+        [Test]
+        public virtual void TestNynorskVocabulary()
+        {
+            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("nn_minimal.txt"));
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, BOKMAAL));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestNorwegianMinimalStemFilter outerInstance;
 
-	  /// <summary>
-	  /// Test against a Bokmål vocabulary file </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, new System.IO.FileStream(getDataFile("nb_minimal.txt"), System.IO.FileMode.Open, System.IO.FileAccess.Read));
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestNorwegianMinimalStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  /// <summary>
-	  /// Test against a Nynorsk vocabulary file </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNynorskVocabulary() throws java.io.IOException
-	  public virtual void testNynorskVocabulary()
-	  {
-		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
-		assertVocabulary(analyzer, new System.IO.FileStream(getDataFile("nn_minimal.txt"), System.IO.FileMode.Open, System.IO.FileAccess.Read));
-	  }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianLightStemmer.NYNORSK));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestNorwegianMinimalStemFilter outerInstance;
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("sekretæren"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, exclusionSet);
+            CheckOneTerm(a, "sekretæren", "sekretæren");
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestNorwegianMinimalStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestNorwegianMinimalStemFilter outerInstance;
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NYNORSK));
-		  }
-	  }
+            private CharArraySet exclusionSet;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("sekretæren"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("sekretæren"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, exclusionSet);
-		checkOneTerm(a, "sekretæren", "sekretæren");
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestNorwegianMinimalStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestNorwegianMinimalStemFilter outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(sink));
+            }
+        }
 
-		  private CharArraySet exclusionSet;
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            Random random = Random();
+            CheckRandomData(random, analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper3(TestNorwegianMinimalStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(sink));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
+        {
+            private readonly TestNorwegianMinimalStemFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		Random random = random();
-		checkRandomData(random, analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper4(TestNorwegianMinimalStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-	  {
-		  private readonly TestNorwegianMinimalStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper4(TestNorwegianMinimalStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new NorwegianMinimalStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new NorwegianMinimalStemFilter(tokenizer));
+            }
+        }
+    }
 }

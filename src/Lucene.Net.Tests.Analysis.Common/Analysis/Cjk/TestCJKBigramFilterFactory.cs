@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.cjk
-{
+﻿using System;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Cjk
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,60 +22,52 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the CJK bigram factory is working.
+    /// </summary>
+    public class TestCJKBigramFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestDefaults()
+        {
+            TextReader reader = new StringReader("多くの学生が試験に落ちた。");
+            TokenStream stream = TokenizerFactory("standard").Create(reader);
+            stream = TokenFilterFactory("CJKBigram").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "多く", "くの", "の学", "学生", "生が", "が試", "試験", "験に", "に落", "落ち", "ちた" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        [Test]
+        public virtual void TestHanOnly()
+        {
+            TextReader reader = new StringReader("多くの学生が試験に落ちた。");
+            TokenStream stream = TokenizerFactory("standard").Create(reader);
+            stream = TokenFilterFactory("CJKBigram", "hiragana", "false").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "多", "く", "の", "学生", "が", "試験", "に", "落", "ち", "た" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the CJK bigram factory is working.
-	/// </summary>
-	public class TestCJKBigramFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDefaults() throws Exception
-	  public virtual void testDefaults()
-	  {
-		Reader reader = new StringReader("多くの学生が試験に落ちた。");
-		TokenStream stream = tokenizerFactory("standard").create(reader);
-		stream = tokenFilterFactory("CJKBigram").create(stream);
-		assertTokenStreamContents(stream, new string[] {"多く", "くの", "の学", "学生", "生が", "が試", "試験", "験に", "に落", "落ち", "ちた"});
-	  }
+        [Test]
+        public virtual void TestHanOnlyUnigrams()
+        {
+            TextReader reader = new StringReader("多くの学生が試験に落ちた。");
+            TokenStream stream = TokenizerFactory("standard").Create(reader);
+            stream = TokenFilterFactory("CJKBigram", "hiragana", "false", "outputUnigrams", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "多", "く", "の", "学", "学生", "生", "が", "試", "試験", "験", "に", "落", "ち", "た" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHanOnly() throws Exception
-	  public virtual void testHanOnly()
-	  {
-		Reader reader = new StringReader("多くの学生が試験に落ちた。");
-		TokenStream stream = tokenizerFactory("standard").create(reader);
-		stream = tokenFilterFactory("CJKBigram", "hiragana", "false").create(stream);
-		assertTokenStreamContents(stream, new string[] {"多", "く", "の", "学生", "が", "試験", "に", "落", "ち", "た"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHanOnlyUnigrams() throws Exception
-	  public virtual void testHanOnlyUnigrams()
-	  {
-		Reader reader = new StringReader("多くの学生が試験に落ちた。");
-		TokenStream stream = tokenizerFactory("standard").create(reader);
-		stream = tokenFilterFactory("CJKBigram", "hiragana", "false", "outputUnigrams", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"多", "く", "の", "学", "学生", "生", "が", "試", "試験", "験", "に", "落", "ち", "た"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("CJKBigram", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("CJKBigram", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

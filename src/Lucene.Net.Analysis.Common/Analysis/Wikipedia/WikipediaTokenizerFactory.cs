@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Wikipedia;
-using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System.IO;
+using System;
+using System.Linq;
 
-namespace org.apache.lucene.analysis.wikipedia
+namespace Lucene.Net.Analysis.Wikipedia
 {
 
 	/*
@@ -22,10 +26,6 @@ namespace org.apache.lucene.analysis.wikipedia
 	 * limitations under the License.
 	 */
 
-
-	using TokenizerFactory = TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
-
 	/// <summary>
 	/// Factory for <seealso cref="WikipediaTokenizer"/>.
 	/// <pre class="prettyprint">
@@ -40,7 +40,8 @@ namespace org.apache.lucene.analysis.wikipedia
 
 	  /// <summary>
 	  /// Creates a new WikipediaTokenizerFactory </summary>
-	  public WikipediaTokenizerFactory(IDictionary<string, string> args) : base(args)
+	  public WikipediaTokenizerFactory(IDictionary<string, string> args) 
+            : base(args)
 	  {
 		if (args.Count > 0)
 		{
@@ -48,11 +49,10 @@ namespace org.apache.lucene.analysis.wikipedia
 		}
 	  }
 
-	  // TODO: add support for WikipediaTokenizer's advanced options.
-	  public override WikipediaTokenizer create(AttributeFactory factory, Reader input)
-	  {
-		return new WikipediaTokenizer(factory, input, WikipediaTokenizer.TOKENS_ONLY, System.Linq.Enumerable.Empty<string>());
-	  }
-	}
-
+        // TODO: add support for WikipediaTokenizer's advanced options.
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        {
+            return new WikipediaTokenizer(factory, input, WikipediaTokenizer.TOKENS_ONLY, Enumerable.Empty<string>());
+        }
+    }
 }

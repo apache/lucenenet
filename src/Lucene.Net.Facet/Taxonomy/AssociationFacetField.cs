@@ -1,9 +1,7 @@
-﻿using Lucene.Net.Facet;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,27 +19,26 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Lucene.Net.Documents.Document; // javadocs
     using Field = Lucene.Net.Documents.Field;
     using FieldType = Lucene.Net.Documents.FieldType;
-    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Add an instance of this to your <seealso cref="Document"/> to add
-    ///  a facet label associated with an arbitrary byte[].
-    ///  This will require a custom <seealso cref="Facets"/>
-    ///  implementation at search time; see {@link
-    ///  IntAssociationFacetField} and {@link
-    ///  FloatAssociationFacetField} to use existing {@link
-    ///  Facets} implementations.
+    /// Add an instance of this to your <see cref="Document"/> to add
+    /// a facet label associated with an arbitrary <see cref="byte[]"/>.
+    /// This will require a custom <see cref="Facets"/>
+    /// implementation at search time; see <see cref="IntAssociationFacetField"/> 
+    /// and <see cref="FloatAssociationFacetField"/> to use existing 
+    /// <see cref="Facets"/> implementations.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class AssociationFacetField : Field
     {
-
         /// <summary>
-        /// Indexed <seealso cref="FieldType"/>. </summary>
+        /// Indexed <see cref="FieldType"/>.
+        /// </summary>
         public static readonly FieldType TYPE = new FieldType();
         static AssociationFacetField()
         {
@@ -50,20 +47,23 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Dimension for this field. </summary>
-        public readonly string dim;
+        /// Dimension for this field.
+        /// </summary>
+        public string Dim { get; private set; }
 
         /// <summary>
-        /// Facet path for this field. </summary>
-        public readonly string[] path;
+        /// Facet path for this field.
+        /// </summary>
+        public string[] Path { get; private set; }
 
         /// <summary>
-        /// Associated value. </summary>
-        public readonly BytesRef assoc;
+        /// Associated value.
+        /// </summary>
+        public BytesRef Assoc { get; private set; }
 
         /// <summary>
-        /// Creates this from {@code dim} and {@code path} and an
-        ///  association 
+        /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
+        /// association 
         /// </summary>
         public AssociationFacetField(BytesRef assoc, string dim, params string[] path)
             : base("dummy", TYPE)
@@ -73,19 +73,18 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 FacetField.VerifyLabel(label);
             }
-            this.dim = dim;
-            this.assoc = assoc;
+            this.Dim = dim;
+            this.Assoc = assoc;
             if (path.Length == 0)
             {
                 throw new System.ArgumentException("path must have at least one element");
             }
-            this.path = path;
+            this.Path = path;
         }
 
         public override string ToString()
         {
-            return "AssociationFacetField(dim=" + dim + " path=" + Arrays.ToString(path) + " bytes=" + assoc + ")";
+            return "AssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " bytes=" + Assoc + ")";
         }
     }
-
 }

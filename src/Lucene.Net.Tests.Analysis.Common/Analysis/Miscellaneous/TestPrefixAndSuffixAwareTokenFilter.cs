@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,25 +20,21 @@
 	 * limitations under the License.
 	 */
 
+    public class TestPrefixAndSuffixAwareTokenFilter : BaseTokenStreamTestCase
+    {
 
+        [Test]
+        public virtual void Test()
+        {
 
-	public class TestPrefixAndSuffixAwareTokenFilter : BaseTokenStreamTestCase
-	{
+            PrefixAndSuffixAwareTokenFilter ts = new PrefixAndSuffixAwareTokenFilter(new SingleTokenTokenStream(CreateToken("^", 0, 0)), new MockTokenizer(new StringReader("hello world"), MockTokenizer.WHITESPACE, false), new SingleTokenTokenStream(CreateToken("$", 0, 0)));
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws java.io.IOException
-	  public virtual void test()
-	  {
+            AssertTokenStreamContents(ts, new string[] { "^", "hello", "world", "$" }, new int[] { 0, 0, 6, 11 }, new int[] { 0, 5, 11, 11 });
+        }
 
-		PrefixAndSuffixAwareTokenFilter ts = new PrefixAndSuffixAwareTokenFilter(new SingleTokenTokenStream(createToken("^", 0, 0)), new MockTokenizer(new StringReader("hello world"), MockTokenizer.WHITESPACE, false), new SingleTokenTokenStream(createToken("$", 0, 0)));
-
-		assertTokenStreamContents(ts, new string[] {"^", "hello", "world", "$"}, new int[] {0, 0, 6, 11}, new int[] {0, 5, 11, 11});
-	  }
-
-	  private static Token createToken(string term, int start, int offset)
-	  {
-		return new Token(term, start, offset);
-	  }
-	}
-
+        private static Token CreateToken(string term, int start, int offset)
+        {
+            return new Token(term, start, offset);
+        }
+    }
 }

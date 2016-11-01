@@ -31,6 +31,8 @@ namespace Lucene.Net.Codecs.SimpleText
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
     using StringHelper = Util.StringHelper;
+    using System.Text;
+    using System.Globalization;
 
     /// <summary>
     /// reads plaintext segments files
@@ -57,15 +59,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DOCCOUNT));
-                int docCount = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_DOCCOUNT.Length, scratch));
+                int docCount = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_DOCCOUNT.Length, scratch), CultureInfo.InvariantCulture);
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_USECOMPOUND));
-                bool isCompoundFile = Convert.ToBoolean(ReadString(SimpleTextSegmentInfoWriter.SI_USECOMPOUND.Length, scratch));
+                bool isCompoundFile = Convert.ToBoolean(ReadString(SimpleTextSegmentInfoWriter.SI_USECOMPOUND.Length, scratch), CultureInfo.InvariantCulture);
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_DIAG));
-                int numDiag = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_DIAG.Length, scratch));
+                int numDiag = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_DIAG.Length, scratch), CultureInfo.InvariantCulture);
                 IDictionary<string, string> diagnostics = new Dictionary<string, string>();
 
                 for (int i = 0; i < numDiag; i++)
@@ -82,7 +84,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_FILES));
-                int numFiles = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_FILES.Length, scratch));
+                int numFiles = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_FILES.Length, scratch), CultureInfo.InvariantCulture);
                 var files = new HashSet<string>();
 
                 for (int i = 0; i < numFiles; i++)
@@ -115,8 +117,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private static string ReadString(int offset, BytesRef scratch)
         {
-            return scratch.Bytes.SubList(scratch.Offset + offset, scratch.Length - offset).ToString();
-            //return new string(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset, StandardCharsets.UTF_8);
+            return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset);
         }
     }
 }

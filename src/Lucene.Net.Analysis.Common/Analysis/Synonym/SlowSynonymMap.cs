@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Synonym
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +23,7 @@ namespace Lucene.Net.Analysis.Synonym
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Mapping rules for use with <seealso cref="SlowSynonymFilter"/> </summary>
     /// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     // for now hardcode at 4.0, as its what the old code did.
                     // would be nice to fix, but shouldn't store a version in each submap!!!
-                    currMap.submap = new CharArrayMap<SlowSynonymMap>(Lucene.Net.Util.Version.LUCENE_CURRENT, 1, IgnoreCase);
+                    currMap.submap = new CharArrayMap<SlowSynonymMap>(LuceneVersion.LUCENE_CURRENT, 1, IgnoreCase);
                 }
 
                 var map = currMap.submap.Get(str);
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     map = new SlowSynonymMap();
                     map.flags |= flags & IGNORE_CASE;
-                    currMap.submap.put(str, map);
+                    currMap.submap.Put(str, map);
                 }
 
                 currMap = map;

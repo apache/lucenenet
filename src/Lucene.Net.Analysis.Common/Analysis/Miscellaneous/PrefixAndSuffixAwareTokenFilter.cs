@@ -1,9 +1,5 @@
-﻿using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Miscellaneous;
-
-namespace org.apache.lucene.analysis.miscellaneous
+﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +16,6 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
 
     /// <summary>
     /// Links two <seealso cref="PrefixAwareTokenFilter"/>.
@@ -39,7 +34,7 @@ namespace org.apache.lucene.analysis.miscellaneous
             this.suffix = new PrefixAwareTokenFilterAnonymousInnerClassHelper2(this, prefix, suffix);
         }
 
-        private class PrefixAwareTokenFilterAnonymousInnerClassHelper : PrefixAwareTokenFilter
+        private sealed class PrefixAwareTokenFilterAnonymousInnerClassHelper : PrefixAwareTokenFilter
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
@@ -50,11 +45,11 @@ namespace org.apache.lucene.analysis.miscellaneous
 
             public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
             {
-                return outerInstance.updateInputToken(suffixToken, lastInputToken);
+                return outerInstance.UpdateInputToken(suffixToken, lastInputToken);
             }
         }
 
-        private class PrefixAwareTokenFilterAnonymousInnerClassHelper2 : PrefixAwareTokenFilter
+        private sealed class PrefixAwareTokenFilterAnonymousInnerClassHelper2 : PrefixAwareTokenFilter
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
@@ -65,23 +60,23 @@ namespace org.apache.lucene.analysis.miscellaneous
 
             public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
             {
-                return outerInstance.updateSuffixToken(suffixToken, lastInputToken);
+                return outerInstance.UpdateSuffixToken(suffixToken, lastInputToken);
             }
         }
 
-        public virtual Token updateInputToken(Token inputToken, Token lastPrefixToken)
+        public virtual Token UpdateInputToken(Token inputToken, Token lastPrefixToken)
         {
             inputToken.SetOffset(lastPrefixToken.EndOffset() + inputToken.StartOffset(), lastPrefixToken.EndOffset() + inputToken.EndOffset());
             return inputToken;
         }
 
-        public virtual Token updateSuffixToken(Token suffixToken, Token lastInputToken)
+        public virtual Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
         {
             suffixToken.SetOffset(lastInputToken.EndOffset() + suffixToken.StartOffset(), lastInputToken.EndOffset() + suffixToken.EndOffset());
             return suffixToken;
         }
 
-        public override bool IncrementToken()
+        public sealed override bool IncrementToken()
         {
             return suffix.IncrementToken();
         }

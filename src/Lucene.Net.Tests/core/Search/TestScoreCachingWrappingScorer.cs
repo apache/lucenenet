@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
         public virtual void TestGetScores()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
             writer.Commit();
             IndexReader ir = writer.Reader;
             writer.Dispose();

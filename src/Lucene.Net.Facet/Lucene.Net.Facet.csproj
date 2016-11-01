@@ -107,6 +107,10 @@
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj">
+      <Project>{e8a339c7-fcf6-4a72-8586-56d8961d7b99}</Project>
+      <Name>Lucene.Net.Join</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
       <Name>Lucene.Net.Queries</Name>

@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,33 +19,28 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
-
-	public class TestOptionalCondition : StemmerTestBase
-	{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("optional-condition.aff", "condition.dic");
-	  }
-
-	  public virtual void testStemming()
-	  {
-		assertStemsTo("hello", "hello");
-		assertStemsTo("try", "try");
-		assertStemsTo("tried", "try");
-		assertStemsTo("work", "work");
-		assertStemsTo("worked", "work");
-		assertStemsTo("rework", "work");
-		assertStemsTo("reworked", "work");
-		assertStemsTo("retried");
-		assertStemsTo("workied");
-		assertStemsTo("tryed");
-		assertStemsTo("tryied");
-		assertStemsTo("helloed");
-	  }
-	}
-
+    public class TestOptionalCondition : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("optional-condition.aff", "condition.dic");
+        }
+        [Test]
+        public virtual void TestStemming()
+        {
+            AssertStemsTo("hello", "hello");
+            AssertStemsTo("try", "try");
+            AssertStemsTo("tried", "try");
+            AssertStemsTo("work", "work");
+            AssertStemsTo("worked", "work");
+            AssertStemsTo("rework", "work");
+            AssertStemsTo("reworked", "work");
+            AssertStemsTo("retried");
+            AssertStemsTo("workied");
+            AssertStemsTo("tryed");
+            AssertStemsTo("tryied");
+            AssertStemsTo("helloed");
+        }
+    }
 }

@@ -1,11 +1,9 @@
-﻿using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,52 +19,54 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// A <seealso cref="TokenStream"/> containing a single token.
-	/// </summary>
-	public sealed class SingleTokenTokenStream : TokenStream
-	{
+    /// A <seealso cref="TokenStream"/> containing a single token.
+    /// </summary>
+    public sealed class SingleTokenTokenStream : TokenStream
+    {
+        private bool exhausted = false;
 
-	  private bool exhausted = false;
+        // The token needs to be immutable, so work with clones!
+        private Token singleToken;
+        private readonly CharTermAttribute tokenAtt;
 
-	  // The token needs to be immutable, so work with clones!
-	  private Token singleToken;
-	  private readonly AttributeImpl tokenAtt;
+        public SingleTokenTokenStream(Token token) : base(Token.TOKEN_ATTRIBUTE_FACTORY)
+        {
 
-	  public SingleTokenTokenStream(Token token) : base(Token.TOKEN_ATTRIBUTE_FACTORY)
-	  {
+            Debug.Assert(token != null);
+            this.singleToken = (Token)token.Clone();
 
-		Debug.Assert(token != null);
-		this.singleToken = token.Clone();
+            // LUCENENET TODO: This is ugly. Can't we just use the type we want?
+            // The interface doesn't convert to Attribute, so we need to do a cast.
+            tokenAtt = (CharTermAttribute)AddAttribute<ICharTermAttribute>();
+            Debug.Assert(tokenAtt is Token);
+        }
 
-        tokenAtt = AddAttribute <ICharTermAttribute>();
-		Debug.Assert(tokenAtt is Token);
-	  }
+        public override bool IncrementToken()
+        {
+            if (exhausted)
+            {
+                return false;
+            }
+            else
+            {
+                ClearAttributes();
+                singleToken.CopyTo(tokenAtt);
+                exhausted = true;
+                return true;
+            }
+        }
 
-	  public override bool IncrementToken()
-	  {
-		if (exhausted)
-		{
-		  return false;
-		}
-		else
-		{
-		  ClearAttributes();
-		  singleToken.CopyTo(tokenAtt);
-		  exhausted = true;
-		  return true;
-		}
-	  }
-
-	  public override void Reset()
-	  {
-		exhausted = false;
-	  }
+        public override void Reset()
+        {
+            exhausted = false;
+        }
 
         public Token Token
         {
-            get { return (Token) singleToken.Clone(); }
-            set { this.singleToken = (Token) value.Clone(); }
+            get { return (Token)singleToken.Clone(); }
+            set { this.singleToken = (Token)value.Clone(); }
         }
-	}
+    }
 }

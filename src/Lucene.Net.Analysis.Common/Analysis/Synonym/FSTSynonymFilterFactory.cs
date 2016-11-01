@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.Core;
+﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Synonym
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,9 +27,9 @@ namespace Lucene.Net.Analysis.Synonym
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    internal sealed class FSTSynonymFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    internal sealed class FSTSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
-        private readonly bool ignoreCase;
+        internal readonly bool ignoreCase;
         private readonly string tokenizerFactory;
         private readonly string synonyms;
         private readonly string format;
@@ -41,21 +42,22 @@ namespace Lucene.Net.Analysis.Synonym
         public FSTSynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            ignoreCase = getBoolean(args, "ignoreCase", false);
-            synonyms = require(args, "synonyms");
-            format = get(args, "format");
-            expand = getBoolean(args, "expand", true);
+            ignoreCase = GetBoolean(args, "ignoreCase", false);
+            synonyms = Require(args, "synonyms");
+            format = Get(args, "format");
+            expand = GetBoolean(args, "expand", true);
 
-            tokenizerFactory = get(args, "tokenizerFactory");
+            tokenizerFactory = Get(args, "tokenizerFactory");
             if (tokenizerFactory != null)
             {
-                assureMatchVersion();
+                AssureMatchVersion();
                 tokArgs["luceneMatchVersion"] = LuceneMatchVersion.ToString();
-                for (var itr = args.Keys.GetEnumerator(); itr.MoveNext(); )
+
+                var keys = new List<string>(args.Keys);
+                foreach (string key in keys)
                 {
-                    var key = itr.Current;
-                    tokArgs[Regex.Replace(itr.Current, "^tokenizerFactory\\.", string.Empty)] = args[key];
-                    itr.Remove();
+                    tokArgs[Regex.Replace(key, "^tokenizerFactory\\.", "")] = args[key];
+                    args.Remove(key);
                 }
             }
             if (args.Count > 0)
@@ -71,7 +73,7 @@ namespace Lucene.Net.Analysis.Synonym
             return map.fst == null ? input : new SynonymFilter(input, map, ignoreCase);
         }
 
-        public void Inform(ResourceLoader loader)
+        public void Inform(IResourceLoader loader)
         {
             TokenizerFactory factory = tokenizerFactory == null ? null : LoadTokenizerFactory(loader, tokenizerFactory);
 
@@ -82,16 +84,16 @@ namespace Lucene.Net.Analysis.Synonym
                 string formatClass = format;
                 if (format == null || format.Equals("solr"))
                 {
-                    formatClass = typeof(SolrSynonymParser).Name;
+                    formatClass = typeof(SolrSynonymParser).AssemblyQualifiedName;
                 }
                 else if (format.Equals("wordnet"))
                 {
-                    formatClass = typeof(WordnetSynonymParser).Name;
+                    formatClass = typeof(WordnetSynonymParser).AssemblyQualifiedName;
                 }
                 // TODO: expose dedup as a parameter?
                 map = LoadSynonyms(loader, formatClass, true, analyzer);
             }
-            catch (ParseException e)
+            catch (Exception e)
             {
                 throw new IOException("Error parsing synonyms file:", e);
             }
@@ -111,8 +113,10 @@ namespace Lucene.Net.Analysis.Synonym
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
+#pragma warning disable 612, 618
                 Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
-                TokenStream stream = outerInstance.ignoreCase ? new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
+                TokenStream stream = outerInstance.ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
+#pragma warning restore 612, 618
                 return new Analyzer.TokenStreamComponents(tokenizer, stream);
             }
         }
@@ -120,56 +124,57 @@ namespace Lucene.Net.Analysis.Synonym
         /// <summary>
         /// Load synonyms with the given <seealso cref="SynonymMap.Parser"/> class.
         /// </summary>
-        private SynonymMap LoadSynonyms(ResourceLoader loader, string cname, bool dedup, Analyzer analyzer)
+        private SynonymMap LoadSynonyms(IResourceLoader loader, string cname, bool dedup, Analyzer analyzer)
         {
-            CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
+            Encoding decoder = Encoding.UTF8;
 
             SynonymMap.Parser parser;
-            Type clazz = loader.findClass(cname, typeof(SynonymMap.Parser));
+            Type clazz = loader.FindClass(cname /*, typeof(SynonymMap.Parser) */);
             try
             {
-                parser = clazz.getConstructor(typeof(bool), typeof(bool), typeof(Analyzer)).newInstance(dedup, expand, analyzer);
+                parser = (SynonymMap.Parser)Activator.CreateInstance(clazz,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                    null, new object[] { dedup, expand, analyzer }, CultureInfo.InvariantCulture);
             }
             catch (Exception e)
             {
-                throw new Exception(e);
+                throw e;
             }
 
             if (File.Exists(synonyms))
             {
-                decoder.Reset();
-                parser.Parse(new InputStreamReader(loader.openResource(synonyms), decoder));
+                parser.Parse(new StreamReader(loader.OpenResource(synonyms), decoder));
             }
             else
             {
-                IList<string> files = splitFileNames(synonyms);
+                IEnumerable<string> files = SplitFileNames(synonyms);
                 foreach (string file in files)
                 {
-                    decoder.reset();
-                    parser.Parse(new InputStreamReader(loader.openResource(file), decoder));
+                    parser.Parse(new StreamReader(loader.OpenResource(synonyms), decoder));
                 }
             }
             return parser.Build();
         }
 
         // (there are no tests for this functionality)
-        private TokenizerFactory LoadTokenizerFactory(ResourceLoader loader, string cname)
+        private TokenizerFactory LoadTokenizerFactory(IResourceLoader loader, string cname)
         {
-            Type clazz = loader.findClass(cname, typeof(TokenizerFactory));
+            Type clazz = loader.FindClass(cname /*, typeof(TokenizerFactory) */);
             try
             {
-                TokenizerFactory tokFactory = clazz.getConstructor(typeof(IDictionary)).newInstance(tokArgs);
-                if (tokFactory is ResourceLoaderAware)
+                TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                    null, new object[] { tokArgs }, CultureInfo.InvariantCulture);
+                if (tokFactory is IResourceLoaderAware)
                 {
-                    ((ResourceLoaderAware)tokFactory).inform(loader);
+                    ((IResourceLoaderAware)tokFactory).Inform(loader);
                 }
                 return tokFactory;
             }
             catch (Exception e)
             {
-                throw new Exception(e);
+                throw e;
             }
         }
     }
-
 }

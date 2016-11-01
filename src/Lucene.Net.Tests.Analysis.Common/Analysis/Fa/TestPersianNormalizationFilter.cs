@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.fa
-{
+﻿using Lucene.Net.Analysis.Ar;
+using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fa
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,93 +22,79 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Persian Normalization Filter
+    /// 
+    /// </summary>
+    public class TestPersianNormalizationFilter : BaseTokenStreamTestCase
+    {
 
-	using ArabicLetterTokenizer = org.apache.lucene.analysis.ar.ArabicLetterTokenizer;
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        [Test]
+        public virtual void TestFarsiYeh()
+        {
+            Check("های", "هاي");
+        }
 
-	/// <summary>
-	/// Test the Persian Normalization Filter
-	/// 
-	/// </summary>
-	public class TestPersianNormalizationFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestYehBarree()
+        {
+            Check("هاے", "هاي");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFarsiYeh() throws java.io.IOException
-	  public virtual void testFarsiYeh()
-	  {
-		check("های", "هاي");
-	  }
+        [Test]
+        public virtual void TestKeheh()
+        {
+            Check("کشاندن", "كشاندن");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testYehBarree() throws java.io.IOException
-	  public virtual void testYehBarree()
-	  {
-		check("هاے", "هاي");
-	  }
+        [Test]
+        public virtual void TestHehYeh()
+        {
+            Check("كتابۀ", "كتابه");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeheh() throws java.io.IOException
-	  public virtual void testKeheh()
-	  {
-		check("کشاندن", "كشاندن");
-	  }
+        [Test]
+        public virtual void TestHehHamzaAbove()
+        {
+            Check("كتابهٔ", "كتابه");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHehYeh() throws java.io.IOException
-	  public virtual void testHehYeh()
-	  {
-		check("كتابۀ", "كتابه");
-	  }
+        [Test]
+        public virtual void TestHehGoal()
+        {
+            Check("زادہ", "زاده");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHehHamzaAbove() throws java.io.IOException
-	  public virtual void testHehHamzaAbove()
-	  {
-		check("كتابهٔ", "كتابه");
-	  }
+        private void Check(string input, string expected)
+        {
+#pragma warning disable 612, 618
+            ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
+#pragma warning restore 612, 618
+            PersianNormalizationFilter filter = new PersianNormalizationFilter(tokenStream);
+            AssertTokenStreamContents(filter, new string[] { expected });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHehGoal() throws java.io.IOException
-	  public virtual void testHehGoal()
-	  {
-		check("زادہ", "زاده");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(final String input, final String expected) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void check(string input, string expected)
-	  {
-		ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
-		PersianNormalizationFilter filter = new PersianNormalizationFilter(tokenStream);
-		assertTokenStreamContents(filter, new string[]{expected});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestPersianNormalizationFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestPersianNormalizationFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestPersianNormalizationFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestPersianNormalizationFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new PersianNormalizationFilter(tokenizer));
-		  }
-	  }
-
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new PersianNormalizationFilter(tokenizer));
+            }
+        }
+    }
 }

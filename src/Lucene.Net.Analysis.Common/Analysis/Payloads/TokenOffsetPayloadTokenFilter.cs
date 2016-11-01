@@ -1,6 +1,10 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using System;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -17,45 +21,40 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Adds the <seealso cref="OffsetAttribute#startOffset()"/>
+    /// and <seealso cref="OffsetAttribute#endOffset()"/>
+    /// First 4 bytes are the start
+    /// 
+    /// 
+    /// </summary>
+    public class TokenOffsetPayloadTokenFilter : TokenFilter
+    {
+        private readonly IOffsetAttribute offsetAtt;
+        private readonly IPayloadAttribute payAtt;
 
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PayloadAttribute = org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-	using BytesRef = org.apache.lucene.util.BytesRef;
+        public TokenOffsetPayloadTokenFilter(TokenStream input)
+              : base(input)
+        {
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            payAtt = AddAttribute<IPayloadAttribute>();
+        }
 
-
-	/// <summary>
-	/// Adds the <seealso cref="OffsetAttribute#startOffset()"/>
-	/// and <seealso cref="OffsetAttribute#endOffset()"/>
-	/// First 4 bytes are the start
-	/// 
-	/// 
-	/// </summary>
-	public class TokenOffsetPayloadTokenFilter : TokenFilter
-	{
-	  private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
-	  private readonly PayloadAttribute payAtt = addAttribute(typeof(PayloadAttribute));
-
-	  public TokenOffsetPayloadTokenFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  sbyte[] data = new sbyte[8];
-		  PayloadHelper.encodeInt(offsetAtt.startOffset(), data, 0);
-		  PayloadHelper.encodeInt(offsetAtt.endOffset(), data, 4);
-		  BytesRef payload = new BytesRef(data);
-		  payAtt.Payload = payload;
-		  return true;
-		}
-		else
-		{
-		return false;
-		}
-	  }
-	}
+        public override sealed bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                byte[] data = new byte[8];
+                PayloadHelper.EncodeInt(offsetAtt.StartOffset(), data, 0);
+                PayloadHelper.EncodeInt(offsetAtt.EndOffset(), data, 4);
+                BytesRef payload = new BytesRef(data);
+                payAtt.Payload = payload;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

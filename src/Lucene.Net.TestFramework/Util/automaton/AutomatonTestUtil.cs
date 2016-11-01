@@ -449,12 +449,12 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void DeterminizeSimple(Automaton a)
         {
-            if (a.Deterministic || a.Singleton != null)
+            if (a.Deterministic || a.IsSingleton)
             {
                 return;
             }
-            HashSet<State> initialset = new HashSet<State>();
-            initialset.Add(a.InitialState);
+            HashSet<State> initialset = new ValueHashSet<State>();
+            initialset.Add(a.Initial);
             DeterminizeSimple(a, initialset);
         }
 
@@ -471,8 +471,8 @@ namespace Lucene.Net.Util.Automaton
             IDictionary<ISet<State>, State> newstate = new Dictionary<ISet<State>, State>();
             sets[initialset] = initialset;
             worklist.AddLast(initialset);
-            a.InitialState = new State();
-            newstate[initialset] = a.InitialState;
+            a.Initial = new State();
+            newstate[initialset] = a.Initial;
             while (worklist.Count > 0)
             {
                 ISet<State> s = worklist.First.Value;
@@ -488,14 +488,14 @@ namespace Lucene.Net.Util.Automaton
                 }
                 for (int n = 0; n < points.Length; n++)
                 {
-                    ISet<State> p = new HashSet<State>();
+                    ISet<State> p = new ValueHashSet<State>();
                     foreach (State q in s)
                     {
                         foreach (Transition t in q.Transitions)
                         {
                             if (t.Min <= points[n] && points[n] <= t.Max)
                             {
-                                p.Add(t.Dest);
+                                p.Add(t.To);
                             }
                         }
                     }

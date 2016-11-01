@@ -7,7 +7,7 @@
     <ProjectGuid>{FBD2EB4D-EAC9-409C-A23D-64D27DF23576}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Search</RootNamespace>
+    <RootNamespace>Lucene.Net.Suggest</RootNamespace>
     <AssemblyName>Lucene.Net.Suggest</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -64,6 +64,7 @@
     <Compile Include="Suggest\Analyzing\FreeTextSuggester.cs" />
     <Compile Include="Suggest\Analyzing\FSTUtil.cs" />
     <Compile Include="Suggest\Analyzing\FuzzySuggester.cs" />
+    <Compile Include="Suggest\Analyzing\SuggesterOptions.cs" />
     <Compile Include="Suggest\Analyzing\SuggestStopFilter.cs" />
     <Compile Include="Suggest\BufferedInputIterator.cs" />
     <Compile Include="Suggest\BufferingTermFreqIteratorWrapper.cs" />
@@ -89,9 +90,17 @@
     <Compile Include="Suggest\UnsortedInputIterator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj">
+      <Project>{a3a0d943-b91a-4b7a-9fcb-6160ea575d95}</Project>
+      <Name>Lucene.Net.Misc</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>

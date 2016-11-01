@@ -115,8 +115,12 @@ namespace Lucene.Net.Search.Payloads
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity).SetMergePolicy(NewLogMergePolicy()));
@@ -305,7 +309,7 @@ namespace Lucene.Net.Search.Payloads
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
             results[0] = 0; //hits.ScoreDocs[0].Doc;
-            CheckHits.CheckHitCollector(Random(), query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results);
+            CheckHits.CheckHitCollector(Random(), query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

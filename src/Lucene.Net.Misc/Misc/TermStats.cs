@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.misc
-{
+﻿using Lucene.Net.Util;
 
-	/*
+namespace Lucene.Net.Misc
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,38 +19,36 @@
 	 * limitations under the License.
 	 */
 
-	using BytesRef = org.apache.lucene.util.BytesRef;
+    /// <summary>
+    /// Holder for a term along with its statistics
+    /// (<see cref="DocFreq"/> and <see cref="TotalTermFreq"/>).
+    /// </summary>
+    public sealed class TermStats
+    {
+        internal readonly BytesRef termtext;
+        public string Field { get; set; }
+        public int DocFreq { get; set; }
+        public long TotalTermFreq { get; set; }
 
-	/// <summary>
-	/// Holder for a term along with its statistics
-	/// (<seealso cref="#docFreq"/> and <seealso cref="#totalTermFreq"/>).
-	/// </summary>
-	public sealed class TermStats
-	{
-	  public BytesRef termtext;
-	  public string field;
-	  public int docFreq;
-	  public long totalTermFreq;
+        internal TermStats(string field, BytesRef termtext, int df, long tf)
+        {
+            this.termtext = BytesRef.DeepCopyOf(termtext);
+            this.Field = field;
+            this.DocFreq = df;
+            this.TotalTermFreq = tf;
+        }
 
-	  internal TermStats(string field, BytesRef termtext, int df, long tf)
-	  {
-		this.termtext = BytesRef.deepCopyOf(termtext);
-		this.field = field;
-		this.docFreq = df;
-		this.totalTermFreq = tf;
-	  }
+        internal string TermText
+        {
+            get
+            {
+                return termtext.Utf8ToString();
+            }
+        }
 
-	  internal string TermText
-	  {
-		  get
-		  {
-			return termtext.utf8ToString();
-		  }
-	  }
-
-	  public override string ToString()
-	  {
-		return ("TermStats: term=" + termtext.utf8ToString() + " docFreq=" + docFreq + " totalTermFreq=" + totalTermFreq);
-	  }
-	}
+        public override string ToString()
+        {
+            return ("TermStats: Term=" + termtext.Utf8ToString() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq);
+        }
+    }
 }

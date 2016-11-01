@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
             {
             }
 
-            protected override LookaheadTokenFilter.Position NewPosition()
+            protected internal override LookaheadTokenFilter.Position NewPosition()
             {
                 return new LookaheadTokenFilter.Position();
             }

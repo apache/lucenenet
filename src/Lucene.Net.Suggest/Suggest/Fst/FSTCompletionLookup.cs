@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Search.Suggest.Tst;
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,13 +24,14 @@ namespace Lucene.Net.Search.Suggest.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
-    /// An adapter from <seealso cref="Lookup"/> API to <seealso cref="FSTCompletion"/>.
+    /// An adapter from <see cref="Lookup"/> API to <see cref="FSTCompletion"/>.
     /// 
-    /// <para>This adapter differs from <seealso cref="FSTCompletion"/> in that it attempts
-    /// to discretize any "weights" as passed from in <seealso cref="InputIterator#weight()"/>
+    /// <para>This adapter differs from <see cref="FSTCompletion"/> in that it attempts
+    /// to discretize any "weights" as passed from in <see cref="IInputIterator.Weight"/>
     /// to match the number of buckets. For the rationale for bucketing, see
-    /// <seealso cref="FSTCompletion"/>.
+    /// <see cref="FSTCompletion"/>.
     /// 
     /// </para>
     /// <para><b>Note:</b>Discretization requires an additional sorting pass.
@@ -48,25 +48,25 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// 
     /// </para>
     /// <para>For fine-grained control over which weights are assigned to which buckets,
-    /// use <seealso cref="FSTCompletion"/> directly or <seealso cref="TSTLookup"/>, for example.
+    /// use <see cref="FSTCompletion"/> directly or <see cref="Tst.TSTLookup"/>, for example.
     /// 
     /// </para>
     /// </summary>
-    /// <seealso cref= FSTCompletion
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="FSTCompletion"/>
+    /// @lucene.experimental
     public class FSTCompletionLookup : Lookup
     {
         /// <summary>
         /// An invalid bucket count if we're creating an object
         /// of this class from an existing FST.
         /// </summary>
-        /// <seealso cref= #FSTCompletionLookup(FSTCompletion, boolean) </seealso>
+        /// <seealso cref="FSTCompletionLookup(FSTCompletion, bool)"/> </seealso>
         private static int INVALID_BUCKETS_COUNT = -1;
 
         /// <summary>
         /// Shared tail length for conflating in the created automaton. Setting this
-        /// to larger values (<seealso cref="Integer#MAX_VALUE"/>) will create smaller (or minimal) 
-        /// automata at the cost of RAM for keeping nodes hash in the <seealso cref="FST"/>. 
+        /// to larger values (<see cref="int.MaxValue"/>) will create smaller (or minimal) 
+        /// automata at the cost of RAM for keeping nodes hash in the <see cref="FST"/>. 
         ///  
         /// <para>Empirical pick.
         /// </para>
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <seealso cref="#build(InputIterator)"/> method. The number of weight
-        /// discretization buckets is set to <seealso cref="FSTCompletion#DEFAULT_BUCKETS"/> and
+        /// <see cref="Build(IInputIterator)"/> method. The number of weight
+        /// discretization buckets is set to <see cref="FSTCompletion.DEFAULT_BUCKETS"/> and
         /// exact matches are promoted to the top of the suggestions list.
         /// </summary>
         public FSTCompletionLookup()
@@ -103,14 +103,14 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <seealso cref="#build(InputIterator)"/> method.
+        /// <see cref="Build(IInputIterator)"/> method.
         /// </summary>
         /// <param name="buckets">
         ///          The number of weight discretization buckets (see
-        ///          <seealso cref="FSTCompletion"/> for details).
+        ///          <see cref="FSTCompletion"/> for details).
         /// </param>
         /// <param name="exactMatchFirst">
-        ///          If <code>true</code> exact matches are promoted to the top of the
+        ///          If <c>true</c> exact matches are promoted to the top of the
         ///          suggestions list. Otherwise they appear in the order of
         ///          discretized weight and alphabetical within the bucket. </param>
         public FSTCompletionLookup(int buckets, bool exactMatchFirst)
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// This constructor takes a pre-built automaton.
         /// </summary>
         ///  <param name="completion"> 
-        ///          An instance of <seealso cref="FSTCompletion"/>. </param>
+        ///          An instance of <see cref="FSTCompletion"/>. </param>
         ///  <param name="exactMatchFirst">
         ///          If <code>true</code> exact matches are promoted to the top of the
         ///          suggestions list. Otherwise they appear in the order of
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.higherWeightsCompletion = new FSTCompletion(completion.FST, true, exactMatchFirst);
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasPayloads)
             {
@@ -145,8 +145,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
-            File tempInput = File.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.defaultTempDir());
-            File tempSorted = File.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.defaultTempDir());
+            FileInfo tempInput = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir());
+            FileInfo tempSorted = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir());
 
             OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             OfflineSorter.ByteSequencesReader reader = null;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             try
             {
-                sbyte[] buffer = new sbyte[0];
+                byte[] buffer = new byte[0];
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
                 BytesRef spare;
                 while ((spare = iterator.Next()) != null)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             return (int)value;
         }
 
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool higherWeightsFirst, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
         {
             if (contexts != null)
             {
@@ -258,11 +258,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             IList<FSTCompletion.Completion> completions;
             if (higherWeightsFirst)
             {
-                completions = higherWeightsCompletion.Lookup(key, num);
+                completions = higherWeightsCompletion.DoLookup(key, num);
             }
             else
             {
-                completions = normalCompletion.Lookup(key, num);
+                completions = normalCompletion.DoLookup(key, num);
             }
 
             List<LookupResult> results = new List<LookupResult>(completions.Count);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public virtual object Get(string key)
         {
             int bucket = normalCompletion.GetBucket(key);
-            return bucket == -1 ? null : Convert.ToInt64(bucket);
+            return bucket == -1 ? (long?)null : Convert.ToInt64(bucket);
         }
 
         public override bool Store(DataOutput output)
@@ -305,13 +305,13 @@ namespace Lucene.Net.Search.Suggest.Fst
             lock (this)
             {
                 count = input.ReadVLong();
-                this.higherWeightsCompletion = new FSTCompletion(new FST<>(input, NoOutputs.Singleton));
+                this.higherWeightsCompletion = new FSTCompletion(new FST<object>(input, NoOutputs.Singleton));
                 this.normalCompletion = new FSTCompletion(higherWeightsCompletion.FST, false, exactMatchFirst);
                 return true;
             }
         }
 
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.ShallowSizeOf(normalCompletion) + RamUsageEstimator.ShallowSizeOf(higherWeightsCompletion);
             if (normalCompletion != null)

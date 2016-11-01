@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Search.Spell;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Search.Spell;
-using Lucene.Net.Util;
+using System.Text;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,91 +27,91 @@ namespace Lucene.Net.Search.Suggest
     /// <summary>
     /// Dictionary represented by a text file.
     /// 
-    /// <p/>Format allowed: 1 entry per line:<br/>
-    /// An entry can be: <br/>
-    /// <ul>
-    /// <li>suggestion</li>
-    /// <li>suggestion <code>fieldDelimiter</code> weight</li>
-    /// <li>suggestion <code>fieldDelimiter</code> weight <code>fieldDelimiter</code> payload</li>
-    /// </ul>
-    /// where the default <code>fieldDelimiter</code> is {@value #DEFAULT_FIELD_DELIMITER}<br/>
-    /// <p/>
+    /// <para>Format allowed: 1 entry per line:</para>
+    /// <para>An entry can be: </para>
+    /// <list type="number">
+    /// <item>suggestion</item>
+    /// <item>suggestion <see cref="fieldDelimiter"/> weight</item>
+    /// <item>suggestion <see cref="fieldDelimiter"/> weight <see cref="fieldDelimiter"/> payload</item>
+    /// </list>
+    /// where the default <see cref="fieldDelimiter"/> is <see cref="DEFAULT_FIELD_DELIMITER"/> (a tab)
+    /// <para>
     /// <b>NOTE:</b> 
-    /// <ul>
-    /// <li>In order to have payload enabled, the first entry has to have a payload</li>
-    /// <li>If the weight for an entry is not specified then a value of 1 is used</li>
-    /// <li>A payload cannot be specified without having the weight specified for an entry</li>
-    /// <li>If the payload for an entry is not specified (assuming payload is enabled) 
-    ///  then an empty payload is returned</li>
-    /// <li>An entry cannot have more than two <code>fieldDelimiter</code></li>
-    /// </ul>
-    /// <p/>
-    /// <b>Example:</b><br/>
-    /// word1 word2 TAB 100 TAB payload1<br/>
-    /// word3 TAB 101<br/>
-    /// word4 word3 TAB 102<br/>
+    /// <list type="number">
+    /// <item>In order to have payload enabled, the first entry has to have a payload</item>
+    /// <item>If the weight for an entry is not specified then a value of 1 is used</item>
+    /// <item>A payload cannot be specified without having the weight specified for an entry</item>
+    /// <item>If the payload for an entry is not specified (assuming payload is enabled) 
+    ///  then an empty payload is returned</item>
+    /// <item>An entry cannot have more than two <see cref="fieldDelimiter"/>s</item>
+    /// </list>
+    /// </para>
+    /// <c>Example:</c><para/>
+    /// word1 word2 TAB 100 TAB payload1<para/>
+    /// word3 TAB 101<para/>
+    /// word4 word3 TAB 102<para/>
     /// </summary>
-    public class FileDictionary : Dictionary
+    public class FileDictionary : IDictionary
     {
 
         /// <summary>
         /// Tab-delimited fields are most common thus the default, but one can override this via the constructor
         /// </summary>
         public const string DEFAULT_FIELD_DELIMITER = "\t";
-        private BufferedReader @in;
+        private TextReader @in;
         private string line;
         private bool done = false;
         private readonly string fieldDelimiter;
 
         /// <summary>
         /// Creates a dictionary based on an inputstream.
-        /// Using <seealso cref="#DEFAULT_FIELD_DELIMITER"/> as the 
+        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the 
         /// field seperator in a line.
         /// <para>
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public FileDictionary(InputStream dictFile)
+        public FileDictionary(Stream dictFile)
             : this(dictFile, DEFAULT_FIELD_DELIMITER)
         {
         }
 
         /// <summary>
         /// Creates a dictionary based on a reader.
-        /// Using <seealso cref="#DEFAULT_FIELD_DELIMITER"/> as the 
+        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the 
         /// field seperator in a line.
         /// </summary>
-        public FileDictionary(Reader reader)
+        public FileDictionary(TextReader reader)
             : this(reader, DEFAULT_FIELD_DELIMITER)
         {
         }
 
         /// <summary>
         /// Creates a dictionary based on a reader. 
-        /// Using <code>fieldDelimiter</code> to seperate out the
+        /// Using <paramref name="fieldDelimiter"/> to seperate out the
         /// fields in a line.
         /// </summary>
-        public FileDictionary(Reader reader, string fieldDelimiter)
+        public FileDictionary(TextReader reader, string fieldDelimiter)
         {
-            @in = new BufferedReader(reader);
+            @in = reader;
             this.fieldDelimiter = fieldDelimiter;
         }
 
         /// <summary>
         /// Creates a dictionary based on an inputstream.
-        /// Using <code>fieldDelimiter</code> to seperate out the
+        /// Using <paramref name="fieldDelimiter"/> to seperate out the
         /// fields in a line.
         /// <para>
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public FileDictionary(InputStream dictFile, string fieldDelimiter)
+        public FileDictionary(Stream dictFile, string fieldDelimiter)
         {
-            @in = new BufferedReader(IOUtils.GetDecodingReader(dictFile, StandardCharsets.UTF_8));
+            @in = IOUtils.GetDecodingReader(dictFile, Encoding.UTF8);
             this.fieldDelimiter = fieldDelimiter;
         }
 
-        public virtual InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        internal sealed class FileIterator : InputIterator
+        internal sealed class FileIterator : IInputIterator
         {
             private readonly FileDictionary outerInstance;
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Suggest
             internal FileIterator(FileDictionary outerInstance)
             {
                 this.outerInstance = outerInstance;
-                outerInstance.line = outerInstance.@in.readLine();
+                outerInstance.line = outerInstance.@in.ReadLine();
                 if (outerInstance.line == null)
                 {
                     outerInstance.done = true;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Suggest
                 }
                 else
                 {
-                    string[] fields = outerInstance.line.Split(outerInstance.fieldDelimiter, true);
+                    string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
                         throw new System.ArgumentException("More than 3 fields in one line");
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest
                 outerInstance.line = outerInstance.@in.ReadLine();
                 if (outerInstance.line != null)
                 {
-                    string[] fields = outerInstance.line.Split(outerInstance.fieldDelimiter, true);
+                    string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
                         throw new System.ArgumentException("More than 3 fields in one line");
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public HashSet<BytesRef> Contexts
+            public IEnumerable<BytesRef> Contexts
             {
                 get { return null; }
             }
@@ -279,6 +279,5 @@ namespace Lucene.Net.Search.Suggest
                 get { return false; }
             }
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,35 +20,33 @@ namespace Lucene.Net.Analysis.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Abstract parent class for analysis factories that create <seealso cref="TokenFilter"/>
     /// instances.
     /// </summary>
     public abstract class TokenFilterFactory : AbstractAnalysisFactory
     {
-
-        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = new AnalysisSPILoader<TokenFilterFactory>(typeof(TokenFilterFactory), new string[] { "TokenFilterFactory", "FilterFactory" });
+        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = new AnalysisSPILoader<TokenFilterFactory>(new string[] { "TokenFilterFactory", "FilterFactory" });
 
         /// <summary>
         /// looks up a tokenfilter by name from context classpath </summary>
-        public static TokenFilterFactory forName(string name, IDictionary<string, string> args)
+        public static TokenFilterFactory ForName(string name, IDictionary<string, string> args)
         {
-            return loader.newInstance(name, args);
+            return loader.NewInstance(name, args);
         }
 
         /// <summary>
         /// looks up a tokenfilter class by name from context classpath </summary>
-        public static Type lookupClass(string name)
+        public static Type LookupClass(string name)
         {
-            return loader.lookupClass(name);
+            return loader.LookupClass(name);
         }
 
         /// <summary>
         /// returns a list of all available tokenfilter names from context classpath </summary>
-        public static HashSet<string> availableTokenFilters()
+        public static IEnumerable<string> AvailableTokenFilters
         {
-            return loader.availableServices();
+            get { return loader.AvailableServices; }
         }
 
         /// <summary>
@@ -65,9 +62,9 @@ namespace Lucene.Net.Analysis.Util
         /// of new factories on the given classpath/classloader!</em>
         /// </para>
         /// </summary>
-        public static void ReloadTokenFilters(ClassLoader classloader)
+        public static void ReloadTokenFilters()
         {
-            loader.reload(classloader);
+            loader.Reload();
         }
 
         /// <summary>

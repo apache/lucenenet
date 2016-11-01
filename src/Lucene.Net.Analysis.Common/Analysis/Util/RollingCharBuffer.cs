@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Util
          * ahead.  Returns -1 if you hit EOF. */
         public int Get(int pos)
         {
-            //System.out.println("    get pos=" + pos + " nextPos=" + nextPos + " count=" + count);
+            //System.out.println("    Get pos=" + pos + " nextPos=" + nextPos + " count=" + count);
             if (pos == nextPos)
             {
                 if (end)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Util
 
                 int toRead = buffer.Length - Math.Max(count, nextWrite);
                 int readCount = reader.Read(buffer, nextWrite, toRead);
-                if (readCount == -1)
+                if (readCount <= 0)
                 {
                     end = true;
                     return -1;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Util
         {
             Debug.Assert(length > 0);
             Debug.Assert(InBounds(posStart), "posStart=" + posStart + " length=" + length);
-            //System.out.println("    buffer.get posStart=" + posStart + " len=" + length);
+            //System.out.println("    buffer.Get posStart=" + posStart + " len=" + length);
 
             int startIndex = GetIndex(posStart);
             int endIndex = GetIndex(posStart + length);

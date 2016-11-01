@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Support
 {
@@ -13,27 +7,25 @@ namespace Lucene.Net.Support
     {
         static readonly BinaryFormatter Formatter = new BinaryFormatter();
 
-        public static MemoryStream SerializeToStream(object o)
+        public static void SerializeToStream(object o, Stream outputStream)
         {
-            using (var stream = new MemoryStream())
-            {
-                Formatter.Serialize(stream, o);
-                return stream;
-            }
+            Formatter.Serialize(outputStream, o);
+        }
+
+        public static void SerializeToStream(object o, BinaryWriter writer)
+        {
+            Formatter.Serialize(writer.BaseStream, o);
         }
 
         public static object DeserializeFromStream(Stream stream)
         {
-            stream.Seek(0, SeekOrigin.Begin);
             object o = Formatter.Deserialize(stream);
             return o;
         }
 
         public static object DeserializeFromStream(BinaryReader reader)
         {
-            var stream = reader.BaseStream;
-            stream.Seek(0, SeekOrigin.Begin);
-            object o = Formatter.Deserialize(stream);
+            object o = Formatter.Deserialize(reader.BaseStream);
             return o;
         }
     }

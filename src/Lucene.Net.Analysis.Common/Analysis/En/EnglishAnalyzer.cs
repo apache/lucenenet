@@ -1,7 +1,14 @@
-﻿namespace org.apache.lucene.analysis.en
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System.IO;
+using System.Linq;
 
-	/*
+namespace Lucene.Net.Analysis.En
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,20 +25,10 @@
 	 * limitations under the License.
 	 */
 
-	using LowerCaseFilter = org.apache.lucene.analysis.core.LowerCaseFilter;
-	using StopFilter = org.apache.lucene.analysis.core.StopFilter;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using StandardAnalyzer = org.apache.lucene.analysis.standard.StandardAnalyzer;
-	using StandardFilter = org.apache.lucene.analysis.standard.StandardFilter;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using StopwordAnalyzerBase = org.apache.lucene.analysis.util.StopwordAnalyzerBase;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
-	/// <seealso cref="Analyzer"/> for English.
-	/// </summary>
-	public sealed class EnglishAnalyzer : StopwordAnalyzerBase
+    /// <summary>
+    /// <seealso cref="Analyzer"/> for English.
+    /// </summary>
+    public sealed class EnglishAnalyzer : StopwordAnalyzerBase
 	{
 	  private readonly CharArraySet stemExclusionSet;
 
@@ -58,7 +55,8 @@
 	  /// <summary>
 	  /// Builds an analyzer with the default stop words: <seealso cref="#getDefaultStopSet"/>.
 	  /// </summary>
-	  public EnglishAnalyzer(Version matchVersion) : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+	  public EnglishAnalyzer(LuceneVersion matchVersion) 
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
 	  {
 	  }
 
@@ -67,7 +65,8 @@
 	  /// </summary>
 	  /// <param name="matchVersion"> lucene compatibility version </param>
 	  /// <param name="stopwords"> a stopword set </param>
-	  public EnglishAnalyzer(Version matchVersion, CharArraySet stopwords) : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+	  public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords) 
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
 	  {
 	  }
 
@@ -79,43 +78,43 @@
 	  /// <param name="matchVersion"> lucene compatibility version </param>
 	  /// <param name="stopwords"> a stopword set </param>
 	  /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
-	  public EnglishAnalyzer(Version matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet) : base(matchVersion, stopwords)
+	  public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet) 
+            : base(matchVersion, stopwords)
 	  {
-		this.stemExclusionSet = CharArraySet.unmodifiableSet(CharArraySet.copy(matchVersion, stemExclusionSet));
+		this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
 	  }
 
-	  /// <summary>
-	  /// Creates a
-	  /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-	  /// which tokenizes all the text in the provided <seealso cref="Reader"/>.
-	  /// </summary>
-	  /// <returns> A
-	  ///         <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-	  ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-	  ///         <seealso cref="StandardFilter"/>, <seealso cref="EnglishPossessiveFilter"/>, 
-	  ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-	  ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-	  ///         provided and <seealso cref="PorterStemFilter"/>. </returns>
-	  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.Tokenizer source = new org.apache.lucene.analysis.standard.StandardTokenizer(matchVersion, reader);
-		Tokenizer source = new StandardTokenizer(matchVersion, reader);
-		TokenStream result = new StandardFilter(matchVersion, source);
-		// prior to this we get the classic behavior, standardfilter does it for us.
-		if (matchVersion.onOrAfter(Version.LUCENE_31))
-		{
-		  result = new EnglishPossessiveFilter(matchVersion, result);
-		}
-		result = new LowerCaseFilter(matchVersion, result);
-		result = new StopFilter(matchVersion, result, stopwords);
-		if (!stemExclusionSet.Empty)
-		{
-		  result = new SetKeywordMarkerFilter(result, stemExclusionSet);
-		}
-		result = new PorterStemFilter(result);
-		return new TokenStreamComponents(source, result);
-	  }
-	}
-
+        /// <summary>
+        /// Creates a
+        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
+        /// which tokenizes all the text in the provided <seealso cref="Reader"/>.
+        /// </summary>
+        /// <returns> A
+        ///         <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
+        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
+        ///         <seealso cref="StandardFilter"/>, <seealso cref="EnglishPossessiveFilter"/>, 
+        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
+        ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided and <seealso cref="PorterStemFilter"/>. </returns>
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        {
+            Tokenizer source = new StandardTokenizer(matchVersion, reader);
+            TokenStream result = new StandardFilter(matchVersion, source);
+            // prior to this we get the classic behavior, standardfilter does it for us.
+#pragma warning disable 612, 618
+            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
+            {
+                result = new EnglishPossessiveFilter(matchVersion, result);
+            }
+            result = new LowerCaseFilter(matchVersion, result);
+            result = new StopFilter(matchVersion, result, stopwords);
+            if (stemExclusionSet.Any())
+            {
+                result = new SetKeywordMarkerFilter(result, stemExclusionSet);
+            }
+            result = new PorterStemFilter(result);
+            return new TokenStreamComponents(source, result);
+        }
+    }
 }

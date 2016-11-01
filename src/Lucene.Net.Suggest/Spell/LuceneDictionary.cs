@@ -3,7 +3,6 @@ using Lucene.Net.Search.Suggest;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +19,12 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Lucene Dictionary: terms taken from the given field
     /// of a Lucene index.
     /// </summary>
-    public class LuceneDictionary : Dictionary
+    public class LuceneDictionary : IDictionary
     {
         private IndexReader reader;
         private string field;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Spell
             this.field = field;
         }
 
-        public InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {

@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
 
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
@@ -69,11 +70,11 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific] // Apparently added to LUCENENET for debugging
         public virtual void TestExposeUnclosedFiles()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             //int numDocs = AtLeast(100);
             int numDocs = 5;
             for (int i = 0; i < numDocs; i++)

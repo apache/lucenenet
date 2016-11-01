@@ -1,11 +1,11 @@
-﻿using System;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Sinks
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,56 +21,138 @@ namespace Lucene.Net.Analysis.Sinks
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Attempts to parse the <seealso cref="CharTermAttribute#buffer()"/> as a Date using a <seealso cref="java.text.DateFormat"/>.
-	/// If the value is a Date, it will add it to the sink.
-	/// <p/> 
-	/// 
-	/// 
-	/// </summary>
-	public class DateRecognizerSinkFilter : TeeSinkTokenFilter.SinkFilter
-	{
-	  public const string DATE_TYPE = "date";
+    /// Attempts to parse the <seealso cref="CharTermAttribute.ToString()"/> as a Date using either the 
+    /// <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/> or 
+    /// <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> methods.
+    /// If a format is passed, <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> 
+    /// will be used, and the format must strictly match one of the specified formats as specified in the MSDN documentation.
+    /// If the value is a Date, it will add it to the sink.
+    /// </summary>
+    public class DateRecognizerSinkFilter : TeeSinkTokenFilter.SinkFilter
+    {
+        protected internal DateTimeStyles style;
+        protected internal ICharTermAttribute termAtt;
+        protected internal IFormatProvider culture;
+        protected internal string[] formats;
 
-	  protected internal DateFormat dateFormat;
-	  protected internal CharTermAttribute termAtt;
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the current culture and <see cref="DateTimeStyles.None"/>.
+        /// Loosely matches standard DateTime formats using <seealso cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        public DateRecognizerSinkFilter()
+              : this((string[])null, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
+        { }
 
-	  /// <summary>
-	  /// Uses {@link java.text.DateFormat#getDateInstance(int, Locale)
-	  /// DateFormat#getDateInstance(DateFormat.DEFAULT, Locale.ROOT)} as 
-	  /// the <seealso cref="java.text.DateFormat"/> object.
-	  /// </summary>
-	  public DateRecognizerSinkFilter() : this(DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.ROOT))
-	  {
-	  }
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the supplied culture and <see cref="DateTimeStyles.None"/>.
+        /// Loosely matches standard DateTime formats using <seealso cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        public DateRecognizerSinkFilter(IFormatProvider culture)
+            : this((string[])null, culture, DateTimeStyles.None)
+        { }
 
-	  public DateRecognizerSinkFilter(DateFormat dateFormat)
-	  {
-		this.dateFormat = dateFormat;
-	  }
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the current culture and <see cref="DateTimeStyles.None"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="format">The allowable format of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, it must match the format of the date exactly to get a match.</param>
+        public DateRecognizerSinkFilter(string format)
+           : this(new string[] { format }, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
+        { }
 
-	  public override bool Accept(AttributeSource source)
-	  {
-		if (termAtt == null)
-		{
-            termAtt = source.AddAttribute <ICharTermAttribute>();
-		}
-		try
-		{
-		  DateTime date = dateFormat.Parse(termAtt.ToString()); //We don't care about the date, just that we can parse it as a date
-		  if (date != null)
-		  {
-			return true;
-		  }
-		}
-		catch (ParseException)
-		{
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the current culture and <see cref="DateTimeStyles.None"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="formats">An array of allowable formats of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, one of them must match the format of the date exactly to get a match.</param>
+        public DateRecognizerSinkFilter(string[] formats)
+            : this(formats, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
+        { }
 
-		}
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied culture and <see cref="DateTimeStyles"/>.
+        /// Loosely matches standard DateTime formats using <seealso cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// If supplied, one of them must match the format of the date exactly to get a match.</param>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// A typical value to specify is <seealso cref="DateTimeStyles.None"/></param>
+        public DateRecognizerSinkFilter(IFormatProvider culture, DateTimeStyles style)
+            :this((string[])null, culture, style)
+        { }
 
-		return false;
-	  }
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied format, culture and <see cref="DateTimeStyles.None"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="format">The allowable format of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, it must match the format of the date exactly to get a match.</param>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        public DateRecognizerSinkFilter(string format, IFormatProvider culture)
+           : this(new string[] { format }, culture, DateTimeStyles.None)
+        { }
 
-	}
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied formats, culture and <see cref="DateTimeStyles.None"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="formats">An array of allowable formats of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, one of them must match the format of the date exactly to get a match.</param>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        public DateRecognizerSinkFilter(string[] formats, IFormatProvider culture)
+            : this(formats, culture, DateTimeStyles.None)
+        { }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the supplied format, culture and <see cref="DateTimeStyles"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="format">The allowable format of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, it must match the format of the date exactly to get a match.</param>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// A typical value to specify is <seealso cref="DateTimeStyles.None"/></param>
+        public DateRecognizerSinkFilter(string format, IFormatProvider culture, DateTimeStyles style)
+            : this(new string[] { format }, culture, style)
+        { }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the supplied formats, culture and <see cref="DateTimeStyles"/>.
+        /// Strictly matches the supplied DateTime formats using <seealso cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
+        /// </summary>
+        /// <param name="formats">An array of allowable formats of the <seealso cref="CharTermAttribute.ToString()"/>.
+        /// If supplied, one of them must match the format of the date exactly to get a match.</param>
+        /// <param name="culture">An object that supplies culture-specific format information</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// A typical value to specify is <seealso cref="DateTimeStyles.None"/></param>
+        public DateRecognizerSinkFilter(string[] formats, IFormatProvider culture, DateTimeStyles style)
+        {
+            this.culture = culture;
+            this.style = style;
+            this.formats = formats;
+        }
+
+        public override bool Accept(AttributeSource source)
+        {
+            if (termAtt == null)
+            {
+                termAtt = source.AddAttribute<ICharTermAttribute>();
+            }
+
+            DateTime date; //We don't care about the date, just that we can parse it as a date
+            if (formats == null)
+            {
+                return DateTime.TryParse(termAtt.ToString(), culture, style, out date);
+            }
+            else
+            {
+                return DateTime.TryParseExact(termAtt.ToString(), formats, culture, style, out date);
+            }
+        }
+    }
 }

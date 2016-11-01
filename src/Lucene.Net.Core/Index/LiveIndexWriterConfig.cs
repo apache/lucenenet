@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="MergeScheduler"/> to use for running merges. </summary>
-        protected internal volatile MergeScheduler mergeScheduler;
+        protected internal volatile IMergeScheduler mergeScheduler;
 
         /// <summary>
         /// Timeout when trying to obtain the write lock on init. </summary>
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
         /// Returns the <seealso cref="MergeScheduler"/> that was set by
         /// <seealso cref="IndexWriterConfig#setMergeScheduler(MergeScheduler)"/>.
         /// </summary>
-        public virtual MergeScheduler MergeScheduler
+        public virtual IMergeScheduler MergeScheduler
         {
             get
             {

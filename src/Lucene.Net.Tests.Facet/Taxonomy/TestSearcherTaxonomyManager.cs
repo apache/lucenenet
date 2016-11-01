@@ -47,12 +47,12 @@ namespace Lucene.Net.Facet.Taxonomy
 
             internal IndexWriter w;
             internal FacetsConfig config;
-            internal TaxonomyWriter tw;
+            internal ITaxonomyWriter tw;
             internal ReferenceManager<SearcherAndTaxonomy> mgr;
             internal int ordLimit;
             internal AtomicBoolean stop;
 
-            public IndexerThread(IndexWriter w, FacetsConfig config, TaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
+            public IndexerThread(IndexWriter w, FacetsConfig config, ITaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
             {
                 this.w = w;
                 this.config = config;
@@ -114,10 +114,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
                         if (VERBOSE)
                         {
-                            Console.WriteLine("TW size=" + tw.Size + " vs " + ordLimit);
+                            Console.WriteLine("TW size=" + tw.Count + " vs " + ordLimit);
                         }
 
-                        if (tw.Size >= ordLimit)
+                        if (tw.Count >= ordLimit)
                         {
                             break;
                         }
@@ -175,10 +175,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         //System.out.println("search maxOrd=" + pair.taxonomyReader.getSize());
                         FacetsCollector sfc = new FacetsCollector();
-                        pair.searcher.Search(new MatchAllDocsQuery(), sfc);
-                        Facets facets = GetTaxonomyFacetCounts(pair.taxonomyReader, config, sfc);
+                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc);
+                        Facets facets = GetTaxonomyFacetCounts(pair.TaxonomyReader, config, sfc);
                         FacetResult result = facets.GetTopChildren(10, "field");
-                        if (pair.searcher.IndexReader.NumDocs > 0)
+                        if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
                             Assert.True(result.ChildCount > 0);
@@ -283,10 +283,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         //System.out.println("search maxOrd=" + pair.taxonomyReader.getSize());
                         FacetsCollector sfc = new FacetsCollector();
-                        pair.searcher.Search(new MatchAllDocsQuery(), sfc);
-                        Facets facets = GetTaxonomyFacetCounts(pair.taxonomyReader, config, sfc);
+                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc);
+                        Facets facets = GetTaxonomyFacetCounts(pair.TaxonomyReader, config, sfc);
                         FacetResult result = facets.GetTopChildren(10, "field");
-                        if (pair.searcher.IndexReader.NumDocs > 0)
+                        if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
                             Assert.True(result.ChildCount > 0);
@@ -365,7 +365,7 @@ namespace Lucene.Net.Facet.Taxonomy
             SearcherAndTaxonomy pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(1, pair.taxonomyReader.Size);
+                Assert.AreEqual(1, pair.TaxonomyReader.Count);
             }
             finally
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Facet.Taxonomy
             pair = mgr.Acquire();
             try
             {
-                Assert.AreEqual(3, pair.taxonomyReader.Size);
+                Assert.AreEqual(3, pair.TaxonomyReader.Count);
             }
             finally
             {

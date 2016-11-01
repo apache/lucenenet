@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
         private readonly HashSet<SegmentCommitInfo> mergingSegments = new HashSet<SegmentCommitInfo>();
 
         private readonly MergePolicy mergePolicy;
-        private readonly MergeScheduler mergeScheduler;
+        private readonly IMergeScheduler mergeScheduler;
         private readonly LinkedList<MergePolicy.OneMerge> PendingMerges = new LinkedList<MergePolicy.OneMerge>();
         private readonly HashSet<MergePolicy.OneMerge> RunningMerges = new HashSet<MergePolicy.OneMerge>();
         private IList<MergePolicy.OneMerge> MergeExceptions = new List<MergePolicy.OneMerge>();
@@ -1266,8 +1266,7 @@ namespace Lucene.Net.Index
 
                 if (WriteLock != null)
                 {
-                    WriteLock.Release(); // release write lock
-                    WriteLock.Dispose();
+                    WriteLock.Dispose(); // release write lock
                     WriteLock = null;
                 }
                 lock (this)
@@ -5917,7 +5916,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private static bool SlowFileExists(Directory dir, string fileName)
         {
-            /*
             try
             {
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
@@ -5926,8 +5924,11 @@ namespace Lucene.Net.Index
             catch (FileNotFoundException)
             {
                 return false;
-            }*/
-            return dir.FileExists(fileName);
+            }
+            catch (NoSuchFileException)
+            {
+                return false;
+            }
         }
     }
 }

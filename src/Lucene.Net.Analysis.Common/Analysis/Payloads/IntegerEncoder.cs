@@ -1,6 +1,9 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Util;
+using System;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -17,26 +20,22 @@
 	 * limitations under the License.
 	 */
 
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using BytesRef = org.apache.lucene.util.BytesRef;
+    /// <summary>
+    ///  Encode a character array Integer as a <seealso cref="BytesRef"/>.
+    /// <p/>
+    /// See <seealso cref="org.apache.lucene.analysis.payloads.PayloadHelper#encodeInt(int, byte[], int)"/>.
+    /// 
+    /// 
+    /// </summary>
+    public class IntegerEncoder : AbstractEncoder, IPayloadEncoder
+    {
 
-
-	/// <summary>
-	///  Encode a character array Integer as a <seealso cref="BytesRef"/>.
-	/// <p/>
-	/// See <seealso cref="org.apache.lucene.analysis.payloads.PayloadHelper#encodeInt(int, byte[], int)"/>.
-	/// 
-	/// 
-	/// </summary>
-	public class IntegerEncoder : AbstractEncoder, PayloadEncoder
-	{
-
-	  public override BytesRef encode(char[] buffer, int offset, int length)
-	  {
-		int payload = ArrayUtil.parseInt(buffer, offset, length); //TODO: improve this so that we don't have to new Strings
-		sbyte[] bytes = PayloadHelper.encodeInt(payload);
-		BytesRef result = new BytesRef(bytes);
-		return result;
-	  }
-	}
+        public override BytesRef Encode(char[] buffer, int offset, int length)
+        {
+            int payload = ArrayUtil.ParseInt(buffer, offset, length); //TODO: improve this so that we don't have to new Strings
+            byte[] bytes = PayloadHelper.EncodeInt(payload);
+            BytesRef result = new BytesRef(bytes);
+            return result;
+        }
+    }
 }

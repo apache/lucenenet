@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -28,5 +30,67 @@ namespace Lucene.Net.Util
         {
             return new ArrayIntroSorter<Entry>(arr, ArrayUtil.naturalComparator<Entry>());
         }
+
+
+        #region BaseSortTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestEmpty()
+        {
+            base.TestEmpty();
+        }
+
+        [Test]
+        public override void TestOne()
+        {
+            base.TestOne();
+        }
+
+        [Test]
+        public override void TestTwo()
+        {
+            base.TestTwo();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        [Test]
+        public override void TestRandomLowCardinality()
+        {
+            base.TestRandomLowCardinality();
+        }
+
+        [Test]
+        public override void TestAscending()
+        {
+            base.TestAscending();
+        }
+
+        [Test]
+        public override void TestAscendingSequences()
+        {
+            base.TestAscendingSequences();
+        }
+
+        [Test]
+        public override void TestDescending()
+        {
+            base.TestDescending();
+        }
+
+        [Test]
+        public override void TestStrictlyDescendingStrategy()
+        {
+            base.TestStrictlyDescendingStrategy();
+        }
+
+        #endregion
     }
 }

@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             }
 
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        [Test, LongRunningTest]
+        [Test, LongRunningTest, Timeout(90000)]
         public virtual void TestQueries()
         {
             // because the first page has a null 'after', we get a normal collector.

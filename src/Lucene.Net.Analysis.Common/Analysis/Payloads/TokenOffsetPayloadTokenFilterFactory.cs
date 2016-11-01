@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.payloads
+namespace Lucene.Net.Analysis.Payloads
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,36 +20,33 @@ namespace org.apache.lucene.analysis.payloads
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="TokenOffsetPayloadTokenFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_tokenoffset" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.TokenOffsetPayloadTokenFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class TokenOffsetPayloadTokenFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="TokenOffsetPayloadTokenFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_tokenoffset" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.TokenOffsetPayloadTokenFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class TokenOffsetPayloadTokenFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new TokenOffsetPayloadTokenFilterFactory </summary>
+        public TokenOffsetPayloadTokenFilterFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new TokenOffsetPayloadTokenFilterFactory </summary>
-	  public TokenOffsetPayloadTokenFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override TokenOffsetPayloadTokenFilter create(TokenStream input)
-	  {
-		return new TokenOffsetPayloadTokenFilter(input);
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new TokenOffsetPayloadTokenFilter(input);
+        }
+    }
 }

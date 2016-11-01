@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.en
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.En
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,88 +23,67 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the PorterStemFilter with Martin Porter's test data.
+    /// </summary>
+    public class TestPorterStemFilter_ : BaseTokenStreamTestCase
+    {
+        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer t = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+                return new TokenStreamComponents(t, new PorterStemFilter(t));
+            }
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+        /// <summary>
+        /// Run the stemmer against all strings in voc.txt
+        /// The output should be the same as the string in output.txt
+        /// </summary>
+        [Test]
+        public virtual void TestPorterStemFilter()
+        {
+            VocabularyAssert.AssertVocabulary(a, GetDataFile("porterTestData.zip"), "voc.txt", "output.txt");
+        }
 
-	/// <summary>
-	/// Test the PorterStemFilter with Martin Porter's test data.
-	/// </summary>
-	public class TestPorterStemFilter : BaseTokenStreamTestCase
-	{
-	  internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("yourselves");
+            Tokenizer tokenizer = new MockTokenizer(new StringReader("yourselves yours"), MockTokenizer.WHITESPACE, false);
+            TokenStream filter = new PorterStemFilter(new SetKeywordMarkerFilter(tokenizer, set));
+            AssertTokenStreamContents(filter, new string[] { "yourselves", "your" });
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer t = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-			return new TokenStreamComponents(t, new PorterStemFilter(t));
-		  }
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2();
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// Run the stemmer against all strings in voc.txt
-	  /// The output should be the same as the string in output.txt
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPorterStemFilter() throws Exception
-	  public virtual void testPorterStemFilter()
-	  {
-		assertVocabulary(a, getDataFile("porterTestData.zip"), "voc.txt", "output.txt");
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("yourselves");
-		Tokenizer tokenizer = new MockTokenizer(new StringReader("yourselves yours"), MockTokenizer.WHITESPACE, false);
-		TokenStream filter = new PorterStemFilter(new SetKeywordMarkerFilter(tokenizer, set));
-		assertTokenStreamContents(filter, new string[] {"yourselves", "your"});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), a, 1000 * RANDOM_MULTIPLIER);
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestPorterStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestPorterStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new PorterStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new PorterStemFilter(tokenizer));
+            }
+        }
+    }
 }

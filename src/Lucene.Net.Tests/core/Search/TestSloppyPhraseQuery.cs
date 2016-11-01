@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
             query.Slop = slop;
 
             Directory ramDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
             writer.AddDocument(doc);
 
             IndexReader reader = writer.Reader;
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
         private void AssertSaneScoring(PhraseQuery pq, IndexSearcher searcher)
         {
             searcher.Search(pq, new CollectorAnonymousInnerClassHelper(this));
-            QueryUtils.Check(Random(), pq, searcher);
+            QueryUtils.Check(Random(), pq, searcher, Similarity);
         }
 
         private class CollectorAnonymousInnerClassHelper : Collector
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
         public virtual void TestSlopWithHoles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.OmitNorms = true;
             Field f = new Field("lyrics", "", customType);
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
             string document = "drug druggy drug drug drug";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
 
             Directory dir = NewDirectory();
 
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);

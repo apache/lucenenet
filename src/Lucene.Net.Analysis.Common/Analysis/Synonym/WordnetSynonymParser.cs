@@ -1,11 +1,10 @@
 ﻿using System;
+using System.IO;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Synonym
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,111 +20,110 @@ namespace Lucene.Net.Analysis.Synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Parser for wordnet prolog format
-	/// <para>
-	/// See http://wordnet.princeton.edu/man/prologdb.5WN.html for a description of the format.
-	/// @lucene.experimental
-	/// </para>
-	/// </summary>
-	// TODO: allow you to specify syntactic categories (e.g. just nouns, etc)
-	public class WordnetSynonymParser : SynonymMap.Parser
-	{
-	  private readonly bool expand;
+    /// Parser for wordnet prolog format
+    /// <para>
+    /// See http://wordnet.princeton.edu/man/prologdb.5WN.html for a description of the format.
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    // TODO: allow you to specify syntactic categories (e.g. just nouns, etc)
+    public class WordnetSynonymParser : SynonymMap.Parser
+    {
+        private readonly bool expand;
 
-	  public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
-	  {
-		this.expand = expand;
-	  }
+        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
+        {
+            this.expand = expand;
+        }
 
-	  public override void Parse(Reader @in)
-	  {
-		LineNumberReader br = new LineNumberReader(@in);
-		try
-		{
-		  string line = null;
-		  string lastSynSetID = "";
-		  CharsRef[] synset = new CharsRef[8];
-		  int synsetSize = 0;
+        public override void Parse(TextReader @in)
+        {
+            int lineNumber = 0;
+            TextReader br = @in;
+            try
+            {
+                string line = null;
+                string lastSynSetID = "";
+                CharsRef[] synset = new CharsRef[8];
+                int synsetSize = 0;
 
-		  while ((line = br.readLine()) != null)
-		  {
-			string synSetID = line.Substring(2, 9);
 
-			if (!synSetID.Equals(lastSynSetID))
-			{
-			  addInternal(synset, synsetSize);
-			  synsetSize = 0;
-			}
+                while ((line = br.ReadLine()) != null)
+                {
+                    lineNumber++;
+                    string synSetID = line.Substring(2, 9);
 
-			if (synset.Length <= synsetSize+1)
-			{
-			  CharsRef[] larger = new CharsRef[synset.Length * 2];
-			  Array.Copy(synset, 0, larger, 0, synsetSize);
-			  synset = larger;
-			}
+                    if (!synSetID.Equals(lastSynSetID))
+                    {
+                        AddInternal(synset, synsetSize);
+                        synsetSize = 0;
+                    }
 
-			synset[synsetSize] = parseSynonym(line, synset[synsetSize]);
-			synsetSize++;
-			lastSynSetID = synSetID;
-		  }
+                    if (synset.Length <= synsetSize + 1)
+                    {
+                        CharsRef[] larger = new CharsRef[synset.Length * 2];
+                        Array.Copy(synset, 0, larger, 0, synsetSize);
+                        synset = larger;
+                    }
 
-		  // final synset in the file
-		  addInternal(synset, synsetSize);
-		}
-		catch (System.ArgumentException e)
-		{
-		  ParseException ex = new ParseException("Invalid synonym rule at line " + br.LineNumber, 0);
-		  ex.initCause(e);
-		  throw ex;
-		}
-		finally
-		{
-		  br.close();
-		}
-	  }
+                    synset[synsetSize] = ParseSynonym(line, synset[synsetSize]);
+                    synsetSize++;
+                    lastSynSetID = synSetID;
+                }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.CharsRef parseSynonym(String line, org.apache.lucene.util.CharsRef reuse) throws java.io.IOException
-	  private CharsRef parseSynonym(string line, CharsRef reuse)
-	  {
-		if (reuse == null)
-		{
-		  reuse = new CharsRef(8);
-		}
+                // final synset in the file
+                AddInternal(synset, synsetSize);
+            }
+            catch (System.ArgumentException e)
+            {
+                throw new Exception("Invalid synonym rule at line " + lineNumber.ToString(), e);
+            }
+            finally
+            {
+                br.Dispose();
+            }
+        }
 
-		int start = line.IndexOf('\'') + 1;
-		int end = line.LastIndexOf('\'');
+        private CharsRef ParseSynonym(string line, CharsRef reuse)
+        {
+            if (reuse == null)
+            {
+                reuse = new CharsRef(8);
+            }
 
-		string text = line.Substring(start, end - start).Replace("''", "'");
-		return Analyze(text, reuse);
-	  }
+            int start = line.IndexOf('\'') + 1;
+            int end = line.LastIndexOf('\'');
 
-	  private void addInternal(CharsRef[] synset, int size)
-	  {
-		if (size <= 1)
-		{
-		  return; // nothing to do
-		}
+            string text = line.Substring(start, end - start).Replace("''", "'");
+            return Analyze(text, reuse);
+        }
 
-		if (expand)
-		{
-		  for (int i = 0; i < size; i++)
-		  {
-			for (int j = 0; j < size; j++)
-			{
-			  Add(synset[i], synset[j], false);
-			}
-		  }
-		}
-		else
-		{
-		  for (int i = 0; i < size; i++)
-		  {
-			Add(synset[i], synset[0], false);
-		  }
-		}
-	  }
-	}
+        private void AddInternal(CharsRef[] synset, int size)
+        {
+            if (size <= 1)
+            {
+                return; // nothing to do
+            }
 
+            if (expand)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        Add(synset[i], synset[j], false);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    Add(synset[i], synset[0], false);
+                }
+            }
+        }
+    }
 }

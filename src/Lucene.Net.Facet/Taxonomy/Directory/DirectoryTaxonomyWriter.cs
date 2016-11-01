@@ -1,50 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using FieldType = Lucene.Net.Documents.FieldType;
-    using StringField = Lucene.Net.Documents.StringField;
-    using TextField = Lucene.Net.Documents.TextField;
-    using TaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.TaxonomyWriterCache;
-    using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
-    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
-    using ReaderManager = Lucene.Net.Index.ReaderManager;
-    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException; // javadocs
-    using NativeFSLockFactory = Lucene.Net.Store.NativeFSLockFactory;
-    using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -62,32 +26,58 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException; // javadocs
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
+    using Directory = Lucene.Net.Store.Directory;
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using FieldType = Lucene.Net.Documents.FieldType;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
+    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using ReaderManager = Lucene.Net.Index.ReaderManager;
+    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
+    using StringField = Lucene.Net.Documents.StringField;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using TextField = Lucene.Net.Documents.TextField;
+    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+
     /// <summary>
-    /// <seealso cref="TaxonomyWriter"/> which uses a <seealso cref="Directory"/> to store the taxonomy
+    /// <see cref="ITaxonomyWriter"/> which uses a <see cref="Store.Directory"/> to store the taxonomy
     /// information on disk, and keeps an additional in-memory cache of some or all
     /// categories.
     /// <para>
-    /// In addition to the permanently-stored information in the <seealso cref="Directory"/>,
-    /// efficiency dictates that we also keep an in-memory cache of <B>recently
-    /// seen</B> or <B>all</B> categories, so that we do not need to go back to disk
+    /// In addition to the permanently-stored information in the <see cref="Store.Directory"/>,
+    /// efficiency dictates that we also keep an in-memory cache of <b>recently
+    /// seen</b> or <b>all</b> categories, so that we do not need to go back to disk
     /// for every category addition to see which ordinal this category already has,
-    /// if any. A <seealso cref="TaxonomyWriterCache"/> object determines the specific caching
+    /// if any. A <see cref="ITaxonomyWriterCache"/> object determines the specific caching
     /// algorithm used.
     /// </para>
     /// <para>
     /// This class offers some hooks for extending classes to control the
-    /// <seealso cref="IndexWriter"/> instance that is used. See <seealso cref="#openIndexWriter"/>.
+    /// <see cref="IndexWriter"/> instance that is used. See <see cref="OpenIndexWriter"/>.
     /// 
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class DirectoryTaxonomyWriter : TaxonomyWriter
+    public class DirectoryTaxonomyWriter : ITaxonomyWriter
     {
-
         /// <summary>
         /// Property name of user commit data that contains the index epoch. The epoch
         /// changes whenever the taxonomy is recreated (i.e. opened with
-        /// <seealso cref="OpenMode#CREATE"/>.
+        /// <see cref="OpenMode.CREATE"/>.
         /// <para>
         /// Applications should not use this property in their commit data because it
         /// will be overridden by this taxonomy writer.
@@ -97,7 +87,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private readonly Directory dir;
         private readonly IndexWriter indexWriter;
-        private readonly TaxonomyWriterCache cache;
+        private readonly ITaxonomyWriterCache cache;
         private readonly AtomicInteger cacheMisses = new AtomicInteger(0);
 
         // Records the taxonomy index epoch, updated on replaceTaxonomy as well.
@@ -117,12 +107,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// We call the cache "complete" if we know that every category in our
-        /// taxonomy is in the cache. When the cache is <B>not</B> complete, and
+        /// taxonomy is in the cache. When the cache is <b>not</b> complete, and
         /// we can't find a category in the cache, we still need to look for it
         /// in the on-disk index; Therefore when the cache is not complete, we
         /// need to open a "reader" to the taxonomy index.
         /// The cache becomes incomplete if it was never filled with the existing
-        /// categories, or if a put() to the cache ever returned true (meaning
+        /// categories, or if a Put() to the cache ever returned true (meaning
         /// that some of the cached data was cleared).
         /// </summary>
         private volatile bool cacheIsComplete;
@@ -131,7 +121,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private volatile int nextID;
 
         /// <summary>
-        /// Reads the commit data from a Directory. </summary>
+        /// Reads the commit data from a <see cref="Store.Directory"/>. </summary>
         private static IDictionary<string, string> ReadCommitData(Directory dir)
         {
             SegmentInfos infos = new SegmentInfos();
@@ -146,9 +136,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// known that no other process nor thread is in fact currently accessing
         /// this taxonomy.
         /// <P>
-        /// This method is unnecessary if your <seealso cref="Directory"/> uses a
-        /// <seealso cref="NativeFSLockFactory"/> instead of the default
-        /// <seealso cref="SimpleFSLockFactory"/>. When the "native" lock is used, a lock
+        /// This method is unnecessary if your <see cref="Store.Directory"/> uses a
+        /// <see cref="NativeFSLockFactory"/> instead of the default
+        /// <see cref="SimpleFSLockFactory"/>. When the "native" lock is used, a lock
         /// does not stay behind forever when the process using it dies. 
         /// </summary>
         public static void Unlock(Directory directory)
@@ -160,33 +150,33 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Construct a Taxonomy writer.
         /// </summary>
         /// <param name="directory">
-        ///    The <seealso cref="Directory"/> in which to store the taxonomy. Note that
+        ///    The <see cref="Store.Directory"/> in which to store the taxonomy. Note that
         ///    the taxonomy is written directly to that directory (not to a
         ///    subdirectory of it). </param>
         /// <param name="openMode">
-        ///    Specifies how to open a taxonomy for writing: <code>APPEND</code>
+        ///    Specifies how to open a taxonomy for writing: <see cref="OpenMode.APPEND"/>
         ///    means open an existing index for append (failing if the index does
-        ///    not yet exist). <code>CREATE</code> means create a new index (first
+        ///    not yet exist). <see cref="OpenMode.CREATE"/> means create a new index (first
         ///    deleting the old one if it already existed).
-        ///    <code>APPEND_OR_CREATE</code> appends to an existing index if there
+        ///    <see cref="OpenMode.CREATE_OR_APPEND"/> appends to an existing index if there
         ///    is one, otherwise it creates a new index. </param>
         /// <param name="cache">
-        ///    A <seealso cref="TaxonomyWriterCache"/> implementation which determines
+        ///    A <see cref="ITaxonomyWriterCache"/> implementation which determines
         ///    the in-memory caching policy. See for example
-        ///    <seealso cref="LruTaxonomyWriterCache"/> and <seealso cref="Cl2oTaxonomyWriterCache"/>.
-        ///    If null or missing, <seealso cref="#defaultTaxonomyWriterCache()"/> is used. </param>
+        ///    <see cref="WriterCache.LruTaxonomyWriterCache"/> and <see cref="Cl2oTaxonomyWriterCache"/>.
+        ///    If null or missing, <see cref="DefaultTaxonomyWriterCache()"/> is used. </param>
         /// <exception cref="CorruptIndexException">
         ///     if the taxonomy is corrupted. </exception>
         /// <exception cref="LockObtainFailedException">
         ///     if the taxonomy is locked by another writer. If it is known
         ///     that no other concurrent writer is active, the lock might
         ///     have been left around by an old dead process, and should be
-        ///     removed using <seealso cref="#unlock(Directory)"/>. </exception>
+        ///     removed using <see cref="Unlock(Directory)"/>. </exception>
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
-        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, TaxonomyWriterCache cache)
+        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
+            ITaxonomyWriterCache cache)
         {
-
             dir = directory;
             IndexWriterConfig config = CreateIndexWriterConfig(openMode);
             indexWriter = OpenIndexWriter(dir, config);
@@ -260,18 +250,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Open internal index writer, which contains the taxonomy data.
         /// <para>
-        /// Extensions may provide their own <seealso cref="IndexWriter"/> implementation or instance. 
-        /// <br><b>NOTE:</b> the instance this method returns will be closed upon calling
-        /// to <seealso cref="#close()"/>.
+        /// Extensions may provide their own <see cref="IndexWriter"/> implementation or instance. 
+        /// <br><b>NOTE:</b> the instance this method returns will be disposed upon calling
+        /// to <see cref="Dispose()"/>.
         /// <br><b>NOTE:</b> the merge policy in effect must not merge none adjacent segments. See
-        /// comment in <seealso cref="#createIndexWriterConfig(IndexWriterConfig.OpenMode)"/> for the logic behind this.
+        /// comment in <see cref="CreateIndexWriterConfig(IndexWriterConfig.OpenMode)"/> for the logic behind this.
         ///  
         /// </para>
         /// </summary>
-        /// <seealso cref= #createIndexWriterConfig(IndexWriterConfig.OpenMode)
-        /// </seealso>
+        /// <seealso cref="CreateIndexWriterConfig(IndexWriterConfig.OpenMode)"/>
         /// <param name="directory">
-        ///          the <seealso cref="Directory"/> on top of which an <seealso cref="IndexWriter"/>
+        ///          the <see cref="Store.Directory"/> on top of which an <see cref="IndexWriter"/>
         ///          should be opened. </param>
         /// <param name="config">
         ///          configuration for the internal index writer. </param>
@@ -281,18 +270,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Create the <seealso cref="IndexWriterConfig"/> that would be used for opening the internal index writer.
-        /// <br>Extensions can configure the <seealso cref="IndexWriter"/> as they see fit,
-        /// including setting a <seealso cref="Lucene.Net.index.MergeScheduler merge-scheduler"/>, or
-        /// <seealso cref="Lucene.Net.index.IndexDeletionPolicy deletion-policy"/>, different RAM size
+        /// Create the <see cref="IndexWriterConfig"/> that would be used for opening the internal index writer.
+        /// <br>Extensions can configure the <see cref="IndexWriter"/> as they see fit,
+        /// including setting a <see cref="Index.MergeScheduler"/>, or
+        /// <see cref="Index.IndexDeletionPolicy"/>, different RAM size
         /// etc.<br>
         /// <br><b>NOTE:</b> internal docids of the configured index must not be altered.
         /// For that, categories are never deleted from the taxonomy index.
         /// In addition, merge policy in effect must not merge none adjacent segments.
         /// </summary>
-        /// <seealso cref= #openIndexWriter(Directory, IndexWriterConfig)
-        /// </seealso>
-        /// <param name="openMode"> see <seealso cref="OpenMode"/> </param>
+        /// <seealso cref="OpenIndexWriter(Directory, IndexWriterConfig)"/>
+        /// <param name="openMode"> see <see cref="OpenMode"/> </param>
         protected virtual IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
         {
             // TODO: should we use a more optimized Codec, e.g. Pulsing (or write custom)?
@@ -305,7 +293,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Opens a <seealso cref="ReaderManager"/> from the internal <seealso cref="IndexWriter"/>. 
+        /// Opens a <see cref="ReaderManager"/> from the internal <see cref="IndexWriter"/>. 
         /// </summary>
         private void InitReaderManager()
         {
@@ -327,7 +315,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Creates a new instance with a default cache as defined by
-        /// <seealso cref="#defaultTaxonomyWriterCache()"/>.
+        /// <see cref="DefaultTaxonomyWriterCache()"/>.
         /// </summary>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
             : this(directory, openMode, DefaultTaxonomyWriterCache())
@@ -335,22 +323,23 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Defines the default <seealso cref="TaxonomyWriterCache"/> to use in constructors
+        /// Defines the default <see cref="ITaxonomyWriterCache"/> to use in constructors
         /// which do not specify one.
-        /// <P>  
-        /// The current default is <seealso cref="Cl2oTaxonomyWriterCache"/> constructed
+        /// <para>  
+        /// The current default is <see cref="Cl2oTaxonomyWriterCache"/> constructed
         /// with the parameters (1024, 0.15f, 3), i.e., the entire taxonomy is
         /// cached in memory while building it.
+        /// </para>
         /// </summary>
-        public static TaxonomyWriterCache DefaultTaxonomyWriterCache()
+        public static ITaxonomyWriterCache DefaultTaxonomyWriterCache()
         {
             return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
         }
 
         /// <summary>
-        /// Frees used resources as well as closes the underlying <seealso cref="IndexWriter"/>,
+        /// Frees used resources as well as closes the underlying <see cref="IndexWriter"/>,
         /// which commits whatever changes made to it to the underlying
-        /// <seealso cref="Directory"/>.
+        /// <see cref="Store.Directory"/>.
         /// </summary>
         public void Dispose()
         {
@@ -373,10 +362,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// A hook for extending classes to close additional resources that were used.
-        /// The default implementation closes the <seealso cref="IndexReader"/> as well as the
-        /// <seealso cref="TaxonomyWriterCache"/> instances that were used. <br>
+        /// The default implementation closes the <see cref="Index.IndexReader"/> as well as the
+        /// <see cref="ITaxonomyWriterCache"/> instances that were used.
+        /// <para>
         /// <b>NOTE:</b> if you override this method, you should include a
-        /// <code>super.closeResources()</code> call in your implementation.
+        /// <c>base.CloseResources()</c> call in your implementation.
+        /// </para>
         /// </summary>
         protected virtual void CloseResources()
         {
@@ -390,7 +381,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 if (cache != null)
                 {
-                    cache.Close();
+                    cache.Dispose();
                 }
             }
         }
@@ -539,7 +530,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Verifies that this instance wasn't closed, or throws
-        /// <seealso cref="AlreadyClosedException"/> if it is.
+        /// <see cref="AlreadyClosedException"/> if it is.
         /// </summary>
         protected internal void EnsureOpen()
         {
@@ -550,7 +541,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Note that the methods calling addCategoryDocument() are synchornized, so
+        /// Note that the methods calling <see cref="AddCategoryDocument"/> are synchornized, so
         /// this method is effectively synchronized as well.
         /// </summary>
         private int AddCategoryDocument(FacetLabel categoryPath, int parent)
@@ -592,11 +583,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class SinglePositionTokenStream : TokenStream
         {
-            internal ICharTermAttribute termAtt;
-            internal IPositionIncrementAttribute posIncrAtt;
-            internal bool returned;
-            internal int val;
-            internal readonly string word;
+            private ICharTermAttribute termAtt;
+            private IPositionIncrementAttribute posIncrAtt;
+            private bool returned;
+            private int val;
+            private readonly string word;
 
             public SinglePositionTokenStream(string word)
             {
@@ -608,15 +599,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             /// <summary>
             /// Set the value we want to keep, as the position increment.
-            /// Note that when TermPositions.nextPosition() is later used to
+            /// Note that when TermPositions.NextPosition() is later used to
             /// retrieve this value, val-1 will be returned, not val.
-            /// <P>
+            /// <para>
             /// IMPORTANT NOTE: Before Lucene 2.9, val>=0 were safe (for val==0,
             /// the retrieved position would be -1). But starting with Lucene 2.9,
             /// this unfortunately changed, and only val>0 are safe. val=0 can
             /// still be used, but don't count on the value you retrieve later
             /// (it could be 0 or -1, depending on circumstances or versions).
-            /// This change is described in Lucene's JIRA: LUCENE-1542. 
+            /// This change is described in Lucene's JIRA: LUCENE-1542.
+            /// </para>
             /// </summary>
             public virtual void Set(int val)
             {
@@ -689,7 +681,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Combine original user data with the taxonomy epoch. </summary>
+        /// Combine original user data with the taxonomy epoch.
+        /// </summary>
         private IDictionary<string, string> CombinedCommitData(IDictionary<string, string> commitData)
         {
             IDictionary<string, string> m = new Dictionary<string, string>();
@@ -716,7 +709,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// prepare most of the work needed for a two-phase commit.
-        /// See <seealso cref="IndexWriter#prepareCommit"/>.
+        /// See <see cref="IndexWriter.PrepareCommit"/>.
         /// </summary>
         public virtual void PrepareCommit()
         {
@@ -733,7 +726,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        public virtual int Size
+        public virtual int Count
         {
             get
             {
@@ -754,7 +747,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// after a certain number (defined by this method) of cache misses.
         /// </para>
         /// <para>
-        /// If the number is set to {@code 0}, the entire taxonomy is read into the
+        /// If the number is set to <c>0</c>, the entire taxonomy is read into the
         /// cache on first use, without fetching individual categories first.
         /// </para>
         /// <para>
@@ -806,7 +799,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             termsEnum = terms.Iterator(termsEnum);
                             while (termsEnum.Next() != null)
                             {
-                                if (!cache.Full)
+                                if (!cache.IsFull)
                                 {
                                     BytesRef t = termsEnum.Term();
                                     // Since we guarantee uniqueness of categories, each term has exactly
@@ -896,7 +889,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 throw new System.IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
             }
 
-            int[] parents = TaxoArrays.Parents();
+            int[] parents = TaxoArrays.Parents;
             Debug.Assert(ordinal < parents.Length, "requested ordinal (" + ordinal + "); parents.length (" + parents.Length + ") !");
             return parents[ordinal];
         }
@@ -904,18 +897,18 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Takes the categories from the given taxonomy directory, and adds the
         /// missing ones to this taxonomy. Additionally, it fills the given
-        /// <seealso cref="OrdinalMap"/> with a mapping from the original ordinal to the new
+        /// <see cref="IOrdinalMap"/> with a mapping from the original ordinal to the new
         /// ordinal.
         /// </summary>
-        public virtual void AddTaxonomy(Directory taxoDir, OrdinalMap map)
+        public virtual void AddTaxonomy(Directory taxoDir, IOrdinalMap map)
         {
             EnsureOpen();
             DirectoryReader r = DirectoryReader.Open(taxoDir);
             try
             {
                 int size = r.NumDocs;
-                OrdinalMap ordinalMap = map;
-                ordinalMap.Size = size;
+                IOrdinalMap ordinalMap = map;
+                ordinalMap.SetSize(size);
                 int @base = 0;
                 TermsEnum te = null;
                 DocsEnum docs = null;
@@ -945,13 +938,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Mapping from old ordinal to new ordinals, used when merging indexes 
         /// wit separate taxonomies.
         /// <para> 
-        /// addToTaxonomies() merges one or more taxonomies into the given taxonomy
-        /// (this). An OrdinalMap is filled for each of the added taxonomies,
+        /// <see cref="AddMapping"/> merges one or more taxonomies into the given taxonomy
+        /// (this). An <see cref="IOrdinalMap"/> is filled for each of the added taxonomies,
         /// containing the new ordinal (in the merged taxonomy) of each of the
         /// categories in the old taxonomy.
         /// <P>  
-        /// There exist two implementations of OrdinalMap: MemoryOrdinalMap and
-        /// DiskOrdinalMap. As their names suggest, the former keeps the map in
+        /// There exist two implementations of <see cref="IOrdinalMap"/>: <see cref="MemoryOrdinalMap"/> and
+        /// <see cref="DiskOrdinalMap"/>. As their names suggest, the former keeps the map in
         /// memory and the latter in a temporary disk file. Because these maps will
         /// later be needed one by one (to remap the counting lists), not all at the
         /// same time, it is recommended to put the first taxonomy's map in memory,
@@ -959,22 +952,22 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// by one, when needed).
         /// </para>
         /// </summary>
-        public interface OrdinalMap
+        public interface IOrdinalMap
         {
             /// <summary>
-            /// Set the size of the map. This MUST be called before addMapping().
-            /// It is assumed (but not verified) that addMapping() will then be
-            /// called exactly 'size' times, with different origOrdinals between 0
-            /// and size-1.  
+            /// Set the size of the map. This MUST be called before <see cref="AddMapping"/>.
+            /// It is assumed (but not verified) that <see cref="AddMapping"/> will then be
+            /// called exactly 'size' times, with different <paramref name="origOrdinals"/> between 0
+            /// and size - 1.  
             /// </summary>
-            int Size { set; }
+            void SetSize(int taxonomySize);
 
             /// <summary>
             /// Record a mapping. </summary>
             void AddMapping(int origOrdinal, int newOrdinal);
 
             /// <summary>
-            /// Call addDone() to say that all addMapping() have been done.
+            /// Call <see cref="AddDone()"/> to say that all <see cref="AddMapping"/> have been done.
             /// In some implementations this might free some resources. 
             /// </summary>
             void AddDone();
@@ -991,9 +984,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// <seealso cref="OrdinalMap"/> maintained in memory
+        /// <see cref="IOrdinalMap"/> maintained in memory
         /// </summary>
-        public sealed class MemoryOrdinalMap : OrdinalMap
+        public sealed class MemoryOrdinalMap : IOrdinalMap
         {
             internal int[] map;
 
@@ -1005,7 +998,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 map = new int[] { };
             }
 
-            public int Size { set; private get; }
+            public void SetSize(int taxonomySize)
+            {
+                map = new int[taxonomySize];
+            }
 
             public void AddMapping(int origOrdinal, int newOrdinal)
             {
@@ -1018,8 +1014,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     Array.Resize(ref map, origOrdinal + 1);
                     map[origOrdinal] = newOrdinal;
                 }
-
-
             }
 
             public void AddDone() // nothing to do
@@ -1035,9 +1029,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// <seealso cref="OrdinalMap"/> maintained on file system
+        /// <see cref="IOrdinalMap"/> maintained on file system
         /// </summary>
-        public sealed class DiskOrdinalMap : OrdinalMap
+        public sealed class DiskOrdinalMap : IOrdinalMap
         {
             internal string tmpfile;
             internal OutputStreamDataOutput @out;
@@ -1058,12 +1052,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 @out.WriteInt(newOrdinal);
             }
 
-            public int Size
+            public void SetSize(int taxonomySize)
             {
-                set
-                {
-                    @out.WriteInt(value);
-                }
+                @out.WriteInt(taxonomySize);
             }
 
             public void AddDone()
@@ -1114,7 +1105,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Rollback changes to the taxonomy writer and closes the instance. Following
         /// this method the instance becomes unusable (calling any of its API methods
-        /// will yield an <seealso cref="AlreadyClosedException"/>).
+        /// will yield an <see cref="AlreadyClosedException"/>).
         /// </summary>
         public virtual void Rollback()
         {
@@ -1129,7 +1120,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Replaces the current taxonomy with the given one. This method should
         /// generally be called in conjunction with
-        /// <seealso cref="IndexWriter#addIndexes(Directory...)"/> to replace both the taxonomy
+        /// <see cref="IndexWriter.AddIndexes(Directory[])"/> to replace both the taxonomy
         /// as well as the search index content.
         /// </summary>
         public virtual void ReplaceTaxonomy(Directory taxoDir)
@@ -1158,7 +1149,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Returns the <seealso cref="Directory"/> of this taxonomy writer. </summary>
+        /// Returns the <see cref="Store.Directory"/> of this taxonomy writer.
+        /// </summary>
         public virtual Directory Directory
         {
             get
@@ -1168,9 +1160,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Used by <seealso cref="DirectoryTaxonomyReader"/> to support NRT.
+        /// Used by <see cref="DirectoryTaxonomyReader"/> to support NRT.
         /// <para>
-        /// <b>NOTE:</b> you should not use the obtained <seealso cref="IndexWriter"/> in any
+        /// <b>NOTE:</b> you should not use the obtained <see cref="IndexWriter"/> in any
         /// way, other than opening an IndexReader on it, or otherwise, the taxonomy
         /// index may become corrupt!
         /// </para>
@@ -1185,8 +1177,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Expert: returns current index epoch, if this is a
-        /// near-real-time reader.  Used by {@link
-        /// DirectoryTaxonomyReader} to support NRT. 
+        /// near-real-time reader.  Used by 
+        /// <see cref="DirectoryTaxonomyReader"/> to support NRT. 
         /// 
         /// @lucene.internal 
         /// </summary>
@@ -1198,5 +1190,4 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
     }
-
 }

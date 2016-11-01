@@ -1,6 +1,10 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using System;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -17,54 +21,47 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Assigns a payload to a token based on the <seealso cref="org.apache.lucene.analysis.Token#type()"/>
+    /// 
+    /// 
+    /// </summary>
+    public class NumericPayloadTokenFilter : TokenFilter
+    {
 
-	using PayloadAttribute = org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using BytesRef = org.apache.lucene.util.BytesRef;
+        private string typeMatch;
+        private BytesRef thePayload;
 
+        private readonly IPayloadAttribute payloadAtt;
+        private readonly ITypeAttribute typeAtt;
 
-	/// <summary>
-	/// Assigns a payload to a token based on the <seealso cref="org.apache.lucene.analysis.Token#type()"/>
-	/// 
-	/// 
-	/// </summary>
-	public class NumericPayloadTokenFilter : TokenFilter
-	{
+        public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) : base(input)
+        {
+            if (typeMatch == null)
+            {
+                throw new System.ArgumentException("typeMatch cannot be null");
+            }
+            //Need to encode the payload
+            thePayload = new BytesRef(PayloadHelper.EncodeFloat(payload));
+            this.typeMatch = typeMatch;
+            this.payloadAtt = AddAttribute<IPayloadAttribute>();
+            this.typeAtt = AddAttribute<ITypeAttribute>();
+        }
 
-	  private string typeMatch;
-	  private BytesRef thePayload;
-
-	  private readonly PayloadAttribute payloadAtt = addAttribute(typeof(PayloadAttribute));
-	  private readonly TypeAttribute typeAtt = addAttribute(typeof(TypeAttribute));
-
-	  public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) : base(input)
-	  {
-		if (typeMatch == null)
-		{
-		  throw new System.ArgumentException("typeMatch cannot be null");
-		}
-		//Need to encode the payload
-		thePayload = new BytesRef(PayloadHelper.encodeFloat(payload));
-		this.typeMatch = typeMatch;
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (typeAtt.type().Equals(typeMatch))
-		  {
-			payloadAtt.Payload = thePayload;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override sealed bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (typeAtt.Type.Equals(typeMatch))
+                {
+                    payloadAtt.Payload = thePayload;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

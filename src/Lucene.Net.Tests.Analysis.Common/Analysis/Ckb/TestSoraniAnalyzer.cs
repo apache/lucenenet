@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,65 +20,58 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    /// <summary>
+    /// Test the Sorani analyzer
+    /// </summary>
+    public class TestSoraniAnalyzer : BaseTokenStreamTestCase
+    {
 
-	/// <summary>
-	/// Test the Sorani analyzer
-	/// </summary>
-	public class TestSoraniAnalyzer : BaseTokenStreamTestCase
-	{
+        /// <summary>
+        /// This test fails with NPE when the stopwords file is missing in classpath
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new SoraniAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	  /// <summary>
-	  /// This test fails with NPE when the stopwords file is missing in classpath
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new SoraniAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        [Test]
+        public virtual void TestStopwords()
+        {
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "ئەم پیاوە", new string[] { "پیاو" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStopwords() throws java.io.IOException
-	  public virtual void testStopwords()
-	  {
-		Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "ئەم پیاوە", new string[] {"پیاو"});
-	  }
+        [Test]
+        public virtual void TestCustomStopwords()
+        {
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            AssertAnalyzesTo(a, "ئەم پیاوە", new string[] { "ئەم", "پیاو" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCustomStopwords() throws java.io.IOException
-	  public virtual void testCustomStopwords()
-	  {
-		Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
-		assertAnalyzesTo(a, "ئەم پیاوە", new string[] {"ئەم", "پیاو"});
-	  }
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "پیاوە", new string[] { "پیاو" });
+            AssertAnalyzesTo(a, "پیاو", new string[] { "پیاو" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws java.io.IOException
-	  public virtual void testReusableTokenStream()
-	  {
-		Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "پیاوە", new string[] {"پیاو"});
-		assertAnalyzesTo(a, "پیاو", new string[] {"پیاو"});
-	  }
+        [Test]
+        public virtual void TestWithStemExclusionSet()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("پیاوە");
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            AssertAnalyzesTo(a, "پیاوە", new string[] { "پیاوە" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithStemExclusionSet() throws java.io.IOException
-	  public virtual void testWithStemExclusionSet()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("پیاوە");
-		Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
-		assertAnalyzesTo(a, "پیاوە", new string[] {"پیاوە"});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new SoraniAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new SoraniAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

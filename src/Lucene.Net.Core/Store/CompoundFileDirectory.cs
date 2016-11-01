@@ -130,10 +130,11 @@ namespace Lucene.Net.Store
             }
         }
 
-        private static readonly byte CODEC_MAGIC_BYTE1 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
-        private static readonly byte CODEC_MAGIC_BYTE2 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
-        private static readonly byte CODEC_MAGIC_BYTE3 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
-        private static readonly byte CODEC_MAGIC_BYTE4 = unchecked((byte)CodecUtil.CODEC_MAGIC);
+        // LUCENENET NOTE: These MUST be sbyte because they can be negative
+        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
+        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
+        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
+        private static readonly sbyte CODEC_MAGIC_BYTE4 = unchecked((sbyte)CodecUtil.CODEC_MAGIC);
 
         /// <summary>
         /// Helper method that reads CFS entries from an input stream </summary>
@@ -153,9 +154,9 @@ namespace Lucene.Net.Store
                 // and separate norms/etc are outside of cfs.
                 if (firstInt == CODEC_MAGIC_BYTE1)
                 {
-                    byte secondByte = stream.ReadByte();
-                    byte thirdByte = stream.ReadByte();
-                    byte fourthByte = stream.ReadByte();
+                    sbyte secondByte = (sbyte)stream.ReadByte();
+                    sbyte thirdByte = (sbyte)stream.ReadByte();
+                    sbyte fourthByte = (sbyte)stream.ReadByte();
                     if (secondByte != CODEC_MAGIC_BYTE2 || thirdByte != CODEC_MAGIC_BYTE3 || fourthByte != CODEC_MAGIC_BYTE4)
                     {
                         throw new CorruptIndexException("Illegal/impossible header for CFS file: " + secondByte + "," + thirdByte + "," + fourthByte);
@@ -260,10 +261,14 @@ namespace Lucene.Net.Store
                 entry = new FileEntry();
                 entry.Offset = offset;
 
-                FileEntry previous = entries[id] = entry;
-                if (previous != null)
+                FileEntry previous;
+                if (entries.TryGetValue(id, out previous))
                 {
                     throw new CorruptIndexException("Duplicate cfs entry id=" + id + " in CFS: " + stream);
+                }
+                else
+                {
+                    entries[id] = entry;
                 }
             }
 
@@ -324,7 +329,7 @@ namespace Lucene.Net.Store
                 FileEntry entry;
                 if (!Entries.TryGetValue(id, out entry))
                 {
-                    throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
+                    throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(Entries.Keys) + ")");
                 }
                 return Handle.OpenSlice(name, entry.Offset, entry.Length);
             }

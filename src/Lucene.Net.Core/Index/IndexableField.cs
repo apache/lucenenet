@@ -43,13 +43,13 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Field name </summary>
-        string Name();
+        string Name { get; }
 
         /// <summary>
         /// <seealso cref="IndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
-        IndexableFieldType FieldType();
+        IndexableFieldType FieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.
@@ -70,11 +70,11 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref= Similarity#computeNorm(FieldInvertState) </seealso>
         /// <seealso cref= DefaultSimilarity#encodeNormValue(float) </seealso>
-        float GetBoost();
+        float Boost { get; }
 
         /// <summary>
         /// Non-null if this field has a binary value </summary>
-        BytesRef BinaryValue();
+        BytesRef BinaryValue { get; }
 
         /// <summary>
         /// Non-null if this field has a string value </summary>

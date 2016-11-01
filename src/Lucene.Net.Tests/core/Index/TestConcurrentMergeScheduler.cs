@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
                         {
                             break;
                         }
-                        if ("flush".Equals(method.Name))
+                        if ("Flush".Equals(method.Name))
                         {
                             isDoFlush = true;
                         }
-                        if ("close".Equals(method.Name))
+                        if ("Close".Equals(method.Name))
                         {
                             isClose = true;
                         }
@@ -100,7 +100,6 @@ namespace Lucene.Net.Index
 
         // Make sure running BG merges still work fine even when
         // we are hitting exceptions during flushing.
-        [Ignore]
         [Test]
         public virtual void TestFlushExceptions()
         {
@@ -351,7 +350,7 @@ namespace Lucene.Net.Index
                 this.Failed = failed;
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 try
                 {
@@ -401,7 +400,7 @@ namespace Lucene.Net.Index
                 SetMaxMergesAndThreads(5, 5);
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 TotMergedBytes += merge.TotalBytesSize();
                 base.DoMerge(merge);

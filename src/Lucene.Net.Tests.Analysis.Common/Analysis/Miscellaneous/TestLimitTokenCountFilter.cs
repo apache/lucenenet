@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,31 +21,26 @@
 	 * limitations under the License.
 	 */
 
-	using Test = org.junit.Test;
+    public class TestLimitTokenCountFilter : BaseTokenStreamTestCase
+    {
 
-	public class TestLimitTokenCountFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void Test()
+        {
+            foreach (bool consumeAll in new bool[] { true, false })
+            {
+                MockTokenizer tokenizer = new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false);
+                tokenizer.EnableChecks = consumeAll;
+                TokenStream stream = new LimitTokenCountFilter(tokenizer, 3, consumeAll);
+                AssertTokenStreamContents(stream, new string[] { "A1", "B2", "C3" });
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws Exception
-	  public virtual void test()
-	  {
-		foreach (bool consumeAll in new bool[]{true, false})
-		{
-		  MockTokenizer tokenizer = new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false);
-		  tokenizer.EnableChecks = consumeAll;
-		  TokenStream stream = new LimitTokenCountFilter(tokenizer, 3, consumeAll);
-		  assertTokenStreamContents(stream, new string[]{"A1", "B2", "C3"});
-		}
-	  }
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected = IllegalArgumentException.class) public void testIllegalArguments() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public virtual void testIllegalArguments()
-	  {
-		new LimitTokenCountFilter(new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false), -1);
-	  }
-	}
-
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public virtual void TestIllegalArguments()
+        {
+            new LimitTokenCountFilter(new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false), -1);
+        }
+    }
 }

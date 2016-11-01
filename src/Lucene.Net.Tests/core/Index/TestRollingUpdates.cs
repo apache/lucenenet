@@ -3,8 +3,9 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
+    using Codecs.Memory;
     //using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
-    
+
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -48,12 +49,11 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
             //provider.register(new MemoryCodec());
-            // LUCENE TODO: uncomment this out once MemoryPostingsFormat is brought over
-            //if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
-            //{
-            //    Codec.Default =
-            //        TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(random().nextBoolean(), random.NextFloat()));
-            //}
+            if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
+            {
+                Codec.Default =
+                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextFloat()));
+            }
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
                 IndexingThread[] threads = new IndexingThread[numThreads];
                 for (int i = 0; i < numThreads; i++)
                 {
-                    threads[i] = new IndexingThread(docs, w, numUpdates);
+                    threads[i] = new IndexingThread(docs, w, numUpdates, NewStringField);
                     threads[i].Start();
                 }
 
@@ -229,12 +229,20 @@ namespace Lucene.Net.Index
             internal readonly IndexWriter Writer;
             internal readonly int Num;
 
-            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num)
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
+
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
+            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num, Func<string, string, Field.Store, Field> newStringField)
                 : base()
             {
                 this.Docs = docs;
                 this.Writer = writer;
                 this.Num = num;
+                NewStringField = newStringField;
             }
 
             public override void Run()

@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,28 +21,30 @@ namespace Lucene.Net.Search.Suggest.Analyzing
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
-    /// Like <seealso cref="StopFilter"/> except it will not remove the
-    ///  last token if that token was not followed by some token
-    ///  separator.  For example, a query 'find the' would
-    ///  preserve the 'the' since it was not followed by a space or
-    ///  punctuation or something, and mark it KEYWORD so future
-    ///  stemmers won't touch it either while a query like "find
-    ///  the popsicle' would remove 'the' as a stopword.
+    /// Like <see cref="Analysis.Core.StopFilter"/> except it will not remove the
+    /// last token if that token was not followed by some token
+    /// separator.  For example, a query 'find the' would
+    /// preserve the 'the' since it was not followed by a space or
+    /// punctuation or something, and mark it KEYWORD so future
+    /// stemmers won't touch it either while a query like "find
+    /// the popsicle' would remove 'the' as a stopword.
     /// 
-    ///  <para>Normally you'd use the ordinary <seealso cref="StopFilter"/>
-    ///  in your indexAnalyzer and then this class in your
-    ///  queryAnalyzer, when using one of the analyzing suggesters. 
+    /// <para>
+    /// Normally you'd use the ordinary <see cref="Analysis.Core.StopFilter"/>
+    /// in your indexAnalyzer and then this class in your
+    /// queryAnalyzer, when using one of the analyzing suggesters. 
     /// </para>
     /// </summary>
 
     public sealed class SuggestStopFilter : TokenFilter
     {
 
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private readonly PositionIncrementAttribute posIncAtt = addAttribute(typeof(PositionIncrementAttribute));
-        private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
-        private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IKeywordAttribute keywordAtt;
+        private readonly IOffsetAttribute offsetAtt;
         private readonly CharArraySet stopWords;
 
         private State endState;
@@ -53,6 +55,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             : base(input)
         {
             this.stopWords = stopWords;
+            this.termAtt = AddAttribute<ICharTermAttribute>();
+            this.posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            this.keywordAtt = AddAttribute<IKeywordAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         public override void Reset()

@@ -8,7 +8,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +24,6 @@ namespace Lucene.Net.Util.Packed
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
@@ -505,7 +503,7 @@ namespace Lucene.Net.Util.Packed
 	    
           NOTE: this test allocates 256 MB
          */
-        [Ignore]
+        [Ignore("See LUCENE-4488 - LUCENENET NOTE: In .NET it is not possible to catch OOME")]
         [Test]
         public virtual void TestIntOverflow()
         {
@@ -1061,8 +1059,8 @@ namespace Lucene.Net.Util.Packed
                     }
 
                     // 4. byte[] decoding
-                    sbyte[] byteBlocks = new sbyte[8 * blocks.Length];
-                    ByteBuffer.Wrap((byte[])(Array)byteBlocks).AsLongBuffer().Put(blocks);
+                    byte[] byteBlocks = new byte[8 * blocks.Length];
+                    ByteBuffer.Wrap(byteBlocks).AsLongBuffer().Put(blocks);
                     long[] values2 = new long[valuesOffset + longIterations * longValueCount];
                     decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
                     foreach (long value in values2)
@@ -1079,13 +1077,13 @@ namespace Lucene.Net.Util.Packed
                     }
 
                     // 5. byte[] encoding
-                    sbyte[] blocks3_ = new sbyte[8 * (blocksOffset2 + blocksLen)];
+                    byte[] blocks3_ = new byte[8 * (blocksOffset2 + blocksLen)];
                     encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
-                    Assert.AreEqual(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap((byte[])(Array)blocks3_).AsLongBuffer());
+                    assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsLongBuffer());
                     // test encoding from int[]
                     if (bpv <= 32)
                     {
-                        sbyte[] blocks4 = new sbyte[blocks3_.Length];
+                        byte[] blocks4 = new byte[blocks3_.Length];
                         encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
                         Assert.AreEqual(blocks3_, blocks4, msg);
                     }
@@ -1117,7 +1115,7 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-        [Test]
+        [Test, Timeout(80000)]
         public virtual void TestAppendingLongBuffer()
         {
 
@@ -1337,7 +1335,7 @@ namespace Lucene.Net.Util.Packed
                 @out.Dispose();
 
                 IndexInput in1 = dir.OpenInput("out.bin", IOContext.DEFAULT);
-                sbyte[] buf = new sbyte[(int)fp];
+                byte[] buf = new byte[(int)fp];
                 in1.ReadBytes(buf, 0, (int)fp);
                 in1.Seek(0L);
                 ByteArrayDataInput in2 = new ByteArrayDataInput((byte[])(Array)buf);
@@ -1470,7 +1468,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test]        
+        [Test, Timeout(180000)]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long)int.MaxValue * 2);

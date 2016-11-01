@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.id
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Id
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,170 +21,161 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tests <seealso cref="IndonesianStemmer"/>
+    /// </summary>
+    public class TestIndonesianStemmer : BaseTokenStreamTestCase
+    {
+        /* full stemming, no stopwords */
+        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Tests <seealso cref="IndonesianStemmer"/>
-	/// </summary>
-	public class TestIndonesianStemmer : BaseTokenStreamTestCase
-	{
-	  /* full stemming, no stopwords */
-	  internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Some examples from the paper </summary>
+        [Test]
+        public virtual void TestExamples()
+        {
+            CheckOneTerm(a, "bukukah", "buku");
+            CheckOneTerm(a, "adalah", "ada");
+            CheckOneTerm(a, "bukupun", "buku");
+            CheckOneTerm(a, "bukuku", "buku");
+            CheckOneTerm(a, "bukumu", "buku");
+            CheckOneTerm(a, "bukunya", "buku");
+            CheckOneTerm(a, "mengukur", "ukur");
+            CheckOneTerm(a, "menyapu", "sapu");
+            CheckOneTerm(a, "menduga", "duga");
+            CheckOneTerm(a, "menuduh", "uduh");
+            CheckOneTerm(a, "membaca", "baca");
+            CheckOneTerm(a, "merusak", "rusak");
+            CheckOneTerm(a, "pengukur", "ukur");
+            CheckOneTerm(a, "penyapu", "sapu");
+            CheckOneTerm(a, "penduga", "duga");
+            CheckOneTerm(a, "pembaca", "baca");
+            CheckOneTerm(a, "diukur", "ukur");
+            CheckOneTerm(a, "tersapu", "sapu");
+            CheckOneTerm(a, "kekasih", "kasih");
+            CheckOneTerm(a, "berlari", "lari");
+            CheckOneTerm(a, "belajar", "ajar");
+            CheckOneTerm(a, "bekerja", "kerja");
+            CheckOneTerm(a, "perjelas", "jelas");
+            CheckOneTerm(a, "pelajar", "ajar");
+            CheckOneTerm(a, "pekerja", "kerja");
+            CheckOneTerm(a, "tarikkan", "tarik");
+            CheckOneTerm(a, "ambilkan", "ambil");
+            CheckOneTerm(a, "mengambilkan", "ambil");
+            CheckOneTerm(a, "makanan", "makan");
+            CheckOneTerm(a, "janjian", "janji");
+            CheckOneTerm(a, "perjanjian", "janji");
+            CheckOneTerm(a, "tandai", "tanda");
+            CheckOneTerm(a, "dapati", "dapat");
+            CheckOneTerm(a, "mendapati", "dapat");
+            CheckOneTerm(a, "pantai", "panta");
+        }
 
-		  public override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
-		  }
-	  }
+        /// <summary>
+        /// Some detailed analysis examples (that might not be the best) </summary>
+        [Test]
+        public virtual void TestIRExamples()
+        {
+            CheckOneTerm(a, "penyalahgunaan", "salahguna");
+            CheckOneTerm(a, "menyalahgunakan", "salahguna");
+            CheckOneTerm(a, "disalahgunakan", "salahguna");
 
-	  /// <summary>
-	  /// Some examples from the paper </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExamples() throws java.io.IOException
-	  public virtual void testExamples()
-	  {
-		checkOneTerm(a, "bukukah", "buku");
-		checkOneTerm(a, "adalah", "ada");
-		checkOneTerm(a, "bukupun", "buku");
-		checkOneTerm(a, "bukuku", "buku");
-		checkOneTerm(a, "bukumu", "buku");
-		checkOneTerm(a, "bukunya", "buku");
-		checkOneTerm(a, "mengukur", "ukur");
-		checkOneTerm(a, "menyapu", "sapu");
-		checkOneTerm(a, "menduga", "duga");
-		checkOneTerm(a, "menuduh", "uduh");
-		checkOneTerm(a, "membaca", "baca");
-		checkOneTerm(a, "merusak", "rusak");
-		checkOneTerm(a, "pengukur", "ukur");
-		checkOneTerm(a, "penyapu", "sapu");
-		checkOneTerm(a, "penduga", "duga");
-		checkOneTerm(a, "pembaca", "baca");
-		checkOneTerm(a, "diukur", "ukur");
-		checkOneTerm(a, "tersapu", "sapu");
-		checkOneTerm(a, "kekasih", "kasih");
-		checkOneTerm(a, "berlari", "lari");
-		checkOneTerm(a, "belajar", "ajar");
-		checkOneTerm(a, "bekerja", "kerja");
-		checkOneTerm(a, "perjelas", "jelas");
-		checkOneTerm(a, "pelajar", "ajar");
-		checkOneTerm(a, "pekerja", "kerja");
-		checkOneTerm(a, "tarikkan", "tarik");
-		checkOneTerm(a, "ambilkan", "ambil");
-		checkOneTerm(a, "mengambilkan", "ambil");
-		checkOneTerm(a, "makanan", "makan");
-		checkOneTerm(a, "janjian", "janji");
-		checkOneTerm(a, "perjanjian", "janji");
-		checkOneTerm(a, "tandai", "tanda");
-		checkOneTerm(a, "dapati", "dapat");
-		checkOneTerm(a, "mendapati", "dapat");
-		checkOneTerm(a, "pantai", "panta");
-	  }
+            CheckOneTerm(a, "pertanggungjawaban", "tanggungjawab");
+            CheckOneTerm(a, "mempertanggungjawabkan", "tanggungjawab");
+            CheckOneTerm(a, "dipertanggungjawabkan", "tanggungjawab");
 
-	  /// <summary>
-	  /// Some detailed analysis examples (that might not be the best) </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIRExamples() throws java.io.IOException
-	  public virtual void testIRExamples()
-	  {
-		checkOneTerm(a, "penyalahgunaan", "salahguna");
-		checkOneTerm(a, "menyalahgunakan", "salahguna");
-		checkOneTerm(a, "disalahgunakan", "salahguna");
+            CheckOneTerm(a, "pelaksanaan", "laksana");
+            CheckOneTerm(a, "pelaksana", "laksana");
+            CheckOneTerm(a, "melaksanakan", "laksana");
+            CheckOneTerm(a, "dilaksanakan", "laksana");
 
-		checkOneTerm(a, "pertanggungjawaban", "tanggungjawab");
-		checkOneTerm(a, "mempertanggungjawabkan", "tanggungjawab");
-		checkOneTerm(a, "dipertanggungjawabkan", "tanggungjawab");
+            CheckOneTerm(a, "melibatkan", "libat");
+            CheckOneTerm(a, "terlibat", "libat");
 
-		checkOneTerm(a, "pelaksanaan", "laksana");
-		checkOneTerm(a, "pelaksana", "laksana");
-		checkOneTerm(a, "melaksanakan", "laksana");
-		checkOneTerm(a, "dilaksanakan", "laksana");
+            CheckOneTerm(a, "penculikan", "culik");
+            CheckOneTerm(a, "menculik", "culik");
+            CheckOneTerm(a, "diculik", "culik");
+            CheckOneTerm(a, "penculik", "culik");
 
-		checkOneTerm(a, "melibatkan", "libat");
-		checkOneTerm(a, "terlibat", "libat");
+            CheckOneTerm(a, "perubahan", "ubah");
+            CheckOneTerm(a, "peledakan", "ledak");
+            CheckOneTerm(a, "penanganan", "tangan");
+            CheckOneTerm(a, "kepolisian", "polisi");
+            CheckOneTerm(a, "kenaikan", "naik");
+            CheckOneTerm(a, "bersenjata", "senjata");
+            CheckOneTerm(a, "penyelewengan", "seleweng");
+            CheckOneTerm(a, "kecelakaan", "celaka");
+        }
 
-		checkOneTerm(a, "penculikan", "culik");
-		checkOneTerm(a, "menculik", "culik");
-		checkOneTerm(a, "diculik", "culik");
-		checkOneTerm(a, "penculik", "culik");
+        /* inflectional-only stemming */
+        internal Analyzer b = new AnalyzerAnonymousInnerClassHelper2();
 
-		checkOneTerm(a, "perubahan", "ubah");
-		checkOneTerm(a, "peledakan", "ledak");
-		checkOneTerm(a, "penanganan", "tangan");
-		checkOneTerm(a, "kepolisian", "polisi");
-		checkOneTerm(a, "kenaikan", "naik");
-		checkOneTerm(a, "bersenjata", "senjata");
-		checkOneTerm(a, "penyelewengan", "seleweng");
-		checkOneTerm(a, "kecelakaan", "celaka");
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper2()
+            {
+            }
 
-	  /* inflectional-only stemming */
-	  internal Analyzer b = new AnalyzerAnonymousInnerClassHelper2();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer, false));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper2()
-		  {
-		  }
+        /// <summary>
+        /// Test stemming only inflectional suffixes </summary>
+        [Test]
+        public virtual void TestInflectionalOnly()
+        {
+            CheckOneTerm(b, "bukunya", "buku");
+            CheckOneTerm(b, "bukukah", "buku");
+            CheckOneTerm(b, "bukunyakah", "buku");
+            CheckOneTerm(b, "dibukukannya", "dibukukan");
+        }
 
-		  public override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer, false));
-		  }
-	  }
+        [Test]
+        public virtual void TestShouldntStem()
+        {
+            CheckOneTerm(a, "bersenjata", "senjata");
+            CheckOneTerm(a, "bukukah", "buku");
+            CheckOneTerm(a, "gigi", "gigi");
+        }
 
-	  /// <summary>
-	  /// Test stemming only inflectional suffixes </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInflectionalOnly() throws java.io.IOException
-	  public virtual void testInflectionalOnly()
-	  {
-		checkOneTerm(b, "bukunya", "buku");
-		checkOneTerm(b, "bukukah", "buku");
-		checkOneTerm(b, "bukunyakah", "buku");
-		checkOneTerm(b, "dibukukannya", "dibukukan");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testShouldntStem() throws java.io.IOException
-	  public virtual void testShouldntStem()
-	  {
-		checkOneTerm(a, "bersenjata", "senjata");
-		checkOneTerm(a, "bukukah", "buku");
-		checkOneTerm(a, "gigi", "gigi");
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestIndonesianStemmer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestIndonesianStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestIndonesianStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestIndonesianStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
+            }
+        }
+    }
 }

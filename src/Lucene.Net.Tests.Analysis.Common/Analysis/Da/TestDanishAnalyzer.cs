@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.da
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Da
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +20,48 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestDanishAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new DanishAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestDanishAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new DanishAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new DanishAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "undersøg", "undersøg");
+            CheckOneTerm(a, "undersøgelse", "undersøg");
+            // stopword
+            AssertAnalyzesTo(a, "på", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new DanishAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "undersøg", "undersøg");
-		checkOneTerm(a, "undersøgelse", "undersøg");
-		// stopword
-		assertAnalyzesTo(a, "på", new string[] {});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("undersøgelse"), false);
+            Analyzer a = new DanishAnalyzer(TEST_VERSION_CURRENT, DanishAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "undersøgelse", "undersøgelse");
+            CheckOneTerm(a, "undersøg", "undersøg");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("undersøgelse"), false);
-		Analyzer a = new DanishAnalyzer(TEST_VERSION_CURRENT, DanishAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "undersøgelse", "undersøgelse");
-		checkOneTerm(a, "undersøg", "undersøg");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new DanishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new DanishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

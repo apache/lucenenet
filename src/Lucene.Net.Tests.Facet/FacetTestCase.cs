@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet
             int i = 0;
             while (i <= labelValues.Length)
             {
-                if (i < labelValues.Length && (double)labelValues[i].value == lastValue)
+                if (i < labelValues.Length && (double)labelValues[i].Value == lastValue)
                 {
                     numInRow++;
                 }
@@ -154,12 +154,12 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i, new ComparatorAnonymousInnerClassHelper(this));
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), new ComparatorAnonymousInnerClassHelper(this));
                     }
                     numInRow = 1;
                     if (i < labelValues.Length)
                     {
-                        lastValue = (double)labelValues[i].value;
+                        lastValue = (double)labelValues[i].Value;
                     }
                 }
                 i++;
@@ -177,16 +177,14 @@ namespace Lucene.Net.Facet
 
             public virtual int Compare(LabelAndValue a, LabelAndValue b)
             {
-                Debug.Assert((double)a.value == (double)b.value);
-                return (new BytesRef(a.label)).CompareTo(new BytesRef(b.label));
+                Debug.Assert((double)a.Value == (double)b.Value);
+                return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
             }
         }
 
-        protected internal virtual void SortLabelValues(IList<LabelAndValue> labelValues)
+        protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
         {
-            var resArray = labelValues.ToArray();
-            Array.Sort(resArray,new ComparatorAnonymousInnerClassHelper2(this));
-            labelValues = resArray.ToList();
+            labelValues.Sort(new ComparatorAnonymousInnerClassHelper2(this));
         }
 
         private class ComparatorAnonymousInnerClassHelper2 : IComparer<LabelAndValue>
@@ -200,26 +198,24 @@ namespace Lucene.Net.Facet
 
             public virtual int Compare(LabelAndValue a, LabelAndValue b)
             {
-                if ((double)a.value > (double)b.value)
+                if ((double)a.Value > (double)b.Value)
                 {
                     return -1;
                 }
-                else if ((double)a.value < (double)b.value)
+                else if ((double)a.Value < (double)b.Value)
                 {
                     return 1;
                 }
                 else
                 {
-                    return (new BytesRef(a.label)).CompareTo(new BytesRef(b.label));
+                    return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
                 }
             }
         }
 
-        protected internal virtual void SortFacetResults(IList<FacetResult> results)
+        protected internal virtual void SortFacetResults(List<FacetResult> results)
         {
-            var resArray = results.ToArray();
-            Array.Sort(resArray, new ComparatorAnonymousInnerClassHelper3(this));
-            results = resArray.ToList();
+            results.Sort(new ComparatorAnonymousInnerClassHelper3(this));
         }
 
         private class ComparatorAnonymousInnerClassHelper3 : IComparer<FacetResult>
@@ -282,8 +278,8 @@ namespace Lucene.Net.Facet
             Assert.AreEqual(a.LabelValues.Length, b.LabelValues.Length);
             for (int i = 0; i < a.LabelValues.Length; i++)
             {
-                Assert.AreEqual(a.LabelValues[i].label, b.LabelValues[i].label);
-                Assert.AreEqual((float)a.LabelValues[i].value, (float)b.LabelValues[i].value, (float)a.LabelValues[i].value / 1e5);
+                Assert.AreEqual(a.LabelValues[i].Label, b.LabelValues[i].Label);
+                Assert.AreEqual((float)a.LabelValues[i].Value, (float)b.LabelValues[i].Value, (float)a.LabelValues[i].Value / 1e5);
             }
         }
     }

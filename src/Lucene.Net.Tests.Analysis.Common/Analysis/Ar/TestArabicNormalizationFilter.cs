@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ar
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ar
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,147 +21,126 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Arabic Normalization Filter
+    /// </summary>
+    public class TestArabicNormalizationFilter : BaseTokenStreamTestCase
+    {
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        [Test]
+        public virtual void TestAlifMadda()
+        {
+            Check("آجن", "اجن");
+        }
 
-	/// <summary>
-	/// Test the Arabic Normalization Filter
-	/// </summary>
-	public class TestArabicNormalizationFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestAlifHamzaAbove()
+        {
+            Check("أحمد", "احمد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAlifMadda() throws java.io.IOException
-	  public virtual void testAlifMadda()
-	  {
-		check("آجن", "اجن");
-	  }
+        [Test]
+        public virtual void TestAlifHamzaBelow()
+        {
+            Check("إعاذ", "اعاذ");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAlifHamzaAbove() throws java.io.IOException
-	  public virtual void testAlifHamzaAbove()
-	  {
-		check("أحمد", "احمد");
-	  }
+        [Test]
+        public virtual void TestAlifMaksura()
+        {
+            Check("بنى", "بني");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAlifHamzaBelow() throws java.io.IOException
-	  public virtual void testAlifHamzaBelow()
-	  {
-		check("إعاذ", "اعاذ");
-	  }
+        [Test]
+        public virtual void TestTehMarbuta()
+        {
+            Check("فاطمة", "فاطمه");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAlifMaksura() throws java.io.IOException
-	  public virtual void testAlifMaksura()
-	  {
-		check("بنى", "بني");
-	  }
+        [Test]
+        public virtual void TestTatweel()
+        {
+            Check("روبرـــــت", "روبرت");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTehMarbuta() throws java.io.IOException
-	  public virtual void testTehMarbuta()
-	  {
-		check("فاطمة", "فاطمه");
-	  }
+        [Test]
+        public virtual void TestFatha()
+        {
+            Check("مَبنا", "مبنا");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTatweel() throws java.io.IOException
-	  public virtual void testTatweel()
-	  {
-		check("روبرـــــت", "روبرت");
-	  }
+        [Test]
+        public virtual void TestKasra()
+        {
+            Check("علِي", "علي");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFatha() throws java.io.IOException
-	  public virtual void testFatha()
-	  {
-		check("مَبنا", "مبنا");
-	  }
+        [Test]
+        public virtual void TestDamma()
+        {
+            Check("بُوات", "بوات");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKasra() throws java.io.IOException
-	  public virtual void testKasra()
-	  {
-		check("علِي", "علي");
-	  }
+        [Test]
+        public virtual void TestFathatan()
+        {
+            Check("ولداً", "ولدا");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDamma() throws java.io.IOException
-	  public virtual void testDamma()
-	  {
-		check("بُوات", "بوات");
-	  }
+        [Test]
+        public virtual void TestKasratan()
+        {
+            Check("ولدٍ", "ولد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFathatan() throws java.io.IOException
-	  public virtual void testFathatan()
-	  {
-		check("ولداً", "ولدا");
-	  }
+        [Test]
+        public virtual void TestDammatan()
+        {
+            Check("ولدٌ", "ولد");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKasratan() throws java.io.IOException
-	  public virtual void testKasratan()
-	  {
-		check("ولدٍ", "ولد");
-	  }
+        [Test]
+        public virtual void TestSukun()
+        {
+            Check("نلْسون", "نلسون");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDammatan() throws java.io.IOException
-	  public virtual void testDammatan()
-	  {
-		check("ولدٌ", "ولد");
-	  }
+        [Test]
+        public virtual void TestShaddah()
+        {
+            Check("هتميّ", "هتمي");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSukun() throws java.io.IOException
-	  public virtual void testSukun()
-	  {
-		check("نلْسون", "نلسون");
-	  }
+        private void Check(string input, string expected)
+        {
+#pragma warning disable 612, 618
+            ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
+#pragma warning restore 612, 618
+            ArabicNormalizationFilter filter = new ArabicNormalizationFilter(tokenStream);
+            AssertTokenStreamContents(filter, new string[] { expected });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testShaddah() throws java.io.IOException
-	  public virtual void testShaddah()
-	  {
-		check("هتميّ", "هتمي");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(final String input, final String expected) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void check(string input, string expected)
-	  {
-		ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
-		ArabicNormalizationFilter filter = new ArabicNormalizationFilter(tokenStream);
-		assertTokenStreamContents(filter, new string[]{expected});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestArabicNormalizationFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestArabicNormalizationFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestArabicNormalizationFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestArabicNormalizationFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new ArabicNormalizationFilter(tokenizer));
-		  }
-	  }
-
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new ArabicNormalizationFilter(tokenizer));
+            }
+        }
+    }
 }

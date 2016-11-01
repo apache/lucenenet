@@ -1,9 +1,8 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,24 +21,23 @@ namespace Lucene.Net.Facet
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Bits = Lucene.Net.Util.Bits;
+    using BulkScorer = Lucene.Net.Search.BulkScorer;
     using Collector = Lucene.Net.Search.Collector;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Explanation = Lucene.Net.Search.Explanation;
     using Filter = Lucene.Net.Search.Filter;
+    using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Query = Lucene.Net.Search.Query;
     using Scorer = Lucene.Net.Search.Scorer;
-    using BulkScorer = Lucene.Net.Search.BulkScorer;
     using Weight = Lucene.Net.Search.Weight;
-    using Bits = Lucene.Net.Util.Bits;
 
     /// <summary>
     /// Only purpose is to punch through and return a
-    ///  DrillSidewaysScorer 
+    /// <see cref="DrillSidewaysScorer"/> 
     /// </summary>
-
     internal class DrillSidewaysQuery : Query
     {
         internal readonly Query baseQuery;
@@ -48,7 +46,8 @@ namespace Lucene.Net.Facet
         internal readonly Query[] drillDownQueries;
         internal readonly bool scoreSubDocsAtOnce;
 
-        internal DrillSidewaysQuery(Query baseQuery, Collector drillDownCollector, Collector[] drillSidewaysCollectors, Query[] drillDownQueries, bool scoreSubDocsAtOnce)
+        internal DrillSidewaysQuery(Query baseQuery, Collector drillDownCollector,
+            Collector[] drillSidewaysCollectors, Query[] drillDownQueries, bool scoreSubDocsAtOnce)
         {
             this.baseQuery = baseQuery;
             this.drillDownCollector = drillDownCollector;
@@ -162,7 +161,6 @@ namespace Lucene.Net.Facet
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
             {
-
                 // TODO: it could be better if we take acceptDocs
                 // into account instead of baseScorer?
                 Scorer baseScorer = baseWeight.Scorer(context, acceptDocs);
@@ -312,5 +310,4 @@ namespace Lucene.Net.Facet
             return true;
         }
     }
-
 }

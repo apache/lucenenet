@@ -21,6 +21,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using System;
     using System.Diagnostics;
     using System.Collections.Generic;
+    using System.Globalization;
     using FieldInfo = Index.FieldInfo;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
@@ -89,11 +90,11 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void StartDocument(int numVectorFields)
         {
             Write(DOC);
-            Write(Convert.ToString(_numDocsWritten));
+            Write(Convert.ToString(_numDocsWritten, CultureInfo.InvariantCulture));
             NewLine();
 
             Write(NUMFIELDS);
-            Write(Convert.ToString(numVectorFields));
+            Write(Convert.ToString(numVectorFields, CultureInfo.InvariantCulture));
             NewLine();
             _numDocsWritten++;
         }
@@ -101,7 +102,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
             Write(FIELD);
-            Write(Convert.ToString(info.Number));
+            Write(Convert.ToString(info.Number, CultureInfo.InvariantCulture));
             NewLine();
 
             Write(FIELDNAME);
@@ -109,19 +110,19 @@ namespace Lucene.Net.Codecs.SimpleText
             NewLine();
 
             Write(FIELDPOSITIONS);
-            Write(Convert.ToString(positions));
+            Write(Convert.ToString(positions, CultureInfo.InvariantCulture).ToLowerInvariant());
             NewLine();
 
             Write(FIELDOFFSETS);
-            Write(Convert.ToString(offsets));
+            Write(Convert.ToString(offsets, CultureInfo.InvariantCulture).ToLowerInvariant());
             NewLine();
 
             Write(FIELDPAYLOADS);
-            Write(Convert.ToString(payloads));
+            Write(Convert.ToString(payloads, CultureInfo.InvariantCulture).ToLowerInvariant());
             NewLine();
 
             Write(FIELDTERMCOUNT);
-            Write(Convert.ToString(numTerms));
+            Write(Convert.ToString(numTerms, CultureInfo.InvariantCulture));
             NewLine();
 
             _positions = positions;
@@ -136,7 +137,7 @@ namespace Lucene.Net.Codecs.SimpleText
             NewLine();
 
             Write(TERMFREQ);
-            Write(Convert.ToString(freq));
+            Write(Convert.ToString(freq, CultureInfo.InvariantCulture));
             NewLine();
         }
 
@@ -147,7 +148,7 @@ namespace Lucene.Net.Codecs.SimpleText
             if (_positions)
             {
                 Write(POSITION);
-                Write(Convert.ToString(position));
+                Write(Convert.ToString(position, CultureInfo.InvariantCulture));
                 NewLine();
 
                 if (_payloads)
@@ -165,11 +166,11 @@ namespace Lucene.Net.Codecs.SimpleText
             if (_offsets)
             {
                 Write(STARTOFFSET);
-                Write(Convert.ToString(startOffset));
+                Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));
                 NewLine();
 
                 Write(ENDOFFSET);
-                Write(Convert.ToString(endOffset));
+                Write(Convert.ToString(endOffset, CultureInfo.InvariantCulture));
                 NewLine();
             }
         }
@@ -203,7 +204,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
 
             try
             {

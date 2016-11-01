@@ -45,15 +45,19 @@ namespace Lucene.Net.Index
         private static Document TestDoc;
         private static FieldInfos.Builder FieldInfos = null;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             TestDoc = new Document();
             FieldInfos = new FieldInfos.Builder();
             DocHelper.SetupDoc(TestDoc);
             foreach (IndexableField field in TestDoc)
             {
-                FieldInfos.AddOrUpdate(field.Name(), field.FieldType());
+                FieldInfos.AddOrUpdate(field.Name, field.FieldType);
             }
             Dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy());
@@ -85,28 +89,28 @@ namespace Lucene.Net.Index
 
             Field field = (Field)doc.GetField(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsTrue(field != null);
-            Assert.IsTrue(field.FieldType().StoreTermVectors);
+            Assert.IsTrue(field.FieldType.StoreTermVectors);
 
-            Assert.IsFalse(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsFalse(field.FieldType.OmitNorms);
+            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
             Assert.IsTrue(field != null);
-            Assert.IsFalse(field.FieldType().StoreTermVectors);
-            Assert.IsTrue(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsFalse(field.FieldType.StoreTermVectors);
+            Assert.IsTrue(field.FieldType.OmitNorms);
+            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.NO_TF_KEY);
             Assert.IsTrue(field != null);
-            Assert.IsFalse(field.FieldType().StoreTermVectors);
-            Assert.IsFalse(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY);
+            Assert.IsFalse(field.FieldType.StoreTermVectors);
+            Assert.IsFalse(field.FieldType.OmitNorms);
+            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY);
 
             DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
             reader.Document(0, visitor);
             IList<IndexableField> fields = visitor.Document.Fields;
             Assert.AreEqual(1, fields.Count);
-            Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name());
+            Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name);
             reader.Dispose();
         }
 
@@ -181,7 +185,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            protected override void ReadInternal(byte[] b, int offset, int length)
+            protected internal override void ReadInternal(byte[] b, int offset, int length)
             {
                 SimOutage();
                 @delegate.Seek(FilePointer);

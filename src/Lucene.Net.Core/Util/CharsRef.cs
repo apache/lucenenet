@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The contents of the CharsRef. Should never be {@code null}.
         /// </summary>
-        public char[] Chars { get; internal set; }
+        public char[] Chars { get; set; }
 
         /// <summary>
         /// Offset of first valid character. </summary>
@@ -250,6 +250,20 @@ namespace Lucene.Net.Util
                 throw new System.IndexOutOfRangeException();
             }
             return Chars[Offset + index];
+        }
+
+        // LUCENENET specific - added to .NETify
+        public char this[int index]
+        {
+            get
+            {
+                // NOTE: must do a real check here to meet the specs of CharSequence
+                if (index < 0 || index >= Length)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                return Chars[Offset + index];
+            }
         }
 
         public ICharSequence SubSequence(int start, int end)

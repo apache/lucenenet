@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.core
+namespace Lucene.Net.Analysis.Core
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,83 +21,74 @@ namespace org.apache.lucene.analysis.core
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Testcase for <seealso cref="TypeTokenFilterFactory"/>
+    /// </summary>
+    public class TestTypeTokenFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	/// <summary>
-	/// Testcase for <seealso cref="TypeTokenFilterFactory"/>
-	/// </summary>
-	public class TestTypeTokenFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestInform()
+        {
+            TypeTokenFilterFactory factory = (TypeTokenFilterFactory)TokenFilterFactory("Type", "types", "stoptypes-1.txt", "enablePositionIncrements", "true");
+            ISet<string> types = factory.StopTypes;
+            assertTrue("types is null and it shouldn't be", types != null);
+            assertTrue("types Size: " + types.Count + " is not: " + 2, types.Count == 2);
+            assertTrue("enablePositionIncrements was set to true but not correctly parsed", factory.EnablePositionIncrements);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInform() throws Exception
-	  public virtual void testInform()
-	  {
-		TypeTokenFilterFactory factory = (TypeTokenFilterFactory) tokenFilterFactory("Type", "types", "stoptypes-1.txt", "enablePositionIncrements", "true");
-		ISet<string> types = factory.StopTypes;
-		assertTrue("types is null and it shouldn't be", types != null);
-		assertTrue("types Size: " + types.Count + " is not: " + 2, types.Count == 2);
-		assertTrue("enablePositionIncrements was set to true but not correctly parsed", factory.EnablePositionIncrements);
+            factory = (TypeTokenFilterFactory)TokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "false", "useWhitelist", "true");
+            types = factory.StopTypes;
+            assertTrue("types is null and it shouldn't be", types != null);
+            assertTrue("types Size: " + types.Count + " is not: " + 4, types.Count == 4);
+            assertTrue("enablePositionIncrements was set to false but not correctly parsed", !factory.EnablePositionIncrements);
+        }
 
-		factory = (TypeTokenFilterFactory) tokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "false", "useWhitelist", "true");
-		types = factory.StopTypes;
-		assertTrue("types is null and it shouldn't be", types != null);
-		assertTrue("types Size: " + types.Count + " is not: " + 4, types.Count == 4);
-		assertTrue("enablePositionIncrements was set to false but not correctly parsed", !factory.EnablePositionIncrements);
-	  }
+        [Test]
+        public virtual void TestCreationWithBlackList()
+        {
+            TokenFilterFactory factory = TokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "true");
+            NumericTokenStream input = new NumericTokenStream();
+            input.SetIntValue(123); // LUCENENET TODO: Shouldn't this be a property setter?
+            factory.Create(input);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCreationWithBlackList() throws Exception
-	  public virtual void testCreationWithBlackList()
-	  {
-		TokenFilterFactory factory = tokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "true");
-		NumericTokenStream input = new NumericTokenStream();
-		input.IntValue = 123;
-		factory.create(input);
-	  }
+        [Test]
+        public virtual void TestCreationWithWhiteList()
+        {
+            TokenFilterFactory factory = TokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "true", "useWhitelist", "true");
+            NumericTokenStream input = new NumericTokenStream();
+            input.SetIntValue(123);
+            factory.Create(input);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCreationWithWhiteList() throws Exception
-	  public virtual void testCreationWithWhiteList()
-	  {
-		TokenFilterFactory factory = tokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "true", "useWhitelist", "true");
-		NumericTokenStream input = new NumericTokenStream();
-		input.IntValue = 123;
-		factory.create(input);
-	  }
+        [Test]
+        public virtual void TestMissingTypesParameter()
+        {
+            try
+            {
+                TokenFilterFactory("Type", "enablePositionIncrements", "false");
+                fail("not supplying 'types' parameter should cause an IllegalArgumentException");
+            }
+            catch (System.ArgumentException)
+            {
+                // everything ok
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMissingTypesParameter() throws Exception
-	  public virtual void testMissingTypesParameter()
-	  {
-		try
-		{
-		  tokenFilterFactory("Type", "enablePositionIncrements", "false");
-		  fail("not supplying 'types' parameter should cause an IllegalArgumentException");
-		}
-		catch (System.ArgumentException)
-		{
-		  // everything ok
-		}
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Type", "types", "stoptypes-1.txt", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Type", "types", "stoptypes-1.txt", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

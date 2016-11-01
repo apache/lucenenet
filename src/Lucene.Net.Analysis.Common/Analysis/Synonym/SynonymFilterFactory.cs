@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Synonym
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Analysis.Synonym
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="SynonymFilter"/>.
     /// <pre class="prettyprint" >
@@ -56,38 +55,42 @@ namespace Lucene.Net.Analysis.Synonym
     /// </ul>
     /// </para>
     /// </summary>
-    public class SynonymFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class SynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private readonly TokenFilterFactory delegator;
 
         public SynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
-	  {
-		assureMatchVersion();
-		if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
-		{
-		  delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
-		}
-		else
-		{
-		  // check if you use the new optional arg "format". this makes no sense for the old one, 
-		  // as its wired to solr's synonyms format only.
-		  if (args.ContainsKey("format") && !args["format"].Equals("solr"))
-		  {
-			throw new System.ArgumentException("You must specify luceneMatchVersion >= 3.4 to use alternate synonyms formats");
-		  }
-		  delegator = new SlowSynonymFilterFactory(new Dictionary<>(OriginalArgs));
-		}
-	  }
+        {
+            AssureMatchVersion();
+#pragma warning disable 612, 618
+            if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
+            {
+                delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
+            }
+#pragma warning restore 612, 618
+            else
+            {
+                // check if you use the new optional arg "format". this makes no sense for the old one, 
+                // as its wired to solr's synonyms format only.
+                if (args.ContainsKey("format") && !args["format"].Equals("solr"))
+                {
+                    throw new System.ArgumentException("You must specify luceneMatchVersion >= 3.4 to use alternate synonyms formats");
+                }
+#pragma warning disable 612, 618
+                delegator = new SlowSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
+#pragma warning restore 612, 618
+            }
+        }
 
         public override TokenStream Create(TokenStream input)
         {
             return delegator.Create(input);
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
-            ((ResourceLoaderAware)delegator).Inform(loader);
+            ((IResourceLoaderAware)delegator).Inform(loader);
         }
 
         /// <summary>

@@ -1,7 +1,5 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,13 +18,12 @@
      */
 
     /// <summary>
-    /// LRU <seealso cref="TaxonomyWriterCache"/> - good choice for huge taxonomies.
+    /// LRU <see cref="ITaxonomyWriterCache"/> - good choice for huge taxonomies.
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class LruTaxonomyWriterCache : TaxonomyWriterCache
+    public class LruTaxonomyWriterCache : ITaxonomyWriterCache
     {
-
         /// <summary>
         /// Determines cache type.
         /// For guaranteed correctness - not relying on no-collisions in the hash
@@ -50,7 +47,8 @@
         private NameIntCacheLRU cache;
 
         /// <summary>
-        /// Creates this with <seealso cref="LRUType#LRU_HASHED"/> method. </summary>
+        /// Creates this with <see cref="LRUType.LRU_HASHED"/> method.
+        /// </summary>
         public LruTaxonomyWriterCache(int cacheSize)
             : this(cacheSize, LRUType.LRU_HASHED)
         {
@@ -63,7 +61,8 @@
         }
 
         /// <summary>
-        /// Creates this with the specified method. </summary>
+        /// Creates this with the specified method.
+        /// </summary>
         public LruTaxonomyWriterCache(int cacheSize, LRUType lruType)
         {
             // TODO (Facet): choose between NameHashIntCacheLRU and NameIntCacheLRU.
@@ -82,13 +81,13 @@
             }
         }
 
-        public virtual bool Full
+        public virtual bool IsFull
         {
             get
             {
                 lock (this)
                 {
-                    return cache.Size == cache.MaxSize;
+                    return cache.Count == cache.Capacity;
                 }
             }
         }
@@ -101,12 +100,15 @@
             }
         }
 
-        public virtual void Close()
+        public virtual void Dispose()
         {
             lock (this)
             {
-                cache.Clear();
-                cache = null;
+                if (cache != null)
+                {
+                    cache.Clear();
+                    cache = null;
+                }
             }
         }
 
@@ -114,13 +116,13 @@
         {
             lock (this)
             {
-                int? res = cache.Get(categoryPath);
-                if (res == null)
+                int result;
+                if (!cache.TryGetValue(categoryPath, out result))
                 {
                     return -1;
                 }
 
-                return (int)res;
+                return result;
             }
         }
 
@@ -128,7 +130,7 @@
         {
             lock (this)
             {
-                bool ret = cache.Put(categoryPath, new int?(ordinal));
+                bool ret = cache.Put(categoryPath, ordinal);
                 // If the cache is full, we need to clear one or more old entries
                 // from the cache. However, if we delete from the cache a recent
                 // addition that isn't yet in our reader, for this entry to be
@@ -143,7 +145,5 @@
                 return ret;
             }
         }
-
     }
-
 }

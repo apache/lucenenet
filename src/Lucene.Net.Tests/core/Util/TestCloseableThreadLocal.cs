@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected override object InitialValue()
+            protected internal override object InitialValue()
             {
                 return TEST_VALUE;
             }

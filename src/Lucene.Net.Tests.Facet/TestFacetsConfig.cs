@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet
             Facets facets = GetTaxonomyFacetCounts(taxoReader, facetsConfig, fc);
             FacetResult res = facets.GetTopChildren(10, "a");
             Assert.AreEqual(1, res.LabelValues.Length);
-            Assert.AreEqual(2, res.LabelValues[0].value);
+            Assert.AreEqual(2, res.LabelValues[0].Value);
             IOUtils.Close(indexReader, taxoReader);
 
             IOUtils.Close(indexDir, taxoDir);

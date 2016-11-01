@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
             writer.Commit();
         }
 
-        private static IndexWriterConfig NewWriterConfig()
+        private IndexWriterConfig NewWriterConfig()
         {
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);

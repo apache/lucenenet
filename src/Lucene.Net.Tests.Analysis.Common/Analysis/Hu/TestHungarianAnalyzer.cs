@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.hu
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hu
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +21,47 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestHungarianAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        public virtual void TestResourcesAvailable()
+        {
+            new HungarianAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestHungarianAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new HungarianAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new HungarianAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "babakocsi", "babakocs");
+            CheckOneTerm(a, "babakocsijáért", "babakocs");
+            // stopword
+            AssertAnalyzesTo(a, "által", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new HungarianAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "babakocsi", "babakocs");
-		checkOneTerm(a, "babakocsijáért", "babakocs");
-		// stopword
-		assertAnalyzesTo(a, "által", new string[] {});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("babakocsi"), false);
+            Analyzer a = new HungarianAnalyzer(TEST_VERSION_CURRENT, HungarianAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "babakocsi", "babakocsi");
+            CheckOneTerm(a, "babakocsijáért", "babakocs");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("babakocsi"), false);
-		Analyzer a = new HungarianAnalyzer(TEST_VERSION_CURRENT, HungarianAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "babakocsi", "babakocsi");
-		checkOneTerm(a, "babakocsijáért", "babakocs");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new HungarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new HungarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

@@ -4,7 +4,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,12 +25,14 @@ namespace Lucene.Net.Util.Fst
     using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using Support;
+    using Attributes;
 
     [TestFixture]
     public class TestBytesStore : LuceneTestCase
     {
 
-        [Test]
+        [Test, LongRunningTest, Timeout(720000)]
         public virtual void TestRandom()
         {
 
@@ -39,7 +40,7 @@ namespace Lucene.Net.Util.Fst
             for (int iter = 0; iter < iters; iter++)
             {
                 int numBytes = TestUtil.NextInt(Random(), 1, 200000);
-                sbyte[] expected = new sbyte[numBytes];
+                byte[] expected = new byte[numBytes];
                 int blockBits = TestUtil.NextInt(Random(), 8, 15);
                 BytesStore bytes = new BytesStore(blockBits);
                 if (VERBOSE)
@@ -61,7 +62,7 @@ namespace Lucene.Net.Util.Fst
                         case 0:
                             {
                                 // write random byte
-                                sbyte b = (sbyte)Random().Next(256);
+                                byte b = (byte)Random().Next(256);
                                 if (VERBOSE)
                                 {
                                     Console.WriteLine("    writeByte b=" + b);
@@ -76,7 +77,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 // write random byte[]
                                 int len = Random().Next(Math.Min(numBytes - pos, 100));
-                                sbyte[] temp = new sbyte[len];
+                                byte[] temp = new byte[len];
                                 Random().NextBytes(temp);
                                 if (VERBOSE)
                                 {
@@ -99,11 +100,11 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("    abs writeInt pos=" + randomPos + " x=" + x);
                                     }
-                                    bytes.writeInt(randomPos, x);
-                                    expected[randomPos++] = (sbyte)(x >> 24);
-                                    expected[randomPos++] = (sbyte)(x >> 16);
-                                    expected[randomPos++] = (sbyte)(x >> 8);
-                                    expected[randomPos++] = (sbyte)x;
+                                    bytes.WriteInt(randomPos, x);
+                                    expected[randomPos++] = (byte)(x >> 24);
+                                    expected[randomPos++] = (byte)(x >> 16);
+                                    expected[randomPos++] = (byte)(x >> 8);
+                                    expected[randomPos++] = (byte)x;
                                 }
                             }
                             break;
@@ -128,11 +129,11 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("    reverse start=" + start + " end=" + end + " len=" + len + " pos=" + pos);
                                     }
-                                    bytes.reverse(start, end);
+                                    bytes.Reverse(start, end);
 
                                     while (start <= end)
                                     {
-                                        sbyte b = expected[end];
+                                        byte b = expected[end];
                                         expected[end] = expected[start];
                                         expected[start] = b;
                                         start++;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     int randomPos = Random().Next(pos - 1);
                                     int len = TestUtil.NextInt(Random(), 1, Math.Min(pos - randomPos - 1, 100));
-                                    sbyte[] temp = new sbyte[len];
+                                    byte[] temp = new byte[len];
                                     Random().NextBytes(temp);
                                     if (VERBOSE)
                                     {
@@ -174,7 +175,7 @@ namespace Lucene.Net.Util.Fst
                                         Console.WriteLine("    copyBytes src=" + src + " dest=" + dest + " len=" + len);
                                     }
                                     Array.Copy(expected, src, expected, dest, len);
-                                    bytes.copyBytes(src, dest, len);
+                                    bytes.CopyBytes(src, dest, len);
                                 }
                             }
                             break;
@@ -190,13 +191,13 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 pos += len;
-                                bytes.skipBytes(len);
+                                bytes.SkipBytes(len);
 
                                 // NOTE: must fill in zeros in case truncate was
                                 // used, else we get false fails:
                                 if (len > 0)
                                 {
-                                    sbyte[] zeros = new sbyte[len];
+                                    byte[] zeros = new byte[len];
                                     bytes.WriteBytes(pos - len, zeros, 0, len);
                                 }
                             }
@@ -208,7 +209,7 @@ namespace Lucene.Net.Util.Fst
                                 if (pos > 0)
                                 {
                                     int dest = Random().Next(pos);
-                                    sbyte b = (sbyte)Random().Next(256);
+                                    byte b = (byte)Random().Next(256);
                                     expected[dest] = b;
                                     bytes.WriteByte(dest, b);
                                 }
@@ -222,9 +223,9 @@ namespace Lucene.Net.Util.Fst
                     {
                         // truncate
                         int len = TestUtil.NextInt(Random(), 1, Math.Min(pos, 100));
-                        bytes.truncate(pos - len);
+                        bytes.Truncate(pos - len);
                         pos -= len;
-                        Arrays.fill(expected, pos, pos + len, (sbyte)0);
+                        Arrays.Fill(expected, pos, pos + len, (byte)0);
                         if (VERBOSE)
                         {
                             Console.WriteLine("    truncate len=" + len + " newPos=" + pos);
@@ -247,7 +248,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     Directory dir = NewDirectory();
                     IndexOutput @out = dir.CreateOutput("bytes", IOContext.DEFAULT);
-                    bytes.writeTo(@out);
+                    bytes.WriteTo(@out);
                     @out.Dispose();
                     IndexInput @in = dir.OpenInput("bytes", IOContext.DEFAULT);
                     bytesToVerify = new BytesStore(@in, numBytes, TestUtil.NextInt(Random(), 256, int.MaxValue));
@@ -263,7 +264,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private void Verify(BytesStore bytes, sbyte[] expected, int totalLength)
+        private void Verify(BytesStore bytes, byte[] expected, int totalLength)
         {
             Assert.AreEqual(totalLength, bytes.Position);
             if (totalLength == 0)
@@ -276,7 +277,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // First verify whole thing in one blast:
-            sbyte[] actual = new sbyte[totalLength];
+            byte[] actual = new byte[totalLength];
             if (Random().NextBoolean())
             {
                 if (VERBOSE)
@@ -284,15 +285,15 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("    bulk: reversed");
                 }
                 // reversed
-                FST.BytesReader r = bytes.ReverseReader;
-                Assert.IsTrue(r.reversed());
-                r.Position = totalLength - 1;
-                r.ReadBytes(actual, 0, actual.Length);
+                FST.BytesReader r2 = bytes.ReverseReader;
+                Assert.IsTrue(r2.IsReversed);
+                r2.Position = totalLength - 1;
+                r2.ReadBytes(actual, 0, actual.Length);
                 int start = 0;
                 int end = totalLength - 1;
                 while (start < end)
                 {
-                    sbyte b = actual[start];
+                    byte b = actual[start];
                     actual[start] = actual[end];
                     actual[end] = b;
                     start++;
@@ -306,14 +307,14 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("    bulk: forward");
                 }
-                FST.BytesReader r = bytes.ForwardReader;
-                Assert.IsFalse(r.reversed());
-                r.ReadBytes(actual, 0, actual.Length);
+                FST.BytesReader r3 = bytes.ForwardReader;
+                Assert.IsFalse(r3.IsReversed);
+                r3.ReadBytes(actual, 0, actual.Length);
             }
 
             for (int i = 0; i < totalLength; i++)
             {
-                Assert.AreEqual("byte @ index=" + i, expected[i], actual[i]);
+                assertEquals("byte @ index=" + i, expected[i], actual[i]);
             }
 
             FST.BytesReader r;
@@ -357,13 +358,13 @@ namespace Lucene.Net.Util.Fst
                     {
                         Console.WriteLine("    op iter=" + op + " reversed=" + reversed + " numBytes=" + numBytes + " pos=" + pos);
                     }
-                    sbyte[] temp = new sbyte[numBytes];
+                    byte[] temp = new byte[numBytes];
                     r.Position = pos;
                     Assert.AreEqual(pos, r.Position);
                     r.ReadBytes(temp, 0, temp.Length);
                     for (int i = 0; i < numBytes; i++)
                     {
-                        sbyte expectedByte;
+                        byte expectedByte;
                         if (reversed)
                         {
                             expectedByte = expected[pos - i];
@@ -372,7 +373,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             expectedByte = expected[pos + i];
                         }
-                        Assert.AreEqual("byte @ index=" + i, expectedByte, temp[i]);
+                        assertEquals("byte @ index=" + i, expectedByte, temp[i]);
                     }
 
                     int left;
@@ -418,12 +419,11 @@ namespace Lucene.Net.Util.Fst
                             Console.WriteLine("    readInt");
                         }
 
-                        r.skipBytes(skipBytes);
-                        Assert.AreEqual(expectedInt, r.readInt());
+                        r.SkipBytes(skipBytes);
+                        Assert.AreEqual(expectedInt, r.ReadInt());
                     }
                 }
             }
         }
     }
-
 }

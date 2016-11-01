@@ -1,75 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Facet;
-using Lucene.Net.Search;
+using System.Linq;
 
 namespace Lucene.Net.Facet
 {
-
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DimConfig = FacetsConfig.DimConfig;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// Collects hits for subsequent faceting, using sampling if needed. Once you've
     /// run a search and collect hits into this, instantiate one of the
-    /// <seealso cref="Facets"/> subclasses to do the facet counting. Note that this collector
+    /// <see cref="Facets"/> subclasses to do the facet counting. Note that this collector
     /// does not collect the scores of matching docs (i.e.
-    /// <seealso cref="FacetsCollector.MatchingDocs#scores"/>) is {@code null}.
+    /// <see cref="FacetsCollector.MatchingDocs.Scores"/>) is <c>null</c>.
     /// <para>
     /// If you require the original set of hits, you can call
-    /// <seealso cref="#getOriginalMatchingDocs()"/>. Also, since the counts of the top-facets
+    /// <see cref="GetOriginalMatchingDocs()"/>. Also, since the counts of the top-facets
     /// is based on the sampled set, you can amortize the counts by calling
-    /// <seealso cref="#amortizeFacetCounts"/>.
+    /// <see cref="AmortizeFacetCounts"/>.
     /// </para>
     /// </summary>
     public class RandomSamplingFacetsCollector : FacetsCollector
     {
-
         /// <summary>
         /// Faster alternative for java.util.Random, inspired by
-        /// http://dmurphy747.wordpress.com/2011/03/23/xorshift-vs-random-
-        /// performance-in-java/
+        /// http://dmurphy747.wordpress.com/2011/03/23/xorshift-vs-random-performance-in-java/
         /// <para>
         /// Has a period of 2^64-1
         /// </para>
         /// </summary>
         private class XORShift64Random
         {
-
             internal long x;
 
             /// <summary>
-            /// Creates a xorshift random generator using the provided seed </summary>
+            /// Creates a xorshift random generator using the provided seed
+            /// </summary>
             public XORShift64Random(long seed)
             {
                 x = seed == 0 ? 0xdeadbeef : seed;
             }
 
             /// <summary>
-            /// Get the next random long value </summary>
+            /// Get the next random long value
+            /// </summary>
             public virtual long RandomLong()
             {
                 x ^= (x << 21);
@@ -79,13 +75,13 @@ namespace Lucene.Net.Facet
             }
 
             /// <summary>
-            /// Get the next random int, between 0 (inclusive) and n (exclusive) </summary>
+            /// Get the next random int, between 0 (inclusive) and <paramref name="n"/> (exclusive)
+            /// </summary>
             public virtual int NextInt(int n)
             {
                 int res = (int)(RandomLong() % n);
                 return (res < 0) ? -res : res;
             }
-
         }
 
         private const int NOT_CALCULATED = -1;
@@ -94,7 +90,7 @@ namespace Lucene.Net.Facet
         private readonly XORShift64Random random;
 
         private double samplingRate;
-        private IList<MatchingDocs> sampledDocs;
+        private List<MatchingDocs> sampledDocs;
         private int totalHits = NOT_CALCULATED;
         private int leftoverBin = NOT_CALCULATED;
         private int leftoverIndex = NOT_CALCULATED;
@@ -102,7 +98,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Constructor with the given sample size and default seed.
         /// </summary>
-        /// <seealso cref= #RandomSamplingFacetsCollector(int, long) </seealso>
+        /// <seealso cref="RandomSamplingFacetsCollector(int, long)"/>
         public RandomSamplingFacetsCollector(int sampleSize)
             : this(sampleSize, 0)
         {
@@ -118,7 +114,7 @@ namespace Lucene.Net.Facet
         ///          samplingRatio of 0.01. If the number of hits is lower, no sampling
         ///          is done at all </param>
         /// <param name="seed">
-        ///          The random seed. If {@code 0} then a seed will be chosen for you. </param>
+        ///          The random seed. If <c>0</c> then a seed will be chosen for you. </param>
         public RandomSamplingFacetsCollector(int sampleSize, long seed)
             : base(false)
         {
@@ -129,61 +125,57 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Returns the sampled list of the matching documents. Note that a
-        /// <seealso cref="FacetsCollector.MatchingDocs"/> instance is returned per segment, even
+        /// <see cref="FacetsCollector.MatchingDocs"/> instance is returned per segment, even
         /// if no hits from that segment are included in the sampled set.
         /// <para>
-        /// Note: One or more of the MatchingDocs might be empty (not containing any
+        /// Note: One or more of the <see cref="FacetsCollector.MatchingDocs"/> might be empty (not containing any
         /// hits) as result of sampling.
         /// </para>
         /// <para>
-        /// Note: {@code MatchingDocs.totalHits} is copied from the original
-        /// MatchingDocs, scores is set to {@code null}
+        /// Note: <see cref="FacetsCollector.MatchingDocs.TotalHits"/> is copied from the original
+        /// <see cref="FacetsCollector.MatchingDocs"/>, scores is set to <c>null</c>
         /// </para>
         /// </summary>
-        public override IList<MatchingDocs> GetMatchingDocs
+        public override List<MatchingDocs> GetMatchingDocs()
         {
-            get
+            List<MatchingDocs> matchingDocs = base.GetMatchingDocs();
+
+            if (totalHits == NOT_CALCULATED)
             {
-                IList<MatchingDocs> matchingDocs = base.GetMatchingDocs;
-
-                if (totalHits == NOT_CALCULATED)
+                totalHits = 0;
+                foreach (MatchingDocs md in matchingDocs)
                 {
-                    totalHits = 0;
-                    foreach (MatchingDocs md in matchingDocs)
-                    {
-                        totalHits += md.totalHits;
-                    }
+                    totalHits += md.TotalHits;
                 }
-
-                if (totalHits <= sampleSize)
-                {
-                    return matchingDocs;
-                }
-
-                if (sampledDocs == null)
-                {
-                    samplingRate = (1.0 * sampleSize) / totalHits;
-                    sampledDocs = CreateSampledDocs(matchingDocs);
-                }
-                return sampledDocs;
             }
+
+            if (totalHits <= sampleSize)
+            {
+                return matchingDocs;
+            }
+
+            if (sampledDocs == null)
+            {
+                samplingRate = (1.0 * sampleSize) / totalHits;
+                sampledDocs = CreateSampledDocs(matchingDocs);
+            }
+            return sampledDocs;
         }
 
         /// <summary>
-        /// Returns the original matching documents. </summary>
-        public virtual IList<MatchingDocs> OriginalMatchingDocs
+        /// Returns the original matching documents.
+        /// </summary>
+        public virtual List<MatchingDocs> GetOriginalMatchingDocs()
         {
-            get
-            {
-                return base.GetMatchingDocs;
-            }
+            return base.GetMatchingDocs();
         }
 
         /// <summary>
-        /// Create a sampled copy of the matching documents list. </summary>
-        private IList<MatchingDocs> CreateSampledDocs(IList<MatchingDocs> matchingDocsList)
+        /// Create a sampled copy of the matching documents list.
+        /// </summary>
+        private List<MatchingDocs> CreateSampledDocs(IEnumerable<MatchingDocs> matchingDocsList)
         {
-            IList<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count);
+            List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count());
             foreach (MatchingDocs docs in matchingDocsList)
             {
                 sampledDocsList.Add(CreateSample(docs));
@@ -192,10 +184,11 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Create a sampled of the given hits. </summary>
+        /// Create a sampled of the given hits.
+        /// </summary>
         private MatchingDocs CreateSample(MatchingDocs docs)
         {
-            int maxdoc = docs.context.Reader.MaxDoc;
+            int maxdoc = docs.Context.Reader.MaxDoc;
 
             // TODO: we could try the WAH8DocIdSet here as well, as the results will be sparse
             FixedBitSet sampleDocs = new FixedBitSet(maxdoc);
@@ -218,7 +211,7 @@ namespace Lucene.Net.Facet
                     limit = binSize;
                     randomIndex = random.NextInt(binSize);
                 }
-                DocIdSetIterator it = docs.bits.GetIterator();
+                DocIdSetIterator it = docs.Bits.GetIterator();
                 for (int doc = it.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = it.NextDoc())
                 {
                     if (counter == randomIndex)
@@ -258,7 +251,7 @@ namespace Lucene.Net.Facet
                     }
                 }
 
-                return new MatchingDocs(docs.context, sampleDocs, docs.totalHits, null);
+                return new MatchingDocs(docs.Context, sampleDocs, docs.TotalHits, null);
             }
             catch (IOException)
             {
@@ -267,9 +260,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Note: if you use a counting <seealso cref="Facets"/> implementation, you can amortize the
-        /// sampled counts by calling this method. Uses the <seealso cref="FacetsConfig"/> and
-        /// the <seealso cref="IndexSearcher"/> to determine the upper bound for each facet value.
+        /// Note: if you use a counting <see cref="Facets"/> implementation, you can amortize the
+        /// sampled counts by calling this method. Uses the <see cref="FacetsConfig"/> and
+        /// the <see cref="IndexSearcher"/> to determine the upper bound for each facet value.
         /// </summary>
         public virtual FacetResult AmortizeFacetCounts(FacetResult res, FacetsConfig config, IndexSearcher searcher)
         {
@@ -290,12 +283,12 @@ namespace Lucene.Net.Facet
 
             for (int i = 0; i < res.LabelValues.Length; i++)
             {
-                childPath[res.Path.Length + 1] = res.LabelValues[i].label;
+                childPath[res.Path.Length + 1] = res.LabelValues[i].Label;
                 string fullPath = FacetsConfig.PathToString(childPath, childPath.Length);
                 int max = reader.DocFreq(new Term(dimConfig.IndexFieldName, fullPath));
-                int correctedCount = (int)((double)res.LabelValues[i].value / samplingRate);
+                int correctedCount = (int)((double)res.LabelValues[i].Value / samplingRate);
                 correctedCount = Math.Min(max, correctedCount);
-                fixedLabelValues[i] = new LabelAndValue(res.LabelValues[i].label, correctedCount);
+                fixedLabelValues[i] = new LabelAndValue(res.LabelValues[i].Label, correctedCount);
             }
 
             // cap the total count on the total number of non-deleted documents in the reader
@@ -309,7 +302,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Returns the sampling rate that was used. </summary>
+        /// Returns the sampling rate that was used.
+        /// </summary>
         public virtual double SamplingRate
         {
             get
@@ -317,7 +311,5 @@ namespace Lucene.Net.Facet
                 return samplingRate;
             }
         }
-
     }
-
 }

@@ -43,14 +43,14 @@ namespace Lucene.Net.Index
     /// Test indexes ~82M docs with 52 positions each, so you get > Integer.MAX_VALUE positions
     /// @lucene.experimental
     /// </summary>
-    [Ignore]
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class Test2BPositions : LuceneTestCase
     // uses lots of space and takes a few minutes
     {
-        //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
+        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
-        public virtual void Test()
+        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
             if (dir is MockDirectoryWrapper)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             }
 
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(scheduler).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)

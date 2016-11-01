@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="KeepWordFilter"/>. 
     /// <pre class="prettyprint">
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class KeepWordFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class KeepWordFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private readonly bool ignoreCase;
         private readonly bool enablePositionIncrements;
@@ -42,17 +42,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public KeepWordFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
-            wordFiles = get(args, "words");
-            ignoreCase = getBoolean(args, "ignoreCase", false);
-            enablePositionIncrements = getBoolean(args, "enablePositionIncrements", true);
+            AssureMatchVersion();
+            wordFiles = Get(args, "words");
+            ignoreCase = GetBoolean(args, "ignoreCase", false);
+            enablePositionIncrements = GetBoolean(args, "enablePositionIncrements", true);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             if (wordFiles != null)
             {
@@ -93,7 +93,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             else
             {
+#pragma warning disable 612, 618
                 TokenStream filter = new KeepWordFilter(luceneMatchVersion, enablePositionIncrements, input, words);
+#pragma warning restore 612, 618
                 return filter;
             }
         }

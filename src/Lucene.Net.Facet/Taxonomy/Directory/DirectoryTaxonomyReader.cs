@@ -2,22 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Lucene.Net.Store;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-    using Document = Lucene.Net.Documents.Document;
-    using Lucene.Net.Facet.Taxonomy;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException; // javadocs
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,9 +22,20 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
+    using Lucene.Net.Facet.Taxonomy;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Documents.Document;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+
     /// <summary>
-    /// A <seealso cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
-    /// <seealso cref="Directory"/>.
+    /// A <see cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
+    /// <see cref="Directory"/>.
     /// <P>
     /// Reading from the on-disk index on every method call is too slow, so this
     /// implementation employs caching: Some methods cache recent requests and their
@@ -49,7 +47,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyReader : TaxonomyReader, IDisposable
     {
-
         public class IntClass
         {
             public int? IntItem { get; set; }
@@ -67,11 +64,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private volatile TaxonomyIndexArrays taxoArrays;
 
         /// <summary>
-        /// Called only from <seealso cref="#doOpenIfChanged()"/>. If the taxonomy has been
-        /// recreated, you should pass {@code null} as the caches and parent/children
+        /// Called only from <see cref="DoOpenIfChanged()"/>. If the taxonomy has been
+        /// recreated, you should pass <c>null</c> as the caches and parent/children
         /// arrays.
         /// </summary>
-        internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, LRUHashMap<FacetLabel, IntClass> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, TaxonomyIndexArrays taxoArrays)
+        internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
+            LRUHashMap<FacetLabel, IntClass> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, 
+            TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
             this.taxoWriter = taxoWriter;
@@ -85,14 +84,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open for reading a taxonomy stored in a given <seealso cref="Directory"/>.
+        /// Open for reading a taxonomy stored in a given <see cref="Directory"/>.
         /// </summary>
-        /// <param name="directory">
-        ///          The <seealso cref="Directory"/> in which the taxonomy resides. </param>
-        /// <exception cref="CorruptIndexException">
-        ///           if the Taxonomy is corrupt. </exception>
-        /// <exception cref="IOException">
-        ///           if another error occurred. </exception>
+        /// <param name="directory"> The <see cref="Directory"/> in which the taxonomy resides. </param>
+        /// <exception cref="Index.CorruptIndexException"> if the Taxonomy is corrupt. </exception>
+        /// <exception cref="IOException"> if another error occurred. </exception>
         public DirectoryTaxonomyReader(Directory directory)
         {
             indexReader = OpenIndexReader(directory);
@@ -107,11 +103,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Opens a <seealso cref="DirectoryTaxonomyReader"/> over the given
-        /// <seealso cref="DirectoryTaxonomyWriter"/> (for NRT).
+        /// Opens a <see cref="DirectoryTaxonomyReader"/> over the given
+        /// <see cref="DirectoryTaxonomyWriter"/> (for NRT).
         /// </summary>
         /// <param name="taxoWriter">
-        ///          The <seealso cref="DirectoryTaxonomyWriter"/> from which to obtain newly
+        ///          The <see cref="DirectoryTaxonomyWriter"/> from which to obtain newly
         ///          added categories, in real-time. </param>
         public DirectoryTaxonomyReader(DirectoryTaxonomyWriter taxoWriter)
         {
@@ -151,16 +147,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Implements the opening of a new <seealso cref="DirectoryTaxonomyReader"/> instance if
+        /// Implements the opening of a new <see cref="DirectoryTaxonomyReader"/> instance if
         /// the taxonomy has changed.
         /// 
         /// <para>
-        /// <b>NOTE:</b> the returned <seealso cref="DirectoryTaxonomyReader"/> shares the
+        /// <b>NOTE:</b> the returned <see cref="DirectoryTaxonomyReader"/> shares the
         /// ordinal and category caches with this reader. This is not expected to cause
         /// any issues, unless the two instances continue to live. The reader
         /// guarantees that the two instances cannot affect each other in terms of
         /// correctness of the caches, however if the size of the cache is changed
-        /// through <seealso cref="#setCacheSize(int)"/>, it will affect both reader instances.
+        /// through <see cref="CacheSize"/>, it will affect both reader instances.
         /// </para>
         /// </summary>
         protected override TaxonomyReader DoOpenIfChanged()
@@ -232,8 +228,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open the <seealso cref="DirectoryReader"/> from this {@link
-        ///  Directory}. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
         /// </summary>
         protected virtual DirectoryReader OpenIndexReader(Directory directory)
         {
@@ -241,8 +236,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open the <seealso cref="DirectoryReader"/> from this {@link
-        ///  IndexWriter}. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
         /// </summary>
         protected virtual DirectoryReader OpenIndexReader(IndexWriter writer)
         {
@@ -250,8 +244,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Expert: returns the underlying <seealso cref="DirectoryReader"/> instance that is
-        /// used by this <seealso cref="TaxonomyReader"/>.
+        /// Expert: returns the underlying <see cref="DirectoryReader"/> instance that is
+        /// used by this <see cref="TaxonomyReader"/>.
         /// </summary>
         internal virtual DirectoryReader InternalIndexReader
         {
@@ -293,26 +287,26 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
             // First try to find the answer in the LRU cache:
-            lock (ordinalCache)
+
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
+            IntClass res = ordinalCache.Get(cp);
+            if (res != null && res.IntItem != null)
             {
-                IntClass res = ordinalCache.Get(cp);
-                if (res != null && res.IntItem != null)
+                if ((int)res.IntItem.Value < indexReader.MaxDoc)
                 {
-                    if ((int)res.IntItem.Value < indexReader.MaxDoc)
-                    {
-                        // Since the cache is shared with DTR instances allocated from
-                        // doOpenIfChanged, we need to ensure that the ordinal is one that
-                        // this DTR instance recognizes.
-                        return (int)res.IntItem.Value;
-                    }
-                    else
-                    {
-                        // if we get here, it means that the category was found in the cache,
-                        // but is not recognized by this TR instance. Therefore there's no
-                        // need to continue search for the path on disk, because we won't find
-                        // it there too.
-                        return TaxonomyReader.INVALID_ORDINAL;
-                    }
+                    // Since the cache is shared with DTR instances allocated from
+                    // doOpenIfChanged, we need to ensure that the ordinal is one that
+                    // this DTR instance recognizes.
+                    return (int)res.IntItem.Value;
+                }
+                else
+                {
+                    // if we get here, it means that the category was found in the cache,
+                    // but is not recognized by this TR instance. Therefore there's no
+                    // need to continue search for the path on disk, because we won't find
+                    // it there too.
+                    return TaxonomyReader.INVALID_ORDINAL;
                 }
             }
 
@@ -329,10 +323,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // that are allocated from doOpenIfChanged. Therefore, if we only store
                 // information about found categories, we cannot accidently tell a new
                 // generation of DTR that a category does not exist.
-                lock (ordinalCache)
-                {
-                    ordinalCache.Put(cp, new IntClass { IntItem = Convert.ToInt32(ret) });
-                }
+
+                // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+                // and removing the lock seems to make the performance better.
+                ordinalCache.Put(cp, new IntClass { IntItem = Convert.ToInt32(ret) });
             }
 
             return ret;
@@ -353,27 +347,26 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // TODO: can we use an int-based hash impl, such as IntToObjectMap,
             // wrapped as LRU?
-            int catIDInteger = Convert.ToInt32(ordinal);
-            lock (categoryCache)
+
+            // LUCENENET NOTE: We don't need to convert ordinal from int to int here as was done in Java.
+            FacetLabel res;
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
+            if (categoryCache.TryGetValue(ordinal, out res))
             {
-                var res = categoryCache.Get(catIDInteger,false);
-                if (res != null)
-                {
-                    return res;
-                }
+                return res;
             }
 
             Document doc = indexReader.Document(ordinal);
-            FacetLabel ret = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
-            lock (categoryCache)
-            {
-                categoryCache.Put(catIDInteger, ret);
-            }
+            res = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
+            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
+            // and removing the lock seems to make the performance better.
+            categoryCache.Put(ordinal, res);
 
-            return ret;
+            return res;
         }
 
-        public override int Size
+        public override int Count
         {
             get
             {
@@ -383,13 +376,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// setCacheSize controls the maximum allowed size of each of the caches
-        /// used by <seealso cref="#getPath(int)"/> and <seealso cref="#getOrdinal(FacetLabel)"/>.
+        /// Setting <see cref="CacheSize"/> controls the maximum allowed size of each of the caches
+        /// used by <see cref="GetPath(int)"/> and <see cref="GetOrdinal(FacetLabel)"/>.
         /// <P>
         /// Currently, if the given size is smaller than the current size of
         /// a cache, it will not shrink, and rather we be limited to its current
         /// size. </summary>
-        /// <param name="size"> the new maximum cache size, in number of entries. </param>
+        /// <param name="value"> the new maximum cache size, in number of entries. </param>
         public virtual int CacheSize
         {
             set
@@ -397,19 +390,19 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 EnsureOpen();
                 lock (categoryCache)
                 {
-                    categoryCache.MaxSize = value;
+                    categoryCache.Limit = value;
                 }
                 lock (ordinalCache)
                 {
-                    ordinalCache.MaxSize = value;
+                    ordinalCache.Limit = value;
                 }
             }
         }
 
         /// <summary>
         /// Returns ordinal -> label mapping, up to the provided
-        ///  max ordinal or number of ordinals, whichever is
-        ///  smaller. 
+        /// max ordinal or number of ordinals, whichever is
+        /// smaller. 
         /// </summary>
         public virtual string ToString(int max)
         {
@@ -433,7 +426,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     sb.Append(i + ": " + category.ToString() + "\n");
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     throw;
                 }
@@ -446,5 +439,4 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Dispose(true);
         }
     }
-
 }

@@ -1,9 +1,8 @@
 ﻿using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Ngram
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Ngram
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Tokenizes the input from an edge into n-grams of given size(s).
     /// <para>
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
-        public EdgeNGramTokenizer(LuceneVersion version, Reader input, int minGram, int maxGram)
+        public EdgeNGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram)
             : base(version, input, minGram, maxGram, true)
         {
         }
@@ -63,11 +63,9 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
-        public EdgeNGramTokenizer(LuceneVersion version, AttributeSource.AttributeFactory factory, Reader input, int minGram, int maxGram)
+        public EdgeNGramTokenizer(LuceneVersion version, AttributeSource.AttributeFactory factory, TextReader input, int minGram, int maxGram)
             : base(version, factory, input, minGram, maxGram, true)
         {
         }
-
     }
-
 }

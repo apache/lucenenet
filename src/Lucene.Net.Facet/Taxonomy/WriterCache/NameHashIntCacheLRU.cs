@@ -1,7 +1,6 @@
 ﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,32 +17,30 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// An an LRU cache of mapping from name to int.
-	/// Used to cache Ordinals of category paths.
-	/// It uses as key, hash of the path instead of the path.
-	/// This way the cache takes less RAM, but correctness depends on
-	/// assuming no collisions. 
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public class NameHashIntCacheLRU : NameIntCacheLRU
-	{
+    /// <summary>
+    /// An an LRU cache of mapping from name to int.
+    /// Used to cache Ordinals of category paths.
+    /// It uses as key, hash of the path instead of the path.
+    /// This way the cache takes less RAM, but correctness depends on
+    /// assuming no collisions. 
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public class NameHashIntCacheLRU : NameIntCacheLRU
+    {
+        internal NameHashIntCacheLRU(int maxCacheSize)
+            : base(maxCacheSize)
+        {
+        }
 
-	  internal NameHashIntCacheLRU(int maxCacheSize) : base(maxCacheSize)
-	  {
-	  }
+        internal override object Key(FacetLabel name)
+        {
+            return new long?(name.LongHashCode());
+        }
 
-	  internal override object Key(FacetLabel name)
-	  {
-		return new long?(name.LongHashCode());
-	  }
-
-	  internal override object Key(FacetLabel name, int prefixLen)
-	  {
-		return new long?(name.Subpath(prefixLen).LongHashCode());
-	  }
-
-	}
-
+        internal override object Key(FacetLabel name, int prefixLen)
+        {
+            return new long?(name.Subpath(prefixLen).LongHashCode());
+        }
+    }
 }

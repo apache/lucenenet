@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestPayloadsOnVectors : LuceneTestCase
     {
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
         public virtual void TestMixupMultiValued()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;
@@ -138,7 +139,7 @@ namespace Lucene.Net.Index
         public virtual void TestPayloadsWithoutPositions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;

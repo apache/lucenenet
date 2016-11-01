@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.tr
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Tr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,56 +20,51 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestTurkishAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new TurkishAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestTurkishAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new TurkishAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new TurkishAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "ağacı", "ağaç");
+            CheckOneTerm(a, "ağaç", "ağaç");
+            // stopword
+            AssertAnalyzesTo(a, "dolayı", new string[] { });
+            // apostrophes
+            CheckOneTerm(a, "Kıbrıs'ta", "kıbrıs");
+            AssertAnalyzesTo(a, "Van Gölü'ne", new string[] { "van", "göl" });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new TurkishAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "ağacı", "ağaç");
-		checkOneTerm(a, "ağaç", "ağaç");
-		// stopword
-		assertAnalyzesTo(a, "dolayı", new string[] {});
-		// apostrophes
-		checkOneTerm(a, "Kıbrıs'ta", "kıbrıs");
-		assertAnalyzesTo(a, "Van Gölü'ne", new string[]{"van", "göl"});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("ağacı"), false);
+            Analyzer a = new TurkishAnalyzer(TEST_VERSION_CURRENT, TurkishAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "ağacı", "ağacı");
+            CheckOneTerm(a, "ağaç", "ağaç");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("ağacı"), false);
-		Analyzer a = new TurkishAnalyzer(TEST_VERSION_CURRENT, TurkishAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "ağacı", "ağacı");
-		checkOneTerm(a, "ağaç", "ağaç");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new TurkishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new TurkishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

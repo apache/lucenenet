@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,24 +19,24 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Sorts SuggestWord instances
     /// </summary>
-    /// <seealso cref= org.apache.lucene.search.spell.SuggestWordScoreComparator </seealso>
-    /// <seealso cref= org.apache.lucene.search.spell.SuggestWordFrequencyComparator
-    ///  </seealso>
+    /// <seealso cref="SuggestWordScoreComparator"/>
+    /// <seealso cref="SuggestWordFrequencyComparator"/>
     public sealed class SuggestWordQueue : PriorityQueue<SuggestWord>
     {
         /// <summary>
         /// Default comparator: score then frequency. </summary>
-        /// <seealso cref= SuggestWordScoreComparator </seealso>
+        /// <seealso cref="SuggestWordScoreComparator"/>
         public static readonly IComparer<SuggestWord> DEFAULT_COMPARATOR = new SuggestWordScoreComparator();
 
 
         private readonly IComparer<SuggestWord> comparator;
 
         /// <summary>
-        /// Use the <seealso cref="#DEFAULT_COMPARATOR"/> </summary>
+        /// Use the <see cref="DEFAULT_COMPARATOR"/> </summary>
         /// <param name="size"> The size of the queue </param>
         public SuggestWordQueue(int size)
             : base(size)

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Store;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,23 +21,22 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// This is a very efficient LabelToOrdinal implementation that uses a
-    /// CharBlockArray to store all labels and a configurable number of HashArrays to
+    /// This is a very efficient <see cref="LabelToOrdinal"/> implementation that uses a
+    /// <see cref="CharBlockArray"/> to store all labels and a configurable number of <see cref="HashArray"/>s to
     /// reference the labels.
     /// <para>
-    /// Since the HashArrays don't handle collisions, a <seealso cref="CollisionMap"/> is used
+    /// Since the <see cref="HashArray"/>s don't handle collisions, a <see cref="CollisionMap"/> is used
     /// to store the colliding labels.
     /// </para>
     /// <para>
     /// This data structure grows by adding a new HashArray whenever the number of
-    /// collisions in the <seealso cref="CollisionMap"/> exceeds {@code loadFactor} * 
-    /// <seealso cref="#getMaxOrdinal()"/>. Growing also includes reinserting all colliding
-    /// labels into the HashArrays to possibly reduce the number of collisions.
+    /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/> * 
+    /// <see cref="GetMaxOrdinal()"/>. Growing also includes reinserting all colliding
+    /// labels into the <see cref="HashArray"/>s to possibly reduce the number of collisions.
     /// 
-    /// For setting the {@code loadFactor} see 
-    /// <seealso cref="#CompactLabelToOrdinal(int, float, int)"/>. 
+    /// For setting the <see cref="loadFactor"/> see 
+    /// <see cref="CompactLabelToOrdinal(int, float, int)"/>. 
     /// 
     /// </para>
     /// <para>
@@ -53,7 +50,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class CompactLabelToOrdinal : LabelToOrdinal
     {
-
         /// <summary>
         /// Default maximum load factor. </summary>
         public const float DefaultLoadFactor = 0.15f;
@@ -70,10 +66,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private float loadFactor;
 
         /// <summary>
-        /// How many labels. </summary>
-        public virtual int SizeOfMap()
+        /// How many labels. 
+        /// </summary>
+        public virtual int SizeOfMap
         {
-            return this.collisionMap.Size();
+            get
+            {
+                return this.collisionMap.Count;
+            }
         }
 
         private CompactLabelToOrdinal()
@@ -81,10 +81,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public CompactLabelToOrdinal(int initialCapacity, float loadFactor, int numHashArrays)
         {
-
             this.hashArrays = new HashArray[numHashArrays];
 
             this.capacity = DetermineCapacity((int)Math.Pow(2, numHashArrays), initialCapacity);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public override void AddLabel(FacetLabel label, int ordinal)
         {
-            if (collisionMap.Size() > threshold)
+            if (collisionMap.Count > threshold)
             {
                 Grow();
             }
@@ -210,10 +210,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
 
             CollisionMap oldCollisionMap = this.collisionMap;
-            this.collisionMap = new CollisionMap(oldCollisionMap.Capacity(), this.labelRepository);
+            this.collisionMap = new CollisionMap(oldCollisionMap.Capacity, this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
-            var it = oldCollisionMap.entryIterator();
+            var it = oldCollisionMap.GetEnumerator();
 
             while (it.MoveNext())
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             this.collisionMap.AddLabelOffset(hash, knownOffset, cid);
 
-            if (this.collisionMap.Size() > this.threshold)
+            if (this.collisionMap.Count > this.threshold)
             {
                 Grow();
             }
@@ -295,7 +295,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Returns index for hash code h. </summary>
+        /// Returns index for hash code h.
+        /// </summary>
         internal static int IndexFor(int h, int length)
         {
             return h & (length - 1);
@@ -361,42 +362,39 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// this package. Memory is consumed mainly by three structures: the hash arrays,
         /// label repository and collision map.
         /// </summary>
-        internal virtual int MemoryUsage
+        internal virtual int GetMemoryUsage()
         {
-            get
+            int memoryUsage = 0;
+            if (this.hashArrays != null)
             {
-                int memoryUsage = 0;
-                if (this.hashArrays != null)
+                // HashArray capacity is instance-specific.
+                foreach (HashArray ha in this.hashArrays)
                 {
-                    // HashArray capacity is instance-specific.
-                    foreach (HashArray ha in this.hashArrays)
-                    {
-                        // Each has 2 capacity-length arrays of ints.
-                        memoryUsage += (ha.capacity * 2 * 4) + 4;
-                    }
+                    // Each has 2 capacity-length arrays of ints.
+                    memoryUsage += (ha.capacity * 2 * 4) + 4;
                 }
-                if (this.labelRepository != null)
-                {
-                    // All blocks are the same size.
-                    int blockSize = this.labelRepository.blockSize;
-                    // Each block has room for blockSize UTF-16 chars.
-                    int actualBlockSize = (blockSize * 2) + 4;
-                    memoryUsage += this.labelRepository.blocks.Count * actualBlockSize;
-                    memoryUsage += 8; // Two int values for array as a whole.
-                }
-                if (this.collisionMap != null)
-                {
-                    memoryUsage += this.collisionMap.MemoryUsage;
-                }
-                return memoryUsage;
             }
+            if (this.labelRepository != null)
+            {
+                // All blocks are the same size.
+                int blockSize = this.labelRepository.blockSize;
+                // Each block has room for blockSize UTF-16 chars.
+                int actualBlockSize = (blockSize * 2) + 4;
+                memoryUsage += this.labelRepository.blocks.Count * actualBlockSize;
+                memoryUsage += 8; // Two int values for array as a whole.
+            }
+            if (this.collisionMap != null)
+            {
+                memoryUsage += this.collisionMap.GetMemoryUsage();
+            }
+            return memoryUsage;
         }
 
         /// <summary>
         /// Opens the file and reloads the CompactLabelToOrdinal. The file it expects
-        /// is generated from the <seealso cref="#flush(File)"/> command.
+        /// is generated from the <see cref="Flush(Stream)"/> command.
         /// </summary>
-        public static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
+        internal static CompactLabelToOrdinal Open(FileInfo file, float loadFactor, int numHashArrays)
         {
             /// <summary>
             /// Part of the file is the labelRepository, which needs to be rehashed
@@ -411,7 +409,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             BinaryReader dis = null;
             try
             {
-                dis = new BinaryReader(new FileStream(file,FileMode.Open,FileAccess.Read));
+                dis = new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read));
 
                 // TaxiReader needs to load the "counter" or occupancy (L2O) to know
                 // the next unique facet. we used to load the delimiter too, but
@@ -422,7 +420,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 l2o.Init();
 
                 // now read the chars
-                l2o.labelRepository = CharBlockArray.Open(dis);
+                l2o.labelRepository = CharBlockArray.Open(dis.BaseStream);
 
                 l2o.collisionMap = new CollisionMap(l2o.labelRepository);
 
@@ -443,13 +441,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     // identical code to CategoryPath.hashFromSerialized. since we need to
                     // advance offset, we cannot call the method directly. perhaps if we
                     // could pass a mutable Integer or something...
-                    int length = (short)l2o.labelRepository.CharAt(offset++);
+                    int length = (ushort)l2o.labelRepository.CharAt(offset++);
                     int hash = length;
                     if (length != 0)
                     {
                         for (int i = 0; i < length; i++)
                         {
-                            int len = (short)l2o.labelRepository.CharAt(offset++);
+                            int len = (ushort)l2o.labelRepository.CharAt(offset++);
                             hash = hash * 31 + l2o.labelRepository.SubSequence(offset, offset + len).GetHashCode();
                             offset += len;
                         }
@@ -465,9 +463,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
 
             }
-            catch (DllNotFoundException)
+            catch (SerializationException se)
             {
-                throw new IOException("Invalid file format. Cannot deserialize.");
+                throw new IOException("Invalid file format. Cannot deserialize.", se);
             }
             finally
             {
@@ -482,24 +480,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         }
 
-        public virtual void Flush(Stream stream)
+        internal virtual void Flush(Stream stream)
         {
-
-            OutputStreamDataOutput dos = new OutputStreamDataOutput(stream);
-
-            try
+            using (BinaryWriter dos = new BinaryWriter(stream))
             {
-                dos.WriteInt(this.counter);
+                dos.Write(this.counter);
 
                 // write the labelRepository
-                this.labelRepository.Flush(dos);
-                // Closes the data output stream
-                dos.Dispose();
-
-            }
-            finally
-            {
-                dos.Dispose();
+                this.labelRepository.Flush(dos.BaseStream);
             }
         }
 
@@ -518,5 +506,4 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
     }
-
 }

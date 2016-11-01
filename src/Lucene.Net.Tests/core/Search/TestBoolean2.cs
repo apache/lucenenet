@@ -57,8 +57,12 @@ namespace Lucene.Net.Search
         private static Directory Dir2;
         private static int MulFactor;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -91,7 +95,7 @@ namespace Lucene.Net.Search
                     Console.WriteLine("\nTEST: cycle...");
                 }
                 Directory copy = new MockDirectoryWrapper(Random(), new RAMDirectory(Dir2, IOContext.DEFAULT));
-                RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2);
+                RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2, Similarity, TimeZone);
                 w.AddIndexes(copy);
                 docCount = w.MaxDoc();
                 w.Dispose();
@@ -280,7 +284,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Ignore]
         [Test]
         public virtual void TestRandomQueries()
         {
@@ -302,12 +305,12 @@ namespace Lucene.Net.Search
                     // match up.
                     Sort sort = Sort.INDEXORDER;
 
-                    QueryUtils.Check(Random(), q1, Searcher); // baseline sim
+                    QueryUtils.Check(Random(), q1, Searcher, Similarity); // baseline sim
                     try
                     {
                         // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
                         Searcher.Similarity = BigSearcher.Similarity; // random sim
-                        QueryUtils.Check(Random(), q1, Searcher);
+                        QueryUtils.Check(Random(), q1, Searcher, Similarity);
                     }
                     finally
                     {

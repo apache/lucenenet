@@ -1,8 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Globalization;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ar
+namespace Lucene.Net.Analysis.Ar
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -19,30 +24,25 @@ namespace org.apache.lucene.analysis.ar
 	 * limitations under the License.
 	 */
 
-	using LetterTokenizer = org.apache.lucene.analysis.core.LetterTokenizer;
-	using CharTokenizer = org.apache.lucene.analysis.util.CharTokenizer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer; // javadoc @link
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
-	/// Tokenizer that breaks text into runs of letters and diacritics.
-	/// <para>
-	/// The problem with the standard Letter tokenizer is that it fails on diacritics.
-	/// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
-	/// </para>
-	/// <para>
-	/// <a name="version"/>
-	/// You must specify the required <seealso cref="Version"/> compatibility when creating
-	/// <seealso cref="ArabicLetterTokenizer"/>:
-	/// <ul>
-	/// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-	/// detect token characters. See <seealso cref="#isTokenChar(int)"/> and
-	/// <seealso cref="#normalize(int)"/> for details.</li>
-	/// </ul>
-	/// </para>
-	/// </summary>
-	/// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead. 
-	[Obsolete("(3.1) Use <seealso cref="StandardTokenizer"/> instead.")]
+    /// <summary>
+    /// Tokenizer that breaks text into runs of letters and diacritics.
+    /// <para>
+    /// The problem with the standard Letter tokenizer is that it fails on diacritics.
+    /// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
+    /// </para>
+    /// <para>
+    /// <a name="version"/>
+    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// <seealso cref="ArabicLetterTokenizer"/>:
+    /// <ul>
+    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
+    /// detect token characters. See <seealso cref="#isTokenChar(int)"/> and
+    /// <seealso cref="#normalize(int)"/> for details.</li>
+    /// </ul>
+    /// </para>
+    /// </summary>
+    /// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead. 
+    [Obsolete("(3.1) Use StandardTokenizer instead.")]
 	public class ArabicLetterTokenizer : LetterTokenizer
 	{
 	  /// <summary>
@@ -52,7 +52,8 @@ namespace org.apache.lucene.analysis.ar
 	  /// </param>
 	  /// <param name="in">
 	  ///          the input to split up into tokens </param>
-	  public ArabicLetterTokenizer(Version matchVersion, Reader @in) : base(matchVersion, @in)
+	  public ArabicLetterTokenizer(LuceneVersion matchVersion, TextReader @in) 
+            : base(matchVersion, @in)
 	  {
 	  }
 
@@ -66,18 +67,17 @@ namespace org.apache.lucene.analysis.ar
 	  ///          the attribute factory to use for this Tokenizer </param>
 	  /// <param name="in">
 	  ///          the input to split up into tokens </param>
-	  public ArabicLetterTokenizer(Version matchVersion, AttributeFactory factory, Reader @in) : base(matchVersion, factory, @in)
+	  public ArabicLetterTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in) 
+            : base(matchVersion, factory, @in)
 	  {
 	  }
 
 	  /// <summary>
 	  /// Allows for Letter category or NonspacingMark category </summary>
 	  /// <seealso cref= org.apache.lucene.analysis.core.LetterTokenizer#isTokenChar(int) </seealso>
-	  protected internal override bool isTokenChar(int c)
+	  protected override bool IsTokenChar(int c)
 	  {
-		return base.isTokenChar(c) || char.getType(c) == char.NON_SPACING_MARK;
-	  }
-
-	}
-
+            return base.IsTokenChar(c) || Character.GetType(c) == UnicodeCategory.NonSpacingMark;
+        }
+    }
 }

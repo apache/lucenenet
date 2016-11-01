@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
         }
 
-        public int PositionLength
+        public virtual int PositionLength
         {
             set
             {

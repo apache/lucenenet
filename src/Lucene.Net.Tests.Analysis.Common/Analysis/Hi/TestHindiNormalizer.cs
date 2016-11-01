@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.hi
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,81 +21,73 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test HindiNormalizer
+    /// </summary>
+    public class TestHindiNormalizer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// Test some basic normalization, with an example from the paper.
+        /// </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Check("अँगरेज़ी", "अंगरेजि");
+            Check("अँगरेजी", "अंगरेजि");
+            Check("अँग्रेज़ी", "अंगरेजि");
+            Check("अँग्रेजी", "अंगरेजि");
+            Check("अंगरेज़ी", "अंगरेजि");
+            Check("अंगरेजी", "अंगरेजि");
+            Check("अंग्रेज़ी", "अंगरेजि");
+            Check("अंग्रेजी", "अंगरेजि");
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        [Test]
+        public virtual void TestDecompositions()
+        {
+            // removing nukta dot
+            Check("क़िताब", "किताब");
+            Check("फ़र्ज़", "फरज");
+            Check("क़र्ज़", "करज");
+            // some other composed nukta forms
+            Check("ऱऴख़ग़ड़ढ़य़", "रळखगडढय");
+            // removal of format (ZWJ/ZWNJ)
+            Check("शार्‍मा", "शारमा");
+            Check("शार्‌मा", "शारमा");
+            // removal of chandra
+            Check("ॅॆॉॊऍऎऑऒ\u0972", "ेेोोएएओओअ");
+            // vowel shortening
+            Check("आईऊॠॡऐऔीूॄॣैौ", "अइउऋऌएओिुृॢेो");
+        }
+        
+        private void Check(string input, string output)
+        {
+            Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
+            TokenFilter tf = new HindiNormalizationFilter(tokenizer);
+            AssertTokenStreamContents(tf, new string[] { output });
+        }
 
-	/// <summary>
-	/// Test HindiNormalizer
-	/// </summary>
-	public class TestHindiNormalizer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// Test some basic normalization, with an example from the paper.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		check("अँगरेज़ी", "अंगरेजि");
-		check("अँगरेजी", "अंगरेजि");
-		check("अँग्रेज़ी", "अंगरेजि");
-		check("अँग्रेजी", "अंगरेजि");
-		check("अंगरेज़ी", "अंगरेजि");
-		check("अंगरेजी", "अंगरेजि");
-		check("अंग्रेज़ी", "अंगरेजि");
-		check("अंग्रेजी", "अंगरेजि");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDecompositions() throws java.io.IOException
-	  public virtual void testDecompositions()
-	  {
-		// removing nukta dot
-		check("क़िताब", "किताब");
-		check("फ़र्ज़", "फरज");
-		check("क़र्ज़", "करज");
-		// some other composed nukta forms
-		check("ऱऴख़ग़ड़ढ़य़", "रळखगडढय");
-		// removal of format (ZWJ/ZWNJ)
-		check("शार्‍मा", "शारमा");
-		check("शार्‌मा", "शारमा");
-		// removal of chandra
-		check("ॅॆॉॊऍऎऑऒ\u0972", "ेेोोएएओओअ");
-		// vowel shortening
-		check("आईऊॠॡऐऔीूॄॣैौ", "अइउऋऌएओिुृॢेो");
-	  }
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(String input, String output) throws java.io.IOException
-	  private void check(string input, string output)
-	  {
-		Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
-		TokenFilter tf = new HindiNormalizationFilter(tokenizer);
-		assertTokenStreamContents(tf, new string[] {output});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestHindiNormalizer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestHindiNormalizer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestHindiNormalizer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestHindiNormalizer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new HindiNormalizationFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new HindiNormalizationFilter(tokenizer));
+            }
+        }
+    }
 }

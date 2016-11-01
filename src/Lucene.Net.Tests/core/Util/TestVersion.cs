@@ -55,15 +55,15 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(LuceneVersion.LUCENE_CURRENT, values[i], "Last constant must be LUCENE_CURRENT");
                 }
-                /*bool dep = typeof(Version).GetField(values[i].Name()).isAnnotationPresent(typeof(Deprecated));
+                bool dep = typeof(LuceneVersion).GetField(values[i].ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false).Any();
                 if (i + 2 != values.Length)
                 {
-                  Assert.IsTrue(values[i].name() + " should be deprecated", dep);
+                    assertTrue(values[i].ToString() + " should be deprecated", dep);
                 }
                 else
                 {
-                  Assert.IsFalse(values[i].name() + " should not be deprecated", dep);
-                }*/
+                    assertFalse(values[i].ToString() + " should not be deprecated", dep);
+                }
             }
         }
 

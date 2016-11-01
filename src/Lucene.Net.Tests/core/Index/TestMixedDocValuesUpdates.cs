@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestMixedDocValuesUpdates : LuceneTestCase
     {
@@ -488,7 +489,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(80000)]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

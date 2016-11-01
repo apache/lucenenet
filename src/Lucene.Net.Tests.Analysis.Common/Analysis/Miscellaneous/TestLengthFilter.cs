@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,69 +23,58 @@
 	 * limitations under the License.
 	 */
 
-	using org.apache.lucene.analysis;
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using Version = org.apache.lucene.util.Version;
+    public class TestLengthFilter : BaseTokenStreamTestCase
+    {
 
+        [Test]
+        public virtual void TestFilterNoPosIncr()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
+            LengthFilter filter = new LengthFilter(LuceneVersion.LUCENE_43, false, stream, 2, 6);
+#pragma warning restore 612, 618
+            AssertTokenStreamContents(filter, new string[] { "short", "ab", "foo" }, new int[] { 1, 1, 1 });
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using Test = org.junit.Test;
+        [Test]
+        public virtual void TestFilterWithPosIncr()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
+            LengthFilter filter = new LengthFilter(TEST_VERSION_CURRENT, stream, 2, 6);
+            AssertTokenStreamContents(filter, new string[] { "short", "ab", "foo" }, new int[] { 1, 4, 2 });
+        }
 
-	public class TestLengthFilter : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFilterNoPosIncr() throws Exception
-	  public virtual void testFilterNoPosIncr()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
-		LengthFilter filter = new LengthFilter(Version.LUCENE_43, false, stream, 2, 6);
-		assertTokenStreamContents(filter, new string[]{"short", "ab", "foo"}, new int[]{1, 1, 1});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestLengthFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFilterWithPosIncr() throws Exception
-	  public virtual void testFilterWithPosIncr()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
-		LengthFilter filter = new LengthFilter(TEST_VERSION_CURRENT, stream, 2, 6);
-		assertTokenStreamContents(filter, new string[]{"short", "ab", "foo"}, new int[]{1, 4, 2});
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestLengthFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new LengthFilter(TEST_VERSION_CURRENT, tokenizer, 0, 5));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestLengthFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestLengthFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new LengthFilter(TEST_VERSION_CURRENT, tokenizer, 0, 5));
-		  }
-	  }
-
-	  /// <summary>
-	  /// checking the validity of constructor arguments
-	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected = IllegalArgumentException.class) public void testIllegalArguments() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public virtual void testIllegalArguments()
-	  {
-		new LengthFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments")), -4, -1);
-	  }
-	}
-
+        /// <summary>
+        /// checking the validity of constructor arguments
+        /// </summary>
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public virtual void TestIllegalArguments()
+        {
+            new LengthFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments")), -4, -1);
+        }
+    }
 }

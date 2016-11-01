@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.th
+namespace Lucene.Net.Analysis.Th
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,37 +22,31 @@ namespace org.apache.lucene.analysis.th
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="ThaiTokenizer"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_thai" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.ThaiTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class ThaiTokenizerFactory : TokenizerFactory
+    {
 
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
+        /// <summary>
+        /// Creates a new ThaiTokenizerFactory </summary>
+        public ThaiTokenizerFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="ThaiTokenizer"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_thai" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.ThaiTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class ThaiTokenizerFactory : TokenizerFactory
-	{
-
-	  /// <summary>
-	  /// Creates a new ThaiTokenizerFactory </summary>
-	  public ThaiTokenizerFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override Tokenizer create(AttributeSource.AttributeFactory factory, Reader reader)
-	  {
-		return new ThaiTokenizer(factory, reader);
-	  }
-	}
-
-
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader reader)
+        {
+            return new ThaiTokenizer(factory, reader);
+        }
+    }
 }

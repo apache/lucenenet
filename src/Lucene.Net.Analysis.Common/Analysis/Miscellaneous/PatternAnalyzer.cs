@@ -1,13 +1,14 @@
-﻿using System;
-using System.IO;
-using Lucene.Net.Analysis.Core;
+﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +25,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a
     /// <seealso cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <seealso cref="Pattern"/>
@@ -61,19 +63,65 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// <code>"\\W+"</code>; Divides text at non-letters (NOT Character.isLetter(c)) </summary>
-        public static readonly Pattern NON_WORD_PATTERN = Pattern.compile("\\W+");
+        public static readonly Regex NON_WORD_PATTERN = new Regex("\\W+", RegexOptions.Compiled);
 
         /// <summary>
         /// <code>"\\s+"</code>; Divides text at whitespaces (Character.isWhitespace(c)) </summary>
-        public static readonly Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+        public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
-        private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.asList("a", "about", "above", "across", "adj", "after", "afterwards", "again", "against", "albeit", "all", "almost", "alone", "along", "already", "also", "although", "always", "among", "amongst", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anywhere", "are", "around", "as", "at", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "both", "but", "by", "can", "cannot", "co", "could", "down", "during", "each", "eg", "either", "else", "elsewhere", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "first", "for", "former", "formerly", "from", "further", "had", "has", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "i", "ie", "if", "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last", "latter", "latterly", "least", "less", "ltd", "many", "may", "me", "meanwhile", "might", "more", "moreover", "most", "mostly", "much", "must", "my", "myself", "namely", "neither", "never", "nevertheless", "next", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps", "rather", "s", "same", "seem", "seemed", "seeming", "seems", "several", "she", "should", "since", "so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "t", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefor", "therein", "thereupon", "these", "they", "this", "those", "though", "through", "throughout", "thru", "thus", "to", "together", "too", "toward", "towards", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what", "whatever", "whatsoever", "when", "whence", "whenever", "whensoever", "where", "whereafter", "whereas", "whereat", "whereby", "wherefrom", "wherein", "whereinto", "whereof", "whereon", "whereto", "whereunto", "whereupon", "wherever", "wherewith", "whether", "which", "whichever", "whichsoever", "while", "whilst", "whither", "who", "whoever", "whole", "whom", "whomever", "whomsoever", "whose", "whosoever", "why", "will", "with", "within", "without", "would", "xsubj", "xcal", "xauthor", "xother ", "xnote", "yet", "you", "your", "yours", "yourself", "yourselves"), true));
+        private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS = 
+            CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+                Arrays.AsList(
+                    "a", "about", "above", "across", "adj", "after", "afterwards",
+                    "again", "against", "albeit", "all", "almost", "alone", "along",
+                    "already", "also", "although", "always", "among", "amongst", "an",
+                    "and", "another", "any", "anyhow", "anyone", "anything",
+                    "anywhere", "are", "around", "as", "at", "be", "became", "because",
+                    "become", "becomes", "becoming", "been", "before", "beforehand",
+                    "behind", "being", "below", "beside", "besides", "between",
+                    "beyond", "both", "but", "by", "can", "cannot", "co", "could",
+                    "down", "during", "each", "eg", "either", "else", "elsewhere",
+                    "enough", "etc", "even", "ever", "every", "everyone", "everything",
+                    "everywhere", "except", "few", "first", "for", "former",
+                    "formerly", "from", "further", "had", "has", "have", "he", "hence",
+                    "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers",
+                    "herself", "him", "himself", "his", "how", "however", "i", "ie", "if",
+                    "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last",
+                    "latter", "latterly", "least", "less", "ltd", "many", "may", "me",
+                    "meanwhile", "might", "more", "moreover", "most", "mostly", "much",
+                    "must", "my", "myself", "namely", "neither", "never",
+                    "nevertheless", "next", "no", "nobody", "none", "noone", "nor",
+                    "not", "nothing", "now", "nowhere", "of", "off", "often", "on",
+                    "once one", "only", "onto", "or", "other", "others", "otherwise",
+                    "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps",
+                    "rather", "s", "same", "seem", "seemed", "seeming", "seems",
+                    "several", "she", "should", "since", "so", "some", "somehow",
+                    "someone", "something", "sometime", "sometimes", "somewhere",
+                    "still", "such", "t", "than", "that", "the", "their", "them",
+                    "themselves", "then", "thence", "there", "thereafter", "thereby",
+                    "therefor", "therein", "thereupon", "these", "they", "this",
+                    "those", "though", "through", "throughout", "thru", "thus", "to",
+                    "together", "too", "toward", "towards", "under", "until", "up",
+                    "upon", "us", "very", "via", "was", "we", "well", "were", "what",
+                    "whatever", "whatsoever", "when", "whence", "whenever",
+                    "whensoever", "where", "whereafter", "whereas", "whereat",
+                    "whereby", "wherefrom", "wherein", "whereinto", "whereof",
+                    "whereon", "whereto", "whereunto", "whereupon", "wherever",
+                    "wherewith", "whether", "which", "whichever", "whichsoever",
+                    "while", "whilst", "whither", "who", "whoever", "whole", "whom",
+                    "whomever", "whomsoever", "whose", "whosoever", "why", "will",
+                    "with", "within", "without", "would", "xsubj", "xcal", "xauthor",
+                    "xother ", "xnote", "yet", "you", "your", "yours", "yourself",
+                    "yourselves"
+                
+                    ), true));
 
         /// <summary>
         /// A lower-casing word analyzer with English stop words (can be shared
         /// freely across threads without harm); global per class loader.
         /// </summary>
-        public static readonly PatternAnalyzer DEFAULT_ANALYZER = new PatternAnalyzer(LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        public static readonly PatternAnalyzer DEFAULT_ANALYZER = new PatternAnalyzer(
+            LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         /// <summary>
         /// A lower-casing word analyzer with <b>extended </b> English stop words
@@ -82,9 +130,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// http://thomas.loc.gov/home/stopwords.html, see
         /// http://thomas.loc.gov/home/all.about.inquery.html
         /// </summary>
-        public static readonly PatternAnalyzer EXTENDED_ANALYZER = new PatternAnalyzer(LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, EXTENDED_ENGLISH_STOP_WORDS);
+        public static readonly PatternAnalyzer EXTENDED_ANALYZER = new PatternAnalyzer(
+            LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, EXTENDED_ENGLISH_STOP_WORDS);
 
-        private readonly Pattern pattern;
+        private readonly Regex pattern;
         private readonly bool toLowerCase;
         private readonly CharArraySet stopWords;
 
@@ -108,23 +157,23 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
         ///            or <a href="http://www.unine.ch/info/clef/">other stop words
         ///            lists </a>. </param>
-        public PatternAnalyzer(LuceneVersion matchVersion, Pattern pattern, bool toLowerCase, CharArraySet stopWords)
+        public PatternAnalyzer(LuceneVersion matchVersion, Regex pattern, bool toLowerCase, CharArraySet stopWords)
         {
             if (pattern == null)
             {
                 throw new System.ArgumentException("pattern must not be null");
             }
 
-            if (eqPattern(NON_WORD_PATTERN, pattern))
+            if (EqPattern(NON_WORD_PATTERN, pattern))
             {
                 pattern = NON_WORD_PATTERN;
             }
-            else if (eqPattern(WHITESPACE_PATTERN, pattern))
+            else if (EqPattern(WHITESPACE_PATTERN, pattern))
             {
                 pattern = WHITESPACE_PATTERN;
             }
 
-            if (stopWords != null && stopWords.Size == 0)
+            if (stopWords != null && stopWords.Count == 0)
             {
                 stopWords = null;
             }
@@ -146,7 +195,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="text">
         ///            the string to tokenize </param>
         /// <returns> a new token stream </returns>
-        public TokenStreamComponents createComponents(string fieldName, TextReader reader, string text)
+        public TokenStreamComponents CreateComponents(string fieldName, TextReader reader, string text)
         {
             // Ideally the Analyzer superclass should have a method with the same signature, 
             // with a default impl that simply delegates to the StringReader flavour. 
@@ -165,7 +214,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             Tokenizer tokenizer = new PatternTokenizer(reader, pattern, toLowerCase);
-            TokenStream result = (stopWords != null) ? new StopFilter(matchVersion, tokenizer, stopWords) : tokenizer;
+            TokenStream result = (stopWords != null) ? (TokenStream)new StopFilter(matchVersion, tokenizer, stopWords) : tokenizer;
             return new TokenStreamComponents(tokenizer, result);
         }
 
@@ -181,7 +230,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> a new token stream </returns>
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            return createComponents(fieldName, reader, null);
+            return CreateComponents(fieldName, reader, null);
         }
 
         /// <summary>
@@ -208,7 +257,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             var p2 = other as PatternAnalyzer;
             if (p2 != null)
             {
-                return toLowerCase == p2.toLowerCase && eqPattern(pattern, p2.pattern) && eq(stopWords, p2.stopWords);
+                return toLowerCase == p2.toLowerCase && EqPattern(pattern, p2.pattern) && Eq(stopWords, p2.stopWords);
             }
             return false;
         }
@@ -229,8 +278,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             int h = 1;
-            h = 31 * h + pattern.pattern().GetHashCode();
-            h = 31 * h + pattern.flags();
+            h = 31 * h + pattern.ToString().GetHashCode();
+            h = 31 * h + (int)pattern.Options;
             h = 31 * h + (toLowerCase ? 1231 : 1237);
             h = 31 * h + (stopWords != null ? stopWords.GetHashCode() : 0);
             return h;
@@ -238,16 +287,16 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// equality where o1 and/or o2 can be null </summary>
-        private static bool eq(object o1, object o2)
+        private static bool Eq(object o1, object o2)
         {
             return (o1 == o2) || (o1 != null ? o1.Equals(o2) : false);
         }
 
         /// <summary>
         /// assumes p1 and p2 are not null </summary>
-        private static bool eqPattern(Pattern p1, Pattern p2)
+        private static bool EqPattern(Regex p1, Regex p2)
         {
-            return p1 == p2 || (p1.flags() == p2.flags() && p1.pattern().Equals(p2.pattern()));
+            return p1 == p2 || (p1.Options == p2.Options && p1.ToString().Equals(p2.ToString()));
         }
 
         /// <summary>
@@ -271,7 +320,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                 len = 0;
                 int n;
-                while ((n = input.Read(buffer)) >= 0)
+                while ((n = input.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     if (len + n > output.Length) // grow capacity
                     {
@@ -306,23 +355,23 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         private sealed class PatternTokenizer : Tokenizer
         {
-            private readonly Pattern pattern;
+            private readonly Regex pattern;
             private string str;
             private readonly bool toLowerCase;
-            private Matcher matcher;
+            private Match matcher;
             private int pos = 0;
             private bool initialized = false;
-            private static readonly Locale locale = Locale.Default;
+            private bool isReset = false; // Flag to keep track of the first match vs subsequent matches
             private readonly ICharTermAttribute termAtt;
             private readonly IOffsetAttribute offsetAtt;
 
-            public PatternTokenizer(TextReader input, Pattern pattern, bool toLowerCase)
+            public PatternTokenizer(TextReader input, Regex pattern, bool toLowerCase)
                 : base(input)
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
                 this.pattern = pattern;
-                this.matcher = pattern.matcher("");
+                this.matcher = pattern.Match("");
                 this.toLowerCase = toLowerCase;
             }
 
@@ -340,28 +389,33 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 while (true) // loop takes care of leading and trailing boundary cases
                 {
                     int start = pos;
-                    int end_Renamed;
-                    bool isMatch = matcher.find();
+                    int end;
+                    if (!isReset)
+                    {
+                        matcher = matcher.NextMatch();
+                    }
+                    isReset = false;
+                    bool isMatch = matcher.Success;
                     if (isMatch)
                     {
-                        end_Renamed = matcher.start();
-                        pos = matcher.end();
+                        end = matcher.Index;
+                        pos = matcher.Index + matcher.Length;
                     }
                     else
                     {
-                        end_Renamed = str.Length;
+                        end = str.Length;
                         matcher = null; // we're finished
                     }
 
-                    if (start != end_Renamed) // non-empty match (header/trailer)
+                    if (start != end) // non-empty match (header/trailer)
                     {
-                        string text = str.Substring(start, end_Renamed - start);
+                        string text = str.Substring(start, end - start);
                         if (toLowerCase)
                         {
-                            text = text.ToLower(locale);
+                            text = text.ToLower();
                         }
                         termAtt.SetEmpty().Append(text);
-                        offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(end_Renamed));
+                        offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(end));
                         return true;
                     }
                     if (!isMatch)
@@ -389,7 +443,18 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 base.Reset();
                 this.str = PatternAnalyzer.ToString(input);
-                this.matcher = pattern.matcher(this.str);
+
+                // LUCENENET: Since we need to "reset" the Match
+                // object, we also need an "isReset" flag to indicate
+                // whether we are at the head of the match and to 
+                // take the appropriate measures to ensure we don't 
+                // overwrite our matcher variable with 
+                // matcher = matcher.NextMatch();
+                // before it is time. A string could potentially
+                // match on index 0, so we need another variable to
+                // manage this state.
+                this.matcher = pattern.Match(this.str);
+                this.isReset = true;
                 this.pos = 0;
                 this.initialized = true;
             }
@@ -410,7 +475,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
             private readonly bool isLetter;
             private readonly bool toLowerCase;
             private readonly CharArraySet stopWords;
-            private static readonly Locale locale = Locale.Default;
             private readonly ICharTermAttribute termAtt;
             private readonly IOffsetAttribute offsetAtt;
 
@@ -444,7 +508,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     // find beginning of token
                     text = null;
-                    while (i < len && !isTokenChar(s[i], letter))
+                    while (i < len && !IsTokenChar(s[i], letter))
                     {
                         i++;
                     }
@@ -452,7 +516,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     if (i < len) // found beginning; now find end of token
                     {
                         start = i;
-                        while (i < len && isTokenChar(s[i], letter))
+                        while (i < len && IsTokenChar(s[i], letter))
                         {
                             i++;
                         }
@@ -460,7 +524,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         text = s.Substring(start, i - start);
                         if (toLowerCase)
                         {
-                            text = text.ToLower(locale);
+                            text = text.ToLower();
                         }
                         //          if (toLowerCase) {            
                         ////            use next line once JDK 1.5 String.toLowerCase() performance regression is fixed
@@ -473,7 +537,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         //            text = s.substring(start, i);
                         //          }
                     }
-                } while (text != null && isStopWord(text));
+                } while (text != null && IsStopWord(text));
 
                 pos = i;
                 if (text == null)
@@ -493,12 +557,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.offsetAtt.SetOffset(CorrectOffset(finalOffset), CorrectOffset(finalOffset));
             }
 
-            private bool isTokenChar(char c, bool isLetter)
+            private bool IsTokenChar(char c, bool isLetter)
             {
                 return isLetter ? char.IsLetter(c) : !char.IsWhiteSpace(c);
             }
 
-            private bool isStopWord(string text)
+            private bool IsStopWord(string text)
             {
                 return stopWords != null && stopWords.Contains(text);
             }
@@ -544,6 +608,5 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
             }
         }
-
     }
 }

@@ -1,7 +1,13 @@
-﻿namespace org.apache.lucene.analysis.de
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.De
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,68 +24,58 @@
 	 * limitations under the License.
 	 */
 
+    public class TestGermanAnalyzer : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT);
+            CheckOneTerm(a, "Tisch", "tisch");
+            CheckOneTerm(a, "Tische", "tisch");
+            CheckOneTerm(a, "Tischen", "tisch");
+        }
 
-	using LowerCaseTokenizer = org.apache.lucene.analysis.core.LowerCaseTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("fischen");
+            GermanStemFilter filter = new GermanStemFilter(new SetKeywordMarkerFilter(new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader("Fischen Trinken")), set));
+            AssertTokenStreamContents(filter, new string[] { "fischen", "trink" });
+        }
 
-	public class TestGermanAnalyzer : BaseTokenStreamTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-	  public virtual void testReusableTokenStream()
-	  {
-		Analyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT);
-		checkOneTerm(a, "Tisch", "tisch");
-		checkOneTerm(a, "Tische", "tisch");
-		checkOneTerm(a, "Tischen", "tisch");
-	  }
+        [Test]
+        public virtual void TestStemExclusionTable()
+        {
+            GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, AsSet("tischen"), false));
+            CheckOneTerm(a, "tischen", "tischen");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("fischen");
-		GermanStemFilter filter = new GermanStemFilter(new SetKeywordMarkerFilter(new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader("Fischen Trinken")), set));
-		assertTokenStreamContents(filter, new string[] {"fischen", "trink"});
-	  }
+        /// <summary>
+        /// test some features of the new snowball filter
+        /// these only pass with LUCENE_CURRENT, not if you use o.a.l.a.de.GermanStemmer
+        /// </summary>
+        [Test]
+        public virtual void TestGermanSpecials()
+        {
+            GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT);
+            // a/o/u + e is equivalent to the umlaut form
+            CheckOneTerm(a, "Schaltflächen", "schaltflach");
+            CheckOneTerm(a, "Schaltflaechen", "schaltflach");
+            // here they are with the old stemmer
+#pragma warning disable 612, 618
+            a = new GermanAnalyzer(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
+            CheckOneTerm(a, "Schaltflächen", "schaltflach");
+            CheckOneTerm(a, "Schaltflaechen", "schaltflaech");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemExclusionTable() throws Exception
-	  public virtual void testStemExclusionTable()
-	  {
-		GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, asSet("tischen"), false));
-		checkOneTerm(a, "tischen", "tischen");
-	  }
-
-	  /// <summary>
-	  /// test some features of the new snowball filter
-	  /// these only pass with LUCENE_CURRENT, not if you use o.a.l.a.de.GermanStemmer
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testGermanSpecials() throws Exception
-	  public virtual void testGermanSpecials()
-	  {
-		GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT);
-		// a/o/u + e is equivalent to the umlaut form
-		checkOneTerm(a, "Schaltflächen", "schaltflach");
-		checkOneTerm(a, "Schaltflaechen", "schaltflach");
-		// here they are with the old stemmer
-		a = new GermanAnalyzer(Version.LUCENE_30);
-		checkOneTerm(a, "Schaltflächen", "schaltflach");
-		checkOneTerm(a, "Schaltflaechen", "schaltflaech");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new GermanAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new GermanAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

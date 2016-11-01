@@ -1,9 +1,8 @@
-﻿using System.Threading;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
+using System;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,50 +20,51 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Lucene.Net.Search;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using SearcherFactory = Lucene.Net.Search.SearcherFactory;
     using SearcherManager = Lucene.Net.Search.SearcherManager;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// Manages near-real-time reopen of both an IndexSearcher
-    /// and a TaxonomyReader.
+    /// Manages near-real-time reopen of both an <see cref="IndexSearcher"/>
+    /// and a <see cref="TaxonomyReader"/>.
     /// 
-    /// <para><b>NOTE</b>: If you call {@link
-    /// DirectoryTaxonomyWriter#replaceTaxonomy} then you must
-    /// open a new {@code SearcherTaxonomyManager} afterwards.
+    /// <para>
+    /// <b>NOTE</b>: If you call <see cref="DirectoryTaxonomyWriter.ReplaceTaxonomy"/>
+    /// then you must open a new <see cref="SearcherTaxonomyManager"/> afterwards.
     /// </para>
     /// </summary>
     public class SearcherTaxonomyManager : ReferenceManager<SearcherTaxonomyManager.SearcherAndTaxonomy>
     {
-
         /// <summary>
-        /// Holds a matched pair of <seealso cref="IndexSearcher"/> and
-        ///  <seealso cref="TaxonomyReader"/> 
+        /// Holds a matched pair of <see cref="IndexSearcher"/> and
+        /// <see cref="Taxonomy.TaxonomyReader"/> 
         /// </summary>
         public class SearcherAndTaxonomy
         {
             /// <summary>
-            /// Point-in-time <seealso cref="IndexSearcher"/>. </summary>
-            public readonly IndexSearcher searcher;
+            /// Point-in-time <see cref="IndexSearcher"/>.
+            /// </summary>
+            public IndexSearcher Searcher { get; private set; }
 
             /// <summary>
-            /// Matching point-in-time <seealso cref="DirectoryTaxonomyReader"/>. </summary>
-            public readonly DirectoryTaxonomyReader taxonomyReader;
+            /// Matching point-in-time <see cref="DirectoryTaxonomyReader"/>.
+            /// </summary>
+            public DirectoryTaxonomyReader TaxonomyReader { get; private set; }
 
             /// <summary>
-            /// Create a SearcherAndTaxonomy </summary>
+            /// Create a <see cref="SearcherAndTaxonomy"/>
+            /// </summary>
             public SearcherAndTaxonomy(IndexSearcher searcher, DirectoryTaxonomyReader taxonomyReader)
             {
-                this.searcher = searcher;
-                this.taxonomyReader = taxonomyReader;
+                this.Searcher = searcher;
+                this.TaxonomyReader = taxonomyReader;
             }
         }
 
@@ -74,9 +74,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Creates near-real-time searcher and taxonomy reader
-        ///  from the corresponding writers. 
+        /// from the corresponding writers. 
         /// </summary>
-        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
+        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, 
+            SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
         {
             if (searcherFactory == null)
             {
@@ -85,7 +86,8 @@ namespace Lucene.Net.Facet.Taxonomy
             this.searcherFactory = searcherFactory;
             this.taxoWriter = taxoWriter;
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
-            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer, applyAllDeletes)), taxoReader);
+            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(
+                searcherFactory, DirectoryReader.Open(writer, applyAllDeletes)), taxoReader);
             this.taxoEpoch = taxoWriter.TaxonomyEpoch;
         }
 
@@ -94,8 +96,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// 
         /// <para>
         /// <b>NOTE:</b> you should only use this constructor if you commit and call
-        /// <seealso cref="#maybeRefresh()"/> in the same thread. Otherwise it could lead to an
-        /// unsync'd <seealso cref="IndexSearcher"/> and <seealso cref="TaxonomyReader"/> pair.
+        /// <see cref="Index.ReaderManager.MaybeRefresh()"/> in the same thread. Otherwise it could lead to an
+        /// unsync'd <see cref="IndexSearcher"/> and <see cref="TaxonomyReader"/> pair.
         /// </para>
         /// </summary>
         public SearcherTaxonomyManager(Store.Directory indexDir, Store.Directory taxoDir, SearcherFactory searcherFactory)
@@ -106,14 +108,15 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             this.searcherFactory = searcherFactory;
             var taxoReader = new DirectoryTaxonomyReader(taxoDir);
-            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(indexDir)), taxoReader);
+            Current = new SearcherAndTaxonomy(SearcherManager.GetSearcher(
+                searcherFactory, DirectoryReader.Open(indexDir)), taxoReader);
             this.taxoWriter = null;
             taxoEpoch = -1;
         }
 
         protected override void DecRef(SearcherAndTaxonomy @ref)
         {
-            @ref.searcher.IndexReader.DecRef();
+            @ref.Searcher.IndexReader.DecRef();
 
             // This decRef can fail, and then in theory we should
             // tryIncRef the searcher to put back the ref count
@@ -122,20 +125,20 @@ namespace Lucene.Net.Facet.Taxonomy
             // during close, in which case 2) very likely the
             // searcher was also just closed by the above decRef and
             // a tryIncRef would fail:
-            @ref.taxonomyReader.DecRef();
+            @ref.TaxonomyReader.DecRef();
         }
 
         protected override bool TryIncRef(SearcherAndTaxonomy @ref)
         {
-            if (@ref.searcher.IndexReader.TryIncRef())
+            if (@ref.Searcher.IndexReader.TryIncRef())
             {
-                if (@ref.taxonomyReader.TryIncRef())
+                if (@ref.TaxonomyReader.TryIncRef())
                 {
                     return true;
                 }
                 else
                 {
-                    @ref.searcher.IndexReader.DecRef();
+                    @ref.Searcher.IndexReader.DecRef();
                 }
             }
             return false;
@@ -146,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // Must re-open searcher first, otherwise we may get a
             // new reader that references ords not yet known to the
             // taxonomy reader:
-            IndexReader r = @ref.searcher.IndexReader;
+            IndexReader r = @ref.Searcher.IndexReader;
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
             if (newReader == null)
             {
@@ -154,16 +157,16 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             else
             {
-                var tr = TaxonomyReader.OpenIfChanged(@ref.taxonomyReader);
+                var tr = TaxonomyReader.OpenIfChanged(@ref.TaxonomyReader);
                 if (tr == null)
                 {
-                    @ref.taxonomyReader.IncRef();
-                    tr = @ref.taxonomyReader;
+                    @ref.TaxonomyReader.IncRef();
+                    tr = @ref.TaxonomyReader;
                 }
                 else if (taxoWriter != null && taxoWriter.TaxonomyEpoch != taxoEpoch)
                 {
                     IOUtils.Close(newReader, tr);
-                    throw new ThreadStateException("DirectoryTaxonomyWriter.replaceTaxonomy was called, which is not allowed when using SearcherTaxonomyManager");
+                    throw new InvalidOperationException("DirectoryTaxonomyWriter.replaceTaxonomy was called, which is not allowed when using SearcherTaxonomyManager");
                 }
 
                 return new SearcherAndTaxonomy(SearcherManager.GetSearcher(searcherFactory, newReader), tr);
@@ -172,8 +175,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         protected override int GetRefCount(SearcherAndTaxonomy reference)
         {
-            return reference.searcher.IndexReader.RefCount;
+            return reference.Searcher.IndexReader.RefCount;
         }
     }
-
 }

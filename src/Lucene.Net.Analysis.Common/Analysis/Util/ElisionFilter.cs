@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +18,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Removes elisions from a <seealso cref="TokenStream"/>. For example, "l'avion" (the plane) will be
     /// tokenized as "avion" (plane).
@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Util
     public sealed class ElisionFilter : TokenFilter
     {
         private readonly CharArraySet articles;
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;
 
         /// <summary>
         /// Constructs an elision filter with a Set of stop words </summary>
@@ -37,6 +37,7 @@ namespace Lucene.Net.Analysis.Util
             : base(input)
         {
             this.articles = articles;
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         /// <summary>

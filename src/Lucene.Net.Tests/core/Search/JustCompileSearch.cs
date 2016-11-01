@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override bool Match(int docid)
+            protected internal override bool Match(int docid)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override bool Match(int doc)
+            protected internal override bool Match(int doc)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileScorer : Scorer
         {
-            protected internal JustCompileScorer(Weight weight)
+            internal JustCompileScorer(Weight weight)
                 : base(weight)
             {
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileTopDocsCollector : TopDocsCollector<ScoreDoc>
         {
-            protected internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
+            internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
                 : base(pq)
             {
             }

@@ -97,19 +97,19 @@ namespace Lucene.Net.Classification.Utils
                         {
                             if (storableField.ReaderValue != null)
                             {
-                                doc.Add(new Field(storableField.Name(), storableField.ReaderValue, ft));
+                                doc.Add(new Field(storableField.Name, storableField.ReaderValue, ft));
                             }
-                            else if (storableField.BinaryValue() != null)
+                            else if (storableField.BinaryValue != null)
                             {
-                                doc.Add(new Field(storableField.Name(), storableField.BinaryValue(), ft));
+                                doc.Add(new Field(storableField.Name, storableField.BinaryValue, ft));
                             }
                             else if (storableField.StringValue != null)
                             {
-                                doc.Add(new Field(storableField.Name(), storableField.StringValue, ft));
+                                doc.Add(new Field(storableField.Name, storableField.StringValue, ft));
                             }
                             else if (storableField.NumericValue != null)
                             {
-                                doc.Add(new Field(storableField.Name(), storableField.NumericValue.ToString(), ft));
+                                doc.Add(new Field(storableField.Name, storableField.NumericValue.ToString(), ft));
                             }
                         }
                     }

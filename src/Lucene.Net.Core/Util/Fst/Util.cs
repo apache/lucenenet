@@ -24,10 +24,6 @@ namespace Lucene.Net.Util.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    /*
-	using Lucene.Net.Util.Fst.FST;
-	using BytesReader = Lucene.Net.Util.Fst.FST.BytesReader;
-    */
 
     /// <summary>
     /// Static helper methods.
@@ -47,7 +43,7 @@ namespace Lucene.Net.Util.Fst
         public static T Get<T>(FST<T> fst, IntsRef input)
         {
             // TODO: would be nice not to alloc this on every lookup
-            var arc = fst.GetFirstArc(new FST<T>.Arc<T>());
+            var arc = fst.GetFirstArc(new FST.Arc<T>());
 
             var fstReader = fst.BytesReader;
 
@@ -62,7 +58,7 @@ namespace Lucene.Net.Util.Fst
                 output = fst.Outputs.Add(output, arc.Output);
             }
 
-            if (arc.Final)
+            if (arc.IsFinal)
             {
                 return fst.Outputs.Add(output, arc.NextFinalOutput);
             }
@@ -80,12 +76,12 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static T Get<T>(FST<T> fst, BytesRef input)
         {
-            Debug.Assert(fst.inputType == FST<long>.INPUT_TYPE.BYTE1);
+            Debug.Assert(fst.InputType == FST.INPUT_TYPE.BYTE1);
 
             var fstReader = fst.BytesReader;
 
             // TODO: would be nice not to alloc this on every lookup
-            var arc = fst.GetFirstArc(new FST<T>.Arc<T>());
+            var arc = fst.GetFirstArc(new FST.Arc<T>());
 
             // Accumulate output as we go
             T output = fst.Outputs.NoOutput;
@@ -98,7 +94,7 @@ namespace Lucene.Net.Util.Fst
                 output = fst.Outputs.Add(output, arc.Output);
             }
 
-            if (arc.Final)
+            if (arc.IsFinal)
             {
                 return fst.Outputs.Add(output, arc.NextFinalOutput);
             }
@@ -127,9 +123,9 @@ namespace Lucene.Net.Util.Fst
             var @in = fst.BytesReader;
 
             // TODO: would be nice not to alloc this on every lookup
-            FST<long?>.Arc<long?> arc = fst.GetFirstArc(new FST<long?>.Arc<long?>());
+            FST.Arc<long?> arc = fst.GetFirstArc(new FST.Arc<long?>());
 
-            FST<long?>.Arc<long?> scratchArc = new FST<long?>.Arc<long?>();
+            FST.Arc<long?> scratchArc = new FST.Arc<long?>();
 
             IntsRef result = new IntsRef();
 
@@ -140,7 +136,7 @@ namespace Lucene.Net.Util.Fst
         /// Expert: like <seealso cref="Util#getByOutput(FST, long)"/> except reusing
         /// BytesReader, initial and scratch Arc, and result.
         /// </summary>
-        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> arc, FST<long?>.Arc<long?> scratchArc, IntsRef result)
+        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc, IntsRef result)
         {
             long output = arc.Output.Value;
             int upto = 0;
@@ -150,7 +146,7 @@ namespace Lucene.Net.Util.Fst
             while (true)
             {
                 //System.out.println("loop: output=" + output + " upto=" + upto + " arc=" + arc);
-                if (arc.Final)
+                if (arc.IsFinal)
                 {
                     long finalOutput = output + arc.NextFinalOutput.Value;
                     //System.out.println("  isFinal finalOutput=" + finalOutput);
@@ -192,7 +188,7 @@ namespace Lucene.Net.Util.Fst
                             var flags = (sbyte)@in.ReadByte();
                             fst.ReadLabel(@in);
                             long minArcOutput;
-                            if ((flags & FST<long>.BIT_ARC_HAS_OUTPUT) != 0)
+                            if ((flags & FST.BIT_ARC_HAS_OUTPUT) != 0)
                             {
                                 long arcOutput = fst.Outputs.Read(@in).Value;
                                 minArcOutput = output + arcOutput;
@@ -235,7 +231,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        FST<long?>.Arc<long?> prevArc = null;
+                        FST.Arc<long?> prevArc = null;
 
                         while (true)
                         {
@@ -270,7 +266,7 @@ namespace Lucene.Net.Util.Fst
                                     break;
                                 }
                             }
-                            else if (arc.Last)
+                            else if (arc.IsLast)
                             {
                                 // Recurse on this arc:
                                 output = minArcOutput;
@@ -304,15 +300,15 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public class FSTPath<T>
         {
-            public FST<T>.Arc<T> Arc;
+            public FST.Arc<T> Arc;
             public T Cost;
             public readonly IntsRef Input;
 
             /// <summary>
             /// Sole constructor </summary>
-            public FSTPath(T cost, FST<T>.Arc<T> arc, IntsRef input)
+            public FSTPath(T cost, FST.Arc<T> arc, IntsRef input)
             {
-                this.Arc = (new FST<T>.Arc<T>()).CopyFrom(arc);
+                this.Arc = (new FST.Arc<T>()).CopyFrom(arc);
                 this.Cost = cost;
                 this.Input = input;
             }
@@ -356,16 +352,18 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public class TopNSearcher<T>
         {
-            internal readonly FST<T> Fst;
-            internal readonly FST<T>.BytesReader BytesReader;
-            internal readonly int TopN;
-            internal readonly int MaxQueueDepth;
+            private readonly FST<T> fst;
+            private readonly FST.BytesReader bytesReader;
+            private readonly int topN;
+            private readonly int maxQueueDepth;
 
-            internal readonly FST<T>.Arc<T> ScratchArc = new FST<T>.Arc<T>();
+            private readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
 
             internal readonly IComparer<T> Comparator;
 
             internal SortedSet<FSTPath<T>> Queue = null;
+
+            private object syncLock = new object();
 
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
@@ -375,10 +373,10 @@ namespace Lucene.Net.Util.Fst
             /// <param name="comparator"> the comparator to select the top N </param>
             public TopNSearcher(FST<T> fst, int topN, int maxQueueDepth, IComparer<T> comparator)
             {
-                this.Fst = fst;
-                this.BytesReader = fst.BytesReader;
-                this.TopN = topN;
-                this.MaxQueueDepth = maxQueueDepth;
+                this.fst = fst;
+                this.bytesReader = fst.BytesReader;
+                this.topN = topN;
+                this.maxQueueDepth = maxQueueDepth;
                 this.Comparator = comparator;
 
                 Queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparator<T>(comparator));
@@ -389,10 +387,10 @@ namespace Lucene.Net.Util.Fst
             {
                 Debug.Assert(Queue != null);
 
-                T cost = Fst.Outputs.Add(path.Cost, path.Arc.Output);
+                T cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                 //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
 
-                if (Queue.Count == MaxQueueDepth)
+                if (Queue.Count == maxQueueDepth)
                 {
                     FSTPath<T> bottom = Queue.Max;
                     int comp = Comparator.Compare(cost, bottom.Cost);
@@ -435,9 +433,16 @@ namespace Lucene.Net.Util.Fst
 
                 Queue.Add(newPath);
 
-                if (Queue.Count == MaxQueueDepth + 1)
+                if (Queue.Count == maxQueueDepth + 1)
                 {
-                    Queue.Last();
+                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
+                    // so we need to add some thread safety just in case.
+                    // Perhaps it might make sense to wrap SortedSet into a type
+                    // that provides thread safety.
+                    lock (syncLock)
+                    {
+                        Queue.Remove(Queue.Max);
+                    }
                 }
             }
 
@@ -445,31 +450,31 @@ namespace Lucene.Net.Util.Fst
             /// Adds all leaving arcs, including 'finished' arc, if
             ///  the node is final, from this node into the queue.
             /// </summary>
-            public virtual void AddStartPaths(FST<T>.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
+            public virtual void AddStartPaths(FST.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
             {
                 // De-dup NO_OUTPUT since it must be a singleton:
-                if (startOutput.Equals(Fst.Outputs.NoOutput))
+                if (startOutput.Equals(fst.Outputs.NoOutput))
                 {
-                    startOutput = Fst.Outputs.NoOutput;
+                    startOutput = fst.Outputs.NoOutput;
                 }
 
                 FSTPath<T> path = new FSTPath<T>(startOutput, node, input);
-                Fst.ReadFirstTargetArc(node, path.Arc, BytesReader);
+                fst.ReadFirstTargetArc(node, path.Arc, bytesReader);
 
                 //System.out.println("add start paths");
 
                 // Bootstrap: find the min starting arc
                 while (true)
                 {
-                    if (allowEmptyString || path.Arc.Label != FST<T>.END_LABEL)
+                    if (allowEmptyString || path.Arc.Label != FST.END_LABEL)
                     {
                         AddIfCompetitive(path);
                     }
-                    if (path.Arc.Last)
+                    if (path.Arc.IsLast)
                     {
                         break;
                     }
-                    Fst.ReadNextArc(path.Arc, BytesReader);
+                    fst.ReadNextArc(path.Arc, bytesReader);
                 }
             }
 
@@ -479,8 +484,8 @@ namespace Lucene.Net.Util.Fst
 
                 //System.out.println("search topN=" + topN);
 
-                var fstReader = Fst.BytesReader;
-                T NO_OUTPUT = Fst.Outputs.NoOutput;
+                var fstReader = fst.BytesReader;
+                T NO_OUTPUT = fst.Outputs.NoOutput;
 
                 // TODO: we could enable FST to sorting arcs by weight
                 // as it freezes... can easily do this on first pass
@@ -491,7 +496,7 @@ namespace Lucene.Net.Util.Fst
                 int rejectCount = 0;
 
                 // For each top N path:
-                while (results.Count < TopN)
+                while (results.Count < topN)
                 {
                     //System.out.println("\nfind next path: queue.size=" + queue.size());
 
@@ -506,7 +511,19 @@ namespace Lucene.Net.Util.Fst
 
                     // Remove top path since we are now going to
                     // pursue it:
-                    path = Queue.First();
+
+                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
+                    // so we need to add some thread safety just in case.
+                    // Perhaps it might make sense to wrap SortedSet into a type
+                    // that provides thread safety.
+                    lock (syncLock)
+                    {
+                        path = Queue.Min;
+                        if (path != null)
+                        {
+                            Queue.Remove(path);
+                        }
+                    }
 
                     if (path == null)
                     {
@@ -515,7 +532,7 @@ namespace Lucene.Net.Util.Fst
                         break;
                     }
 
-                    if (path.Arc.Label == FST<T>.END_LABEL)
+                    if (path.Arc.Label == FST.END_LABEL)
                     {
                         //System.out.println("    empty string!  cost=" + path.cost);
                         // Empty string!
@@ -524,7 +541,7 @@ namespace Lucene.Net.Util.Fst
                         continue;
                     }
 
-                    if (results.Count == TopN - 1 && MaxQueueDepth == TopN)
+                    if (results.Count == topN - 1 && maxQueueDepth == topN)
                     {
                         // Last path -- don't bother w/ queue anymore:
                         Queue = null;
@@ -542,7 +559,7 @@ namespace Lucene.Net.Util.Fst
                     while (true)
                     {
                         //System.out.println("\n    cycle path: " + path);
-                        Fst.ReadFirstTargetArc(path.Arc, path.Arc, fstReader);
+                        fst.ReadFirstTargetArc(path.Arc, path.Arc, fstReader);
 
                         // For each arc leaving this node:
                         bool foundZero = false;
@@ -560,7 +577,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                                 else if (!foundZero)
                                 {
-                                    ScratchArc.CopyFrom(path.Arc);
+                                    scratchArc.CopyFrom(path.Arc);
                                     foundZero = true;
                                 }
                                 else
@@ -572,11 +589,11 @@ namespace Lucene.Net.Util.Fst
                             {
                                 AddIfCompetitive(path);
                             }
-                            if (path.Arc.Last)
+                            if (path.Arc.IsLast)
                             {
                                 break;
                             }
-                            Fst.ReadNextArc(path.Arc, fstReader);
+                            fst.ReadNextArc(path.Arc, fstReader);
                         }
 
                         Debug.Assert(foundZero);
@@ -587,17 +604,17 @@ namespace Lucene.Net.Util.Fst
                             // are more clever above... eg on finding the
                             // first NO_OUTPUT arc we'd switch to using
                             // scratchArc
-                            path.Arc.CopyFrom(ScratchArc);
+                            path.Arc.CopyFrom(scratchArc);
                         }
 
-                        if (path.Arc.Label == FST<T>.END_LABEL)
+                        if (path.Arc.Label == FST.END_LABEL)
                         {
                             // Add final output:
-                            //System.out.println("    done!: " + path);
-                            T finalOutput = Fst.Outputs.Add(path.Cost, path.Arc.Output);
+                            //Debug.WriteLine("    done!: " + path);
+                            T finalOutput = fst.Outputs.Add(path.Cost, path.Arc.Output);
                             if (AcceptResult(path.Input, finalOutput))
                             {
-                                //System.out.println("    add result: " + path);
+                                //Debug.WriteLine("    add result: " + path);
                                 results.Add(new Result<T>(path.Input, finalOutput));
                             }
                             else
@@ -611,11 +628,11 @@ namespace Lucene.Net.Util.Fst
                             path.Input.Grow(1 + path.Input.Length);
                             path.Input.Ints[path.Input.Length] = path.Arc.Label;
                             path.Input.Length++;
-                            path.Cost = Fst.Outputs.Add(path.Cost, path.Arc.Output);
+                            path.Cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                         }
                     }
                 }
-                return new TopResults<T>(rejectCount + TopN <= MaxQueueDepth, results);
+                return new TopResults<T>(rejectCount + topN <= maxQueueDepth, results);
             }
 
             protected virtual bool AcceptResult(IntsRef input, T output)
@@ -678,7 +695,7 @@ namespace Lucene.Net.Util.Fst
         /// Starting from node, find the top N min cost
         ///  completions to a final node.
         /// </summary>
-        public static TopResults<T> shortestPaths<T>(FST<T> fst, FST<T>.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
+        public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
         {
             // All paths are kept, so we can pass topN for
             // maxQueueDepth and the pruning is admissible:
@@ -721,19 +738,19 @@ namespace Lucene.Net.Util.Fst
         ///          binary format. Expands the graph considerably.
         /// </param>
         /// <seealso cref= "http://www.graphviz.org/" </seealso>
-        public static void toDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
+        public static void ToDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
         {
             const string expandedNodeColor = "blue";
 
             // this is the start arc in the automaton (from the epsilon state to the first state
             // with outgoing transitions.
-            FST<T>.Arc<T> startArc = fst.GetFirstArc(new FST<T>.Arc<T>());
+            FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
 
             // A queue of transitions to consider for the next level.
-            IList<FST<T>.Arc<T>> thisLevelQueue = new List<FST<T>.Arc<T>>();
+            IList<FST.Arc<T>> thisLevelQueue = new List<FST.Arc<T>>();
 
             // A queue of transitions to consider when processing the next level.
-            IList<FST<T>.Arc<T>> nextLevelQueue = new List<FST<T>.Arc<T>>();
+            IList<FST.Arc<T>> nextLevelQueue = new List<FST.Arc<T>>();
             nextLevelQueue.Add(startArc);
             //System.out.println("toDot: startArc: " + startArc);
 
@@ -777,7 +794,7 @@ namespace Lucene.Net.Util.Fst
 
                 bool isFinal;
                 T finalOutput;
-                if (startArc.Final)
+                if (startArc.IsFinal)
                 {
                     isFinal = true;
                     finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default(T) : startArc.NextFinalOutput;
@@ -806,7 +823,7 @@ namespace Lucene.Net.Util.Fst
                 @out.Write("\n  // Transitions and states at level: " + level + "\n");
                 while (thisLevelQueue.Count > 0)
                 {
-                    FST<T>.Arc<T> arc = thisLevelQueue[thisLevelQueue.Count - 1];
+                    FST.Arc<T> arc = thisLevelQueue[thisLevelQueue.Count - 1];
                     thisLevelQueue.RemoveAt(thisLevelQueue.Count - 1);
                     //System.out.println("  pop: " + arc);
                     if (FST<T>.TargetHasArcs(arc))
@@ -861,7 +878,7 @@ namespace Lucene.Net.Util.Fst
                                 // To see the node address, use this instead:
                                 //emitDotState(out, Integer.toString(arc.target), stateShape, stateColor, String.valueOf(arc.target));
                                 seen.SafeSet((int)arc.Target, true);
-                                nextLevelQueue.Add((new FST<T>.Arc<T>()).CopyFrom(arc));
+                                nextLevelQueue.Add((new FST.Arc<T>()).CopyFrom(arc));
                                 sameLevelStates.Add((int)arc.Target);
                             }
 
@@ -875,7 +892,7 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.Final && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 // Tricky special case: sometimes, due to
                                 // pruning, the builder can [sillily] produce
@@ -887,7 +904,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             string arcColor;
-                            if (arc.Flag(FST<T>.BIT_TARGET_NEXT))
+                            if (arc.Flag(FST.BIT_TARGET_NEXT))
                             {
                                 arcColor = "red";
                             }
@@ -896,11 +913,11 @@ namespace Lucene.Net.Util.Fst
                                 arcColor = "black";
                             }
 
-                            Debug.Assert(arc.Label != FST<T>.END_LABEL);
-                            @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.Final ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
+                            Debug.Assert(arc.Label != FST.END_LABEL);
+                            @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.IsFinal ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
                             // Break the loop if we're on the last arc of this state.
-                            if (arc.Last)
+                            if (arc.IsLast)
                             {
                                 //System.out.println("    break");
                                 break;
@@ -1066,16 +1083,16 @@ namespace Lucene.Net.Util.Fst
         /// <param name="follow"> the arc to follow reading the label from </param>
         /// <param name="arc"> the arc to read into in place </param>
         /// <param name="in"> the fst's <seealso cref="BytesReader"/> </param>
-        public static FST<T>.Arc<T> readCeilArc<T>(int label, FST<T> fst, FST<T>.Arc<T> follow, FST<T>.Arc<T> arc, FST<T>.BytesReader @in)
+        public static FST.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
             // TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?
-            if (label == FST<T>.END_LABEL)
+            if (label == FST.END_LABEL)
             {
-                if (follow.Final)
+                if (follow.IsFinal)
                 {
                     if (follow.Target <= 0)
                     {
-                        arc.Flags = (sbyte)FST<T>.BIT_LAST_ARC;
+                        arc.Flags = (sbyte)FST.BIT_LAST_ARC;
                     }
                     else
                     {
@@ -1085,7 +1102,7 @@ namespace Lucene.Net.Util.Fst
                         arc.Node = follow.Target;
                     }
                     arc.Output = follow.NextFinalOutput;
-                    arc.Label = FST<T>.END_LABEL;
+                    arc.Label = FST.END_LABEL;
                     return arc;
                 }
                 else
@@ -1099,7 +1116,7 @@ namespace Lucene.Net.Util.Fst
                 return null;
             }
             fst.ReadFirstTargetArc(follow, arc, @in);
-            if (arc.BytesPerArc != 0 && arc.Label != FST<T>.END_LABEL)
+            if (arc.BytesPerArc != 0 && arc.Label != FST.END_LABEL)
             {
                 // Arcs are fixed array -- use binary search to find
                 // the target.
@@ -1156,7 +1173,7 @@ namespace Lucene.Net.Util.Fst
                     // System.out.println("    found!");
                     return arc;
                 }
-                else if (arc.Last)
+                else if (arc.IsLast)
                 {
                     return null;
                 }

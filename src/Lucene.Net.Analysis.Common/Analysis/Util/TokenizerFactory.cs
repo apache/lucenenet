@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Abstract parent class for analysis factories that create <seealso cref="Tokenizer"/>
     /// instances.
@@ -29,27 +29,27 @@ namespace Lucene.Net.Analysis.Util
     public abstract class TokenizerFactory : AbstractAnalysisFactory
     {
 
-        private static readonly AnalysisSPILoader<TokenizerFactory> loader = new AnalysisSPILoader<TokenizerFactory>(typeof(TokenizerFactory));
+        private static readonly AnalysisSPILoader<TokenizerFactory> loader = new AnalysisSPILoader<TokenizerFactory>();
 
         /// <summary>
         /// looks up a tokenizer by name from context classpath </summary>
         public static TokenizerFactory ForName(string name, IDictionary<string, string> args)
         {
-            return loader.newInstance(name, args);
+            return loader.NewInstance(name, args);
         }
 
         /// <summary>
         /// looks up a tokenizer class by name from context classpath </summary>
         public static Type LookupClass(string name)
         {
-            return loader.lookupClass(name);
+            return loader.LookupClass(name);
         }
 
         /// <summary>
         /// returns a list of all available tokenizer names from context classpath </summary>
-        public static HashSet<string> AvailableTokenizers()
+        public static IEnumerable<string> AvailableTokenizers
         {
-            return loader.availableServices();
+            get { return loader.AvailableServices; }
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace Lucene.Net.Analysis.Util
         /// of new factories on the given classpath/classloader!</em>
         /// </para>
         /// </summary>
-        public static void ReloadTokenizers(ClassLoader classloader)
+        public static void ReloadTokenizers()
         {
-            loader.reload(classloader);
+            loader.Reload();
         }
 
         /// <summary>

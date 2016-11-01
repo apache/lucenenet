@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                bytes = field.BinaryValue();
+                bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     bits |= FIELD_IS_BINARY;
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     @string = field.StringValue;
                     if (@string == null)
                     {
-                        throw new System.ArgumentException("field " + field.Name() + " is stored but does not have binaryValue, stringValue nor numericValue");
+                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
                     }
                 }
             }

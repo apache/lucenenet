@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.pt
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.Pt
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +19,45 @@
 	 * limitations under the License.
 	 */
 
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="PortugueseStemmer"/> to stem 
+    /// Portuguese words.
+    /// <para>
+    /// To prevent terms from being stemmed use an instance of
+    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
+    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </para>
+    /// </summary>
+    public sealed class PortugueseStemFilter : TokenFilter
+    {
+        private readonly PortugueseStemmer stemmer = new PortugueseStemmer();
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAttr;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="PortugueseStemmer"/> to stem 
-	/// Portuguese words.
-	/// <para>
-	/// To prevent terms from being stemmed use an instance of
-	/// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-	/// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-	/// </para>
-	/// </summary>
-	public sealed class PortugueseStemFilter : TokenFilter
-	{
-	  private readonly PortugueseStemmer stemmer = new PortugueseStemmer();
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAttr = addAttribute(typeof(KeywordAttribute));
+        public PortugueseStemFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
-	  public PortugueseStemFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAttr.Keyword)
-		  {
-			// this stemmer increases word length by 1: worst case '*ã' -> '*ão'
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len = termAtt.length();
-			int len = termAtt.length();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newlen = stemmer.stem(termAtt.resizeBuffer(len+1), len);
-			int newlen = stemmer.stem(termAtt.resizeBuffer(len + 1), len);
-			termAtt.Length = newlen;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAttr.Keyword)
+                {
+                    // this stemmer increases word length by 1: worst case '*ã' -> '*ão'
+                    int len = termAtt.Length;
+                    int newlen = stemmer.Stem(termAtt.ResizeBuffer(len + 1), len);
+                    termAtt.Length = newlen;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

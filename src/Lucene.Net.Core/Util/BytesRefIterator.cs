@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A simple iterator interface for <seealso cref="BytesRef"/> iteration.
     /// </summary>
-    public interface BytesRefIterator
+    public interface BytesRefIterator // LUCENENET TODO: Rename interface "I"
     {
         /// <summary>
         /// Increments the iteration to the next <seealso cref="BytesRef"/> in the iterator.

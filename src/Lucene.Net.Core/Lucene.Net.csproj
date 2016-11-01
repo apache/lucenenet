@@ -7,6 +7,7 @@
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Lucene.Net</AssemblyName>
+    <RootNamespace>Lucene.Net</RootNamespace>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -34,16 +35,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Lucene.Net</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -286,6 +284,8 @@
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FrozenBufferedUpdates.cs" />
+    <Compile Include="Index\IConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\IMergeScheduler.cs" />
     <Compile Include="Index\IndexableField.cs" />
     <Compile Include="Index\IndexableFieldType.cs" />
     <Compile Include="Index\IndexCommit.cs" />
@@ -366,6 +366,7 @@
     <Compile Include="Index\StoredFieldsConsumer.cs" />
     <Compile Include="Index\StoredFieldsProcessor.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
+    <Compile Include="Index\TaskMergeScheduler.cs" />
     <Compile Include="Index\Term.cs" />
     <Compile Include="Index\TermContext.cs" />
     <Compile Include="Index\Terms.cs" />
@@ -607,33 +608,46 @@
     <Compile Include="Support\AtomicInteger.cs" />
     <Compile Include="Support\AtomicLong.cs" />
     <Compile Include="Support\AtomicObject.cs" />
+    <Compile Include="Support\AtomicReferenceArray.cs" />
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
-    <Compile Include="Support\BufferUnderflowException.cs" />
+    <Compile Include="Support\BufferExceptions.cs" />
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\ByteArrayOutputStream.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
+    <Compile Include="Support\ByteOrder.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
+    <Compile Include="Support\CharacterIterator.cs" />
+    <Compile Include="Support\Compatibility\BinaryReaderDataInput.cs" />
     <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
+    <Compile Include="Support\CultureContext.cs" />
+    <Compile Include="Support\DataInputStream.cs" />
+    <Compile Include="Support\DataOutputStream.cs" />
     <Compile Include="Support\ErrorHandling.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashCodeMerge.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
+    <Compile Include="Support\IDataInput.cs" />
+    <Compile Include="Support\IDataOutput.cs" />
     <Compile Include="Support\IdentityComparer.cs" />
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\IDictionaryExtensions.cs" />
+    <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\ListExtensions.cs" />
+    <Compile Include="Support\LongBuffer.cs" />
+    <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
+    <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SetExtensions.cs" />
@@ -674,6 +688,7 @@
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
+    <Compile Include="Support\ValueHashSet.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Util\Accountable.cs" />
     <Compile Include="Util\ArrayInPlaceMergeSorter.cs" />
@@ -839,6 +854,7 @@
     <Compile Include="Util\PriorityQueue.cs" />
     <Compile Include="Util\QueryBuilder.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
+    <Compile Include="Util\ReaderWriterLockSlimExtension.cs" />
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
     <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\RefCount.cs" />

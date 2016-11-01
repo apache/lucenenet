@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            Iw = new RandomIndexWriter(Random(), Dir);
+            Iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             doc.Add(idField);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
         public virtual void TestCachingWorks()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSet()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSetIterator()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search
         public virtual void TestIsCacheAble()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(new Document());
             writer.Dispose();
 
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
             // (must) get an NRT reader:
             DirectoryReader reader = DirectoryReader.Open(writer.w, true);
             // same reason we don't wrap?
-            IndexSearcher searcher = NewSearcher(reader, false);
+            IndexSearcher searcher = NewSearcher(reader, false, Similarity);
 
             // add a doc, refresh the reader, and check that it's there
             Document doc = new Document();
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(reader, false);
+            searcher = NewSearcher(reader, false, Similarity);
 
             TopDocs docs = searcher.Search(new MatchAllDocsQuery(), 1);
             Assert.AreEqual(1, docs.TotalHits, "Should find a hit...");
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search
             oldReader = reader;
             reader = RefreshReader(reader);
 
-            searcher = NewSearcher(reader, false);
+            searcher = NewSearcher(reader, false, Similarity);
 
             missCount = filter.MissCount;
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
             filter = new CachingWrapperFilter(startFilter);
             writer.AddDocument(doc);
             reader = RefreshReader(reader);
-            searcher = NewSearcher(reader, false);
+            searcher = NewSearcher(reader, false, Similarity);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(1, docs.TotalHits, "[query + filter] Should find a hit...");
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
             oldReader = reader;
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(reader, false);
+            searcher = NewSearcher(reader, false, Similarity);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(2, docs.TotalHits, "[query + filter] Should find 2 hits...");
@@ -472,7 +472,7 @@ namespace Lucene.Net.Search
             writer.DeleteDocuments(new Term("id", "1"));
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(reader, false);
+            searcher = NewSearcher(reader, false, Similarity);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(0, docs.TotalHits, "[query + filter] Should *not* find a hit...");

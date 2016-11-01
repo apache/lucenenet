@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
             Length_Renamed = bytes.Length;
         }
 
-        protected override void ReadInternal(byte[] dest, int destOffset, int len)
+        protected internal override void ReadInternal(byte[] dest, int destOffset, int len)
         {
             int remainder = len;
             int start = Pointer;

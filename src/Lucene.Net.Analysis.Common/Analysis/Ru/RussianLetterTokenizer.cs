@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ru
+namespace Lucene.Net.Analysis.Ru
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,64 +23,60 @@ namespace org.apache.lucene.analysis.ru
 	 * limitations under the License.
 	 */
 
-	using CharTokenizer = org.apache.lucene.analysis.util.CharTokenizer;
-	using LetterTokenizer = org.apache.lucene.analysis.core.LetterTokenizer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer; // for javadocs
-	using Version = org.apache.lucene.util.Version;
+    /// <summary>
+    /// A RussianLetterTokenizer is a <seealso cref="Tokenizer"/> that extends <seealso cref="LetterTokenizer"/>
+    /// by also allowing the basic Latin digits 0-9.
+    /// <para>
+    /// <a name="version"/>
+    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// <seealso cref="RussianLetterTokenizer"/>:
+    /// <ul>
+    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
+    /// detect token characters. See <seealso cref="CharTokenizer#isTokenChar(int)"/> and
+    /// <seealso cref="CharTokenizer#normalize(int)"/> for details.</li>
+    /// </ul>
+    /// </para>
+    /// </summary>
+    /// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead, which has the same functionality.
+    /// This filter will be removed in Lucene 5.0  
+    [Obsolete("(3.1) Use StandardTokenizer instead, which has the same functionality.")]
+    public class RussianLetterTokenizer : CharTokenizer
+    {
+        private const int DIGIT_0 = '0';
+        private const int DIGIT_9 = '9';
 
-	/// <summary>
-	/// A RussianLetterTokenizer is a <seealso cref="Tokenizer"/> that extends <seealso cref="LetterTokenizer"/>
-	/// by also allowing the basic Latin digits 0-9.
-	/// <para>
-	/// <a name="version"/>
-	/// You must specify the required <seealso cref="Version"/> compatibility when creating
-	/// <seealso cref="RussianLetterTokenizer"/>:
-	/// <ul>
-	/// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-	/// detect token characters. See <seealso cref="CharTokenizer#isTokenChar(int)"/> and
-	/// <seealso cref="CharTokenizer#normalize(int)"/> for details.</li>
-	/// </ul>
-	/// </para>
-	/// </summary>
-	/// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead, which has the same functionality.
-	/// This filter will be removed in Lucene 5.0  
-	[Obsolete("(3.1) Use <seealso cref="StandardTokenizer"/> instead, which has the same functionality.")]
-	public class RussianLetterTokenizer : CharTokenizer
-	{
-		private const int DIGIT_0 = '0';
-		private const int DIGIT_9 = '9';
+        /// Construct a new RussianLetterTokenizer. * <param name="matchVersion"> Lucene version
+        /// to match See <seealso cref="<a href="#version">above</a>"/>
+        /// </param>
+        /// <param name="in">
+        ///          the input to split up into tokens </param>
+        public RussianLetterTokenizer(LuceneVersion matchVersion, TextReader @in)
+            : base(matchVersion, @in)
+        {
+        }
 
-		/// Construct a new RussianLetterTokenizer. * <param name="matchVersion"> Lucene version
-		/// to match See <seealso cref="<a href="#version">above</a>"/>
-		/// </param>
-		/// <param name="in">
-		///          the input to split up into tokens </param>
-		public RussianLetterTokenizer(Version matchVersion, Reader @in) : base(matchVersion, @in)
-		{
-		}
+        /// <summary>
+        /// Construct a new RussianLetterTokenizer using a given
+        /// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>. * @param
+        /// matchVersion Lucene version to match See
+        /// <seealso cref="<a href="#version">above</a>"/>
+        /// </summary>
+        /// <param name="factory">
+        ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
+        /// <param name="in">
+        ///          the input to split up into tokens </param>
+        public RussianLetterTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
+            : base(matchVersion, factory, @in)
+        {
+        }
 
-		/// <summary>
-		/// Construct a new RussianLetterTokenizer using a given
-		/// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>. * @param
-		/// matchVersion Lucene version to match See
-		/// <seealso cref="<a href="#version">above</a>"/>
-		/// </summary>
-		/// <param name="factory">
-		///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
-		/// <param name="in">
-		///          the input to split up into tokens </param>
-		public RussianLetterTokenizer(Version matchVersion, AttributeFactory factory, Reader @in) : base(matchVersion, factory, @in)
-		{
-		}
-
-		 /// <summary>
-		 /// Collects only characters which satisfy
-		 /// <seealso cref="Character#isLetter(int)"/>.
-		 /// </summary>
-		protected internal override bool isTokenChar(int c)
-		{
-			return char.IsLetter(c) || (c >= DIGIT_0 && c <= DIGIT_9);
-		}
-	}
-
+        /// <summary>
+        /// Collects only characters which satisfy
+        /// <seealso cref="Character#isLetter(int)"/>.
+        /// </summary>
+        protected override bool IsTokenChar(int c)
+        {
+            return Character.IsLetter(c) || (c >= DIGIT_0 && c <= DIGIT_9);
+        }
+    }
 }

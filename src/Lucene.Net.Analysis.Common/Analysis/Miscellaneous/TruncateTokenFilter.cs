@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,49 +19,45 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+    /// <summary>
+    /// A token filter for truncating the terms into a specific length.
+    /// Fixed prefix truncation, as a stemming method, produces good results on Turkish language.
+    /// It is reported that F5, using first 5 characters, produced best results in
+    /// <a href="http://www.users.muohio.edu/canf/papers/JASIST2008offPrint.pdf">
+    /// Information Retrieval on Turkish Texts</a>
+    /// </summary>
+    public sealed class TruncateTokenFilter : TokenFilter
+    {
+        private readonly ICharTermAttribute termAttribute;
+        private readonly IKeywordAttribute keywordAttr;
 
-	/// <summary>
-	/// A token filter for truncating the terms into a specific length.
-	/// Fixed prefix truncation, as a stemming method, produces good results on Turkish language.
-	/// It is reported that F5, using first 5 characters, produced best results in
-	/// <a href="http://www.users.muohio.edu/canf/papers/JASIST2008offPrint.pdf">
-	/// Information Retrieval on Turkish Texts</a>
-	/// </summary>
-	public sealed class TruncateTokenFilter : TokenFilter
-	{
+        private readonly int length;
 
-	  private readonly CharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAttr = addAttribute(typeof(KeywordAttribute));
+        public TruncateTokenFilter(TokenStream input, int length) : base(input)
+        {
+            if (length < 1)
+            {
+                throw new System.ArgumentOutOfRangeException("length parameter must be a positive number: " + length);
+            }
+            this.length = length;
+            this.termAttribute = AddAttribute<ICharTermAttribute>();
+            this.keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
-	  private readonly int length;
-
-	  public TruncateTokenFilter(TokenStream input, int length) : base(input)
-	  {
-		if (length < 1)
-		{
-		  throw new System.ArgumentException("length parameter must be a positive number: " + length);
-		}
-		this.length = length;
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAttr.Keyword && termAttribute.length() > length)
-		  {
-			termAttribute.Length = length;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAttr.Keyword && termAttribute.Length > length)
+                {
+                    termAttribute.Length = length;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

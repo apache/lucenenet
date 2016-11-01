@@ -106,11 +106,18 @@ namespace Lucene.Net.Support
 
         public static int ToLowerCase(int codePoint)
         {
-            // LUCENENET TODO do we really need this? what's wrong with char.ToLower() ?
-
             var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);
 
-            str = str.ToLower();
+            str = str.ToLowerInvariant();
+
+            return CodePointAt(str, 0);
+        }
+
+        public static int ToUpperCase(int codePoint)
+        {
+            var str = UnicodeUtil.NewString(new[] { codePoint }, 0, 1);
+
+            str = str.ToUpperInvariant();
 
             return CodePointAt(str, 0);
         }
@@ -137,6 +144,33 @@ namespace Lucene.Net.Support
                 {
                     n--;
                     i++;
+                }
+            }
+            return n;
+        }
+
+        public static int CodePointCount(char[] a, int offset, int count)
+        {
+            if (count > a.Length - offset || offset < 0 || count < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return CodePointCountImpl(a, offset, count);
+        }
+
+        internal static int CodePointCountImpl(char[] a, int offset, int count)
+        {
+            int endIndex = offset + count;
+            int n = 0;
+            for (int i = offset; i < endIndex;)
+            {
+                n++;
+                if (char.IsHighSurrogate(a[i++]))
+                {
+                    if (i < endIndex && char.IsLowSurrogate(a[i]))
+                    {
+                        i++;
+                    }
                 }
             }
             return n;
@@ -215,6 +249,60 @@ namespace Lucene.Net.Support
         /// 
         /// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/lang/Character.java
         /// </summary>
+        public static int OffsetByCodePoints(string seq, int index,
+                                         int codePointOffset)
+        {
+            int length = seq.Length;
+            if (index < 0 || index > length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            int x = index;
+            if (codePointOffset >= 0)
+            {
+                int i;
+                for (i = 0; x < length && i < codePointOffset; i++)
+                {
+                    if (char.IsHighSurrogate(seq[x++]))
+                    {
+                        if (x < length && char.IsLowSurrogate(seq[x]))
+                        {
+                            x++;
+                        }
+                    }
+                }
+                if (i < codePointOffset)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            else
+            {
+                int i;
+                for (i = codePointOffset; x > 0 && i < 0; i++)
+                {
+                    if (char.IsLowSurrogate(seq[--x]))
+                    {
+                        if (x > 0 && char.IsHighSurrogate(seq[x - 1]))
+                        {
+                            x--;
+                        }
+                    }
+                }
+                if (i < 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            return x;
+        }
+
+        /// <summary>
+        /// Copy of the implementation from Character class in Java
+        /// 
+        /// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/lang/Character.java
+        /// </summary>
         public static int OffsetByCodePoints(char[] a, int start, int count,
                                          int index, int codePointOffset)
         {
@@ -267,16 +355,32 @@ namespace Lucene.Net.Support
 
         public static bool IsLetter(int c)
         {
-            var str = Char.ConvertFromUtf32(c);
-
-            var unicodeCategory = Char.GetUnicodeCategory(str, 0);
+            var unicodeCategory = Char.GetUnicodeCategory((char)c);
 
             return unicodeCategory == UnicodeCategory.LowercaseLetter ||
                    unicodeCategory == UnicodeCategory.UppercaseLetter ||
                    unicodeCategory == UnicodeCategory.TitlecaseLetter ||
                    unicodeCategory == UnicodeCategory.ModifierLetter ||
-                   unicodeCategory== UnicodeCategory.OtherLetter;
+                   unicodeCategory == UnicodeCategory.OtherLetter;
+        }
 
+        /// <summary>
+        /// LUCENENET safe way to get unicode category. The .NET <seealso cref="char.ConvertFromUtf32(int)"/>
+        /// method should be used first to be safe for surrogate pairs. However, if the value falls between
+        /// 0x00d800 and 0x00dfff, that method throws an exception. So this is a wrapper that converts the
+        /// codepoint to a char in those cases.
+        /// 
+        /// This mimics the behavior of the Java Character.GetType class, but returns the .NET UnicodeCategory
+        /// enumeration for easy consumption.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static UnicodeCategory GetType(int codePoint)
+        {
+            if ((codePoint >= 0x00d800) && (codePoint <= 0x00dfff))
+                return char.GetUnicodeCategory((char)codePoint);
+            else
+                return char.GetUnicodeCategory(char.ConvertFromUtf32(codePoint), 0);
         }
     }
 }

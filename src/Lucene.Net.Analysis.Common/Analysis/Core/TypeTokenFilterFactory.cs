@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +21,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory class for <seealso cref="TypeTokenFilter"/>.
     /// <pre class="prettyprint">
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Core
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class TypeTokenFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class TypeTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private readonly bool useWhitelist;
         private readonly bool enablePositionIncrements;
@@ -44,24 +45,24 @@ namespace Lucene.Net.Analysis.Core
         public TypeTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            stopTypesFiles = require(args, "types");
-            enablePositionIncrements = getBoolean(args, "enablePositionIncrements", true);
-            useWhitelist = getBoolean(args, "useWhitelist", false);
+            stopTypesFiles = Require(args, "types");
+            enablePositionIncrements = GetBoolean(args, "enablePositionIncrements", true);
+            useWhitelist = GetBoolean(args, "useWhitelist", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
-            IList<string> files = splitFileNames(stopTypesFiles);
-            if (files.Count > 0)
+            IEnumerable<string> files = SplitFileNames(stopTypesFiles);
+            if (files.Count() > 0)
             {
                 stopTypes = new HashSet<string>();
                 foreach (string file in files)
                 {
-                    IList<string> typesLines = getLines(loader, file.Trim());
+                    IEnumerable<string> typesLines = GetLines(loader, file.Trim());
                     stopTypes.AddAll(typesLines);
                 }
             }
@@ -85,9 +86,10 @@ namespace Lucene.Net.Analysis.Core
 
         public override TokenStream Create(TokenStream input)
         {
+#pragma warning disable 612, 618
             TokenStream filter = new TypeTokenFilter(luceneMatchVersion, enablePositionIncrements, input, stopTypes, useWhitelist);
+#pragma warning restore 612, 618
             return filter;
         }
     }
-
 }

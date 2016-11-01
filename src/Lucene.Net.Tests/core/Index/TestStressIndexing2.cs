@@ -1,36 +1,38 @@
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
+    /*
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
-
-    /*
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    ///
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    ///
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TermQuery = Lucene.Net.Search.TermQuery;
@@ -81,7 +83,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestRandom()
         {
@@ -158,7 +159,7 @@ namespace Lucene.Net.Index
 
             public virtual int Compare(IndexableField o1, IndexableField o2)
             {
-                return o1.Name().CompareTo(o2.Name());
+                return o1.Name.CompareTo(o2.Name);
             }
         }
 
@@ -272,9 +273,13 @@ namespace Lucene.Net.Index
             return docs;
         }
 
-        public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
+        public void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
-            IndexWriter w = new IndexWriter(dir, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 
             // index all docs in a single thread
             IEnumerator<Document> iter = docs.Values.GetEnumerator();
@@ -681,9 +686,9 @@ namespace Lucene.Net.Index
             {
                 IndexableField f1 = ff1[i];
                 IndexableField f2 = ff2[i];
-                if (f1.BinaryValue() != null)
+                if (f1.BinaryValue != null)
                 {
-                    Debug.Assert(f2.BinaryValue() != null);
+                    Debug.Assert(f2.BinaryValue != null);
                 }
                 else
                 {
@@ -917,7 +922,7 @@ namespace Lucene.Net.Index
 
                 List<Field> fields = new List<Field>();
                 string idString = IdString;
-                Field idField = NewField("id", idString, customType1);
+                Field idField = OuterInstance.NewField("id", idString, customType1);
                 fields.Add(idField);
 
                 int nFields = NextInt(MaxFields);
@@ -950,13 +955,13 @@ namespace Lucene.Net.Index
                             customType.Stored = true;
                             customType.OmitNorms = true;
                             customType.Indexed = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(1), customType));
                             break;
 
                         case 1:
                             customType.Indexed = true;
                             customType.Tokenized = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 2:
@@ -964,14 +969,14 @@ namespace Lucene.Net.Index
                             customType.StoreTermVectors = false;
                             customType.StoreTermVectorOffsets = false;
                             customType.StoreTermVectorPositions = false;
-                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 3:
                             customType.Stored = true;
                             customType.Indexed = true;
                             customType.Tokenized = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
                             break;
                     }
                 }

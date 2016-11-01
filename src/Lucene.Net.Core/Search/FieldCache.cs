@@ -1,12 +1,12 @@
-using System;
-using System.Text;
 using Lucene.Net.Documents;
-using Lucene.Net.Index;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-    using System.IO;
-    using System.Runtime.CompilerServices;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using Bits = Lucene.Net.Util.Bits;
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
         /// entries are created that are not sane according to
         /// <seealso cref="Lucene.Net.Util.FieldCacheSanityChecker"/>.
         /// </summary>
-        StreamWriter InfoStream { set; get; }
+        TextWriter InfoStream { set; get; }
     }
 
     public static class FieldCache
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // IntField, instead, which already decodes
                 // directly from byte[]
-                return sbyte.Parse(term.Utf8ToString());
+                return sbyte.Parse(term.Utf8ToString(), CultureInfo.InvariantCulture);
             }
 
             public override string ToString()
@@ -520,7 +520,7 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // IntField, instead, which already decodes
                 // directly from byte[]
-                return short.Parse(term.Utf8ToString());
+                return short.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
             public override string ToString()
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // IntField, instead, which already decodes
                 // directly from byte[]
-                return int.Parse(term.Utf8ToString());
+                return int.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -568,7 +568,11 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // FloatField, instead, which already decodes
                 // directly from byte[]
-                return float.Parse(term.Utf8ToString());
+
+                // LUCENENET: We parse to double first and then cast to float, which allows us to parse 
+                // double.MaxValue.ToString("R") (resulting in Infinity). This is how it worked in Java
+                // and the TestFieldCache.TestInfoStream() test depends on this behavior to pass.
+                return (float)double.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -592,7 +596,7 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // LongField, instead, which already decodes
                 // directly from byte[]
-                return long.Parse(term.Utf8ToString());
+                return long.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -616,7 +620,7 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // DoubleField, instead, which already decodes
                 // directly from byte[]
-                return double.Parse(term.Utf8ToString());
+                return double.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
             }
 
             public TermsEnum TermsEnum(Terms terms)

@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NullInfoStream = Lucene.Net.Util.NullInfoStream;
     using Query = Lucene.Net.Search.Query;
+    using Similarity = Search.Similarities.Similarity;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
@@ -84,23 +85,44 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer </summary>
-        public RandomIndexWriter(Random r, Directory dir)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
+        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer
+        ///
+        /// LUCENENET specific
+        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        /// created without adding a dependency on 
+        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT </summary>
-        public RandomIndexWriter(Random r, Directory dir, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
+        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT
+        ///
+        /// LUCENENET specific
+        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        /// created without adding a dependency on 
+        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config </summary>
-        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
+        /// Creates a RandomIndexWriter with a random config
+        ///
+        /// LUCENENET specific
+        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        /// created without adding a dependency on 
+        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
 

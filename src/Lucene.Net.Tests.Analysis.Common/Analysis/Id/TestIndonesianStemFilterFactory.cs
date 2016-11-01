@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.id
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Id
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,56 +21,49 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Indonesian stem filter factory is working.
+    /// </summary>
+    public class TestIndonesianStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually stems text.
+        /// </summary>
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("dibukukannya");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("IndonesianStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "buku" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        /// <summary>
+        /// Test inflectional-only mode
+        /// </summary>
+        [Test]
+        public virtual void TestStemmingInflectional()
+        {
+            TextReader reader = new StringReader("dibukukannya");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("IndonesianStem", "stemDerivational", "false").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "dibukukan" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Indonesian stem filter factory is working.
-	/// </summary>
-	public class TestIndonesianStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually stems text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("dibukukannya");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("IndonesianStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"buku"});
-	  }
-
-	  /// <summary>
-	  /// Test inflectional-only mode
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemmingInflectional() throws Exception
-	  public virtual void testStemmingInflectional()
-	  {
-		Reader reader = new StringReader("dibukukannya");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("IndonesianStem", "stemDerivational", "false").create(stream);
-		assertTokenStreamContents(stream, new string[] {"dibukukan"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("IndonesianStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("IndonesianStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

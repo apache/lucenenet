@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
         public virtual void TestIllegalIndexableField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.StoreTermVectors = true;
             ft.StoreTermVectorPayloads = true;

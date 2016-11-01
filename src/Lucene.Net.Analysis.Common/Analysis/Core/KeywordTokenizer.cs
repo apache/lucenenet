@@ -5,7 +5,6 @@ using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Emits the entire input as a single token.
     /// </summary>
@@ -57,6 +57,9 @@ namespace Lucene.Net.Analysis.Core
         public KeywordTokenizer(AttributeSource.AttributeFactory factory, Reader input, int bufferSize)
             : base(factory, input)
         {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+
             if (bufferSize <= 0)
             {
                 throw new System.ArgumentException("bufferSize must be > 0");
@@ -75,7 +78,7 @@ namespace Lucene.Net.Analysis.Core
                 while (true)
                 {
                     int length = input.Read(buffer, upto, buffer.Length - upto);
-                    if (length == -1)
+                    if (length <= 0)
                     {
                         break;
                     }

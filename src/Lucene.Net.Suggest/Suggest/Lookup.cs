@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Search.Spell;
+﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// Simple Lookup interface for <seealso cref="string"/> suggestions.
+    /// Simple Lookup interface for <see cref="string"/> suggestions.
     /// @lucene.experimental
     /// </summary>
     public abstract class Lookup
@@ -44,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
-            ///  highlighted suggestion. 
+            /// highlighted suggestion. 
             /// </summary>
             public readonly object highlightKey;
 
@@ -58,7 +57,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// the key's contexts (null if not present) </summary>
-            public readonly HashSet<BytesRef> contexts;
+            public readonly IEnumerable<BytesRef> contexts;
 
             /// <summary>
             /// Create a new result from a key+weight pair.
@@ -87,7 +86,7 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Create a new result from a key+weight+payload+contexts triple.
             /// </summary>
-            public LookupResult(string key, long value, BytesRef payload, HashSet<BytesRef> contexts)
+            public LookupResult(string key, long value, BytesRef payload, IEnumerable<BytesRef> contexts)
                 : this(key, null, value, payload, contexts)
             {
             }
@@ -103,7 +102,7 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Create a new result from a key+highlightKey+weight+payload+contexts triple.
             /// </summary>
-            public LookupResult(string key, object highlightKey, long value, BytesRef payload, HashSet<BytesRef> contexts)
+            public LookupResult(string key, object highlightKey, long value, BytesRef payload, IEnumerable<BytesRef> contexts)
             {
                 this.key = key;
                 this.highlightKey = highlightKey;
@@ -126,7 +125,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// A simple char-by-char comparator for <seealso cref="CharSequence"/>
+        /// A simple char-by-char comparator for <see cref="string"/>
         /// </summary>
         public static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparator();
 
@@ -154,7 +153,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// A <seealso cref="PriorityQueue"/> collecting a fixed size of high priority <seealso cref="LookupResult"/>
+        /// A <see cref="PriorityQueue{LookupResult}"/> collecting a fixed size of high priority <see cref="LookupResult"/>s.
         /// </summary>
         public sealed class LookupPriorityQueue : PriorityQueue<LookupResult>
         {
@@ -201,17 +200,17 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Build lookup from a dictionary. Some implementations may require sorted
         /// or unsorted keys from the dictionary's iterator - use
-        /// <seealso cref="SortedInputIterator"/> or
-        /// <seealso cref="UnsortedInputIterator"/> in such case.
+        /// <see cref="SortedInputIterator"/> or
+        /// <see cref="UnsortedInputIterator"/> in such case.
         /// </summary>
-        public virtual void Build(Dictionary dict)
+        public virtual void Build(IDictionary dict)
         {
             Build(dict.EntryIterator);
         }
 
         /// <summary>
-        /// Calls <seealso cref="#load(DataInput)"/> after converting
-        /// <seealso cref="InputStream"/> to <seealso cref="DataInput"/>
+        /// Calls <see cref="Load(DataInput)"/> after converting
+        /// <see cref="Stream"/> to <see cref="DataInput"/>
         /// </summary>
         public virtual bool Load(Stream input)
         {
@@ -227,8 +226,8 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Calls <seealso cref="#store(DataOutput)"/> after converting
-        /// <seealso cref="OutputStream"/> to <seealso cref="DataOutput"/>
+        /// Calls <see cref="Store(DataOutput)"/> after converting
+        /// <see cref="Stream"/> to <see cref="DataOutput"/>
         /// </summary>
         public virtual bool Store(Stream output)
         {
@@ -249,10 +248,10 @@ namespace Lucene.Net.Search.Suggest
         public abstract long Count { get; }
 
         /// <summary>
-        /// Builds up a new internal <seealso cref="Lookup"/> representation based on the given <seealso cref="InputIterator"/>.
+        /// Builds up a new internal <see cref="Lookup"/> representation based on the given <see cref="IInputIterator"/>.
         /// The implementation might re-sort the data internally.
         /// </summary>
-        public abstract void Build(InputIterator inputIterator);
+        public abstract void Build(IInputIterator inputIterator);
 
         /// <summary>
         /// Look up a key and return possible completion for this key. </summary>
@@ -261,7 +260,7 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public virtual IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
+        public virtual List<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
         {
             return DoLookup(key, null, onlyMorePopular, num);
         }
@@ -274,28 +273,26 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public abstract IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num);
+        public abstract List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num);
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>
-        /// <param name="output"> <seealso cref="DataOutput"/> to write the data to. </param>
+        /// <param name="output"> <see cref="DataOutput"/> to write the data to. </param>
         /// <returns> true if successful, false if unsuccessful or not supported. </returns>
-        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
         public abstract bool Store(DataOutput output);
 
         /// <summary>
         /// Discard current lookup data and load it from a previously saved copy.
         /// Optional operation. </summary>
-        /// <param name="input"> the <seealso cref="DataInput"/> to load the lookup data. </param>
+        /// <param name="input"> the <see cref="DataInput"/> to load the lookup data. </param>
         /// <returns> true if completed successfully, false if unsuccessful or not supported. </returns>
-        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
         public abstract bool Load(DataInput input);
 
         /// <summary>
         /// Get the size of the underlying lookup implementation in memory </summary>
         /// <returns> ram size of the lookup implementation in bytes </returns>
-        public abstract long SizeInBytes();
-
+        public abstract long GetSizeInBytes();
     }
-
 }

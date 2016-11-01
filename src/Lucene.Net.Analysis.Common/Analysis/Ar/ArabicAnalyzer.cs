@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ar
+namespace Lucene.Net.Analysis.Ar
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,142 +25,136 @@ namespace org.apache.lucene.analysis.ar
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// <seealso cref="Analyzer"/> for Arabic. 
+    /// <para>
+    /// This analyzer implements light-stemming as specified by:
+    /// <i>
+    /// Light Stemming for Arabic Information Retrieval
+    /// </i>    
+    /// http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
+    /// </para>
+    /// <para>
+    /// The analysis package contains three primary components:
+    /// <ul>
+    ///  <li><seealso cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.
+    ///  <li><seealso cref="ArabicStemFilter"/>: Arabic light stemming
+    ///  <li>Arabic stop words file: a set of default Arabic stop words.
+    /// </ul>
+    /// 
+    /// </para>
+    /// </summary>
+    public sealed class ArabicAnalyzer : StopwordAnalyzerBase
+    {
 
-	using LowerCaseFilter = org.apache.lucene.analysis.core.LowerCaseFilter;
-	using StopFilter = org.apache.lucene.analysis.core.StopFilter;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using StopwordAnalyzerBase = org.apache.lucene.analysis.util.StopwordAnalyzerBase;
-	using Version = org.apache.lucene.util.Version;
+        /// <summary>
+        /// File containing default Arabic stopwords.
+        /// 
+        /// Default stopword list is from http://members.unine.ch/jacques.savoy/clef/index.html
+        /// The stopword list is BSD-Licensed.
+        /// </summary>
+        public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-	/// <summary>
-	/// <seealso cref="Analyzer"/> for Arabic. 
-	/// <para>
-	/// This analyzer implements light-stemming as specified by:
-	/// <i>
-	/// Light Stemming for Arabic Information Retrieval
-	/// </i>    
-	/// http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
-	/// </para>
-	/// <para>
-	/// The analysis package contains three primary components:
-	/// <ul>
-	///  <li><seealso cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.
-	///  <li><seealso cref="ArabicStemFilter"/>: Arabic light stemming
-	///  <li>Arabic stop words file: a set of default Arabic stop words.
-	/// </ul>
-	/// 
-	/// </para>
-	/// </summary>
-	public sealed class ArabicAnalyzer : StopwordAnalyzerBase
-	{
+        /// <summary>
+        /// Returns an unmodifiable instance of the default stop-words set. </summary>
+        /// <returns> an unmodifiable instance of the default stop-words set. </returns>
+        public static CharArraySet DefaultStopSet
+        {
+            get
+            {
+                return DefaultSetHolder.DEFAULT_STOP_SET;
+            }
+        }
 
-	  /// <summary>
-	  /// File containing default Arabic stopwords.
-	  /// 
-	  /// Default stopword list is from http://members.unine.ch/jacques.savoy/clef/index.html
-	  /// The stopword list is BSD-Licensed.
-	  /// </summary>
-	  public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
+        /// <summary>
+        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// accesses the static final set the first time.;
+        /// </summary>
+        private class DefaultSetHolder
+        {
+            internal static readonly CharArraySet DEFAULT_STOP_SET;
 
-	  /// <summary>
-	  /// Returns an unmodifiable instance of the default stop-words set. </summary>
-	  /// <returns> an unmodifiable instance of the default stop-words set. </returns>
-	  public static CharArraySet DefaultStopSet
-	  {
-		  get
-		  {
-			return DefaultSetHolder.DEFAULT_STOP_SET;
-		  }
-	  }
+            static DefaultSetHolder()
+            {
+                try
+                {
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ArabicAnalyzer), typeof(ArabicAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, "#");
+                }
+                catch (IOException)
+                {
+                    // default set should always be present as it is part of the
+                    // distribution (JAR)
+                    throw new Exception("Unable to load default stopword set");
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
-	  /// accesses the static final set the first time.;
-	  /// </summary>
-	  private class DefaultSetHolder
-	  {
-		internal static readonly CharArraySet DEFAULT_STOP_SET;
+        private readonly CharArraySet stemExclusionSet;
 
-		static DefaultSetHolder()
-		{
-		  try
-		  {
-			DEFAULT_STOP_SET = loadStopwordSet(false, typeof(ArabicAnalyzer), DEFAULT_STOPWORD_FILE, "#");
-		  }
-		  catch (IOException)
-		  {
-			// default set should always be present as it is part of the
-			// distribution (JAR)
-			throw new Exception("Unable to load default stopword set");
-		  }
-		}
-	  }
+        /// <summary>
+        /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// </summary>
+        public ArabicAnalyzer(LuceneVersion matchVersion)
+              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+        {
+        }
 
-	  private readonly CharArraySet stemExclusionSet;
+        /// <summary>
+        /// Builds an analyzer with the given stop words
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          lucene compatibility version </param>
+        /// <param name="stopwords">
+        ///          a stopword set </param>
+        public ArabicAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
+              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+        {
+        }
 
-	  /// <summary>
-	  /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
-	  /// </summary>
-	  public ArabicAnalyzer(Version matchVersion) : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
-	  {
-	  }
+        /// <summary>
+        /// Builds an analyzer with the given stop word. If a none-empty stem exclusion set is
+        /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
+        /// <seealso cref="ArabicStemFilter"/>.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          lucene compatibility version </param>
+        /// <param name="stopwords">
+        ///          a stopword set </param>
+        /// <param name="stemExclusionSet">
+        ///          a set of terms not to be stemmed </param>
+        public ArabicAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
+              : base(matchVersion, stopwords)
+        {
+            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+        }
 
-	  /// <summary>
-	  /// Builds an analyzer with the given stop words
-	  /// </summary>
-	  /// <param name="matchVersion">
-	  ///          lucene compatibility version </param>
-	  /// <param name="stopwords">
-	  ///          a stopword set </param>
-	  public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords) : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
-	  {
-	  }
-
-	  /// <summary>
-	  /// Builds an analyzer with the given stop word. If a none-empty stem exclusion set is
-	  /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
-	  /// <seealso cref="ArabicStemFilter"/>.
-	  /// </summary>
-	  /// <param name="matchVersion">
-	  ///          lucene compatibility version </param>
-	  /// <param name="stopwords">
-	  ///          a stopword set </param>
-	  /// <param name="stemExclusionSet">
-	  ///          a set of terms not to be stemmed </param>
-	  public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet) : base(matchVersion, stopwords)
-	  {
-		this.stemExclusionSet = CharArraySet.unmodifiableSet(CharArraySet.copy(matchVersion, stemExclusionSet));
-	  }
-
-	  /// <summary>
-	  /// Creates
-	  /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-	  /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
-	  /// </summary>
-	  /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-	  ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-	  ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>,
-	  ///         <seealso cref="ArabicNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
-	  ///         if a stem exclusion set is provided and <seealso cref="ArabicStemFilter"/>. </returns>
-	  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.Tokenizer source = matchVersion.onOrAfter(org.apache.lucene.util.Version.LUCENE_31) ? new org.apache.lucene.analysis.standard.StandardTokenizer(matchVersion, reader) : new ArabicLetterTokenizer(matchVersion, reader);
-		Tokenizer source = matchVersion.onOrAfter(Version.LUCENE_31) ? new StandardTokenizer(matchVersion, reader) : new ArabicLetterTokenizer(matchVersion, reader);
-		TokenStream result = new LowerCaseFilter(matchVersion, source);
-		// the order here is important: the stopword list is not normalized!
-		result = new StopFilter(matchVersion, result, stopwords);
-		// TODO maybe we should make ArabicNormalization filter also KeywordAttribute aware?!
-		result = new ArabicNormalizationFilter(result);
-		if (!stemExclusionSet.Empty)
-		{
-		  result = new SetKeywordMarkerFilter(result, stemExclusionSet);
-		}
-		return new TokenStreamComponents(source, new ArabicStemFilter(result));
-	  }
-	}
-
-
+        /// <summary>
+        /// Creates
+        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// </summary>
+        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
+        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
+        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>,
+        ///         <seealso cref="ArabicNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
+        ///         if a stem exclusion set is provided and <seealso cref="ArabicStemFilter"/>. </returns>
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        {
+#pragma warning disable 612, 618
+            Tokenizer source = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
+                ? new StandardTokenizer(matchVersion, reader) 
+                : (Tokenizer)new ArabicLetterTokenizer(matchVersion, reader);
+#pragma warning restore 612, 618
+            TokenStream result = new LowerCaseFilter(matchVersion, source);
+            // the order here is important: the stopword list is not normalized!
+            result = new StopFilter(matchVersion, result, stopwords);
+            // TODO maybe we should make ArabicNormalization filter also KeywordAttribute aware?!
+            result = new ArabicNormalizationFilter(result);
+            if (stemExclusionSet.Count > 0)
+            {
+                result = new SetKeywordMarkerFilter(result, stemExclusionSet);
+            }
+            return new TokenStreamComponents(source, new ArabicStemFilter(result));
+        }
+    }
 }

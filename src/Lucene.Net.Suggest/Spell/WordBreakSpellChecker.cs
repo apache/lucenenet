@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <para>
     /// A spell checker whose sole function is to offer suggestions by combining
@@ -42,19 +42,17 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Creates a new spellchecker with default configuration values </summary>
-        /// <seealso cref= #setMaxChanges(int) </seealso>
-        /// <seealso cref= #setMaxCombineWordLength(int) </seealso>
-        /// <seealso cref= #setMaxEvaluations(int) </seealso>
-        /// <seealso cref= #setMinBreakWordLength(int) </seealso>
-        /// <seealso cref= #setMinSuggestionFrequency(int) </seealso>
+        /// <seealso cref="MaxChanges"/>
+        /// <seealso cref="MaxCombineWordLength"/>
+        /// <seealso cref="MaxEvaluations"/>
+        /// <seealso cref="MinBreakWordLength"/>
+        /// <seealso cref="MinSuggestionFrequency"/>
         public WordBreakSpellChecker()
         {
         }
 
         /// <summary>
-        /// <para>
         /// Determines the order to list word break suggestions
-        /// </para>
         /// </summary>
         public enum BreakSuggestionSortMethod
         {
@@ -75,37 +73,30 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// <para>
         /// Generate suggestions by breaking the passed-in term into multiple words.
         /// The scores returned are equal to the number of word breaks needed so a
         /// lower score is generally preferred over a higher score.
-        /// </para>
         /// </summary>
         /// <param name="suggestMode">
-        ///          - default = <seealso cref="SuggestMode#SUGGEST_WHEN_NOT_IN_INDEX"/> </param>
+        ///          - default = <see cref="SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX"/> </param>
         /// <param name="sortMethod">
-        ///          - default =
-        ///          <seealso cref="BreakSuggestionSortMethod#NUM_CHANGES_THEN_MAX_FREQUENCY"/> </param>
+        ///          - default = <see cref="BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY"/> </param>
         /// <returns> one or more arrays of words formed by breaking up the original term </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public virtual SuggestWord[][] SuggestWordBreaks(Term term, int maxSuggestions, IndexReader ir, SuggestMode suggestMode, BreakSuggestionSortMethod sortMethod)
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        public virtual SuggestWord[][] SuggestWordBreaks(Term term, int maxSuggestions, IndexReader ir, 
+            SuggestMode suggestMode = SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, 
+            BreakSuggestionSortMethod sortMethod = BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY)
         {
             if (maxSuggestions < 1)
             {
                 return new SuggestWord[0][];
             }
-            if (suggestMode == null)
-            {
-                suggestMode = SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX;
-            }
-            if (sortMethod == null)
-            {
-                sortMethod = BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY;
-            }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<SuggestWordArrayWrapper> queueComparator = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY ? new LengthThenMaxFreqComparator(this) : new LengthThenSumFreqComparator(this);
-            LinkedList<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparator);
+            IComparer<SuggestWordArrayWrapper> queueComparator = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
+                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparator(this) 
+                : new LengthThenSumFreqComparator(this);
+            PriorityQueue<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparator);
 
             int origFreq = ir.DocFreq(term);
             if (origFreq > 0 && suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
@@ -124,7 +115,7 @@ namespace Lucene.Net.Search.Spell
             SuggestWord[][] suggestionArray = new SuggestWord[suggestions.Count][];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                suggestionArray[i] = suggestions.RemoveFirst().SuggestWords;
+                suggestionArray[i] = suggestions.Dequeue().SuggestWords;
             }
 
             return suggestionArray;
@@ -133,31 +124,32 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// <para>
         /// Generate suggestions by combining one or more of the passed-in terms into
-        /// single words. The returned <seealso cref="CombineSuggestion"/> contains both a
-        /// <seealso cref="SuggestWord"/> and also an array detailing which passed-in terms were
+        /// single words. The returned <see cref="CombineSuggestion"/> contains both a
+        /// <see cref="SuggestWord"/> and also an array detailing which passed-in terms were
         /// involved in creating this combination. The scores returned are equal to the
         /// number of word combinations needed, also one less than the length of the
-        /// array <seealso cref="CombineSuggestion#originalTermIndexes"/>. Generally, a
+        /// array <see cref="CombineSuggestion.OriginalTermIndexes"/>. Generally, a
         /// suggestion with a lower score is preferred over a higher score.
         /// </para>
         /// <para>
         /// To prevent two adjacent terms from being combined (for instance, if one is
         /// mandatory and the other is prohibited), separate the two terms with
-        /// <seealso cref="WordBreakSpellChecker#SEPARATOR_TERM"/>
+        /// <see cref="WordBreakSpellChecker.SEPARATOR_TERM"/>
         /// </para>
         /// <para>
-        /// When suggestMode equals <seealso cref="SuggestMode#SUGGEST_WHEN_NOT_IN_INDEX"/>, each
+        /// When suggestMode equals <see cref="SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX"/>, each
         /// suggestion will include at least one term not in the index.
         /// </para>
         /// <para>
-        /// When suggestMode equals <seealso cref="SuggestMode#SUGGEST_MORE_POPULAR"/>, each
+        /// When suggestMode equals <see cref="SuggestMode.SUGGEST_MORE_POPULAR"/>, each
         /// suggestion will have the same, or better frequency than the most-popular
         /// included term.
         /// </para>
         /// </summary>
         /// <returns> an array of words generated by combining original terms </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public virtual CombineSuggestion[] SuggestWordCombinations(Term[] terms, int maxSuggestions, IndexReader ir, SuggestMode suggestMode)
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        public virtual CombineSuggestion[] SuggestWordCombinations(Term[] terms, int maxSuggestions, 
+            IndexReader ir, SuggestMode suggestMode = SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
         {
             if (maxSuggestions < 1)
             {
@@ -176,7 +168,7 @@ namespace Lucene.Net.Search.Spell
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
             IComparer<CombineSuggestionWrapper> queueComparator = new CombinationsThenFreqComparator(this);
-            LinkedList<CombineSuggestionWrapper> suggestions = new PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparator);
+            PriorityQueue<CombineSuggestionWrapper> suggestions = new PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparator);
 
             int thisTimeEvaluations = 0;
             for (int i = 0; i < terms.Length - 1; i++)
@@ -221,7 +213,7 @@ namespace Lucene.Net.Search.Spell
                         minFreq = Math.Min(minFreq, origFreqs[j]);
                     }
 
-                    Term combinedTerm = new Term(terms[0].Field(), combinedTermText);
+                    Term combinedTerm = new Term(terms[0].Field, combinedTermText);
                     int combinedTermFreq = ir.DocFreq(combinedTerm);
 
                     if (suggestMode != SuggestMode.SUGGEST_MORE_POPULAR || combinedTermFreq >= maxFreq)
@@ -237,14 +229,14 @@ namespace Lucene.Net.Search.Spell
                                     origIndexes[k] = i + k;
                                 }
                                 SuggestWord word = new SuggestWord();
-                                word.freq = combinedTermFreq;
-                                word.score = origIndexes.Length - 1;
-                                word.@string = combinedTerm.Text();
+                                word.Freq = combinedTermFreq;
+                                word.Score = origIndexes.Length - 1;
+                                word.String = combinedTerm.Text();
                                 CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(this, new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
-                                suggestions.AddLast(suggestion);
+                                suggestions.Enqueue(suggestion);
                                 if (suggestions.Count > maxSuggestions)
                                 {
-                                    suggestions.RemoveFirst();
+                                    suggestions.Dequeue();
                                 }
                             }
                         }
@@ -259,12 +251,15 @@ namespace Lucene.Net.Search.Spell
             CombineSuggestion[] combineSuggestions = new CombineSuggestion[suggestions.Count];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                combineSuggestions[i] = suggestions.RemoveFirst().CombineSuggestion;
+                combineSuggestions[i] = suggestions.Dequeue().CombineSuggestion;
             }
             return combineSuggestions;
         }
 
-        private int GenerateBreakUpSuggestions(Term term, IndexReader ir, int numberBreaks, int maxSuggestions, int useMinSuggestionFrequency, SuggestWord[] prefix, LinkedList<SuggestWordArrayWrapper> suggestions, int totalEvaluations, BreakSuggestionSortMethod sortMethod)
+        private int GenerateBreakUpSuggestions(Term term, IndexReader ir, 
+            int numberBreaks, int maxSuggestions, int useMinSuggestionFrequency, 
+            SuggestWord[] prefix, PriorityQueue<SuggestWordArrayWrapper> suggestions, 
+            int totalEvaluations, BreakSuggestionSortMethod sortMethod)
         {
             string termText = term.Text();
             int termLength = termText.CodePointCount(0, termText.Length);
@@ -284,24 +279,27 @@ namespace Lucene.Net.Search.Spell
                 int end = termText.OffsetByCodePoints(0, i);
                 string leftText = termText.Substring(0, end);
                 string rightText = termText.Substring(end);
-                SuggestWord leftWord = GenerateSuggestWord(ir, term.Field(), leftText);
+                SuggestWord leftWord = GenerateSuggestWord(ir, term.Field, leftText);
 
-                if (leftWord.freq >= useMinSuggestionFrequency)
+                if (leftWord.Freq >= useMinSuggestionFrequency)
                 {
-                    SuggestWord rightWord = GenerateSuggestWord(ir, term.Field(), rightText);
-                    if (rightWord.freq >= useMinSuggestionFrequency)
+                    SuggestWord rightWord = GenerateSuggestWord(ir, term.Field, rightText);
+                    if (rightWord.Freq >= useMinSuggestionFrequency)
                     {
                         SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(this, NewSuggestion(prefix, leftWord, rightWord));
-                        suggestions.AddLast(suggestion);
+                        suggestions.Enqueue(suggestion);
                         if (suggestions.Count > maxSuggestions)
                         {
-                            suggestions.RemoveFirst();
+                            suggestions.Dequeue();
                         }
                     }
                     int newNumberBreaks = numberBreaks + 1;
                     if (newNumberBreaks <= maxChanges)
                     {
-                        int evaluations = GenerateBreakUpSuggestions(new Term(term.Field(), rightWord.@string), ir, newNumberBreaks, maxSuggestions, useMinSuggestionFrequency, NewPrefix(prefix, leftWord), suggestions, totalEvaluations, sortMethod);
+                        int evaluations = GenerateBreakUpSuggestions(new Term(term.Field, rightWord.String), 
+                            ir, newNumberBreaks, maxSuggestions, 
+                            useMinSuggestionFrequency, NewPrefix(prefix, leftWord), 
+                            suggestions, totalEvaluations, sortMethod);
                         totalEvaluations += evaluations;
                     }
                 }
@@ -331,13 +329,13 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < prefix.Length; i++)
             {
                 SuggestWord word = new SuggestWord();
-                word.@string = prefix[i].@string;
-                word.freq = prefix[i].freq;
-                word.score = score;
+                word.String = prefix[i].String;
+                word.Freq = prefix[i].Freq;
+                word.Score = score;
                 newSuggestion[i] = word;
             }
-            append1.score = score;
-            append2.score = score;
+            append1.Score = score;
+            append2.Score = score;
             newSuggestion[newSuggestion.Length - 2] = append1;
             newSuggestion[newSuggestion.Length - 1] = append2;
             return newSuggestion;
@@ -348,16 +346,17 @@ namespace Lucene.Net.Search.Spell
             Term term = new Term(fieldname, text);
             int freq = ir.DocFreq(term);
             SuggestWord word = new SuggestWord();
-            word.freq = freq;
-            word.score = 1;
-            word.@string = text;
+            word.Freq = freq;
+            word.Score = 1;
+            word.String = text;
             return word;
         }
 
         /// <summary>
-        /// Returns the minimum frequency a term must have
-        /// to be part of a suggestion. </summary>
-        /// <seealso cref= #setMinSuggestionFrequency(int) </seealso>
+        /// Gets or sets the minimum frequency a term must have to be 
+        /// included as part of a suggestion. Default=1 Not applicable when used with
+        /// <see cref="SuggestMode.SUGGEST_MORE_POPULAR"/>
+        /// </summary>
         public virtual int MinSuggestionFrequency
         {
             get
@@ -371,8 +370,9 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns the maximum length of a combined suggestion </summary>
-        /// <seealso cref= #setMaxCombineWordLength(int) </seealso>
+        /// Gets or sets the maximum length of a suggestion made 
+        /// by combining 1 or more original terms. Default=20.
+        /// </summary>
         public virtual int MaxCombineWordLength
         {
             get
@@ -386,8 +386,8 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns the minimum size of a broken word </summary>
-        /// <seealso cref= #setMinBreakWordLength(int) </seealso>
+        /// Gets or sets the minimum length to break words down to. Default=1.
+        /// </summary>
         public virtual int MinBreakWordLength
         {
             get
@@ -401,8 +401,9 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns the maximum number of changes to perform on the input </summary>
-        /// <seealso cref= #setMaxChanges(int) </seealso>
+        /// Gets or sets the maximum numbers of changes (word breaks or combinations) to make 
+        /// on the original term(s). Default=1.
+        /// </summary>
         public virtual int MaxChanges
         {
             get
@@ -416,8 +417,9 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns the maximum number of word combinations to evaluate. </summary>
-        /// <seealso cref= #setMaxEvaluations(int) </seealso>
+        /// Gets or sets the maximum number of word combinations to evaluate. Default=1000. A higher
+        /// value might improve result quality. A lower value might improve performance.
+        /// </summary>
         public virtual int MaxEvaluations
         {
             get
@@ -441,13 +443,13 @@ namespace Lucene.Net.Search.Spell
 
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
-                if (o1.suggestWords.Length != o2.suggestWords.Length)
+                if (o1.SuggestWords.Length != o2.SuggestWords.Length)
                 {
-                    return o2.suggestWords.Length - o1.suggestWords.Length;
+                    return o2.SuggestWords.Length - o1.SuggestWords.Length;
                 }
-                if (o1.freqMax != o2.freqMax)
+                if (o1.FreqMax != o2.FreqMax)
                 {
-                    return o1.freqMax - o2.freqMax;
+                    return o1.FreqMax - o2.FreqMax;
                 }
                 return 0;
             }
@@ -464,13 +466,13 @@ namespace Lucene.Net.Search.Spell
 
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
-                if (o1.suggestWords.Length != o2.suggestWords.Length)
+                if (o1.SuggestWords.Length != o2.SuggestWords.Length)
                 {
-                    return o2.suggestWords.Length - o1.suggestWords.Length;
+                    return o2.SuggestWords.Length - o1.SuggestWords.Length;
                 }
-                if (o1.freqSum != o2.freqSum)
+                if (o1.FreqSum != o2.FreqSum)
                 {
-                    return o1.freqSum - o2.freqSum;
+                    return o1.FreqSum - o2.FreqSum;
                 }
                 return 0;
             }
@@ -487,25 +489,25 @@ namespace Lucene.Net.Search.Spell
 
             public int Compare(CombineSuggestionWrapper o1, CombineSuggestionWrapper o2)
             {
-                if (o1.numCombinations != o2.numCombinations)
+                if (o1.NumCombinations != o2.NumCombinations)
                 {
-                    return o2.numCombinations - o1.numCombinations;
+                    return o2.NumCombinations - o1.NumCombinations;
                 }
-                if (o1.combineSuggestion.suggestion.freq != o2.combineSuggestion.suggestion.freq)
+                if (o1.CombineSuggestion.Suggestion.Freq != o2.CombineSuggestion.Suggestion.Freq)
                 {
-                    return o1.combineSuggestion.suggestion.freq - o2.combineSuggestion.suggestion.freq;
+                    return o1.CombineSuggestion.Suggestion.Freq - o2.CombineSuggestion.Suggestion.Freq;
                 }
                 return 0;
             }
         }
 
-        private class SuggestWordArrayWrapper
+        private class SuggestWordArrayWrapper : IComparable<SuggestWordArrayWrapper>
         {
             private readonly WordBreakSpellChecker outerInstance;
 
-            internal readonly SuggestWord[] suggestWords;
-            internal readonly int freqMax;
-            internal readonly int freqSum;
+            private readonly SuggestWord[] suggestWords;
+            private readonly int freqMax;
+            private readonly int freqSum;
 
             internal SuggestWordArrayWrapper(WordBreakSpellChecker outerInstance, SuggestWord[] suggestWords)
             {
@@ -515,20 +517,42 @@ namespace Lucene.Net.Search.Spell
                 int aFreqMax = 0;
                 foreach (SuggestWord sw in suggestWords)
                 {
-                    aFreqSum += sw.freq;
-                    aFreqMax = Math.Max(aFreqMax, sw.freq);
+                    aFreqSum += sw.Freq;
+                    aFreqMax = Math.Max(aFreqMax, sw.Freq);
                 }
                 this.freqSum = aFreqSum;
                 this.freqMax = aFreqMax;
             }
+
+            public SuggestWord[] SuggestWords
+            {
+                get { return suggestWords; }
+            }
+
+            public int FreqMax
+            {
+                get { return freqMax; }
+            }
+
+            public int FreqSum
+            {
+                get { return freqSum; }
+            }
+
+            // Required by the PriorityQueue's generic constraint, but we are using
+            // IComparer<T> here rather than IComparable<T>
+            public int CompareTo(SuggestWordArrayWrapper other)
+            {
+                throw new NotSupportedException();
+            }
         }
 
-        private class CombineSuggestionWrapper
+        private class CombineSuggestionWrapper : IComparable<CombineSuggestionWrapper>
         {
             private readonly WordBreakSpellChecker outerInstance;
 
-            internal readonly CombineSuggestion combineSuggestion;
-            internal readonly int numCombinations;
+            private readonly CombineSuggestion combineSuggestion;
+            private readonly int numCombinations;
 
             internal CombineSuggestionWrapper(WordBreakSpellChecker outerInstance, CombineSuggestion combineSuggestion, int numCombinations)
             {
@@ -536,7 +560,23 @@ namespace Lucene.Net.Search.Spell
                 this.combineSuggestion = combineSuggestion;
                 this.numCombinations = numCombinations;
             }
+
+            public CombineSuggestion CombineSuggestion
+            {
+                get { return combineSuggestion; }
+            }
+
+            public int NumCombinations
+            {
+                get { return numCombinations; }
+            }
+
+            // Required by the PriorityQueue's generic constraint, but we are using
+            // IComparer<T> here rather than IComparable<T>
+            public int CompareTo(CombineSuggestionWrapper other)
+            {
+                throw new NotSupportedException();
+            }
         }
     }
-
 }

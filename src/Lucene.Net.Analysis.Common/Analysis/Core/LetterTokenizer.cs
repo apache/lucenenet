@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A LetterTokenizer is a tokenizer that divides text at non-letters. That's to
     /// say, it defines tokens as maximal strings of adjacent letters, as defined by
@@ -41,7 +41,6 @@ namespace Lucene.Net.Analysis.Core
     /// </ul>
     /// </para>
     /// </summary>
-
     public class LetterTokenizer : CharTokenizer
     {
 
@@ -76,7 +75,7 @@ namespace Lucene.Net.Analysis.Core
         /// Collects only characters which satisfy
         /// <seealso cref="Character#isLetter(int)"/>.
         /// </summary>
-        protected override bool IsTokenChar(char c)
+        protected override bool IsTokenChar(int c)
         {
             return Character.IsLetter(c);
         }

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-    using System.Threading;
+using System.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
@@ -52,6 +52,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestBinaryDocValuesUpdates : LuceneTestCase
     {
@@ -1109,25 +1110,59 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpdateOldSegments()
         {
-            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec() };
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+
+            Codec[] oldCodecs = new Codec[] {
+                new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            };
             Directory dir = NewDirectory();
 
-            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));
             doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
             writer.AddDocument(doc);
             writer.Dispose();
+            dir.Dispose();
+        }
 
-            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            writer = new IndexWriter(dir, conf);
-            writer.UpdateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
+        /// <summary>
+        /// LUCENENET specific
+        /// Split from <see cref="TestUpdateOldSegments"/> because OLD_FORMAT_IMPERSONATION_IS_ACTIVE
+        /// is no longer static and the existing codecs have to be remade.
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestUpdateOldSegments_OldFormatNotActive()
+        {
+            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
+
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+
+            Codec[] oldCodecs = new Codec[] {
+                new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            };
+
+            Directory dir = NewDirectory();
+            Document doc = new Document();
+            doc.Add(new StringField("id", "doc", Store.NO));
+            doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
+
+            var conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
+
+            var writer = new IndexWriter(dir, conf);
+            writer.AddDocument(doc);
+            writer.UpdateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
+
             try
             {
                 writer.Dispose();
@@ -1578,7 +1613,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test, LongRunningTest, Timeout(40000)]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

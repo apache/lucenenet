@@ -3,14 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,35 +20,42 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+
     /// <summary>
-    /// A <seealso cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
+    /// A <see cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
     /// index.
     /// 
     /// @lucene.experimental
     /// </summary>
     internal class TaxonomyIndexArrays : ParallelTaxonomyArrays
     {
-
-        private readonly int[] parents_Renamed;
+        private readonly int[] parents;
 
         // the following two arrays are lazily intialized. note that we only keep a
         // single boolean member as volatile, instead of declaring the arrays
         // volatile. the code guarantees that only after the boolean is set to true,
         // the arrays are returned.
         private volatile bool initializedChildren = false;
-        private int[] children_Renamed, siblings_Renamed;
+        private int[] children, siblings;
 
         /// <summary>
-        /// Used by <seealso cref="#add(int, int)"/> after the array grew. </summary>
+        /// Used by <see cref="Add(int, int)"/> after the array grew.
+        /// </summary>
         private TaxonomyIndexArrays(int[] parents)
         {
-            this.parents_Renamed = parents;
+            this.parents = parents;
         }
 
         public TaxonomyIndexArrays(IndexReader reader)
         {
-            parents_Renamed = new int[reader.MaxDoc];
-            if (parents_Renamed.Length > 0)
+            parents = new int[reader.MaxDoc];
+            if (parents.Length > 0)
             {
                 InitParents(reader, 0);
                 // Starting Lucene 2.9, following the change LUCENE-1542, we can
@@ -66,7 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // with existing indexes, so what we'll do instead is just
                 // hard-code the parent of ordinal 0 to be -1, and assume (as is
                 // indeed the case) that no other parent can be -1.
-                parents_Renamed[0] = TaxonomyReader.INVALID_ORDINAL;
+                parents[0] = TaxonomyReader.INVALID_ORDINAL;
             }
         }
 
@@ -78,9 +77,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // it may be caused if e.g. the taxonomy segments were merged, and so an updated
             // NRT reader was obtained, even though nothing was changed. this is not very likely
             // to happen.
-            int[] copyParents = copyFrom.Parents();
-            this.parents_Renamed = new int[reader.MaxDoc];
-            Array.Copy(copyParents, 0, parents_Renamed, 0, copyParents.Length);
+            int[] copyParents = copyFrom.Parents;
+            this.parents = new int[reader.MaxDoc];
+            Array.Copy(copyParents, 0, parents, 0, copyParents.Length);
             InitParents(reader, copyParents.Length);
 
             if (copyFrom.initializedChildren)
@@ -95,14 +94,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 if (!initializedChildren) // must do this check !
                 {
-                    children_Renamed = new int[parents_Renamed.Length];
-                    siblings_Renamed = new int[parents_Renamed.Length];
+                    children = new int[parents.Length];
+                    siblings = new int[parents.Length];
                     if (copyFrom != null)
                     {
                         // called from the ctor, after we know copyFrom has initialized children/siblings
-                        Array.Copy(copyFrom.Children(), 0, children_Renamed, 0, copyFrom.Children().Length);
-                        Array.Copy(copyFrom.Siblings(), 0, siblings_Renamed, 0, copyFrom.Siblings().Length);
-                        ComputeChildrenSiblings(copyFrom.parents_Renamed.Length);
+                        Array.Copy(copyFrom.Children, 0, children, 0, copyFrom.Children.Length);
+                        Array.Copy(copyFrom.Siblings, 0, siblings, 0, copyFrom.Siblings.Length);
+                        ComputeChildrenSiblings(copyFrom.parents.Length);
                     }
                     else
                     {
@@ -118,28 +117,30 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // reset the youngest child of all ordinals. while this should be done only
             // for the leaves, we don't know up front which are the leaves, so we reset
             // all of them.
-            for (int i = first; i < parents_Renamed.Length; i++)
+            for (int i = first; i < parents.Length; i++)
             {
-                children_Renamed[i] = TaxonomyReader.INVALID_ORDINAL;
+                children[i] = TaxonomyReader.INVALID_ORDINAL;
             }
 
             // the root category has no parent, and therefore no siblings
             if (first == 0)
             {
                 first = 1;
-                siblings_Renamed[0] = TaxonomyReader.INVALID_ORDINAL;
+                siblings[0] = TaxonomyReader.INVALID_ORDINAL;
             }
 
-            for (int i = first; i < parents_Renamed.Length; i++)
+            for (int i = first; i < parents.Length; i++)
             {
                 // note that parents[i] is always < i, so the right-hand-side of
                 // the following line is already set when we get here
-                siblings_Renamed[i] = children_Renamed[parents_Renamed[i]];
-                children_Renamed[parents_Renamed[i]] = i;
+                siblings[i] = children[parents[i]];
+                children[parents[i]] = i;
             }
         }
 
-        // Read the parents of the new categories
+        /// <summary>
+        /// Read the parents of the new categories
+        /// </summary>
         private void InitParents(IndexReader reader, int first)
         {
             if (reader.MaxDoc == first)
@@ -168,7 +169,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         throw new CorruptIndexException("Missing parent data for category " + i);
                     }
 
-                    parents_Renamed[i] = positions.NextPosition();
+                    parents[i] = positions.NextPosition();
 
                     if (positions.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
                     {
@@ -195,58 +196,65 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         internal virtual TaxonomyIndexArrays Add(int ordinal, int parentOrdinal)
         {
-            if (ordinal >= parents_Renamed.Length)
+            if (ordinal >= parents.Length)
             {
-                int[] newarray = ArrayUtil.Grow(parents_Renamed, ordinal + 1);
+                int[] newarray = ArrayUtil.Grow(parents, ordinal + 1);
                 newarray[ordinal] = parentOrdinal;
                 return new TaxonomyIndexArrays(newarray);
             }
-            parents_Renamed[ordinal] = parentOrdinal;
+            parents[ordinal] = parentOrdinal;
             return this;
         }
 
         /// <summary>
-        /// Returns the parents array, where {@code parents[i]} denotes the parent of
-        /// category ordinal {@code i}.
+        /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
+        /// category ordinal <c>i</c>.
         /// </summary>
-        public override int[] Parents()
+        public override int[] Parents
         {
-            return parents_Renamed;
+            get
+            {
+                return parents;
+            }
         }
 
         /// <summary>
-        /// Returns the children array, where {@code children[i]} denotes the youngest
-        /// child of category ordinal {@code i}. The youngest child is defined as the
+        /// Returns the children array, where <c>Children[i]</c> denotes the youngest
+        /// child of category ordinal <c>i</c>. The youngest child is defined as the
         /// category that was added last to the taxonomy as an immediate child of
-        /// {@code i}.
+        /// <c>i</c>.
         /// </summary>
-        public override int[] Children()
+        public override int[] Children
         {
-            if (!initializedChildren)
+            get
             {
-                InitChildrenSiblings(null);
-            }
+                if (!initializedChildren)
+                {
+                    InitChildrenSiblings(null);
+                }
 
-            // the array is guaranteed to be populated
-            return children_Renamed;
+                // the array is guaranteed to be populated
+                return children;
+            }
         }
 
         /// <summary>
-        /// Returns the siblings array, where {@code siblings[i]} denotes the sibling
-        /// of category ordinal {@code i}. The sibling is defined as the previous
-        /// youngest child of {@code parents[i]}.
+        /// Returns the siblings array, where <c>Siblings[i]</c> denotes the sibling
+        /// of category ordinal <c>i</c>. The sibling is defined as the previous
+        /// youngest child of <c>Parents[i]</c>.
         /// </summary>
-        public override int[] Siblings()
+        public override int[] Siblings
         {
-            if (!initializedChildren)
+            get
             {
-                InitChildrenSiblings(null);
+                if (!initializedChildren)
+                {
+                    InitChildrenSiblings(null);
+                }
+
+                // the array is guaranteed to be populated
+                return siblings;
             }
-
-            // the array is guaranteed to be populated
-            return siblings_Renamed;
         }
-
     }
-
 }

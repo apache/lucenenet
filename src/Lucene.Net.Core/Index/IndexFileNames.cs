@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Lucene.Net.Index
 {
+    using Support;
     using System.Text.RegularExpressions;
 
     /*
@@ -104,7 +105,8 @@ namespace Lucene.Net.Index
                 // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
                 // to the gen length as string (hopefully an upper limit so SB won't
                 // expand in the middle.
-                StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(gen.ToString());
+                StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length))
+                    .Append(@base).Append('_').Append(Number.ToString(gen, Character.MAX_RADIX));
                 if (ext.Length > 0)
                 {
                     res.Append('.').Append(ext);

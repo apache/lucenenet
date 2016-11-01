@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("id", "d1"));
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
 
-            QueryUtils.Check(Random(), dq, s);
+            QueryUtils.Check(Random(), dq, s, Similarity);
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("dek", "albino"));
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
-            QueryUtils.Check(Random(), dq, s);
+            QueryUtils.Check(Random(), dq, s, Similarity);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
             Scorer ds = dw.Scorer(context, (context.AtomicReader).LiveDocs);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("hed", "albino"));
             q.Add(Tq("hed", "elephant"));
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("hed", "elephant"));
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -299,7 +299,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -329,17 +329,17 @@ namespace Lucene.Net.Search
                 q1.Add(Tq("hed", "albino"));
                 q1.Add(Tq("dek", "albino"));
                 q.Add(q1, BooleanClause.Occur.MUST); // true,false);
-                QueryUtils.Check(Random(), q1, s);
+                QueryUtils.Check(Random(), q1, s, Similarity);
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
                 q2.Add(Tq("hed", "elephant"));
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.MUST); // true,false);
-                QueryUtils.Check(Random(), q2, s);
+                QueryUtils.Check(Random(), q2, s, Similarity);
             }
 
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -375,7 +375,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -414,7 +414,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -464,7 +464,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 

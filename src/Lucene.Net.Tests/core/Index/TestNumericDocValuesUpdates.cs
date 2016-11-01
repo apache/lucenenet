@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
+    [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
     public class TestNumericDocValuesUpdates : LuceneTestCase
     {
@@ -1062,14 +1062,15 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpdateOldSegments()
         {
-            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec() };
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+
+            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE) };
             Directory dir = NewDirectory();
 
             bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));
@@ -1526,7 +1527,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(120000)]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

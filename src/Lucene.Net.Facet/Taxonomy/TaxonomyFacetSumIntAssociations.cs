@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,25 +19,23 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
 
     /// <summary>
     /// Aggregates sum of int values previously indexed with
-    ///  <seealso cref="IntAssociationFacetField"/>, assuming the default
-    ///  encoding.
+    /// <see cref="IntAssociationFacetField"/>, assuming the default
+    /// encoding.
     /// 
     ///  @lucene.experimental 
     /// </summary>
     public class TaxonomyFacetSumIntAssociations : IntTaxonomyFacets
     {
-
         /// <summary>
-        /// Create {@code TaxonomyFacetSumIntAssociations} against
-        ///  the default index field. 
+        /// Create <see cref="TaxonomyFacetSumIntAssociations"/> against
+        /// the default index field. 
         /// </summary>
         public TaxonomyFacetSumIntAssociations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -47,13 +43,13 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Create {@code TaxonomyFacetSumIntAssociations} against
-        ///  the specified index field. 
+        /// Create <see cref="TaxonomyFacetSumIntAssociations"/> against
+        /// the specified index field. 
         /// </summary>
         public TaxonomyFacetSumIntAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)
         {
-            SumValues(fc.GetMatchingDocs);
+            SumValues(fc.GetMatchingDocs());
         }
 
         private void SumValues(IList<FacetsCollector.MatchingDocs> matchingDocs)
@@ -61,13 +57,13 @@ namespace Lucene.Net.Facet.Taxonomy
             //System.out.println("count matchingDocs=" + matchingDocs + " facetsField=" + facetsFieldName);
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                BinaryDocValues dv = hits.context.AtomicReader.GetBinaryDocValues(IndexFieldName);
+                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(indexFieldName);
                 if (dv == null) // this reader does not have DocValues for the requested category list
                 {
                     continue;
                 }
 
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -82,9 +78,11 @@ namespace Lucene.Net.Facet.Taxonomy
                     int offset = bytesRef.Offset;
                     while (offset < end)
                     {
-                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
-                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
                         values[ord] += value;
                     }
@@ -92,5 +90,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

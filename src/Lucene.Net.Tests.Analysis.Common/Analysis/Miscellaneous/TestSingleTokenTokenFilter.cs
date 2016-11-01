@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,35 +21,29 @@
 	 * limitations under the License.
 	 */
 
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using AttributeImpl = org.apache.lucene.util.AttributeImpl;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    public class TestSingleTokenTokenFilter : LuceneTestCase
+    {
 
-	public class TestSingleTokenTokenFilter : LuceneTestCase
-	{
+        [Test]
+        public virtual void Test()
+        {
+            Token token = new Token();
+            SingleTokenTokenStream ts = new SingleTokenTokenStream(token);
+            var tokenAtt = ts.AddAttribute<ICharTermAttribute>();
+            assertTrue(tokenAtt is Token);
+            ts.Reset();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws java.io.IOException
-	  public virtual void test()
-	  {
-		Token token = new Token();
-		SingleTokenTokenStream ts = new SingleTokenTokenStream(token);
-		AttributeImpl tokenAtt = (AttributeImpl) ts.addAttribute(typeof(CharTermAttribute));
-		assertTrue(tokenAtt is Token);
-		ts.reset();
+            assertTrue(ts.IncrementToken());
+            assertEquals(token, tokenAtt);
+            assertFalse(ts.IncrementToken());
 
-		assertTrue(ts.incrementToken());
-		assertEquals(token, tokenAtt);
-		assertFalse(ts.incrementToken());
+            token = new Token("hallo", 10, 20, "someType");
+            ts.Token = token;
+            ts.Reset();
 
-		token = new Token("hallo", 10, 20, "someType");
-		ts.Token = token;
-		ts.reset();
-
-		assertTrue(ts.incrementToken());
-		assertEquals(token, tokenAtt);
-		assertFalse(ts.incrementToken());
-	  }
-	}
-
+            assertTrue(ts.IncrementToken());
+            assertEquals(token, tokenAtt);
+            assertFalse(ts.IncrementToken());
+        }
+    }
 }

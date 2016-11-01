@@ -3,7 +3,6 @@ using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,27 +20,28 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
     using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
-    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using Directory = Lucene.Net.Store.Directory;
+    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
 
     /// <summary>
-    /// Prints how many ords are under each dimension. </summary>
+    /// Prints how many ords are under each dimension. 
+    /// </summary>
 
     // java -cp ../build/core/classes/java:../build/facet/classes/java org.apache.lucene.facet.util.PrintTaxonomyStats -printTree /s2/scratch/indices/wikibig.trunk.noparents.facets.Lucene41.nd1M/facets
     public class PrintTaxonomyStats
     {
-
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public PrintTaxonomyStats()
         {
         }
 
         /// <summary>
-        /// Command-line tool. </summary>
+        /// Command-line tool.
+        /// </summary>
         public static void Main(string[] args)
         {
             bool printTree = false;
@@ -59,6 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             if (args.Length != (printTree ? 2 : 1))
             {
+                // LUCENENET TODO: Usage depends on wrapping this into a console application assembly.
                 Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
                 Environment.Exit(1);
             }
@@ -73,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Recursively prints stats for all ordinals. </summary>
         public static void PrintStats(TaxonomyReader r, TextWriter @out, bool printTree)
         {
-            @out.WriteLine(r.Size + " total categories.");
+            @out.WriteLine(r.Count + " total categories.");
 
             ChildrenIterator it = r.GetChildren(TaxonomyReader.ROOT_ORDINAL);
             int child;
@@ -117,5 +118,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        protected override DirectoryReader DoWrapDirectoryReader(DirectoryReader @in)
+        protected internal override DirectoryReader DoWrapDirectoryReader(DirectoryReader @in)
         {
             return new AssertingDirectoryReader(@in);
         }

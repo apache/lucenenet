@@ -3,8 +3,7 @@ using System.IO;
 
 namespace Lucene.Net.Analysis.Util
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,92 +20,122 @@ namespace Lucene.Net.Analysis.Util
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple <seealso cref="ResourceLoader"/> that opens resource files
+    /// from the local file system, optionally resolving against
+    /// a base directory.
+    /// 
+    /// <para>This loader wraps a delegate <seealso cref="ResourceLoader"/>
+    /// that is used to resolve all files, the current base directory
+    /// does not contain. <seealso cref="#newInstance"/> is always resolved
+    /// against the delegate, as a <seealso cref="ClassLoader"/> is needed.
+    /// 
+    /// </para>
+    /// <para>You can chain several {@code FilesystemResourceLoader}s
+    /// to allow lookup of files in more than one base directory.
+    /// </para>
+    /// </summary>
+    public sealed class FilesystemResourceLoader : IResourceLoader
+    {
+        private readonly DirectoryInfo baseDirectory;
+        private readonly IResourceLoader @delegate;
 
-	/// <summary>
-	/// Simple <seealso cref="ResourceLoader"/> that opens resource files
-	/// from the local file system, optionally resolving against
-	/// a base directory.
-	/// 
-	/// <para>This loader wraps a delegate <seealso cref="ResourceLoader"/>
-	/// that is used to resolve all files, the current base directory
-	/// does not contain. <seealso cref="#newInstance"/> is always resolved
-	/// against the delegate, as a <seealso cref="ClassLoader"/> is needed.
-	/// 
-	/// </para>
-	/// <para>You can chain several {@code FilesystemResourceLoader}s
-	/// to allow lookup of files in more than one base directory.
-	/// </para>
-	/// </summary>
-	public sealed class FilesystemResourceLoader : ResourceLoader
-	{
-	  private readonly File baseDirectory;
-	  private readonly ResourceLoader @delegate;
+        /// <summary>
+        /// Creates a resource loader that requires absolute filenames or relative to CWD
+        /// to resolve resources. Files not found in file system and class lookups
+        /// are delegated to context classloader.
+        /// </summary>
+        public FilesystemResourceLoader()
+              : this((DirectoryInfo)null)
+        {
+        }
 
-	  /// <summary>
-	  /// Creates a resource loader that requires absolute filenames or relative to CWD
-	  /// to resolve resources. Files not found in file system and class lookups
-	  /// are delegated to context classloader.
-	  /// </summary>
-	  public FilesystemResourceLoader() : this((File) null)
-	  {
-	  }
+        /// <summary>
+        /// Creates a resource loader that resolves resources against the given
+        /// base directory (may be {@code null} to refer to CWD).
+        /// Files not found in file system and class lookups are delegated to context
+        /// classloader.
+        /// </summary>
+        public FilesystemResourceLoader(DirectoryInfo baseDirectory)
+              : this(baseDirectory, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
+        {
+        }
 
-	  /// <summary>
-	  /// Creates a resource loader that resolves resources against the given
-	  /// base directory (may be {@code null} to refer to CWD).
-	  /// Files not found in file system and class lookups are delegated to context
-	  /// classloader.
-	  /// </summary>
-	  public FilesystemResourceLoader(File baseDirectory) : this(baseDirectory, new ClasspathResourceLoader())
-	  {
-	  }
+        /// <summary>
+        /// Creates a resource loader that resolves resources against the given
+        /// base directory (may be {@code null} to refer to CWD).
+        /// Files not found in file system and class lookups are delegated
+        /// to the given delegate <seealso cref="ResourceLoader"/>.
+        /// </summary>
+        public FilesystemResourceLoader(DirectoryInfo baseDirectory, IResourceLoader @delegate)
+        {
+            // LUCENENET NOTE: If you call DirectoryInfo.Create() it doesn't set the DirectoryInfo.Exists
+            // flag to true, so we use the Directory object to check the path explicitly.
+            if (baseDirectory != null && !Directory.Exists(baseDirectory.FullName))
+            {
+                throw new System.ArgumentException("baseDirectory is not a directory or null");
+            }
+            if (@delegate == null)
+            {
+                throw new System.ArgumentException("delegate ResourceLoader may not be null");
+            }
 
-	  /// <summary>
-	  /// Creates a resource loader that resolves resources against the given
-	  /// base directory (may be {@code null} to refer to CWD).
-	  /// Files not found in file system and class lookups are delegated
-	  /// to the given delegate <seealso cref="ResourceLoader"/>.
-	  /// </summary>
-	  public FilesystemResourceLoader(File baseDirectory, ResourceLoader @delegate)
-	  {
-		if (baseDirectory != null && !baseDirectory.Directory)
-		{
-		  throw new System.ArgumentException("baseDirectory is not a directory or null");
-		}
-		if (@delegate == null)
-		{
-		  throw new System.ArgumentException("delegate ResourceLoader may not be null");
-		}
-		this.baseDirectory = baseDirectory;
-		this.@delegate = @delegate;
-	  }
+            this.baseDirectory = baseDirectory;
+            this.@delegate = @delegate;
+        }
 
-	  public Stream OpenResource(string resource)
-	  {
-		try
-		{
-		  File file = new File(resource);
-		  if (baseDirectory != null && !file.Absolute)
-		  {
-			file = new File(baseDirectory, resource);
-		  }
-		  return new FileInputStream(file);
-		}
-		catch (FileNotFoundException)
-		{
-		  return @delegate.openResource(resource);
-		}
-	  }
+        public Stream OpenResource(string resource)
+        {
+            try
+            {
+                FileInfo file = null;
 
-	  public T newInstance<T>(string cname, Type expectedType)
-	  {
-		return @delegate.newInstance(cname, expectedType);
-	  }
+                // First try absolute.
+                if (System.IO.File.Exists(resource))
+                {
+                    file = new FileInfo(resource);
+                }
+                else
+                {
+                    // Try as a relative path
+                    var fullPath = System.IO.Path.GetFullPath(resource);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        file = new FileInfo(fullPath);
+                    }
+                    else if (baseDirectory != null)
+                    {
+                        // Try to combine with the base directory
+                        string based = System.IO.Path.Combine(baseDirectory.FullName, resource);
+                        if (System.IO.File.Exists(based))
+                        {
+                            file = new FileInfo(based);
+                        }
+                    }
+                }
 
-	  public Type findClass<T>(string cname, Type expectedType)
-	  {
-		return @delegate.findClass(cname, expectedType);
-	  }
-	}
+                if (file != null)
+                {
+                    return file.OpenRead();
+                }
 
+                // Fallback on the inner resource loader (this could fail)
+                return @delegate.OpenResource(resource);
+            }
+            catch (Exception e)
+            {
+                throw new IOException("The requested file could not be found", e);
+            }
+        }
+
+        public T NewInstance<T>(string cname)
+        {
+            return @delegate.NewInstance<T>(cname);
+        }
+
+        public Type FindClass(string cname)
+        {
+            return @delegate.FindClass(cname);
+        }
+    }
 }

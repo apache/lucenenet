@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Facet;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,10 +19,9 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// Maps specified dims to provided Facets impls; else, uses
-    ///  the default Facets impl. 
+    /// Maps specified dims to provided <see cref="Facets"/> impls; else, uses
+    /// the default <see cref="Facets"/> impl. 
     /// </summary>
     public class MultiFacets : Facets
     {
@@ -33,8 +29,8 @@ namespace Lucene.Net.Facet
         private readonly Facets defaultFacets;
 
         /// <summary>
-        /// Create this, with the specified default <seealso cref="Facets"/>
-        ///  for fields not included in {@code dimToFacets}. 
+        /// Create this, with the specified default <see cref="Facets"/>
+        /// for fields not included in <paramref name="dimToFacets"/>. 
         /// </summary>
         public MultiFacets(IDictionary<string, Facets> dimToFacets, Facets defaultFacets = null)
         {
@@ -71,10 +67,10 @@ namespace Lucene.Net.Facet
             return facets.GetSpecificValue(dim, path);
         }
 
-        public override IList<FacetResult> GetAllDims(int topN)
+        public override List<FacetResult> GetAllDims(int topN)
         {
 
-            IList<FacetResult> results = new List<FacetResult>();
+            List<FacetResult> results = new List<FacetResult>();
 
             // First add the specific dim's facets:
             foreach (KeyValuePair<string, Facets> ent in dimToFacets)
@@ -99,5 +95,4 @@ namespace Lucene.Net.Facet
             return results;
         }
     }
-
 }

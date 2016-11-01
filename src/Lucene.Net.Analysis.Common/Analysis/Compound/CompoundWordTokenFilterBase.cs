@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Compound
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Analysis.Compound
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Base class for decomposition token filters.
     /// <para>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Compound
         protected internal readonly int maxSubwordSize;
         protected internal readonly bool onlyLongestMatch;
 
-        protected internal readonly CharTermAttribute termAtt;
+        protected internal readonly ICharTermAttribute termAtt;
         protected internal readonly IOffsetAttribute offsetAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Compound
         protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(input)
         {
-            termAtt = AddAttribute<ICharTermAttribute>() as CharTermAttribute;
+            termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Compound
             this.dictionary = dictionary;
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (tokens.Count > 0)
             {
@@ -174,7 +174,9 @@ namespace Lucene.Net.Analysis.Compound
                 int startOff = outerInstance.offsetAtt.StartOffset();
                 int endOff = outerInstance.offsetAtt.EndOffset();
 
+#pragma warning disable 612, 618
                 if (outerInstance.matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.termAtt.Length)
+#pragma warning restore 612, 618
                 {
                     // if length by start + end offsets doesn't match the term text then assume
                     // this is a synonym and don't adjust the offsets.

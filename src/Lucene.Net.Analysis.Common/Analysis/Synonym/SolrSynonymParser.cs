@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Synonym
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -22,192 +22,187 @@ namespace Lucene.Net.Analysis.Synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Parser for the Solr synonyms format.
-	/// <ol>
-	///   <li> Blank lines and lines starting with '#' are comments.
-	///   <li> Explicit mappings match any token sequence on the LHS of "=>"
-	///        and replace with all alternatives on the RHS.  These types of mappings
-	///        ignore the expand parameter in the constructor.
-	///        Example:
-	///        <blockquote>i-pod, i pod => ipod</blockquote>
-	///   <li> Equivalent synonyms may be separated with commas and give
-	///        no explicit mapping.  In this case the mapping behavior will
-	///        be taken from the expand parameter in the constructor.  This allows
-	///        the same synonym file to be used in different synonym handling strategies.
-	///        Example:
-	///        <blockquote>ipod, i-pod, i pod</blockquote>
-	/// 
-	///   <li> Multiple synonym mapping entries are merged.
-	///        Example:
-	///        <blockquote>
-	///         foo => foo bar<br>
-	///         foo => baz<br><br>
-	///         is equivalent to<br><br>
-	///         foo => foo bar, baz
-	///        </blockquote>
-	///  </ol>
-	/// @lucene.experimental
-	/// </summary>
-	public class SolrSynonymParser : SynonymMap.Parser
-	{
-	  private readonly bool expand;
+    /// Parser for the Solr synonyms format.
+    /// <ol>
+    ///   <li> Blank lines and lines starting with '#' are comments.
+    ///   <li> Explicit mappings match any token sequence on the LHS of "=>"
+    ///        and replace with all alternatives on the RHS.  These types of mappings
+    ///        ignore the expand parameter in the constructor.
+    ///        Example:
+    ///        <blockquote>i-pod, i pod => ipod</blockquote>
+    ///   <li> Equivalent synonyms may be separated with commas and give
+    ///        no explicit mapping.  In this case the mapping behavior will
+    ///        be taken from the expand parameter in the constructor.  This allows
+    ///        the same synonym file to be used in different synonym handling strategies.
+    ///        Example:
+    ///        <blockquote>ipod, i-pod, i pod</blockquote>
+    /// 
+    ///   <li> Multiple synonym mapping entries are merged.
+    ///        Example:
+    ///        <blockquote>
+    ///         foo => foo bar<br>
+    ///         foo => baz<br><br>
+    ///         is equivalent to<br><br>
+    ///         foo => foo bar, baz
+    ///        </blockquote>
+    ///  </ol>
+    /// @lucene.experimental
+    /// </summary>
+    public class SolrSynonymParser : SynonymMap.Parser
+    {
+        private readonly bool expand;
 
-	  public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
-	  {
-		this.expand = expand;
-	  }
+        public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
+        {
+            this.expand = expand;
+        }
 
-	  public override void Parse(Reader @in)
-	  {
-		LineNumberReader br = new LineNumberReader(@in);
-		try
-		{
-		  addInternal(br);
-		}
-		catch (System.ArgumentException e)
-		{
-		  ParseException ex = new ParseException("Invalid synonym rule at line " + br.LineNumber, 0);
-		  ex.initCause(e);
-		  throw ex;
-		}
-		finally
-		{
-		  br.close();
-		}
-	  }
+        public override void Parse(TextReader @in)
+        {
+            int lineNumber = 0;
+            try
+            {
+                string line = null;
+                while ((line = @in.ReadLine()) != null)
+                {
+                    lineNumber++;
+                    if (line.Length == 0 || line[0] == '#')
+                    {
+                        continue; // ignore empty lines and comments
+                    }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void addInternal(java.io.BufferedReader in) throws java.io.IOException
-	  private void addInternal(BufferedReader @in)
-	  {
-		string line = null;
-		while ((line = @in.readLine()) != null)
-		{
-		  if (line.Length == 0 || line[0] == '#')
-		  {
-			continue; // ignore empty lines and comments
-		  }
+                    CharsRef[] inputs;
+                    CharsRef[] outputs;
 
-		  CharsRef[] inputs;
-		  CharsRef[] outputs;
+                    // TODO: we could process this more efficiently.
+                    string[] sides = Split(line, "=>");
+                    if (sides.Length > 1) // explicit mapping
+                    {
+                        if (sides.Length != 2)
+                        {
+                            throw new System.ArgumentException("more than one explicit mapping specified on the same line");
+                        }
+                        string[] inputStrings = Split(sides[0], ",");
+                        inputs = new CharsRef[inputStrings.Length];
+                        for (int i = 0; i < inputs.Length; i++)
+                        {
+                            inputs[i] = Analyze(Unescape(inputStrings[i]).Trim(), new CharsRef());
+                        }
 
-		  // TODO: we could process this more efficiently.
-		  string[] sides = Split(line, "=>");
-		  if (sides.Length > 1) // explicit mapping
-		  {
-			if (sides.Length != 2)
-			{
-			  throw new System.ArgumentException("more than one explicit mapping specified on the same line");
-			}
-			string[] inputStrings = Split(sides[0], ",");
-			inputs = new CharsRef[inputStrings.Length];
-			for (int i = 0; i < inputs.Length; i++)
-			{
-			  inputs[i] = Analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
-			}
+                        string[] outputStrings = Split(sides[1], ",");
+                        outputs = new CharsRef[outputStrings.Length];
+                        for (int i = 0; i < outputs.Length; i++)
+                        {
+                            outputs[i] = Analyze(Unescape(outputStrings[i]).Trim(), new CharsRef());
+                        }
+                    }
+                    else
+                    {
+                        string[] inputStrings = Split(line, ",");
+                        inputs = new CharsRef[inputStrings.Length];
+                        for (int i = 0; i < inputs.Length; i++)
+                        {
+                            inputs[i] = Analyze(Unescape(inputStrings[i]).Trim(), new CharsRef());
+                        }
+                        if (expand)
+                        {
+                            outputs = inputs;
+                        }
+                        else
+                        {
+                            outputs = new CharsRef[1];
+                            outputs[0] = inputs[0];
+                        }
+                    }
 
-			string[] outputStrings = Split(sides[1], ",");
-			outputs = new CharsRef[outputStrings.Length];
-			for (int i = 0; i < outputs.Length; i++)
-			{
-			  outputs[i] = Analyze(unescape(outputStrings[i]).Trim(), new CharsRef());
-			}
-		  }
-		  else
-		  {
-			string[] inputStrings = Split(line, ",");
-			inputs = new CharsRef[inputStrings.Length];
-			for (int i = 0; i < inputs.Length; i++)
-			{
-			  inputs[i] = Analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
-			}
-			if (expand)
-			{
-			  outputs = inputs;
-			}
-			else
-			{
-			  outputs = new CharsRef[1];
-			  outputs[0] = inputs[0];
-			}
-		  }
+                    // currently we include the term itself in the map,
+                    // and use includeOrig = false always.
+                    // this is how the existing filter does it, but its actually a bug,
+                    // especially if combined with ignoreCase = true
+                    for (int i = 0; i < inputs.Length; i++)
+                    {
+                        for (int j = 0; j < outputs.Length; j++)
+                        {
+                            Add(inputs[i], outputs[j], false);
+                        }
+                    }
+                }
+            }
+            catch (System.ArgumentException e)
+            {
+                throw new Exception("Invalid synonym rule at line " + lineNumber, e);
+                //ex.initCause(e);
+                //throw ex;
+            }
+            finally
+            {
+                @in.Dispose();
+            }
+        }
 
-		  // currently we include the term itself in the map,
-		  // and use includeOrig = false always.
-		  // this is how the existing filter does it, but its actually a bug,
-		  // especially if combined with ignoreCase = true
-		  for (int i = 0; i < inputs.Length; i++)
-		  {
-			for (int j = 0; j < outputs.Length; j++)
-			{
-			  Add(inputs[i], outputs[j], false);
-			}
-		  }
-		}
-	  }
+        private static string[] Split(string s, string separator)
+        {
+            List<string> list = new List<string>(2);
+            StringBuilder sb = new StringBuilder();
+            int pos = 0, end = s.Length;
+            while (pos < end)
+            {
+                //if (s.StartsWith(separator, pos))
+                if (s.Substring(pos).StartsWith(separator))
+                {
+                    if (sb.Length > 0)
+                    {
+                        list.Add(sb.ToString());
+                        sb = new StringBuilder();
+                    }
+                    pos += separator.Length;
+                    continue;
+                }
 
-	  private static string[] Split(string s, string separator)
-	  {
-		List<string> list = new List<string>(2);
-		StringBuilder sb = new StringBuilder();
-		int pos = 0, end = s.Length;
-		while (pos < end)
-		{
-		  if (s.StartsWith(separator,pos))
-		  {
-			if (sb.Length > 0)
-			{
-			  list.Add(sb.ToString());
-			  sb = new StringBuilder();
-			}
-			pos += separator.Length;
-			continue;
-		  }
+                char ch = s[pos++];
+                if (ch == '\\')
+                {
+                    sb.Append(ch);
+                    if (pos >= end) // ERROR, or let it go?
+                    {
+                        break;
+                    }
+                    ch = s[pos++];
+                }
 
-		  char ch = s[pos++];
-		  if (ch == '\\')
-		  {
-			sb.Append(ch);
-			if (pos >= end) // ERROR, or let it go?
-			{
-				break;
-			}
-			ch = s[pos++];
-		  }
+                sb.Append(ch);
+            }
 
-		  sb.Append(ch);
-		}
+            if (sb.Length > 0)
+            {
+                list.Add(sb.ToString());
+            }
 
-		if (sb.Length > 0)
-		{
-		  list.Add(sb.ToString());
-		}
+            return list.ToArray();
+        }
 
-		return list.ToArray();
-	  }
-
-	  private string unescape(string s)
-	  {
-		if (s.IndexOf("\\", StringComparison.Ordinal) >= 0)
-		{
-		  StringBuilder sb = new StringBuilder();
-		  for (int i = 0; i < s.Length; i++)
-		  {
-			char ch = s[i];
-			if (ch == '\\' && i < s.Length - 1)
-			{
-			  sb.Append(s[++i]);
-			}
-			else
-			{
-			  sb.Append(ch);
-			}
-		  }
-		  return sb.ToString();
-		}
-		return s;
-	  }
-	}
-
+        private string Unescape(string s)
+        {
+            if (s.IndexOf("\\", StringComparison.Ordinal) >= 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < s.Length; i++)
+                {
+                    char ch = s[i];
+                    if (ch == '\\' && i < s.Length - 1)
+                    {
+                        sb.Append(s[++i]);
+                    }
+                    else
+                    {
+                        sb.Append(ch);
+                    }
+                }
+                return sb.ToString();
+            }
+            return s;
+        }
+    }
 }

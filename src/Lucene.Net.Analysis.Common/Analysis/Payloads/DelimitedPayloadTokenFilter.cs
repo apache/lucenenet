@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
-using org.apache.lucene.analysis.payloads;
 
 namespace Lucene.Net.Analysis.Payloads
 {
@@ -19,6 +18,7 @@ namespace Lucene.Net.Analysis.Payloads
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Characters before the delimiter are the "token", those after are the payload.
     /// <p/>
@@ -34,16 +34,18 @@ namespace Lucene.Net.Analysis.Payloads
     {
         public const char DEFAULT_DELIMITER = '|';
         private readonly char delimiter;
-        private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private readonly IPayloadAttribute payAtt = addAttribute(typeof(PayloadAttribute));
-        private readonly PayloadEncoder encoder;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPayloadAttribute payAtt;
+        private readonly IPayloadEncoder encoder;
 
 
-        public DelimitedPayloadTokenFilter(TokenStream input, char delimiter, PayloadEncoder encoder)
+        public DelimitedPayloadTokenFilter(TokenStream input, char delimiter, IPayloadEncoder encoder)
             : base(input)
         {
             this.delimiter = delimiter;
             this.encoder = encoder;
+            termAtt = AddAttribute<ICharTermAttribute>();
+            payAtt = AddAttribute<IPayloadAttribute>();
         }
 
         public override bool IncrementToken()
@@ -56,7 +58,7 @@ namespace Lucene.Net.Analysis.Payloads
                 {
                     if (buffer[i] == delimiter)
                     {
-                        payAtt.Payload = encoder.encode(buffer, i + 1, (length - (i + 1)));
+                        payAtt.Payload = encoder.Encode(buffer, i + 1, (length - (i + 1)));
                         termAtt.Length = i; // simply set a new length
                         return true;
                     }
@@ -71,5 +73,4 @@ namespace Lucene.Net.Analysis.Payloads
             }
         }
     }
-
 }

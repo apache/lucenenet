@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Standard
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,12 +20,11 @@ namespace Lucene.Net.Analysis.Standard
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Internal interface for supporting versioned grammars.
     /// @lucene.internal 
     /// </summary>
-    public interface StandardTokenizerInterface
+    public interface IStandardTokenizerInterface
     {
 
         /// <summary>
@@ -35,12 +33,12 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Copies the matched text into the CharTermAttribute
         /// </summary>
-        void getText(ICharTermAttribute t);
+        void GetText(ICharTermAttribute t);
 
         /// <summary>
         /// Returns the current position.
         /// </summary>
-        int yychar();
+        int YyChar { get; }
 
         /// <summary>
         /// Resets the scanner to read from a new input stream.
@@ -51,12 +49,12 @@ namespace Lucene.Net.Analysis.Standard
         /// Lexical state is set to <tt>ZZ_INITIAL</tt>.
         /// </summary>
         /// <param name="reader">   the new input stream  </param>
-        void yyreset(TextReader reader);
+        void YyReset(TextReader reader);
 
         /// <summary>
         /// Returns the length of the matched text region.
         /// </summary>
-        int yylength();
+        int YyLength { get; }
 
         /// <summary>
         /// Resumes scanning until the next regular expression is matched,
@@ -64,7 +62,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         /// <returns>      the next token, <seealso cref="#YYEOF"/> on end of stream </returns>
         /// <exception cref="IOException">  if any I/O-Error occurs </exception>
-        int NextToken { get; }
+        int GetNextToken();
 
     }
 

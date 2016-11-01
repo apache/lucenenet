@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     // TODO
     //   - mix in forceMerge, addIndexes
     //   - randomoly mix in non-congruent docs
-
+    [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class TestNRTThreads : ThreadedIndexingAndSearchingTestCase
     {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             UseNonNrtReaders = Random().NextBoolean();
         }
 
-        protected override void DoSearching(TaskScheduler es, DateTime stopTime)
+        protected internal override void DoSearching(TaskScheduler es, DateTime stopTime)
         {
             bool anyOpenDelFiles = false;
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(anyOpenDelFiles, "saw non-zero open-but-deleted count");
         }
 
-        protected override Directory GetDirectory(Directory @in)
+        protected internal override Directory GetDirectory(Directory @in)
         {
             Debug.Assert(@in is MockDirectoryWrapper);
             if (!UseNonNrtReaders)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             return @in;
         }
 
-        protected override void DoAfterWriter(TaskScheduler es)
+        protected internal override void DoAfterWriter(TaskScheduler es)
         {
             // Force writer to do reader pooling, always, so that
             // all merged segments, even for merges before
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 
         private IndexSearcher FixedSearcher;
 
-        protected override IndexSearcher CurrentSearcher
+        protected internal override IndexSearcher CurrentSearcher
         {
             get
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override void ReleaseSearcher(IndexSearcher s)
+        protected internal override void ReleaseSearcher(IndexSearcher s)
         {
             if (s != FixedSearcher)
             {
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override IndexSearcher FinalSearcher
+        protected internal override IndexSearcher FinalSearcher
         {
             get
             {

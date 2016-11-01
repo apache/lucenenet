@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 
-namespace org.apache.lucene.analysis.pattern
+namespace Lucene.Net.Analysis.Pattern
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,48 +22,52 @@ namespace org.apache.lucene.analysis.pattern
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="PatternReplaceCharFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;charFilter class="solr.PatternReplaceCharFilterFactory" 
+    ///                    pattern="([^a-z])" replacement=""/&gt;
+    ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// 
+    /// @since Solr 3.1
+    /// </summary>
+    public class PatternReplaceCharFilterFactory : CharFilterFactory
+    {
+        private readonly Regex pattern;
+        private readonly string replacement;
+        private readonly int maxBlockChars;
+        private readonly string blockDelimiters;
 
-	using CharFilterFactory = org.apache.lucene.analysis.util.CharFilterFactory;
+        /// <summary>
+        /// Creates a new PatternReplaceCharFilterFactory </summary>
+        public PatternReplaceCharFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            pattern = GetPattern(args, "pattern");
+            replacement = Get(args, "replacement", "");
+            // TODO: warn if you set maxBlockChars or blockDelimiters ?
+            maxBlockChars = GetInt(args, "maxBlockChars",
+#pragma warning disable 612, 618
+                PatternReplaceCharFilter.DEFAULT_MAX_BLOCK_CHARS);
+#pragma warning restore 612, 618
+            if (args.TryGetValue("blockDelimiters", out blockDelimiters))
+            {
+                args.Remove("blockDelimiters");
+            }
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="PatternReplaceCharFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;charFilter class="solr.PatternReplaceCharFilterFactory" 
-	///                    pattern="([^a-z])" replacement=""/&gt;
-	///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// 
-	/// @since Solr 3.1
-	/// </summary>
-	public class PatternReplaceCharFilterFactory : CharFilterFactory
-	{
-	  private readonly Pattern pattern;
-	  private readonly string replacement;
-	  private readonly int maxBlockChars;
-	  private readonly string blockDelimiters;
-
-	  /// <summary>
-	  /// Creates a new PatternReplaceCharFilterFactory </summary>
-	  public PatternReplaceCharFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		pattern = getPattern(args, "pattern");
-		replacement = get(args, "replacement", "");
-		// TODO: warn if you set maxBlockChars or blockDelimiters ?
-		maxBlockChars = getInt(args, "maxBlockChars", PatternReplaceCharFilter.DEFAULT_MAX_BLOCK_CHARS);
-		blockDelimiters = args.Remove("blockDelimiters");
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override CharFilter create(Reader input)
-	  {
-		return new PatternReplaceCharFilter(pattern, replacement, maxBlockChars, blockDelimiters, input);
-	  }
-	}
-
+        public override TextReader Create(TextReader input)
+        {
+#pragma warning disable 612, 618
+            return new PatternReplaceCharFilter(pattern, replacement, maxBlockChars, blockDelimiters, input);
+#pragma warning restore 612, 618
+        }
+    }
 }

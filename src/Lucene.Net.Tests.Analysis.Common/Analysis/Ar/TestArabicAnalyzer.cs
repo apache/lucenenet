@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.ar
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Ar
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,105 +20,97 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    /// <summary>
+    /// Test the Arabic Analyzer
+    /// 
+    /// </summary>
+    public class TestArabicAnalyzer : BaseTokenStreamTestCase
+    {
 
-	/// <summary>
-	/// Test the Arabic Analyzer
-	/// 
-	/// </summary>
-	public class TestArabicAnalyzer : BaseTokenStreamTestCase
-	{
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new ArabicAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new ArabicAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// Some simple tests showing some features of the analyzer, how some regular forms will conflate
+        /// </summary>
+        [Test]
+        public virtual void TestBasicFeatures()
+        {
+            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "كبير", new string[] { "كبير" });
+            AssertAnalyzesTo(a, "كبيرة", new string[] { "كبير" }); // feminine marker
 
-	  /// <summary>
-	  /// Some simple tests showing some features of the analyzer, how some regular forms will conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasicFeatures() throws Exception
-	  public virtual void testBasicFeatures()
-	  {
-		ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "كبير", new string[] {"كبير"});
-		assertAnalyzesTo(a, "كبيرة", new string[] {"كبير"}); // feminine marker
+            AssertAnalyzesTo(a, "مشروب", new string[] { "مشروب" });
+            AssertAnalyzesTo(a, "مشروبات", new string[] { "مشروب" }); // plural -at
 
-		assertAnalyzesTo(a, "مشروب", new string[] {"مشروب"});
-		assertAnalyzesTo(a, "مشروبات", new string[] {"مشروب"}); // plural -at
+            AssertAnalyzesTo(a, "أمريكيين", new string[] { "امريك" }); // plural -in
+            AssertAnalyzesTo(a, "امريكي", new string[] { "امريك" }); // singular with bare alif
 
-		assertAnalyzesTo(a, "أمريكيين", new string[] {"امريك"}); // plural -in
-		assertAnalyzesTo(a, "امريكي", new string[] {"امريك"}); // singular with bare alif
+            AssertAnalyzesTo(a, "كتاب", new string[] { "كتاب" });
+            AssertAnalyzesTo(a, "الكتاب", new string[] { "كتاب" }); // definite article
 
-		assertAnalyzesTo(a, "كتاب", new string[] {"كتاب"});
-		assertAnalyzesTo(a, "الكتاب", new string[] {"كتاب"}); // definite article
+            AssertAnalyzesTo(a, "ما ملكت أيمانكم", new string[] { "ملكت", "ايمانكم" });
+            AssertAnalyzesTo(a, "الذين ملكت أيمانكم", new string[] { "ملكت", "ايمانكم" }); // stopwords
+        }
 
-		assertAnalyzesTo(a, "ما ملكت أيمانكم", new string[] {"ملكت", "ايمانكم"});
-		assertAnalyzesTo(a, "الذين ملكت أيمانكم", new string[] {"ملكت", "ايمانكم"}); // stopwords
-	  }
+        /// <summary>
+        /// Simple tests to show things are getting reset correctly, etc.
+        /// </summary>
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "كبير", new string[] { "كبير" });
+            AssertAnalyzesTo(a, "كبيرة", new string[] { "كبير" }); // feminine marker
+        }
 
-	  /// <summary>
-	  /// Simple tests to show things are getting reset correctly, etc.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-	  public virtual void testReusableTokenStream()
-	  {
-		ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "كبير", new string[] {"كبير"});
-		assertAnalyzesTo(a, "كبيرة", new string[] {"كبير"}); // feminine marker
-	  }
+        /// <summary>
+        /// Non-arabic text gets treated in a similar way as SimpleAnalyzer.
+        /// </summary>
+        [Test]
+        public virtual void TestEnglishInput()
+        {
+            AssertAnalyzesTo(new ArabicAnalyzer(TEST_VERSION_CURRENT), "English text.", new string[] { "english", "text" });
+        }
 
-	  /// <summary>
-	  /// Non-arabic text gets treated in a similar way as SimpleAnalyzer.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEnglishInput() throws Exception
-	  public virtual void testEnglishInput()
-	  {
-		assertAnalyzesTo(new ArabicAnalyzer(TEST_VERSION_CURRENT), "English text.", new string[] {"english", "text"});
-	  }
+        /// <summary>
+        /// Test that custom stopwords work, and are not case-sensitive.
+        /// </summary>
+        [Test]
+        public virtual void TestCustomStopwords()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, AsSet("the", "and", "a"), false);
+            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, set);
+            AssertAnalyzesTo(a, "The quick brown fox.", new string[] { "quick", "brown", "fox" });
+        }
 
-	  /// <summary>
-	  /// Test that custom stopwords work, and are not case-sensitive.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCustomStopwords() throws Exception
-	  public virtual void testCustomStopwords()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, asSet("the", "and", "a"), false);
-		ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, set);
-		assertAnalyzesTo(a, "The quick brown fox.", new string[] {"quick", "brown", "fox"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithStemExclusionSet() throws java.io.IOException
-	  public virtual void testWithStemExclusionSet()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, asSet("ساهدهات"), false);
-		ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
-		assertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] {"كبير","the", "quick", "ساهدهات"});
-		assertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] {"كبير","the", "quick", "ساهدهات"});
+        [Test]
+        public virtual void TestWithStemExclusionSet()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, AsSet("ساهدهات"), false);
+            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهدهات" });
+            AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهدهات" });
 
 
-		a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET);
-		assertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] {"كبير","the", "quick", "ساهد"});
-		assertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] {"كبير","the", "quick", "ساهد"});
-	  }
+            a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET);
+            AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهد" });
+            AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهد" });
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new ArabicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new ArabicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

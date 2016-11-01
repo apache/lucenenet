@@ -788,7 +788,7 @@ namespace Lucene.Net.Codecs.Memory
 
             internal int docFreq_Renamed;
             internal long totalTermFreq_Renamed;
-            internal BytesRefFSTEnum<BytesRef>.InputOutput<BytesRef> current;
+            internal BytesRefFSTEnum.InputOutput<BytesRef> current;
             internal BytesRef postingsSpare = new BytesRef();
 
             public FSTTermsEnum(FieldInfo field, FST<BytesRef> fst)

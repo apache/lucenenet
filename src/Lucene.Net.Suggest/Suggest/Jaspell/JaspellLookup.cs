@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,11 +21,12 @@ namespace Lucene.Net.Search.Suggest.Jaspell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Suggest implementation based on 
     /// <a href="http://jaspell.sourceforge.net/">JaSpell</a>.
     /// </summary>
-    /// <seealso cref= JaspellTernarySearchTrie </seealso>
+    /// <seealso cref="JaspellTernarySearchTrie"/>
     public class JaspellLookup : Lookup
     {
         internal JaspellTernarySearchTrie trie = new JaspellTernarySearchTrie();
@@ -38,14 +38,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         private long count = 0;
 
         /// <summary>
-        /// Creates a new empty trie </summary>
-        /// <seealso cref= #build(InputIterator)
-        ///  </seealso>
+        /// Creates a new empty trie
+        /// </summary>
+        /// <seealso cref="Build(IInputIterator)"/>
         public JaspellLookup()
         {
         }
 
-        public override void Build(InputIterator tfit)
+        public override void Build(IInputIterator tfit)
         {
             if (tfit.HasPayloads)
             {
@@ -88,6 +88,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// This method always returns false.
         /// </para>
         /// </summary>
+        /// <param name="key"> A <see cref="string"/> index. </param>
+        /// <param name="value"> The object to be stored in the Trie. </param>
         public virtual bool Add(string key, object value)
         {
             trie.Put(key, value);
@@ -99,18 +101,19 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Returns the value for the specified key, or null
         /// if the key does not exist.
         /// </summary>
+        /// <param name="key"> A <see cref="string"/> index. </param>
         public virtual object Get(string key)
         {
             return trie.Get(key);
         }
 
-        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
-            IList<LookupResult> res = new List<LookupResult>();
+            List<LookupResult> res = new List<LookupResult>();
             IList<string> list;
             int count = onlyMorePopular ? num * 2 : num;
             if (usePrefix)
@@ -209,7 +212,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 mask |= HAS_VALUE;
             }
-            @out.WriteByte(mask);
+            @out.WriteByte((byte)mask);
             if (node.data != null)
             {
                 @out.WriteLong((long)(node.data));
@@ -242,9 +245,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Returns byte size of the underlying TST. </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
-            return trie.SizeInBytes();
+            return trie.GetSizeInBytes();
         }
 
         public override long Count

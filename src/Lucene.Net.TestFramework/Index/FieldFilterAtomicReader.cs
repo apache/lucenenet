@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
                     this.OuterInstance = outerInstance;
                 }
 
-                protected override bool PredicateFunction(string field)
+                protected internal override bool PredicateFunction(string field)
                 {
                     return OuterInstance.OuterInstance.HasField(field);
                 }

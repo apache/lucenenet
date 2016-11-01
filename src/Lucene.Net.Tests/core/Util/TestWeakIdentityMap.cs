@@ -1,28 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     [TestFixture]
     public class TestWeakIdentityMap : LuceneTestCase
@@ -35,8 +37,14 @@ namespace Lucene.Net.Util
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             string key1 = "foo";
-            string key2 = "foo";
-            string key3 = "foo";
+            string key2 = "test1 foo".Split(' ')[1];
+            string key3 = "test2 foo".Split(' ')[1];
+
+            // LUCENENET NOTE: As per http://stackoverflow.com/a/543329/181087,
+            // the above hack is required in order to ensure the AreNotSame
+            // check will work. If you assign the same string to 3 different variables
+            // without doing some kind of manipulation from the original string, the
+            // AreNotSame test will fail because the references will be the same.
 
             Assert.AreNotSame(key1, key2);
             Assert.AreEqual(key1, key2);
@@ -97,19 +105,20 @@ namespace Lucene.Net.Util
             Assert.AreEqual(3, map.Size());
 
             int c = 0, keysAssigned = 0;
-            for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext(); )
+            for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext();)
             {
                 //Assert.IsTrue(iter.hasNext()); // try again, should return same result!
                 string k = iter.Current;
-                Assert.IsTrue(k == key1 || k == key2 | k == key3);
-                keysAssigned += (k == key1) ? 1 : ((k == key2) ? 2 : 4);
+                // LUCENENET NOTE: Need object.ReferenceEquals here because the == operator does more than check reference equality
+                Assert.IsTrue(object.ReferenceEquals(k, key1) || object.ReferenceEquals(k, key2) | object.ReferenceEquals(k, key3));
+                keysAssigned += object.ReferenceEquals(k, key1) ? 1 : (object.ReferenceEquals(k, key2) ? 2 : 4);
                 c++;
             }
             Assert.AreEqual(3, c);
             Assert.AreEqual(1 + 2 + 4, keysAssigned, "all keys must have been seen");
 
             c = 0;
-            for (IEnumerator<string> iter = map.Values.GetEnumerator(); iter.MoveNext(); )
+            for (IEnumerator<string> iter = map.Values.GetEnumerator(); iter.MoveNext();)
             {
                 string v = iter.Current;
                 Assert.IsTrue(v.StartsWith("bar"));
@@ -126,14 +135,13 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    System.RunFinalization();
-                    System.gc();
+                    GC.Collect();
                     int newSize = map.Size();
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
                     size = newSize;
-                    Thread.Sleep(new TimeSpan(100L));
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
                     c = 0;
-                    for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext(); )
+                    for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext();)
                     {
                         Assert.IsNotNull(iter.Current);
                         c++;
@@ -163,8 +171,14 @@ namespace Lucene.Net.Util
             {
             }*/
 
-            key1 = "foo";
-            key2 = "foo";
+            // LUCENENET NOTE: As per http://stackoverflow.com/a/543329/181087,
+            // the following hack is required in order to ensure the string references
+            // are different. If you assign the same string to 2 different variables
+            // without doing some kind of manipulation from the original string, the
+            // references will be the same.
+
+            key1 = "test3 foo".Split(' ')[1];
+            key2 = "test4 foo".Split(' ')[1];
             map.Put(key1, "bar1");
             map.Put(key2, "bar2");
             Assert.AreEqual(2, map.Size());
@@ -179,14 +193,15 @@ namespace Lucene.Net.Util
         {
             // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
             const int threadCount = 8, keyCount = 1024;
-            ExecutorService exec = Executors.newFixedThreadPool(threadCount, new NamedThreadFactory("testConcurrentHashMap"));
+
+            RunnableAnonymousInnerClassHelper[] workers = new RunnableAnonymousInnerClassHelper[threadCount];
             WeakIdentityMap<object, int?> map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(Random().NextBoolean());
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             AtomicReferenceArray<object> keys = new AtomicReferenceArray<object>(keyCount);
             for (int j = 0; j < keyCount; j++)
             {
-                keys.Set(j, new object());
+                keys[j] = new object();
             }
 
             try
@@ -194,19 +209,33 @@ namespace Lucene.Net.Util
                 for (int t = 0; t < threadCount; t++)
                 {
                     Random rnd = new Random(Random().Next());
-                    exec.execute(new RunnableAnonymousInnerClassHelper(this, keyCount, map, keys, rnd));
+                    var worker = new RunnableAnonymousInnerClassHelper(this, keyCount, map, keys, rnd);
+                    workers[t] = worker;
+                    worker.Start();
                 }
             }
             finally
             {
-                exec.shutdown();
-                while (!exec.awaitTermination(1000L, TimeUnit.MILLISECONDS)) ;
+                foreach (var w in workers)
+                {
+                    w.Join(1000L);
+                }
             }
+
+            // LUCENENET: Since assertions were done on the other threads, we need to check the
+            // results here.
+            for (int i = 0; i < workers.Length; i++)
+            {
+                assertTrue(string.Format(CultureInfo.InvariantCulture,
+                    "worker thread {0} of {1} failed \n" + workers[i].Error, i, workers.Length),
+                    workers[i].Error == null);
+            }
+
 
             // clear strong refs
             for (int j = 0; j < keyCount; j++)
             {
-                keys.Set(j, null);
+                keys[j] = null;
             }
 
             // check that GC does not cause problems in reap() method:
@@ -215,14 +244,13 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    System.runFinalization();
-                    System.gc();
+                    GC.Collect();
                     int newSize = map.Size();
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
                     size = newSize;
                     Thread.Sleep(new TimeSpan(100L));
                     int c = 0;
-                    for (IEnumerator<object> it = map.Keys.GetEnumerator(); it.MoveNext(); )
+                    for (IEnumerator<object> it = map.Keys.GetEnumerator(); it.MoveNext();)
                     {
                         Assert.IsNotNull(it.Current);
                         c++;
@@ -238,60 +266,75 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RunnableAnonymousInnerClassHelper : IThreadRunnable
+        private class RunnableAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestWeakIdentityMap OuterInstance;
+            private readonly TestWeakIdentityMap outerInstance;
 
-            private int KeyCount;
-            private WeakIdentityMap<object, int?> Map;
-            private AtomicReferenceArray<object> Keys;
-            private Random Rnd;
+            private readonly int keyCount;
+            private readonly WeakIdentityMap<object, int?> map;
+            private AtomicReferenceArray<object> keys;
+            private readonly Random rnd;
+            private volatile Exception error;
 
             public RunnableAnonymousInnerClassHelper(TestWeakIdentityMap outerInstance, int keyCount, WeakIdentityMap<object, int?> map, AtomicReferenceArray<object> keys, Random rnd)
             {
-                this.OuterInstance = outerInstance;
-                this.KeyCount = keyCount;
-                this.Map = map;
-                this.Keys = keys;
-                this.Rnd = rnd;
+                this.outerInstance = outerInstance;
+                this.keyCount = keyCount;
+                this.map = map;
+                this.keys = keys;
+                this.rnd = rnd;
             }
 
-            public void Run()
+            public Exception Error
             {
-                int count = AtLeast(Rnd, 10000);
-                for (int i = 0; i < count; i++)
+                get { return error; }
+            }
+
+
+            public override void Run()
+            {
+                int count = AtLeast(rnd, 10000);
+                try
                 {
-                    int j = Rnd.Next(KeyCount);
-                    switch (Rnd.Next(5))
+                    for (int i = 0; i < count; i++)
                     {
-                        case 0:
-                            Map.Put(Keys.Get(j), Convert.ToInt32(j));
-                            break;
-                        case 1:
-                            int? v = Map.Get(Keys.Get(j));
-                            if (v != null)
-                            {
-                                Assert.AreEqual(j, (int)v);
-                            }
-                            break;
-                        case 2:
-                            Map.Remove(Keys.Get(j));
-                            break;
-                        case 3:
-                            // renew key, the old one will be GCed at some time:
-                            Keys.Set(j, new object());
-                            break;
-                        case 4:
-                            // check iterator still working
-                            for (IEnumerator<object> it = Map.Keys.GetEnumerator(); it.MoveNext(); )
-                            {
-                                Assert.IsNotNull(it.Current);
-                            }
-                            break;
-                        default:
-                            Assert.Fail("Should not get here.");
-                            break;
+                        int j = rnd.Next(keyCount);
+                        switch (rnd.Next(5))
+                        {
+                            case 0:
+                                map.Put(keys[j], Convert.ToInt32(j));
+                                break;
+                            case 1:
+                                int? v = map.Get(keys[j]);
+                                if (v != null)
+                                {
+                                    Assert.AreEqual(j, (int)v);
+                                }
+                                break;
+                            case 2:
+                                map.Remove(keys[j]);
+                                break;
+                            case 3:
+                                // renew key, the old one will be GCed at some time:
+                                keys[j] = new object();
+                                break;
+                            case 4:
+                                // check iterator still working
+                                for (IEnumerator<object> it = map.Keys.GetEnumerator(); it.MoveNext();)
+                                {
+                                    Assert.IsNotNull(it.Current);
+                                }
+                                break;
+                            default:
+                                Assert.Fail("Should not get here.");
+                                break;
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    this.error = e;
                 }
             }
         }

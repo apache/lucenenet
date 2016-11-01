@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 IndexableField field = fields[i];
-                IndexableFieldType fieldType = field.FieldType();
+                IndexableFieldType fieldType = field.FieldType;
 
                 // TODO FI: this should be "genericized" to querying
                 // consumer if it wants to see this particular field
@@ -79,9 +79,9 @@ namespace Lucene.Net.Index
                     bool analyzed = fieldType.Tokenized && DocState.Analyzer != null;
 
                     // if the field omits norms, the boost cannot be indexed.
-                    if (fieldType.OmitNorms && field.GetBoost() != 1.0f)
+                    if (fieldType.OmitNorms && field.Boost != 1.0f)
                     {
-                        throw new System.NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name() + "'");
+                        throw new System.NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
                     }
 
                     // only bother checking offsets if something will consume them.
@@ -131,11 +131,11 @@ namespace Lucene.Net.Index
                                 int posIncr = posIncrAttribute.PositionIncrement;
                                 if (posIncr < 0)
                                 {
-                                    throw new System.ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name() + "'");
+                                    throw new System.ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name + "'");
                                 }
                                 if (FieldState.Position_Renamed == 0 && posIncr == 0)
                                 {
-                                    throw new System.ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name() + "'");
+                                    throw new System.ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name + "'");
                                 }
                                 int position = FieldState.Position_Renamed + posIncr;
                                 if (position > 0)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
                                 }
                                 else if (position < 0)
                                 {
-                                    throw new System.ArgumentException("position overflow for field '" + field.Name() + "'");
+                                    throw new System.ArgumentException("position overflow for field '" + field.Name + "'");
                                 }
 
                                 // position is legal, we can safely place it in fieldState now.
@@ -164,11 +164,11 @@ namespace Lucene.Net.Index
                                     int endOffset = FieldState.Offset_Renamed + offsetAttribute.EndOffset();
                                     if (startOffset < 0 || endOffset < startOffset)
                                     {
-                                        throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name() + "'");
+                                        throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
                                     }
                                     if (startOffset < lastStartOffset)
                                     {
-                                        throw new System.ArgumentException("offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset + " for field '" + field.Name() + "'");
+                                        throw new System.ArgumentException("offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset + " for field '" + field.Name + "'");
                                     }
                                     lastStartOffset = startOffset;
                                 }
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
                     }
 
                     FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
-                    FieldState.Boost_Renamed *= field.GetBoost();
+                    FieldState.Boost_Renamed *= field.Boost;
                 }
 
                 // LUCENE-2387: don't hang onto the field, so GC can

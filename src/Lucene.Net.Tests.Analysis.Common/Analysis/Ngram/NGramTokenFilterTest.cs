@@ -1,9 +1,15 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ngram
+namespace Lucene.Net.Analysis.Ngram
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,269 +26,224 @@ namespace org.apache.lucene.analysis.ngram
 	 * limitations under the License.
 	 */
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using WhitespaceTokenizer = org.apache.lucene.analysis.core.WhitespaceTokenizer;
-	using ASCIIFoldingFilter = org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using Version = org.apache.lucene.util.Version;
+    /// <summary>
+    /// Tests <seealso cref="NGramTokenFilter"/> for correctness.
+    /// </summary>
+    public class NGramTokenFilterTest : BaseTokenStreamTestCase
+    {
+        private TokenStream input;
 
+        public override void SetUp()
+        {
+            base.SetUp();
+            input = new MockTokenizer(new StringReader("abcde"), MockTokenizer.WHITESPACE, false);
+        }
 
-	/// <summary>
-	/// Tests <seealso cref="NGramTokenFilter"/> for correctness.
-	/// </summary>
-	public class NGramTokenFilterTest : BaseTokenStreamTestCase
-	{
-	  private TokenStream input;
+        [Test]
+        public virtual void TestInvalidInput()
+        {
+            bool gotException = false;
+            try
+            {
+                new NGramTokenFilter(TEST_VERSION_CURRENT, input, 2, 1);
+            }
+            catch (System.ArgumentException)
+            {
+                gotException = true;
+            }
+            assertTrue(gotException);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void setUp() throws Exception
-	  public override void setUp()
-	  {
-		base.setUp();
-		input = new MockTokenizer(new StringReader("abcde"), MockTokenizer.WHITESPACE, false);
-	  }
+        [Test]
+        public virtual void TestInvalidInput2()
+        {
+            bool gotException = false;
+            try
+            {
+                new NGramTokenFilter(TEST_VERSION_CURRENT, input, 0, 1);
+            }
+            catch (System.ArgumentException)
+            {
+                gotException = true;
+            }
+            assertTrue(gotException);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidInput() throws Exception
-	  public virtual void testInvalidInput()
-	  {
-		bool gotException = false;
-		try
-		{
-		  new NGramTokenFilter(TEST_VERSION_CURRENT, input, 2, 1);
-		}
-		catch (System.ArgumentException)
-		{
-		  gotException = true;
-		}
-		assertTrue(gotException);
-	  }
+        [Test]
+        public virtual void TestUnigrams()
+        {
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 1);
+            AssertTokenStreamContents(filter, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0, 0 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidInput2() throws Exception
-	  public virtual void testInvalidInput2()
-	  {
-		bool gotException = false;
-		try
-		{
-		  new NGramTokenFilter(TEST_VERSION_CURRENT, input, 0, 1);
-		}
-		catch (System.ArgumentException)
-		{
-		  gotException = true;
-		}
-		assertTrue(gotException);
-	  }
+        [Test]
+        public virtual void TestBigrams()
+        {
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 2, 2);
+            AssertTokenStreamContents(filter, new string[] { "ab", "bc", "cd", "de" }, new int[] { 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testUnigrams() throws Exception
-	  public virtual void testUnigrams()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 1);
-		assertTokenStreamContents(filter, new string[]{"a","b","c","d","e"}, new int[]{0,0,0,0,0}, new int[]{5,5,5,5,5}, new int[]{1,0,0,0,0});
-	  }
+        [Test]
+        public virtual void TestNgrams()
+        {
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 3);
+            AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc", "b", "bc", "bcd", "c", "cd", "cde", "d", "de", "e" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, null, new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, null, null, false);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBigrams() throws Exception
-	  public virtual void testBigrams()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 2, 2);
-		assertTokenStreamContents(filter, new string[]{"ab","bc","cd","de"}, new int[]{0,0,0,0}, new int[]{5,5,5,5}, new int[]{1,0,0,0});
-	  }
+        [Test]
+        public virtual void TestNgramsNoIncrement()
+        {
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 3);
+            AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc", "b", "bc", "bcd", "c", "cd", "cde", "d", "de", "e" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, null, new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, null, null, false);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNgrams() throws Exception
-	  public virtual void testNgrams()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 3);
-		assertTokenStreamContents(filter, new string[]{"a","ab","abc","b","bc","bcd","c","cd","cde","d","de","e"}, new int[]{0,0,0,0,0,0,0,0,0,0,0,0}, new int[]{5,5,5,5,5,5,5,5,5,5,5,5}, null, new int[]{1,0,0,0,0,0,0,0,0,0,0,0}, null, null, false);
-	  }
+        [Test]
+        public virtual void TestOversizedNgrams()
+        {
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 6, 7);
+            AssertTokenStreamContents(filter, new string[0], new int[0], new int[0]);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNgramsNoIncrement() throws Exception
-	  public virtual void testNgramsNoIncrement()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 1, 3);
-		assertTokenStreamContents(filter, new string[]{"a","ab","abc","b","bc","bcd","c","cd","cde","d","de","e"}, new int[]{0,0,0,0,0,0,0,0,0,0,0,0}, new int[]{5,5,5,5,5,5,5,5,5,5,5,5}, null, new int[]{1,0,0,0,0,0,0,0,0,0,0,0}, null, null, false);
-	  }
+        [Test]
+        public virtual void TestSmallTokenInStream()
+        {
+            input = new MockTokenizer(new StringReader("abc de fgh"), MockTokenizer.WHITESPACE, false);
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 3, 3);
+            AssertTokenStreamContents(filter, new string[] { "abc", "fgh" }, new int[] { 0, 7 }, new int[] { 3, 10 }, new int[] { 1, 2 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testOversizedNgrams() throws Exception
-	  public virtual void testOversizedNgrams()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 6, 7);
-		assertTokenStreamContents(filter, new string[0], new int[0], new int[0]);
-	  }
+        [Test]
+        public virtual void TestReset()
+        {
+            WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("abcde"));
+            NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 1, 1);
+            AssertTokenStreamContents(filter, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0, 0 });
+            tokenizer.Reader = new StringReader("abcde");
+            AssertTokenStreamContents(filter, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0, 0 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSmallTokenInStream() throws Exception
-	  public virtual void testSmallTokenInStream()
-	  {
-		input = new MockTokenizer(new StringReader("abc de fgh"), MockTokenizer.WHITESPACE, false);
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, input, 3, 3);
-		assertTokenStreamContents(filter, new string[]{"abc","fgh"}, new int[]{0,7}, new int[]{3,10}, new int[] {1, 2});
-	  }
+        // LUCENE-3642
+        // EdgeNgram blindly adds term length to offset, but this can take things out of bounds
+        // wrt original text if a previous filter increases the length of the word (in this case æ -> ae)
+        // so in this case we behave like WDF, and preserve any modified offsets
+        [Test]
+        public virtual void TestInvalidOffsets()
+        {
+            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            AssertAnalyzesTo(analyzer, "mosfellsbær", new string[] { "mo", "os", "sf", "fe", "el", "ll", "ls", "sb", "ba", "ae", "er" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 }, new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReset() throws Exception
-	  public virtual void testReset()
-	  {
-		WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("abcde"));
-		NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 1, 1);
-		assertTokenStreamContents(filter, new string[]{"a","b","c","d","e"}, new int[]{0,0,0,0,0}, new int[]{5,5,5,5,5}, new int[]{1,0,0,0,0});
-		tokenizer.Reader = new StringReader("abcde");
-		assertTokenStreamContents(filter, new string[]{"a","b","c","d","e"}, new int[]{0,0,0,0,0}, new int[]{5,5,5,5,5}, new int[]{1,0,0,0,0});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly NGramTokenFilterTest outerInstance;
 
-	  // LUCENE-3642
-	  // EdgeNgram blindly adds term length to offset, but this can take things out of bounds
-	  // wrt original text if a previous filter increases the length of the word (in this case æ -> ae)
-	  // so in this case we behave like WDF, and preserve any modified offsets
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidOffsets() throws Exception
-	  public virtual void testInvalidOffsets()
-	  {
-		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-		assertAnalyzesTo(analyzer, "mosfellsbær", new string[] {"mo", "os", "sf", "fe", "el", "ll", "ls", "sb", "ba", "ae", "er"}, new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, new int[] {11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11}, new int[] {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-	  }
+            public AnalyzerAnonymousInnerClassHelper(NGramTokenFilterTest outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly NGramTokenFilterTest outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilter filters = new ASCIIFoldingFilter(tokenizer);
+                filters = new NGramTokenFilter(TEST_VERSION_CURRENT, filters, 2, 2);
+                return new TokenStreamComponents(tokenizer, filters);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper(NGramTokenFilterTest outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                int min = TestUtil.NextInt(Random(), 2, 10);
+                int max = TestUtil.NextInt(Random(), min, 20);
+                Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
+                CheckRandomData(Random(), a, 200 * RANDOM_MULTIPLIER, 20);
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenFilter filters = new ASCIIFoldingFilter(tokenizer);
-			filters = new NGramTokenFilter(TEST_VERSION_CURRENT, filters, 2, 2);
-			return new TokenStreamComponents(tokenizer, filters);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly NGramTokenFilterTest outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		for (int i = 0; i < 10; i++)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int min = org.apache.lucene.util.TestUtil.nextInt(random(), 2, 10);
-		  int min = TestUtil.Next(random(), 2, 10);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int max = org.apache.lucene.util.TestUtil.nextInt(random(), min, 20);
-		  int max = TestUtil.Next(random(), min, 20);
-		  Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
-		  checkRandomData(random(), a, 200 * RANDOM_MULTIPLIER, 20);
-		}
-	  }
+            private int min;
+            private int max;
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly NGramTokenFilterTest outerInstance;
+            public AnalyzerAnonymousInnerClassHelper2(NGramTokenFilterTest outerInstance, int min, int max)
+            {
+                this.outerInstance = outerInstance;
+                this.min = min;
+                this.max = max;
+            }
 
-		  private int min;
-		  private int max;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(NGramTokenFilterTest outerInstance, int min, int max)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.min = min;
-			  this.max = max;
-		  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Random random = Random();
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly NGramTokenFilterTest outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws Exception
-	  public virtual void testEmptyTerm()
-	  {
-		Random random = random();
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkAnalysisConsistency(random, a, random.nextBoolean(), "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(NGramTokenFilterTest outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly NGramTokenFilterTest outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 2, 15));
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper3(NGramTokenFilterTest outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestLucene43()
+        {
+#pragma warning disable 612, 618
+            NGramTokenFilter filter = new NGramTokenFilter(LuceneVersion.LUCENE_43, input, 2, 3);
+#pragma warning restore 612, 618
+            AssertTokenStreamContents(filter, new string[] { "ab", "bc", "cd", "de", "abc", "bcd", "cde" }, new int[] { 0, 1, 2, 3, 0, 1, 2 }, new int[] { 2, 3, 4, 5, 3, 4, 5 }, null, new int[] { 1, 1, 1, 1, 1, 1, 1 }, null, null, false);
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 2, 15));
-		  }
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLucene43() throws java.io.IOException
-	  public virtual void testLucene43()
-	  {
-		NGramTokenFilter filter = new NGramTokenFilter(Version.LUCENE_43, input, 2, 3);
-		assertTokenStreamContents(filter, new string[]{"ab","bc","cd","de","abc","bcd","cde"}, new int[]{0,1,2,3,0,1,2}, new int[]{2,3,4,5,3,4,5}, null, new int[]{1,1,1,1,1,1,1}, null, null, false);
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSupplementaryCharacters() throws java.io.IOException
-	  public virtual void testSupplementaryCharacters()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String s = org.apache.lucene.util.TestUtil.randomUnicodeString(random(), 10);
-		string s = TestUtil.randomUnicodeString(random(), 10);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int codePointCount = s.codePointCount(0, s.length());
-		int codePointCount = s.codePointCount(0, s.Length);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int minGram = org.apache.lucene.util.TestUtil.nextInt(random(), 1, 3);
-		int minGram = TestUtil.Next(random(), 1, 3);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxGram = org.apache.lucene.util.TestUtil.nextInt(random(), minGram, 10);
-		int maxGram = TestUtil.Next(random(), minGram, 10);
-		TokenStream tk = new KeywordTokenizer(new StringReader(s));
-		tk = new NGramTokenFilter(TEST_VERSION_CURRENT, tk, minGram, maxGram);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.tokenattributes.CharTermAttribute termAtt = tk.addAttribute(org.apache.lucene.analysis.tokenattributes.CharTermAttribute.class);
-		CharTermAttribute termAtt = tk.addAttribute(typeof(CharTermAttribute));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.tokenattributes.OffsetAttribute offsetAtt = tk.addAttribute(org.apache.lucene.analysis.tokenattributes.OffsetAttribute.class);
-		OffsetAttribute offsetAtt = tk.addAttribute(typeof(OffsetAttribute));
-		tk.reset();
-		for (int start = 0; start < codePointCount; ++start)
-		{
-		  for (int end = start + minGram; end <= Math.Min(codePointCount, start + maxGram); ++end)
-		  {
-			assertTrue(tk.incrementToken());
-			assertEquals(0, offsetAtt.startOffset());
-			assertEquals(s.Length, offsetAtt.endOffset());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startIndex = Character.offsetByCodePoints(s, 0, start);
-			int startIndex = char.offsetByCodePoints(s, 0, start);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int endIndex = Character.offsetByCodePoints(s, 0, end);
-			int endIndex = char.offsetByCodePoints(s, 0, end);
-			assertEquals(s.Substring(startIndex, endIndex - startIndex), termAtt.ToString());
-		  }
-		}
-		assertFalse(tk.incrementToken());
-	  }
-
-	}
-
+        [Test]
+        public virtual void TestSupplementaryCharacters()
+        {
+            string s = TestUtil.RandomUnicodeString(Random(), 10);
+            int codePointCount = Character.CodePointCount(s, 0, s.Length);
+            int minGram = TestUtil.NextInt(Random(), 1, 3);
+            int maxGram = TestUtil.NextInt(Random(), minGram, 10);
+            TokenStream tk = new KeywordTokenizer(new StringReader(s));
+            tk = new NGramTokenFilter(TEST_VERSION_CURRENT, tk, minGram, maxGram);
+            ICharTermAttribute termAtt = tk.AddAttribute<ICharTermAttribute>();
+            IOffsetAttribute offsetAtt = tk.AddAttribute<IOffsetAttribute>();
+            tk.Reset();
+            for (int start = 0; start < codePointCount; ++start)
+            {
+                for (int end = start + minGram; end <= Math.Min(codePointCount, start + maxGram); ++end)
+                {
+                    assertTrue(tk.IncrementToken());
+                    assertEquals(0, offsetAtt.StartOffset());
+                    assertEquals(s.Length, offsetAtt.EndOffset());
+                    int startIndex = Character.OffsetByCodePoints(s, 0, start);
+                    int endIndex = Character.OffsetByCodePoints(s, 0, end);
+                    assertEquals(s.Substring(startIndex, endIndex - startIndex), termAtt.ToString());
+                }
+            }
+            assertFalse(tk.IncrementToken());
+        }
+    }
 }

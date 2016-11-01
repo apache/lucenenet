@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ru
+namespace Lucene.Net.Analysis.Ru
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,33 +22,27 @@ namespace org.apache.lucene.analysis.ru
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Testcase for <seealso cref="RussianLetterTokenizer"/> </summary>
+    /// @deprecated (3.1) Remove this test class in Lucene 5.0 
+    [Obsolete("(3.1) Remove this test class in Lucene 5.0")]
+    public class TestRussianLetterTokenizer : BaseTokenStreamTestCase
+    {
 
-	using Version = org.apache.lucene.util.Version;
+        [Test]
+        public virtual void TestRussianLetterTokenizer_()
+        {
+            StringReader reader = new StringReader("1234567890 Вместе \ud801\udc1ctest");
+            RussianLetterTokenizer tokenizer = new RussianLetterTokenizer(LuceneVersion.LUCENE_CURRENT, reader);
+            AssertTokenStreamContents(tokenizer, new string[] { "1234567890", "Вместе", "\ud801\udc1ctest" });
+        }
 
-	/// <summary>
-	/// Testcase for <seealso cref="RussianLetterTokenizer"/> </summary>
-	/// @deprecated (3.1) Remove this test class in Lucene 5.0 
-	[Obsolete("(3.1) Remove this test class in Lucene 5.0")]
-	public class TestRussianLetterTokenizer : BaseTokenStreamTestCase
-	{
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRussianLetterTokenizer() throws java.io.IOException
-	  public virtual void testRussianLetterTokenizer()
-	  {
-		StringReader reader = new StringReader("1234567890 Вместе \ud801\udc1ctest");
-		RussianLetterTokenizer tokenizer = new RussianLetterTokenizer(Version.LUCENE_CURRENT, reader);
-		assertTokenStreamContents(tokenizer, new string[] {"1234567890", "Вместе", "\ud801\udc1ctest"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRussianLetterTokenizerBWCompat() throws java.io.IOException
-	  public virtual void testRussianLetterTokenizerBWCompat()
-	  {
-		StringReader reader = new StringReader("1234567890 Вместе \ud801\udc1ctest");
-		RussianLetterTokenizer tokenizer = new RussianLetterTokenizer(Version.LUCENE_30, reader);
-		assertTokenStreamContents(tokenizer, new string[] {"1234567890", "Вместе", "test"});
-	  }
-	}
-
+        [Test]
+        public virtual void TestRussianLetterTokenizerBWCompat()
+        {
+            StringReader reader = new StringReader("1234567890 Вместе \ud801\udc1ctest");
+            RussianLetterTokenizer tokenizer = new RussianLetterTokenizer(LuceneVersion.LUCENE_30, reader);
+            AssertTokenStreamContents(tokenizer, new string[] { "1234567890", "Вместе", "test" });
+        }
+    }
 }

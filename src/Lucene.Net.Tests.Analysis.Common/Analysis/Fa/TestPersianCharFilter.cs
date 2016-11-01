@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.fa
-{
+﻿using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fa
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,43 +20,39 @@
 	 * limitations under the License.
 	 */
 
+    public class TestPersianCharFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	public class TestPersianCharFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                return new TokenStreamComponents(new MockTokenizer(reader));
+            }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			return new TokenStreamComponents(new MockTokenizer(reader));
-		  }
+            public override TextReader InitReader(string fieldName, TextReader reader)
+            {
+                return new PersianCharFilter(reader);
+            }
+        }
 
-		  protected internal override Reader initReader(string fieldName, Reader reader)
-		  {
-			return new PersianCharFilter(reader);
-		  }
-	  }
+        [Test]
+        public virtual void TestBasics()
+        {
+            AssertAnalyzesTo(analyzer, "this is a\u200Ctest", new string[] { "this", "is", "a", "test" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws Exception
-	  public virtual void testBasics()
-	  {
-		assertAnalyzesTo(analyzer, "this is a\u200Ctest", new string[] {"this", "is", "a", "test"});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

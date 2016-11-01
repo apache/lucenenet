@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ga
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Ga
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,73 +21,65 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestIrishAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        public virtual void TestResourcesAvailable()
+        {
+            new IrishAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestIrishAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new IrishAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "siopadóireacht", "siopadóir");
+            CheckOneTerm(a, "síceapatacha", "síceapaite");
+            // stopword
+            AssertAnalyzesTo(a, "le", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "siopadóireacht", "siopadóir");
-		checkOneTerm(a, "síceapatacha", "síceapaite");
-		// stopword
-		assertAnalyzesTo(a, "le", new string[] { });
-	  }
+        /// <summary>
+        /// test use of elisionfilter </summary>
+        [Test]
+        public virtual void TestContractions()
+        {
+            Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "b'fhearr m'athair", new string[] { "fearr", "athair" });
+        }
 
-	  /// <summary>
-	  /// test use of elisionfilter </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testContractions() throws java.io.IOException
-	  public virtual void testContractions()
-	  {
-		Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "b'fhearr m'athair", new string[] {"fearr", "athair"});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("feirmeoireacht"), false);
+            Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT, IrishAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "feirmeoireacht", "feirmeoireacht");
+            CheckOneTerm(a, "siopadóireacht", "siopadóir");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("feirmeoireacht"), false);
-		Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT, IrishAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "feirmeoireacht", "feirmeoireacht");
-		checkOneTerm(a, "siopadóireacht", "siopadóir");
-	  }
+        /// <summary>
+        /// test special hyphen handling </summary>
+        [Test]
+        public virtual void TestHyphens()
+        {
+            Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "n-athair", new string[] { "athair" }, new int[] { 2 });
+        }
 
-	  /// <summary>
-	  /// test special hyphen handling </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHyphens() throws java.io.IOException
-	  public virtual void testHyphens()
-	  {
-		Analyzer a = new IrishAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "n-athair", new string[] {"athair"}, new int[] {2});
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new IrishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new IrishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

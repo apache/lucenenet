@@ -1,10 +1,9 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,20 +26,20 @@ namespace Lucene.Net.Search.Spell
     ///  way as Lucene's FuzzyTermsEnum with the transpositions option enabled.
     ///  
     ///  Notes:
-    ///  <ul>
-    ///    <li> This metric treats full unicode codepoints as characters
-    ///    <li> This metric scales raw edit distances into a floating point score
-    ///         based upon the shortest of the two terms
-    ///    <li> Transpositions of two adjacent codepoints are treated as primitive 
-    ///         edits.
-    ///    <li> Edits are applied in parallel: for example, "ab" and "bca" have 
-    ///         distance 3.
-    ///  </ul>
+    ///  <list type="bullet">
+    ///    <item> This metric treats full unicode codepoints as characters</item>
+    ///    <item> This metric scales raw edit distances into a floating point score
+    ///         based upon the shortest of the two terms</item>
+    ///    <item> Transpositions of two adjacent codepoints are treated as primitive 
+    ///         edits.</item>
+    ///    <item> Edits are applied in parallel: for example, "ab" and "bca" have 
+    ///         distance 3.</item>
+    ///  </list>
     ///  
     ///  NOTE: this class is not particularly efficient. It is only intended
     ///  for merging results from multiple DirectSpellCheckers.
     /// </summary>
-    public sealed class LuceneLevenshteinDistance : StringDistance
+    public sealed class LuceneLevenshteinDistance : IStringDistance
     {
 
         /// <summary>
@@ -70,8 +69,7 @@ namespace Lucene.Net.Search.Spell
             n = targetPoints.Length;
             int m = otherPoints.Length;
 
-            //TODO The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java: (ORIGINAL LINE: d = new int[n+1][m+1];)
-            d = RectangularArrays.ReturnRectangularIntArray(n + 1, m + 1);
+            d = ReturnRectangularIntArray(n + 1, m + 1);
 
             if (n == 0 || m == 0)
             {
@@ -132,6 +130,26 @@ namespace Lucene.Net.Search.Spell
                 cp = @ref.Ints[@ref.Length++] = Character.CodePointAt(s, i);
             }
             return @ref;
+        }
+
+        private static int[][] ReturnRectangularIntArray(int size1, int size2)
+        {
+            int[][] array;
+            if (size1 > -1)
+            {
+                array = new int[size1][];
+                if (size2 > -1)
+                {
+                    for (int Array1 = 0; Array1 < size1; Array1++)
+                    {
+                        array[Array1] = new int[size2];
+                    }
+                }
+            }
+            else
+                array = null;
+
+            return array;
         }
     }
 }

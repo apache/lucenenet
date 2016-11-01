@@ -32,11 +32,15 @@ namespace Lucene.Net.Search
         private static IndexReader Reader;
         private static Directory Directory;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because Similarity and TimeZone are not static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
             writer.Dispose();
             Reader = DirectoryReader.Open(Directory);
         }

@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This class converts alphabetic, numeric, and symbolic Unicode characters
     /// which are not in the first 127 ASCII characters (the "Basic Latin" Unicode
@@ -64,8 +64,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public ASCIIFoldingFilter(TokenStream input)
             : this(input, false)
         {
-            termAtt = AddAttribute<ICharTermAttribute>();
-            posIncAttr = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -81,6 +79,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(input)
         {
             this.preserveOriginal = preserveOriginal;
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncAttr = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -88,10 +88,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         public bool PreserveOriginal
         {
-            get
-            {
-                return preserveOriginal;
-            }
+            get { return preserveOriginal; }
         }
 
         public override bool IncrementToken()
@@ -109,7 +106,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 char[] buffer = termAtt.Buffer();
                 int length = termAtt.Length;
 
-                // If no characters actually require rewriting then we
+                // If no characters actually Require rewriting then we
                 // just return token as-is:
                 for (int i = 0; i < length; ++i)
                 {

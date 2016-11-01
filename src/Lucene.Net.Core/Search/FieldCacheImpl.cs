@@ -239,7 +239,12 @@ namespace Lucene.Net.Search
                         ReaderCache[readerKey] = innerCache;
                         Wrapper.InitReader(reader);
                     }
-                    if (!innerCache.TryGetValue(key, out value))
+                    // LUCENENET NOTE: We declare a temp variable here so we 
+                    // don't overwrite value variable with the null
+                    // that will result when this if block succeeds; otherwise
+                    // we won't have a value to put in the cache.
+                    object temp;
+                    if (!innerCache.TryGetValue(key, out temp))
                     {
                         innerCache[key] = value;
                     }
@@ -295,7 +300,7 @@ namespace Lucene.Net.Search
                             // call to FieldCache.getXXX
                             if (key.Custom != null && Wrapper != null)
                             {
-                                StreamWriter infoStream = Wrapper.InfoStream;
+                                TextWriter infoStream = Wrapper.InfoStream;
                                 if (infoStream != null)
                                 {
                                     PrintNewInsanity(infoStream, progress.Value);
@@ -308,7 +313,7 @@ namespace Lucene.Net.Search
                 return value;
             }
 
-            internal virtual void PrintNewInsanity(StreamWriter infoStream, object value)
+            internal virtual void PrintNewInsanity(TextWriter infoStream, object value)
             {
                 FieldCacheSanityChecker.Insanity[] insanities = FieldCacheSanityChecker.CheckSanity(Wrapper);
                 for (int i = 0; i < insanities.Length; i++)
@@ -1931,9 +1936,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private volatile StreamWriter infoStream;
+        private volatile TextWriter infoStream;
 
-        public virtual StreamWriter InfoStream
+        public virtual TextWriter InfoStream
         {
             set
             {

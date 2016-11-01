@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestCustomNorms : LuceneTestCase
     {

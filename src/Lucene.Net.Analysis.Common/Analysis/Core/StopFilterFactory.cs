@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -66,7 +65,7 @@ namespace Lucene.Net.Analysis.Core
     ///  </li>
     /// </ul>
     /// </summary>
-    public class StopFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class StopFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         public const string FORMAT_WORDSET = "wordset";
         public const string FORMAT_SNOWBALL = "snowball";
@@ -82,18 +81,18 @@ namespace Lucene.Net.Analysis.Core
         public StopFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
-            stopWordFiles = get(args, "words");
-            format = get(args, "format", (null == stopWordFiles ? null : FORMAT_WORDSET));
-            ignoreCase = getBoolean(args, "ignoreCase", false);
-            enablePositionIncrements = getBoolean(args, "enablePositionIncrements", true);
+            AssureMatchVersion();
+            stopWordFiles = Get(args, "words");
+            format = Get(args, "format", (null == stopWordFiles ? null : FORMAT_WORDSET));
+            ignoreCase = GetBoolean(args, "ignoreCase", false);
+            enablePositionIncrements = GetBoolean(args, "enablePositionIncrements", true);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             if (stopWordFiles != null)
             {
@@ -103,7 +102,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 else if (FORMAT_SNOWBALL.Equals(format, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    stopWords = getSnowballWordSet(loader, stopWordFiles, ignoreCase);
+                    stopWords = GetSnowballWordSet(loader, stopWordFiles, ignoreCase);
                 }
                 else
                 {

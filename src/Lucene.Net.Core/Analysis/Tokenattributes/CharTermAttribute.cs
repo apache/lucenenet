@@ -1,26 +1,27 @@
+using Lucene.Net.Support;
 using System;
+using System.Linq;
 using System.Text;
 
+// LUCENENET TODO: Rename this namespace to TokenAttributes (.NETify)
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-    using Lucene.Net.Support;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using Attribute = Lucene.Net.Util.Attribute;
@@ -123,16 +124,39 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
             if (index >= TermLength)
             {
-                throw new System.IndexOutOfRangeException();
+                throw new IndexOutOfRangeException();
             }
             return TermBuffer[index];
+        }
+
+        // LUCENENET specific indexer to make CharTermAttribute act more like a .NET type
+        public char this[int index]
+        {
+            get
+            {
+                if (index >= TermLength)
+                {
+                    throw new IndexOutOfRangeException("index");
+                }
+
+                return TermBuffer[index];
+            }
+            set
+            {
+                if (index >= TermLength)
+                {
+                    throw new IndexOutOfRangeException("index");
+                }
+
+                TermBuffer[index] = value;
+            }
         }
 
         public ICharSequence SubSequence(int start, int end)
         {
             if (start > TermLength || end > TermLength)
             {
-                throw new System.IndexOutOfRangeException();
+                throw new IndexOutOfRangeException();
             }
             return new StringCharSequenceWrapper(new string(TermBuffer, start, end - start));
         }
@@ -144,7 +168,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
             if (csq == null)
                 return AppendNull();
 
-            int len = end - start;
+            int len = end - start, csqlen = csq.Length;
+            if (len < 0 || start > csqlen || end > csqlen)
+                throw new IndexOutOfRangeException();
+            if (len == 0)
+                return this;
+
             csq.CopyTo(start, InternalResizeBuffer(TermLength + len), TermLength, len);
             Length += len;
 
@@ -154,6 +183,35 @@ namespace Lucene.Net.Analysis.Tokenattributes
         public ICharTermAttribute Append(char c)
         {
             ResizeBuffer(TermLength + 1)[TermLength++] = c;
+            return this;
+        }
+
+        public ICharTermAttribute Append(char[] chars)
+        {
+            if (chars == null)
+                return AppendNull();
+
+            int len = chars.Length;
+            chars.CopyTo(InternalResizeBuffer(TermLength + len), TermLength);
+            Length += len;
+
+            return this;
+        }
+
+        public ICharTermAttribute Append(char[] chars, int start, int end)
+        {
+            if (chars == null)
+                return AppendNull();
+
+            int len = end - start, csqlen = chars.Length;
+            if (len < 0 || start > csqlen || end > csqlen)
+                throw new IndexOutOfRangeException();
+            if (len == 0)
+                return this;
+
+            chars.Skip(start).Take(len).ToArray().CopyTo(InternalResizeBuffer(TermLength + len), TermLength);
+            Length += len;
+
             return this;
         }
 
@@ -170,6 +228,22 @@ namespace Lucene.Net.Analysis.Tokenattributes
             }
 
             return Append(s.ToString());
+        }
+
+        public ICharTermAttribute Append(StringBuilder s, int start, int end)
+        {
+            if (s == null) // needed for Appendable compliance
+            {
+                return AppendNull();
+            }
+
+            int len = end - start, csqlen = s.Length;
+            if (len < 0 || start > csqlen || end > csqlen)
+                throw new IndexOutOfRangeException();
+            if (len == 0)
+                return this;
+
+            return Append(s.ToString(start, end - start));
         }
 
         public ICharTermAttribute Append(ICharTermAttribute ta)

@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,37 +19,36 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-    using Lucene.Net.Util;
-
     /// <summary>
     /// Keeps highest results, first by largest int value,
-    ///  then tie break by smallest ord. 
+    /// then tie break by smallest ord. 
     /// </summary>
     public class TopOrdAndIntQueue : PriorityQueue<TopOrdAndIntQueue.OrdAndValue>
     {
-
         /// <summary>
-        /// Holds a single entry. </summary>
+        /// Holds a single entry.
+        /// </summary>
         public sealed class OrdAndValue
         {
-
             /// <summary>
             /// Ordinal of the entry. </summary>
-            public int Ord;
+            public int Ord { get; set; }
 
             /// <summary>
             /// Value associated with the ordinal. </summary>
-            public int Value;
+            public int Value { get; set; }
 
             /// <summary>
-            /// Default constructor. </summary>
+            /// Default constructor.
+            /// </summary>
             public OrdAndValue()
             {
             }
         }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public TopOrdAndIntQueue(int topN)
             : base(topN, false)
         {
@@ -72,5 +70,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

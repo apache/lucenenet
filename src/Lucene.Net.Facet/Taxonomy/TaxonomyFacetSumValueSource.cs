@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
-using Lucene.Net.Facet;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,20 +23,19 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using MatchingDocs = FacetsCollector.MatchingDocs;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Scorer = Lucene.Net.Search.Scorer;
-    using Weight = Lucene.Net.Search.Weight;
+    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
     using IntsRef = Lucene.Net.Util.IntsRef;
+    using MatchingDocs = FacetsCollector.MatchingDocs;
+    using Scorer = Lucene.Net.Search.Scorer;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+    using Weight = Lucene.Net.Search.Weight;
 
     /// <summary>
-    /// Aggregates sum of values from {@link
-    ///  FunctionValues#doubleVal}, for each facet label.
+    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal"/>, 
+    /// for each facet label.
     /// 
     ///  @lucene.experimental 
     /// </summary>
@@ -48,26 +45,28 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Aggreggates float facet values from the provided
-        ///  <seealso cref="ValueSource"/>, pulling ordinals using {@link
-        ///  DocValuesOrdinalsReader} against the default indexed
-        ///  facet field {@link
-        ///  FacetsConfig#DEFAULT_INDEX_FIELD_NAME}. 
+        /// <see cref="ValueSource"/>, pulling ordinals using <see cref="DocValuesOrdinalsReader"/>
+        /// against the default indexed
+        /// facet field <see cref="FacetsConfig.DEFAULT_INDEX_FIELD_NAME"/>. 
         /// </summary>
-        public TaxonomyFacetSumValueSource(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc, ValueSource valueSource)
-            : this(new DocValuesOrdinalsReader(FacetsConfig.DEFAULT_INDEX_FIELD_NAME), taxoReader, config, fc, valueSource)
+        public TaxonomyFacetSumValueSource(TaxonomyReader taxoReader, FacetsConfig config,
+            FacetsCollector fc, ValueSource valueSource)
+            : this(new DocValuesOrdinalsReader(FacetsConfig.DEFAULT_INDEX_FIELD_NAME),
+                  taxoReader, config, fc, valueSource)
         {
         }
 
         /// <summary>
         /// Aggreggates float facet values from the provided
-        ///  <seealso cref="ValueSource"/>, and pulls ordinals from the
-        ///  provided <seealso cref="OrdinalsReader"/>. 
+        /// <see cref="ValueSource"/>, and pulls ordinals from the
+        /// provided <see cref="OrdinalsReader"/>. 
         /// </summary>
-        public TaxonomyFacetSumValueSource(OrdinalsReader ordinalsReader, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc, ValueSource valueSource)
+        public TaxonomyFacetSumValueSource(OrdinalsReader ordinalsReader, TaxonomyReader taxoReader,
+            FacetsConfig config, FacetsCollector fc, ValueSource valueSource)
             : base(ordinalsReader.IndexFieldName, taxoReader, config)
         {
             this.ordinalsReader = ordinalsReader;
-            SumValues(fc.GetMatchingDocs, fc.KeepScores, valueSource);
+            SumValues(fc.GetMatchingDocs(), fc.KeepScores, valueSource);
         }
 
         private sealed class FakeScorer : Scorer
@@ -130,13 +129,13 @@ namespace Lucene.Net.Facet.Taxonomy
             IntsRef scratch = new IntsRef();
             foreach (MatchingDocs hits in matchingDocs)
             {
-                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.context);
+                OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.Context);
 
                 int scoresIdx = 0;
-                float[] scores = hits.scores;
+                float[] scores = hits.Scores;
 
-                FunctionValues functionValues = valueSource.GetValues(context, hits.context);
-                DocIdSetIterator docs = hits.bits.GetIterator();
+                FunctionValues functionValues = valueSource.GetValues(context, hits.Context);
+                DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -159,15 +158,16 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// <seealso cref="ValueSource"/> that returns the score for each
-        ///  hit; use this to aggregate the sum of all hit scores
-        ///  for each facet label.  
+        /// <see cref="ValueSource"/> that returns the score for each
+        /// hit; use this to aggregate the sum of all hit scores
+        /// for each facet label.  
         /// </summary>
         public class ScoreValueSource : ValueSource
         {
 
             /// <summary>
-            /// Sole constructor. </summary>
+            /// Sole constructor.
+            /// </summary>
             public ScoreValueSource()
             {
             }
@@ -193,7 +193,6 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     this.outerInstance = outerInstance;
                     this.scorer = scorer;
-
                 }
 
                 public override double DoubleVal(int document)
@@ -202,7 +201,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.Score();
                     }
-                    catch (Exception exception)
+                    catch (Exception /*exception*/)
                     {
                         throw;
                     }
@@ -214,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (ReferenceEquals(null, o)) return false;
                 if (ReferenceEquals(this, o)) return true;
                 if (o.GetType() != this.GetType()) return false;
-                return Equals((ScoreValueSource) o);
+                return Equals((ScoreValueSource)o);
             }
 
             protected bool Equals(ScoreValueSource other)
@@ -224,13 +223,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override int GetHashCode()
             {
-                return hcode;
+                return RuntimeHelpers.GetHashCode(this);
             }
-
-            private static readonly int hcode = typeof(DoubleDocValuesAnonymousInnerClassHelper).GetHashCode();
-
-            
-
 
             public override string Description
             {
@@ -238,10 +232,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     return "score()";
                 }
-
             }
         }
-
     }
-
 }

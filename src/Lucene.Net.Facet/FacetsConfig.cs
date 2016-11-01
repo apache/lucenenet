@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Lucene.Net.Facet.SortedSet;
-using Lucene.Net.Facet.Taxonomy;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,45 +25,44 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
-    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Documents.StringField;
-    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AssociationFacetField = Lucene.Net.Facet.Taxonomy.AssociationFacetField;
+    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Documents.Document;
     using FacetLabel = Lucene.Net.Facet.Taxonomy.FacetLabel;
+    using Field = Lucene.Net.Documents.Field;
     using FloatAssociationFacetField = Lucene.Net.Facet.Taxonomy.FloatAssociationFacetField;
-    using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
-    using TaxonomyWriter = Lucene.Net.Facet.Taxonomy.TaxonomyWriter;
     using IndexableField = Lucene.Net.Index.IndexableField;
     using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
     using IntsRef = Lucene.Net.Util.IntsRef;
+    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
+    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
+    using StringField = Lucene.Net.Documents.StringField;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
 
     /// <summary>
     /// Records per-dimension configuration.  By default a
-    ///  dimension is flat, single valued and does
-    ///  not require count for the dimension; use
-    ///  the setters in this class to change these settings for
-    ///  each dim.
+    /// dimension is flat, single valued and does
+    /// not require count for the dimension; use
+    /// the setters in this class to change these settings for
+    /// each dim.
     /// 
-    ///  <para><b>NOTE</b>: this configuration is not saved into the
-    ///  index, but it's vital, and up to the application to
-    ///  ensure, that at search time the provided {@code
-    ///  FacetsConfig} matches what was used during indexing.
+    /// <para>
+    /// <b>NOTE</b>: this configuration is not saved into the
+    /// index, but it's vital, and up to the application to
+    /// ensure, that at search time the provided <see cref="FacetsConfig"/>
+    /// matches what was used during indexing.
     /// 
     ///  @lucene.experimental 
     /// </para>
     /// </summary>
     public class FacetsConfig
     {
-
         /// <summary>
         /// Which Lucene field holds the drill-downs and ords (as
-        ///  doc values). 
+        /// doc values). 
         /// </summary>
         public const string DEFAULT_INDEX_FIELD_NAME = "$facets";
 
@@ -85,28 +81,30 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// True if this dimension is hierarchical. </summary>
-            public bool Hierarchical;
+            public bool Hierarchical { get; set; }
 
             /// <summary>
             /// True if this dimension is multi-valued. </summary>
-            public bool MultiValued;
+            public bool MultiValued { get; set; }
 
             /// <summary>
             /// True if the count/aggregate for the entire dimension
             ///  is required, which is unusual (default is false). 
             /// </summary>
-            public bool RequireDimCount;
+            public bool RequireDimCount { get; set; }
 
             /// <summary>
             /// Actual field where this dimension's facet labels
             ///  should be indexed 
             /// </summary>
-            public string IndexFieldName = DEFAULT_INDEX_FIELD_NAME;
+            public string IndexFieldName { get; set; }
 
             /// <summary>
-            /// Default constructor. </summary>
+            /// Default constructor.
+            /// </summary>
             public DimConfig()
             {
+                IndexFieldName = DEFAULT_INDEX_FIELD_NAME;
             }
         }
 
@@ -115,19 +113,21 @@ namespace Lucene.Net.Facet
         public static readonly DimConfig DEFAULT_DIM_CONFIG = new DimConfig();
 
         /// <summary>
-        /// Default constructor. </summary>
+        /// Default constructor.
+        /// </summary>
         public FacetsConfig()
         {
         }
 
         /// <summary>
         /// Get the default configuration for new dimensions.  Useful when
-        ///  the dimension is not known beforehand and may need different 
-        ///  global default settings, like {@code multivalue =
-        ///  true}.
+        /// the dimension is not known beforehand and may need different 
+        /// global default settings, like <c>multivalue = true</c>.
         /// </summary>
-        ///  <returns> The default configuration to be used for dimensions that 
-        ///  are not yet set in the <seealso cref="FacetsConfig"/>  </returns>
+        /// <returns>
+        /// The default configuration to be used for dimensions that 
+        /// are not yet set in the <see cref="FacetsConfig"/>
+        /// </returns>
         protected virtual DimConfig DefaultDimConfig
         {
             get
@@ -137,7 +137,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Get the current configuration for a dimension. </summary>
+        /// Get the current configuration for a dimension.
+        /// </summary>
         public virtual DimConfig GetDimConfig(string dimName)
         {
             lock (this)
@@ -152,8 +153,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if this dimension is hierarchical
-        ///  (has depth > 1 paths). 
+        /// Pass <c>true</c> if this dimension is hierarchical
+        /// (has depth > 1 paths). 
         /// </summary>
         public virtual void SetHierarchical(string dimName, bool v)
         {
@@ -172,8 +173,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if this dimension may have more than
-        ///  one value per document. 
+        /// Pass <c>true</c> if this dimension may have more than
+        /// one value per document. 
         /// </summary>
         public virtual void SetMultiValued(string dimName, bool v)
         {
@@ -192,9 +193,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Pass {@code true} if at search time you require
-        ///  accurate counts of the dimension, i.e. how many
-        ///  hits have this dimension. 
+        /// Pass <c>true</c> if at search time you require
+        /// accurate counts of the dimension, i.e. how many
+        /// hits have this dimension. 
         /// </summary>
         public virtual void SetRequireDimCount(string dimName, bool v)
         {
@@ -214,8 +215,8 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Specify which index field name should hold the
-        ///  ordinals for this dimension; this is only used by the
-        ///  taxonomy based facet methods. 
+        /// ordinals for this dimension; this is only used by the
+        /// taxonomy based facet methods. 
         /// </summary>
         public virtual void SetIndexFieldName(string dimName, string indexFieldName)
         {
@@ -234,7 +235,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Returns map of field name to <seealso cref="DimConfig"/>. </summary>
+        /// Returns map of field name to <see cref="DimConfig"/>.
+        /// </summary>
         public virtual IDictionary<string, DimConfig> DimConfigs
         {
             get
@@ -253,12 +255,12 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Translates any added <seealso cref="FacetField"/>s into normal fields for indexing;
-        /// only use this version if you did not add any taxonomy-based fields (
-        /// <seealso cref="FacetField"/> or <seealso cref="AssociationFacetField"/>).
+        /// Translates any added <see cref="FacetField"/>s into normal fields for indexing;
+        /// only use this version if you did not add any taxonomy-based fields 
+        /// (<see cref="FacetField"/> or <see cref="AssociationFacetField"/>).
         /// 
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to IndexWriter, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
@@ -268,14 +270,14 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Translates any added <seealso cref="FacetField"/>s into normal fields for indexing.
+        /// Translates any added <see cref="FacetField"/>s into normal fields for indexing.
         /// 
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to IndexWriter, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
-        public virtual Document Build(TaxonomyWriter taxoWriter, Document doc)
+        public virtual Document Build(ITaxonomyWriter taxoWriter, Document doc)
         {
             // Find all FacetFields, collated by the actual field:
             IDictionary<string, IList<FacetField>> byField = new Dictionary<string, IList<FacetField>>();
@@ -290,13 +292,13 @@ namespace Lucene.Net.Facet
 
             foreach (IndexableField field in doc.Fields)
             {
-                if (field.FieldType() == FacetField.TYPE)
+                if (field.FieldType == FacetField.TYPE)
                 {
                     FacetField facetField = (FacetField)field;
-                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
+                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
                     if (dimConfig.MultiValued == false)
                     {
-                        CheckSeen(seenDims, facetField.dim);
+                        CheckSeen(seenDims, facetField.Dim);
                     }
                     string indexFieldName = dimConfig.IndexFieldName;
                     IList<FacetField> fields;
@@ -308,7 +310,7 @@ namespace Lucene.Net.Facet
                     fields.Add(facetField);
                 }
 
-                if (field.FieldType() == SortedSetDocValuesFacetField.TYPE)
+                if (field.FieldType == SortedSetDocValuesFacetField.TYPE)
                 {
                     var facetField = (SortedSetDocValuesFacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
@@ -326,21 +328,21 @@ namespace Lucene.Net.Facet
                     fields.Add(facetField);
                 }
 
-                if (field.FieldType() == AssociationFacetField.TYPE)
+                if (field.FieldType == AssociationFacetField.TYPE)
                 {
                     AssociationFacetField facetField = (AssociationFacetField)field;
-                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
+                    FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
                     if (dimConfig.MultiValued == false)
                     {
-                        CheckSeen(seenDims, facetField.dim);
+                        CheckSeen(seenDims, facetField.Dim);
                     }
                     if (dimConfig.Hierarchical)
                     {
-                        throw new System.ArgumentException("AssociationFacetField cannot be hierarchical (dim=\"" + facetField.dim + "\")");
+                        throw new System.ArgumentException("AssociationFacetField cannot be hierarchical (dim=\"" + facetField.Dim + "\")");
                     }
                     if (dimConfig.RequireDimCount)
                     {
-                        throw new System.ArgumentException("AssociationFacetField cannot requireDimCount (dim=\"" + facetField.dim + "\")");
+                        throw new System.ArgumentException("AssociationFacetField cannot requireDimCount (dim=\"" + facetField.Dim + "\")");
                     }
 
                     string indexFieldName = dimConfig.IndexFieldName;
@@ -383,14 +385,14 @@ namespace Lucene.Net.Facet
             Document result = new Document();
 
             ProcessFacetFields(taxoWriter, byField, result);
-            processSSDVFacetFields(dvByField, result);
+            ProcessSSDVFacetFields(dvByField, result);
             ProcessAssocFacetFields(taxoWriter, assocByField, result);
 
             //System.out.println("add stored: " + addedStoredFields);
 
             foreach (IndexableField field in doc.Fields)
             {
-                IndexableFieldType ft = field.FieldType();
+                IndexableFieldType ft = field.FieldType;
                 if (ft != FacetField.TYPE && ft != SortedSetDocValuesFacetField.TYPE && ft != AssociationFacetField.TYPE)
                 {
                     result.Add(field);
@@ -400,7 +402,7 @@ namespace Lucene.Net.Facet
             return result;
         }
 
-        private void ProcessFacetFields(TaxonomyWriter taxoWriter, IDictionary<string, IList<FacetField>> byField, Document doc)
+        private void ProcessFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<FacetField>> byField, Document doc)
         {
 
             foreach (KeyValuePair<string, IList<FacetField>> ent in byField)
@@ -413,15 +415,15 @@ namespace Lucene.Net.Facet
                 foreach (FacetField facetField in ent.Value)
                 {
 
-                    FacetsConfig.DimConfig ft = GetDimConfig(facetField.dim);
-                    if (facetField.path.Length > 1 && ft.Hierarchical == false)
+                    FacetsConfig.DimConfig ft = GetDimConfig(facetField.Dim);
+                    if (facetField.Path.Length > 1 && ft.Hierarchical == false)
                     {
-                        throw new System.ArgumentException("dimension \"" + facetField.dim + "\" is not hierarchical yet has " + facetField.path.Length + " components");
+                        throw new System.ArgumentException("dimension \"" + facetField.Dim + "\" is not hierarchical yet has " + facetField.Path.Length + " components");
                     }
 
-                    FacetLabel cp = new FacetLabel(facetField.dim, facetField.path);
+                    FacetLabel cp = new FacetLabel(facetField.Dim, facetField.Path);
 
-                    checkTaxoWriter(taxoWriter);
+                    CheckTaxoWriter(taxoWriter);
                     int ordinal = taxoWriter.AddCategory(cp);
                     if (ordinals.Length == ordinals.Ints.Length)
                     {
@@ -466,7 +468,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public void processSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
+        public void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
         {
             //System.out.println("process SSDV: " + byField);
             foreach (KeyValuePair<string, IList<SortedSetDocValuesFacetField>> ent in byField)
@@ -491,7 +493,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void ProcessAssocFacetFields(TaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc)
+        private void ProcessAssocFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc)
         {
             foreach (KeyValuePair<string, IList<AssociationFacetField>> ent in byField)
             {
@@ -501,8 +503,8 @@ namespace Lucene.Net.Facet
                 foreach (AssociationFacetField field in ent.Value)
                 {
                     // NOTE: we don't add parents for associations
-                    checkTaxoWriter(taxoWriter);
-                    FacetLabel label = new FacetLabel(field.dim, field.path);
+                    CheckTaxoWriter(taxoWriter);
+                    FacetLabel label = new FacetLabel(field.Dim, field.Path);
                     int ordinal = taxoWriter.AddCategory(label);
                     if (upto + 4 > bytes.Length)
                     {
@@ -513,12 +515,12 @@ namespace Lucene.Net.Facet
                     bytes[upto++] = (byte)(ordinal >> 16);
                     bytes[upto++] = (byte)(ordinal >> 8);
                     bytes[upto++] = (byte)ordinal;
-                    if (upto + field.assoc.Length > bytes.Length)
+                    if (upto + field.Assoc.Length > bytes.Length)
                     {
-                        bytes = ArrayUtil.Grow(bytes, upto + field.assoc.Length);
+                        bytes = ArrayUtil.Grow(bytes, upto + field.Assoc.Length);
                     }
-                    Array.Copy(field.assoc.Bytes, field.assoc.Offset, bytes, upto, field.assoc.Length);
-                    upto += field.assoc.Length;
+                    Array.Copy(field.Assoc.Bytes, field.Assoc.Offset, bytes, upto, field.Assoc.Length);
+                    upto += field.Assoc.Length;
 
                     // Drill down:
                     for (int i = 1; i <= label.Length; i++)
@@ -531,8 +533,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Encodes ordinals into a BytesRef; expert: subclass can
-        ///  override this to change encoding. 
+        /// Encodes ordinals into a <see cref="BytesRef"/>; expert: subclass can
+        /// override this to change encoding. 
         /// </summary>
         protected virtual BytesRef DedupAndEncode(IntsRef ordinals)
         {
@@ -597,11 +599,11 @@ namespace Lucene.Net.Facet
             return new BytesRef(bytes, 0, upto);
         }
 
-        private void checkTaxoWriter(TaxonomyWriter taxoWriter)
+        private void CheckTaxoWriter(ITaxonomyWriter taxoWriter)
         {
             if (taxoWriter == null)
             {
-                throw new ThreadStateException("a non-null TaxonomyWriter must be provided when indexing FacetField or AssociationFacetField");
+                throw new ThreadStateException("a non-null ITaxonomyWriter must be provided when indexing FacetField or AssociationFacetField");
             }
         }
 
@@ -612,7 +614,8 @@ namespace Lucene.Net.Facet
         private const char ESCAPE_CHAR = '\u001E';
 
         /// <summary>
-        /// Turns a dim + path into an encoded string. </summary>
+        /// Turns a dim + path into an encoded string.
+        /// </summary>
         public static string PathToString(string dim, string[] path)
         {
             string[] fullPath = new string[1 + path.Length];
@@ -622,15 +625,16 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Turns a dim + path into an encoded string. </summary>
+        /// Turns a dim + path into an encoded string.
+        /// </summary>
         public static string PathToString(string[] path)
         {
             return PathToString(path, path.Length);
         }
 
         /// <summary>
-        /// Turns the first {@code length} elements of {@code
-        /// path} into an encoded string. 
+        /// Turns the first <paramref name="length"/> elements of <paramref name="path"/>
+        /// into an encoded string. 
         /// </summary>
         public static string PathToString(string[] path, int length)
         {
@@ -665,9 +669,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Turns an encoded string (from a previous call to {@link
-        ///  #pathToString}) back into the original {@code
-        ///  String[]}. 
+        /// Turns an encoded string (from a previous call to <see cref="PathToString"/>) 
+        /// back into the original <see cref="string[]"/>. 
         /// </summary>
         public static string[] StringToPath(string s)
         {
@@ -708,5 +711,4 @@ namespace Lucene.Net.Facet
             return parts.ToArray();
         }
     }
-
 }

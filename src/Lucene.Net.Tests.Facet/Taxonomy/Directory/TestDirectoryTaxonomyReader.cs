@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ltr.Dispose();
 
             // should not fail as we IncRef() before close
-            var tmpSie = ltr.Size;
+            var tmpSie = ltr.Count;
             ltr.DecRef();
 
             dir.Dispose();
@@ -118,7 +118,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ltr.Dispose();
             try
             {
-                var tmpSize = ltr.Size;
+                var tmpSize = ltr.Count;
                 Fail("An AlreadyClosedException should have been thrown here");
             }
             catch (AlreadyClosedException)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private void doTestReadRecreatedTaxonomy(Random random, bool closeReader)
         {
             Directory dir = null;
-            TaxonomyWriter tw = null;
+            ITaxonomyWriter tw = null;
             TaxonomyReader tr = null;
 
             // prepare a few categories
@@ -166,7 +166,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 tw.Dispose();
 
                 tr = new DirectoryTaxonomyReader(dir);
-                int baseNumCategories = tr.Size;
+                int baseNumCategories = tr.Count;
 
                 for (int i = 0; i < n; i++)
                 {
@@ -189,7 +189,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         tr.Dispose(true);
                         tr = newtr;
                     }
-                    Assert.AreEqual(baseNumCategories + 1 + k, tr.Size, "Wrong #categories in taxonomy (i=" + i + ", k=" + k + ")");
+                    Assert.AreEqual(baseNumCategories + 1 + k, tr.Count, "Wrong #categories in taxonomy (i=" + i + ", k=" + k + ")");
                 }
             }
             finally
@@ -251,9 +251,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 reader = newtr;
 
                 // assert categories
-                Assert.AreEqual(numCategories, reader.Size);
+                Assert.AreEqual(numCategories, reader.Count);
                 int roundOrdinal = reader.GetOrdinal(new FacetLabel(Convert.ToString(i)));
-                int[] parents = reader.ParallelTaxonomyArrays.Parents();
+                int[] parents = reader.ParallelTaxonomyArrays.Parents;
                 Assert.AreEqual(0, parents[roundOrdinal]); // round's parent is root
                 for (int j = 0; j < numCats; j++)
                 {
@@ -297,11 +297,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogByteSizeMergePolicy()));
-            var writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper2(this, dir, iw) as DirectoryTaxonomyWriter;
+
+            // LUCENENET: We need to set the index writer before the constructor of the base class is called
+            // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
+            // The only option seems to be to set it statically before creating the instance.
+            DirectoryTaxonomyWriterAnonymousInnerClassHelper2.iw = iw;
+            var writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper2(dir);
 
             var reader = new DirectoryTaxonomyReader(writer);
-            Assert.AreEqual(1, reader.Size);
-            Assert.AreEqual(1, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(1, reader.Count);
+            Assert.AreEqual(1, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // add category and call forceMerge -- this should flush IW and merge segments down to 1
             // in ParentArray.initFromReader, this used to fail assuming there are no parents.
@@ -313,8 +318,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.NotNull(newtr);
             reader.Dispose();
             reader = newtr;
-            Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.Count);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();
             writer.Dispose();
@@ -323,15 +328,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class DirectoryTaxonomyWriterAnonymousInnerClassHelper2 : DirectoryTaxonomyWriter
         {
-            private readonly TestDirectoryTaxonomyReader outerInstance;
+            internal static IndexWriter iw = null;
 
-            private IndexWriter iw;
-            private IndexWriterConfig config;
-
-            public DirectoryTaxonomyWriterAnonymousInnerClassHelper2(TestDirectoryTaxonomyReader outerInstance, Directory dir, IndexWriter iw) : base(dir)
+            public DirectoryTaxonomyWriterAnonymousInnerClassHelper2(Directory dir) 
+                : base(dir)
             {
-                this.outerInstance = outerInstance;
-                this.iw = iw;
             }
 
             protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config) 
@@ -352,7 +353,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
             var iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogByteSizeMergePolicy()));
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper3(this, dir, iw);
+
+            // LUCENENET: We need to set the index writer before the constructor of the base class is called
+            // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
+            // The only option seems to be to set it statically before creating the instance.
+            DirectoryTaxonomyWriterAnonymousInnerClassHelper3.iw = iw;
+            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper3(dir);
 
 
             // add a category so that the following DTR open will cause a flush and 
@@ -360,8 +366,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             writer.AddCategory(new FacetLabel("a"));
 
             var reader = new DirectoryTaxonomyReader(writer);
-            Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.Count);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // merge all the segments so that NRT reader thinks there's a change 
             iw.ForceMerge(1);
@@ -371,8 +377,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.NotNull(newtr);
             reader.Dispose();
             reader = newtr;
-            Assert.AreEqual(2, reader.Size);
-            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents().Length);
+            Assert.AreEqual(2, reader.Count);
+            Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             reader.Dispose();
             writer.Dispose();
@@ -381,15 +387,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class DirectoryTaxonomyWriterAnonymousInnerClassHelper3 : DirectoryTaxonomyWriter
         {
-            private readonly TestDirectoryTaxonomyReader outerInstance;
+            internal static IndexWriter iw;
 
-            private IndexWriter iw;
-
-            public DirectoryTaxonomyWriterAnonymousInnerClassHelper3(TestDirectoryTaxonomyReader outerInstance, Directory dir, IndexWriter iw)
+            public DirectoryTaxonomyWriterAnonymousInnerClassHelper3(Directory dir)
                 : base(dir)
             {
-                this.outerInstance = outerInstance;
-                this.iw = iw;
             }
 
             protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)

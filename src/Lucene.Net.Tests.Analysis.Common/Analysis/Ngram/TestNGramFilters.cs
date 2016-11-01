@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.ngram
-{
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.IO;
+using Reader = System.IO.TextReader;
 
-	/*
+namespace Lucene.Net.Analysis.Ngram
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,186 +23,174 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the NGram filter factories are working.
+    /// </summary>
+    public class TestNGramFilters : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Test NGramTokenizerFactory
+        /// </summary>
+        [Test]
+        public virtual void TestNGramTokenizer()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = TokenizerFactory("NGram").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "t", "te", "e", "es", "s", "st", "t" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using Version = org.apache.lucene.util.Version;
+        /// <summary>
+        /// Test NGramTokenizerFactory with min and max gram options
+        /// </summary>
+        [Test]
+        public virtual void TestNGramTokenizer2()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = TokenizerFactory("NGram", "minGramSize", "2", "maxGramSize", "3").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "te", "tes", "es", "est", "st" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the NGram filter factories are working.
-	/// </summary>
-	public class TestNGramFilters : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Test NGramTokenizerFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNGramTokenizer() throws Exception
-	  public virtual void testNGramTokenizer()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = tokenizerFactory("NGram").create(reader);
-		assertTokenStreamContents(stream, new string[] {"t", "te", "e", "es", "s", "st", "t"});
-	  }
+        /// <summary>
+        /// Test the NGramFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestNGramFilter()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("NGram").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "t", "te", "e", "es", "s", "st", "t" });
+        }
 
-	  /// <summary>
-	  /// Test NGramTokenizerFactory with min and max gram options
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNGramTokenizer2() throws Exception
-	  public virtual void testNGramTokenizer2()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = tokenizerFactory("NGram", "minGramSize", "2", "maxGramSize", "3").create(reader);
-		assertTokenStreamContents(stream, new string[] {"te", "tes", "es", "est", "st"});
-	  }
+        /// <summary>
+        /// Test the NGramFilterFactory with min and max gram options
+        /// </summary>
+        [Test]
+        public virtual void TestNGramFilter2()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("NGram", "minGramSize", "2", "maxGramSize", "3").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "te", "tes", "es", "est", "st" });
+        }
 
-	  /// <summary>
-	  /// Test the NGramFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNGramFilter() throws Exception
-	  public virtual void testNGramFilter()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("NGram").create(stream);
-		assertTokenStreamContents(stream, new string[] {"t", "te", "e", "es", "s", "st", "t"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramTokenizerFactory
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramTokenizer()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = TokenizerFactory("EdgeNGram").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "t" });
+        }
 
-	  /// <summary>
-	  /// Test the NGramFilterFactory with min and max gram options
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNGramFilter2() throws Exception
-	  public virtual void testNGramFilter2()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("NGram", "minGramSize", "2", "maxGramSize", "3").create(stream);
-		assertTokenStreamContents(stream, new string[] {"te", "tes", "es", "est", "st"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramTokenizerFactory with min and max gram size
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramTokenizer2()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = TokenizerFactory("EdgeNGram", "minGramSize", "1", "maxGramSize", "2").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "t", "te" });
+        }
 
-	  /// <summary>
-	  /// Test EdgeNGramTokenizerFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramTokenizer() throws Exception
-	  public virtual void testEdgeNGramTokenizer()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = tokenizerFactory("EdgeNGram").create(reader);
-		assertTokenStreamContents(stream, new string[] {"t"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramTokenizerFactory with side option
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramTokenizer3()
+        {
+            Reader reader = new StringReader("ready");
+#pragma warning disable 612, 618
+            TokenStream stream = TokenizerFactory("EdgeNGram", LuceneVersion.LUCENE_43, "side", "back").Create(reader);
+#pragma warning restore 612, 618
+            AssertTokenStreamContents(stream, new string[] { "y" });
+        }
 
-	  /// <summary>
-	  /// Test EdgeNGramTokenizerFactory with min and max gram size
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramTokenizer2() throws Exception
-	  public virtual void testEdgeNGramTokenizer2()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = tokenizerFactory("EdgeNGram", "minGramSize", "1", "maxGramSize", "2").create(reader);
-		assertTokenStreamContents(stream, new string[] {"t", "te"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramFilter()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("EdgeNGram").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "t" });
+        }
 
-	  /// <summary>
-	  /// Test EdgeNGramTokenizerFactory with side option
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramTokenizer3() throws Exception
-	  public virtual void testEdgeNGramTokenizer3()
-	  {
-		Reader reader = new StringReader("ready");
-		TokenStream stream = tokenizerFactory("EdgeNGram", Version.LUCENE_43, "side", "back").create(reader);
-		assertTokenStreamContents(stream, new string[] {"y"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramFilterFactory with min and max gram size
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramFilter2()
+        {
+            Reader reader = new StringReader("test");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("EdgeNGram", "minGramSize", "1", "maxGramSize", "2").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "t", "te" });
+        }
 
-	  /// <summary>
-	  /// Test EdgeNGramFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramFilter() throws Exception
-	  public virtual void testEdgeNGramFilter()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("EdgeNGram").create(stream);
-		assertTokenStreamContents(stream, new string[] {"t"});
-	  }
+        /// <summary>
+        /// Test EdgeNGramFilterFactory with side option
+        /// </summary>
+        [Test]
+        public virtual void TestEdgeNGramFilter3()
+        {
+            Reader reader = new StringReader("ready");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
+            stream = TokenFilterFactory("EdgeNGram", LuceneVersion.LUCENE_43, "side", "back").Create(stream);
+#pragma warning restore 612, 618
+            AssertTokenStreamContents(stream, new string[] { "y" });
+        }
 
-	  /// <summary>
-	  /// Test EdgeNGramFilterFactory with min and max gram size
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramFilter2() throws Exception
-	  public virtual void testEdgeNGramFilter2()
-	  {
-		Reader reader = new StringReader("test");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("EdgeNGram", "minGramSize", "1", "maxGramSize", "2").create(stream);
-		assertTokenStreamContents(stream, new string[] {"t", "te"});
-	  }
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenizerFactory("NGram", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test EdgeNGramFilterFactory with side option
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEdgeNGramFilter3() throws Exception
-	  public virtual void testEdgeNGramFilter3()
-	  {
-		Reader reader = new StringReader("ready");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("EdgeNGram", Version.LUCENE_43, "side", "back").create(stream);
-		assertTokenStreamContents(stream, new string[] {"y"});
-	  }
+            try
+            {
+                TokenizerFactory("EdgeNGram", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenizerFactory("NGram", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
+            try
+            {
+                TokenFilterFactory("NGram", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-		try
-		{
-		  tokenizerFactory("EdgeNGram", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  tokenFilterFactory("NGram", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  tokenFilterFactory("EdgeNGram", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+            try
+            {
+                TokenFilterFactory("EdgeNGram", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

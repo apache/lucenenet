@@ -1,7 +1,6 @@
-﻿namespace org.apache.lucene.analysis.de
+﻿namespace Lucene.Net.Analysis.De
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +17,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,99 +52,98 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	/// <summary>
-	/// Minimal Stemmer for German.
-	/// <para>
-	/// This stemmer implements the following algorithm:
-	/// <i>Morphologie et recherche d'information</i>
-	/// Jacques Savoy.
-	/// </para>
-	/// </summary>
-	public class GermanMinimalStemmer
-	{
+    /// <summary>
+    /// Minimal Stemmer for German.
+    /// <para>
+    /// This stemmer implements the following algorithm:
+    /// <i>Morphologie et recherche d'information</i>
+    /// Jacques Savoy.
+    /// </para>
+    /// </summary>
+    public class GermanMinimalStemmer
+    {
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 5)
-		{
-		  return len;
-		}
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len < 5)
+            {
+                return len;
+            }
 
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'ä':
-				s[i] = 'a';
-				break;
-			case 'ö':
-				s[i] = 'o';
-				break;
-			case 'ü':
-				s[i] = 'u';
-				break;
-		  }
-		}
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'ä':
+                        s[i] = 'a';
+                        break;
+                    case 'ö':
+                        s[i] = 'o';
+                        break;
+                    case 'ü':
+                        s[i] = 'u';
+                        break;
+                }
+            }
 
-		if (len > 6 && s[len - 3] == 'n' && s[len - 2] == 'e' && s[len - 1] == 'n')
-		{
-			return len - 3;
-		}
+            if (len > 6 && s[len - 3] == 'n' && s[len - 2] == 'e' && s[len - 1] == 'n')
+            {
+                return len - 3;
+            }
 
-		if (len > 5)
-		{
-		  switch (s[len - 1])
-		  {
-			case 'n':
-				if (s[len - 2] == 'e')
-				{
-					return len - 2;
-				}
-				else
-				{
-					break;
-				}
-			case 'e':
-				if (s[len - 2] == 's')
-				{
-					return len - 2;
-				}
-				else
-				{
-					break;
-				}
-			case 's':
-				if (s[len - 2] == 'e')
-				{
-					return len - 2;
-				}
-				else
-				{
-					break;
-				}
-			case 'r':
-				if (s[len - 2] == 'e')
-				{
-					return len - 2;
-				}
-				else
-				{
-					break;
-				}
-		  }
-		}
+            if (len > 5)
+            {
+                switch (s[len - 1])
+                {
+                    case 'n':
+                        if (s[len - 2] == 'e')
+                        {
+                            return len - 2;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    case 'e':
+                        if (s[len - 2] == 's')
+                        {
+                            return len - 2;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    case 's':
+                        if (s[len - 2] == 'e')
+                        {
+                            return len - 2;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    case 'r':
+                        if (s[len - 2] == 'e')
+                        {
+                            return len - 2;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                }
+            }
 
-		switch (s[len - 1])
-		{
-		  case 'n':
-		  case 'e':
-		  case 's':
-		  case 'r':
-			  return len - 1;
-		}
+            switch (s[len - 1])
+            {
+                case 'n':
+                case 'e':
+                case 's':
+                case 'r':
+                    return len - 1;
+            }
 
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.en
+namespace Lucene.Net.Analysis.En
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,37 +20,36 @@ namespace org.apache.lucene.analysis.en
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    //using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
 
-	/// <summary>
-	/// Factory for <seealso cref="EnglishPossessiveFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_enpossessive" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.EnglishPossessiveFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class EnglishPossessiveFilterFactory : TokenFilterFactory
-	{
+    /// <summary>
+    /// Factory for <seealso cref="EnglishPossessiveFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_enpossessive" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.EnglishPossessiveFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class EnglishPossessiveFilterFactory : TokenFilterFactory
+    {
 
-	  /// <summary>
-	  /// Creates a new EnglishPossessiveFilterFactory </summary>
-	  public EnglishPossessiveFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		assureMatchVersion();
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new EnglishPossessiveFilterFactory </summary>
+        public EnglishPossessiveFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            AssureMatchVersion();
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new EnglishPossessiveFilter(luceneMatchVersion, input);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new EnglishPossessiveFilter(luceneMatchVersion, input);
+        }
+    }
 }

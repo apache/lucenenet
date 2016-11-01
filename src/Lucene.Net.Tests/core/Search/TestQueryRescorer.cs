@@ -44,6 +44,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public class TestQueryRescorer : LuceneTestCase
     {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -120,7 +121,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomCombine()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 float score = firstPassScore;
                 if (secondPassMatches)
@@ -189,7 +190,7 @@ namespace Lucene.Net.Search
         public virtual void TestExplain()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -262,7 +263,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 float score = firstPassScore;
                 if (secondPassMatches)
@@ -277,7 +278,7 @@ namespace Lucene.Net.Search
         public virtual void TestMissingSecondPassScore()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -335,7 +336,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int[] idToNum = new int[numDocs];
             int maxValue = TestUtil.NextInt(Random(), 10, 1000000);
@@ -403,7 +404,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 return secondPassScore;
             }

@@ -1,0 +1,215 @@
+﻿using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
+
+namespace Lucene.Net.Search.Suggest
+{
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+    public class FileDictionaryTest : LuceneTestCase
+    {
+        private KeyValuePair<List<string>, string> GenerateFileEntry(string fieldDelimiter, bool hasWeight, bool hasPayload)
+        {
+            List<string> entryValues = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            string term = TestUtil.RandomSimpleString(Random(), 1, 300);
+            sb.append(term);
+            entryValues.Add(term);
+            if (hasWeight)
+            {
+                sb.append(fieldDelimiter);
+                long weight = TestUtil.NextLong(Random(), long.MinValue, long.MaxValue);
+                sb.append(weight);
+                entryValues.Add(weight.ToString());
+            }
+            if (hasPayload)
+            {
+                sb.append(fieldDelimiter);
+                string payload = TestUtil.RandomSimpleString(Random(), 1, 300);
+                sb.append(payload);
+                entryValues.Add(payload);
+            }
+            sb.append("\n");
+            return new KeyValuePair<List<string>, string>(entryValues, sb.toString());
+        }
+
+        private KeyValuePair<List<List<string>>, string> generateFileInput(int count, string fieldDelimiter, bool hasWeights, bool hasPayloads)
+        {
+            List<List<string>> entries = new List<List<string>>();
+            StringBuilder sb = new StringBuilder();
+            bool hasPayload = hasPayloads;
+            for (int i = 0; i < count; i++)
+            {
+                if (hasPayloads)
+                {
+                    hasPayload = (i == 0) ? true : Random().nextBoolean();
+                }
+                KeyValuePair<List<string>, string> entrySet = GenerateFileEntry(fieldDelimiter, (!hasPayloads && hasWeights) ? Random().nextBoolean() : hasWeights, hasPayload);
+                entries.Add(entrySet.Key);
+                sb.append(entrySet.Value);
+            }
+            return new KeyValuePair<List<List<string>>, string>(entries, sb.toString());
+        }
+
+        [Test]
+        public void TestFileWithTerm()
+        {
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), FileDictionary.DEFAULT_FIELD_DELIMITER, false, false);
+            Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
+            FileDictionary dictionary = new FileDictionary(inputReader);
+            List<List<string>> entries = fileInput.Key;
+            IInputIterator inputIter = dictionary.EntryIterator;
+            assertFalse(inputIter.HasPayloads);
+            BytesRef term;
+            int count = 0;
+            while ((term = inputIter.Next()) != null)
+            {
+                assertTrue(entries.size() > count);
+                List<string> entry = entries[count];
+                assertTrue(entry.size() >= 1); // at least a term
+                assertEquals(entry[0], term.Utf8ToString());
+                assertEquals(1, inputIter.Weight);
+                assertNull(inputIter.Payload);
+                count++;
+            }
+            assertEquals(count, entries.size());
+        }
+
+        [Test]
+        public void TestFileWithWeight()
+        {
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), FileDictionary.DEFAULT_FIELD_DELIMITER, true, false);
+            Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
+            FileDictionary dictionary = new FileDictionary(inputReader);
+            List<List<String>> entries = fileInput.Key;
+            IInputIterator inputIter = dictionary.EntryIterator;
+            assertFalse(inputIter.HasPayloads);
+            BytesRef term;
+            int count = 0;
+            while ((term = inputIter.Next()) != null)
+            {
+                assertTrue(entries.size() > count);
+                List<String> entry = entries[count];
+                assertTrue(entry.size() >= 1); // at least a term
+                assertEquals(entry[0], term.Utf8ToString());
+                assertEquals((entry.size() == 2) ? long.Parse(entry[1], CultureInfo.InvariantCulture) : 1, inputIter.Weight);
+                assertNull(inputIter.Payload);
+                count++;
+            }
+            assertEquals(count, entries.size());
+        }
+
+        [Test]
+        public void TestFileWithWeightAndPayload()
+        {
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), FileDictionary.DEFAULT_FIELD_DELIMITER, true, true);
+            Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
+            FileDictionary dictionary = new FileDictionary(inputReader);
+            List<List<string>> entries = fileInput.Key;
+            IInputIterator inputIter = dictionary.EntryIterator;
+            assertTrue(inputIter.HasPayloads);
+            BytesRef term;
+            int count = 0;
+            while ((term = inputIter.Next()) != null)
+            {
+                assertTrue(entries.size() > count);
+                List<string> entry = entries[count];
+                assertTrue(entry.size() >= 2); // at least term and weight
+                assertEquals(entry[0], term.Utf8ToString());
+                assertEquals(long.Parse(entry[1], CultureInfo.InvariantCulture), inputIter.Weight);
+                if (entry.size() == 3)
+                {
+                    assertEquals(entry[2], inputIter.Payload.Utf8ToString());
+                }
+                else
+                {
+                    assertEquals(inputIter.Payload.Length, 0);
+                }
+                count++;
+            }
+            assertEquals(count, entries.size());
+        }
+
+        [Test]
+        public void TestFileWithOneEntry()
+        {
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(1, FileDictionary.DEFAULT_FIELD_DELIMITER, true, true);
+            Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
+            FileDictionary dictionary = new FileDictionary(inputReader);
+            List<List<string>> entries = fileInput.Key;
+            IInputIterator inputIter = dictionary.EntryIterator;
+            assertTrue(inputIter.HasPayloads);
+            BytesRef term;
+            int count = 0;
+            while ((term = inputIter.Next()) != null)
+            {
+                assertTrue(entries.size() > count);
+                List<string> entry = entries[count];
+                assertTrue(entry.size() >= 2); // at least term and weight
+                assertEquals(entry[0], term.Utf8ToString());
+                assertEquals(long.Parse(entry[1], CultureInfo.InvariantCulture), inputIter.Weight);
+                if (entry.size() == 3)
+                {
+                    assertEquals(entry[2], inputIter.Payload.Utf8ToString());
+                }
+                else
+                {
+                    assertEquals(inputIter.Payload.Length, 0);
+                }
+                count++;
+            }
+            assertEquals(count, entries.size());
+        }
+
+
+        [Test]
+        public void TestFileWithDifferentDelimiter()
+        {
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), " , ", true, true);
+            Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
+            FileDictionary dictionary = new FileDictionary(inputReader, " , ");
+            List<List<string>> entries = fileInput.Key;
+            IInputIterator inputIter = dictionary.EntryIterator;
+            assertTrue(inputIter.HasPayloads);
+            BytesRef term;
+            int count = 0;
+            while ((term = inputIter.Next()) != null)
+            {
+                assertTrue(entries.size() > count);
+                List<string> entry = entries[count];
+                assertTrue(entry.size() >= 2); // at least term and weight
+                assertEquals(entry[0], term.Utf8ToString());
+                assertEquals(long.Parse(entry[1]), inputIter.Weight);
+                if (entry.size() == 3)
+                {
+                    assertEquals(entry[2], inputIter.Payload.Utf8ToString());
+                }
+                else
+                {
+                    assertEquals(inputIter.Payload.Length, 0);
+                }
+                count++;
+            }
+            assertEquals(count, entries.size());
+        }
+    }
+}

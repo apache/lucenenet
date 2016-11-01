@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.hi
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,92 +21,84 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Hindi filter Factories are working.
+    /// </summary>
+    public class TestHindiFilters : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Test IndicNormalizationFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestIndicNormalizer()
+        {
+            TextReader reader = new StringReader("ত্‍ अाैर");
+            TokenStream stream = TokenizerFactory("Standard").Create(reader);
+            stream = TokenFilterFactory("IndicNormalization").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "ৎ", "और" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        /// <summary>
+        /// Test HindiNormalizationFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestHindiNormalizer()
+        {
+            TextReader reader = new StringReader("क़िताब");
+            TokenStream stream = TokenizerFactory("Standard").Create(reader);
+            stream = TokenFilterFactory("IndicNormalization").Create(stream);
+            stream = TokenFilterFactory("HindiNormalization").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "किताब" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Hindi filter Factories are working.
-	/// </summary>
-	public class TestHindiFilters : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Test IndicNormalizationFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIndicNormalizer() throws Exception
-	  public virtual void testIndicNormalizer()
-	  {
-		Reader reader = new StringReader("ত্‍ अाैर");
-		TokenStream stream = tokenizerFactory("Standard").create(reader);
-		stream = tokenFilterFactory("IndicNormalization").create(stream);
-		assertTokenStreamContents(stream, new string[] {"ৎ", "और"});
-	  }
+        /// <summary>
+        /// Test HindiStemFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestStemmer()
+        {
+            TextReader reader = new StringReader("किताबें");
+            TokenStream stream = TokenizerFactory("Standard").Create(reader);
+            stream = TokenFilterFactory("IndicNormalization").Create(stream);
+            stream = TokenFilterFactory("HindiNormalization").Create(stream);
+            stream = TokenFilterFactory("HindiStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "किताब" });
+        }
 
-	  /// <summary>
-	  /// Test HindiNormalizationFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHindiNormalizer() throws Exception
-	  public virtual void testHindiNormalizer()
-	  {
-		Reader reader = new StringReader("क़िताब");
-		TokenStream stream = tokenizerFactory("Standard").create(reader);
-		stream = tokenFilterFactory("IndicNormalization").create(stream);
-		stream = tokenFilterFactory("HindiNormalization").create(stream);
-		assertTokenStreamContents(stream, new string[] {"किताब"});
-	  }
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("IndicNormalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test HindiStemFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemmer() throws Exception
-	  public virtual void testStemmer()
-	  {
-		Reader reader = new StringReader("किताबें");
-		TokenStream stream = tokenizerFactory("Standard").create(reader);
-		stream = tokenFilterFactory("IndicNormalization").create(stream);
-		stream = tokenFilterFactory("HindiNormalization").create(stream);
-		stream = tokenFilterFactory("HindiStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"किताब"});
-	  }
+            try
+            {
+                TokenFilterFactory("HindiNormalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("IndicNormalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  tokenFilterFactory("HindiNormalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  tokenFilterFactory("HindiStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+            try
+            {
+                TokenFilterFactory("HindiStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

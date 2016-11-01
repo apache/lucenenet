@@ -1,12 +1,11 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,27 +23,26 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
-
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
     using Filter = Lucene.Net.Search.Filter;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
+    using IndexReader = Lucene.Net.Index.IndexReader;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using Query = Lucene.Net.Search.Query;
+    using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
 
     /// <summary>
-    /// A <seealso cref="Query"/> for drill-down over facet categories. You
-    /// should call <seealso cref="#add(String, String...)"/> for every group of categories you
+    /// A <see cref="Query"/> for drill-down over facet categories. You
+    /// should call <see cref="Add(string, string[])"/> for every group of categories you
     /// want to drill-down over.
     /// <para>
-    /// <b>NOTE:</b> if you choose to create your own <seealso cref="Query"/> by calling
-    /// <seealso cref="#term"/>, it is recommended to wrap it with <seealso cref="ConstantScoreQuery"/>
-    /// and set the <seealso cref="ConstantScoreQuery#setBoost(float) boost"/> to {@code 0.0f},
+    /// <b>NOTE:</b> if you choose to create your own <see cref="Query"/> by calling
+    /// <see cref="Term"/>, it is recommended to wrap it with <see cref="ConstantScoreQuery"/>
+    /// and set the <see cref="ConstantScoreQuery.Boost">boost</see> to <c>0.0f</c>,
     /// so that it does not affect the scores of the documents.
     /// 
     /// @lucene.experimental
@@ -52,9 +50,9 @@ namespace Lucene.Net.Facet
     /// </summary>
     public sealed class DrillDownQuery : Query
     {
-
         /// <summary>
-        /// Creates a drill-down term. </summary>
+        /// Creates a drill-down term.
+        /// </summary>
         public static Term Term(string field, string dim, params string[] path)
         {
             return new Term(field, FacetsConfig.PathToString(dim, path));
@@ -65,16 +63,18 @@ namespace Lucene.Net.Facet
         private readonly IDictionary<string, int?> drillDownDims = new Dictionary<string, int?>();
 
         /// <summary>
-        /// Used by clone() </summary>
+        /// Used by <see cref="Clone"/>
+        /// </summary>
         internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int?> drillDownDims)
         {
-            this.query = (BooleanQuery) query.Clone();
+            this.query = (BooleanQuery)query.Clone();
             this.drillDownDims.AddAll(drillDownDims);
             this.config = config;
         }
 
         /// <summary>
-        /// Used by DrillSideways </summary>
+        /// Used by <see cref="DrillSideways"/>
+        /// </summary>
         internal DrillDownQuery(FacetsConfig config, Filter filter, DrillDownQuery other)
         {
             query = new BooleanQuery(true); // disable coord
@@ -95,7 +95,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Used by DrillSideways </summary>
+        /// Used by <see cref="DrillSideways"/>
+        /// </summary>
         internal DrillDownQuery(FacetsConfig config, Query baseQuery, IList<Query> clauses, IDictionary<string, int?> drillDownDims)
         {
             query = new BooleanQuery(true);
@@ -112,9 +113,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Creates a new {@code DrillDownQuery} without a base query, 
-        ///  to perform a pure browsing query (equivalent to using
-        ///  <seealso cref="MatchAllDocsQuery"/> as base). 
+        /// Creates a new <see cref="DrillDownQuery"/> without a base query, 
+        /// to perform a pure browsing query (equivalent to using
+        /// <see cref="MatchAllDocsQuery"/> as base). 
         /// </summary>
         public DrillDownQuery(FacetsConfig config)
             : this(config, null)
@@ -122,10 +123,10 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Creates a new {@code DrillDownQuery} over the given base query. Can be
-        ///  {@code null}, in which case the result <seealso cref="Query"/> from
-        ///  <seealso cref="#rewrite(IndexReader)"/> will be a pure browsing query, filtering on
-        ///  the added categories only. 
+        /// Creates a new <see cref="DrillDownQuery"/> over the given base query. Can be
+        /// <c>null</c>, in which case the result <see cref="Query"/> from
+        /// <see cref="Rewrite(IndexReader)"/> will be a pure browsing query, filtering on
+        /// the added categories only. 
         /// </summary>
         public DrillDownQuery(FacetsConfig config, Query baseQuery)
         {
@@ -139,7 +140,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Merges (ORs) a new path into an existing AND'd
-        ///  clause. 
+        /// clause. 
         /// </summary>
         private void Merge(string dim, string[] path)
         {
@@ -169,9 +170,9 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Adds one dimension of drill downs; if you pass the same
-        ///  dimension more than once it is OR'd with the previous
-        ///  cofnstraints on that dimension, and all dimensions are
-        ///  AND'd against each other and the base query. 
+        /// dimension more than once it is OR'd with the previous
+        /// cofnstraints on that dimension, and all dimensions are
+        /// AND'd against each other and the base query. 
         /// </summary>
         public void Add(string dim, params string[] path)
         {
@@ -191,8 +192,8 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Expert: add a custom drill-down subQuery.  Use this
-        ///  when you have a separate way to drill-down on the
-        ///  dimension than the indexed facet ordinals. 
+        /// when you have a separate way to drill-down on the
+        /// dimension than the indexed facet ordinals. 
         /// </summary>
         public void Add(string dim, Query subQuery)
         {
@@ -215,7 +216,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Expert: add a custom drill-down Filter, e.g. when
-        ///  drilling down after range faceting. 
+        /// drilling down after range faceting. 
         /// </summary>
         public void Add(string dim, Filter subFilter)
         {
@@ -384,5 +385,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

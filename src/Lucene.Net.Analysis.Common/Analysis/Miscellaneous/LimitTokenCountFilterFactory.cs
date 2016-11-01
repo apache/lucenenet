@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="LimitTokenCountFilter"/>. 
     /// <pre class="prettyprint">
@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LimitTokenCountFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            maxTokenCount = requireInt(args, MAX_TOKEN_COUNT_KEY);
-            consumeAllTokens = getBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
+            maxTokenCount = RequireInt(args, MAX_TOKEN_COUNT_KEY);
+            consumeAllTokens = GetBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

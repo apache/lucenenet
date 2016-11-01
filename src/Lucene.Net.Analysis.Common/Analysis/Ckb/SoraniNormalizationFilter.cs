@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,35 +19,30 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="SoraniNormalizer"/> to normalize the
+    /// orthography.
+    /// </summary>
+    public sealed class SoraniNormalizationFilter : TokenFilter
+    {
+        private readonly SoraniNormalizer normalizer = new SoraniNormalizer();
+        private readonly ICharTermAttribute termAtt;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="SoraniNormalizer"/> to normalize the
-	/// orthography.
-	/// </summary>
-	public sealed class SoraniNormalizationFilter : TokenFilter
-	{
-	  private readonly SoraniNormalizer normalizer = new SoraniNormalizer();
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        public SoraniNormalizationFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
 
-	  public SoraniNormalizationFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newlen = normalizer.normalize(termAtt.buffer(), termAtt.length());
-		  int newlen = normalizer.normalize(termAtt.buffer(), termAtt.length());
-		  termAtt.Length = newlen;
-		  return true;
-		}
-		return false;
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                int newlen = normalizer.normalize(termAtt.Buffer(), termAtt.Length);
+                termAtt.Length = newlen;
+                return true;
+            }
+            return false;
+        }
+    }
 }

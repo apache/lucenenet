@@ -349,7 +349,7 @@ namespace Lucene.Net.Analysis
             Analyzer @delegate = new MockAnalyzer(Random());
             Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), NewDirectory());
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), NewDirectory(), Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType();
             ft.Indexed = true;

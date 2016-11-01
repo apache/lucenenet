@@ -1,7 +1,8 @@
-namespace org.apache.lucene
-{
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,67 +19,71 @@ namespace org.apache.lucene
 	 * limitations under the License.
 	 */
 
-	using Analyzer = Lucene.Net.Analysis.Analyzer;
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using Term = Lucene.Net.Index.Term;
-	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-	using Lucene.Net.Search;
-	using Directory = Lucene.Net.Store.Directory;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Term = Lucene.Net.Index.Term;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Lucene.Net.Search;
+    using Directory = Lucene.Net.Store.Directory;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-	/// <summary>
-	/// A very simple demo used in the API documentation (src/java/overview.html).
-	/// 
-	/// Please try to keep src/java/overview.html up-to-date when making changes
-	/// to this class.
-	/// </summary>
-	public class TestDemo : LuceneTestCase
-	{
+    /// <summary>
+    /// A very simple demo used in the API documentation (src/java/overview.html).
+    /// 
+    /// Please try to keep src/java/overview.html up-to-date when making changes
+    /// to this class.
+    /// </summary>
+    public class TestDemo_ : LuceneTestCase
+    {
 
-	  public virtual void TestDemo()
-	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+        [Test]
+        public virtual void TestDemo()
+        {
+            Analyzer analyzer = new MockAnalyzer(Random());
 
-		// Store the index in memory:
-		Directory directory = newDirectory();
-		// To store an index on disk, use this instead:
-		// Directory directory = FSDirectory.open(new File("/tmp/testindex"));
-		RandomIndexWriter iwriter = new RandomIndexWriter(random(), directory, analyzer);
-		Document doc = new Document();
-		string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
-		string text = "this is the text to be indexed. " + longTerm;
-		doc.add(newTextField("fieldname", text, Field.Store.YES));
-		iwriter.addDocument(doc);
-		iwriter.close();
+            // Store the index in memory:
+            using (Directory directory = NewDirectory())
+            {
+                string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
+                string text = "this is the text to be indexed. " + longTerm;
 
-		// Now search the index:
-		IndexReader ireader = DirectoryReader.open(directory); // read-only=true
-		IndexSearcher isearcher = newSearcher(ireader);
+                // To store an index on disk, use this instead:
+                // Directory directory = FSDirectory.open(new File("/tmp/testindex"));
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, analyzer)))
+                {
+                    Documents.Document doc = new Documents.Document();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    iwriter.AddDocument(doc);
+                }
 
-		Assert.AreEqual(1, isearcher.search(new TermQuery(new Term("fieldname", longTerm)), 1).totalHits);
-		Query query = new TermQuery(new Term("fieldname", "text"));
-		TopDocs hits = isearcher.search(query, null, 1);
-		Assert.AreEqual(1, hits.totalHits);
-		// Iterate through the results:
-		for (int i = 0; i < hits.scoreDocs.length; i++)
-		{
-		  Document hitDoc = isearcher.doc(hits.scoreDocs[i].doc);
-		  Assert.AreEqual(text, hitDoc.get("fieldname"));
-		}
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = NewSearcher(ireader);
 
-		// Test simple phrase query
-		PhraseQuery phraseQuery = new PhraseQuery();
-		phraseQuery.add(new Term("fieldname", "to"));
-		phraseQuery.add(new Term("fieldname", "be"));
-		Assert.AreEqual(1, isearcher.search(phraseQuery, null, 1).totalHits);
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Documents.Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                    }
 
-		ireader.close();
-		directory.close();
-	  }
-	}
+                    // Test simple phrase query
+                    PhraseQuery phraseQuery = new PhraseQuery();
+                    phraseQuery.Add(new Term("fieldname", "to"));
+                    phraseQuery.Add(new Term("fieldname", "be"));
+                    Assert.AreEqual(1, isearcher.Search(phraseQuery, null, 1).TotalHits);
 
+                }
+            }
+        }
+    }
 }

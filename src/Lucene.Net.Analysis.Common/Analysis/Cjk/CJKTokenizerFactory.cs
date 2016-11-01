@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.cjk
+namespace Lucene.Net.Analysis.Cjk
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,38 +23,33 @@ namespace org.apache.lucene.analysis.cjk
 	 * limitations under the License.
 	 */
 
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
 
+    /// <summary>
+    /// Factory for <seealso cref="CJKTokenizer"/>. 
+    /// <pre class="prettyprint" >
+    /// &lt;fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.CJKTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre> </summary>
+    /// @deprecated Use <seealso cref="CJKBigramFilterFactory"/> instead. 
+    [Obsolete("Use CJKBigramFilterFactory instead.")]
+    public class CJKTokenizerFactory : TokenizerFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="CJKTokenizer"/>. 
-	/// <pre class="prettyprint" >
-	/// &lt;fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.CJKTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre> </summary>
-	/// @deprecated Use <seealso cref="CJKBigramFilterFactory"/> instead. 
-	[Obsolete("Use <seealso cref="CJKBigramFilterFactory"/> instead.")]
-	public class CJKTokenizerFactory : TokenizerFactory
-	{
+        /// <summary>
+        /// Creates a new CJKTokenizerFactory </summary>
+        public CJKTokenizerFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new CJKTokenizerFactory </summary>
-	  public CJKTokenizerFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override CJKTokenizer create(AttributeFactory factory, Reader @in)
-	  {
-		return new CJKTokenizer(factory, @in);
-	  }
-	}
-
-
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader @in)
+        {
+            return new CJKTokenizer(factory, @in);
+        }
+    }
 }

@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.br
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Br
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,195 +23,175 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Brazilian Stem Filter, which only modifies the term text.
+    /// 
+    /// It is very similar to the snowball portuguese algorithm but not exactly the same.
+    /// 
+    /// </summary>
+    public class TestBrazilianStemmer : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestWithSnowballExamples()
+        {
+            Check("boa", "boa");
+            Check("boainain", "boainain");
+            Check("boas", "boas");
+            Check("bôas", "boas"); // removes diacritic: different from snowball portugese
+            Check("boassu", "boassu");
+            Check("boataria", "boat");
+            Check("boate", "boat");
+            Check("boates", "boat");
+            Check("boatos", "boat");
+            Check("bob", "bob");
+            Check("boba", "bob");
+            Check("bobagem", "bobag");
+            Check("bobagens", "bobagens");
+            Check("bobalhões", "bobalho"); // removes diacritic: different from snowball portugese
+            Check("bobear", "bob");
+            Check("bobeira", "bobeir");
+            Check("bobinho", "bobinh");
+            Check("bobinhos", "bobinh");
+            Check("bobo", "bob");
+            Check("bobs", "bobs");
+            Check("boca", "boc");
+            Check("bocadas", "boc");
+            Check("bocadinho", "bocadinh");
+            Check("bocado", "boc");
+            Check("bocaiúva", "bocaiuv"); // removes diacritic: different from snowball portuguese
+            Check("boçal", "bocal"); // removes diacritic: different from snowball portuguese
+            Check("bocarra", "bocarr");
+            Check("bocas", "boc");
+            Check("bode", "bod");
+            Check("bodoque", "bodoqu");
+            Check("body", "body");
+            Check("boeing", "boeing");
+            Check("boem", "boem");
+            Check("boemia", "boem");
+            Check("boêmio", "boemi"); // removes diacritic: different from snowball portuguese
+            Check("bogotá", "bogot");
+            Check("boi", "boi");
+            Check("bóia", "boi"); // removes diacritic: different from snowball portuguese
+            Check("boiando", "boi");
+            Check("quiabo", "quiab");
+            Check("quicaram", "quic");
+            Check("quickly", "quickly");
+            Check("quieto", "quiet");
+            Check("quietos", "quiet");
+            Check("quilate", "quilat");
+            Check("quilates", "quilat");
+            Check("quilinhos", "quilinh");
+            Check("quilo", "quil");
+            Check("quilombo", "quilomb");
+            Check("quilométricas", "quilometr"); // removes diacritic: different from snowball portuguese
+            Check("quilométricos", "quilometr"); // removes diacritic: different from snowball portuguese
+            Check("quilômetro", "quilometr"); // removes diacritic: different from snowball portoguese
+            Check("quilômetros", "quilometr"); // removes diacritic: different from snowball portoguese
+            Check("quilos", "quil");
+            Check("quimica", "quimic");
+            Check("quilos", "quil");
+            Check("quimica", "quimic");
+            Check("quimicas", "quimic");
+            Check("quimico", "quimic");
+            Check("quimicos", "quimic");
+            Check("quimioterapia", "quimioterap");
+            Check("quimioterápicos", "quimioterap"); // removes diacritic: different from snowball portoguese
+            Check("quimono", "quimon");
+            Check("quincas", "quinc");
+            Check("quinhão", "quinha"); // removes diacritic: different from snowball portoguese
+            Check("quinhentos", "quinhent");
+            Check("quinn", "quinn");
+            Check("quino", "quin");
+            Check("quinta", "quint");
+            Check("quintal", "quintal");
+            Check("quintana", "quintan");
+            Check("quintanilha", "quintanilh");
+            Check("quintão", "quinta"); // removes diacritic: different from snowball portoguese
+            Check("quintessência", "quintessente"); // versus snowball portuguese 'quintessent'
+            Check("quintino", "quintin");
+            Check("quinto", "quint");
+            Check("quintos", "quint");
+            Check("quintuplicou", "quintuplic");
+            Check("quinze", "quinz");
+            Check("quinzena", "quinzen");
+            Check("quiosque", "quiosqu");
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using LowerCaseTokenizer = org.apache.lucene.analysis.core.LowerCaseTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        [Test]
+        public virtual void TestNormalization()
+        {
+            Check("Brasil", "brasil"); // lowercase by default
+            Check("Brasília", "brasil"); // remove diacritics
+            Check("quimio5terápicos", "quimio5terapicos"); // contains non-letter, diacritic will still be removed
+            Check("áá", "áá"); // token is too short: diacritics are not removed
+            Check("ááá", "aaa"); // normally, diacritics are removed
+        }
 
-	/// <summary>
-	/// Test the Brazilian Stem Filter, which only modifies the term text.
-	/// 
-	/// It is very similar to the snowball portuguese algorithm but not exactly the same.
-	/// 
-	/// </summary>
-	public class TestBrazilianStemmer : BaseTokenStreamTestCase
-	{
+        [Test]
+        public virtual void TestReusableTokenStream()
+        {
+            Analyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT);
+            checkReuse(a, "boa", "boa");
+            checkReuse(a, "boainain", "boainain");
+            checkReuse(a, "boas", "boas");
+            checkReuse(a, "bôas", "boas"); // removes diacritic: different from snowball portugese
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithSnowballExamples() throws Exception
-	  public virtual void testWithSnowballExamples()
-	  {
-	   check("boa", "boa");
-	   check("boainain", "boainain");
-	   check("boas", "boas");
-	   check("bôas", "boas"); // removes diacritic: different from snowball portugese
-	   check("boassu", "boassu");
-	   check("boataria", "boat");
-	   check("boate", "boat");
-	   check("boates", "boat");
-	   check("boatos", "boat");
-	   check("bob", "bob");
-	   check("boba", "bob");
-	   check("bobagem", "bobag");
-	   check("bobagens", "bobagens");
-	   check("bobalhões", "bobalho"); // removes diacritic: different from snowball portugese
-	   check("bobear", "bob");
-	   check("bobeira", "bobeir");
-	   check("bobinho", "bobinh");
-	   check("bobinhos", "bobinh");
-	   check("bobo", "bob");
-	   check("bobs", "bobs");
-	   check("boca", "boc");
-	   check("bocadas", "boc");
-	   check("bocadinho", "bocadinh");
-	   check("bocado", "boc");
-	   check("bocaiúva", "bocaiuv"); // removes diacritic: different from snowball portuguese
-	   check("boçal", "bocal"); // removes diacritic: different from snowball portuguese
-	   check("bocarra", "bocarr");
-	   check("bocas", "boc");
-	   check("bode", "bod");
-	   check("bodoque", "bodoqu");
-	   check("body", "body");
-	   check("boeing", "boeing");
-	   check("boem", "boem");
-	   check("boemia", "boem");
-	   check("boêmio", "boemi"); // removes diacritic: different from snowball portuguese
-	   check("bogotá", "bogot");
-	   check("boi", "boi");
-	   check("bóia", "boi"); // removes diacritic: different from snowball portuguese
-	   check("boiando", "boi");
-	   check("quiabo", "quiab");
-	   check("quicaram", "quic");
-	   check("quickly", "quickly");
-	   check("quieto", "quiet");
-	   check("quietos", "quiet");
-	   check("quilate", "quilat");
-	   check("quilates", "quilat");
-	   check("quilinhos", "quilinh");
-	   check("quilo", "quil");
-	   check("quilombo", "quilomb");
-	   check("quilométricas", "quilometr"); // removes diacritic: different from snowball portuguese
-	   check("quilométricos", "quilometr"); // removes diacritic: different from snowball portuguese
-	   check("quilômetro", "quilometr"); // removes diacritic: different from snowball portoguese
-	   check("quilômetros", "quilometr"); // removes diacritic: different from snowball portoguese
-	   check("quilos", "quil");
-	   check("quimica", "quimic");
-	   check("quilos", "quil");
-	   check("quimica", "quimic");
-	   check("quimicas", "quimic");
-	   check("quimico", "quimic");
-	   check("quimicos", "quimic");
-	   check("quimioterapia", "quimioterap");
-	   check("quimioterápicos", "quimioterap"); // removes diacritic: different from snowball portoguese
-	   check("quimono", "quimon");
-	   check("quincas", "quinc");
-	   check("quinhão", "quinha"); // removes diacritic: different from snowball portoguese
-	   check("quinhentos", "quinhent");
-	   check("quinn", "quinn");
-	   check("quino", "quin");
-	   check("quinta", "quint");
-	   check("quintal", "quintal");
-	   check("quintana", "quintan");
-	   check("quintanilha", "quintanilh");
-	   check("quintão", "quinta"); // removes diacritic: different from snowball portoguese
-	   check("quintessência", "quintessente"); // versus snowball portuguese 'quintessent'
-	   check("quintino", "quintin");
-	   check("quinto", "quint");
-	   check("quintos", "quint");
-	   check("quintuplicou", "quintuplic");
-	   check("quinze", "quinz");
-	   check("quinzena", "quinzen");
-	   check("quiosque", "quiosqu");
-	  }
+        [Test]
+        public virtual void TestStemExclusionTable()
+        {
+            BrazilianAnalyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, AsSet("quintessência"), false));
+            checkReuse(a, "quintessência", "quintessência"); // excluded words will be completely unchanged.
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNormalization() throws Exception
-	  public virtual void testNormalization()
-	  {
-		check("Brasil", "brasil"); // lowercase by default
-		check("Brasília", "brasil"); // remove diacritics
-		check("quimio5terápicos", "quimio5terapicos"); // contains non-letter, diacritic will still be removed
-		check("áá", "áá"); // token is too short: diacritics are not removed
-		check("ááá", "aaa"); // normally, diacritics are removed
-	  }
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("Brasília");
+            BrazilianStemFilter filter = new BrazilianStemFilter(new SetKeywordMarkerFilter(new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader("Brasília Brasilia")), set));
+            AssertTokenStreamContents(filter, new string[] { "brasília", "brasil" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReusableTokenStream() throws Exception
-	  public virtual void testReusableTokenStream()
-	  {
-		Analyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT);
-		checkReuse(a, "boa", "boa");
-		checkReuse(a, "boainain", "boainain");
-		checkReuse(a, "boas", "boas");
-		checkReuse(a, "bôas", "boas"); // removes diacritic: different from snowball portugese
-	  }
+        private void Check(string input, string expected)
+        {
+            CheckOneTerm(new BrazilianAnalyzer(TEST_VERSION_CURRENT), input, expected);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemExclusionTable() throws Exception
-	  public virtual void testStemExclusionTable()
-	  {
-		BrazilianAnalyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, asSet("quintessência"), false));
-		checkReuse(a, "quintessência", "quintessência"); // excluded words will be completely unchanged.
-	  }
+        private void checkReuse(Analyzer a, string input, string expected)
+        {
+            CheckOneTerm(a, input, expected);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("Brasília");
-		BrazilianStemFilter filter = new BrazilianStemFilter(new SetKeywordMarkerFilter(new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader("Brasília Brasilia")), set));
-		assertTokenStreamContents(filter, new string[] {"brasília", "brasil"});
-	  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new BrazilianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(final String input, final String expected) throws Exception
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void check(string input, string expected)
-	  {
-		checkOneTerm(new BrazilianAnalyzer(TEST_VERSION_CURRENT), input, expected);
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void checkReuse(org.apache.lucene.analysis.Analyzer a, String input, String expected) throws Exception
-	  private void checkReuse(Analyzer a, string input, string expected)
-	  {
-		checkOneTerm(a, input, expected);
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestBrazilianStemmer outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new BrazilianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestBrazilianStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestBrazilianStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestBrazilianStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new BrazilianStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new BrazilianStemFilter(tokenizer));
+            }
+        }
+    }
 }

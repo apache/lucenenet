@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 
         private static void Add(IDictionary<string, IndexableField> map, IndexableField field)
         {
-            map[field.Name()] = field;
+            map[field.Name] = field;
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             {
                 IndexableField f = Fields[i];
                 Add(All, f);
-                if (f.FieldType().Indexed)
+                if (f.FieldType.Indexed)
                 {
                     Add(Indexed, f);
                 }
@@ -269,15 +269,15 @@ namespace Lucene.Net.Index
                 {
                     Add(Unindexed, f);
                 }
-                if (f.FieldType().StoreTermVectors)
+                if (f.FieldType.StoreTermVectors)
                 {
                     Add(Termvector, f);
                 }
-                if (f.FieldType().Indexed && !f.FieldType().StoreTermVectors)
+                if (f.FieldType.Indexed && !f.FieldType.StoreTermVectors)
                 {
                     Add(Notermvector, f);
                 }
-                if (f.FieldType().Stored)
+                if (f.FieldType.Stored)
                 {
                     Add(Stored, f);
                 }
@@ -285,15 +285,15 @@ namespace Lucene.Net.Index
                 {
                     Add(Unstored, f);
                 }
-                if (f.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }
-                if (f.FieldType().OmitNorms)
+                if (f.FieldType.OmitNorms)
                 {
                     Add(NoNorms, f);
                 }
-                if (f.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }

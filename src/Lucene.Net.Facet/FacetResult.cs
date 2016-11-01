@@ -1,10 +1,10 @@
-﻿using System.Text;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using System;
+using System.Globalization;
+using System.Text;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,40 +23,71 @@ namespace Lucene.Net.Facet
      */
 
     /// <summary>
-    /// Counts or aggregates for a single dimension. </summary>
+    /// Counts or aggregates for a single dimension.
+    /// </summary>
     public sealed class FacetResult
     {
+        /// <summary>
+        /// Dimension that was requested.
+        /// </summary>
+        public string Dim { get; private set; }
 
         /// <summary>
-        /// Dimension that was requested. </summary>
-        public readonly string Dim;
-
-        /// <summary>
-        /// Path whose children were requested. </summary>
-        public readonly string[] Path;
+        /// Path whose children were requested.
+        /// </summary>
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
-        ///  sum of all child values), even those not included in
-        ///  the topN. 
+        /// sum of all child values), even those not included in
+        /// the topN. 
         /// </summary>
-        public readonly float Value;
+        public float Value { get; private set; }
 
         /// <summary>
-        /// How many child labels were encountered. </summary>
-        public readonly int ChildCount;
+        /// How many child labels were encountered.
+        /// </summary>
+        public int ChildCount { get; private set; }
 
         /// <summary>
-        /// Child counts. </summary>
-        public readonly LabelAndValue[] LabelValues;
+        /// Child counts.
+        /// </summary>
+        public LabelAndValue[] LabelValues { get; private set; }
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// The original data type of <see cref="Value"/> that was passed through the constructor.
+        /// </summary>
+        public Type TypeOfValue { get; private set; }
+
+        /// <summary>
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
+        /// </summary>
         public FacetResult(string dim, string[] path, float value, LabelAndValue[] labelValues, int childCount)
+            : this(dim, path, labelValues, childCount)
+        {
+            this.Value = value;
+            this.TypeOfValue = typeof(float);
+        }
+
+        /// <summary>
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
+        /// </summary>
+        public FacetResult(string dim, string[] path, int value, LabelAndValue[] labelValues, int childCount)
+            : this(dim, path, labelValues, childCount)
+        {
+            this.Value = value;
+            this.TypeOfValue = typeof(int);
+        }
+
+        /// <summary>
+        /// Private constructor for shared parameters to be called by public constructors.
+        /// </summary>
+        private FacetResult(string dim, string[] path, LabelAndValue[] labelValues, int childCount)
         {
             this.Dim = dim;
             this.Path = path;
-            this.Value = value;
             this.LabelValues = labelValues;
             this.ChildCount = childCount;
         }
@@ -69,7 +100,14 @@ namespace Lucene.Net.Facet
             sb.Append(" path=");
             sb.Append("[" + Arrays.ToString(Path) + "]");
             sb.Append(" value=");
-            sb.Append(Value);
+            if (TypeOfValue == typeof(int))
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0}", Value); // No formatting (looks like int)
+            }
+            else
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#####}", Value); // Decimal formatting
+            }
             sb.Append(" childCount=");
             sb.Append(ChildCount);
             sb.Append('\n');
@@ -100,5 +138,4 @@ namespace Lucene.Net.Facet
             return hashCode;
         }
     }
-
 }

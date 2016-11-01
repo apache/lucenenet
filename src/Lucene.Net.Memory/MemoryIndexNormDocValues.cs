@@ -1,6 +1,4 @@
-﻿using Lucene.Net.Index;
-
-namespace Lucene.Net.Memory
+﻿namespace Lucene.Net.Index.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -42,6 +40,5 @@ namespace Lucene.Net.Memory
                 return value;
             }
         }
-
     }
 }

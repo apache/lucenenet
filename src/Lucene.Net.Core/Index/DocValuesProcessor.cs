@@ -53,21 +53,21 @@ namespace Lucene.Net.Index
 
         public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
         {
-            DocValuesType_e? dvType = field.FieldType().DocValueType;
+            DocValuesType_e? dvType = field.FieldType.DocValueType;
             if (dvType != null)
             {
                 fieldInfo.DocValuesType = dvType;
                 if (dvType == DocValuesType_e.BINARY)
                 {
-                    AddBinaryField(fieldInfo, docID, field.BinaryValue());
+                    AddBinaryField(fieldInfo, docID, field.BinaryValue);
                 }
                 else if (dvType == DocValuesType_e.SORTED)
                 {
-                    AddSortedField(fieldInfo, docID, field.BinaryValue());
+                    AddSortedField(fieldInfo, docID, field.BinaryValue);
                 }
                 else if (dvType == DocValuesType_e.SORTED_SET)
                 {
-                    AddSortedSetField(fieldInfo, docID, field.BinaryValue());
+                    AddSortedSetField(fieldInfo, docID, field.BinaryValue);
                 }
                 else if (dvType == DocValuesType_e.NUMERIC)
                 {

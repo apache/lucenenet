@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new FacetField("Author", "Bob"));
@@ -252,7 +252,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -308,7 +308,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Facet
                 }
             nextDocContinue: ;
             }
-        nextDocBreak:
+            //nextDocBreak:// Not referenced
 
             IDictionary<string, int?> idToDocID = new Dictionary<string, int?>();
             for (int i = 0; i < s.IndexReader.MaxDoc; i++)
@@ -1213,10 +1213,10 @@ namespace Lucene.Net.Facet
                 {
                     foreach (LabelAndValue labelValue in fr.LabelValues)
                     {
-                        actualValues[labelValue.label] = (int)labelValue.value;
+                        actualValues[labelValue.Label] = (int)labelValue.Value;
                         if (VERBOSE)
                         {
-                            Console.WriteLine("        " + idx + ": " + new BytesRef(labelValue.label) + ": " + labelValue.value);
+                            Console.WriteLine("        " + idx + ": " + new BytesRef(labelValue.Label) + ": " + labelValue.Value);
                             idx++;
                         }
                     }
@@ -1254,12 +1254,12 @@ namespace Lucene.Net.Facet
                     for (int i = 0; i < topNIDs.Length; i++)
                     {
                         int expectedOrd = topNIDs[i];
-                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.LabelValues[i].value);
+                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.LabelValues[i].Value);
                         if (isSortedSetDV)
                         {
                             // Tie-break facet labels are only in unicode
                             // order with SortedSetDVFacets:
-                            Assert.AreEqual("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].label);
+                            assertEquals("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].Label);
                         }
                     }
                 }
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Facet
             // LUCENE-5045: make sure DrillSideways works with an empty index
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            var writer = new RandomIndexWriter(Random(), dir);
+            var writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
             IndexSearcher searcher = NewSearcher(writer.Reader);
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);

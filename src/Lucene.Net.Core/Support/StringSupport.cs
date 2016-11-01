@@ -14,5 +14,45 @@ namespace Lucene.Net.Support
         {
             return new BytesRef(str.GetBytes(enc));
         }
+
+        /// <summary>
+        /// This method mimics the Java String.compareTo(String) method in that it
+        /// <list type="number">
+        /// <item>Compares the strings using lexographic sorting rules</item>
+        /// <item>Performs a culture-insensitive comparison</item>
+        /// </list>
+        /// This method is a convenience to replace the .NET CompareTo method 
+        /// on all strings, provided the logic does not expect specific values
+        /// but is simply comparing them with <code>></code> or <code><</code>.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="value">The string to compare with.</param>
+        /// <returns>
+        /// An integer that indicates the lexical relationship between the two comparands.
+        /// Less than zero indicates the comparison value is greater than the current string.
+        /// Zero indicates the strings are equal.
+        /// Greater than zero indicates the comparison value is less than the current string.
+        /// </returns>
+        public static int CompareToOrdinal(this string str, string value)
+        {
+            return string.CompareOrdinal(str, value);
+        }
+
+
+        public static int CodePointAt(this string str, int index)
+        {
+            return Character.CodePointAt(str, index);
+        }
+
+        public static int CodePointCount(this string str, int beginIndex, int endIndex)
+        {
+            return Character.CodePointCount(str, beginIndex, endIndex);
+        }
+
+        public static int OffsetByCodePoints(this string seq, int index,
+                                         int codePointOffset)
+        {
+            return Character.OffsetByCodePoints(seq, index, codePointOffset);
+        }
     }
 }

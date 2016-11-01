@@ -1,25 +1,26 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Trims leading and trailing whitespace from Tokens in the stream.
     /// <para>As of Lucene 4.4, this filter does not support updateOffsets=true anymore
@@ -28,7 +29,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class TrimFilter : TokenFilter
     {
-
         internal readonly bool updateOffsets;
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
@@ -55,7 +55,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Create a new <seealso cref="TrimFilter"/> on top of <code>in</code>. </summary>
         public TrimFilter(LuceneVersion version, TokenStream @in)
+#pragma warning disable 612, 618
             : this(version, @in, false)
+#pragma warning restore 612, 618
         {
         }
 
@@ -108,5 +110,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return true;
         }
     }
-
 }

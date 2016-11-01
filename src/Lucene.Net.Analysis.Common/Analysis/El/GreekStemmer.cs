@@ -1,10 +1,10 @@
-﻿namespace org.apache.lucene.analysis.el
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Analysis.El
 {
-
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,779 +21,1061 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// A stemmer for Greek words, according to: <i>Development of a Stemmer for the
-	/// Greek Language.</i> Georgios Ntais
-	/// <para>
-	/// NOTE: Input is expected to be casefolded for Greek (including folding of final
-	/// sigma to sigma), and with diacritics removed. This can be achieved with 
-	/// either <seealso cref="GreekLowerCaseFilter"/> or ICUFoldingFilter.
-	/// @lucene.experimental
-	/// </para>
-	/// </summary>
-	public class GreekStemmer
-	{
-
-	 /// <summary>
-	 /// Stems a word contained in a leading portion of a char[] array.
-	 /// The word is passed through a number of rules that modify it's length.
-	 /// </summary>
-	 /// <param name="s"> A char[] array that contains the word to be stemmed. </param>
-	 /// <param name="len"> The length of the char[] array. </param>
-	 /// <returns> The new length of the stemmed word. </returns>
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 4) // too short
-		{
-		  return len;
-		}
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int origLen = len;
-		int origLen = len;
-		// "short rules": if it hits one of these, it skips the "long list"
-		len = rule0(s, len);
-		len = rule1(s, len);
-		len = rule2(s, len);
-		len = rule3(s, len);
-		len = rule4(s, len);
-		len = rule5(s, len);
-		len = rule6(s, len);
-		len = rule7(s, len);
-		len = rule8(s, len);
-		len = rule9(s, len);
-		len = rule10(s, len);
-		len = rule11(s, len);
-		len = rule12(s, len);
-		len = rule13(s, len);
-		len = rule14(s, len);
-		len = rule15(s, len);
-		len = rule16(s, len);
-		len = rule17(s, len);
-		len = rule18(s, len);
-		len = rule19(s, len);
-		len = rule20(s, len);
-		// "long list"
-		if (len == origLen)
-		{
-		  len = rule21(s, len);
-		}
-
-		return rule22(s, len);
-	  }
-
-	  private int rule0(char[] s, int len)
-	  {
-		if (len > 9 && (endsWith(s, len, "καθεστωτοσ") || endsWith(s, len, "καθεστωτων")))
-		{
-		  return len - 4;
-		}
-
-		if (len > 8 && (endsWith(s, len, "γεγονοτοσ") || endsWith(s, len, "γεγονοτων")))
-		{
-		  return len - 4;
-		}
-
-		if (len > 8 && endsWith(s, len, "καθεστωτα"))
-		{
-		  return len - 3;
-		}
-
-		if (len > 7 && (endsWith(s, len, "τατογιου") || endsWith(s, len, "τατογιων")))
-		{
-		  return len - 4;
-		}
-
-		if (len > 7 && endsWith(s, len, "γεγονοτα"))
-		{
-		  return len - 3;
-		}
-
-		if (len > 7 && endsWith(s, len, "καθεστωσ"))
-		{
-		  return len - 2;
-		}
-
-		if (len > 6 && (endsWith(s, len, "σκαγιου")) || endsWith(s, len, "σκαγιων") || endsWith(s, len, "ολογιου") || endsWith(s, len, "ολογιων") || endsWith(s, len, "κρεατοσ") || endsWith(s, len, "κρεατων") || endsWith(s, len, "περατοσ") || endsWith(s, len, "περατων") || endsWith(s, len, "τερατοσ") || endsWith(s, len, "τερατων"))
-		{
-		  return len - 4;
-		}
-
-		if (len > 6 && endsWith(s, len, "τατογια"))
-		{
-		  return len - 3;
-		}
-
-		if (len > 6 && endsWith(s, len, "γεγονοσ"))
-		{
-		  return len - 2;
-		}
-
-		if (len > 5 && (endsWith(s, len, "φαγιου") || endsWith(s, len, "φαγιων") || endsWith(s, len, "σογιου") || endsWith(s, len, "σογιων")))
-		{
-		  return len - 4;
-		}
-
-		if (len > 5 && (endsWith(s, len, "σκαγια") || endsWith(s, len, "ολογια") || endsWith(s, len, "κρεατα") || endsWith(s, len, "περατα") || endsWith(s, len, "τερατα")))
-		{
-		  return len - 3;
-		}
-
-		if (len > 4 && (endsWith(s, len, "φαγια") || endsWith(s, len, "σογια") || endsWith(s, len, "φωτοσ") || endsWith(s, len, "φωτων")))
-		{
-		  return len - 3;
-		}
-
-		if (len > 4 && (endsWith(s, len, "κρεασ") || endsWith(s, len, "περασ") || endsWith(s, len, "τερασ")))
-		{
-		  return len - 2;
-		}
-
-		if (len > 3 && endsWith(s, len, "φωτα"))
-		{
-		  return len - 2;
-		}
-
-		if (len > 2 && endsWith(s, len, "φωσ"))
-		{
-		  return len - 1;
-		}
-
-		return len;
-	  }
-
-	  private int rule1(char[] s, int len)
-	  {
-		if (len > 4 && (endsWith(s, len, "αδεσ") || endsWith(s, len, "αδων")))
-		{
-		  len -= 4;
-		  if (!(endsWith(s, len, "οκ") || endsWith(s, len, "μαμ") || endsWith(s, len, "μαν") || endsWith(s, len, "μπαμπ") || endsWith(s, len, "πατερ") || endsWith(s, len, "γιαγι") || endsWith(s, len, "νταντ") || endsWith(s, len, "κυρ") || endsWith(s, len, "θει") || endsWith(s, len, "πεθερ")))
-		  {
-			len += 2; // add back -αδ
-		  }
-		}
-		return len;
-	  }
-
-	  private int rule2(char[] s, int len)
-	  {
-		if (len > 4 && (endsWith(s, len, "εδεσ") || endsWith(s, len, "εδων")))
-		{
-		  len -= 4;
-		  if (endsWith(s, len, "οπ") || endsWith(s, len, "ιπ") || endsWith(s, len, "εμπ") || endsWith(s, len, "υπ") || endsWith(s, len, "γηπ") || endsWith(s, len, "δαπ") || endsWith(s, len, "κρασπ") || endsWith(s, len, "μιλ"))
-		  {
-			len += 2; // add back -εδ
-		  }
-		}
-		return len;
-	  }
-
-	  private int rule3(char[] s, int len)
-	  {
-		if (len > 5 && (endsWith(s, len, "ουδεσ") || endsWith(s, len, "ουδων")))
-		{
-		  len -= 5;
-		  if (endsWith(s, len, "αρκ") || endsWith(s, len, "καλιακ") || endsWith(s, len, "πεταλ") || endsWith(s, len, "λιχ") || endsWith(s, len, "πλεξ") || endsWith(s, len, "σκ") || endsWith(s, len, "σ") || endsWith(s, len, "φλ") || endsWith(s, len, "φρ") || endsWith(s, len, "βελ") || endsWith(s, len, "λουλ") || endsWith(s, len, "χν") || endsWith(s, len, "σπ") || endsWith(s, len, "τραγ") || endsWith(s, len, "φε"))
-		  {
-			len += 3; // add back -ουδ
-		  }
-		}
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc4 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ"), false);
-
-	  private int rule4(char[] s, int len)
-	  {
-		if (len > 3 && (endsWith(s, len, "εωσ") || endsWith(s, len, "εων")))
-		{
-		  len -= 3;
-		  if (exc4.contains(s, 0, len))
-		  {
-			len++; // add back -ε
-		  }
-		}
-		return len;
-	  }
-
-	  private int rule5(char[] s, int len)
-	  {
-		if (len > 2 && endsWith(s, len, "ια"))
-		{
-		  len -= 2;
-		  if (endsWithVowel(s, len))
-		  {
-			len++; // add back -ι
-		  }
-		}
-		else if (len > 3 && (endsWith(s, len, "ιου") || endsWith(s, len, "ιων")))
-		{
-		  len -= 3;
-		  if (endsWithVowel(s, len))
-		  {
-			len++; // add back -ι
-		  }
-		}
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc6 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("αλ", "αδ", "ενδ", "αμαν", "αμμοχαλ", "ηθ", "ανηθ", "αντιδ", "φυσ", "βρωμ", "γερ", "εξωδ", "καλπ", "καλλιν", "καταδ", "μουλ", "μπαν", "μπαγιατ", "μπολ", "μποσ", "νιτ", "ξικ", "συνομηλ", "πετσ", "πιτσ", "πικαντ", "πλιατσ", "ποστελν", "πρωτοδ", "σερτ", "συναδ", "τσαμ", "υποδ", "φιλον", "φυλοδ", "χασ"), false);
-
-	  private int rule6(char[] s, int len)
-	  {
-		bool removed = false;
-		if (len > 3 && (endsWith(s, len, "ικα") || endsWith(s, len, "ικο")))
-		{
-		  len -= 3;
-		  removed = true;
-		}
-		else if (len > 4 && (endsWith(s, len, "ικου") || endsWith(s, len, "ικων")))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-
-		if (removed)
-		{
-		  if (endsWithVowel(s, len) || exc6.contains(s, 0, len))
-		  {
-			len += 2; // add back -ικ
-		  }
-		}
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc7 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ", "πεθ", "πικρ", "ποτ", "σιχ", "χ"), false);
-
-	  private int rule7(char[] s, int len)
-	  {
-		if (len == 5 && endsWith(s, len, "αγαμε"))
-		{
-		  return len - 1;
-		}
-
-		if (len > 7 && endsWith(s, len, "ηθηκαμε"))
-		{
-		  len -= 7;
-		}
-		else if (len > 6 && endsWith(s, len, "ουσαμε"))
-		{
-		  len -= 6;
-		}
-		else if (len > 5 && (endsWith(s, len, "αγαμε") || endsWith(s, len, "ησαμε") || endsWith(s, len, "ηκαμε")))
-		{
-		  len -= 5;
-		}
-
-		if (len > 3 && endsWith(s, len, "αμε"))
-		{
-		  len -= 3;
-		  if (exc7.contains(s, 0, len))
-		  {
-			len += 2; // add back -αμ
-		  }
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc8a = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("τρ", "τσ"), false);
-
-	  private static readonly CharArraySet exc8b = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("βετερ", "βουλκ", "βραχμ", "γ", "δραδουμ", "θ", "καλπουζ", "καστελ", "κορμορ", "λαοπλ", "μωαμεθ", "μ", "μουσουλμ", "ν", "ουλ", "π", "πελεκ", "πλ", "πολισ", "πορτολ", "σαρακατσ", "σουλτ", "τσαρλατ", "ορφ", "τσιγγ", "τσοπ", "φωτοστεφ", "χ", "ψυχοπλ", "αγ", "ορφ", "γαλ", "γερ", "δεκ", "διπλ", "αμερικαν", "ουρ", "πιθ", "πουριτ", "σ", "ζωντ", "ικ", "καστ", "κοπ", "λιχ", "λουθηρ", "μαιντ", "μελ", "σιγ", "σπ", "στεγ", "τραγ", "τσαγ", "φ", "ερ", "αδαπ", "αθιγγ", "αμηχ", "ανικ", "ανοργ", "απηγ", "απιθ", "ατσιγγ", "βασ", "βασκ", "βαθυγαλ", "βιομηχ", "βραχυκ", "διατ", "διαφ", "ενοργ", "θυσ", "καπνοβιομηχ", "καταγαλ", "κλιβ", "κοιλαρφ", "λιβ", "μεγλοβιομηχ", "μικροβιομηχ", "νταβ", "ξηροκλιβ", "ολιγοδαμ", "ολογαλ", "πενταρφ", "περηφ", "περιτρ", "πλατ", "πολυδαπ", "πολυμηχ", "στεφ", "ταβ", "τετ", "υπερηφ", "υποκοπ", "χαμηλοδαπ", "ψηλοταβ"), false);
-
-	  private int rule8(char[] s, int len)
-	  {
-		bool removed = false;
-
-		if (len > 8 && endsWith(s, len, "ιουντανε"))
-		{
-		  len -= 8;
-		  removed = true;
-		}
-		else if (len > 7 && endsWith(s, len, "ιοντανε") || endsWith(s, len, "ουντανε") || endsWith(s, len, "ηθηκανε"))
-		{
-		  len -= 7;
-		  removed = true;
-		}
-		else if (len > 6 && endsWith(s, len, "ιοτανε") || endsWith(s, len, "οντανε") || endsWith(s, len, "ουσανε"))
-		{
-		  len -= 6;
-		  removed = true;
-		}
-		else if (len > 5 && endsWith(s, len, "αγανε") || endsWith(s, len, "ησανε") || endsWith(s, len, "οτανε") || endsWith(s, len, "ηκανε"))
-		{
-		  len -= 5;
-		  removed = true;
-		}
-
-		if (removed && exc8a.contains(s, 0, len))
-		{
-		  // add -αγαν (we removed > 4 chars so its safe)
-		  len += 4;
-		  s[len - 4] = 'α';
-		  s[len - 3] = 'γ';
-		  s[len - 2] = 'α';
-		  s[len - 1] = 'ν';
-		}
-
-		if (len > 3 && endsWith(s, len, "ανε"))
-		{
-		  len -= 3;
-		  if (endsWithVowelNoY(s, len) || exc8b.contains(s, 0, len))
-		  {
-			len += 2; // add back -αν
-		  }
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc9 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("αβαρ", "βεν", "εναρ", "αβρ", "αδ", "αθ", "αν", "απλ", "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ", "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ"), false);
-
-	  private int rule9(char[] s, int len)
-	  {
-		if (len > 5 && endsWith(s, len, "ησετε"))
-		{
-		  len -= 5;
-		}
-
-		if (len > 3 && endsWith(s, len, "ετε"))
-		{
-		  len -= 3;
-		  if (exc9.contains(s, 0, len) || endsWithVowelNoY(s, len) || endsWith(s, len, "οδ") || endsWith(s, len, "αιρ") || endsWith(s, len, "φορ") || endsWith(s, len, "ταθ") || endsWith(s, len, "διαθ") || endsWith(s, len, "σχ") || endsWith(s, len, "ενδ") || endsWith(s, len, "ευρ") || endsWith(s, len, "τιθ") || endsWith(s, len, "υπερθ") || endsWith(s, len, "ραθ") || endsWith(s, len, "ενθ") || endsWith(s, len, "ροθ") || endsWith(s, len, "σθ") || endsWith(s, len, "πυρ") || endsWith(s, len, "αιν") || endsWith(s, len, "συνδ") || endsWith(s, len, "συν") || endsWith(s, len, "συνθ") || endsWith(s, len, "χωρ") || endsWith(s, len, "πον") || endsWith(s, len, "βρ") || endsWith(s, len, "καθ") || endsWith(s, len, "ευθ") || endsWith(s, len, "εκθ") || endsWith(s, len, "νετ") || endsWith(s, len, "ρον") || endsWith(s, len, "αρκ") || endsWith(s, len, "βαρ") || endsWith(s, len, "βολ") || endsWith(s, len, "ωφελ"))
-		  {
-			len += 2; // add back -ετ
-		  }
-		}
-
-		return len;
-	  }
-
-	  private int rule10(char[] s, int len)
-	  {
-		if (len > 5 && (endsWith(s, len, "οντασ") || endsWith(s, len, "ωντασ")))
-		{
-		  len -= 5;
-		  if (len == 3 && endsWith(s, len, "αρχ"))
-		  {
-			len += 3; // add back *ντ
-			s[len - 3] = 'ο';
-		  }
-		  if (endsWith(s, len, "κρε"))
-		  {
-			len += 3; // add back *ντ
-			s[len - 3] = 'ω';
-		  }
-		}
-
-		return len;
-	  }
-
-	  private int rule11(char[] s, int len)
-	  {
-		if (len > 6 && endsWith(s, len, "ομαστε"))
-		{
-		  len -= 6;
-		  if (len == 2 && endsWith(s, len, "ον"))
-		  {
-			len += 5; // add back -ομαστ
-		  }
-		}
-		else if (len > 7 && endsWith(s, len, "ιομαστε"))
-		{
-		  len -= 7;
-		  if (len == 2 && endsWith(s, len, "ον"))
-		  {
-			len += 5;
-			s[len - 5] = 'ο';
-			s[len - 4] = 'μ';
-			s[len - 3] = 'α';
-			s[len - 2] = 'σ';
-			s[len - 1] = 'τ';
-		  }
-		}
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc12a = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ"), false);
-
-	  private static readonly CharArraySet exc12b = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ"), false);
-
-	  private int rule12(char[] s, int len)
-	  {
-		if (len > 5 && endsWith(s, len, "ιεστε"))
-		{
-		  len -= 5;
-		  if (exc12a.contains(s, 0, len))
-		  {
-			len += 4; // add back -ιεστ
-		  }
-		}
-
-		if (len > 4 && endsWith(s, len, "εστε"))
-		{
-		  len -= 4;
-		  if (exc12b.contains(s, 0, len))
-		  {
-			len += 3; // add back -εστ
-		  }
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc13 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("διαθ", "θ", "παρακαταθ", "προσθ", "συνθ"), false);
-
-	  private int rule13(char[] s, int len)
-	  {
-		if (len > 6 && endsWith(s, len, "ηθηκεσ"))
-		{
-		  len -= 6;
-		}
-		else if (len > 5 && (endsWith(s, len, "ηθηκα") || endsWith(s, len, "ηθηκε")))
-		{
-		  len -= 5;
-		}
-
-		bool removed = false;
-
-		if (len > 4 && endsWith(s, len, "ηκεσ"))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-		else if (len > 3 && (endsWith(s, len, "ηκα") || endsWith(s, len, "ηκε")))
-		{
-		  len -= 3;
-		  removed = true;
-		}
-
-		if (removed && (exc13.contains(s, 0, len) || endsWith(s, len, "σκωλ") || endsWith(s, len, "σκουλ") || endsWith(s, len, "ναρθ") || endsWith(s, len, "σφ") || endsWith(s, len, "οθ") || endsWith(s, len, "πιθ")))
-		{
-		  len += 2; // add back the -ηκ
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc14 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("φαρμακ", "χαδ", "αγκ", "αναρρ", "βρομ", "εκλιπ", "λαμπιδ", "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ", "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα"), false);
-
-	  private int rule14(char[] s, int len)
-	  {
-		bool removed = false;
-
-		if (len > 5 && endsWith(s, len, "ουσεσ"))
-		{
-		  len -= 5;
-		  removed = true;
-		}
-		else if (len > 4 && (endsWith(s, len, "ουσα") || endsWith(s, len, "ουσε")))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-
-		if (removed && (exc14.contains(s, 0, len) || endsWithVowel(s, len) || endsWith(s, len, "ποδαρ") || endsWith(s, len, "βλεπ") || endsWith(s, len, "πανταχ") || endsWith(s, len, "φρυδ") || endsWith(s, len, "μαντιλ") || endsWith(s, len, "μαλλ") || endsWith(s, len, "κυματ") || endsWith(s, len, "λαχ") || endsWith(s, len, "ληγ") || endsWith(s, len, "φαγ") || endsWith(s, len, "ομ") || endsWith(s, len, "πρωτ")))
-		{
-		  len += 3; // add back -ουσ
-		}
-
-	   return len;
-	  }
-
-	  private static readonly CharArraySet exc15a = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("αβαστ", "πολυφ", "αδηφ", "παμφ", "ρ", "ασπ", "αφ", "αμαλ", "αμαλλι", "ανυστ", "απερ", "ασπαρ", "αχαρ", "δερβεν", "δροσοπ", "ξεφ", "νεοπ", "νομοτ", "ολοπ", "ομοτ", "προστ", "προσωποπ", "συμπ", "συντ", "τ", "υποτ", "χαρ", "αειπ", "αιμοστ", "ανυπ", "αποτ", "αρτιπ", "διατ", "εν", "επιτ", "κροκαλοπ", "σιδηροπ", "λ", "ναυ", "ουλαμ", "ουρ", "π", "τρ", "μ"), false);
-
-	  private static readonly CharArraySet exc15b = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("ψοφ", "ναυλοχ"), false);
-
-	  private int rule15(char[] s, int len)
-	  {
-		bool removed = false;
-		if (len > 4 && endsWith(s, len, "αγεσ"))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-		else if (len > 3 && (endsWith(s, len, "αγα") || endsWith(s, len, "αγε")))
-		{
-		  len -= 3;
-		  removed = true;
-		}
-
-		if (removed)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean cond1 = exc15a.contains(s, 0, len) || endsWith(s, len, "οφ") || endsWith(s, len, "πελ") || endsWith(s, len, "χορτ") || endsWith(s, len, "λλ") || endsWith(s, len, "σφ") || endsWith(s, len, "ρπ") || endsWith(s, len, "φρ") || endsWith(s, len, "πρ") || endsWith(s, len, "λοχ") || endsWith(s, len, "σμην");
-		  bool cond1 = exc15a.contains(s, 0, len) || endsWith(s, len, "οφ") || endsWith(s, len, "πελ") || endsWith(s, len, "χορτ") || endsWith(s, len, "λλ") || endsWith(s, len, "σφ") || endsWith(s, len, "ρπ") || endsWith(s, len, "φρ") || endsWith(s, len, "πρ") || endsWith(s, len, "λοχ") || endsWith(s, len, "σμην");
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean cond2 = exc15b.contains(s, 0, len) || endsWith(s, len, "κολλ");
-		  bool cond2 = exc15b.contains(s, 0, len) || endsWith(s, len, "κολλ");
-
-		  if (cond1 && !cond2)
-		  {
-			len += 2; // add back -αγ
-		  }
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc16 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν"), false);
-
-	  private int rule16(char[] s, int len)
-	  {
-		bool removed = false;
-		if (len > 4 && endsWith(s, len, "ησου"))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-		else if (len > 3 && (endsWith(s, len, "ησε") || endsWith(s, len, "ησα")))
-		{
-		  len -= 3;
-		  removed = true;
-		}
-
-		if (removed && exc16.contains(s, 0, len))
-		{
-		  len += 2; // add back -ησ
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc17 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ"), false);
-
-	  private int rule17(char[] s, int len)
-	  {
-		if (len > 4 && endsWith(s, len, "ηστε"))
-		{
-		  len -= 4;
-		  if (exc17.contains(s, 0, len))
-		  {
-			len += 3; // add back the -ηστ
-		  }
-		}
-
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc18 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων"), false);
-
-	  private int rule18(char[] s, int len)
-	  {
-		bool removed = false;
-
-		if (len > 6 && (endsWith(s, len, "ησουνε") || endsWith(s, len, "ηθουνε")))
-		{
-		  len -= 6;
-		  removed = true;
-		}
-		else if (len > 4 && endsWith(s, len, "ουνε"))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-
-		if (removed && exc18.contains(s, 0, len))
-		{
-		  len += 3;
-		  s[len - 3] = 'ο';
-		  s[len - 2] = 'υ';
-		  s[len - 1] = 'ν';
-		}
-		return len;
-	  }
-
-	  private static readonly CharArraySet exc19 = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ"), false);
-
-	  private int rule19(char[] s, int len)
-	  {
-		bool removed = false;
-
-		if (len > 6 && (endsWith(s, len, "ησουμε") || endsWith(s, len, "ηθουμε")))
-		{
-		  len -= 6;
-		  removed = true;
-		}
-		else if (len > 4 && endsWith(s, len, "ουμε"))
-		{
-		  len -= 4;
-		  removed = true;
-		}
-
-		if (removed && exc19.contains(s, 0, len))
-		{
-		  len += 3;
-		  s[len - 3] = 'ο';
-		  s[len - 2] = 'υ';
-		  s[len - 1] = 'μ';
-		}
-		return len;
-	  }
-
-	  private int rule20(char[] s, int len)
-	  {
-		if (len > 5 && (endsWith(s, len, "ματων") || endsWith(s, len, "ματοσ")))
-		{
-		  len -= 3;
-		}
-		else if (len > 4 && endsWith(s, len, "ματα"))
-		{
-		  len -= 2;
-		}
-		return len;
-	  }
-
-	  private int rule21(char[] s, int len)
-	  {
-		if (len > 9 && endsWith(s, len, "ιοντουσαν"))
-		{
-		  return len - 9;
-		}
-
-		if (len > 8 && (endsWith(s, len, "ιομασταν") || endsWith(s, len, "ιοσασταν") || endsWith(s, len, "ιουμαστε") || endsWith(s, len, "οντουσαν")))
-		{
-		  return len - 8;
-		}
-
-		if (len > 7 && (endsWith(s, len, "ιεμαστε") || endsWith(s, len, "ιεσαστε") || endsWith(s, len, "ιομουνα") || endsWith(s, len, "ιοσαστε") || endsWith(s, len, "ιοσουνα") || endsWith(s, len, "ιουνται") || endsWith(s, len, "ιουνταν") || endsWith(s, len, "ηθηκατε") || endsWith(s, len, "ομασταν") || endsWith(s, len, "οσασταν") || endsWith(s, len, "ουμαστε")))
-		{
-		  return len - 7;
-		}
-
-		if (len > 6 && (endsWith(s, len, "ιομουν") || endsWith(s, len, "ιονταν") || endsWith(s, len, "ιοσουν") || endsWith(s, len, "ηθειτε") || endsWith(s, len, "ηθηκαν") || endsWith(s, len, "ομουνα") || endsWith(s, len, "οσαστε") || endsWith(s, len, "οσουνα") || endsWith(s, len, "ουνται") || endsWith(s, len, "ουνταν") || endsWith(s, len, "ουσατε")))
-		{
-		  return len - 6;
-		}
-
-		if (len > 5 && (endsWith(s, len, "αγατε") || endsWith(s, len, "ιεμαι") || endsWith(s, len, "ιεται") || endsWith(s, len, "ιεσαι") || endsWith(s, len, "ιοταν") || endsWith(s, len, "ιουμα") || endsWith(s, len, "ηθεισ") || endsWith(s, len, "ηθουν") || endsWith(s, len, "ηκατε") || endsWith(s, len, "ησατε") || endsWith(s, len, "ησουν") || endsWith(s, len, "ομουν") || endsWith(s, len, "ονται") || endsWith(s, len, "ονταν") || endsWith(s, len, "οσουν") || endsWith(s, len, "ουμαι") || endsWith(s, len, "ουσαν")))
-		{
-		  return len - 5;
-		}
-
-		if (len > 4 && (endsWith(s, len, "αγαν") || endsWith(s, len, "αμαι") || endsWith(s, len, "ασαι") || endsWith(s, len, "αται") || endsWith(s, len, "ειτε") || endsWith(s, len, "εσαι") || endsWith(s, len, "εται") || endsWith(s, len, "ηδεσ") || endsWith(s, len, "ηδων") || endsWith(s, len, "ηθει") || endsWith(s, len, "ηκαν") || endsWith(s, len, "ησαν") || endsWith(s, len, "ησει") || endsWith(s, len, "ησεσ") || endsWith(s, len, "ομαι") || endsWith(s, len, "οταν")))
-		{
-		  return len - 4;
-		}
-
-		if (len > 3 && (endsWith(s, len, "αει") || endsWith(s, len, "εισ") || endsWith(s, len, "ηθω") || endsWith(s, len, "ησω") || endsWith(s, len, "ουν") || endsWith(s, len, "ουσ")))
-		{
-		  return len - 3;
-		}
-
-		if (len > 2 && (endsWith(s, len, "αν") || endsWith(s, len, "ασ") || endsWith(s, len, "αω") || endsWith(s, len, "ει") || endsWith(s, len, "εσ") || endsWith(s, len, "ησ") || endsWith(s, len, "οι") || endsWith(s, len, "οσ") || endsWith(s, len, "ου") || endsWith(s, len, "υσ") || endsWith(s, len, "ων")))
-		{
-		  return len - 2;
-		}
-
-		if (len > 1 && endsWithVowel(s, len))
-		{
-		  return len - 1;
-		}
-
-		return len;
-	  }
-
-	  private int rule22(char[] s, int len)
-	  {
-		if (endsWith(s, len, "εστερ") || endsWith(s, len, "εστατ"))
-		{
-		  return len - 5;
-		}
-
-		if (endsWith(s, len, "οτερ") || endsWith(s, len, "οτατ") || endsWith(s, len, "υτερ") || endsWith(s, len, "υτατ") || endsWith(s, len, "ωτερ") || endsWith(s, len, "ωτατ"))
-		{
-		  return len - 4;
-		}
-
-		return len;
-	  }
-
-	 /// <summary>
-	 /// Checks if the word contained in the leading portion of char[] array , 
-	 /// ends with the suffix given as parameter.
-	 /// </summary>
-	 /// <param name="s"> A char[] array that represents a word. </param>
-	 /// <param name="len"> The length of the char[] array. </param>
-	 /// <param name="suffix"> A <seealso cref="String"/> object to check if the word given ends with these characters. </param>
-	 /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
-	  private bool EndsWith(char[] s, int len, string suffix)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int suffixLen = suffix.length();
-		int suffixLen = suffix.Length;
-		if (suffixLen > len)
-		{
-		  return false;
-		}
-		for (int i = suffixLen - 1; i >= 0; i--)
-		{
-		  if (s[len - (suffixLen - i)] != suffix[i])
-		  {
-			return false;
-		  }
-		}
-
-		return true;
-	  }
-
-	 /// <summary>
-	 /// Checks if the word contained in the leading portion of char[] array , 
-	 /// ends with a Greek vowel.
-	 /// </summary>
-	 /// <param name="s"> A char[] array that represents a word. </param>
-	 /// <param name="len"> The length of the char[] array. </param>
-	 /// <returns> True if the word contained in the leading portion of char[] array , 
-	 /// ends with a vowel , false otherwise. </returns>
-	  private bool endsWithVowel(char[] s, int len)
-	  {
-		if (len == 0)
-		{
-		  return false;
-		}
-		switch (s[len - 1])
-		{
-		  case 'α':
-		  case 'ε':
-		  case 'η':
-		  case 'ι':
-		  case 'ο':
-		  case 'υ':
-		  case 'ω':
-			return true;
-		  default:
-			return false;
-		}
-	  }
-
-	 /// <summary>
-	 /// Checks if the word contained in the leading portion of char[] array , 
-	 /// ends with a Greek vowel.
-	 /// </summary>
-	 /// <param name="s"> A char[] array that represents a word. </param>
-	 /// <param name="len"> The length of the char[] array. </param>
-	 /// <returns> True if the word contained in the leading portion of char[] array , 
-	 /// ends with a vowel , false otherwise. </returns>
-	  private bool endsWithVowelNoY(char[] s, int len)
-	  {
-		if (len == 0)
-		{
-		  return false;
-		}
-		switch (s[len - 1])
-		{
-		  case 'α':
-		  case 'ε':
-		  case 'η':
-		  case 'ι':
-		  case 'ο':
-		  case 'ω':
-			return true;
-		  default:
-			return false;
-		}
-	  }
-	}
-
+    /// <summary>
+    /// A stemmer for Greek words, according to: <i>Development of a Stemmer for the
+    /// Greek Language.</i> Georgios Ntais
+    /// <para>
+    /// NOTE: Input is expected to be casefolded for Greek (including folding of final
+    /// sigma to sigma), and with diacritics removed. This can be achieved with 
+    /// either <seealso cref="GreekLowerCaseFilter"/> or ICUFoldingFilter.
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class GreekStemmer
+    {
+
+        /// <summary>
+        /// Stems a word contained in a leading portion of a char[] array.
+        /// The word is passed through a number of rules that modify it's length.
+        /// </summary>
+        /// <param name="s"> A char[] array that contains the word to be stemmed. </param>
+        /// <param name="len"> The length of the char[] array. </param>
+        /// <returns> The new length of the stemmed word. </returns>
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len < 4) // too short
+            {
+                return len;
+            }
+
+            int origLen = len;
+            // "short rules": if it hits one of these, it skips the "long list"
+            len = Rule0(s, len);
+            len = Rule1(s, len);
+            len = Rule2(s, len);
+            len = Rule3(s, len);
+            len = Rule4(s, len);
+            len = Rule5(s, len);
+            len = Rule6(s, len);
+            len = Rule7(s, len);
+            len = Rule8(s, len);
+            len = Rule9(s, len);
+            len = Rule10(s, len);
+            len = Rule11(s, len);
+            len = Rule12(s, len);
+            len = Rule13(s, len);
+            len = Rule14(s, len);
+            len = Rule15(s, len);
+            len = Rule16(s, len);
+            len = Rule17(s, len);
+            len = Rule18(s, len);
+            len = Rule19(s, len);
+            len = Rule20(s, len);
+            // "long list"
+            if (len == origLen)
+            {
+                len = Rule21(s, len);
+            }
+
+            return rule22(s, len);
+        }
+
+        private int Rule0(char[] s, int len)
+        {
+            if (len > 9 && (StemmerUtil.EndsWith(s, len, "καθεστωτοσ") || 
+                StemmerUtil.EndsWith(s, len, "καθεστωτων")))
+            {
+                return len - 4;
+            }
+
+            if (len > 8 && (StemmerUtil.EndsWith(s, len, "γεγονοτοσ") || 
+                StemmerUtil.EndsWith(s, len, "γεγονοτων")))
+            {
+                return len - 4;
+            }
+
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "καθεστωτα"))
+            {
+                return len - 3;
+            }
+
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "τατογιου") || 
+                StemmerUtil.EndsWith(s, len, "τατογιων")))
+            {
+                return len - 4;
+            }
+
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "γεγονοτα"))
+            {
+                return len - 3;
+            }
+
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "καθεστωσ"))
+            {
+                return len - 2;
+            }
+
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "σκαγιου")) || 
+                StemmerUtil.EndsWith(s, len, "σκαγιων") || 
+                StemmerUtil.EndsWith(s, len, "ολογιου") || 
+                StemmerUtil.EndsWith(s, len, "ολογιων") || 
+                StemmerUtil.EndsWith(s, len, "κρεατοσ") || 
+                StemmerUtil.EndsWith(s, len, "κρεατων") || 
+                StemmerUtil.EndsWith(s, len, "περατοσ") || 
+                StemmerUtil.EndsWith(s, len, "περατων") || 
+                StemmerUtil.EndsWith(s, len, "τερατοσ") || 
+                StemmerUtil.EndsWith(s, len, "τερατων"))
+            {
+                return len - 4;
+            }
+
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "τατογια"))
+            {
+                return len - 3;
+            }
+
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "γεγονοσ"))
+            {
+                return len - 2;
+            }
+
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "φαγιου") || 
+                StemmerUtil.EndsWith(s, len, "φαγιων") || 
+                StemmerUtil.EndsWith(s, len, "σογιου") || 
+                StemmerUtil.EndsWith(s, len, "σογιων")))
+            {
+                return len - 4;
+            }
+
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "σκαγια") || 
+                StemmerUtil.EndsWith(s, len, "ολογια") || 
+                StemmerUtil.EndsWith(s, len, "κρεατα") || 
+                StemmerUtil.EndsWith(s, len, "περατα") || 
+                StemmerUtil.EndsWith(s, len, "τερατα")))
+            {
+                return len - 3;
+            }
+
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "φαγια") || 
+                StemmerUtil.EndsWith(s, len, "σογια") || 
+                StemmerUtil.EndsWith(s, len, "φωτοσ") || 
+                StemmerUtil.EndsWith(s, len, "φωτων")))
+            {
+                return len - 3;
+            }
+
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "κρεασ") || 
+                StemmerUtil.EndsWith(s, len, "περασ") || 
+                StemmerUtil.EndsWith(s, len, "τερασ")))
+            {
+                return len - 2;
+            }
+
+            if (len > 3 && StemmerUtil.EndsWith(s, len, "φωτα"))
+            {
+                return len - 2;
+            }
+
+            if (len > 2 && StemmerUtil.EndsWith(s, len, "φωσ"))
+            {
+                return len - 1;
+            }
+
+            return len;
+        }
+
+        private int Rule1(char[] s, int len)
+        {
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αδεσ") || 
+                StemmerUtil.EndsWith(s, len, "αδων")))
+            {
+                len -= 4;
+                if (!(StemmerUtil.EndsWith(s, len, "οκ") || 
+                    StemmerUtil.EndsWith(s, len, "μαμ") || 
+                    StemmerUtil.EndsWith(s, len, "μαν") || 
+                    StemmerUtil.EndsWith(s, len, "μπαμπ") || 
+                    StemmerUtil.EndsWith(s, len, "πατερ") || 
+                    StemmerUtil.EndsWith(s, len, "γιαγι") || 
+                    StemmerUtil.EndsWith(s, len, "νταντ") || 
+                    StemmerUtil.EndsWith(s, len, "κυρ") || 
+                    StemmerUtil.EndsWith(s, len, "θει") || 
+                    StemmerUtil.EndsWith(s, len, "πεθερ")))
+                {
+                    len += 2; // add back -αδ
+                }
+            }
+            return len;
+        }
+
+        private int Rule2(char[] s, int len)
+        {
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "εδεσ") || 
+                StemmerUtil.EndsWith(s, len, "εδων")))
+            {
+                len -= 4;
+                if (StemmerUtil.EndsWith(s, len, "οπ") ||
+                    StemmerUtil.EndsWith(s, len, "ιπ") || 
+                    StemmerUtil.EndsWith(s, len, "εμπ") || 
+                    StemmerUtil.EndsWith(s, len, "υπ") || 
+                    StemmerUtil.EndsWith(s, len, "γηπ") || 
+                    StemmerUtil.EndsWith(s, len, "δαπ") || 
+                    StemmerUtil.EndsWith(s, len, "κρασπ") || 
+                    StemmerUtil.EndsWith(s, len, "μιλ"))
+                {
+                    len += 2; // add back -εδ
+                }
+            }
+            return len;
+        }
+
+        private int Rule3(char[] s, int len)
+        {
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ουδεσ") || 
+                StemmerUtil.EndsWith(s, len, "ουδων")))
+            {
+                len -= 5;
+                if (StemmerUtil.EndsWith(s, len, "αρκ") || 
+                    StemmerUtil.EndsWith(s, len, "καλιακ") || 
+                    StemmerUtil.EndsWith(s, len, "πεταλ") || 
+                    StemmerUtil.EndsWith(s, len, "λιχ") || 
+                    StemmerUtil.EndsWith(s, len, "πλεξ") || 
+                    StemmerUtil.EndsWith(s, len, "σκ") || 
+                    StemmerUtil.EndsWith(s, len, "σ") || 
+                    StemmerUtil.EndsWith(s, len, "φλ") || 
+                    StemmerUtil.EndsWith(s, len, "φρ") || 
+                    StemmerUtil.EndsWith(s, len, "βελ") || 
+                    StemmerUtil.EndsWith(s, len, "λουλ") || 
+                    StemmerUtil.EndsWith(s, len, "χν") || 
+                    StemmerUtil.EndsWith(s, len, "σπ") || 
+                    StemmerUtil.EndsWith(s, len, "τραγ") || 
+                    StemmerUtil.EndsWith(s, len, "φε"))
+                {
+                    len += 3; // add back -ουδ
+                }
+            }
+            return len;
+        }
+
+#pragma warning disable 612, 618
+        private static readonly CharArraySet exc4 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ"), false);
+#pragma warning restore 612, 618
+
+        private int Rule4(char[] s, int len)
+        {
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "εωσ") || 
+                StemmerUtil.EndsWith(s, len, "εων")))
+            {
+                len -= 3;
+                if (exc4.Contains(s, 0, len))
+                {
+                    len++; // add back -ε
+                }
+            }
+            return len;
+        }
+
+        private int Rule5(char[] s, int len)
+        {
+            if (len > 2 && StemmerUtil.EndsWith(s, len, "ια"))
+            {
+                len -= 2;
+                if (EndsWithVowel(s, len))
+                {
+                    len++; // add back -ι
+                }
+            }
+            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "ιου") || 
+                StemmerUtil.EndsWith(s, len, "ιων")))
+            {
+                len -= 3;
+                if (EndsWithVowel(s, len))
+                {
+                    len++; // add back -ι
+                }
+            }
+            return len;
+        }
+
+        private static readonly CharArraySet exc6 =
+#pragma warning disable 612, 618
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("αλ", "αδ", "ενδ", "αμαν", "αμμοχαλ", "ηθ", "ανηθ", 
+                "αντιδ", "φυσ", "βρωμ", "γερ", "εξωδ", "καλπ", "καλλιν", "καταδ", 
+                "μουλ", "μπαν", "μπαγιατ", "μπολ", "μποσ", "νιτ", "ξικ", "συνομηλ", 
+                "πετσ", "πιτσ", "πικαντ", "πλιατσ", "ποστελν", "πρωτοδ", "σερτ", 
+                "συναδ", "τσαμ", "υποδ", "φιλον", "φυλοδ", "χασ"), false);
+
+        private int Rule6(char[] s, int len)
+        {
+            bool removed = false;
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "ικα") || 
+                StemmerUtil.EndsWith(s, len, "ικο")))
+            {
+                len -= 3;
+                removed = true;
+            }
+            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ικου") || 
+                StemmerUtil.EndsWith(s, len, "ικων")))
+            {
+                len -= 4;
+                removed = true;
+            }
+
+            if (removed)
+            {
+                if (EndsWithVowel(s, len) || exc6.Contains(s, 0, len))
+                {
+                    len += 2; // add back -ικ
+                }
+            }
+            return len;
+        }
+
+        private static readonly CharArraySet exc7 =
+#pragma warning disable 612, 618
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ", 
+                "πεθ", "πικρ", "ποτ", "σιχ", "χ"), false);
+
+        private int Rule7(char[] s, int len)
+        {
+            if (len == 5 && StemmerUtil.EndsWith(s, len, "αγαμε"))
+            {
+                return len - 1;
+            }
+
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "ηθηκαμε"))
+            {
+                len -= 7;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ουσαμε"))
+            {
+                len -= 6;
+            }
+            else if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγαμε") || 
+                StemmerUtil.EndsWith(s, len, "ησαμε") || 
+                StemmerUtil.EndsWith(s, len, "ηκαμε")))
+            {
+                len -= 5;
+            }
+
+            if (len > 3 && StemmerUtil.EndsWith(s, len, "αμε"))
+            {
+                len -= 3;
+                if (exc7.Contains(s, 0, len))
+                {
+                    len += 2; // add back -αμ
+                }
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc8a = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("τρ", "τσ"), false);
+
+        private static readonly CharArraySet exc8b = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("βετερ", "βουλκ", "βραχμ", "γ", "δραδουμ", "θ", "καλπουζ", 
+                "καστελ", "κορμορ", "λαοπλ", "μωαμεθ", "μ", "μουσουλμ", "ν", "ουλ", 
+                "π", "πελεκ", "πλ", "πολισ", "πορτολ", "σαρακατσ", "σουλτ", 
+                "τσαρλατ", "ορφ", "τσιγγ", "τσοπ", "φωτοστεφ", "χ", "ψυχοπλ", "αγ", 
+                "ορφ", "γαλ", "γερ", "δεκ", "διπλ", "αμερικαν", "ουρ", "πιθ", 
+                "πουριτ", "σ", "ζωντ", "ικ", "καστ", "κοπ", "λιχ", "λουθηρ", "μαιντ", 
+                "μελ", "σιγ", "σπ", "στεγ", "τραγ", "τσαγ", "φ", "ερ", "αδαπ", 
+                "αθιγγ", "αμηχ", "ανικ", "ανοργ", "απηγ", "απιθ", "ατσιγγ", "βασ", 
+                "βασκ", "βαθυγαλ", "βιομηχ", "βραχυκ", "διατ", "διαφ", "ενοργ", 
+                "θυσ", "καπνοβιομηχ", "καταγαλ", "κλιβ", "κοιλαρφ", "λιβ", 
+                "μεγλοβιομηχ", "μικροβιομηχ", "νταβ", "ξηροκλιβ", "ολιγοδαμ", 
+                "ολογαλ", "πενταρφ", "περηφ", "περιτρ", "πλατ", "πολυδαπ", "πολυμηχ", 
+                "στεφ", "ταβ", "τετ", "υπερηφ", "υποκοπ", "χαμηλοδαπ", "ψηλοταβ"), false);
+
+        private int Rule8(char[] s, int len)
+        {
+            bool removed = false;
+
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "ιουντανε"))
+            {
+                len -= 8;
+                removed = true;
+            }
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "ιοντανε") || 
+                StemmerUtil.EndsWith(s, len, "ουντανε") || 
+                StemmerUtil.EndsWith(s, len, "ηθηκανε"))
+            {
+                len -= 7;
+                removed = true;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ιοτανε") || 
+                StemmerUtil.EndsWith(s, len, "οντανε") || 
+                StemmerUtil.EndsWith(s, len, "ουσανε"))
+            {
+                len -= 6;
+                removed = true;
+            }
+            else if (len > 5 && StemmerUtil.EndsWith(s, len, "αγανε") || 
+                StemmerUtil.EndsWith(s, len, "ησανε") || 
+                StemmerUtil.EndsWith(s, len, "οτανε") || 
+                StemmerUtil.EndsWith(s, len, "ηκανε"))
+            {
+                len -= 5;
+                removed = true;
+            }
+
+            if (removed && exc8a.Contains(s, 0, len))
+            {
+                // add -αγαν (we removed > 4 chars so its safe)
+                len += 4;
+                s[len - 4] = 'α';
+                s[len - 3] = 'γ';
+                s[len - 2] = 'α';
+                s[len - 1] = 'ν';
+            }
+
+            if (len > 3 && StemmerUtil.EndsWith(s, len, "ανε"))
+            {
+                len -= 3;
+                if (EndsWithVowelNoY(s, len) || exc8b.Contains(s, 0, len))
+                {
+                    len += 2; // add back -αν
+                }
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc9 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("αβαρ", "βεν", "εναρ", "αβρ", "αδ", "αθ", "αν", "απλ", 
+                "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ", 
+                "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ"), false);
+
+        private int Rule9(char[] s, int len)
+        {
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "ησετε"))
+            {
+                len -= 5;
+            }
+
+            if (len > 3 && StemmerUtil.EndsWith(s, len, "ετε"))
+            {
+                len -= 3;
+                if (exc9.Contains(s, 0, len) || 
+                    EndsWithVowelNoY(s, len) || 
+                    StemmerUtil.EndsWith(s, len, "οδ") || 
+                    StemmerUtil.EndsWith(s, len, "αιρ") || 
+                    StemmerUtil.EndsWith(s, len, "φορ") || 
+                    StemmerUtil.EndsWith(s, len, "ταθ") || 
+                    StemmerUtil.EndsWith(s, len, "διαθ") || 
+                    StemmerUtil.EndsWith(s, len, "σχ") || 
+                    StemmerUtil.EndsWith(s, len, "ενδ") || 
+                    StemmerUtil.EndsWith(s, len, "ευρ") || 
+                    StemmerUtil.EndsWith(s, len, "τιθ") || 
+                    StemmerUtil.EndsWith(s, len, "υπερθ") || 
+                    StemmerUtil.EndsWith(s, len, "ραθ") || 
+                    StemmerUtil.EndsWith(s, len, "ενθ") || 
+                    StemmerUtil.EndsWith(s, len, "ροθ") || 
+                    StemmerUtil.EndsWith(s, len, "σθ") || 
+                    StemmerUtil.EndsWith(s, len, "πυρ") || 
+                    StemmerUtil.EndsWith(s, len, "αιν") || 
+                    StemmerUtil.EndsWith(s, len, "συνδ") || 
+                    StemmerUtil.EndsWith(s, len, "συν") || 
+                    StemmerUtil.EndsWith(s, len, "συνθ") || 
+                    StemmerUtil.EndsWith(s, len, "χωρ") || 
+                    StemmerUtil.EndsWith(s, len, "πον") || 
+                    StemmerUtil.EndsWith(s, len, "βρ") || 
+                    StemmerUtil.EndsWith(s, len, "καθ") || 
+                    StemmerUtil.EndsWith(s, len, "ευθ") || 
+                    StemmerUtil.EndsWith(s, len, "εκθ") || 
+                    StemmerUtil.EndsWith(s, len, "νετ") || 
+                    StemmerUtil.EndsWith(s, len, "ρον") || 
+                    StemmerUtil.EndsWith(s, len, "αρκ") || 
+                    StemmerUtil.EndsWith(s, len, "βαρ") || 
+                    StemmerUtil.EndsWith(s, len, "βολ") || 
+                    StemmerUtil.EndsWith(s, len, "ωφελ"))
+                {
+                    len += 2; // add back -ετ
+                }
+            }
+
+            return len;
+        }
+
+        private int Rule10(char[] s, int len)
+        {
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "οντασ") || StemmerUtil.EndsWith(s, len, "ωντασ")))
+            {
+                len -= 5;
+                if (len == 3 && StemmerUtil.EndsWith(s, len, "αρχ"))
+                {
+                    len += 3; // add back *ντ
+                    s[len - 3] = 'ο';
+                }
+                if (StemmerUtil.EndsWith(s, len, "κρε"))
+                {
+                    len += 3; // add back *ντ
+                    s[len - 3] = 'ω';
+                }
+            }
+
+            return len;
+        }
+
+        private int Rule11(char[] s, int len)
+        {
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "ομαστε"))
+            {
+                len -= 6;
+                if (len == 2 && StemmerUtil.EndsWith(s, len, "ον"))
+                {
+                    len += 5; // add back -ομαστ
+                }
+            }
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "ιομαστε"))
+            {
+                len -= 7;
+                if (len == 2 && StemmerUtil.EndsWith(s, len, "ον"))
+                {
+                    len += 5;
+                    s[len - 5] = 'ο';
+                    s[len - 4] = 'μ';
+                    s[len - 3] = 'α';
+                    s[len - 2] = 'σ';
+                    s[len - 1] = 'τ';
+                }
+            }
+            return len;
+        }
+
+#pragma warning disable 612, 618
+        private static readonly CharArraySet exc12a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+            Arrays.AsList("π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ"), false);
+
+        private static readonly CharArraySet exc12b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+            Arrays.AsList("αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ"), false);
+#pragma warning restore 612, 618
+
+        private int Rule12(char[] s, int len)
+        {
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "ιεστε"))
+            {
+                len -= 5;
+                if (exc12a.Contains(s, 0, len))
+                {
+                    len += 4; // add back -ιεστ
+                }
+            }
+
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "εστε"))
+            {
+                len -= 4;
+                if (exc12b.Contains(s, 0, len))
+                {
+                    len += 3; // add back -εστ
+                }
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc13 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("διαθ", "θ", "παρακαταθ", "προσθ", "συνθ"), false);
+
+        private int Rule13(char[] s, int len)
+        {
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "ηθηκεσ"))
+            {
+                len -= 6;
+            }
+            else if (len > 5 && (StemmerUtil.EndsWith(s, len, "ηθηκα") || StemmerUtil.EndsWith(s, len, "ηθηκε")))
+            {
+                len -= 5;
+            }
+
+            bool removed = false;
+
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ηκεσ"))
+            {
+                len -= 4;
+                removed = true;
+            }
+            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "ηκα") || StemmerUtil.EndsWith(s, len, "ηκε")))
+            {
+                len -= 3;
+                removed = true;
+            }
+
+            if (removed && (exc13.Contains(s, 0, len) || 
+                StemmerUtil.EndsWith(s, len, "σκωλ") || 
+                StemmerUtil.EndsWith(s, len, "σκουλ") || 
+                StemmerUtil.EndsWith(s, len, "ναρθ") || 
+                StemmerUtil.EndsWith(s, len, "σφ") || 
+                StemmerUtil.EndsWith(s, len, "οθ") || 
+                StemmerUtil.EndsWith(s, len, "πιθ")))
+            {
+                len += 2; // add back the -ηκ
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc14 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("φαρμακ", "χαδ", "αγκ", "αναρρ", "βρομ", "εκλιπ", "λαμπιδ", 
+                "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ", 
+                "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα"), false);
+
+        private int Rule14(char[] s, int len)
+        {
+            bool removed = false;
+
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "ουσεσ"))
+            {
+                len -= 5;
+                removed = true;
+            }
+            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ουσα") || 
+                StemmerUtil.EndsWith(s, len, "ουσε")))
+            {
+                len -= 4;
+                removed = true;
+            }
+
+            if (removed && (exc14.Contains(s, 0, len) || 
+                EndsWithVowel(s, len) || 
+                StemmerUtil.EndsWith(s, len, "ποδαρ") || 
+                StemmerUtil.EndsWith(s, len, "βλεπ") || 
+                StemmerUtil.EndsWith(s, len, "πανταχ") || 
+                StemmerUtil.EndsWith(s, len, "φρυδ") || 
+                StemmerUtil.EndsWith(s, len, "μαντιλ") || 
+                StemmerUtil.EndsWith(s, len, "μαλλ") || 
+                StemmerUtil.EndsWith(s, len, "κυματ") || 
+                StemmerUtil.EndsWith(s, len, "λαχ") || 
+                StemmerUtil.EndsWith(s, len, "ληγ") || 
+                StemmerUtil.EndsWith(s, len, "φαγ") || 
+                StemmerUtil.EndsWith(s, len, "ομ") || 
+                StemmerUtil.EndsWith(s, len, "πρωτ")))
+            {
+                len += 3; // add back -ουσ
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc15a = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("αβαστ", "πολυφ", "αδηφ", "παμφ", "ρ", "ασπ", "αφ", "αμαλ", 
+                "αμαλλι", "ανυστ", "απερ", "ασπαρ", "αχαρ", "δερβεν", "δροσοπ", 
+                "ξεφ", "νεοπ", "νομοτ", "ολοπ", "ομοτ", "προστ", "προσωποπ", "συμπ", 
+                "συντ", "τ", "υποτ", "χαρ", "αειπ", "αιμοστ", "ανυπ", "αποτ", 
+                "αρτιπ", "διατ", "εν", "επιτ", "κροκαλοπ", "σιδηροπ", "λ", "ναυ", 
+                "ουλαμ", "ουρ", "π", "τρ", "μ"), false);
+
+        private static readonly CharArraySet exc15b = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("ψοφ", "ναυλοχ"), false);
+
+        private int Rule15(char[] s, int len)
+        {
+            bool removed = false;
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "αγεσ"))
+            {
+                len -= 4;
+                removed = true;
+            }
+            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "αγα") || StemmerUtil.EndsWith(s, len, "αγε")))
+            {
+                len -= 3;
+                removed = true;
+            }
+
+            if (removed)
+            {
+                bool cond1 = exc15a.Contains(s, 0, len) || 
+                    StemmerUtil.EndsWith(s, len, "οφ") || 
+                    StemmerUtil.EndsWith(s, len, "πελ") || 
+                    StemmerUtil.EndsWith(s, len, "χορτ") || 
+                    StemmerUtil.EndsWith(s, len, "λλ") || 
+                    StemmerUtil.EndsWith(s, len, "σφ") || 
+                    StemmerUtil.EndsWith(s, len, "ρπ") || 
+                    StemmerUtil.EndsWith(s, len, "φρ") || 
+                    StemmerUtil.EndsWith(s, len, "πρ") || 
+                    StemmerUtil.EndsWith(s, len, "λοχ") || 
+                    StemmerUtil.EndsWith(s, len, "σμην");
+
+                bool cond2 = exc15b.Contains(s, 0, len) || StemmerUtil.EndsWith(s, len, "κολλ");
+
+                if (cond1 && !cond2)
+                {
+                    len += 2; // add back -αγ
+                }
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc16 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν"), false);
+
+        private int Rule16(char[] s, int len)
+        {
+            bool removed = false;
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ησου"))
+            {
+                len -= 4;
+                removed = true;
+            }
+            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "ησε") || StemmerUtil.EndsWith(s, len, "ησα")))
+            {
+                len -= 3;
+                removed = true;
+            }
+
+            if (removed && exc16.Contains(s, 0, len))
+            {
+                len += 2; // add back -ησ
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc17 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ"), false);
+
+        private int Rule17(char[] s, int len)
+        {
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ηστε"))
+            {
+                len -= 4;
+                if (exc17.Contains(s, 0, len))
+                {
+                    len += 3; // add back the -ηστ
+                }
+            }
+
+            return len;
+        }
+
+        private static readonly CharArraySet exc18 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων"), false);
+
+        private int Rule18(char[] s, int len)
+        {
+            bool removed = false;
+
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "ησουνε") || StemmerUtil.EndsWith(s, len, "ηθουνε")))
+            {
+                len -= 6;
+                removed = true;
+            }
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "ουνε"))
+            {
+                len -= 4;
+                removed = true;
+            }
+
+            if (removed && exc18.Contains(s, 0, len))
+            {
+                len += 3;
+                s[len - 3] = 'ο';
+                s[len - 2] = 'υ';
+                s[len - 1] = 'ν';
+            }
+            return len;
+        }
+
+        private static readonly CharArraySet exc19 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ"), false);
+
+        private int Rule19(char[] s, int len)
+        {
+            bool removed = false;
+
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "ησουμε") || StemmerUtil.EndsWith(s, len, "ηθουμε")))
+            {
+                len -= 6;
+                removed = true;
+            }
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "ουμε"))
+            {
+                len -= 4;
+                removed = true;
+            }
+
+            if (removed && exc19.Contains(s, 0, len))
+            {
+                len += 3;
+                s[len - 3] = 'ο';
+                s[len - 2] = 'υ';
+                s[len - 1] = 'μ';
+            }
+            return len;
+        }
+
+        private int Rule20(char[] s, int len)
+        {
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ματων") || StemmerUtil.EndsWith(s, len, "ματοσ")))
+            {
+                len -= 3;
+            }
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "ματα"))
+            {
+                len -= 2;
+            }
+            return len;
+        }
+
+        private int Rule21(char[] s, int len)
+        {
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "ιοντουσαν"))
+            {
+                return len - 9;
+            }
+
+            if (len > 8 && (StemmerUtil.EndsWith(s, len, "ιομασταν") || 
+                StemmerUtil.EndsWith(s, len, "ιοσασταν") || 
+                StemmerUtil.EndsWith(s, len, "ιουμαστε") || 
+                StemmerUtil.EndsWith(s, len, "οντουσαν")))
+            {
+                return len - 8;
+            }
+
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "ιεμαστε") || 
+                StemmerUtil.EndsWith(s, len, "ιεσαστε") || 
+                StemmerUtil.EndsWith(s, len, "ιομουνα") || 
+                StemmerUtil.EndsWith(s, len, "ιοσαστε") || 
+                StemmerUtil.EndsWith(s, len, "ιοσουνα") || 
+                StemmerUtil.EndsWith(s, len, "ιουνται") || 
+                StemmerUtil.EndsWith(s, len, "ιουνταν") || 
+                StemmerUtil.EndsWith(s, len, "ηθηκατε") || 
+                StemmerUtil.EndsWith(s, len, "ομασταν") || 
+                StemmerUtil.EndsWith(s, len, "οσασταν") || 
+                StemmerUtil.EndsWith(s, len, "ουμαστε")))
+            {
+                return len - 7;
+            }
+
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "ιομουν") || 
+                StemmerUtil.EndsWith(s, len, "ιονταν") || 
+                StemmerUtil.EndsWith(s, len, "ιοσουν") || 
+                StemmerUtil.EndsWith(s, len, "ηθειτε") || 
+                StemmerUtil.EndsWith(s, len, "ηθηκαν") || 
+                StemmerUtil.EndsWith(s, len, "ομουνα") || 
+                StemmerUtil.EndsWith(s, len, "οσαστε") || 
+                StemmerUtil.EndsWith(s, len, "οσουνα") || 
+                StemmerUtil.EndsWith(s, len, "ουνται") || 
+                StemmerUtil.EndsWith(s, len, "ουνταν") || 
+                StemmerUtil.EndsWith(s, len, "ουσατε")))
+            {
+                return len - 6;
+            }
+
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγατε") || 
+                StemmerUtil.EndsWith(s, len, "ιεμαι") || 
+                StemmerUtil.EndsWith(s, len, "ιεται") || 
+                StemmerUtil.EndsWith(s, len, "ιεσαι") || 
+                StemmerUtil.EndsWith(s, len, "ιοταν") || 
+                StemmerUtil.EndsWith(s, len, "ιουμα") || 
+                StemmerUtil.EndsWith(s, len, "ηθεισ") || 
+                StemmerUtil.EndsWith(s, len, "ηθουν") || 
+                StemmerUtil.EndsWith(s, len, "ηκατε") || 
+                StemmerUtil.EndsWith(s, len, "ησατε") || 
+                StemmerUtil.EndsWith(s, len, "ησουν") || 
+                StemmerUtil.EndsWith(s, len, "ομουν") ||
+                StemmerUtil.EndsWith(s, len, "ονται") || 
+                StemmerUtil.EndsWith(s, len, "ονταν") || 
+                StemmerUtil.EndsWith(s, len, "οσουν") || 
+                StemmerUtil.EndsWith(s, len, "ουμαι") || 
+                StemmerUtil.EndsWith(s, len, "ουσαν")))
+            {
+                return len - 5;
+            }
+
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αγαν") || 
+                StemmerUtil.EndsWith(s, len, "αμαι") || 
+                StemmerUtil.EndsWith(s, len, "ασαι") || 
+                StemmerUtil.EndsWith(s, len, "αται") || 
+                StemmerUtil.EndsWith(s, len, "ειτε") || 
+                StemmerUtil.EndsWith(s, len, "εσαι") || 
+                StemmerUtil.EndsWith(s, len, "εται") || 
+                StemmerUtil.EndsWith(s, len, "ηδεσ") || 
+                StemmerUtil.EndsWith(s, len, "ηδων") || 
+                StemmerUtil.EndsWith(s, len, "ηθει") || 
+                StemmerUtil.EndsWith(s, len, "ηκαν") || 
+                StemmerUtil.EndsWith(s, len, "ησαν") || 
+                StemmerUtil.EndsWith(s, len, "ησει") || 
+                StemmerUtil.EndsWith(s, len, "ησεσ") || 
+                StemmerUtil.EndsWith(s, len, "ομαι") || 
+                StemmerUtil.EndsWith(s, len, "οταν")))
+            {
+                return len - 4;
+            }
+
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "αει") || 
+                StemmerUtil.EndsWith(s, len, "εισ") || 
+                StemmerUtil.EndsWith(s, len, "ηθω") || 
+                StemmerUtil.EndsWith(s, len, "ησω") || 
+                StemmerUtil.EndsWith(s, len, "ουν") || 
+                StemmerUtil.EndsWith(s, len, "ουσ")))
+            {
+                return len - 3;
+            }
+
+            if (len > 2 && (StemmerUtil.EndsWith(s, len, "αν") || 
+                StemmerUtil.EndsWith(s, len, "ασ") || 
+                StemmerUtil.EndsWith(s, len, "αω") || 
+                StemmerUtil.EndsWith(s, len, "ει") || 
+                StemmerUtil.EndsWith(s, len, "εσ") || 
+                StemmerUtil.EndsWith(s, len, "ησ") || 
+                StemmerUtil.EndsWith(s, len, "οι") || 
+                StemmerUtil.EndsWith(s, len, "οσ") || 
+                StemmerUtil.EndsWith(s, len, "ου") || 
+                StemmerUtil.EndsWith(s, len, "υσ") || 
+                StemmerUtil.EndsWith(s, len, "ων")))
+            {
+                return len - 2;
+            }
+
+            if (len > 1 && EndsWithVowel(s, len))
+            {
+                return len - 1;
+            }
+
+            return len;
+        }
+
+        private int rule22(char[] s, int len)
+        {
+            if (StemmerUtil.EndsWith(s, len, "εστερ") || 
+                StemmerUtil.EndsWith(s, len, "εστατ"))
+            {
+                return len - 5;
+            }
+
+            if (StemmerUtil.EndsWith(s, len, "οτερ") || 
+                StemmerUtil.EndsWith(s, len, "οτατ") || 
+                StemmerUtil.EndsWith(s, len, "υτερ") || 
+                StemmerUtil.EndsWith(s, len, "υτατ") || 
+                StemmerUtil.EndsWith(s, len, "ωτερ") || 
+                StemmerUtil.EndsWith(s, len, "ωτατ"))
+            {
+                return len - 4;
+            }
+
+            return len;
+        }
+
+        /// <summary>
+        /// Checks if the word contained in the leading portion of char[] array , 
+        /// ends with the suffix given as parameter.
+        /// </summary>
+        /// <param name="s"> A char[] array that represents a word. </param>
+        /// <param name="len"> The length of the char[] array. </param>
+        /// <param name="suffix"> A <seealso cref="String"/> object to check if the word given ends with these characters. </param>
+        /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
+        private bool EndsWith(char[] s, int len, string suffix)
+        {
+            int suffixLen = suffix.Length;
+            if (suffixLen > len)
+            {
+                return false;
+            }
+            for (int i = suffixLen - 1; i >= 0; i--)
+            {
+                if (s[len - (suffixLen - i)] != suffix[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if the word contained in the leading portion of char[] array , 
+        /// ends with a Greek vowel.
+        /// </summary>
+        /// <param name="s"> A char[] array that represents a word. </param>
+        /// <param name="len"> The length of the char[] array. </param>
+        /// <returns> True if the word contained in the leading portion of char[] array , 
+        /// ends with a vowel , false otherwise. </returns>
+        private bool EndsWithVowel(char[] s, int len)
+        {
+            if (len == 0)
+            {
+                return false;
+            }
+            switch (s[len - 1])
+            {
+                case 'α':
+                case 'ε':
+                case 'η':
+                case 'ι':
+                case 'ο':
+                case 'υ':
+                case 'ω':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the word contained in the leading portion of char[] array , 
+        /// ends with a Greek vowel.
+        /// </summary>
+        /// <param name="s"> A char[] array that represents a word. </param>
+        /// <param name="len"> The length of the char[] array. </param>
+        /// <returns> True if the word contained in the leading portion of char[] array , 
+        /// ends with a vowel , false otherwise. </returns>
+        private bool EndsWithVowelNoY(char[] s, int len)
+        {
+            if (len == 0)
+            {
+                return false;
+            }
+            switch (s[len - 1])
+            {
+                case 'α':
+                case 'ε':
+                case 'η':
+                case 'ι':
+                case 'ο':
+                case 'ω':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
 }

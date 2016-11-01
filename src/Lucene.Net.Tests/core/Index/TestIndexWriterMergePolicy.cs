@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 
         // Test the case where a merge results in no doc at all
         [Test]
-        public virtual void TestMergeDocCount0()
+        public virtual void TestMergeDocCount0([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
 
@@ -200,7 +200,12 @@ namespace Lucene.Net.Index
 
             ldmp = new LogDocMergePolicy();
             ldmp.MergeFactor = 5;
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(ldmp).SetMergeScheduler(new ConcurrentMergeScheduler()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                .SetOpenMode(OpenMode_e.APPEND)
+                .SetMaxBufferedDocs(10)
+                .SetMergePolicy(ldmp)
+                .SetMergeScheduler(scheduler);
+            writer = new IndexWriter(dir, config);
 
             // merge factor is changed, so check invariants after all adds
             for (int i = 0; i < 10; i++)

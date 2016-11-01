@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 
 namespace Lucene.Net.Support
 {
@@ -85,6 +86,42 @@ namespace Lucene.Net.Support
             }
 
             return (int)crc32Value;
+        }
+
+        /// <summary>
+        /// Gets a hash code for the valueOrEnumerable. If the valueOrEnumerable implements
+        /// IEnumerable, it enumerates the values and makes a combined hash code representing
+        /// all of the values in the order they occur in the set. The types of IEnumerable must also be
+        /// the same, so for example a <see cref="int[]"/> and a <see cref="List{Int32}"/> containing
+        /// the same values will have different hash codes.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="valueOrEnumerable">Any value type, reference type or IEnumerable type.</param>
+        /// <returns>A combined hash code of the value and, if IEnumerable, any values it contains.</returns>
+        public static int GetValueHashCode<T>(this T valueOrEnumerable)
+        {
+            if (valueOrEnumerable == null)
+                return 0; // 0 for null
+
+            if (!(valueOrEnumerable is IEnumerable) || valueOrEnumerable is string)
+            {
+                return valueOrEnumerable.GetHashCode();
+            }
+
+            int hashCode = valueOrEnumerable.GetType().GetHashCode();
+            foreach (object value in valueOrEnumerable as IEnumerable)
+            {
+                if (value != null)
+                {
+                    hashCode = CombineHashCodes(hashCode, value.GetHashCode());
+                }
+                else
+                {
+                    hashCode = CombineHashCodes(hashCode, 0 /* 0 for null */);
+                }
+            }
+
+            return hashCode;
         }
     }
 }

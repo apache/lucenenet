@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.de
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.De
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,97 +21,84 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tests <seealso cref="GermanNormalizationFilter"/>
+    /// </summary>
+    public class TestGermanNormalizationFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Tests <seealso cref="GermanNormalizationFilter"/>
-	/// </summary>
-	public class TestGermanNormalizationFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string field, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream stream = new GermanNormalizationFilter(tokenizer);
+                return new TokenStreamComponents(tokenizer, stream);
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Tests that a/o/u + e is equivalent to the umlaut form
+        /// </summary>
+        [Test]
+        public virtual void TestBasicExamples()
+        {
+            CheckOneTerm(analyzer, "Schaltflächen", "Schaltflachen");
+            CheckOneTerm(analyzer, "Schaltflaechen", "Schaltflachen");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string field, Reader reader)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.Tokenizer tokenizer = new org.apache.lucene.analysis.MockTokenizer(reader, org.apache.lucene.analysis.MockTokenizer.WHITESPACE, false);
-			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.TokenStream stream = new GermanNormalizationFilter(tokenizer);
-			TokenStream stream = new GermanNormalizationFilter(tokenizer);
-			return new TokenStreamComponents(tokenizer, stream);
-		  }
-	  }
+        /// <summary>
+        /// Tests the specific heuristic that ue is not folded after a vowel or q.
+        /// </summary>
+        [Test]
+        public virtual void TestUHeuristic()
+        {
+            CheckOneTerm(analyzer, "dauer", "dauer");
+        }
 
-	  /// <summary>
-	  /// Tests that a/o/u + e is equivalent to the umlaut form
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasicExamples() throws java.io.IOException
-	  public virtual void testBasicExamples()
-	  {
-		checkOneTerm(analyzer, "Schaltflächen", "Schaltflachen");
-		checkOneTerm(analyzer, "Schaltflaechen", "Schaltflachen");
-	  }
+        /// <summary>
+        /// Tests german specific folding of sharp-s
+        /// </summary>
+        [Test]
+        public virtual void TestSpecialFolding()
+        {
+            CheckOneTerm(analyzer, "weißbier", "weissbier");
+        }
 
-	  /// <summary>
-	  /// Tests the specific heuristic that ue is not folded after a vowel or q.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testUHeuristic() throws java.io.IOException
-	  public virtual void testUHeuristic()
-	  {
-		checkOneTerm(analyzer, "dauer", "dauer");
-	  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-	  /// <summary>
-	  /// Tests german specific folding of sharp-s
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSpecialFolding() throws java.io.IOException
-	  public virtual void testSpecialFolding()
-	  {
-		checkOneTerm(analyzer, "weißbier", "weissbier");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestGermanNormalizationFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestGermanNormalizationFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestGermanNormalizationFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestGermanNormalizationFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new GermanNormalizationFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new GermanNormalizationFilter(tokenizer));
+            }
+        }
+    }
 }

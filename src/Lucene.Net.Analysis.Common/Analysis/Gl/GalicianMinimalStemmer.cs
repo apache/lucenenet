@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.gl
-{
+﻿using Lucene.Net.Analysis.Pt;
 
-	/*
+namespace Lucene.Net.Analysis.Gl
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,26 +19,25 @@
 	 * limitations under the License.
 	 */
 
-	using RSLPStemmerBase = org.apache.lucene.analysis.pt.RSLPStemmerBase;
+    //using RSLPStemmerBase = org.apache.lucene.analysis.pt.RSLPStemmerBase;
 
-	/// <summary>
-	/// Minimal Stemmer for Galician
-	/// <para>
-	/// This follows the "RSLP-S" algorithm, but modified for Galician.
-	/// Hence this stemmer only applies the plural reduction step of:
-	/// "Regras do lematizador para o galego"
-	/// </para>
-	/// </summary>
-	/// <seealso cref= RSLPStemmerBase </seealso>
-	public class GalicianMinimalStemmer : RSLPStemmerBase
-	{
+    /// <summary>
+    /// Minimal Stemmer for Galician
+    /// <para>
+    /// This follows the "RSLP-S" algorithm, but modified for Galician.
+    /// Hence this stemmer only applies the plural reduction step of:
+    /// "Regras do lematizador para o galego"
+    /// </para>
+    /// </summary>
+    /// <seealso cref= RSLPStemmerBase </seealso>
+    public class GalicianMinimalStemmer : RSLPStemmerBase
+    {
 
-	  private static readonly Step pluralStep = parse(typeof(GalicianMinimalStemmer), "galician.rslp")["Plural"];
+        private static readonly Step pluralStep = Parse(typeof(GalicianMinimalStemmer), "galician.rslp")["Plural"];
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		return pluralStep.apply(s, len);
-	  }
-	}
-
+        public virtual int stem(char[] s, int len)
+        {
+            return pluralStep.Apply(s, len);
+        }
+    }
 }

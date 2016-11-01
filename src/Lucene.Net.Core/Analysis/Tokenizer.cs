@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Dispose()
         {
-            input.Close();
+            input.Dispose();
             // LUCENE-2387: don't hold onto Reader after close, so
             // GC can reclaim
             InputPending = ILLEGAL_STATE_READER;
