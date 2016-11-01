@@ -72,9 +72,7 @@ namespace Lucene.Net.Analysis.Util
             AbstractAnalysisFactory factory = null;
             try
             {
-                factory = (AbstractAnalysisFactory)Activator.CreateInstance(clazz,
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new object[] { args }, CultureInfo.InvariantCulture);
+                factory = (AbstractAnalysisFactory)Activator.CreateInstance(clazz, args);
             }
             catch (TargetInvocationException e)
             {
