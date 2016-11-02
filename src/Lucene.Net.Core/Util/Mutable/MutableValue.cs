@@ -26,6 +26,11 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public abstract class MutableValue : IComparable<MutableValue>
     {
+        protected MutableValue()
+        {
+            Exists = true;
+        }
+
         public bool Exists { get; set; }
 
         public abstract void Copy(MutableValue source);
