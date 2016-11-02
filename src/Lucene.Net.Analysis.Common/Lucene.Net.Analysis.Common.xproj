@@ -16,4 +16,7 @@
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.targets" Condition="'$(VSToolsPath)' != ''" />
+  <PropertyGroup>
+    <CopyNuGetImplementations>true</CopyNuGetImplementations>
+  </PropertyGroup>
 </Project>
