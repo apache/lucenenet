@@ -14,21 +14,21 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public class SearchGroup<TGroupValue>
+    public class SearchGroup<TGroupValue> : ISearchGroup<TGroupValue>
     {
         /** The value that defines this group  */
-        public TGroupValue groupValue;
+        public TGroupValue GroupValue { get; set; }
 
         /** The sort values used during sorting. These are the
          *  groupSort field values of the highest rank document
          *  (by the groupSort) within the group.  Can be
          * <code>null</code> if <code>fillFields=false</code> had
          * been passed to {@link AbstractFirstPassGroupingCollector#getTopGroups} */
-        public object[] sortValues;
+        public object[] SortValues { get; set; }
 
         public override string ToString()
         {
-            return ("SearchGroup(groupValue=" + groupValue + " sortValues=" + Arrays.ToString(sortValues) + ")");
+            return ("SearchGroup(groupValue=" + GroupValue + " sortValues=" + Arrays.ToString(SortValues) + ")");
         }
 
         public override bool Equals(object o)
@@ -38,14 +38,14 @@ namespace Lucene.Net.Search.Grouping
 
             SearchGroup<TGroupValue> that = (SearchGroup<TGroupValue>)o;
 
-            if (groupValue == null)
+            if (GroupValue == null)
             {
-                if (that.groupValue != null)
+                if (that.GroupValue != null)
                 {
                     return false;
                 }
             }
-            else if (!groupValue.Equals(that.groupValue))
+            else if (!GroupValue.Equals(that.GroupValue))
             {
                 return false;
             }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Grouping
 
         public override int GetHashCode()
         {
-            return groupValue != null ? groupValue.GetHashCode() : 0;
+            return GroupValue != null ? GroupValue.GetHashCode() : 0;
         }
 
         private class ShardIter<T>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 Debug.Assert(iter.MoveNext());
                 SearchGroup<T> group = iter.Current;
-                if (group.sortValues == null)
+                if (group.SortValues == null)
                 {
                     throw new ArgumentException("group.sortValues is null; you must pass fillFields=true to the first pass collector");
                 }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Grouping
                 while (shard.iter.MoveNext())
                 {
                     SearchGroup<T> group = shard.Next();
-                    MergedGroup<T> mergedGroup = groupsSeen.ContainsKey(group.groupValue) ? groupsSeen[group.groupValue] : null;
+                    MergedGroup<T> mergedGroup = groupsSeen.ContainsKey(group.GroupValue) ? groupsSeen[group.GroupValue] : null;
                     bool isNew = mergedGroup == null;
                     //System.out.println("    next group=" + (group.groupValue == null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
 
@@ -232,11 +232,11 @@ namespace Lucene.Net.Search.Grouping
                     {
                         // Start a new group:
                         //System.out.println("      new");
-                        mergedGroup = new MergedGroup<T>(group.groupValue);
+                        mergedGroup = new MergedGroup<T>(group.GroupValue);
                         mergedGroup.minShardIndex = shard.shardIndex;
-                        Debug.Assert(group.sortValues != null);
-                        mergedGroup.topValues = group.sortValues;
-                        groupsSeen[group.groupValue] = mergedGroup;
+                        Debug.Assert(group.SortValues != null);
+                        mergedGroup.topValues = group.SortValues;
+                        groupsSeen[group.GroupValue] = mergedGroup;
                         mergedGroup.inQueue = true;
                         queue.Add(mergedGroup);
                     }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Grouping
                         bool competes = false;
                         for (int compIDX = 0; compIDX < groupComp.comparators.Length; compIDX++)
                         {
-                            int cmp = groupComp.reversed[compIDX] * groupComp.comparators[compIDX].CompareValues(group.sortValues[compIDX],
+                            int cmp = groupComp.reversed[compIDX] * groupComp.comparators[compIDX].CompareValues(group.SortValues[compIDX],
                                                                                                                        mergedGroup.topValues[compIDX]);
                             if (cmp < 0)
                             {
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Grouping
                             {
                                 queue.Remove(mergedGroup);
                             }
-                            mergedGroup.topValues = group.sortValues;
+                            mergedGroup.topValues = group.SortValues;
                             mergedGroup.minShardIndex = shard.shardIndex;
                             queue.Add(mergedGroup);
                             mergedGroup.inQueue = true;
@@ -335,8 +335,8 @@ namespace Lucene.Net.Search.Grouping
                     if (count++ >= offset)
                     {
                         SearchGroup<T> newGroup = new SearchGroup<T>();
-                        newGroup.groupValue = group.groupValue;
-                        newGroup.sortValues = group.topValues;
+                        newGroup.GroupValue = group.groupValue;
+                        newGroup.SortValues = group.topValues;
                         newTopGroups.Add(newGroup);
                         if (newTopGroups.Count == topN)
                         {
@@ -384,5 +384,16 @@ namespace Lucene.Net.Search.Grouping
                 return new GroupMerger<T>(groupSort).Merge(topGroups, offset, topN);
             }
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to provide covariance
+    /// with the TGroupValue type
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface ISearchGroup<out TGroupValue>
+    {
+        TGroupValue GroupValue { get; }
+        object[] SortValues { get; set; }
     }
 }

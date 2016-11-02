@@ -22,7 +22,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : Collector
+    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : Collector, IAbstractFirstPassGroupingCollector<TGroupValue>
     {
         private readonly Sort groupSort;
         private readonly FieldComparator[] comparators;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupOffset">The offset in the collected groups</param>
         /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
-        public ICollection<SearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
+        public IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
         {
 
             //System.out.println("FP.getTopGroups groupOffset=" + groupOffset + " fillFields=" + fillFields + " groupMap.size()=" + groupMap.size());
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Grouping
                 BuildSortedSet();
             }
 
-            ICollection<SearchGroup<TGroupValue>> result = new List<SearchGroup<TGroupValue>>();
+            ICollection<ISearchGroup<TGroupValue>> result = new List<ISearchGroup<TGroupValue>>();
             int upto = 0;
             int sortFieldCount = groupSort.GetSort().Length;
             foreach (CollectedSearchGroup<TGroupValue> group in orderedGroups)
@@ -119,13 +119,13 @@ namespace Lucene.Net.Search.Grouping
                 }
                 //System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
                 SearchGroup<TGroupValue> searchGroup = new SearchGroup<TGroupValue>();
-                searchGroup.groupValue = group.groupValue;
+                searchGroup.GroupValue = group.GroupValue;
                 if (fillFields)
                 {
-                    searchGroup.sortValues = new object[sortFieldCount];
+                    searchGroup.SortValues = new object[sortFieldCount];
                     for (int sortFieldIDX = 0; sortFieldIDX < sortFieldCount; sortFieldIDX++)
                     {
-                        searchGroup.sortValues[sortFieldIDX] = comparators[sortFieldIDX].Value(group.ComparatorSlot);
+                        searchGroup.SortValues[sortFieldIDX] = comparators[sortFieldIDX].Value(group.ComparatorSlot);
                     }
                 }
                 result.Add(searchGroup);
@@ -206,14 +206,14 @@ namespace Lucene.Net.Search.Grouping
 
                     // Add a new CollectedSearchGroup:
                     CollectedSearchGroup<TGroupValue> sg = new CollectedSearchGroup<TGroupValue>();
-                    sg.groupValue = CopyDocGroupValue(groupValue, default(TGroupValue));
+                    sg.GroupValue = CopyDocGroupValue(groupValue, default(TGroupValue));
                     sg.ComparatorSlot = groupMap.Count;
                     sg.TopDoc = docBase + doc;
                     foreach (FieldComparator fc in comparators)
                     {
                         fc.Copy(sg.ComparatorSlot, doc);
                     }
-                    groupMap[sg.groupValue] = sg;
+                    groupMap[sg.GroupValue] = sg;
 
                     if (groupMap.Count == topNGroups)
                     {
@@ -237,10 +237,10 @@ namespace Lucene.Net.Search.Grouping
                 }
                 Debug.Assert(orderedGroups.Count == topNGroups - 1);
 
-                groupMap.Remove(bottomGroup.groupValue);
+                groupMap.Remove(bottomGroup.GroupValue);
 
                 // reuse the removed CollectedSearchGroup
-                bottomGroup.groupValue = CopyDocGroupValue(groupValue, bottomGroup.groupValue);
+                bottomGroup.GroupValue = CopyDocGroupValue(groupValue, bottomGroup.GroupValue);
                 bottomGroup.TopDoc = docBase + doc;
 
                 foreach (FieldComparator fc in comparators)
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Grouping
                     fc.Copy(bottomGroup.ComparatorSlot, doc);
                 }
 
-                groupMap[bottomGroup.groupValue] = bottomGroup;
+                groupMap[bottomGroup.GroupValue] = bottomGroup;
                 orderedGroups.Add(bottomGroup);
                 Debug.Assert(orderedGroups.Count == topNGroups);
 
@@ -423,5 +423,24 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>a copy of the specified group value</returns>
         protected abstract TGroupValue CopyDocGroupValue(TGroupValue groupValue, TGroupValue reuse);
 
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface IAbstractFirstPassGroupingCollector<out TGroupValue>
+    {
+        // LUCENENET NOTE: We must use IEnumerable rather than ICollection here because we need
+        // this to be covariant
+        /// <summary>
+        /// Returns top groups, starting from offset.  This may
+        /// return null, if no groups were collected, or if the
+        /// number of unique groups collected is &lt;= offset.
+        /// </summary>
+        /// <param name="groupOffset">The offset in the collected groups</param>
+        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
+        /// <returns>top groups, starting from offset</returns>
+        IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields);
     }
 }

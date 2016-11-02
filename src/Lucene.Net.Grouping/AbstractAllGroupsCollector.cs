@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -15,18 +16,18 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : AbstractAllGroupsCollector
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : Collector, IAbstractAllGroupsCollector<TGroupValue>
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
         /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
-        public override int GroupCount
+        public virtual int GroupCount
         {
             get
             {
-                return Groups.Count;
+                return Groups.Count();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <returns>the group values</returns>
-        public abstract ICollection<TGroupValue> Groups { get; }
+        public abstract IEnumerable<TGroupValue> Groups { get; }
 
 
         // Empty not necessary
@@ -56,30 +57,54 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific class used to reference <see cref="AbstractAllGroupsCollector{TGroupValue}"/>
-    /// without refering to its generic closing type.
+    /// LUCENENET specific interface used to apply covariance to TGroupValue
     /// </summary>
-    public abstract class AbstractAllGroupsCollector : Collector
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface IAbstractAllGroupsCollector<out TGroupValue>
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
         /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
-        public abstract int GroupCount { get; }
+        int GroupCount { get; }
 
-
-        // Empty not necessary
-        public override Scorer Scorer
-        {
-            set
-            {
-            }
-        }
-
-        public override bool AcceptsDocsOutOfOrder()
-        {
-            return true;
-        }
+        /// <summary>
+        /// Returns the group values
+        /// <para>
+        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="BytesRef"/>
+        /// representing a group value.
+        /// </para>
+        /// </summary>
+        /// <returns>the group values</returns>
+        IEnumerable<TGroupValue> Groups { get; }
     }
+
+    ///// <summary>
+    ///// LUCENENET specific class used to reference <see cref="AbstractAllGroupsCollector{TGroupValue}"/>
+    ///// without refering to its generic closing type.
+    ///// </summary>
+    //public abstract class AbstractAllGroupsCollector : Collector
+    //{
+    //    /// <summary>
+    //    /// Returns the total number of groups for the executed search.
+    //    /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
+    //    /// </summary>
+    //    /// <returns>The total number of groups for the executed search</returns>
+    //    public abstract int GroupCount { get; }
+
+
+    //    // Empty not necessary
+    //    public override Scorer Scorer
+    //    {
+    //        set
+    //        {
+    //        }
+    //    }
+
+    //    public override bool AcceptsDocsOutOfOrder()
+    //    {
+    //        return true;
+    //    }
+    //}
 }

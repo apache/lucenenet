@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             this.groups = new List<GroupCount>(groups.Count);
             foreach (SearchGroup<BytesRef> group in groups)
             {
-                this.groups.Add(new GroupCount(group.groupValue));
+                this.groups.Add(new GroupCount(group.GroupValue));
             }
             ordSet = new SentinelIntSet(groups.Count, -2);
             groupCounts = new GroupCount[ordSet.Keys.Length];

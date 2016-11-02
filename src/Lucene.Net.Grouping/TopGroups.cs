@@ -24,39 +24,39 @@ namespace Lucene.Net.Search.Grouping
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class TopGroups<TGroupValue>
+    public class TopGroups<TGroupValue> : ITopGroups<TGroupValue>
     {
         /// <summary>
         /// Number of documents matching the search </summary>
-        public readonly int TotalHitCount;
+        public int TotalHitCount { get; private set; }
 
         /// <summary>
         /// Number of documents grouped into the topN groups </summary>
-        public readonly int TotalGroupedHitCount;
+        public int TotalGroupedHitCount { get; private set; }
 
         /// <summary>
-        /// The total number of unique groups. If <code>null</code> this value is not computed. </summary>
-        public readonly int? TotalGroupCount;
+        /// The total number of unique groups. If <c>null</c> this value is not computed. </summary>
+        public int? TotalGroupCount { get; private set; }
 
         /// <summary>
         /// Group results in groupSort order </summary>
-        public readonly GroupDocs<TGroupValue>[] Groups;
+        public IGroupDocs<TGroupValue>[] Groups { get; private set; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
-        public readonly SortField[] GroupSort;
+        public SortField[] GroupSort { get; private set; }
 
         /// <summary>
         /// How docs are sorted within each group </summary>
-        public readonly SortField[] WithinGroupSort;
+        public SortField[] WithinGroupSort { get; private set; }
 
         /// <summary>
         /// Highest score across all hits, or
-        ///  <code>Float.NaN</code> if scores were not computed. 
+        /// <see cref="float.NaN"/> if scores were not computed. 
         /// </summary>
-        public readonly float MaxScore;
+        public float MaxScore { get; private set; }
 
-        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValue>[] groups, float maxScore)
+        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, IGroupDocs<TGroupValue>[] groups, float maxScore)
         {
             GroupSort = groupSort;
             WithinGroupSort = withinGroupSort;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Grouping
             MaxScore = maxScore;
         }
 
-        public TopGroups(TopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
+        public TopGroups(ITopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
         {
             GroupSort = oldTopGroups.GroupSort;
             WithinGroupSort = oldTopGroups.WithinGroupSort;
@@ -244,5 +244,43 @@ namespace Lucene.Net.Search.Grouping
 
             return new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to provide covariance
+    /// with the TGroupValue type
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface ITopGroups<out TGroupValue>
+    {
+        /// <summary>
+        /// Number of documents matching the search </summary>
+        int TotalHitCount { get; }
+
+        /// <summary>
+        /// Number of documents grouped into the topN groups </summary>
+        int TotalGroupedHitCount { get; }
+
+        /// <summary>
+        /// The total number of unique groups. If <c>null</c> this value is not computed. </summary>
+        int? TotalGroupCount { get; }
+
+        /// <summary>
+        /// Group results in groupSort order </summary>
+        IGroupDocs<TGroupValue>[] Groups { get; }
+
+        /// <summary>
+        /// How groups are sorted against each other </summary>
+        SortField[] GroupSort { get; }
+
+        /// <summary>
+        /// How docs are sorted within each group </summary>
+        SortField[] WithinGroupSort { get; }
+
+        /// <summary>
+        /// Highest score across all hits, or
+        /// <see cref="float.NaN"/> if scores were not computed. 
+        /// </summary>
+        float MaxScore { get; }
     }
 }

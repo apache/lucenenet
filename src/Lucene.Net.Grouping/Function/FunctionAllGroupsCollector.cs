@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Grouping.Function
             this.groupBy = groupBy;
         }
 
-        public override ICollection<MutableValue> Groups
+        public override IEnumerable<MutableValue> Groups
         {
             get
             {

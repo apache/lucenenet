@@ -224,22 +224,28 @@ namespace Lucene.Net.Search.Grouping
         protected abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
     }
 
-    /////// <summary>
-    /////// LUCENENET specific interface used to reference an 
-    /////// <see cref="AbstractAllGroupHeadsCollector{GH}"/> subclass
-    /////// without refering to its generic closing type.
-    /////// </summary>
-    ////public interface IAllGroupHeadsCollector
-    ////{
-    ////    // From AbstractAllGroupHeadsCollector{GH}
-    ////    FixedBitSet RetrieveGroupHeads(int maxDoc);
-    ////    int[] RetrieveGroupHeads();
-    ////    int GroupHeadsSize { get; }
-    ////    void Collect(int doc);
-    ////    bool AcceptsDocsOutOfOrder();
+    ///// <summary>
+    ///// LUCENENET specific interface used to apply covariance to GH
+    ///// </summary>
+    //public interface IAbstractAllGroupHeadsCollector<out GH>
+    //{
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <param name="maxDoc">The maxDoc of the top level <see cref="Index.IndexReader"/></param>
+    //    /// <returns>a <see cref="FixedBitSet"/> containing all group heads.</returns>
+    //    FixedBitSet RetrieveGroupHeads(int maxDoc);
 
-    ////    // From Collector
-    ////    Scorer Scorer { set; }
-    ////    AtomicReaderContext NextReader { set; }
-    ////}
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <returns>an int array containing all group heads. The size of the array is equal to number of collected unique groups.</returns>
+    //    int[] RetrieveGroupHeads();
+
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <returns>the number of group heads found for a query.</returns>
+    //    int GroupHeadsSize { get; }
+    //}
 }

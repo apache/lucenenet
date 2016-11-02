@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override ICollection<BytesRef> Groups
+        public override IEnumerable<BytesRef> Groups
         {
             get
             {

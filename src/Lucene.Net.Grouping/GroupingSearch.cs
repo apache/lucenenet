@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping
         private bool allGroupHeads;
         private int initialSize = 128;
 
-        private ICollection /* Collection<?> */ matchingGroups;
+        private IList /* Collection<?> */ matchingGroups;
         private Bits matchingGroupHeads;
 
         /**
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Grouping
          * @return the grouped result as a {@link TopGroups} instance
          * @throws IOException If any I/O related errors occur
          */
-        public TopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<TGroupValue>(searcher, null, query, groupOffset, groupLimit);
         }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Grouping
          * @return the grouped result as a {@link TopGroups} instance
          * @throws IOException If any I/O related errors occur
          */
-        public TopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupField != null || groupFunction != null)
             {
@@ -129,147 +129,151 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        protected TopGroups<TGroupValue> GroupByFieldOrFunction<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        protected ITopGroups<TGroupValue> GroupByFieldOrFunction<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
-            // LUCENENET TODO: Finish
-            return null;
-            //int topN = groupOffset + groupLimit;
-            //AbstractFirstPassGroupingCollector<TGroupValue> firstPassCollector;
-            //AbstractAllGroupsCollector<TGroupValue> allGroupsCollector;
-            //AbstractAllGroupHeadsCollector allGroupHeadsCollector;
-            //if (groupFunction != null)
-            //{
-            //    firstPassCollector = new FunctionFirstPassGroupingCollector(groupFunction, valueSourceContext, groupSort, topN);
-            //    if (allGroups)
-            //    {
-            //        allGroupsCollector = new FunctionAllGroupsCollector(groupFunction, valueSourceContext);
-            //    }
-            //    else
-            //    {
-            //        allGroupsCollector = null;
-            //    }
-            //    if (allGroupHeads)
-            //    {
-            //        allGroupHeadsCollector = new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, sortWithinGroup);
-            //    }
-            //    else
-            //    {
-            //        allGroupHeadsCollector = null;
-            //    }
-            //}
-            //else
-            //{
-            //    firstPassCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topN);
-            //    if (allGroups)
-            //    {
-            //        allGroupsCollector = new TermAllGroupsCollector(groupField, initialSize);
-            //    }
-            //    else
-            //    {
-            //        allGroupsCollector = null;
-            //    }
-            //    if (allGroupHeads)
-            //    {
-            //        allGroupHeadsCollector = TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup, initialSize);
-            //    }
-            //    else
-            //    {
-            //        allGroupHeadsCollector = null;
-            //    }
-            //}
+            int topN = groupOffset + groupLimit;
+            IAbstractFirstPassGroupingCollector<TGroupValue> firstPassCollector;
+            IAbstractAllGroupsCollector<TGroupValue> allGroupsCollector;
+            AbstractAllGroupHeadsCollector allGroupHeadsCollector;
+            if (groupFunction != null)
+            {
+                firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new FunctionFirstPassGroupingCollector(groupFunction, valueSourceContext, groupSort, topN);
+                if (allGroups)
+                {
+                    allGroupsCollector = (IAbstractAllGroupsCollector<TGroupValue>)new FunctionAllGroupsCollector(groupFunction, valueSourceContext);
+                }
+                else
+                {
+                    allGroupsCollector = null;
+                }
+                if (allGroupHeads)
+                {
+                    allGroupHeadsCollector = new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, sortWithinGroup);
+                }
+                else
+                {
+                    allGroupHeadsCollector = null;
+                }
+            }
+            else
+            {
+                firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new TermFirstPassGroupingCollector(groupField, groupSort, topN);
+                if (allGroups)
+                {
+                    allGroupsCollector = (IAbstractAllGroupsCollector<TGroupValue>)new TermAllGroupsCollector(groupField, initialSize);
+                }
+                else
+                {
+                    allGroupsCollector = null;
+                }
+                if (allGroupHeads)
+                {
+                    allGroupHeadsCollector = TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup, initialSize);
+                }
+                else
+                {
+                    allGroupHeadsCollector = null;
+                }
+            }
 
-            //Collector firstRound;
-            //if (allGroupHeads || allGroups)
-            //{
-            //    List<Collector> collectors = new List<Collector>();
-            //    collectors.Add(firstPassCollector);
-            //    if (allGroups)
-            //    {
-            //        collectors.Add(allGroupsCollector);
-            //    }
-            //    if (allGroupHeads)
-            //    {
-            //        collectors.Add(allGroupHeadsCollector);
-            //    }
-            //    firstRound = MultiCollector.Wrap(collectors.ToArray(/* new Collector[collectors.size()] */));
-            //}
-            //else
-            //{
-            //    firstRound = firstPassCollector;
-            //}
+            Collector firstRound;
+            if (allGroupHeads || allGroups)
+            {
+                List<Collector> collectors = new List<Collector>();
+                // LUCENENET TODO: Make the Collector abstract class into an interface
+                // so we can remove the casting here
+                collectors.Add((Collector)firstPassCollector);
+                if (allGroups)
+                {
+                    // LUCENENET TODO: Make the Collector abstract class into an interface
+                    // so we can remove the casting here
+                    collectors.Add((Collector)allGroupsCollector);
+                }
+                if (allGroupHeads)
+                {
+                    collectors.Add(allGroupHeadsCollector);
+                }
+                firstRound = MultiCollector.Wrap(collectors.ToArray(/* new Collector[collectors.size()] */));
+            }
+            else
+            {
+                // LUCENENET TODO: Make the Collector abstract class into an interface
+                // so we can remove the casting here
+                firstRound = (Collector)firstPassCollector;
+            }
 
-            //CachingCollector cachedCollector = null;
-            //if (maxCacheRAMMB != null || maxDocsToCache != null)
-            //{
-            //    if (maxCacheRAMMB != null)
-            //    {
-            //        cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxCacheRAMMB.Value);
-            //    }
-            //    else
-            //    {
-            //        cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxDocsToCache.Value);
-            //    }
-            //    searcher.Search(query, filter, cachedCollector);
-            //}
-            //else
-            //{
-            //    searcher.Search(query, filter, firstRound);
-            //}
+            CachingCollector cachedCollector = null;
+            if (maxCacheRAMMB != null || maxDocsToCache != null)
+            {
+                if (maxCacheRAMMB != null)
+                {
+                    cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxCacheRAMMB.Value);
+                }
+                else
+                {
+                    cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxDocsToCache.Value);
+                }
+                searcher.Search(query, filter, cachedCollector);
+            }
+            else
+            {
+                searcher.Search(query, filter, firstRound);
+            }
 
-            //if (allGroups)
-            //{
-            //    matchingGroups = (ICollection)allGroupsCollector.GetGroups();
-            //}
-            //else
-            //{
-            //    matchingGroups = (ICollection)Collections.EmptyList<TGroupValue>();
-            //}
-            //if (allGroupHeads)
-            //{
-            //    matchingGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads(searcher.IndexReader.MaxDoc);
-            //}
-            //else
-            //{
-            //    matchingGroupHeads = new Bits_MatchNoBits(searcher.IndexReader.MaxDoc);
-            //}
+            if (allGroups)
+            {
+                matchingGroups = (IList)allGroupsCollector.Groups;
+            }
+            else
+            {
+                matchingGroups = new List<TGroupValue>();
+            }
+            if (allGroupHeads)
+            {
+                matchingGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads(searcher.IndexReader.MaxDoc);
+            }
+            else
+            {
+                matchingGroupHeads = new Bits_MatchNoBits(searcher.IndexReader.MaxDoc);
+            }
 
-            //ICollection<SearchGroup<TGroupValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
-            //if (topSearchGroups == null)
-            //{
-            //    return new TopGroups<TGroupValue>(new SortField[0], new SortField[0], 0, 0, new GroupDocs<TGroupValue>[0], float.NaN);
-            //}
+            IEnumerable<ISearchGroup<TGroupValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            if (topSearchGroups == null)
+            {
+                return new TopGroups<TGroupValue>(new SortField[0], new SortField[0], 0, 0, new GroupDocs<TGroupValue>[0], float.NaN);
+            }
 
-            //int topNInsideGroup = groupDocsOffset + groupDocsLimit;
-            //AbstractSecondPassGroupingCollector<TGroupValue> secondPassCollector;
-            //if (groupFunction != null)
-            //{
-            //    secondPassCollector = new FunctionSecondPassGroupingCollector(topSearchGroups as ICollection<SearchGroup<MutableValue>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext);
-            //}
-            //else
-            //{
-            //    secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as ICollection<SearchGroup<BytesRef>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields);
-            //}
+            int topNInsideGroup = groupDocsOffset + groupDocsLimit;
+            IAbstractSecondPassGroupingCollector<TGroupValue> secondPassCollector;
+            if (groupFunction != null)
+            {
+                secondPassCollector = (IAbstractSecondPassGroupingCollector<TGroupValue>)new FunctionSecondPassGroupingCollector(topSearchGroups as ICollection<SearchGroup<MutableValue>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext);
+            }
+            else
+            {
+                secondPassCollector = (IAbstractSecondPassGroupingCollector<TGroupValue>)new TermSecondPassGroupingCollector(groupField, topSearchGroups as ICollection<SearchGroup<BytesRef>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields);
+            }
 
-            //if (cachedCollector != null && cachedCollector.Cached)
-            //{
-            //    cachedCollector.Replay(secondPassCollector);
-            //}
-            //else
-            //{
-            //    searcher.Search(query, filter, secondPassCollector);
-            //}
+            if (cachedCollector != null && cachedCollector.Cached)
+            {
+                cachedCollector.Replay((Collector)secondPassCollector);
+            }
+            else
+            {
+                searcher.Search(query, filter, (Collector)secondPassCollector);
+            }
 
-            //if (allGroups)
-            //{
-            //    return new TopGroups<TGroupValue>(secondPassCollector.GetTopGroups(groupDocsOffset), matchingGroups.Count);
-            //}
-            //else
-            //{
-            //    return secondPassCollector.GetTopGroups(groupDocsOffset);
-            //}
+            if (allGroups)
+            {
+                return new TopGroups<TGroupValue>(secondPassCollector.GetTopGroups(groupDocsOffset), matchingGroups.Count);
+            }
+            else
+            {
+                return secondPassCollector.GetTopGroups(groupDocsOffset);
+            }
         }
 
-        protected TopGroups<T> GroupByDocBlock<T>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        protected ITopGroups<T> GroupByDocBlock<T>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             BlockGroupingCollector c = new BlockGroupingCollector(groupSort, topN, includeScores, groupEndDocs);

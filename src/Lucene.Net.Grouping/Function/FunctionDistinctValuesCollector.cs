@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Grouping.Function
             groupMap = new LurchTable<MutableValue, GroupCount>(1 << 4);
             foreach (SearchGroup<MutableValue> group in groups)
             {
-                groupMap[group.groupValue] = new GroupCount(group.groupValue);
+                groupMap[group.GroupValue] = new GroupCount(group.GroupValue);
             }
         }
 
