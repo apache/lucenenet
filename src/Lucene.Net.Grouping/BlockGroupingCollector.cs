@@ -1,12 +1,8 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -330,7 +326,12 @@ namespace Lucene.Net.Search.Grouping
          *  @param fillSortFields If true then the Comparable
          *     values for the sort fields will be set
          */
-        public TopGroups<T> GetTopGroups<T>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        {
+            return GetTopGroups<object>(withinGroupSort, groupOffset, withinGroupOffset, maxDocsPerGroup, fillSortFields);
+        }
+
+        public ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
 
             //if (queueFull) {
@@ -350,7 +351,7 @@ namespace Lucene.Net.Search.Grouping
 
             float maxScore = float.MinValue;
 
-            GroupDocs<T>[] groups = new GroupDocs<T>[groupQueue.Size() - groupOffset];
+            GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Size() - groupOffset];
             for (int downTo = groupQueue.Size() - groupOffset - 1; downTo >= 0; downTo--)
             {
                 OneGroup og = groupQueue.Pop();
@@ -406,11 +407,11 @@ namespace Lucene.Net.Search.Grouping
 
                 // TODO: we could aggregate scores across children
                 // by Sum/Avg instead of passing NaN:
-                groups[downTo] = new GroupDocs<T>(float.NaN,
+                groups[downTo] = new GroupDocs<TGroupValue>(float.NaN,
                                                        topDocs.MaxScore,
                                                        og.count,
                                                        topDocs.ScoreDocs,
-                                                       default(T),
+                                                       default(TGroupValue),
                                                        groupSortValues);
                 maxScore = Math.Max(maxScore, topDocs.MaxScore);
             }
@@ -423,7 +424,7 @@ namespace Lucene.Net.Search.Grouping
             }
             */
 
-            return new TopGroups<T>(new TopGroups<T>(groupSort.GetSort(),
+            return new TopGroups<TGroupValue>(new TopGroups<TGroupValue>(groupSort.GetSort(),
                                                withinGroupSort == null ? null : withinGroupSort.GetSort(),
                                                totalHitCount, totalGroupedHitCount, groups, maxScore),
                                  totalGroupCount);

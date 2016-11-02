@@ -88,16 +88,22 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.Reader);
             w.Dispose();
 
-            AbstractAllGroupsCollector allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
-            indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector);
+            IAbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
+            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
+            // so this cast is not necessary. Consider eliminating the Collector abstract class.
+            indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector as Collector);
             assertEquals(4, allGroupsCollector.GroupCount);
 
             allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
-            indexSearcher.Search(new TermQuery(new Term("content", "some")), allGroupsCollector);
+            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
+            // so this cast is not necessary. Consider eliminating the Collector abstract class.
+            indexSearcher.Search(new TermQuery(new Term("content", "some")), allGroupsCollector as Collector);
             assertEquals(3, allGroupsCollector.GroupCount);
 
             allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
-            indexSearcher.Search(new TermQuery(new Term("content", "blob")), allGroupsCollector);
+            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
+            // so this cast is not necessary. Consider eliminating the Collector abstract class.
+            indexSearcher.Search(new TermQuery(new Term("content", "blob")), allGroupsCollector as Collector);
             assertEquals(2, allGroupsCollector.GroupCount);
 
             indexSearcher.IndexReader.Dispose();
@@ -113,9 +119,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private AbstractAllGroupsCollector CreateRandomCollector(string groupField, bool canUseIDV)
+        private IAbstractAllGroupsCollector<object> CreateRandomCollector(string groupField, bool canUseIDV)
         {
-            AbstractAllGroupsCollector selected;
+            IAbstractAllGroupsCollector<object> selected;
             if (Random().nextBoolean())
             {
                 selected = new TermAllGroupsCollector(groupField);

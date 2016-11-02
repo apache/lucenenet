@@ -1,11 +1,6 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -22,7 +17,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private SortedDocValues index;
         private readonly string groupField;
 
-        public TermSecondPassGroupingCollector(string groupField, ICollection<SearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
+        public TermSecondPassGroupingCollector(string groupField, IEnumerable<ISearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
                                                int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
                   : base(groups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {

@@ -1,11 +1,9 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -77,7 +75,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             spareSlot = topNGroups;
-            groupMap = new Dictionary<TGroupValue, CollectedSearchGroup<TGroupValue>>(topNGroups);
+            groupMap = new HashMap<TGroupValue, CollectedSearchGroup<TGroupValue>>(topNGroups);
         }
 
         /// <summary>
@@ -188,9 +186,8 @@ namespace Lucene.Net.Search.Grouping
             // under null group)?
             TGroupValue groupValue = GetDocGroupValue(doc);
 
-            CollectedSearchGroup<TGroupValue> group = groupMap[groupValue];
-
-            if (group == null)
+            CollectedSearchGroup<TGroupValue> group;
+            if (!groupMap.TryGetValue(groupValue, out group))
             {
 
                 // First time we are seeing this group, or, we've seen

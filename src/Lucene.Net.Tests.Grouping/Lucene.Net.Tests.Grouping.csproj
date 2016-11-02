@@ -48,6 +48,7 @@
     <Compile Include="AllGroupHeadsCollectorTest.cs" />
     <Compile Include="AllGroupsCollectorTest.cs" />
     <Compile Include="GroupFacetCollectorTest.cs" />
+    <Compile Include="GroupingSearchTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

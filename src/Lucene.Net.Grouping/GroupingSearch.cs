@@ -1,6 +1,4 @@
 ﻿using Lucene.Net.Queries.Function;
-using Lucene.Net.Search;
-using Lucene.Net.Search.Grouping;
 using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Util;
@@ -8,9 +6,6 @@ using Lucene.Net.Util.Mutable;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -41,7 +36,7 @@ namespace Lucene.Net.Search.Grouping
         private bool allGroupHeads;
         private int initialSize = 128;
 
-        private IList /* Collection<?> */ matchingGroups;
+        private ICollection /* Collection<?> */ matchingGroups;
         private Bits matchingGroupHeads;
 
         /**
@@ -97,6 +92,11 @@ namespace Lucene.Net.Search.Grouping
          * @return the grouped result as a {@link TopGroups} instance
          * @throws IOException If any I/O related errors occur
          */
+        public ITopGroups<object> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        {
+            return Search<object>(searcher, null, query, groupOffset, groupLimit);
+        }
+
         public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<TGroupValue>(searcher, null, query, groupOffset, groupLimit);
@@ -113,6 +113,26 @@ namespace Lucene.Net.Search.Grouping
          * @return the grouped result as a {@link TopGroups} instance
          * @throws IOException If any I/O related errors occur
          */
+        public ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        {
+            if (groupFunction != null)
+            {
+                return GroupByFieldOrFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else if (groupField != null)
+            {
+                return GroupByFieldOrFunction<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else if (groupEndDocs != null)
+            {
+                return GroupByDocBlock<object>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else
+            {
+                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+            }
+        }
+
         public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupField != null || groupFunction != null)
@@ -121,13 +141,26 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (groupEndDocs != null)
             {
-                return (TopGroups<TGroupValue>)GroupByDocBlock<TGroupValue>(searcher, filter, query, groupOffset, groupLimit);
+                return GroupByDocBlock<TGroupValue>(searcher, filter, query, groupOffset, groupLimit);
             }
             else
             {
                 throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
+
+        //protected ITopGroups<object> GroupByFieldOrFunction(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        //{
+        //    // LUCENENET TODO: Perhaps there is a better way to infer type without resorting to hard-coding them here, but
+        //    // the original GroupByFieldOrFunction is already aware of the underlying type based on the FirstPassGroupingCollector
+        //    // and SecondPassGroupingCollector.
+        //    if (groupFunction != null)
+        //    {
+        //        return GroupByFieldOrFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
+        //    }
+
+        //    return GroupByFieldOrFunction<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
+        //}
 
         protected ITopGroups<TGroupValue> GroupByFieldOrFunction<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
@@ -247,20 +280,28 @@ namespace Lucene.Net.Search.Grouping
             IAbstractSecondPassGroupingCollector<TGroupValue> secondPassCollector;
             if (groupFunction != null)
             {
-                secondPassCollector = (IAbstractSecondPassGroupingCollector<TGroupValue>)new FunctionSecondPassGroupingCollector(topSearchGroups as ICollection<SearchGroup<MutableValue>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext);
+                secondPassCollector = new FunctionSecondPassGroupingCollector(topSearchGroups as IEnumerable<ISearchGroup<MutableValue>>, 
+                    groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext)
+                    as IAbstractSecondPassGroupingCollector<TGroupValue>;
             }
             else
             {
-                secondPassCollector = (IAbstractSecondPassGroupingCollector<TGroupValue>)new TermSecondPassGroupingCollector(groupField, topSearchGroups as ICollection<SearchGroup<BytesRef>>, groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields);
+                secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as IEnumerable<ISearchGroup<BytesRef>>, 
+                    groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields)
+                    as IAbstractSecondPassGroupingCollector<TGroupValue>;
             }
 
             if (cachedCollector != null && cachedCollector.Cached)
             {
-                cachedCollector.Replay((Collector)secondPassCollector);
+                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
+                // so this cast is not necessary. Consider eliminating the Collector abstract class.
+                cachedCollector.Replay(secondPassCollector as Collector);
             }
             else
             {
-                searcher.Search(query, filter, (Collector)secondPassCollector);
+                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
+                // so this cast is not necessary. Consider eliminating the Collector abstract class.
+                searcher.Search(query, filter, secondPassCollector as Collector);
             }
 
             if (allGroups)
@@ -273,13 +314,13 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        protected ITopGroups<T> GroupByDocBlock<T>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        protected ITopGroups<TGroupValue> GroupByDocBlock<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             BlockGroupingCollector c = new BlockGroupingCollector(groupSort, topN, includeScores, groupEndDocs);
             searcher.Search(query, filter, c);
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;
-            return c.GetTopGroups<T>(sortWithinGroup, groupOffset, groupDocsOffset, topNInsideGroup, fillSortFields);
+            return c.GetTopGroups<TGroupValue>(sortWithinGroup, groupOffset, groupDocsOffset, topNInsideGroup, fillSortFields);
         }
 
         /**
@@ -441,6 +482,13 @@ namespace Lucene.Net.Search.Grouping
         public ICollection<T> GetAllMatchingGroups<T>()
         {
             return (ICollection<T>)matchingGroups;
+        }
+
+        // LUCENENET specific used to get the groups if the type is unknown (since the above
+        // method will crash if the wrong type is used)
+        public ICollection GetAllMatchingGroups()
+        {
+            return matchingGroups;
         }
 
         /**

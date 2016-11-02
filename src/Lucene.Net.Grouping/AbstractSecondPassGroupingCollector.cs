@@ -1,10 +1,8 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -21,19 +19,19 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : Collector
+    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : Collector, IAbstractSecondPassGroupingCollector<TGroupValue>
     {
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> groupMap;
         private readonly int maxDocsPerGroup;
         protected AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>[] groupDocs;
-        private readonly IEnumerable<SearchGroup<TGroupValue>> groups;
+        private readonly IEnumerable<ISearchGroup<TGroupValue>> groups;
         private readonly Sort withinGroupSort;
         private readonly Sort groupSort;
 
         private int totalHitCount;
         private int totalGroupedHitCount;
 
-        public AbstractSecondPassGroupingCollector(IEnumerable<SearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
+        public AbstractSecondPassGroupingCollector(IEnumerable<ISearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
                                                    int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
         {
 
@@ -47,7 +45,7 @@ namespace Lucene.Net.Search.Grouping
             this.withinGroupSort = withinGroupSort;
             this.groups = groups;
             this.maxDocsPerGroup = maxDocsPerGroup;
-            groupMap = new Dictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count());
+            groupMap = new HashMap<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count());
 
             foreach (SearchGroup<TGroupValue> group in groups)
             {
@@ -116,7 +114,7 @@ namespace Lucene.Net.Search.Grouping
             return false;
         }
 
-        public TopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
+        public ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
         {
             GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count()];
 
