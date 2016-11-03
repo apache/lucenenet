@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -601,11 +602,11 @@ namespace Lucene.Net.Index
 
             ISet<string> delIDs = new ConcurrentHashSet<string>(new HashSet<string>());
             ISet<string> delPackIDs = new ConcurrentHashSet<string>(new HashSet<string>());
-            IList<SubDocs> allSubDocs = new SynchronizedCollection<SubDocs>();
+            ConcurrentQueue<SubDocs> allSubDocs = new ConcurrentQueue<SubDocs>();
 
             DateTime stopTime = DateTime.UtcNow.AddSeconds(RUN_TIME_SEC);
 
-            ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs);
+            ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs.ToList());
 
             if (VERBOSE)
             {

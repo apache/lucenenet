@@ -197,15 +197,19 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
+#if !NETCORE
                 try
                 {
+#endif
                     Latch.Wait();
+#if !NETCORE
                 }
                 catch (ThreadInterruptedException e)
                 {
                     Failed = e;
                     return;
                 }
+#endif
                 DirectoryReader reader;
                 while ((reader = Holder.Reader) != null)
                 {

@@ -29,8 +29,7 @@ namespace Lucene.Net.Util
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
-    [Serializable]
-    public abstract class Attribute : ICloneable, IAttribute
+    public abstract class Attribute : IAttribute
     {
         /// <summary> Clears the values in this Attribute and resets it to its
         /// default value. If this implementation implements more than one Attribute interface
@@ -134,34 +133,25 @@ namespace Lucene.Net.Util
             System.Text.StringBuilder buffer = new System.Text.StringBuilder();
             System.Type clazz = this.GetType();
             System.Reflection.FieldInfo[] fields = clazz.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.Static);
-            try
+            for (int i = 0; i < fields.Length; i++)
             {
-                for (int i = 0; i < fields.Length; i++)
+                System.Reflection.FieldInfo f = fields[i];
+                if (f.IsStatic)
+                    continue;
+                //f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
+                System.Object value_Renamed = f.GetValue(this);
+                if (buffer.Length > 0)
                 {
-                    System.Reflection.FieldInfo f = fields[i];
-                    if (f.IsStatic)
-                        continue;
-                    //f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
-                    System.Object value_Renamed = f.GetValue(this);
-                    if (buffer.Length > 0)
-                    {
-                        buffer.Append(',');
-                    }
-                    if (value_Renamed == null)
-                    {
-                        buffer.Append(f.Name + "=null");
-                    }
-                    else
-                    {
-                        buffer.Append(f.Name + "=" + value_Renamed);
-                    }
+                    buffer.Append(',');
                 }
-            }
-            catch (System.UnauthorizedAccessException e)
-            {
-                // this should never happen, because we're just accessing fields
-                // from 'this'
-                throw new System.SystemException(e.Message, e);
+                if (value_Renamed == null)
+                {
+                    buffer.Append(f.Name + "=null");
+                }
+                else
+                {
+                    buffer.Append(f.Name + "=" + value_Renamed);
+                }
             }
 
             return buffer.ToString();
@@ -178,16 +168,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual System.Object Clone()
         {
-            System.Object clone = null;
-            try
-            {
-                clone = base.MemberwiseClone();
-            }
-            catch (System.Exception e)
-            {
-                throw new System.SystemException(e.Message, e); // shouldn't happen
-            }
-            return clone;
+            return base.MemberwiseClone();
         }
     }
 }

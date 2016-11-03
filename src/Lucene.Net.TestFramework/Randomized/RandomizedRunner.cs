@@ -19,6 +19,7 @@ using Lucene.Net.Randomized.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace Lucene.Net.Randomized
@@ -36,7 +37,7 @@ namespace Lucene.Net.Randomized
             this.suiteClass = testClass;
 
             var list = new List<ISeedDecorator>();
-            var attrs = this.suiteClass.GetCustomAttributes(typeof(SeedDecoratorAttribute), true).Cast<SeedDecoratorAttribute>();
+            var attrs = this.suiteClass.GetTypeInfo().GetCustomAttributes<SeedDecoratorAttribute>(true);
             foreach (var attr in attrs)
             {
                 foreach (var decoratorType in attr.Decorators)

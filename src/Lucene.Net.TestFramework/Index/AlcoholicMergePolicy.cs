@@ -42,9 +42,9 @@ namespace Lucene.Net.Index
         private readonly Random Random;
         private readonly DateTime Calendar;
 
-        public AlcoholicMergePolicy(TimeZone tz, Random random)
+        public AlcoholicMergePolicy(Random random)
         {
-            this.Calendar = new DateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue), new GregorianCalendar());
+            this.Calendar = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue));
             this.Random = random;
             MaxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
         }

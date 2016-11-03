@@ -776,6 +776,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+#if !NETCORE //NOTE: Cannot set ThreadPriority in .NET Core.
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
@@ -804,6 +805,7 @@ namespace Lucene.Net.Index
                 Thread.CurrentThread.Priority = pri;
             }
         }
+#endif
 
         [Test]
         public virtual void TestVariableSchema()
@@ -1304,6 +1306,7 @@ namespace Lucene.Net.Index
                             AllowInterrupt = true;
                         }
                     }
+#if !NETCORE
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1319,6 +1322,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
+#endif
                     catch (Exception t)
                     {
                         Console.WriteLine("FAILED; unexpected exception");

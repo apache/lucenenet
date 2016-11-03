@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Support
 {
@@ -33,6 +34,16 @@ namespace Lucene.Net.Support
 
         static OS()
         {
+#if NETSTANDARD
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                isWindows = true;
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                isUnix = true;
+            }
+#else
             PlatformID pid = Environment.OSVersion.Platform;
             isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
 
@@ -41,6 +52,7 @@ namespace Lucene.Net.Support
             // 128 is mono's old platform tag for Unix.
             int id = (int)pid;
             isUnix = id == 4 || id == 6 || id == 128;
+#endif
         }
 
         /// <summary>

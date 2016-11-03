@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     {
         public override DocIdBitSet CopyOf(BitArray bs, int length)
         {
-            return new DocIdBitSet((BitArray)bs.Clone());
+            return new DocIdBitSet(new BitArray(bs));
         }
 
 

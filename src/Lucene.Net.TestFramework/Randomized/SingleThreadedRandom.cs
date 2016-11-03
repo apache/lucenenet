@@ -31,7 +31,7 @@ namespace Lucene.Net.Randomized
         private Random @delegate;
         private readonly WeakReference ownerRef;
         private readonly string ownerName;
-        private StackTrace trace;
+        private string trace;
 
         private volatile Boolean isDisposed = true;
 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Randomized
             this.@delegate = @delegate;
             this.ownerRef = new WeakReference(owner);
             this.ownerName = owner.Name;
-            this.trace = new System.Diagnostics.StackTrace(1);
+            this.trace = Environment.StackTrace;
         }
 
         public override int Next()
@@ -102,7 +102,7 @@ namespace Lucene.Net.Randomized
                                 " and must not be shared.  The current thread is " + Thread.CurrentThread.Name + ".";
 
                 throw new InvalidOperationException(message,
-                    new IllegalStateException("The instance was illegally accessed", this.trace));
+                    new IllegalStateException("The instance was illegally accessed\n" + this.trace));
             }
         }
 

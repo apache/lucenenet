@@ -5,7 +5,7 @@ namespace Lucene.Net.Support
 {
     public static class FloatUtils
     {
-        [DllImport("msvcrt", CharSet = CharSet.Auto)]
+        [DllImport("msvcrt")]
         public static extern IntPtr _controlfp_s(IntPtr currentControl, int newControl, int mask);
 
         public static void SetPrecision()

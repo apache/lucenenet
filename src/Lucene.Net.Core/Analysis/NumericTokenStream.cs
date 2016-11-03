@@ -4,6 +4,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis
 {
@@ -144,7 +145,7 @@ namespace Lucene.Net.Analysis
             public override Util.Attribute CreateAttributeInstance<T>()
             {
                 var attClass = typeof(T);
-                if (typeof(ICharTermAttribute).IsAssignableFrom(attClass))
+                if (typeof(ICharTermAttribute).GetTypeInfo().IsAssignableFrom(attClass.GetTypeInfo()))
                 {
                     throw new System.ArgumentException("NumericTokenStream does not support CharTermAttribute.");
                 }

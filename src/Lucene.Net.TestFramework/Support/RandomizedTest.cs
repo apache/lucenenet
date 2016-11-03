@@ -1,5 +1,6 @@
-﻿using NUnit.Framework;
-using System.Configuration;
+﻿using Lucene.Net.Support.Configuration;
+using NUnit.Framework;
+
 
 namespace Lucene.Net.TestFramework.Support
 {
@@ -7,32 +8,23 @@ namespace Lucene.Net.TestFramework.Support
     {
         public static bool SystemPropertyAsBoolean(string key, bool defaultValue)
         {
-            var setting = ConfigurationManager.AppSettings[key];
-
-            if (string.IsNullOrEmpty(setting))
-                return defaultValue;
-
-            bool v;
-
-            if (bool.TryParse(setting, out v))
-                return v;
-
-            return defaultValue;
+            return Configuration.GetProperty<bool>(key, defaultValue,
+                (str) =>
+                {
+                    bool value;
+                    return bool.TryParse(str, out value) ? value : defaultValue;
+                });
         }
 
         public static int SystemPropertyAsInt(string key, int defaultValue)
         {
-            var setting = ConfigurationManager.AppSettings[key];
-
-            if (string.IsNullOrEmpty(setting))
-                return defaultValue;
-
-            int v;
-
-            if (int.TryParse(setting, out v))
-                return v;
-
-            return defaultValue;
+            return Configuration.GetProperty<int>(key, defaultValue,
+              (str) =>
+              {
+                  int value;
+                  return int.TryParse(str, out value) ? value : defaultValue;
+              }
+            );
         }
 
         public static void AssumeTrue(string msg, bool value)

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Util
 {
-    /*
+    using System.Reflection;    /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
      * this work for additional information regarding copyright ownership.
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
                         // we have the slight chance that another thread may do the same, but who cares?
                         try
                         {
-                            string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.Assembly.FullName;
+                            string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
                             AttClassImplMap.Add(attClass, new WeakReference(clazz = Type.GetType(name, true)));
                         }
                         catch (Exception)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
         /// this class holds the state of an AttributeSource. </summary>
         /// <seealso cref= #captureState </seealso>
         /// <seealso cref= #restoreState </seealso>
-        public sealed class State : ICloneable
+        public sealed class State
         {
             internal Attribute attribute;
             internal State next;
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util
                                 foundInterfaces.AddLast(new WeakReference(curInterface));
                             }
                         }
-                        actClazz = actClazz.BaseType;
+                        actClazz = actClazz.GetTypeInfo().BaseType;
                     } while (actClazz != null);
                     KnownImplClasses[clazz] = foundInterfaces;
                 }
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
             var attClass = typeof(T);
             if (!Attributes.ContainsKey(attClass))
             {
-                if (!(attClass.IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
+                if (!(attClass.GetTypeInfo().IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends IAttribute, but " + attClass.FullName + " does not fulfil this contract.");
                 }

@@ -74,12 +74,12 @@ namespace Lucene.Net.Documents
             // we use default locale since LuceneTestCase randomizes it
             //Calendar cal = new GregorianCalendar(TimeZone.GetTimeZone("GMT"), Locale.Default);
             //cal.Clear();
-
-            DateTime cal = new DateTime(1970, 1, 1, 0, 0, 0, 0, new GregorianCalendar()); // hour, minute, second -  year=1970, month=january, day=1
+           
+            DateTime cal = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, 0); // hour, minute, second -  year=1970, month=january, day=1
             //cal.set(DateTime.MILLISECOND, 0);
             Assert.AreEqual(cal.Ticks, time);
 
-            cal = new DateTime(1980, 2, 2, 11, 5, 0, 0, new GregorianCalendar()); // hour, minute, second -  year=1980, month=february, day=2
+            cal = new GregorianCalendar().ToDateTime(1980, 2, 2, 11, 5, 0, 0); // hour, minute, second -  year=1980, month=february, day=2
             //cal.set(DateTime.MILLISECOND, 0);
             time = DateTools.StringToTime("198002021105");
             Assert.AreEqual(cal.Ticks, time);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Documents
         {
             // we use default locale since LuceneTestCase randomizes it
             //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"), Locale.Default);
-            DateTime cal = new DateTime(2004, 2, 3, 22, 8, 56, 333, new GregorianCalendar());
+            DateTime cal = new GregorianCalendar().ToDateTime(2004, 2, 3, 22, 8, 56, 333);
 
             /*cal.clear();
             cal = new DateTime(2004, 1, 3, 22, 8, 56); // hour, minute, second -  year=2004, month=february(!), day=3
@@ -125,7 +125,7 @@ namespace Lucene.Net.Documents
             Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(DateTools.StringToDate(dateString)));
 
             // date before 1970:
-            cal = new DateTime(1961, 3, 5, 23, 9, 51, 444, new GregorianCalendar()); // hour, minute, second -  year=1961, month=march(!), day=5
+            cal = new GregorianCalendar().ToDateTime(1961, 3, 5, 23, 9, 51, 444); // hour, minute, second -  year=1961, month=march(!), day=5
             //cal.set(DateTime.MILLISECOND, 444);
             dateString = DateTools.DateToString(cal, DateTools.Resolution.MILLISECOND);
             Assert.AreEqual("19610305230951444", dateString);
@@ -136,12 +136,12 @@ namespace Lucene.Net.Documents
             Assert.AreEqual("1961-03-05 23:00:00:000", IsoFormat(DateTools.StringToDate(dateString)));
 
             // timeToString:
-            cal = new DateTime(1970, 1, 1, 0, 0, 0, 0, new GregorianCalendar()); // hour, minute, second -  year=1970, month=january, day=1
+            cal = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, 0); // hour, minute, second -  year=1970, month=january, day=1
             //cal.set(DateTime.MILLISECOND, 0);
             dateString = DateTools.TimeToString(cal.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.MILLISECOND);
             Assert.AreEqual("19700101000000000", dateString);
 
-            cal = new DateTime(1970, 1, 1, 1, 2, 3, 0, new GregorianCalendar()); // hour, minute, second -  year=1970, month=january, day=1
+            cal = new GregorianCalendar().ToDateTime(1970, 1, 1, 1, 2, 3, 0); // hour, minute, second -  year=1970, month=january, day=1
             //cal.set(DateTime.MILLISECOND, 0);
             dateString = DateTools.TimeToString(cal.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.MILLISECOND);
             Assert.AreEqual("19700101010203000", dateString);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Documents
             // we use default locale since LuceneTestCase randomizes it
             //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"), Locale.Default);
             //cal.clear();
-            DateTime cal = new DateTime(2004, 2, 3, 22, 8, 56, 333, new GregorianCalendar()); // hour, minute, second -  year=2004, month=february(!), day=3
+            DateTime cal = new GregorianCalendar().ToDateTime(2004, 2, 3, 22, 8, 56, 333); // hour, minute, second -  year=2004, month=february(!), day=3
             //cal.set(DateTime.MILLISECOND, 333);
             DateTime date = cal;
             Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(date));

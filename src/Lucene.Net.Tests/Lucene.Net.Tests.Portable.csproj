@@ -1,0 +1,583 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{91AD3FB7-8BC0-4008-852B-9972CD47E6C0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Lucene.Net.Tests</RootNamespace>
+    <AssemblyName>Lucene.Net.Tests</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_TASKMERGESCHEDULER</DefineConstants>
+    <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="core\App.config" />
+    <None Include="core\Lucene.Net.snk" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Lucene.Net.Tests.Portable.project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.Portable.csproj">
+      <Project>{2796ebeb-8f48-4728-9221-a2c361781bfc}</Project>
+      <Name>Lucene.Net.Codecs.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.Portable.csproj">
+      <Project>{c7d049d9-439c-4de2-bb0b-60b3dace18ea}</Project>
+      <Name>Lucene.Net.Facet.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.Portable.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.Portable.csproj">
+      <Project>{940efd2b-d875-4a6f-adb2-ad711b8440f4}</Project>
+      <Name>Lucene.Net.TestFramework.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="core\Analysis\TestCachingTokenFilter.cs" />
+    <Compile Include="core\Analysis\TestCharFilter.cs" />
+    <Compile Include="core\Analysis\TestGraphTokenizers.cs" />
+    <Compile Include="core\Analysis\TestLookaheadTokenFilter.cs" />
+    <Compile Include="core\Analysis\TestMockAnalyzer.cs" />
+    <Compile Include="core\Analysis\TestMockCharFilter.cs" />
+    <Compile Include="core\Analysis\TestNumericTokenStream.cs" />
+    <Compile Include="core\Analysis\TestPosition.cs" />
+    <Compile Include="core\Analysis\TestReusableStringReader.cs" />
+    <Compile Include="core\Analysis\TestToken.cs" />
+    <Compile Include="core\Analysis\Tokenattributes\TestCharTermAttributeImpl.cs" />
+    <Compile Include="core\Analysis\Tokenattributes\TestSimpleAttributeImpl.cs" />
+    <Compile Include="core\Analysis\TrivialLookaheadFilter.cs" />
+    <Compile Include="core\AssemblyInfo.cs" />
+    <Compile Include="core\Codecs\Compressing\AbstractTestCompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\AbstractTestLZ4CompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestCompressingStoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Compressing\TestCompressingTermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Compressing\TestFastCompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestFastDecompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestHighCompressionMode.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestImpersonation.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xStoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xTermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestSurrogates.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestTermInfosReaderIndex.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestBitVector.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40PostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40PostingsReader.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40StoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40TermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestReuseDocsEnum.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat2.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat3.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestForUtil.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestLucene41StoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene42\TestLucene42DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Lucene45\TestLucene45DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldDocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat2.cs" />
+    <Compile Include="core\Document\TestBinaryDocument.cs" />
+    <Compile Include="core\Document\TestDateTools.cs" />
+    <Compile Include="core\Document\TestDocument.cs" />
+    <Compile Include="core\Document\TestField.cs" />
+    <Compile Include="core\Index\BinaryTokenStream.cs" />
+    <Compile Include="core\Index\SynchronizedList.cs" />
+    <Compile Include="core\Index\Test2BBinaryDocValues.cs" />
+    <Compile Include="core\Index\Test2BDocs.cs" />
+    <Compile Include="core\Index\Test2BNumericDocValues.cs" />
+    <Compile Include="core\Index\Test2BPositions.cs" />
+    <Compile Include="core\Index\Test2BPostings.cs" />
+    <Compile Include="core\Index\Test2BPostingsBytes.cs" />
+    <Compile Include="core\Index\Test2BSortedDocValues.cs" />
+    <Compile Include="core\Index\Test2BTerms.cs" />
+    <Compile Include="core\Index\Test4GBStoredFields.cs" />
+    <Compile Include="core\Index\TestAddIndexes.cs" />
+    <Compile Include="core\Index\TestAllFilesHaveChecksumFooter.cs" />
+    <Compile Include="core\Index\TestAllFilesHaveCodecHeader.cs" />
+    <Compile Include="core\Index\TestAtomicUpdate.cs" />
+    <Compile Include="core\Index\TestBagOfPositions.cs" />
+    <Compile Include="core\Index\TestBagOfPostings.cs" />
+    <Compile Include="core\Index\TestBinaryDocValuesUpdates.cs" />
+    <Compile Include="core\Index\TestBinaryTerms.cs" />
+    <Compile Include="core\Index\TestByteSlices.cs" />
+    <Compile Include="core\Index\TestCheckIndex.cs" />
+    <Compile Include="core\Index\TestCodecHoldsOpenFiles.cs" />
+    <Compile Include="core\Index\TestCodecs.cs" />
+    <Compile Include="core\Index\TestCompoundFile.cs" />
+    <Compile Include="core\Index\TestConsistentFieldNumbers.cs" />
+    <Compile Include="core\Index\TestCrash.cs" />
+    <Compile Include="core\Index\TestCrashCausesCorruptIndex.cs" />
+    <Compile Include="core\Index\TestCustomNorms.cs" />
+    <Compile Include="core\Index\TestDeletionPolicy.cs" />
+    <Compile Include="core\Index\TestDirectoryReader.cs" />
+    <Compile Include="core\Index\TestDirectoryReaderReopen.cs" />
+    <Compile Include="core\Index\TestDoc.cs" />
+    <Compile Include="core\Index\TestDocCount.cs" />
+    <Compile Include="core\Index\TestDocInverterPerFieldErrorInfo.cs" />
+    <Compile Include="core\Index\TestDocsAndPositions.cs" />
+    <Compile Include="core\Index\TestDocTermOrds.cs" />
+    <Compile Include="core\Index\TestDocumentsWriterDeleteQueue.cs" />
+    <Compile Include="core\Index\TestDocumentsWriterStallControl.cs" />
+    <Compile Include="core\Index\TestDocumentWriter.cs" />
+    <Compile Include="core\Index\TestDocValuesFormat.cs" />
+    <Compile Include="core\Index\TestDocValuesIndexing.cs" />
+    <Compile Include="core\Index\TestDocValuesWithThreads.cs" />
+    <Compile Include="core\Index\TestDuelingCodecs.cs" />
+    <Compile Include="core\Index\TestExceedMaxTermLength.cs" />
+    <Compile Include="core\Index\TestFieldInfos.cs" />
+    <Compile Include="core\Index\TestFieldsReader.cs" />
+    <Compile Include="core\Index\TestFilterAtomicReader.cs" />
+    <Compile Include="core\Index\TestFlex.cs" />
+    <Compile Include="core\Index\TestForceMergeForever.cs" />
+    <Compile Include="core\Index\TestForTooMuchCloning.cs" />
+    <Compile Include="core\Index\TestIndexableField.cs" />
+    <Compile Include="core\Index\TestIndexCommit.cs" />
+    <Compile Include="core\Index\TestIndexFileDeleter.cs" />
+    <Compile Include="core\Index\TestIndexInput.cs" />
+    <Compile Include="core\Index\TestIndexReaderClose.cs" />
+    <Compile Include="core\Index\TestIndexWriter.cs" />
+    <Compile Include="core\Index\TestIndexWriterCommit.cs" />
+    <Compile Include="core\Index\TestIndexWriterConfig.cs" />
+    <Compile Include="core\Index\TestIndexWriterDelete.cs" />
+    <Compile Include="core\Index\TestIndexWriterExceptions.cs" />
+    <Compile Include="core\Index\TestIndexWriterForceMerge.cs" />
+    <Compile Include="core\Index\TestIndexWriterLockRelease.cs" />
+    <Compile Include="core\Index\TestIndexWriterMergePolicy.cs" />
+    <Compile Include="core\Index\TestIndexWriterMerging.cs" />
+    <Compile Include="core\Index\TestIndexWriterNRTIsCurrent.cs" />
+    <Compile Include="core\Index\TestIndexWriterOnDiskFull.cs" />
+    <Compile Include="core\Index\TestIndexWriterOutOfFileDescriptors.cs" />
+    <Compile Include="core\Index\TestIndexWriterReader.cs" />
+    <Compile Include="core\Index\TestIndexWriterUnicode.cs" />
+    <Compile Include="core\Index\TestIndexWriterWithThreads.cs" />
+    <Compile Include="core\Index\TestIntBlockPool.cs" />
+    <Compile Include="core\Index\TestIsCurrent.cs" />
+    <Compile Include="core\Index\TestLazyProxSkipping.cs" />
+    <Compile Include="core\Index\TestLogMergePolicy.cs" />
+    <Compile Include="core\Index\TestLongPostings.cs" />
+    <Compile Include="core\Index\TestMaxTermFrequency.cs" />
+    <Compile Include="core\Index\TestMixedCodecs.cs" />
+    <Compile Include="core\Index\TestMixedDocValuesUpdates.cs" />
+    <Compile Include="core\Index\TestMultiDocValues.cs" />
+    <Compile Include="core\Index\TestMultiFields.cs" />
+    <Compile Include="core\Index\TestMultiLevelSkipList.cs" />
+    <Compile Include="core\Index\TestNeverDelete.cs" />
+    <Compile Include="core\Index\TestNewestSegment.cs" />
+    <Compile Include="core\Index\TestNoDeletionPolicy.cs" />
+    <Compile Include="core\Index\TestNoMergePolicy.cs" />
+    <Compile Include="core\Index\TestNoMergeScheduler.cs" />
+    <Compile Include="core\Index\TestNorms.cs" />
+    <Compile Include="core\Index\TestNRTReaderWithThreads.cs" />
+    <Compile Include="core\Index\TestNRTThreads.cs" />
+    <Compile Include="core\Index\TestNumericDocValuesUpdates.cs" />
+    <Compile Include="core\Index\TestOmitNorms.cs" />
+    <Compile Include="core\Index\TestOmitPositions.cs" />
+    <Compile Include="core\Index\TestOmitTf.cs" />
+    <Compile Include="core\Index\TestParallelAtomicReader.cs" />
+    <Compile Include="core\Index\TestParallelCompositeReader.cs" />
+    <Compile Include="core\Index\TestParallelReaderEmptyIndex.cs" />
+    <Compile Include="core\Index\TestParallelTermEnum.cs" />
+    <Compile Include="core\Index\TestPayloads.cs" />
+    <Compile Include="core\Index\TestPayloadsOnVectors.cs" />
+    <Compile Include="core\Index\TestPerSegmentDeletes.cs" />
+    <Compile Include="core\Index\TestPersistentSnapshotDeletionPolicy.cs" />
+    <Compile Include="core\Index\TestPostingsFormat.cs" />
+    <Compile Include="core\Index\TestPostingsOffsets.cs" />
+    <Compile Include="core\Index\TestPrefixCodedTerms.cs" />
+    <Compile Include="core\Index\TestReaderClosed.cs" />
+    <Compile Include="core\Index\TestRollback.cs" />
+    <Compile Include="core\Index\TestRollingUpdates.cs" />
+    <Compile Include="core\Index\TestSameTokenSamePosition.cs" />
+    <Compile Include="core\Index\TestSegmentMerger.cs" />
+    <Compile Include="core\Index\TestSegmentReader.cs" />
+    <Compile Include="core\Index\TestSegmentTermDocs.cs" />
+    <Compile Include="core\Index\TestSegmentTermEnum.cs" />
+    <Compile Include="core\Index\TestSizeBoundedForceMerge.cs" />
+    <Compile Include="core\Index\TestSnapshotDeletionPolicy.cs" />
+    <Compile Include="core\Index\TestStoredFieldsFormat.cs" />
+    <Compile Include="core\Index\TestStressAdvance.cs" />
+    <Compile Include="core\Index\TestStressIndexing.cs" />
+    <Compile Include="core\Index\TestStressIndexing2.cs" />
+    <Compile Include="core\Index\TestStressNRT.cs" />
+    <Compile Include="core\Index\TestSumDocFreq.cs" />
+    <Compile Include="core\Index\TestTaskMergeSchedulerExternal.cs" />
+    <Compile Include="core\Index\TestTerm.cs" />
+    <Compile Include="core\Index\TestTermdocPerf.cs" />
+    <Compile Include="core\Index\TestTermsEnum.cs" />
+    <Compile Include="core\Index\TestTermsEnum2.cs" />
+    <Compile Include="core\Index\TestTermVectorsFormat.cs" />
+    <Compile Include="core\Index\TestTermVectorsReader.cs" />
+    <Compile Include="core\Index\TestTermVectorsWriter.cs" />
+    <Compile Include="core\Index\TestThreadedForceMerge.cs" />
+    <Compile Include="core\Index\TestTieredMergePolicy.cs" />
+    <Compile Include="core\Index\TestTransactionRollback.cs" />
+    <Compile Include="core\Index\TestTransactions.cs" />
+    <Compile Include="core\Index\TestTryDelete.cs" />
+    <Compile Include="core\Index\TestTwoPhaseCommitTool.cs" />
+    <Compile Include="core\RectangularArrays.cs" />
+    <Compile Include="core\Search\BaseTestRangeFilter.cs" />
+    <Compile Include="core\Search\FuzzyTermOnShortTermsTest.cs" />
+    <Compile Include="core\Search\JustCompileSearch.cs" />
+    <Compile Include="core\Search\MockFilter.cs" />
+    <Compile Include="core\Search\MultiCollectorTest.cs" />
+    <Compile Include="core\Search\Payloads\PayloadHelper.cs" />
+    <Compile Include="core\Search\Payloads\TestPayloadExplanations.cs" />
+    <Compile Include="core\Search\Payloads\TestPayloadNearQuery.cs" />
+    <Compile Include="core\Search\Payloads\TestPayloadTermQuery.cs" />
+    <Compile Include="core\Search\Similarities\TestSimilarity2.cs" />
+    <Compile Include="core\Search\Similarities\TestSimilarityBase.cs" />
+    <Compile Include="core\Search\SingleDocTestFilter.cs" />
+    <Compile Include="core\Search\Spans\JustCompileSearchSpans.cs" />
+    <Compile Include="core\Search\Spans\MultiSpansWrapper.cs" />
+    <Compile Include="core\Search\Spans\TestBasics.cs" />
+    <Compile Include="core\Search\Spans\TestFieldMaskingSpanQuery.cs" />
+    <Compile Include="core\Search\Spans\TestNearSpansOrdered.cs" />
+    <Compile Include="core\Search\Spans\TestPayloadSpans.cs" />
+    <Compile Include="core\Search\Spans\TestSpanExplanations.cs" />
+    <Compile Include="core\Search\Spans\TestSpanExplanationsOfNonMatches.cs" />
+    <Compile Include="core\Search\Spans\TestSpanFirstQuery.cs" />
+    <Compile Include="core\Search\Spans\TestSpanMultiTermQueryWrapper.cs" />
+    <Compile Include="core\Search\Spans\TestSpans.cs" />
+    <Compile Include="core\Search\Spans\TestSpansAdvanced.cs" />
+    <Compile Include="core\Search\Spans\TestSpansAdvanced2.cs" />
+    <Compile Include="core\Search\Spans\TestSpanSearchEquivalence.cs" />
+    <Compile Include="core\Search\TestAutomatonQuery.cs" />
+    <Compile Include="core\Search\TestAutomatonQueryUnicode.cs" />
+    <Compile Include="core\Search\TestBoolean2.cs" />
+    <Compile Include="core\Search\TestBooleanMinShouldMatch.cs" />
+    <Compile Include="core\Search\TestBooleanOr.cs" />
+    <Compile Include="core\Search\TestBooleanQuery.cs" />
+    <Compile Include="core\Search\TestBooleanQueryVisitSubscorers.cs" />
+    <Compile Include="core\Search\TestBooleanScorer.cs" />
+    <Compile Include="core\Search\TestCachingCollector.cs" />
+    <Compile Include="core\Search\TestCachingWrapperFilter.cs" />
+    <Compile Include="core\Search\TestComplexExplanations.cs" />
+    <Compile Include="core\Search\TestComplexExplanationsOfNonMatches.cs" />
+    <Compile Include="core\Search\TestConjunctions.cs" />
+    <Compile Include="core\Search\TestConstantScoreQuery.cs" />
+    <Compile Include="core\Search\TestCustomSearcherSort.cs" />
+    <Compile Include="core\Search\TestDateFilter.cs" />
+    <Compile Include="core\Search\TestDateSort.cs" />
+    <Compile Include="core\Search\TestDisjunctionMaxQuery.cs" />
+    <Compile Include="core\Search\TestDocBoost.cs" />
+    <Compile Include="core\Search\TestDocIdSet.cs" />
+    <Compile Include="core\Search\TestDocTermOrdsRangeFilter.cs" />
+    <Compile Include="core\Search\TestDocTermOrdsRewriteMethod.cs" />
+    <Compile Include="core\Search\TestDocValuesScoring.cs" />
+    <Compile Include="core\Search\TestEarlyTermination.cs" />
+    <Compile Include="core\Search\TestElevationComparator.cs" />
+    <Compile Include="core\Search\TestExplanations.cs" />
+    <Compile Include="core\Search\TestFieldCacheRangeFilter.cs" />
+    <Compile Include="core\Search\TestFieldCacheRewriteMethod.cs" />
+    <Compile Include="core\Search\TestFieldCacheTermsFilter.cs" />
+    <Compile Include="core\Search\TestFieldValueFilter.cs" />
+    <Compile Include="core\Search\TestFilteredQuery.cs" />
+    <Compile Include="core\Search\TestFilteredSearch.cs" />
+    <Compile Include="core\Search\TestFuzzyQuery.cs" />
+    <Compile Include="core\Search\TestIndexSearcher.cs" />
+    <Compile Include="core\Search\TestLiveFieldValues.cs" />
+    <Compile Include="core\Search\TestMatchAllDocsQuery.cs" />
+    <Compile Include="core\Search\TestMinShouldMatch2.cs" />
+    <Compile Include="core\Search\TestMultiPhraseQuery.cs" />
+    <Compile Include="core\Search\TestMultiTermConstantScore.cs" />
+    <Compile Include="core\Search\TestMultiTermQueryRewrites.cs" />
+    <Compile Include="core\Search\TestMultiThreadTermVectors.cs" />
+    <Compile Include="core\Search\TestMultiValuedNumericRangeQuery.cs" />
+    <Compile Include="core\Search\TestNGramPhraseQuery.cs" />
+    <Compile Include="core\Search\TestNot.cs" />
+    <Compile Include="core\Search\TestNumericRangeQuery32.cs" />
+    <Compile Include="core\Search\TestNumericRangeQuery64.cs" />
+    <Compile Include="core\Search\TestPhrasePrefixQuery.cs" />
+    <Compile Include="core\Search\TestPhraseQuery.cs" />
+    <Compile Include="core\Search\TestPositionIncrement.cs" />
+    <Compile Include="core\Search\TestPositiveScoresOnlyCollector.cs" />
+    <Compile Include="core\Search\TestPrefixFilter.cs" />
+    <Compile Include="core\Search\TestPrefixInBooleanQuery.cs" />
+    <Compile Include="core\Search\TestPrefixQuery.cs" />
+    <Compile Include="core\Search\TestPrefixRandom.cs" />
+    <Compile Include="core\Search\TestQueryRescorer.cs" />
+    <Compile Include="core\Search\TestQueryWrapperFilter.cs" />
+    <Compile Include="core\Search\TestRegexpQuery.cs" />
+    <Compile Include="core\Search\TestRegexpRandom.cs" />
+    <Compile Include="core\Search\TestRegexpRandom2.cs" />
+    <Compile Include="core\Search\TestSameScoresWithThreads.cs" />
+    <Compile Include="core\Search\TestScoreCachingWrappingScorer.cs" />
+    <Compile Include="core\Search\TestScorerPerf.cs" />
+    <Compile Include="core\Search\TestSearchAfter.cs" />
+    <Compile Include="core\Search\TestSearcherManager.cs" />
+    <Compile Include="core\Search\TestSearchWithThreads.cs" />
+    <Compile Include="core\Search\TestShardSearching.cs" />
+    <Compile Include="core\Search\TestSimilarity.cs" />
+    <Compile Include="core\Search\TestSimilarityProvider.cs" />
+    <Compile Include="core\Search\TestSimpleExplanations.cs" />
+    <Compile Include="core\Search\TestSimpleExplanationsOfNonMatches.cs" />
+    <Compile Include="core\Search\TestSimpleSearchEquivalence.cs" />
+    <Compile Include="core\Search\TestSloppyPhraseQuery.cs" />
+    <Compile Include="core\Search\TestSloppyPhraseQuery2.cs" />
+    <Compile Include="core\Search\TestSort.cs" />
+    <Compile Include="core\Search\TestSortDocValues.cs" />
+    <Compile Include="core\Search\TestSortRandom.cs" />
+    <Compile Include="core\Search\TestSortRescorer.cs" />
+    <Compile Include="core\Search\TestSubScorerFreqs.cs" />
+    <Compile Include="core\Search\TestTermRangeFilter.cs" />
+    <Compile Include="core\Search\TestTermRangeQuery.cs" />
+    <Compile Include="core\Search\TestTermScorer.cs" />
+    <Compile Include="core\Search\TestTermVectors.cs" />
+    <Compile Include="core\Search\TestTopDocsCollector.cs" />
+    <Compile Include="core\Search\TestTopDocsMerge.cs" />
+    <Compile Include="core\Search\TestTopFieldCollector.cs" />
+    <Compile Include="core\Search\TestTopScoreDocCollector.cs" />
+    <Compile Include="core\Search\TestTotalHitCountCollector.cs" />
+    <Compile Include="core\Search\TestWildcard.cs" />
+    <Compile Include="core\Search\TestWildcardRandom.cs" />
+    <Compile Include="core\Store\TestBufferedChecksum.cs" />
+    <Compile Include="core\Store\TestBufferedIndexInput.cs" />
+    <Compile Include="core\Store\TestByteArrayDataInput.cs" />
+    <Compile Include="core\Store\TestCopyBytes.cs" />
+    <Compile Include="core\Store\TestDirectory.cs" />
+    <Compile Include="core\Store\TestFileSwitchDirectory.cs" />
+    <Compile Include="core\Store\TestFilterDirectory.cs" />
+    <Compile Include="core\Store\TestHugeRamFile.cs" />
+    <Compile Include="core\Store\TestLock.cs" />
+    <Compile Include="core\Store\TestLockFactory.cs" />
+    <Compile Include="core\Store\TestMockDirectoryWrapper.cs" />
+    <Compile Include="core\Store\TestMultiMMap.cs" />
+    <Compile Include="core\Store\TestNRTCachingDirectory.cs" />
+    <Compile Include="core\Store\TestRAMDirectory.cs" />
+    <Compile Include="core\Store\TestRateLimiter.cs" />
+    <Compile Include="core\Store\TestWindowsMMap.cs" />
+    <Compile Include="core\SupportClassException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\TestAssertions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\TestDemo.cs" />
+    <Compile Include="core\TestExternalCodecs.cs" />
+    <Compile Include="core\TestSearch.cs" />
+    <Compile Include="core\TestSearchForDuplicates.cs" />
+    <Compile Include="core\Util\Automaton\TestBasicOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestCompiledAutomaton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestDeterminism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestDeterminizeLexicon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestLevenshteinAutomata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestMinimize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestSpecialOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestUTF32ToUTF8.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\BaseSortTestCase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Fst\Test2BFST.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Fst\TestBytesStore.cs" />
+    <Compile Include="core\Util\Fst\TestFSTs.cs" />
+    <Compile Include="core\Util\Packed\TestEliasFanoDocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Packed\TestEliasFanoSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Packed\TestPackedInts.cs" />
+    <Compile Include="core\Util\StressRamUsageEstimator.cs" />
+    <Compile Include="core\Util\Test2BPagedBytes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestArrayUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestAttributeSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBroadWord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestByteBlockPool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRefArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRefHash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCharsRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCloseableThreadLocal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCollectionUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestConstants.cs" />
+    <Compile Include="core\Util\TestDocIdBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestDoubleBarrelLRUCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFieldCacheSanityChecker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFilterIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFixedBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIdentityHashSet.cs" />
+    <Compile Include="core\Util\TestIndexableBinaryStringTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestInPlaceMergeSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIntroSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIntsRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIOUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestLongBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestMergedIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestNamedSPILoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestNumericUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestOfflineSorter.cs" />
+    <Compile Include="core\Util\TestOpenBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPagedBytes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPForDeltaDocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPriorityQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestQueryBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRamUsageEstimator.cs" />
+    <Compile Include="core\Util\TestRamUsageEstimatorOnWildAnimals.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRecyclingByteBlockAllocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRecyclingIntBlockAllocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRollingBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSentinelIntSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSetOnce.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSloppyMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSmallFloat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestStringHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestTimSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Support\TestToStringUtils.cs" />
+    <Compile Include="core\Util\TestUnicodeUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestVersionComparator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestVirtualMethod.cs" />
+    <Compile Include="core\Util\TestWAH8DocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestWeakIdentityMap.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\Util\Cache\" />
+    <Folder Include="core\Util\Junitcompat\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <PropertyGroup>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+  </PropertyGroup>
+</Project>

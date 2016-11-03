@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
         /// <p>
         /// <b>NOTE:</b>
         /// The default implementation closes the input Reader, so
-        /// be sure to call <code>super.close()</code> when overriding this method.
+        /// be sure to call <code>super.Dispose()</code> when overriding this method.
         /// </summary>
         public override void Dispose()
         {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis
                     + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
             }
 
-            public override void Close()
+            protected override void Dispose(bool disposing)
             {
             }
         }

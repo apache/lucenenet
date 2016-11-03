@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -67,7 +68,9 @@ namespace Lucene.Net.Support
     ///     <item><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</item>
     /// </list>
     /// </remarks>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
         internal IEqualityComparer<TKey> _comparer;
@@ -116,7 +119,7 @@ namespace Lucene.Net.Support
             _dict = wrappedDict;
             _hasNullValue = false;
 
-            if (typeof(TKey).IsValueType)
+            if (typeof(TKey).GetTypeInfo().IsValueType)
             {
                 _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
             }

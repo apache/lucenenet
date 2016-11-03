@@ -51,23 +51,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             protected internal override bool SortTermsByUnicode()
             {
+
                 // We carefully peek into stack track above us: if
                 // we are part of a "merge", we must sort by UTF16:
                 bool unicodeSortOrder = true;
 
-                var trace = new StackTrace();
-                foreach (var frame in trace.GetFrames())
+                if (Util.StackTraceHelper.DoesStackTraceContainMethod("Merge"))
                 {
-                    var method = frame.GetMethod();
-                    if ("Merge".Equals(method.Name))
-                    {
                         unicodeSortOrder = false;
                         if (LuceneTestCase.VERBOSE)
                         {
                             Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 vector term sort order");
                         }
-                        break;
-                    }
                 }
 
                 return unicodeSortOrder;

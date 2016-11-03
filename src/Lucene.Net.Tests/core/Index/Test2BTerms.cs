@@ -6,7 +6,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Analysis;
     using Lucene.Net.Analysis.Tokenattributes;
-    
+
     using Lucene.Net.Search;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 
     using Lucene.Net.Util;
     using NUnit.Framework;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
     using Codec = Lucene.Net.Codecs.Codec;
 
@@ -157,7 +158,7 @@ namespace Lucene.Net.Index
                     {
                         return new MyTermAttributeImpl();
                     }
-                    if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
+                    if (attClass.GetTypeInfo().IsSubclassOf(typeof(CharTermAttribute)))
                     {
                         throw new System.ArgumentException("no");
                     }

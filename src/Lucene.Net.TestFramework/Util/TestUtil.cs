@@ -42,7 +42,6 @@ namespace Lucene.Net.Util
     using Codec = Lucene.Net.Codecs.Codec;
 
     //using CheckIndex = Lucene.Net.Index.CheckIndex;
-    using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;

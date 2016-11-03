@@ -275,14 +275,19 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
+#if !NETCORE
                 try
                 {
+#endif
                     Latch.Wait();
+#if !NETCORE
                 }
                 catch (ThreadInterruptedException e)
                 {
                     throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                 }
+#endif
+
                 int i = 0;
                 while ((i = Index.GetAndIncrement()) < Ids.Length)
                 {

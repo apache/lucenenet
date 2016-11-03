@@ -7,7 +7,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using NUnit.Framework;
-
+    using System.Threading;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

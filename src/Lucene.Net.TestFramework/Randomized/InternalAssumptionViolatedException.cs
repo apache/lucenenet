@@ -29,10 +29,5 @@ namespace Lucene.Net.Randomized
 
         public InternalAssumptionViolatedException(string message, Exception inner)
             : base(message, inner) { }
-
-        protected InternalAssumptionViolatedException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
     }
 }

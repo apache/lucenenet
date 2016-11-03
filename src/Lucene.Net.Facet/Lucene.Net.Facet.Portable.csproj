@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C7D049D9-439C-4DE2-BB0B-60B3DACE18EA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Facet</RootNamespace>
+    <AssemblyName>Lucene.Net.Facet</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+        <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Lucene.Net.Facet.Portable.project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DrillDownQuery.cs" />
+    <Compile Include="DrillSideways.cs" />
+    <Compile Include="DrillSidewaysQuery.cs" />
+    <Compile Include="DrillSidewaysScorer.cs" />
+    <Compile Include="FacetField.cs" />
+    <Compile Include="FacetResult.cs" />
+    <Compile Include="Facets.cs" />
+    <Compile Include="FacetsCollector.cs" />
+    <Compile Include="FacetsConfig.cs" />
+    <Compile Include="LabelAndValue.cs" />
+    <Compile Include="MultiFacets.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomSamplingFacetsCollector.cs" />
+    <Compile Include="Range\DoubleRange.cs" />
+    <Compile Include="Range\DoubleRangeFacetCounts.cs" />
+    <Compile Include="Range\LongRange.cs" />
+    <Compile Include="Range\LongRangeCounter.cs" />
+    <Compile Include="Range\LongRangeFacetCounts.cs" />
+    <Compile Include="Range\Range.cs" />
+    <Compile Include="Range\RangeFacetCounts.cs" />
+    <Compile Include="SortedSet\DefaultSortedSetDocValuesReaderState.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesFacetCounts.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesFacetField.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesReaderState.cs" />
+    <Compile Include="Taxonomy\AssociationFacetField.cs" />
+    <Compile Include="Taxonomy\CachedOrdinalsReader.cs" />
+    <Compile Include="Taxonomy\CategoryPath.cs" />
+    <Compile Include="Taxonomy\Directory\Consts.cs" />
+    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
+    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyWriter.cs" />
+    <Compile Include="Taxonomy\Directory\TaxonomyIndexArrays.cs" />
+    <Compile Include="Taxonomy\DocValuesOrdinalsReader.cs" />
+    <Compile Include="Taxonomy\FacetLabel.cs" />
+    <Compile Include="Taxonomy\FastTaxonomyFacetCounts.cs" />
+    <Compile Include="Taxonomy\FloatAssociationFacetField.cs" />
+    <Compile Include="Taxonomy\FloatTaxonomyFacets.cs" />
+    <Compile Include="Taxonomy\IntAssociationFacetField.cs" />
+    <Compile Include="Taxonomy\IntTaxonomyFacets.cs" />
+    <Compile Include="Taxonomy\LRUHashMap.cs" />
+    <Compile Include="Taxonomy\OrdinalsReader.cs" />
+    <Compile Include="Taxonomy\ParallelTaxonomyArrays.cs" />
+    <Compile Include="Taxonomy\PrintTaxonomyStats.cs" />
+    <Compile Include="Taxonomy\SearcherTaxonomyManager.cs" />
+    <Compile Include="Taxonomy\TaxonomyFacetCounts.cs" />
+    <Compile Include="Taxonomy\TaxonomyFacets.cs" />
+    <Compile Include="Taxonomy\TaxonomyFacetSumFloatAssociations.cs" />
+    <Compile Include="Taxonomy\TaxonomyFacetSumIntAssociations.cs" />
+    <Compile Include="Taxonomy\TaxonomyFacetSumValueSource.cs" />
+    <Compile Include="Taxonomy\TaxonomyReader.cs" />
+    <Compile Include="Taxonomy\TaxonomyWriter.cs" />
+    <Compile Include="Taxonomy\WriterCache\CategoryPathUtils.cs" />
+    <Compile Include="Taxonomy\WriterCache\CharBlockArray.cs" />
+    <Compile Include="Taxonomy\WriterCache\CharBlockArrayConverter.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2oTaxonomyWriterCache.cs" />
+    <Compile Include="Taxonomy\WriterCache\CollisionMap.cs" />
+    <Compile Include="Taxonomy\WriterCache\CompactLabelToOrdinal.cs" />
+    <Compile Include="Taxonomy\WriterCache\LabelToOrdinal.cs" />
+    <Compile Include="Taxonomy\WriterCache\LruTaxonomyWriterCache.cs" />
+    <Compile Include="Taxonomy\WriterCache\NameHashIntCacheLRU.cs" />
+    <Compile Include="Taxonomy\WriterCache\NameIntCacheLRU.cs" />
+    <Compile Include="Taxonomy\WriterCache\TaxonomyWriterCache.cs" />
+    <Compile Include="TopOrdAndFloatQueue.cs" />
+    <Compile Include="TopOrdAndIntQueue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.Portable.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+  </PropertyGroup>
+</Project>

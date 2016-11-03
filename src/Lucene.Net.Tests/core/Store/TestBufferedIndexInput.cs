@@ -45,23 +45,12 @@ namespace Lucene.Net.Store
     {
         private static void WriteBytes(FileInfo aFile, long size)
         {
-            Stream ostream = null;
-            try
-            {
-                //ostream = new FileOutputStream(aFile);
-                ostream = new FileStream(aFile.FullName, FileMode.Create);
+            using (FileStream ostream = new FileStream(aFile.FullName, FileMode.Create)) {
                 for (int i = 0; i < size; i++)
                 {
                     ostream.WriteByte(Byten(i));
                 }
                 ostream.Flush();
-            }
-            finally
-            {
-                if (ostream != null)
-                {
-                    ostream.Close();
-                }
             }
         }
 

@@ -31,6 +31,8 @@ namespace Lucene.Net.Support
     /// </summary>
     public class FileSupport
     {
+        private static readonly object _lock = new object();
+
         /// <summary>
         /// Returns an array of abstract pathnames representing the files and directories of the specified path.
         /// </summary>
@@ -98,8 +100,14 @@ namespace Lucene.Net.Support
 
             if (OS.IsWindows)
             {
+#if NETSTANDARD
+                // Getting the SafeFileHandle property automatically flushes the
+                // stream: https://msdn.microsoft.com/en-us/library/system.io.filestream.safefilehandle(v=vs.110).aspx
+                var handle = fileStream.SafeFileHandle;
+#else
                 if (!FlushFileBuffers(fileStream.Handle))
                     throw new IOException();
+#endif
             }
             //else if (OS.IsUnix)
             //{
@@ -142,50 +150,52 @@ namespace Lucene.Net.Support
         /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case the suffix ".tmp" will be used</param>
         /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static FileInfo CreateTempFile(string prefix, string suffix, DirectoryInfo directory)
         {
-            if (string.IsNullOrEmpty(prefix))
-                throw new ArgumentNullException("prefix");
-            if (prefix.Length < 3)
-                throw new ArgumentException("Prefix string too short");
-            string s = (suffix == null) ? ".tmp" : suffix;
-            if (directory == null)
+            lock (_lock)
             {
-                string tmpDir = Path.GetTempPath();
-                directory = new DirectoryInfo(tmpDir);
-            }
-            int attempt = 0;
-            string extension = suffix.StartsWith(".") ? suffix : '.' + suffix;
-            string fileName = Path.Combine(directory.FullName, string.Concat(prefix, extension));
-            while (true)
-            {
-                try
+                if (string.IsNullOrEmpty(prefix))
+                    throw new ArgumentNullException("prefix");
+                if (prefix.Length < 3)
+                    throw new ArgumentException("Prefix string too short");
+                string s = (suffix == null) ? ".tmp" : suffix;
+                if (directory == null)
                 {
-                    if (attempt > 0)
-                    {
-                        fileName = Path.Combine(directory.FullName, string.Concat(prefix, attempt.ToString(), extension));
-                    }
-                    if (File.Exists(fileName))
-                    {
-                        attempt++;
-                        continue;
-                    }
-                    // Create the file
-                    File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
-                    break;
+                    string tmpDir = Path.GetTempPath();
+                    directory = new DirectoryInfo(tmpDir);
                 }
-                catch (IOException e)
+                int attempt = 0;
+                string extension = suffix.StartsWith(".") ? suffix : '.' + suffix;
+                string fileName = Path.Combine(directory.FullName, string.Concat(prefix, extension));
+                while (true)
                 {
-                    if (!e.Message.Contains("already exists"))
+                    try
                     {
-                        throw e;
+                        if (attempt > 0)
+                        {
+                            fileName = Path.Combine(directory.FullName, string.Concat(prefix, attempt.ToString(), extension));
+                        }
+                        if (File.Exists(fileName))
+                        {
+                            attempt++;
+                            continue;
+                        }
+                        // Create the file
+                        File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
+                        break;
                     }
+                    catch (IOException e)
+                    {
+                        if (!e.Message.Contains("already exists"))
+                        {
+                            throw e;
+                        }
 
-                    attempt++;
+                        attempt++;
+                    }
                 }
+                return new FileInfo(fileName);
             }
-            return new FileInfo(fileName);
         }
     }
 }

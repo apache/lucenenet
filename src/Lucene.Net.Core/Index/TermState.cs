@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     /// <seealso cref= TermsEnum#seekExact(Lucene.Net.Util.BytesRef, TermState) </seealso>
     /// <seealso cref= TermsEnum#termState()
     /// @lucene.experimental </seealso>
-    public abstract class TermState : ICloneable
+    public abstract class TermState
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

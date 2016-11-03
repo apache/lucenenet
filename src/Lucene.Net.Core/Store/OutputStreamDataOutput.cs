@@ -25,26 +25,26 @@ namespace Lucene.Net.Store
     /// </summary>
     public class OutputStreamDataOutput : DataOutput, IDisposable
     {
-        private readonly Stream Os;
+        private readonly BinaryWriter _writer;
 
         public OutputStreamDataOutput(Stream os)
         {
-            this.Os = os;
+            this._writer = new BinaryWriter(os);
         }
 
         public override void WriteByte(byte b)
         {
-            Os.WriteByte(unchecked((byte)b));
+            _writer.Write(unchecked((byte)b));
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            Os.Write(b, offset, length);
+            _writer.Write(b, offset, length);
         }
 
         public void Dispose()
         {
-            Os.Close();
+            _writer.Dispose();
         }
     }
 }

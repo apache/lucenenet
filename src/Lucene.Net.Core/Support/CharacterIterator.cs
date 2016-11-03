@@ -19,7 +19,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    public abstract class CharacterIterator : ICloneable
+    public abstract class CharacterIterator
     {
         public static readonly char DONE = '\uFFFF';
 

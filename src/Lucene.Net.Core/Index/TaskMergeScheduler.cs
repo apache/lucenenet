@@ -113,7 +113,11 @@ namespace Lucene.Net.Index
         {
             get
             {
+#if NETSTANDARD
+                return 2;
+#else
                 return (int)ThreadPriority.Normal;
+#endif 
             }
             set
             {
@@ -355,8 +359,10 @@ namespace Lucene.Net.Index
                 return;
             }
 
+#if !NETSTANDARD
             try
             {
+#endif
                 // When an exception is hit during merge, IndexWriter
                 // removes any partial files and then allows another
                 // merge to run.  If whatever caused the error is not
@@ -364,11 +370,13 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
+#if !NETSTANDARD
             }
             catch (ThreadInterruptedException ie)
             {
                 throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             }
+#endif
             throw new MergePolicy.MergeException(exc, _directory);
         }
 

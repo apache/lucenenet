@@ -311,14 +311,18 @@ namespace Lucene.Net.Search
                 {
                     // TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
                     Counter.AddAndGet(resolution);
+#if !NETSTANDARD
                     try
                     {
+#endif
                         Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
+#if !NETSTANDARD
                     }
                     catch (ThreadInterruptedException ie)
                     {
                         throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                     }
+#endif
                 }
             }
 

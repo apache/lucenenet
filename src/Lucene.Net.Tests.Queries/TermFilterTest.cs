@@ -139,23 +139,13 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestNoTerms()
         {
-            try
-            {
-                new TermFilter(null);
-                Fail(@"must fail - no term!");
-            }
-            catch (ArgumentException e)
-            {
-            }
+            Assert.Throws<ArgumentException>(
+                () => {  new TermFilter(null); },
+                "must fail - no term!");
 
-            try
-            {
-                new TermFilter(new Term(null));
-                Fail(@"must fail - no field!");
-            }
-            catch (ArgumentException e)
-            {
-            }
+            Assert.Throws<ArgumentException>(
+             () => { new TermFilter(new Term(null)); },
+             "must fail - no field!");
         }
 
         [Test]

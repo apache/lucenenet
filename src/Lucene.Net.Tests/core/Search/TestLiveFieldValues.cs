@@ -7,6 +7,7 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
+    using Index;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -166,7 +167,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     IDictionary<string, int?> values = new Dictionary<string, int?>();
-                    IList<string> allIDs = new SynchronizedCollection<string>();
+                    IList<string> allIDs = new SynchronizedList<string>();
 
                     StartingGun.Wait();
                     for (int iter = 0; iter < Iters; iter++)

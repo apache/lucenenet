@@ -333,7 +333,7 @@ namespace Lucene.Net.Search
             private readonly Random Random;
             private readonly float Density;
             private readonly IList<BytesRef> DocValues;
-            public readonly IList<BytesRef> MatchValues = new SynchronizedCollection<BytesRef>();
+            public readonly IList<BytesRef> MatchValues = new SynchronizedList<BytesRef>();
 
             // density should be 0.0 ... 1.0
             public RandomFilter(Random random, float density, IList<BytesRef> docValues)

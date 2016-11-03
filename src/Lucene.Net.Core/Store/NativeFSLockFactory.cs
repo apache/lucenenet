@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     Channel = new FileStream(Path.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
-                    Channel.Lock(0, Channel.Length);
+
                     success = true;
                 }
                 catch (IOException e)
@@ -213,8 +213,6 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        Channel.Unlock(0, Channel.Length);
-
                         NativeFSLock _;
                         _creatingInstance._locks.TryRemove(Path.FullName, out _);
                     }

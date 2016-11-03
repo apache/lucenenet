@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
             {
                 if (disposing)
                 {
-                    Descriptor.Close();
+                    Descriptor.Dispose();
                 }
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Store
             {
                 if (!IsClone)
                 {
-                    File.Close();
+                    File.Dispose();
                 }
             }
 

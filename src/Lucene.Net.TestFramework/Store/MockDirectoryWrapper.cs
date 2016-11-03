@@ -569,7 +569,7 @@ namespace Lucene.Net.Store
         {
             if (RandomState.NextBoolean())
             {
-                Thread.@Yield();
+                Thread.Sleep(0);
             }
         }
 

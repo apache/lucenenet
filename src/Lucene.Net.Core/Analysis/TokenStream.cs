@@ -119,12 +119,12 @@ namespace Lucene.Net.Analysis
             //if (!type.desiredAssertionStatus()) return true; // not supported in .NET
 
             var hasCompilerGeneratedAttribute =
-                type.GetCustomAttributes(typeof (CompilerGeneratedAttribute), false).Any();
+                type.GetTypeInfo().GetCustomAttributes(typeof (CompilerGeneratedAttribute), false).Any();
             var isAnonymousType = hasCompilerGeneratedAttribute && type.FullName.Contains("AnonymousType");
 
             var method = type.GetMethod("IncrementToken", BindingFlags.Public | BindingFlags.Instance);
 
-            if (!(isAnonymousType || type.IsSealed || (method != null && method.IsFinal)))            
+            if (!(isAnonymousType || type.GetTypeInfo().IsSealed || (method != null && method.IsFinal)))            
             {
                 // Original Java code throws an AssertException via Java's assert, we can't do this here
                 throw new InvalidOperationException("TokenStream implementation classes or at least their IncrementToken() implementation must be marked sealed");
@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Releases resources associated with this stream.
         /// <p>
-        /// If you override this method, always call {@code super.close()}, otherwise
+        /// If you override this method, always call {@code super.Dispose()}, otherwise
         /// some internal state will not be correctly reset (e.g., <seealso cref="Tokenizer"/> will
         /// throw <seealso cref="IllegalStateException"/> on reuse).
         /// </summary>

@@ -98,14 +98,19 @@ namespace Lucene.Net.Store
                                         : new LockObtainFailedException(reason);
                     throw e;
                 }
+
+#if !NETSTANDARD
                 try
                 {
+#endif
                     Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
+#if !NETSTANDARD                
                 }
                 catch (ThreadInterruptedException ie)
                 {
                     throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                 }
+#endif
                 locked = Obtain();
             }
             return locked;

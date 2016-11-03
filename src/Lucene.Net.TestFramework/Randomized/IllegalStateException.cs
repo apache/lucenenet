@@ -18,52 +18,16 @@
 using System;
 using System.Diagnostics;
 
+
 namespace Lucene.Net.Randomized
 {
     [Serializable]
     public class IllegalStateException : Exception
     {
-        private StackTrace trace;
-        private string traceAsString;
+        public IllegalStateException() { }
 
-        public override string StackTrace
-        {
-            get
-            {
-                if (this.trace != null)
-                    return this.trace.ToString();
+        public IllegalStateException(string message) : base(message) { }
 
-                if (!string.IsNullOrEmpty(this.traceAsString))
-                    return this.traceAsString;
-
-                return base.StackTrace;
-            }
-        }
-
-        public IllegalStateException()
-        {
-        }
-
-        public IllegalStateException(string message)
-            : base(message)
-        {
-        }
-
-        public IllegalStateException(string message, StackTrace trace)
-            : base(message)
-        {
-            this.trace = trace;
-        }
-
-        public IllegalStateException(string message, Exception inner)
-            : base(message, inner)
-        {
-            this.traceAsString = inner.StackTrace;
-        }
-
-        protected IllegalStateException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
+        public IllegalStateException(string message, Exception inner) : base(message, inner) { }
     }
 }

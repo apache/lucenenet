@@ -32,9 +32,14 @@ namespace Lucene.Net.Util
         /// <summary>Returns a single object instance for each equal string. </summary>
         public virtual System.String Intern(System.String s)
         {
+#if !NETSTANDARD
             return String.Intern(s);
+#else
+            throw new PlatformNotSupportedException("String.Intern not supported.  Use SimpleStringInterner.");
+#endif
+
         }
-        
+
         /// <summary>Returns a single object instance for each equal string. </summary>
         public virtual System.String Intern(char[] arr, int offset, int len)
         {

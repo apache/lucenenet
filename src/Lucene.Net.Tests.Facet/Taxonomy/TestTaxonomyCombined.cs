@@ -870,7 +870,9 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Run()
             {
+#if !NETCORE
                 Priority = 1 + Priority;
+#endif 
                 try
                 {
                     while (!stop.Get())

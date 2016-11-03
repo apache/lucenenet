@@ -136,7 +136,7 @@ namespace Lucene.Net.Classification
                 if (reader != null)
                     reader.Dispose();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // do nothing
             }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Util;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -785,7 +786,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 //System.out.println("pff.reset te=" + termEnum);
                 this.fieldInfo = fieldInfo;
-                InternedFieldName = String.Intern(fieldInfo.Name);
+                
+                InternedFieldName = StringHelper.Intern(fieldInfo.Name);
+
                 Term term = new Term(InternedFieldName);
                 if (TermEnum == null)
                 {

@@ -60,7 +60,7 @@ namespace Lucene.Net.Expressions
 					{
 						if (source == null)
 						{
-							throw new SystemException("Internal error. Variable (" + expression.variables[i]
+							throw new InvalidOperationException("Internal error. Variable (" + expression.variables[i]
 								 + ") does not exist.");
 						}
 					}
@@ -91,7 +91,7 @@ namespace Lucene.Net.Expressions
 					values = variables[i].GetValues(context, readerContext);
 					if (values == null)
 					{
-						throw new SystemException("Internal error. External (" + externalName + ") does not exist.");
+						throw new InvalidOperationException("Internal error. External (" + externalName + ") does not exist.");
 					}
 					valuesCache[externalName] = values;
 				}

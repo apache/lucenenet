@@ -111,8 +111,8 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    [Serializable]
-    public sealed class SegmentInfos : /*List<SegmentCommitInfo>,*/ ICloneable
+    
+    public sealed class SegmentInfos /*: List<SegmentCommitInfo>*/
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>

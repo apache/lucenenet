@@ -117,14 +117,8 @@ namespace Lucene.Net.Expressions
                 if (o is Expression)
                 {
                     Expression expr = (Expression)o;
-                    try
-                    {
-                        expr.GetValueSource(this);
-                    }
-                    catch (StackOverflowException)
-                    {
-                        throw new ArgumentException("Recursion Error: Cycle detected originating in (" + expr.sourceText + ")");
-                    }
+
+                    expr.GetValueSource(this);
                 }
             }
         }

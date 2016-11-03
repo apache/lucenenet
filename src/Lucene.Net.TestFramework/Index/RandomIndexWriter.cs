@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
             {
                 if (Random.Next(4) == 2)
                 {
-                    Thread.@Yield();
+                    System.Threading.Thread.Sleep(0);
                 }
             }
         }

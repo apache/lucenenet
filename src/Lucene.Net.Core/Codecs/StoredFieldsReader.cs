@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class StoredFieldsReader : ICloneable, IDisposable
+    public abstract class StoredFieldsReader : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

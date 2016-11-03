@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
     [TestFixture]
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
     {
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, MaxTime(int.MaxValue)]
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, MaxTime(int.MaxValue)]
         public virtual void TestNeverCallingPeek()
         {
             Analyzer a = new NCPAnalyzerAnonymousInnerClassHelper(this);

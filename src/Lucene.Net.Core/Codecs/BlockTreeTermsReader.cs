@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs
             {
                 if (!success)
                 {
-                    // this.close() will close in:
+                    // this.Dispose() will close in:
                     IOUtils.CloseWhileHandlingException(indexIn, this);
                 }
             }
@@ -600,7 +600,7 @@ namespace Lucene.Net.Codecs
                       Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
                       Util.toDot(index, w, false, false);
                       System.out.println("FST INDEX: SAVED to " + dotFileName);
-                      w.close();
+                      w.Dispose();
                     }
                     */
                 }

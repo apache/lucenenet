@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestByteSlices : LuceneTestCase
     {
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public virtual void TestBasic()
         {
             ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));

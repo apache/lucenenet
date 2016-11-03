@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
             {
                 if (result == null)
                 {
-                    result = (BitArray)rnd.Clone();
+                    result =  new BitArray(rnd);
                 }
                 else
                 {

@@ -355,7 +355,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="fnCreate">Constructs a new value for the key.</param>
-        public TValue GetOrAdd(TKey key, Converter<TKey, TValue> fnCreate)
+        public TValue GetOrAdd(TKey key, Func<TKey, TValue> fnCreate)
         {
             var info = new Add2Info { Create = fnCreate };
             Insert(key, ref info);
@@ -382,7 +382,7 @@ namespace Lucene.Net.Support
         /// the factory method fnCreate will be called to produce the new value, if the key exists, the converter method
         /// fnUpdate will be called to create an updated value.
         /// </remarks>
-        public TValue AddOrUpdate(TKey key, Converter<TKey, TValue> fnCreate, KeyValueUpdate<TKey, TValue> fnUpdate)
+        public TValue AddOrUpdate(TKey key, Func<TKey, TValue> fnCreate, KeyValueUpdate<TKey, TValue> fnUpdate)
         {
             var info = new Add2Info { Create = fnCreate, Update = fnUpdate };
             Insert(key, ref info);
@@ -403,7 +403,7 @@ namespace Lucene.Net.Support
         /// Adds an element with the provided key and value to the <see cref="T:System.Collections.Generic.IDictionary`2"/>
         /// by calling the provided factory method to construct the value if the key is not already present in the collection.
         /// </summary>
-        public bool TryAdd(TKey key, Converter<TKey, TValue> fnCreate)
+        public bool TryAdd(TKey key, Func<TKey, TValue> fnCreate)
         {
             var info = new Add2Info { Create = fnCreate };
             return InsertResult.Inserted == Insert(key, ref info);
@@ -1450,7 +1450,7 @@ namespace Lucene.Net.Support
             readonly bool _hasAddValue;
             readonly TValue _addValue;
             public TValue Value;
-            public Converter<TKey, TValue> Create;
+            public Func<TKey, TValue> Create;
             public KeyValueUpdate<TKey, TValue> Update;
 
             public Add2Info(TValue addValue) : this()
@@ -1520,25 +1520,29 @@ namespace Lucene.Net.Support
 
     #region LurchTable Support
 
-    #region Exceptions
+#region Exceptions
 
     /// <summary>
     /// Exception class: LurchTableCorruptionException
     /// The LurchTable internal datastructure appears to be corrupted.
     /// </summary>
+#if !NETSTANDARD
     [System.SerializableAttribute()]
+#endif
     [global::System.Diagnostics.DebuggerStepThroughAttribute()]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("CSharpTest.Net.Generators", "2.13.222.435")]
-    public partial class LurchTableCorruptionException : System.ApplicationException
+    public partial class LurchTableCorruptionException : Exception
     {
+#if !NETSTANDARD
         /// <summary>
         /// Serialization constructor
         /// </summary>
         protected LurchTableCorruptionException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
         {
         }
+#endif
         /// <summary>
         /// Used to create this exception from an hresult and message bypassing the message formatting
         /// </summary>
@@ -1576,9 +1580,9 @@ namespace Lucene.Net.Support
         }
     }
 
-    #endregion // Exceptions
+#endregion // Exceptions
 
-    #region Delegates
+#region Delegates
 
     /// <summary> Provides a delegate that performs an atomic update of a key/value pair </summary>
     public delegate TValue KeyValueUpdate<TKey, TValue>(TKey key, TValue original);
@@ -1586,9 +1590,9 @@ namespace Lucene.Net.Support
     /// <summary> Provides a delegate that performs a test on key/value pair </summary>
     public delegate bool KeyValuePredicate<TKey, TValue>(TKey key, TValue original);
 
-    #endregion // Delegates
+#endregion // Delegates
 
-    #region Interfaces
+#region Interfaces
 
     /// <summary>
     /// An interface to provide conditional or custom creation logic to a concurrent dictionary.
@@ -1639,9 +1643,9 @@ namespace Lucene.Net.Support
         bool RemoveValue(TKey key, TValue value);
     }
 
-    #endregion // interfaces
+#endregion // interfaces
 
-    #region Classes
+#region Classes
 
     internal class HashUtilities
     {
@@ -1664,7 +1668,7 @@ namespace Lucene.Net.Support
         }
     }
 
-    #endregion // Classes
+#endregion // Classes
 
-    #endregion // LurchTable Support
+#endregion // LurchTable Support
 }

@@ -30,10 +30,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
     using Lucene.Net.TestFramework.Support;
+    using Support.Configuration;
     using System.IO;
     using System.Reflection;
     using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
@@ -51,7 +53,6 @@ namespace Lucene.Net.Util
     using Codec = Lucene.Net.Codecs.Codec;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using CompositeReader = Lucene.Net.Index.CompositeReader;
-    using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -323,23 +324,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
+        public static readonly string TEST_CODEC = Configuration.GetAppSetting("tests.codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = Configuration.GetAppSetting("tests.postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = Configuration.GetAppSetting("tests.docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = Configuration.GetAppSetting("tests.directory", "random");
 
         /// <summary>
         /// the line file used by LineFileDocs </summary>
-        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = Configuration.GetAppSetting("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         /// <summary>
         /// Whether or not <seealso cref="Nightly"/> tests should run. </summary>
@@ -916,6 +917,9 @@ namespace Lucene.Net.Util
                 int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
                 IConcurrentMergeScheduler mergeScheduler;
 
+#if NETCORE
+                mergeScheduler = new TaskMergeScheduler();
+#else
                 if (r.NextBoolean())
                 {
                     mergeScheduler = new ConcurrentMergeScheduler();
@@ -924,7 +928,7 @@ namespace Lucene.Net.Util
                 {
                     mergeScheduler = new TaskMergeScheduler();
                 }
-
+#endif
                 mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
                 c.SetMergeScheduler(mergeScheduler);
             }
@@ -1032,12 +1036,12 @@ namespace Lucene.Net.Util
 
         public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
-            return NewAlcoholicMergePolicy(Random(), ClassEnvRule.TimeZone);
+            return NewAlcoholicMergePolicy(Random());
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
+        public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r)
         {
-            return new AlcoholicMergePolicy(tz, new Random(r.Next()));
+            return new AlcoholicMergePolicy(new Random(r.Next()));
         }
 
         public static LogMergePolicy NewLogMergePolicy(Random r)
@@ -1470,7 +1474,7 @@ namespace Lucene.Net.Util
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             // If it is a FSDirectory type, try its ctor(File)
-            if (clazz.IsSubclassOf(typeof(FSDirectory)))
+            if (clazz.GetTypeInfo().IsSubclassOf(typeof(FSDirectory)))
             {
                 DirectoryInfo dir = CreateTempDir("index-" + clazzName);
                 dir.Create(); // ensure it's created so we 'have' it.
@@ -2744,12 +2748,9 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected string GetFullMethodName()
+        protected string GetFullMethodName([CallerMemberName] string memberName = "")
         {
-            var st = new StackTrace();
-            var sf = st.GetFrame(1);
-
-            return string.Format("{0}+{1}", this.GetType().Name, sf.GetMethod().Name);
+            return string.Format("{0}+{1}", this.GetType().Name, memberName);
         }
 
         private void CleanupTemporaryFiles()
@@ -2801,7 +2802,9 @@ namespace Lucene.Net.Util
         public class ConcurrentMergeSchedulers
         {
             public readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
+#if !NETCORE
                 new ConcurrentMergeScheduler(),
+#endif
                 new TaskMergeScheduler()
             };
         }

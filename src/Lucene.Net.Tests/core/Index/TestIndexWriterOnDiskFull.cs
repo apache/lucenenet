@@ -6,6 +6,7 @@ namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using System.IO;
+    using Util;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -567,20 +568,18 @@ namespace Lucene.Net.Index
                     return;
                 }
 
-                var trace = new StackTrace();
-                foreach (var frame in trace.GetFrames())
+                /*typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && */
+                if (StackTraceHelper.DoesStackTraceContainMethod("MergeTerms") && !DidFail1)
                 {
-                    var method = frame.GetMethod();
-                    if (/*typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && */"MergeTerms".Equals(method.Name) && !DidFail1)
-                    {
-                        DidFail1 = true;
-                        throw new IOException("fake disk full during mergeTerms");
-                    }
-                    if (/*typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && */"WriteLiveDocs".Equals(method.Name) && !DidFail2)
-                    {
-                        DidFail2 = true;
-                        throw new IOException("fake disk full while writing LiveDocs");
-                    }
+                    DidFail1 = true;
+                    throw new IOException("fake disk full during mergeTerms");
+                }
+
+                /*typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && */
+                if (StackTraceHelper.DoesStackTraceContainMethod("WriteLiveDocs") && !DidFail2)
+                {
+                    DidFail2 = true;
+                    throw new IOException("fake disk full while writing LiveDocs");
                 }
             }
         }

@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
         {
             if (!SystemStream)
             {
-                Stream.Close();
+                Stream.Dispose();
             }
         }
 

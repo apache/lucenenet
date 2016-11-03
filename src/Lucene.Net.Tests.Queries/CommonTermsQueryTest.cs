@@ -142,7 +142,7 @@ namespace Lucene.Net.Tests.Queries
                 query.Add(null);
                 Fail(@"null values are not supported");
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
             }
         }
@@ -280,23 +280,17 @@ namespace Lucene.Net.Tests.Queries
         public void TestIllegalOccur()
         {
             Random random = Random();
-            try
-            {
-                new CommonTermsQuery(BooleanClause.Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
-                Fail(@"MUST_NOT is not supproted");
-            }
-            catch (ArgumentException ex)
-            {
-            }
+            Assert.Throws<ArgumentException>(() =>
+                {
+                    new CommonTermsQuery(BooleanClause.Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
+                },
+                "MUST_NOT is not supported");
 
-            try
-            {
-                new CommonTermsQuery(RandomOccur(random), BooleanClause.Occur.MUST_NOT, Random().NextFloat());
-                Fail(@"MUST_NOT is not supproted");
-            }
-            catch (ArgumentException ex)
-            {
-            }
+            Assert.Throws<ArgumentException>(() =>
+                {
+                    new CommonTermsQuery(RandomOccur(random), BooleanClause.Occur.MUST_NOT, Random().NextFloat());
+                },
+                "MUST_NOT is not supported");
         }
 
         [Test]

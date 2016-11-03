@@ -10,6 +10,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System.IO;
+    using Util;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Bits = Lucene.Net.Util.Bits;
@@ -112,14 +113,18 @@ namespace Lucene.Net.Index
                         if (ioe.Message.StartsWith("fake disk full at") || ioe.Message.Equals("now failing on purpose"))
                         {
                             DiskFull = true;
+#if !NETCORE
                             try
                             {
-                                Thread.Sleep(1);
+#endif
+                            Thread.Sleep(1);
+#if !NETCORE
                             }
                             catch (ThreadInterruptedException ie)
                             {
                                 throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                             }
+#endif
                             if (fullCount++ >= 5)
                             {
                                 break;
@@ -423,31 +428,11 @@ namespace Lucene.Net.Index
 
                 if (DoFail)
                 {
-                    var trace = new StackTrace();
-                    bool sawAbortOrFlushDoc = false;
-                    bool sawClose = false;
-                    bool sawMerge = false;
-
-                    foreach (var frame in trace.GetFrames())
-                    {
-                        var method = frame.GetMethod();
-                        if (sawAbortOrFlushDoc && sawMerge && sawClose)
-                        {
-                            break;
-                        }
-                        if ("Abort".Equals(method.Name) || "FinishDocument".Equals(method.Name))
-                        {
-                            sawAbortOrFlushDoc = true;
-                        }
-                        if ("Merge".Equals(method.Name))
-                        {
-                            sawMerge = true;
-                        }
-                        if ("Close".Equals(method.Name) || "Dispose".Equals(method.Name))
-                        {
-                            sawClose = true;
-                        }
-                    }
+                    bool sawAbortOrFlushDoc = StackTraceHelper.DoesStackTraceContainMethod("Abort")
+                        || StackTraceHelper.DoesStackTraceContainMethod("FinishDocument");
+                    bool sawClose = StackTraceHelper.DoesStackTraceContainMethod("Close")
+                        || StackTraceHelper.DoesStackTraceContainMethod("Dispose");
+                    bool sawMerge = StackTraceHelper.DoesStackTraceContainMethod("Merge");
 
                     if (sawAbortOrFlushDoc && !sawClose && !sawMerge)
                     {
@@ -509,20 +494,15 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
-                    var trace = new StackTrace();
-                    foreach (var frame in trace.GetFrames())
+                    if (StackTraceHelper.DoesStackTraceContainMethod("Flush") /*&& "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name)*/)
                     {
-                        var method = frame.GetMethod();
-                        if ("Flush".Equals(method.Name) /*&& "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name)*/)
+                        if (OnlyOnce)
                         {
-                            if (OnlyOnce)
-                            {
-                                DoFail = false;
-                            }
-                            //System.out.println(Thread.currentThread().getName() + ": NOW FAIL: onlyOnce=" + onlyOnce);
-                            //new Throwable(Console.WriteLine().StackTrace);
-                            throw new IOException("now failing on purpose");
+                            DoFail = false;
                         }
+                        //System.out.println(Thread.currentThread().getName() + ": NOW FAIL: onlyOnce=" + onlyOnce);
+                        //new Throwable(Console.WriteLine().StackTrace);
+                        throw new IOException("now failing on purpose");
                     }
                 }
             }
@@ -666,7 +646,7 @@ namespace Lucene.Net.Index
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-            AtomicObject<IndexWriter> writerRef = 
+            AtomicObject<IndexWriter> writerRef =
                 new AtomicObject<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 
             LineFileDocs docs = new LineFileDocs(Random());

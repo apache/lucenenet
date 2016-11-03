@@ -67,29 +67,12 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail && TestThread())
+                if (DoFail && TestThread() && Random().NextBoolean())
                 {
-                    bool isDoFlush = false;
-                    bool isClose = false;
-                    var trace = new StackTrace();
-                    foreach (var frame in trace.GetFrames())
-                    {
-                        var method = frame.GetMethod();
-                        if (isDoFlush && isClose)
-                        {
-                            break;
-                        }
-                        if ("Flush".Equals(method.Name))
-                        {
-                            isDoFlush = true;
-                        }
-                        if ("Close".Equals(method.Name))
-                        {
-                            isClose = true;
-                        }
-                    }
+                    bool isDoFlush = Util.StackTraceHelper.DoesStackTraceContainMethod("Flush");
+                    bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close");    
 
-                    if (isDoFlush && !isClose && Random().NextBoolean())
+                    if (isDoFlush && !isClose )
                     {
                         HitExc = true;
                         throw new IOException(Thread.CurrentThread.Name + ": now failing during flush");
@@ -213,7 +196,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -245,7 +228,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -407,7 +390,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();

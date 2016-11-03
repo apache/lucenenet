@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
             internal Random Random;
 
             // we use the default Locale/TZ since LuceneTestCase randomizes it
-            internal DateTime @base = new DateTime(1970, 1, 1, new GregorianCalendar());
+            internal DateTime @base;
 
             // Just to generate some different Lucene Date strings
             internal virtual string LuceneDate

@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
             {
                 if (Reader != null)
                 {
-                    Reader.Close();
+                    Reader.Dispose();
                     Reader = null;
                 }
             }
@@ -100,9 +100,8 @@ namespace Lucene.Net.Util
                 try
                 {
                     @is = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    //@is = File.OpenRead(Path);
                 }
-                catch (Exception FSfail)
+                catch (Exception)
                 {
                     failed = true;
                     // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
@@ -140,7 +139,7 @@ namespace Lucene.Net.Util
                         var temp = new MemoryStream();
                         gzs.CopyTo(temp);
                         // Free up the previous stream
-                        @is.Close();
+                        @is.Dispose();
                         // Use the decompressed stream now
                         @is = temp;
                     }
@@ -183,7 +182,7 @@ namespace Lucene.Net.Util
                     Reader.ReadLine();
                 }
 
-                @is.Close();
+                @is.Dispose();
             }
         }
 

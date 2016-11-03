@@ -28,6 +28,18 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class StringHelper
     {
+        /// <summary> Expert:
+        /// The StringInterner implementation used by Lucene.
+        /// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
+        /// </summary>
+        public static StringInterner interner = new SimpleStringInterner(1024, 8);
+
+        /// <summary>Returns the same string object for all equal strings.</summary>
+        public static System.String Intern(System.String s)
+        {
+            return interner.Intern(s);
+        }
+
         /// <summary>
         /// Compares two <seealso cref="BytesRef"/>, element by element, and returns the
         /// number of elements common to both arrays.

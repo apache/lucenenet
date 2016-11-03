@@ -49,11 +49,11 @@ namespace Lucene.Net.Store
             if (args.Length != 2)
             {
                 Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
-                Environment.Exit(1);
+                Environment.FailFast("1");
             }
 
             int arg = 0;
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(args[arg++]);
+            IPHostEntry ipHostInfo = Dns.GetHostEntryAsync(args[arg++]).Result;
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 0);
             int maxClients = Convert.ToInt32(args[arg++]);
@@ -62,6 +62,7 @@ namespace Lucene.Net.Store
             {
                 s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
                 s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
+
                 s.Bind(localEndPoint);
                 Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
 
@@ -116,7 +117,7 @@ namespace Lucene.Net.Store
 
             public override void Run()
             {
-                using (Stream @in = new NetworkStream(Cs, FileAccess.Read), os = new NetworkStream(Cs, FileAccess.ReadWrite))
+                using (Stream @in = new NetworkStream(Cs), os = new NetworkStream(Cs))
                 {
                     BinaryReader intReader = new BinaryReader(@in);
                     BinaryWriter intWriter = new BinaryWriter(os);

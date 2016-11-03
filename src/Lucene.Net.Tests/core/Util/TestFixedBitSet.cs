@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
 
         internal virtual void DoPrevSetBit(BitArray a, FixedBitSet b)
         {
-            int aa = a.Count + Random().Next(100);
+            int aa = a.Length + Random().Next(100);
             int bb = aa;
             do
             {
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
                 int fromIndex, toIndex;
                 fromIndex = Random().Next(sz / 2);
                 toIndex = fromIndex + Random().Next(sz - fromIndex);
-                BitArray aa = (BitArray)a.Clone();
+                BitArray aa = new BitArray(a);
                 aa.Flip(fromIndex, toIndex);
                 FixedBitSet bb = b.Clone();
                 bb.Flip(fromIndex, toIndex);
@@ -197,7 +197,7 @@ namespace Lucene.Net.Util
 
                 fromIndex = Random().Next(sz / 2);
                 toIndex = fromIndex + Random().Next(sz - fromIndex);
-                aa = (BitArray)a.Clone();
+                aa = new BitArray(a);
                 aa.Clear(fromIndex, toIndex);
                 bb = b.Clone();
                 bb.Clear(fromIndex, toIndex);
@@ -208,7 +208,7 @@ namespace Lucene.Net.Util
 
                 fromIndex = Random().Next(sz / 2);
                 toIndex = fromIndex + Random().Next(sz - fromIndex);
-                aa = (BitArray)a.Clone();
+                aa = new BitArray(a);
                 aa.Set(fromIndex, toIndex);
                 bb = b.Clone();
                 bb.Set(fromIndex, toIndex);
@@ -221,13 +221,13 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
-                    BitArray a_and = (BitArray)a.Clone();
+                    BitArray a_and = new BitArray(a);
                     a_and = a_and.And_UnequalLengths(a0);
-                    BitArray a_or = (BitArray)a.Clone();
+                    BitArray a_or = new BitArray(a);
                     a_or = a_or.Or_UnequalLengths(a0);
-                    BitArray a_xor = (BitArray)a.Clone();
+                    BitArray a_xor = new BitArray(a);
                     a_xor = a_xor.Xor_UnequalLengths(a0);
-                    BitArray a_andn = (BitArray)a.Clone();
+                    BitArray a_andn = new BitArray(a);
                     a_andn.AndNot(a0);
 
                     FixedBitSet b_and = b.Clone();

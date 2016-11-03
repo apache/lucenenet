@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Test huge RAMFile with more than Integer.MAX_VALUE bytes. (LUCENE-957) </summary>
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, MaxTime(int.MaxValue)]
         public virtual void TestHugeFile()
         {
             var f = new DenseRAMFile();

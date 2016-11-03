@@ -92,7 +92,9 @@ namespace Lucene.Net.Support
         /// </summary>
         public virtual void Interrupt()
         {
+#if !NETSTANDARD
             _threadField.Interrupt();
+#endif
         }
 
         /// <summary>
@@ -131,31 +133,33 @@ namespace Lucene.Net.Support
             _threadField.IsBackground = isDaemon;
         }
 
+#if !NETSTANDARD
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
         public ThreadPriority Priority
         {
-            get
-            {
-                try
-                {
-                    return _threadField.Priority;
-                }
-                catch
-                {
-                    return ThreadPriority.Normal;
-                }
-            }
-            set
-            {
-                try
-                {
-                    _threadField.Priority = value;
-                }
-                catch { }
-            }
+           get
+           {
+               try
+               {
+                   return _threadField.Priority;
+               }
+               catch
+               {
+                   return ThreadPriority.Normal;
+               }
+           }
+           set
+           {
+               try
+               {
+                   _threadField.Priority = value;
+               }
+               catch { }
+           }
         }
+#endif
 
         /// <summary>
         /// Gets a value indicating the execution status of the current thread
@@ -197,7 +201,7 @@ namespace Lucene.Net.Support
         /// <param name="MiliSeconds">Time of wait in milliseconds</param>
         public void Join(long MiliSeconds)
         {
-            _threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
+            _threadField.Join(Convert.ToInt32(MiliSeconds));
         }
 
         /// <summary>
@@ -207,7 +211,9 @@ namespace Lucene.Net.Support
         /// <param name="NanoSeconds">Time of wait in nanoseconds</param>
         public void Join(long MiliSeconds, int NanoSeconds)
         {
-            _threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
+            int totalTime = Convert.ToInt32(MiliSeconds + (NanoSeconds*0.000001));
+
+            _threadField.Join(totalTime);
         }
 
         /// <summary>
@@ -217,6 +223,8 @@ namespace Lucene.Net.Support
         {
             Monitor.PulseAll(_threadField);
         }
+
+#if !NETSTANDARD
 
         /// <summary>
         /// Raises a ThreadAbortException in the thread on which it is invoked,
@@ -239,6 +247,7 @@ namespace Lucene.Net.Support
         {
             _threadField.Abort(stateInfo);
         }
+#endif
 
         /// <summary>
         /// Suspends the thread, if the thread is already suspended it has no effect
@@ -254,7 +263,11 @@ namespace Lucene.Net.Support
         /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
+#if !NETSTANDARD
             return "Thread[" + Name + "," + Priority.ToString() + "]";
+#else
+            return "Thread[" + Name + "]";
+#endif
         }
 
         [ThreadStatic]

@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System.IO;
-
+    using Util;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -962,17 +962,9 @@ namespace Lucene.Net.Index
                 }
                 if (sawMaybe && !failed)
                 {
-                    bool seen = false;
-                    var trace = new StackTrace();
-                    foreach (var frame in trace.GetFrames())
-                    {
-                        var method = frame.GetMethod();
-                        if ("ApplyDeletesAndUpdates".Equals(method.Name) || "SlowFileExists".Equals(method.Name))
-                        {
-                            seen = true;
-                            break;
-                        }
-                    }
+                    bool seen = 
+                        StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates") ||
+                        StackTraceHelper.DoesStackTraceContainMethod("SlowFileExists");                 
 
                     if (!seen)
                     {
@@ -981,35 +973,28 @@ namespace Lucene.Net.Index
                         if (VERBOSE)
                         {
                             Console.WriteLine("TEST: mock failure: now fail");
-                            Console.WriteLine((new Exception()).StackTrace);
+                            Console.WriteLine(Environment.StackTrace);
                         }
                         throw new IOException("fail after applyDeletes");
                     }
                 }
                 if (!failed)
                 {
-                    var trace = new StackTrace();
-                    foreach (var frame in trace.GetFrames())
+                    if (StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates"))
                     {
-                        var method = frame.GetMethod();
-                        if ("ApplyDeletesAndUpdates".Equals(method.Name))
+                        if (VERBOSE)
                         {
-                            if (VERBOSE)
-                            {
-                                Console.WriteLine("TEST: mock failure: saw applyDeletes");
-                                Console.WriteLine((new Exception()).StackTrace);
-                            }
-                            sawMaybe = true;
-                            break;
+                            Console.WriteLine("TEST: mock failure: saw applyDeletes");
+                            Console.WriteLine(Environment.StackTrace);
                         }
-                    }
+                        sawMaybe = true;
+                    }              
                 }
             }
         }
 
         // this test tests that the files created by the docs writer before
         // a segment is written are cleaned up if there's an i/o error
-
         [Test]
         public virtual void TestErrorInDocsWriterAdd()
         {
@@ -1307,7 +1292,7 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, MaxTime(int.MaxValue)]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

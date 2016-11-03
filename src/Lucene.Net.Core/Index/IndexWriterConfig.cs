@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
     /// <seealso cref= IndexWriter#getConfig()
     ///
     /// @since 3.1 </seealso>
-    public sealed class IndexWriterConfig : LiveIndexWriterConfig, ICloneable
+    public sealed class IndexWriterConfig : LiveIndexWriterConfig
     {
         /// <summary>
         /// Specifies the open mode for <seealso cref="IndexWriter"/>.

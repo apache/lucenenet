@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
                     // - end with one of: "product of:", "sum of:", "max of:", or
                     // - have "max plus <x> times others" (where <x> is float).
                     float x = 0;
-                    string descr = expl.Description.ToLower(CultureInfo.InvariantCulture);
+                    string descr = CultureInfo.InvariantCulture.TextInfo.ToLower(expl.Description);
                     bool productOf = descr.EndsWith("product of:");
                     bool sumOf = descr.EndsWith("sum of:");
                     bool maxOf = descr.EndsWith("max of:");

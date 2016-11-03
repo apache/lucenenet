@@ -166,14 +166,17 @@ namespace Lucene.Net.Index
 
                 StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat();
 
+#if !NETSTANDARD
                 try
                 {
+#endif
                     FieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
+#if !NETSTANDARD
                 }
                 catch (System.AccessViolationException ave)
                 {
                 }
-
+#endif
                 //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
                 if (fieldInfos.HasVectors()) // open term vector files only as needed

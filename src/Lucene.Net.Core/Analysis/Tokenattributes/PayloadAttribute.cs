@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
     /// <summary>
     /// Default implementation of <seealso cref="PayloadAttribute"/>. </summary>
-    public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable
+    public class PayloadAttribute : Attribute, IPayloadAttribute
     {
         private BytesRef payload;
 

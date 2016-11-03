@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+#if NETSTANDARD
+using Microsoft.Extensions.DependencyModel;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -47,24 +48,25 @@ namespace Lucene.Net.Util
             // hoping would be loaded hasn't been loaded yet into the app domain,
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
-            var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies().Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x));
+#if NETSTANDARD
+            var dependencyContext = DependencyContext.Default;
+            var assemblyNames = dependencyContext.RuntimeLibraries
+                .SelectMany(lib => lib.GetDefaultAssemblyNames(dependencyContext))
+                .Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x))
+                .Distinct();
+            var assembliesLoaded = LoadAssemblyFromName(assemblyNames);
+#else
+            var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+            assembliesLoaded = assembliesLoaded.Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x)).ToArray();
+
             var referencedAssemblies = assembliesLoaded
                 .SelectMany(assembly =>
                 {
                     return assembly
                         .GetReferencedAssemblies()
                         .Where(reference => !DotNetFrameworkFilter.IsFrameworkAssembly(reference))
-                        .Select(assemblyName => {
-                            try
-                            {
-                                return Assembly.Load(assemblyName);
-                            }
-                            catch
-                            {
-                                // swallow
-                                return null;
-                            }
-                        });
+                        .Select(assemblyName => LoadAssemblyFromName(assemblyName));
                 })
                 .Where(x => x != null)
                 .Distinct();
@@ -140,6 +142,23 @@ namespace Lucene.Net.Util
             return GetEnumerator();
         }
 
+        private static IEnumerable<Assembly> LoadAssemblyFromName(IEnumerable<AssemblyName> assemblyNames)
+        {
+            return assemblyNames.Select(x => LoadAssemblyFromName(x)).Where(x => x != null);
+        }
+
+        private static Assembly LoadAssemblyFromName(AssemblyName assemblyName)
+        {
+            try
+            {
+                return Assembly.Load(assemblyName);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Assembly filter logic from:
         /// https://raw.githubusercontent.com/Microsoft/dotnet-apiport/master/src/Microsoft.Fx.Portability/Analyzer/DotNetFrameworkFilter.cs
@@ -150,7 +169,7 @@ namespace Lucene.Net.Util
             /// These keys are a collection of public key tokens derived from all the reference assemblies in
             /// "%ProgramFiles%\Reference Assemblies\Microsoft" on a Windows 10 machine with VS 2015 installed
             /// </summary>
-            private static readonly ICollection<string> s_microsoftKeys = new HashSet<string>(new[] 
+            private static readonly ICollection<string> s_microsoftKeys = new HashSet<string>(new[]
             {
                 "b77a5c561934e089", // ECMA
                 "b03f5f7f11d50a3a", // DEVDIV
@@ -188,7 +207,14 @@ namespace Lucene.Net.Util
                     return false;
                 }
 
-                var publicKeyToken = string.Concat(assembly.GetPublicKeyToken().Select(i => i.ToString("x2")));
+                var publicKey = assembly.GetPublicKeyToken();
+
+                if (publicKey == default(byte[]))
+                {
+                    return false;
+                }
+
+                var publicKeyToken = string.Concat(publicKey.Select(i => i.ToString("x2")));
 
                 return s_microsoftKeys.Contains(publicKeyToken)
                     || s_frameworkAssemblyNamePrefixes.Any(p => assembly.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase));

@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Automaton
     /// </p>
     /// @lucene.experimental
     /// </summary>
-    public class Automaton : ICloneable
+    public class Automaton
     {
         /// <summary>
         /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Extra data associated with this automaton. </summary>
-        [NonSerialized]
+        
         internal object info;
 
         /// <summary>

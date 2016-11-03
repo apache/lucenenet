@@ -1,10 +1,9 @@
-using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -41,7 +40,7 @@ namespace Lucene.Net.Analysis
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;   
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
 
@@ -675,24 +674,30 @@ namespace Lucene.Net.Analysis
                     threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw, this);
                 }
                 
-                Array.ForEach(threads, thread => thread.Start());                
+                foreach (AnalysisThread thread in threads)
+                {
+                    thread.Start();
+                }
 
                 startingGun.Signal();
-                
                 foreach (var t in threads)
                 {
+#if !NETCORE
                     try
                     {
+#endif
                         t.Join();
+#if !NETCORE
                     }
                     catch (ThreadInterruptedException e)
                     {
                         Fail("Thread interrupted");
                     }
+#endif
                 }
 
                 if (threads.Any(x => x.Failed))
-                    Fail("Thread interrupted");
+                    Fail("Thread threw exception");
 
                 success = true;
             }
@@ -1147,11 +1152,12 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
         {
-            StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), IOUtils.CHARSET_UTF_8);
-            TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
-            ts.Reset();
-            (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
-            w.Dispose();
+            using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), IOUtils.CHARSET_UTF_8))
+            {
+                TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
+                ts.Reset();
+                (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();    
+            }
         }
 
         internal static int[] ToIntArray(IList<int> list)

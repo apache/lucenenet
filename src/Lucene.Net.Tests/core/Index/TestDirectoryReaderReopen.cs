@@ -1,8 +1,8 @@
+using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
 
             TestReopen test = new TestReopenAnonymousInnerClassHelper3(this, dir, n);
 
-            IList<ReaderCouple> readers = new SynchronizedCollection<ReaderCouple>();
+            IList<ReaderCouple> readers = new SynchronizedList<ReaderCouple>();
             DirectoryReader firstReader = DirectoryReader.Open(dir);
             DirectoryReader reader = firstReader;
 

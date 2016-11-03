@@ -8,6 +8,7 @@ namespace Lucene.Net.Search
 {
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using System.Reflection;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Bits = Lucene.Net.Util.Bits;

@@ -1,9 +1,10 @@
-﻿using ICU4NET;
+using Icu;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using NUnit.Framework;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -128,7 +129,7 @@ namespace Lucene.Net.Analysis.Util
             internal IOffsetAttribute offsetAtt;
 
             public WholeSentenceTokenizer(TextReader reader)
-                : base(reader, BreakIterator.CreateSentenceInstance(Locale.GetUS()))
+                : base(reader, new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE)
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -173,7 +174,7 @@ namespace Lucene.Net.Analysis.Util
             internal IPositionIncrementAttribute posIncAtt;
 
             public SentenceAndWordTokenizer(TextReader reader)
-                : base(reader, BreakIterator.CreateSentenceInstance(Locale.GetUS()))
+                : base(reader, new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE)
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();

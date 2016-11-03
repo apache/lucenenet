@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2796EBEB-8F48-4728-9221-A2C361781BFC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Codecs</RootNamespace>
+    <AssemblyName>Lucene.Net.Codecs</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>$(OutputPath)\netstandard1.6</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Lucene.Net.Codecs.Portable.project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Appending\AppendingCodec.cs" />
+    <Compile Include="Appending\AppendingPostingsFormat.cs" />
+    <Compile Include="Appending\AppendingTermsReader.cs" />
+    <Compile Include="BlockTerms\BlockTermsReader.cs" />
+    <Compile Include="BlockTerms\BlockTermsWriter.cs" />
+    <Compile Include="BlockTerms\FixedGapTermsIndexReader.cs" />
+    <Compile Include="BlockTerms\FixedGapTermsIndexWriter.cs" />
+    <Compile Include="BlockTerms\TermsIndexReaderBase.cs" />
+    <Compile Include="BlockTerms\TermsIndexWriterBase.cs" />
+    <Compile Include="BlockTerms\VariableGapTermsIndexReader.cs" />
+    <Compile Include="BlockTerms\VariableGapTermsIndexWriter.cs" />
+    <Compile Include="Bloom\BloomFilterFactory.cs" />
+    <Compile Include="Bloom\BloomFilteringPostingsFormat.cs" />
+    <Compile Include="Bloom\DefaultBloomFilterFactory.cs" />
+    <Compile Include="Bloom\FuzzySet.cs" />
+    <Compile Include="Bloom\HashFunction.cs" />
+    <Compile Include="Bloom\MurmurHash2.cs" />
+    <Compile Include="DiskDV\DiskDocValuesFormat.cs" />
+    <Compile Include="DiskDV\DiskDocValuesProducer.cs" />
+    <Compile Include="DiskDV\DiskNormsFormat.cs" />
+    <Compile Include="HashMapHelperClass.cs" />
+    <Compile Include="IntBlock\FixedIntBlockIndexInput.cs" />
+    <Compile Include="IntBlock\FixedIntBlockIndexOutput.cs" />
+    <Compile Include="IntBlock\VariableIntBlockIndexInput.cs" />
+    <Compile Include="IntBlock\VariableIntBlockIndexOutput.cs" />
+    <Compile Include="Memory\DirectDocValuesConsumer.cs" />
+    <Compile Include="Memory\DirectDocValuesFormat.cs" />
+    <Compile Include="Memory\DirectDocValuesProducer.cs" />
+    <Compile Include="Memory\DirectPostingsFormat.cs" />
+    <Compile Include="Memory\FSTOrdPostingsFormat.cs" />
+    <Compile Include="Memory\FSTOrdPulsing41PostingsFormat.cs" />
+    <Compile Include="Memory\FSTOrdTermsReader.cs" />
+    <Compile Include="Memory\FSTOrdTermsWriter.cs" />
+    <Compile Include="Memory\FSTPostingsFormat.cs" />
+    <Compile Include="Memory\FSTPulsing41PostingsFormat.cs" />
+    <Compile Include="Memory\FSTTermOutputs.cs" />
+    <Compile Include="Memory\FSTTermsReader.cs" />
+    <Compile Include="Memory\FSTTermsWriter.cs" />
+    <Compile Include="Memory\MemoryDocValuesConsumer.cs" />
+    <Compile Include="Memory\MemoryDocValuesFormat.cs" />
+    <Compile Include="Memory\MemoryDocValuesProducer.cs" />
+    <Compile Include="Memory\MemoryPostingsFormat.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pulsing\Pulsing41PostingsFormat.cs" />
+    <Compile Include="Pulsing\PulsingPostingsFormat.cs" />
+    <Compile Include="Pulsing\PulsingPostingsReader.cs" />
+    <Compile Include="Pulsing\PulsingPostingsWriter.cs" />
+    <Compile Include="RectangularArrays.cs" />
+    <Compile Include="Sep\IntIndexInput.cs" />
+    <Compile Include="Sep\IntIndexOutput.cs" />
+    <Compile Include="Sep\IntStreamFactory.cs" />
+    <Compile Include="Sep\SepPostingsReader.cs" />
+    <Compile Include="Sep\SepPostingsWriter.cs" />
+    <Compile Include="Sep\SepSkipListReader.cs" />
+    <Compile Include="Sep\SepSkipListWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextCodec.cs" />
+    <Compile Include="SimpleText\SimpleTextDocValuesFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextDocValuesReader.cs" />
+    <Compile Include="SimpleText\SimpleTextDocValuesWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextFieldInfosFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextFieldInfosReader.cs" />
+    <Compile Include="SimpleText\SimpleTextFieldInfosWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextFieldsReader.cs" />
+    <Compile Include="SimpleText\SimpleTextFieldsWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextLiveDocsFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextNormsFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextPostingsFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextSegmentInfoFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextSegmentInfoReader.cs" />
+    <Compile Include="SimpleText\SimpleTextSegmentInfoWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextStoredFieldsFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextStoredFieldsReader.cs" />
+    <Compile Include="SimpleText\SimpleTextStoredFieldsWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextTermVectorsFormat.cs" />
+    <Compile Include="SimpleText\SimpleTextTermVectorsReader.cs" />
+    <Compile Include="SimpleText\SimpleTextTermVectorsWriter.cs" />
+    <Compile Include="SimpleText\SimpleTextUtil.cs" />
+    <Compile Include="StringHelperClass.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <NuGetTargetMoniker>.NETStandard,Version=v1.6</NuGetTargetMoniker>
+  </PropertyGroup>
+</Project>

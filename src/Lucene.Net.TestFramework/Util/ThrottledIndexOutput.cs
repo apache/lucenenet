@@ -144,14 +144,18 @@ namespace Lucene.Net.Util
             {
                 return;
             }
+#if !NETCORE
             try
             {
-                Thread.Sleep(new TimeSpan(ms));
+#endif 
+                Thread.Sleep(TimeSpan.FromMilliseconds(ms));
+#if !NETCORE
             }
             catch (ThreadInterruptedException e)
             {
                 throw new ThreadInterruptedException("Thread Interrupted Exception", e);
             }
+#endif
         }
 
         public override long Length

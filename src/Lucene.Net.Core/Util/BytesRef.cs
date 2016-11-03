@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
     /// is <b>wrong</b>, as it does not respect the correct character set
     /// and may return wrong results (depending on the platform's defaults)!
     /// </summary>
-    public sealed class BytesRef : IComparable, ICloneable
+    public sealed class BytesRef : IComparable
     {
         /// <summary>
         /// An empty byte array for convenience </summary>

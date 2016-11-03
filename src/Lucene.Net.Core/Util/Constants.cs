@@ -1,5 +1,7 @@
 using Lucene.Net.Support;
 using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Util
 {
@@ -92,7 +94,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                LUCENE_VERSION = typeof(Constants).GetTypeInfo().Assembly.GetName().Version.ToString();
             }
             catch (System.Security.SecurityException) //Ignore in medium trust.
             {
@@ -192,7 +194,14 @@ namespace Lucene.Net.Util
         {
             try
             {
-                if (variable == "OS_VERSION") return System.Environment.OSVersion.ToString();
+                if (variable == "OS_VERSION")
+                {
+#if NETSTANDARD
+                    return RuntimeInformation.OSDescription;
+#else
+                    return Environment.OSVersion.ToString();
+#endif
+                }
 
                 return System.Environment.GetEnvironmentVariable(variable);
             }
@@ -202,6 +211,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        #endregion MEDIUM-TRUST Support
+#endregion MEDIUM-TRUST Support
     }
 }

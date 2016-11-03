@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 }
 
                 //fw = new StreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
-                pw = new StreamWriter(f.FullName);
+                pw = new StreamWriter(File.Open(f.FullName, FileMode.Open));
                 pw.WriteLine(text);
                 return f;
             }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
         {
             FileInfo file = new FileInfo(Path.Combine(WorkDir.FullName, fileName));
             Document doc = new Document();
-            StreamReader @is = new StreamReader(file.FullName);
+            StreamReader @is = new StreamReader(File.Open(file.FullName, FileMode.Open));
             doc.Add(new TextField("contents", @is));
             writer.AddDocument(doc);
             writer.Commit();

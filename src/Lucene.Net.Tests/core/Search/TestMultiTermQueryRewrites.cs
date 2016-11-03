@@ -5,6 +5,8 @@ using Lucene.Net.Documents;
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
+    using System.Runtime.CompilerServices;
+    using Util;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -248,7 +250,7 @@ namespace Lucene.Net.Search
             CheckBoosts(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(1024));
         }
 
-        private void CheckMaxClauseLimitation(MultiTermQuery.RewriteMethod method)
+        private void CheckMaxClauseLimitation(MultiTermQuery.RewriteMethod method, [CallerMemberName] string memberName = "")
         {
             int savedMaxClauseCount = BooleanQuery.MaxClauseCount;
             BooleanQuery.MaxClauseCount = 3;
@@ -260,10 +262,9 @@ namespace Lucene.Net.Search
                 MultiSearcherDupls.Rewrite(mtq);
                 Assert.Fail("Should throw BooleanQuery.TooManyClauses");
             }
-            catch (BooleanQuery.TooManyClauses e)
+            catch (BooleanQuery.TooManyClauses)
             {
-                //  Maybe remove this assert in later versions, when internal API changes:
-                Assert.AreEqual("CheckMaxClauseCount", new StackTrace(e).GetFrames()[0].GetMethod().Name, "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");
+                Assert.IsTrue(StackTraceHelper.DoesStackTraceContainMethod("CheckMaxClauseCount"), "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");
             }
             finally
             {

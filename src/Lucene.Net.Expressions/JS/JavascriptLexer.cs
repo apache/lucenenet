@@ -93,7 +93,7 @@ namespace Lucene.Net.Expressions.JS
 			string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
 			ParseException parseException = new ParseException(message, re.CharPositionInLine);
 			
-			throw new SystemException(parseException.Message, parseException);
+			throw new InvalidOperationException(parseException.Message, parseException);
 		}
 
 		// delegates

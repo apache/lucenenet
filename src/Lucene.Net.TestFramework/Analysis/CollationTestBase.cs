@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis
             {
                 string term = TestUtil.RandomSimpleString(Random());
                 IOException priorException = null;
-                TokenStream ts = analyzer.TokenStream("fake", new StreamReader(term));
+                TokenStream ts = analyzer.TokenStream("fake", new StringReader(term));
                 try
                 {
                     ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
@@ -327,7 +327,7 @@ namespace Lucene.Net.Analysis
                         string term = mapping.Key;
                         BytesRef expected = mapping.Value;
                         IOException priorException = null;
-                        TokenStream ts = Analyzer.TokenStream("fake", new StreamReader(term));
+                        TokenStream ts = Analyzer.TokenStream("fake", new StringReader(term));
                         try
                         {
                             ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();

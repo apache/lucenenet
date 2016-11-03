@@ -30,6 +30,7 @@ namespace Lucene.Net.Util
             internal ListElement Next;
         }
 
+#if !NETCORE // StackOverflowException cannot be caught in .NET Core. This test does not apply.
         [Test]
         public virtual void TestOverflowMaxChainLength()
         {
@@ -62,5 +63,6 @@ namespace Lucene.Net.Util
                 Assert.Fail("Max object chain length till stack overflow: " + lower);
             }
         }
+#endif
     }
 }

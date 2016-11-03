@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Timeout(300000)]
+        [Test, MaxTime(300000)]
         public virtual void TestRandomWithPrefix()
         {
             Directory dir = NewDirectory();

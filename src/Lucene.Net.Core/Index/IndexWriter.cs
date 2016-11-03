@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
         ///
         /// <pre class="prettyprint">
         /// try {
-        ///   writer.close();
+        ///   writer.Dispose();
         /// } finally {
         ///   if (IndexWriter.isLocked(directory)) {
         ///     IndexWriter.unlock(directory);
@@ -1192,11 +1192,14 @@ namespace Lucene.Net.Index
 
                         if (waitForMerges)
                         {
+#if !NETSTANDARD
                             try
                             {
-                                // Give merge scheduler last chance to run, in case
+#endif    
+                            // Give merge scheduler last chance to run, in case
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
+#if !NETSTANDARD
                             }
                             catch (ThreadInterruptedException)
                             {
@@ -1207,16 +1210,20 @@ namespace Lucene.Net.Index
                                     infoStream.Message("IW", "interrupted while waiting for final merges");
                                 }
                             }
+#endif
                         }
 
                         lock (this)
                         {
                             for (; ; )
                             {
+#if !NETSTANDARD
                                 try
                                 {
+#endif
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
+#if !NETSTANDARD
                                 }
                                 catch (ThreadInterruptedException)
                                 {
@@ -1229,6 +1236,7 @@ namespace Lucene.Net.Index
                                         infoStream.Message("IW", "interrupted while waiting for merges to finish");
                                     }
                                 }
+#endif
                             }
                             StopMerges = true;
                         }
@@ -1296,7 +1304,9 @@ namespace Lucene.Net.Index
                 // finally, restore interrupt status:
                 if (interrupted)
                 {
+#if !NETSTANDARD
                     Thread.CurrentThread.Interrupt();
+#endif
                 }
             }
         }
@@ -5362,14 +5372,18 @@ namespace Lucene.Net.Index
                 // fails to be called, we wait for at most 1 second
                 // and then return so caller can check if wait
                 // conditions are satisfied:
+#if !NETSTANDARD
                 try
                 {
+#endif
                     Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException ie)
                 {
                     throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                 }
+#endif
             }
         }
 

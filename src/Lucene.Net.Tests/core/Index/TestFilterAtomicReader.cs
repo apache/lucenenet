@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 
         private static void CheckOverrideMethods(Type clazz)
         {
-            Type superClazz = clazz.BaseType;
+            Type superClazz = clazz.GetTypeInfo().BaseType;
             foreach (MethodInfo m in superClazz.GetMethods())
             {
                 if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("Attributes"))

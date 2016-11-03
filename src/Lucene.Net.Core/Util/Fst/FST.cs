@@ -320,7 +320,7 @@ namespace Lucene.Net.Util.Fst
             if (bytes.length == 665) {
               Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"), StandardCharsets.UTF_8);
               Util.toDot(this, w, false, false);
-              w.close();
+              w.Dispose();
               System.out.println("Wrote FST to out.dot");
             }
             */
@@ -569,7 +569,7 @@ namespace Lucene.Net.Util.Fst
         public void Save(FileInfo file)
         {
             bool success = false;
-            var bs = new BufferedStream(file.OpenWrite());
+            var bs = file.OpenWrite();
             try
             {
                 Save(new OutputStreamDataOutput(bs));
@@ -589,7 +589,6 @@ namespace Lucene.Net.Util.Fst
         }
 
         // LUCENENET NOTE: static Read<T>() was moved into the FST class
-
         private void WriteLabel(DataOutput @out, int v)
         {
             Debug.Assert(v >= 0, "v=" + v);

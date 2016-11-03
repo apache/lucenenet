@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -101,7 +102,7 @@ namespace Lucene.Net.Util
                 {
                     // CodeBase uses unc path, get rid of the file prefix if it exists.
                     // File prefix could be file:// or file:///
-                    var assemblyDirectoryUri = new Uri(typeof(Paths).Assembly.CodeBase);
+                    var assemblyDirectoryUri = new Uri(typeof(Paths).GetTypeInfo().Assembly.Location);
                     s_assemblyDirectory = Path.GetDirectoryName(assemblyDirectoryUri.LocalPath);
                 }
                 return s_assemblyDirectory;
@@ -139,10 +140,10 @@ namespace Lucene.Net.Util
                     // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.
                     var assemblyLocation = AssemblyDirectory;
 
-                    var index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    var index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
                     if (index == -1)
                     {
-                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
                     }
 
                     if (index < 0)

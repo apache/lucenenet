@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Randomized.Attributes
 {
@@ -30,9 +31,9 @@ namespace Lucene.Net.Randomized.Attributes
         {
             this.Decorators = new List<Type>();
 
-            foreach (var item in decorators)
+            foreach (Type item in decorators)
             {
-                if (item.GetInterfaces().Contains(typeof(ISeedDecorator)))
+                if (item.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISeedDecorator)))
                     this.Decorators.Add(item);
             }
         }

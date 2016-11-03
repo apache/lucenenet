@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     /// <seealso cref= DocumentsWriterFlushControl </seealso>
     /// <seealso cref= DocumentsWriterPerThread </seealso>
     /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
-    public abstract class FlushPolicy : ICloneable
+    public abstract class FlushPolicy
     {
         protected internal LiveIndexWriterConfig IWConfig;
         protected internal InfoStream InfoStream;

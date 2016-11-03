@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     ///
     ///  @lucene.internal
     /// </summary>
-    public sealed class IntsRef : IComparable<IntsRef>, ICloneable
+    public sealed class IntsRef : IComparable<IntsRef>
     {
         /// <summary>
         /// An empty integer array for convenience </summary>

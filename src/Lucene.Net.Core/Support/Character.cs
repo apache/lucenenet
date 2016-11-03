@@ -355,7 +355,7 @@ namespace Lucene.Net.Support
 
         public static bool IsLetter(int c)
         {
-            var unicodeCategory = Char.GetUnicodeCategory((char)c);
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory((char)c);
 
             return unicodeCategory == UnicodeCategory.LowercaseLetter ||
                    unicodeCategory == UnicodeCategory.UppercaseLetter ||
@@ -378,9 +378,9 @@ namespace Lucene.Net.Support
         public static UnicodeCategory GetType(int codePoint)
         {
             if ((codePoint >= 0x00d800) && (codePoint <= 0x00dfff))
-                return char.GetUnicodeCategory((char)codePoint);
+                return CharUnicodeInfo.GetUnicodeCategory((char)codePoint);
             else
-                return char.GetUnicodeCategory(char.ConvertFromUtf32(codePoint), 0);
+                return CharUnicodeInfo.GetUnicodeCategory(char.ConvertFromUtf32(codePoint), 0);
         }
     }
 }

@@ -25,16 +25,16 @@ namespace Lucene.Net.Store
     /// </summary>
     public class InputStreamDataInput : DataInput, IDisposable
     {
-        private Stream @is;
+        private BinaryReader _reader;
 
         public InputStreamDataInput(Stream @is)
         {
-            this.@is = @is;
+            this._reader = new BinaryReader(@is);
         }
 
         public override byte ReadByte()
         {
-            int v = @is.ReadByte();
+            int v = _reader.ReadByte();
             if (v == -1)
             {
                 throw new EndOfStreamException();
@@ -46,7 +46,7 @@ namespace Lucene.Net.Store
         {
             while (len > 0)
             {
-                int cnt = @is.Read(b, offset, len);
+                int cnt = _reader.Read(b, offset, len);
                 if (cnt < 0)
                 {
                     // Partially read the input, but no more data available in the stream.
@@ -72,10 +72,10 @@ namespace Lucene.Net.Store
             {
                 if (disposing)
                 {
-                    @is.Dispose();
+                    _reader.Dispose();
                 }
 
-                @is = null;
+                _reader = null;
                 disposed = true;
             }
         }

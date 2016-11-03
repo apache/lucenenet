@@ -1,8 +1,12 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#if NETCORE
+using Newtonsoft.Json;
+#endif
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -29,15 +33,21 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
+#if NETCORE
+    [JsonConverter(typeof(CharBlockArrayConverter))]
+#else
     [Serializable]
+#endif
     public class CharBlockArray : ICharSequence
     {
         private const long serialVersionUID = 1L;
 
         private const int DefaultBlockSize = 32 * 1024; // 32 KB default size
 
+#if !NETCORE
         [Serializable]
-        internal sealed class Block : ICloneable
+#endif
+        internal sealed class Block
         {
             internal const long serialVersionUID = 1L;
 
@@ -228,12 +238,26 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream @out)
         {
+            byte[] bytes = null;
+#if NETCORE
+            var json = JsonConvert.SerializeObject(this, new CharBlockArrayConverter());
+            bytes = Encoding.UTF8.GetBytes(json);
+#else
             StreamUtils.SerializeToStream(this, @out);
+#endif
+            @out.WriteBytes(bytes, 0, bytes.Length);
         }
 
         public static CharBlockArray Open(Stream @in)
         {
+#if NETCORE
+            var json = Encoding.UTF8.GetString(@in.ReadBytes((int)@in.BaseStream.Length));
+            var deserialized = JsonConvert.DeserializeObject<CharBlockArray>(json);
+
+            return deserialized;
+#else
             return StreamUtils.DeserializeFromStream(@in) as CharBlockArray;
+#endif
         }
     }
 }

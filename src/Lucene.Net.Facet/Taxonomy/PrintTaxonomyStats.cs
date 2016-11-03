@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Command-line tool.
         /// </summary>
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             bool printTree = false;
             string path = null;
@@ -61,13 +61,14 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // LUCENENET TODO: Usage depends on wrapping this into a console application assembly.
                 Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
-                Environment.Exit(1);
+                return 1;
             }
             Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path));
             var r = new DirectoryTaxonomyReader(dir);
             PrintStats(r, System.Console.Out, printTree);
             r.Dispose();
-            //dir.close();
+  
+            return 0;
         }
 
         /// <summary>

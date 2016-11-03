@@ -1,8 +1,13 @@
-﻿using ICU4NET;
-using Lucene.Net.Analysis.Tokenattributes;
-using System;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
+using Icu;
+using Lucene.Net.Analysis.Tokenattributes;
+using Version = Lucene.Net.Util.LuceneVersion;
+
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -41,6 +46,9 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class SegmentingTokenizerBase : Tokenizer
     {
+        // LUCENENET: Using Icu .NET to get Local_US
+        public static readonly Locale Local_US = new Locale("en-US");
+
         protected internal const int BUFFERMAX = 1024;
         protected internal readonly char[] buffer = new char[BUFFERMAX];
         /// <summary>
@@ -53,7 +61,9 @@ namespace Lucene.Net.Analysis.Util
         /// accumulated offset of previous buffers for this reader, for offsetAtt </summary>
         protected internal int offset = 0;
 
-        private readonly BreakIterator iterator;
+        private readonly Locale locale;
+        private readonly BreakIterator.UBreakIteratorType iteratorType;
+        private IEnumerator<string> enumerator;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewSentenceInstance();
 
         private readonly IOffsetAttribute offsetAtt;
@@ -67,19 +77,28 @@ namespace Lucene.Net.Analysis.Util
         /// be provided to this constructor.
         /// </para>
         /// </summary>
-        protected SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
-            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, iterator)
-        {
-        }
+        protected SegmentingTokenizerBase(TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, Local_US, iteratorType)
+        { }
+
+        protected SegmentingTokenizerBase(TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, locale, iteratorType)
+        { }
 
         /// <summary>
         /// Construct a new SegmenterBase, also supplying the AttributeFactory
         /// </summary>
-        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
+        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
+            : this(factory, reader, Local_US, iteratorType) 
+        { }
+
+        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
             : base(factory, reader)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();
-            this.iterator = iterator;
+            this.iteratorType = iteratorType;
+            this.locale = locale;
+            enumerator = Enumerable.Empty<Boundary>().GetEnumerator();
         }
 
         public override sealed bool IncrementToken()
@@ -103,7 +122,7 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             wrapper.SetText(buffer, 0, 0);
-            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            enumerator = Enumerable.Empty<Boundary>().GetEnumerator();
             length = usableLength = offset = 0;
         }
 
@@ -174,7 +193,10 @@ namespace Lucene.Net.Analysis.Util
             }
 
             wrapper.SetText(buffer, 0, Math.Max(0, usableLength));
-            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+
+            var text = new string(wrapper.Text, wrapper.Start, wrapper.Length));
+
+            enumerator = BreakIterator.Split(iteratorType, locale, text).GetEnumerator();
         }
 
         // TODO: refactor to a shared readFully somewhere
@@ -212,22 +234,12 @@ namespace Lucene.Net.Analysis.Util
 
             while (true)
             {
-                int start = iterator.Current();
-
-                if (start == BreakIterator.DONE)
+                if (!enumerator.MoveNext())
                 {
-                    return false; // BreakIterator exhausted
+                    return false;
                 }
 
-                // find the next set of boundaries
-                int end_Renamed = iterator.Next();
-
-                if (end_Renamed == BreakIterator.DONE)
-                {
-                    return false; // BreakIterator exhausted
-                }
-
-                SetNextSentence(start, end_Renamed);
+                SetNextSentence(enumerator.Current);
                 if (IncrementWord())
                 {
                     return true;
@@ -237,7 +249,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Provides the next input sentence for analysis </summary>
-        protected internal abstract void SetNextSentence(int sentenceStart, int sentenceEnd);
+        protected internal abstract void SetNextSentence(string sentence);
 
         /// <summary>
         /// Returns true if another word is available </summary>

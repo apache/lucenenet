@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
         }
 
         // Tests Terms.intersect
-        [Test, LongRunningTest, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, MaxTime(int.MaxValue)]
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();

@@ -103,28 +103,10 @@ namespace Lucene.Net.Index
             Assert.AreEqual("\u0000", @is.ReadString());
             Assert.AreEqual("Lu\u0000ce\u0000ne", @is.ReadString());
 
-            try
-            {
-                @is.ReadVInt();
-                Assert.Fail("Should throw " + expectedEx.Name);
-            }
-            catch (Exception e)
-            {
-                Assert.IsTrue(e.Message.StartsWith("Invalid vInt"));
-                Assert.IsTrue(expectedEx.IsInstanceOfType(e));
-            }
+            Assert.Throws<IOException>(() => { @is.ReadVInt(); });           
             Assert.AreEqual(1, @is.ReadVInt()); // guard value
 
-            try
-            {
-                @is.ReadVLong();
-                Assert.Fail("Should throw " + expectedEx.Name);
-            }
-            catch (Exception e)
-            {
-                Assert.IsTrue(e.Message.StartsWith("Invalid vLong"));
-                Assert.IsTrue(expectedEx.IsInstanceOfType(e));
-            }
+            Assert.Throws<IOException>(() => { @is.ReadVLong(); });
             Assert.AreEqual(1L, @is.ReadVLong()); // guard value
         }
 

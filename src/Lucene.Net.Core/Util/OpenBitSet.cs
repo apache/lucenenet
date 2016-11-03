@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
     /// </table>
     /// </summary>
 
-    public class OpenBitSet : DocIdSet, Bits, ICloneable
+    public class OpenBitSet : DocIdSet, Bits
     {
         protected internal long[] bits;
         protected internal int Wlen; // number of words (elements) used in the array
@@ -893,17 +893,10 @@ namespace Lucene.Net.Util
 
         public object Clone()
         {
-            try
-            {
-                //OpenBitSet obs = (OpenBitSet)base.Clone();
-                //obs.bits = (long[])obs.bits.Clone(); // hopefully an array clone is as fast(er) than arraycopy
-                OpenBitSet obs = new OpenBitSet((long[])bits.Clone(), Wlen);
-                return obs;
-            }
-            catch (Exception e)
-            {
-                throw new SystemException(e.Message, e);
-            }
+            //OpenBitSet obs = (OpenBitSet)base.Clone();
+            //obs.bits = (long[])obs.bits.Clone(); // hopefully an array clone is as fast(er) than arraycopy
+            OpenBitSet obs = new OpenBitSet((long[])bits.Clone(), Wlen);
+            return obs;
         }
 
         /// <summary>

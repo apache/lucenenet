@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -68,19 +69,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // we are part of a "merge", we must sort by UTF16:
                 bool unicodeSortOrder = true;
 
-                StackTrace trace = new StackTrace();
-                foreach (StackFrame frame in trace.GetFrames())
+                if(Util.StackTraceHelper.DoesStackTraceContainMethod("Merge"))
                 {
-                    var method = frame.GetMethod();
-                    if ("Merge".Equals(method.Name))
-                    {
-                        unicodeSortOrder = false;
+                       unicodeSortOrder = false;
                         if (LuceneTestCase.VERBOSE)
                         {
                             Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 term sort order");
                         }
-                        break;
-                    }
                 }
 
                 return unicodeSortOrder;

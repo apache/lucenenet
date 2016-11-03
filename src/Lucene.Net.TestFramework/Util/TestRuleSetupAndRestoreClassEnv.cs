@@ -66,11 +66,9 @@ namespace Lucene.Net.Util
 
         private Codec SavedCodec;
         private CultureInfo SavedLocale;
-        private TimeZone SavedTimeZone;
         private InfoStream SavedInfoStream;
 
         internal CultureInfo Locale;
-        internal TimeZone TimeZone;
         internal Similarity Similarity;
         internal Codec Codec;
 

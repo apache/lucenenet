@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable, ICloneable
+    public abstract class MergePolicy : IDisposable
     {
         /// <summary>
         /// A map of doc IDs. </summary>
@@ -290,16 +290,20 @@ namespace Lucene.Net.Index
 
                     while (Paused)
                     {
+#if !NETSTANDARD
                         try
                         {
+#endif
                             // In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+#if !NETSTANDARD
                         }
                         catch (ThreadInterruptedException ie)
                         {
                             throw new Exception(ie.Message, ie);
                         }
+#endif
                         if (Aborted_Renamed)
                         {
                             throw new MergeAbortedException("merge is aborted: " + SegString(dir));
@@ -457,7 +461,9 @@ namespace Lucene.Net.Index
         ///  executing a merge.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
+#if !NETSTANDARD
         [Serializable]
+#endif
         public class MergeException : Exception
         {
             internal Directory Dir;

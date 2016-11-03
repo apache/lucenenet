@@ -186,7 +186,7 @@ namespace Lucene.Net.Expressions.JS
             }
             //ParseException parseException = new ParseException(message, re.CharPositionInLine);
 
-            throw new SystemException(message);
+            throw new InvalidOperationException(message);
         }
 
         public static string GetReadableTokenString(IToken token)

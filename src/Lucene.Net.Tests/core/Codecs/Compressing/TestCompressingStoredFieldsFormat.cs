@@ -6,6 +6,7 @@ namespace Lucene.Net.Codecs.Compressing
 {
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using System;
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

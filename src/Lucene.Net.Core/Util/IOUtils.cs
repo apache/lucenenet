@@ -6,6 +6,7 @@ namespace Lucene.Net.Util
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
     using System.Text;
 
     /*
@@ -288,7 +289,7 @@ namespace Lucene.Net.Util
         /// <returns> a wrapping reader </returns>
         public static TextReader GetDecodingReader(Stream stream, Encoding charSet)
         {
-            return new StreamReader(new BufferedStream(stream), charSet);
+            return new StreamReader(stream, charSet);
         }
 
         /// <summary>
@@ -341,7 +342,7 @@ namespace Lucene.Net.Util
             bool success = false;
             try
             {
-                stream = clazz.Assembly.GetManifestResourceStream(resource);
+                stream = clazz.GetTypeInfo().Assembly.GetManifestResourceStream(resource);
                 TextReader reader = GetDecodingReader(stream, charSet);
                 success = true;
                 return reader;

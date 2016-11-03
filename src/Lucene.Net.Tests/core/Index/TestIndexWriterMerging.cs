@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    Thread.@Yield();
+                    Thread.Sleep(0);
                 }
             }
         }

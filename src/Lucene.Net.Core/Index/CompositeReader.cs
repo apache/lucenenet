@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -72,7 +73,7 @@ namespace Lucene.Net.Index
         {
             StringBuilder buffer = new StringBuilder();
             // walk up through class hierarchy to get a non-empty simple name (anonymous classes have no name):
-            for (Type clazz = this.GetType(); clazz != null; clazz = clazz.BaseType)
+            for (Type clazz = this.GetType(); clazz != null; clazz = clazz.GetTypeInfo().BaseType)
             {
                 if (clazz.Name != null)
                 {

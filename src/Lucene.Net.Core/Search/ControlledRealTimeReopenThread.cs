@@ -143,15 +143,18 @@ namespace Lucene.Net.Search
                     ReopenLock.Unlock();
                 }
 
+#if !NETSTANDARD
                 try
                 {
+#endif
                     Join();
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException ie)
                 {
                     throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                 }
-
+#endif
                 // Max it out so any waiting search threads will return:
                 SearchingGen = long.MaxValue;
                 Monitor.PulseAll(this);
@@ -263,7 +266,9 @@ namespace Lucene.Net.Search
                 while (!Finish)
                 {
                     // Need lock before finding out if has waiting
+
                     ReopenLock.Lock();
+
                     try
                     {
                         // True if we have someone waiting for reopened searcher:
@@ -280,12 +285,15 @@ namespace Lucene.Net.Search
                         {
                             break;
                         }
+
                     }
+#if !NETSTANDARD
                     catch (ThreadInterruptedException ie)
                     {
                         Thread.CurrentThread.Interrupt();
                         return;
                     }
+#endif
                     finally
                     {
                         ReopenLock.Unlock();

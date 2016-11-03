@@ -52,10 +52,15 @@ namespace Lucene.Net
             return new SetFromMap<T>(map);
         }
 
-        internal class SetFromMap<T> : ICollection<T>, IEnumerable<T>, IEnumerable, ISerializable, IDeserializationCallback, ISet<T>, IReadOnlyCollection<T>
+        internal class SetFromMap<T> : ICollection<T>, IEnumerable<T>, IEnumerable, ISet<T>, IReadOnlyCollection<T>
+#if !NETSTANDARD
+            ,ISerializable, IDeserializationCallback
+#endif
         {
             private readonly IDictionary<T, bool?> m; // The backing map
+#if !NETSTANDARD
             [NonSerialized]
+#endif
             private ICollection<T> s;
 
             internal SetFromMap(IDictionary<T, bool?> map)
@@ -179,7 +184,7 @@ namespace Lucene.Net
                 return true;
             }
 
-            #region Not Implemented Members
+#region Not Implemented Members
             public void ExceptWith(IEnumerable<T> other)
             {
                 throw new NotImplementedException();
@@ -225,16 +230,18 @@ namespace Lucene.Net
                 throw new NotImplementedException();
             }
 
+#if !NETSTANDARD
             public void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 throw new NotImplementedException();
             }
+#endif
 
             public void OnDeserialization(object sender)
             {
                 throw new NotImplementedException();
             }
-            #endregion
+#endregion
         }
 
         public static IComparer<T> ReverseOrder<T>()
@@ -242,7 +249,6 @@ namespace Lucene.Net
             return (IComparer<T>)ReverseComparator.REVERSE_ORDER;
         }
 
-        [Serializable]
         private class ReverseComparator : IComparer<IComparable>
         {
             internal static readonly ReverseComparator REVERSE_ORDER = new ReverseComparator();
@@ -265,7 +271,6 @@ namespace Lucene.Net
             return new ReverseComparator2<T>(cmp);
         }
 
-        [Serializable]
         private class ReverseComparator2<T> : IComparer<T>
 
         {

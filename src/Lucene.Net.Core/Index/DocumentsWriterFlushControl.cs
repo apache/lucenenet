@@ -292,18 +292,22 @@ namespace Lucene.Net.Index
 
         public void WaitForFlush()
         {
-            lock (this)
+             lock (this)
             {
                 while (FlushingWriters.Count != 0)
                 {
+#if !NETSTANDARD
                     try
                     {
-                        Monitor.Wait(this);
+#endif
+                    Monitor.Wait(this);
+#if !NETSTANDARD
                     }
                     catch (ThreadInterruptedException e)
                     {
                         throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                     }
+#endif
                 }
             }
         }

@@ -38,7 +38,7 @@ namespace Lucene.Net
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
+    using Util;
     /// <summary>
     /// Holds tests cases to verify external APIs are accessible
     /// while not being in Lucene.Net.Index package.
@@ -97,14 +97,9 @@ namespace Lucene.Net
         {
             public override void Eval(MockDirectoryWrapper dir)
             {
-                var trace = new StackTrace();
-                foreach (var frame in trace.GetFrames())
+                if (StackTraceHelper.DoesStackTraceContainMethod("DoMerge"))
                 {
-                    var method = frame.GetMethod();
-                    if ("DoMerge".Equals(method.Name))
-                    {
-                        throw new IOException("now failing during merge");
-                    }
+                    throw new IOException("now failing during merge");
                 }
 		    }
         }

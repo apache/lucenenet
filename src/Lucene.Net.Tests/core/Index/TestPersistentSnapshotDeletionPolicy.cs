@@ -5,6 +5,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System;
     using System.IO;
+    using Util;
     using Directory = Lucene.Net.Store.Directory;
 
     /*
@@ -165,14 +166,10 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                var trace = new StackTrace();
-                foreach (var frame in trace.GetFrames())
+                /*typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && */
+                if (StackTraceHelper.DoesStackTraceContainMethod("Persist"))
                 {
-                    var method = frame.GetMethod();
-                    if (/*typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && */"Persist".Equals(method.Name))
-                    {
-                        throw new IOException("now fail on purpose");
-                    }
+                    throw new IOException("now fail on purpose");
                 }
             }
         }

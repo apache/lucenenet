@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
                 //      if (name.equals("startCommit")) {
                 if (Random().Next(4) == 2)
                 {
-                    Thread.@Yield();
+                    Thread.Sleep(0);
                 }
             }
         }

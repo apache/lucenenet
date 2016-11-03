@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Spans
     /// Removes matches which overlap with another SpanQuery or
     /// within a x tokens before or y tokens after another SpanQuery.
     /// </summary>
-    public class SpanNotQuery : SpanQuery, ICloneable
+    public class SpanNotQuery : SpanQuery
     {
         private SpanQuery include;
         private SpanQuery exclude;

@@ -348,15 +348,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestInvalidFields()
         {
-            try
-            {
-                new Field("foo", new MockTokenizer(new StreamReader("")), StringField.TYPE_STORED);
-                Assert.Fail("did not hit expected exc");
-            }
-            catch (System.ArgumentException iae)
-            {
-                // expected
-            }
+            Assert.Throws<System.ArgumentException>(() => { new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED); });
         }
 
         // LUCENE-3682
