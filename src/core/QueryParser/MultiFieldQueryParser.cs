@@ -167,7 +167,12 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), Occur.SHOULD));
+                    var clause = new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), Occur.SHOULD);
+
+                    if (boosts != null && boosts.ContainsKey(fields[i]))
+                        clause.Query.Boost = boosts[fields[i]];
+
+                    clauses.Add(clause);
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -181,7 +186,12 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), Occur.SHOULD));
+                    var clause = new BooleanClause(GetPrefixQuery(fields[i], termStr), Occur.SHOULD);
+
+                    if (boosts != null && boosts.ContainsKey(fields[i]))
+                        clause.Query.Boost = boosts[fields[i]];
+
+                    clauses.Add(clause);
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -194,8 +204,13 @@ namespace Lucene.Net.QueryParsers
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
-                {
-                    clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), Occur.SHOULD));
+                {                    
+                    var clause = new BooleanClause(GetWildcardQuery(fields[i], termStr), Occur.SHOULD);
+
+                    if (boosts != null && boosts.ContainsKey(fields[i]))
+                        clause.Query.Boost = boosts[fields[i]];
+
+                    clauses.Add(clause);
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -210,7 +225,12 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), Occur.SHOULD));
+                    var clause = new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), Occur.SHOULD);
+
+                    if (boosts != null && boosts.ContainsKey(fields[i]))
+                        clause.Query.Boost = boosts[fields[i]];
+
+                    clauses.Add(clause);
                 }
                 return GetBooleanQuery(clauses, true);
             }
