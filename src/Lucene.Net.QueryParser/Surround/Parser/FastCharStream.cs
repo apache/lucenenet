@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
             try
             {
-                input.Close();
+                input.Dispose();
             }
             catch (System.IO.IOException e)
             {

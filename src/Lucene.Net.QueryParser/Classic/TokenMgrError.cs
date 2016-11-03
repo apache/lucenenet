@@ -21,7 +21,9 @@ namespace Lucene.Net.QueryParsers.Classic
      */
 
 	/// <summary>Token Manager Error. </summary>
-	[Serializable]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
 	public class TokenMgrError : Exception
 	{
         /*

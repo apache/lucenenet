@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if (true) return ret;
             }
-            throw new ApplicationException("Missing return statement in function");
+            throw new InvalidOperationException("Missing return statement in function");
         }
 
         public int Modifiers()
@@ -695,7 +695,9 @@ namespace Lucene.Net.QueryParsers.Classic
             throw GenerateParseException();
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         private sealed class LookaheadSuccess : Exception
         {
         }

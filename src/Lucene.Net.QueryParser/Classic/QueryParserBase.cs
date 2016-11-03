@@ -448,8 +448,8 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (LowercaseExpandedTerms)
             {
-                part1 = part1 == null ? null : part1.ToLower(Locale);
-                part2 = part2 == null ? null : part2.ToLower(Locale);
+                part1 = part1 == null ? null : Locale.TextInfo.ToLower(part1);
+                part2 = part2 == null ? null : Locale.TextInfo.ToLower(part2);
             }
 
             try
@@ -720,7 +720,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery");
             if (LowercaseExpandedTerms)
             {
-                termStr = termStr.ToLower(Locale);
+                termStr = Locale.TextInfo.ToLower(termStr);
             }
             Term t = new Term(field, termStr);
             return NewWildcardQuery(t);
@@ -748,7 +748,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (LowercaseExpandedTerms)
             {
-                termStr = termStr.ToLower(Locale);
+                termStr = Locale.TextInfo.ToLower(termStr);
             }
             Term t = new Term(field, termStr);
             return NewRegexpQuery(t);
@@ -780,7 +780,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ParseException("'*' not allowed as first character in PrefixQuery");
             if (LowercaseExpandedTerms)
             {
-                termStr = termStr.ToLower(Locale);
+                termStr = Locale.TextInfo.ToLower(termStr);
             }
             Term t = new Term(field, termStr);
             return NewPrefixQuery(t);
@@ -800,7 +800,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (LowercaseExpandedTerms)
             {
-                termStr = termStr.ToLower(Locale);
+                termStr = Locale.TextInfo.ToLower(termStr);
             }
             Term t = new Term(field, termStr);
             return NewFuzzyQuery(t, minSimilarity, FuzzyPrefixLength);

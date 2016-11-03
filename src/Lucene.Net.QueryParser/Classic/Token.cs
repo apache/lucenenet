@@ -22,7 +22,9 @@ namespace Lucene.Net.QueryParsers.Classic
 	/// <summary> 
     /// Describes the input token stream.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
 	public class Token
 	{
 		

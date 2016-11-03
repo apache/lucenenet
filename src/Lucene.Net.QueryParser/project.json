@@ -1,7 +1,7 @@
 {
   "version": "4.8.0-alpha",
   "dependencies": {
-    "Lucene.Net.Core": "4.8.0-alpha"
+    "Lucene.Net.Analysis.Common": "4.8.0-alpha"
   },
   "frameworks": {
     "netstandard1.5": {
@@ -11,7 +11,9 @@
       }
     },
     "net451": {
-
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_CLONEABLE" ]
+      }
     }
   }
 }

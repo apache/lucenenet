@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Classic
 		{
 			try
 			{
-				input.Close();
+				input.Dispose();
 			}
 			catch (System.IO.IOException e)
 			{

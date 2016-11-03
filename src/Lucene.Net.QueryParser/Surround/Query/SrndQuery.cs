@@ -25,7 +25,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// <summary>
     /// Lowest level base class for surround queries 
     /// </summary>
-    public abstract class SrndQuery : ICloneable
+    public abstract class SrndQuery
+#if FEATURE_CLONEABLE
+    : ICloneable
+#endif
     {
         //public SrndQuery() { }
 
@@ -91,7 +94,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             }
             catch (Exception e)
             {
-                throw new SystemException(e.Message, e); // shouldn't happen
+                throw new InvalidOperationException(e.Message, e); // shouldn't happen
             }
             return clone;
         }

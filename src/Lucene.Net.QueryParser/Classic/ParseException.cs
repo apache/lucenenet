@@ -29,7 +29,9 @@ namespace Lucene.Net.QueryParsers.Classic
 	/// You can modify this class to customize your error reporting
 	/// mechanisms so long as you retain the public fields.
 	/// </summary>
-	[Serializable]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
 	public class ParseException : Exception
 	{
         /// <summary>

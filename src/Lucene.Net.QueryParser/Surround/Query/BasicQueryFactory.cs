@@ -38,6 +38,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class BasicQueryFactory
     {
+        private readonly static object _lock = new object();
+
         public BasicQueryFactory(int maxBasicQueries)
         {
             this.maxBasicQueries = maxBasicQueries;
@@ -68,12 +70,15 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             get { return queriesMade >= maxBasicQueries; }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         protected virtual void CheckMax()
         {
-            if (AtMax)
-                throw new TooManyBasicQueries(MaxBasicQueries);
-            queriesMade++;
+            lock (_lock) 
+            {
+                if (AtMax)
+                    throw new TooManyBasicQueries(MaxBasicQueries);
+
+                queriesMade++;
+            }
         }
 
         public virtual TermQuery NewTermQuery(Term term)
