@@ -746,7 +746,7 @@ namespace Lucene.Net.Util
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                sb.Append(NextInt(r, BlockStarts[block], BlockEnds[block]));
+                sb.AppendCodePoint(NextInt(r, BlockStarts[block], BlockEnds[block]));
             }
             return sb.ToString();
         }
