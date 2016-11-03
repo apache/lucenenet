@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             fragments.Add(new LookupHighlightFragment(text.Substring(startOffset, endOffset - startOffset), true));
                             upto = endOffset;
                         }
-                        else if (prefixToken != null && token.StartsWith(prefixToken, StringComparison.InvariantCulture))
+                        else if (prefixToken != null && token.Normalize().StartsWith(prefixToken, StringComparison.Ordinal))
                         {
                             fragments.Add(new LookupHighlightFragment(text.Substring(startOffset, prefixToken.Length), true));
                             if (prefixToken.Length < token.Length)
@@ -550,7 +551,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public override void Run()
             {
+#if !NETSTANDARD
                 Priority += 1;
+#endif
                 while (!stop.Get())
                 {
                     string query = RandomText();
@@ -779,7 +782,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 // Prefix match
                                 for (int k = 0; k < inputTerms.Length; k++)
                                 {
-                                    if (inputTerms[k].StartsWith(queryTerms[j], StringComparison.InvariantCulture))
+                                    if (inputTerms[k].StartsWith(queryTerms[j], StringComparison.Ordinal))
                                     {
                                         match = true;
                                         break;

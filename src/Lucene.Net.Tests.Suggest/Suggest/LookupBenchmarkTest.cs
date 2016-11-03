@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Suggest
             List<Input> input = new List<Input>();
 
             //URL resource = LookupBenchmarkTest.class.getResource("Top50KWiki.utf8");
-            var resource = typeof(LookupBenchmarkTest).Assembly.GetManifestResourceStream("Lucene.Net.Tests.Suggest.Suggest.Top50KWiki.utf8");
+            var resource = typeof(LookupBenchmarkTest).GetTypeInfo().Assembly.GetManifestResourceStream("Lucene.Net.Tests.Suggest.Suggest.Top50KWiki.utf8");
             Debug.Assert(resource != null, "Resource missing: Top50KWiki.utf8");
 
             string line = null;
