@@ -73,8 +73,9 @@ namespace Lucene.Net.Analysis.Cz
             {
                 try
                 {
+                    var resource = typeof(CzechAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_SET = WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), typeof(CzechAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
+                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), resource, Encoding.UTF8), 
                         "#",
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);

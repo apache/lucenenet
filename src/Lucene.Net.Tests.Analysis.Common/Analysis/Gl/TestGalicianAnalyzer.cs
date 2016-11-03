@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Gl
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+     [TestFixture]
     public class TestGalicianAnalyzer : BaseTokenStreamTestCase
     {
         /// <summary>

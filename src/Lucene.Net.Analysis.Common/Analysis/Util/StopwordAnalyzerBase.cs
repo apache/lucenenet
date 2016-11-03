@@ -162,23 +162,5 @@ namespace Lucene.Net.Analysis.Util
                 IOUtils.Close(stopwords);
             }
         }
-
-        /// <summary>
-        /// LUCENENET specific:
-        /// In .NET Core, resources are embedded with the namespace based on
-        /// the physical location they are located in preceded by the name of
-        /// the assembly.
-        /// For example, the file: Analysis/Bg/stopwords.txt, would have the
-        /// resource name `Lucene.Net.Analysis.Common.Analysis.Bg.stopwords.txt`
-        /// </summary>
-        protected internal static string GetAnalysisResourceName(Type type, string analysisSubfolder, string filename)
-        {
-#if FEATURE_NETCOREEMBEDDEDRESOURCE
-            return string.Format("{0}.Analysis.{1}.{2}", type.GetTypeInfo().Assembly.GetName().Name, analysisSubfolder, filename);
-#else
-            return string.Format("{0}.{1}", type.Namespace, filename);
-#endif
-        }
     }
-
 }

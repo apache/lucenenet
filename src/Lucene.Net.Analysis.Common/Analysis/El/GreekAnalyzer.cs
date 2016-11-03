@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.El
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(GreekAnalyzer), "El", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(GreekAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_SET = LoadStopwordSet(false, typeof(GreekAnalyzer), resource, "#");
                 }
                 catch (IOException)

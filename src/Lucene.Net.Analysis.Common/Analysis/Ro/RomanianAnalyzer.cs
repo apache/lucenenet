@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Ro
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(RomanianAnalyzer), "Ro", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(RomanianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(RomanianAnalyzer), resource, STOPWORDS_COMMENT);
                 }
                 catch (IOException)

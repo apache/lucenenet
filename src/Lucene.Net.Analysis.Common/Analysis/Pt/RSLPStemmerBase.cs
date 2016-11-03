@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Pt
         {
             IDictionary<string, Step> steps = new Dictionary<string, Step>();
 
-            using (TextReader r = IOUtils.GetDecodingReader(clazz, clazz.Namespace + "." + resource, Encoding.UTF8))
+            using (TextReader r = IOUtils.GetDecodingReader(clazz, clazz.GetAnalysisResourceName(resource), Encoding.UTF8))
             {
                 string step;
                 while ((step = ReadLine(r)) != null)

@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ckb
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(SoraniAnalyzer), "Ckb", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(SoraniAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(
                         IOUtils.GetDecodingReader(typeof(SoraniAnalyzer), resource, Encoding.UTF8),
 #pragma warning disable 612, 618

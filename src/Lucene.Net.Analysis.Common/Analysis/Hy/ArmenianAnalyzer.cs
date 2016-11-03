@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Hy
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(ArmenianAnalyzer), "Hy", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(ArmenianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ArmenianAnalyzer), resource, "#");
                 }
                 catch (IOException)

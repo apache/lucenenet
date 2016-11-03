@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Br
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(BrazilianAnalyzer), "Br", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(BrazilianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(
                         IOUtils.GetDecodingReader(typeof(BrazilianAnalyzer), resource, Encoding.UTF8),
                         "#",

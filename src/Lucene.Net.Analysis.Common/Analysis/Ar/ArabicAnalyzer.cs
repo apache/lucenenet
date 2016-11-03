@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Ar
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(ArabicAnalyzer), "Ar", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(ArabicAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ArabicAnalyzer), resource, "#");
                 }
                 catch (IOException)

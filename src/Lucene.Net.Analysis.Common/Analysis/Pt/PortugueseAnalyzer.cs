@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Pt
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(SnowballFilter), "Snowball", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(SnowballFilter).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), resource, Encoding.UTF8),
 #pragma warning disable 612, 618

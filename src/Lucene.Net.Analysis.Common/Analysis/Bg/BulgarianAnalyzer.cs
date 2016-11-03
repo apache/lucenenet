@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Bg
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(BulgarianAnalyzer), "Bg", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(BulgarianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(BulgarianAnalyzer), resource, "#");
                 }
                 catch (IOException)

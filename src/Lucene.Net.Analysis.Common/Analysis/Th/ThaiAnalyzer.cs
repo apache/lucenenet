@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Th
             {
                 try
                 {
-                    var resource = GetAnalysisResourceName(typeof(ThaiAnalyzer), "Th", DEFAULT_STOPWORD_FILE);
+                    var resource = typeof(ThaiAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(ThaiAnalyzer), resource, STOPWORDS_COMMENT);
                 }
                 catch (IOException)
