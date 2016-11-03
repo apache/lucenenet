@@ -1,15 +1,17 @@
 ﻿{
-  "supports": {
-    "net46.app": {},
-    "dnxcore50.app": {}
-  },
+  "version": "4.8.0-alpha",
   "dependencies": {
-    "Microsoft.NETCore": "5.0.1-beta-23516",
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1-beta-23516"
+    "Lucene.Net.Core": "4.8.0-alpha"
   },
   "frameworks": {
-    "dotnet5.4": {
-      "imports": "portable-net452"
+    "netstandard1.5": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
+    "net451": {
+
     }
   }
 }
