@@ -1,17 +1,38 @@
 {
   "version": "4.8.0-alpha",
   "dependencies": {
-    "Lucene.Net.Core": "4.8.0-alpha"
+    "dotnet-test-nunit": "3.4.0-beta-2",
+    "Lucene.Net.Memory": "4.8.0-alpha",
+    "Lucene.Net.QueryParser": "4.8.0-alpha",
+    "Lucene.Net.TestFramework": "4.8.0-alpha",
+    "NUnit": "3.5.0"
   },
-  "frameworks": {
-    "netstandard1.5": {
-      "imports": "dnxcore50",
-      "dependencies": {
-        "NETStandard.Library": "1.6.0"
-      }
-    },
-    "net451": {
 
+  "buildOptions": {
+    "embed": {
+      "includeFiles": [
+        "Index/Memory/testqueries.txt",
+        "Index/Memory/testqueries2.txt"
+      ]
     }
+  },
+  
+  "testRunner": "nunit",
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "dependencies": { 
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      }
+    }
+  },
+  
+  "runtimes": {
+    "win7-x86": {},
+    "win7-x64": {}
   }
 }
