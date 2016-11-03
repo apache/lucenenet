@@ -134,7 +134,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///         
         private static int CompareCharsAlphabetically(char cCompare2, char cRef, CultureInfo culture)
         {
-            return char.ToLower(cCompare2, culture) - char.ToLower(cRef, culture);
+            var textInfo = culture.TextInfo;
+            return textInfo.ToLower(cCompare2) - textInfo.ToLower(cRef);
         }
 
         /* what follows is the original Jaspell code. 
@@ -300,7 +301,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                         occur = Convert.ToSingle(word.Substring(pos + 1).Trim());
                         word = word.Substring(0, pos);
                     }
-                    string key = word.ToLower(culture);
+                    string key = culture.TextInfo.ToLower(word);
                     if (rootNode == null)
                     {
                         rootNode = new TSTNode(this, key[0], null);
@@ -345,7 +346,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                         {
                             occur += (float)occur2;
                         }
-                        currentNode = GetOrCreateNode(word.Trim().ToLower(culture));
+                        currentNode = GetOrCreateNode(culture.TextInfo.ToLower(word.Trim()));
                         currentNode.data = occur;
                     }
                 }
@@ -504,7 +505,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> The <see cref="System.Nullable{float}"/> retrieved from the Ternary Search Trie. </returns>
         public virtual float? GetAndIncrement(string key)
         {
-            string key2 = key.Trim().ToLower(culture);
+            string key2 = culture.TextInfo.ToLower(key.Trim());
             TSTNode node = GetNode(key2);
             if (node == null)
             {
@@ -894,7 +895,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          the Trie. </param>
         public virtual void Remove(string key)
         {
-            DeleteNode(GetNode(key.Trim().ToLower(this.culture)));
+            DeleteNode(GetNode(this.culture.TextInfo.ToLower(key.Trim())));
         }
 
         /// <summary>
