@@ -1146,7 +1146,7 @@ namespace Lucene.Net.QueryParsers.Util
             string oldDefaultField = DefaultField;
             DefaultField = "date";
             ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
-            qp.Locale = System.Globalization.CultureInfo.GetCultureInfo("en");
+            qp.Locale = new CultureInfo("en");
             Query q = GetQuery(query, qp);
             ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
             assertEquals(expected, hits.Length);
