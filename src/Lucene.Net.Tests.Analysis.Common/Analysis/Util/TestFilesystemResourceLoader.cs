@@ -50,8 +50,39 @@ namespace Lucene.Net.Analysis.Util
 
         private void assertClasspathDelegation(IResourceLoader rl)
         {
+            const string LuceneNetAnalysisCommon = "Lucene.Net.Analysis.Common";
+            var assemblyDirectory = System.IO.Path.GetDirectoryName(typeof(TestFilesystemResourceLoader).Assembly.Location);
+            var current = new DirectoryInfo(assemblyDirectory);
+
+            DirectoryInfo analysisCommonFolder = null;
+
+            // LUCENENET: Searching upwards for the parent rather than using a
+            // relative path because in .NET Core, the base directory is not
+            // always under bin\Debug\. The program may be running from
+            // bin\Debug\netcoreapp1.0\win7-x64\.
+            while (current != null)
+            {
+                var matching = current.GetDirectories(LuceneNetAnalysisCommon, SearchOption.TopDirectoryOnly);
+
+                if (matching == null || matching.Length == 0)
+                {
+                    current = Directory.GetParent(current.FullName);
+                }
+                else
+                {
+                    analysisCommonFolder = matching.First();
+                    break;
+                }
+            }
+
+            if (analysisCommonFolder == null)
+            {
+                throw new InvalidOperationException("Should have been able to find " + LuceneNetAnalysisCommon + " as a parent of " + typeof(TestFilesystemResourceLoader).Assembly.Location);
+            }
+
+            var englishStopText = System.IO.Path.Combine(analysisCommonFolder.FullName, @"Analysis\Snowball\english_stop.txt");
             // try a stopwords file from classpath
-            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(System.IO.Path.GetFullPath(@"..\..\..\Lucene.Net.Analysis.Common\Analysis\Snowball\english_stop.txt")), Encoding.UTF8), TEST_VERSION_CURRENT);
+            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(englishStopText), Encoding.UTF8), TEST_VERSION_CURRENT);
             assertTrue(set.contains("you"));
             // try to load a class; we use string comparison because classloader may be different...
             assertEquals("Lucene.Net.Analysis.Util.RollingCharBuffer", rl.NewInstance<object>("Lucene.Net.Analysis.Util.RollingCharBuffer").ToString());
