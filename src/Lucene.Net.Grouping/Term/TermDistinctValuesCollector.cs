@@ -1,12 +1,9 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -34,16 +31,17 @@ namespace Lucene.Net.Search.Grouping.Terms
          * @param countField The field to count distinct values for
          * @param groups The top N groups, collected during the first phase search
          */
-        public TermDistinctValuesCollector(string groupField, string countField, ICollection<SearchGroup<BytesRef>> groups)
+        public TermDistinctValuesCollector(string groupField, string countField, IEnumerable<ISearchGroup<BytesRef>> groups)
         {
             this.groupField = groupField;
             this.countField = countField;
-            this.groups = new List<GroupCount>(groups.Count);
-            foreach (SearchGroup<BytesRef> group in groups)
+            int groupCount = groups.Count();
+            this.groups = new List<GroupCount>(groupCount);
+            foreach (ISearchGroup<BytesRef> group in groups)
             {
                 this.groups.Add(new GroupCount(group.GroupValue));
             }
-            ordSet = new SentinelIntSet(groups.Count, -2);
+            ordSet = new SentinelIntSet(groupCount, -2);
             groupCounts = new GroupCount[ordSet.Keys.Length];
         }
 
@@ -61,13 +59,13 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 if (countOrd == -1)
                 {
-                    gc.uniqueValues.Add(null);
+                    ((ISet<BytesRef>)gc.UniqueValues).Add(null);
                 }
                 else
                 {
                     BytesRef br = new BytesRef();
                     countFieldTermIndex.LookupOrd(countOrd, br);
-                    gc.uniqueValues.Add(br);
+                    ((ISet<BytesRef>)gc.UniqueValues).Add(br);
                 }
 
                 gc.ords = Arrays.CopyOf(gc.ords, gc.ords.Length + 1);
@@ -92,9 +90,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             return Array.BinarySearch(ords, ord) < 0;
         }
 
-        public override List<GroupCount> GetGroups()
+        public override IEnumerable<GroupCount> Groups
         {
-            return groups;
+            get { return groups; }
         }
 
         public override AtomicReaderContext NextReader
@@ -106,17 +104,17 @@ namespace Lucene.Net.Search.Grouping.Terms
                 ordSet.Clear();
                 foreach (GroupCount group in groups)
                 {
-                    int groupOrd = group.groupValue == null ? -1 : groupFieldTermIndex.LookupTerm(group.groupValue);
-                    if (group.groupValue != null && groupOrd < 0)
+                    int groupOrd = group.GroupValue == null ? -1 : groupFieldTermIndex.LookupTerm(group.GroupValue);
+                    if (group.GroupValue != null && groupOrd < 0)
                     {
                         continue;
                     }
 
                     groupCounts[ordSet.Put(groupOrd)] = group;
-                    group.ords = new int[group.uniqueValues.Count];
+                    group.ords = new int[group.UniqueValues.Count()];
                     Arrays.Fill(group.ords, -2);
                     int i = 0;
-                    foreach (BytesRef value2 in group.uniqueValues)
+                    foreach (BytesRef value2 in group.UniqueValues)
                     {
                         int countOrd = value2 == null ? -1 : countFieldTermIndex.LookupTerm(value2);
                         if (value2 == null || countOrd >= 0)

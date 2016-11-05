@@ -13,13 +13,14 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GC"></typeparam>
-    public abstract class AbstractDistinctValuesCollector<GC> : Collector where GC : IGroupCount /* AbstractDistinctValuesCollector<GC>.GroupCount */
+    public abstract class AbstractDistinctValuesCollector<GC> : Collector, IAbstractDistinctValuesCollector<GC>
+        where GC : IGroupCount /* AbstractDistinctValuesCollector<GC>.GroupCount */
     {
         /// <summary>
         /// Returns all unique values for each top N group.
         /// </summary>
         /// <returns>all unique values for each top N group</returns>
-        public abstract List<GC> GetGroups();
+        public abstract IEnumerable<GC> Groups { get; }
 
         public override bool AcceptsDocsOutOfOrder()
         {
@@ -66,16 +67,16 @@ namespace Lucene.Net.Search.Grouping
     /// <see cref="AbstractDistinctValuesCollector{GC}"/> and renamed
     /// from GroupCount to AbstractGroupCount
     /// </remarks>
-    public abstract class AbstractGroupCount<TGroupValue> : IGroupCount
+    public abstract class AbstractGroupCount<TGroupValue> : IGroupCount<TGroupValue>
         //where TGroupValue : IComparable
     {
-        public readonly TGroupValue groupValue;
-        public readonly ISet<TGroupValue> uniqueValues;
+        public TGroupValue GroupValue { get; protected set; }
+        public IEnumerable<TGroupValue> UniqueValues { get; protected set; }
 
         public AbstractGroupCount(TGroupValue groupValue)
         {
-            this.groupValue = groupValue;
-            this.uniqueValues = new HashSet<TGroupValue>();
+            this.GroupValue = groupValue;
+            this.UniqueValues = new HashSet<TGroupValue>();
         }
     }
 
@@ -85,5 +86,26 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     public interface IGroupCount
     {
+    }
+
+
+    /// <summary>
+    /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface IGroupCount<out TGroupValue> : IGroupCount
+    {
+        TGroupValue GroupValue { get; }
+        IEnumerable<TGroupValue> UniqueValues { get; }
+    }
+
+
+    /// <summary>
+    /// LUCENENET specific interface used to apply covariance to GC
+    /// </summary>
+    /// <typeparam name="GC"></typeparam>
+    public interface IAbstractDistinctValuesCollector<out GC>
+    {
+        IEnumerable<GC> Groups { get; }
     }
 }

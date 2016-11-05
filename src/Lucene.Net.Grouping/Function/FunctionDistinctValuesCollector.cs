@@ -1,13 +1,9 @@
-﻿using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Mutable;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Grouping.Function
 {
@@ -28,21 +24,21 @@ namespace Lucene.Net.Search.Grouping.Function
         private MutableValue groupMval;
         private MutableValue countMval;
 
-        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, ICollection<SearchGroup<MutableValue>> groups)
+        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, IEnumerable<ISearchGroup<MutableValue>> groups)
         {
             this.vsContext = vsContext;
             this.groupSource = groupSource;
             this.countSource = countSource;
-            groupMap = new LurchTable<MutableValue, GroupCount>(1 << 4);
+            groupMap = new LinkedHashMap<MutableValue, GroupCount>();
             foreach (SearchGroup<MutableValue> group in groups)
             {
                 groupMap[group.GroupValue] = new GroupCount(group.GroupValue);
             }
         }
 
-        public override List<GroupCount> GetGroups()
+        public override IEnumerable<GroupCount> Groups
         {
-            return new List<GroupCount>(groupMap.Values);
+            get { return new List<GroupCount>(groupMap.Values); }
         }
 
         public override void Collect(int doc)
@@ -52,7 +48,7 @@ namespace Lucene.Net.Search.Grouping.Function
             if (groupMap.TryGetValue(groupMval, out groupCount))
             {
                 countFiller.FillValue(doc);
-                groupCount.uniqueValues.Add(countMval.Duplicate());
+                ((ISet<MutableValue>)groupCount.UniqueValues).Add(countMval.Duplicate());
             }
         }
 

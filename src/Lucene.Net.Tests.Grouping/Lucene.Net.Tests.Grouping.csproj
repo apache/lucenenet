@@ -47,6 +47,7 @@
     <Compile Include="AbstractGroupingTestCase.cs" />
     <Compile Include="AllGroupHeadsCollectorTest.cs" />
     <Compile Include="AllGroupsCollectorTest.cs" />
+    <Compile Include="DistinctValuesCollectorTest.cs" />
     <Compile Include="GroupFacetCollectorTest.cs" />
     <Compile Include="GroupingSearchTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
