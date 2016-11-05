@@ -345,7 +345,10 @@ namespace Lucene.Net.Support
 
             public void CopyTo(TKey[] array, int arrayIndex)
             {
-                throw new NotImplementedException("Implement this as needed");
+                foreach (var element in outerInstance.list)
+                {
+                    array[arrayIndex++] = element.Key;
+                }
             }
 
             public IEnumerator<TKey> GetEnumerator()
@@ -455,7 +458,10 @@ namespace Lucene.Net.Support
 
             public void CopyTo(TValue[] array, int arrayIndex)
             {
-                throw new NotImplementedException("Implement this as needed");
+                foreach (var element in outerInstance.list)
+                {
+                    array[arrayIndex++] = element.Value;
+                }
             }
 
             public IEnumerator<TValue> GetEnumerator()
