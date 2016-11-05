@@ -206,13 +206,13 @@ namespace Lucene.Net.Search.Grouping
         {
 
             private readonly GroupComparator<T> groupComp;
-            private readonly ISet<MergedGroup<T>> queue;
+            private readonly TreeSet<MergedGroup<T>> queue;
             private readonly IDictionary<T, MergedGroup<T>> groupsSeen;
 
             public GroupMerger(Sort groupSort)
             {
                 groupComp = new GroupComparator<T>(groupSort);
-                queue = new SortedSet<MergedGroup<T>>(groupComp);
+                queue = new TreeSet<MergedGroup<T>>(groupComp);
                 groupsSeen = new HashMap<T, MergedGroup<T>>();
             }
 
