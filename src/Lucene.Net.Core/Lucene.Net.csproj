@@ -643,6 +643,7 @@
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\IDictionaryExtensions.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
+    <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\LongBuffer.cs" />
     <Compile Include="Support\LurchTable.cs" />
