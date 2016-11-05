@@ -125,6 +125,84 @@ namespace Lucene.Net.Support
             return this[key];
         }
 
+        #region Object overrides
+
+        public override bool Equals(object obj)
+        {
+            if (obj == this)
+                return true;
+
+            if (!(obj is IDictionary<TKey, TValue>))
+                return false;
+            IDictionary<TKey, TValue> m = (IDictionary<TKey, TValue>)obj;
+            if (m.Count != Count)
+                return false;
+
+            try
+            {
+                var i = GetEnumerator();
+                while (i.MoveNext())
+                {
+                    KeyValuePair<TKey, TValue> e = i.Current;
+                    TKey key = e.Key;
+                    TValue value = e.Value;
+                    if (value == null)
+                    {
+                        if (!(m[key] == null && m.ContainsKey(key)))
+                            return false;
+                    }
+                    else
+                    {
+                        if (!value.Equals(m[key]))
+                            return false;
+                    }
+                }
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int h = 0;
+            var i = GetEnumerator();
+            while (i.MoveNext())
+                h += i.Current.GetHashCode();
+            return h;
+        }
+
+        public override string ToString()
+        {
+            var i = GetEnumerator();
+            if (!i.MoveNext())
+                return "{}";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append('{');
+            for (;;)
+            {
+                var e = i.Current;
+                TKey key = e.Key;
+                TValue value = e.Value;
+                sb.Append(key);
+                sb.Append('=');
+                sb.Append(value);
+                if (!i.MoveNext())
+                    return sb.Append('}').ToString();
+                sb.Append(',').Append(' ');
+            }
+        }
+
+        #endregion
+
         #region Implementation of IEnumerable
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
