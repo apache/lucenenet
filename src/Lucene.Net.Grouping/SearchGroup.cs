@@ -1,11 +1,8 @@
-﻿using Lucene.Net.Search;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -60,20 +57,20 @@ namespace Lucene.Net.Search.Grouping
 
         private class ShardIter<T>
         {
-            public readonly IEnumerator<SearchGroup<T>> iter;
+            public readonly IEnumerator<ISearchGroup<T>> iter;
             public readonly int shardIndex;
 
-            public ShardIter(ICollection<SearchGroup<T>> shard, int shardIndex)
+            public ShardIter(IEnumerable<ISearchGroup<T>> shard, int shardIndex)
             {
                 this.shardIndex = shardIndex;
                 iter = shard.GetEnumerator();
-                //Debug.Assert(iter.hasNext());
+                //Debug.Assert(iter.hasNext()); // No reasonable way to do this in .NET
             }
 
-            public SearchGroup<T> Next()
+            public ISearchGroup<T> Next()
             {
-                Debug.Assert(iter.MoveNext());
-                SearchGroup<T> group = iter.Current;
+                //Debug.Assert(iter.hasNext()); // No reasonable way to do this in .NET
+                ISearchGroup<T> group = iter.Current;
                 if (group.SortValues == null)
                 {
                     throw new ArgumentException("group.sortValues is null; you must pass fillFields=true to the first pass collector");
@@ -216,14 +213,14 @@ namespace Lucene.Net.Search.Grouping
             {
                 groupComp = new GroupComparator<T>(groupSort);
                 queue = new SortedSet<MergedGroup<T>>(groupComp);
-                groupsSeen = new Dictionary<T, MergedGroup<T>>();
+                groupsSeen = new HashMap<T, MergedGroup<T>>();
             }
 
             private void UpdateNextGroup(int topN, ShardIter<T> shard)
             {
                 while (shard.iter.MoveNext())
                 {
-                    SearchGroup<T> group = shard.Next();
+                    ISearchGroup<T> group = shard.Next();
                     MergedGroup<T> mergedGroup = groupsSeen.ContainsKey(group.GroupValue) ? groupsSeen[group.GroupValue] : null;
                     bool isNew = mergedGroup == null;
                     //System.out.println("    next group=" + (group.groupValue == null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
@@ -304,7 +301,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            public ICollection<SearchGroup<T>> Merge(IList<ICollection<SearchGroup<T>>> shards, int offset, int topN)
+            public ICollection<SearchGroup<T>> Merge(IList<IEnumerable<ISearchGroup<T>>> shards, int offset, int topN)
             {
 
                 int maxQueueSize = offset + topN;
@@ -313,7 +310,7 @@ namespace Lucene.Net.Search.Grouping
                 // Init queue:
                 for (int shardIDX = 0; shardIDX < shards.Count; shardIDX++)
                 {
-                    ICollection<SearchGroup<T>> shard = shards[shardIDX];
+                    IEnumerable<ISearchGroup<T>> shard = shards[shardIDX];
                     if (shard.Any())
                     {
                         //System.out.println("  insert shard=" + shardIDX);
@@ -373,7 +370,7 @@ namespace Lucene.Net.Search.Grouping
          *
          * <p>NOTE: this returns null if the topGroups is empty.
          */
-        public static ICollection<SearchGroup<T>> Merge<T>(IList<ICollection<SearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
+        public static ICollection<SearchGroup<T>> Merge<T>(IList<IEnumerable<ISearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
         {
             if (topGroups.Count == 0)
             {

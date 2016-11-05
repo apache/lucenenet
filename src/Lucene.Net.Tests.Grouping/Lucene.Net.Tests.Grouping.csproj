@@ -51,6 +51,7 @@
     <Compile Include="GroupFacetCollectorTest.cs" />
     <Compile Include="GroupingSearchTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestGrouping.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

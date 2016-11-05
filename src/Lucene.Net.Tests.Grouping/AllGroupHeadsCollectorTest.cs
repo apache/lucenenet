@@ -220,8 +220,9 @@ namespace Lucene.Net.Search.Grouping
                         case DocValuesType_e.SORTED:
                             valuesField = new SortedDocValuesField("group_dv", new BytesRef());
                             break;
-                            //default:
-                            //    fail("unhandled type");
+                        default:
+                            fail("unhandled type");
+                            break;
                     }
                     doc.Add(valuesField);
                 }
@@ -685,8 +686,9 @@ namespace Lucene.Net.Search.Grouping
                     case DocValuesType_e.SORTED:
                         valuesField = new SortedDocValuesField(groupField + "_dv", new BytesRef(value));
                         break;
-                        //default:
-                        //    fail("unhandled type");
+                    default:
+                        fail("unhandled type");
+                        break;
                 }
                 doc.Add(valuesField);
             }

@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Grouping
         /// <b>NOTE</b>: the topDocs in each GroupDocs is actually
         /// an instance of TopDocsAndShards
         /// </summary>
-        public static TopGroups<T> Merge<T>(TopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
+        public static TopGroups<T> Merge<T>(ITopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
         {
             //System.out.println("TopGroups.merge");
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Grouping
                 for (int shardIdx = 0; shardIdx < shardGroups.Length; shardIdx++)
                 {
                     //System.out.println("    shard=" + shardIDX);
-                    TopGroups<T> shard = shardGroups[shardIdx];
+                    ITopGroups<T> shard = shardGroups[shardIdx];
                     var shardGroupDocs = shard.Groups[groupIDX];
                     if (groupValue == null)
                     {
