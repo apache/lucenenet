@@ -1,39 +1,40 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace Lucene.Net.Support
 {
+    /*
+     *
+     * Licensed to the Apache Software Foundation (ASF) under one
+     * or more contributor license agreements.  See the NOTICE file
+     * distributed with this work for additional information
+     * regarding copyright ownership.  The ASF licenses this file
+     * to you under the Apache License, Version 2.0 (the
+     * "License"); you may not use this file except in compliance
+     * with the License.  You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing,
+     * software distributed under the License is distributed on an
+     * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     * KIND, either express or implied.  See the License for the
+     * specific language governing permissions and limitations
+     * under the License.
+     *
+    */
+
     [TestFixture]
     public class TestHashMap
     {
-        private static HashMap<TKey, TValue> GetNewHashMap<TKey, TValue>()
+        protected virtual HashMap<TKey, TValue> GetNewHashMap<TKey, TValue>()
         {
             return new HashMap<TKey, TValue>();
         }
 
-        private static HashMap<string,string> GetDefaultHashMap1()
+        private HashMap<string,string> GetDefaultHashMap1()
         {
             var hm = GetNewHashMap<string, string>();
             hm.Add("key1", "value1");
@@ -41,8 +42,8 @@ namespace Lucene.Net.Support
             return hm;
         }
 
-        [Test]
-        public void TestKeyEnumeration()
+        [Test, LuceneNetSpecific]
+        public virtual void TestKeyEnumeration()
         {
             var keys = new List<string> {"key1", "key2"};
             var dict = GetDefaultHashMap1();
@@ -59,8 +60,8 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
-        public void TestValueEnumeration()
+        [Test, LuceneNetSpecific]
+        public virtual void TestValueEnumeration()
         {
             var values = new List<string> { "value1", "value2" };
             var dict = GetDefaultHashMap1();
@@ -77,26 +78,26 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
-        public void TestKeyValuePairEnumeration()
+        [Test, LuceneNetSpecific]
+        public virtual void TestKeyValuePairEnumeration()
         {
             var dict = GetDefaultHashMap1();
             Action<KeyValuePair<string, string>> act = kvp =>
-                                                           {
-                                                               Assert.IsNotNull(kvp);
-                                                               if (kvp.Key == "key1")
-                                                               {
-                                                                   Assert.AreEqual("value1", kvp.Value);
-                                                               }
-                                                               else if (kvp.Key == "key2")
-                                                               {
-                                                                   Assert.AreEqual("value2", kvp.Value);
-                                                               }
-                                                               else if (kvp.Key == null)
-                                                               {
-                                                                   Assert.AreEqual("nullval", kvp.Value);
-                                                               }
-                                                           };
+                {
+                    Assert.IsNotNull(kvp);
+                    if (kvp.Key == "key1")
+                    {
+                        Assert.AreEqual("value1", kvp.Value);
+                    }
+                    else if (kvp.Key == "key2")
+                    {
+                        Assert.AreEqual("value2", kvp.Value);
+                    }
+                    else if (kvp.Key == null)
+                    {
+                        Assert.AreEqual("nullval", kvp.Value);
+                    }
+                };
 
             foreach (var kvp in dict)
             {
@@ -110,8 +111,8 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
-        public void TestContainsNullKey()
+        [Test, LuceneNetSpecific]
+        public virtual void TestContainsNullKey()
         {
             var dict = GetDefaultHashMap1();
             Assert.IsFalse(dict.ContainsKey(null));
@@ -122,16 +123,16 @@ namespace Lucene.Net.Support
             Assert.AreEqual("value", dict[null]);
         }
 
-        [Test]
-        public void TestContainsKey()
+        [Test, LuceneNetSpecific]
+        public virtual void TestContainsKey()
         {
             var dict = GetDefaultHashMap1();
             Assert.IsTrue(dict.ContainsKey("key1"));
             Assert.IsTrue(dict.ContainsKey("key2"));
         }
 
-        [Test]
-        public void TestAdd_NoNullKeys_NullValues()
+        [Test, LuceneNetSpecific]
+        public virtual void TestAdd_NoNullKeys_NullValues()
         {
             var dict = GetNewHashMap<string, string>();
             dict.Add("key1", null);
@@ -140,8 +141,8 @@ namespace Lucene.Net.Support
             Assert.AreEqual(2, dict.Count);
         }
 
-        [Test]
-        public void TestAdd_WithNullKeys_NoNullValues()
+        [Test, LuceneNetSpecific]
+        public virtual void TestAdd_WithNullKeys_NoNullValues()
         {
             var dict = GetNewHashMap<string, string>();
             dict.Add("key1", "value1");
@@ -150,24 +151,24 @@ namespace Lucene.Net.Support
             Assert.AreEqual(2, dict.Count);
         }
 
-        [Test]
-        public void TestGetWithNonExistantKey_EmptyCollection()
+        [Test, LuceneNetSpecific]
+        public virtual void TestGetWithNonExistantKey_EmptyCollection()
         {
             var dict = GetNewHashMap<string, string>();
             Assert.IsNull(dict["nothing"]);
             Assert.IsNull(dict[null]);
         }
 
-        [Test]
-        public void TestGetWithNonExistantKey()
+        [Test, LuceneNetSpecific]
+        public virtual void TestGetWithNonExistantKey()
         {
             var dict = GetDefaultHashMap1();
             Assert.IsNull(dict["nothing"]);
             Assert.IsNull(dict[null]);
         }
 
-        [Test]
-        public void TestAddsUpdate_NotThrowException()
+        [Test, LuceneNetSpecific]
+        public virtual void TestAddsUpdate_NotThrowException()
         {
             var dict = GetNewHashMap<string, string>();
 
@@ -180,8 +181,8 @@ namespace Lucene.Net.Support
             Assert.AreEqual(1, dict.Count);
         }
 
-        [Test]
-        public void TestIndexersUpdate_NotThrowException()
+        [Test, LuceneNetSpecific]
+        public virtual void TestIndexersUpdate_NotThrowException()
         {
             var dict = GetNewHashMap<string, string>();
 
@@ -194,8 +195,8 @@ namespace Lucene.Net.Support
             Assert.AreEqual(1, dict.Count);
         }
 
-        [Test]
-        public void TestWithValueType()
+        [Test, LuceneNetSpecific]
+        public virtual void TestWithValueType()
         {
             // Make sure default value types are stored in the internal dictionary
             // and not the _nullValue variable

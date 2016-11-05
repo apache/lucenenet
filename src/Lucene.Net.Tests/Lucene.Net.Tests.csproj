@@ -483,6 +483,7 @@
     <Compile Include="core\Support\C5\SupportClasses.cs" />
     <Compile Include="core\Support\C5\WeakViewList.cs" />
     <Compile Include="core\Support\C5\Wrappers.cs" />
+    <Compile Include="core\Support\TestHashMap.cs" />
     <Compile Include="core\Support\TestLongBuffer.cs" />
     <Compile Include="core\Support\TestByteBuffer.cs" />
     <Compile Include="core\Support\TestLurchTable.cs" />
