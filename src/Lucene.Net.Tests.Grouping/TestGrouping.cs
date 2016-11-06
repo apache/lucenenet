@@ -465,13 +465,9 @@ namespace Lucene.Net.Search.Grouping
                     {
                         return sf.Reverse ? -cmp : cmp;
                     }
-                    else
-                    {
-                        // should never get here
-                    }
                 }
                 // Our sort always fully tie breaks:
-                //fail();
+                fail();
                 return 0;
             }
         }
