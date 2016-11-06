@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Grouping.Function
         /** Holds current head document for a single group.
          *
          * @lucene.experimental */
-        public class GroupHead : AbstractGroupHead /*AbstractAllGroupHeadsCollector.GroupHead<MutableValue>*/
+        public class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /*AbstractAllGroupHeadsCollector.GroupHead<MutableValue>*/
         {
 
             private readonly FunctionAllGroupHeadsCollector outerInstance;

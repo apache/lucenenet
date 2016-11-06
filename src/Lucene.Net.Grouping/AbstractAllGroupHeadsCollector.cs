@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.Search.Grouping
 {
     public abstract class AbstractAllGroupHeadsCollector<GH> : AbstractAllGroupHeadsCollector
-        where GH : AbstractGroupHead /*AbstractAllGroupHeadsCollector<GH>.GroupHead*/
+        where GH : AbstractAllGroupHeadsCollector_GroupHead
     {
         protected readonly int[] reversed;
         protected readonly int compIDXEnd;
@@ -150,16 +150,19 @@ namespace Lucene.Net.Search.Grouping
     /// </para>
     /// </summary>
     /// <remarks>
-    /// LUCENENET: moved this class outside of the AbstractAllGroupHeadsCollector,
-    /// made non-generic, and renamed from GroupHead to AbstractGroupHead.
+    /// LUCENENET: moved this class from of the <see cref="AbstractAllGroupHeadsCollector{TGroupValue}"/>,
+    /// to <see cref="AbstractAllGroupHeadsCollector"/>, made it non-generic so the generic closing type doesn't need 
+    /// to be specified in classes that use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed 
+    /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes 
+    /// named GroupHead in derived classes of <see cref="AbstractAllGroupHeadsCollector"/>.
     /// </remarks>
-    public abstract class AbstractGroupHead /*<TGroupValue>*/
+    public abstract class AbstractAllGroupHeadsCollector_GroupHead /*<TGroupValue>*/
     {
 
         //public readonly TGroupValue groupValue;
         public int Doc { get; protected set; }
 
-        protected AbstractGroupHead(/*TGroupValue groupValue,*/ int doc)
+        protected AbstractAllGroupHeadsCollector_GroupHead(/*TGroupValue groupValue,*/ int doc)
         {
             //this.groupValue = groupValue;
             this.Doc = doc;
