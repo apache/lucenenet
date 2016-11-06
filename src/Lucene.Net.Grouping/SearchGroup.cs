@@ -54,6 +54,18 @@ namespace Lucene.Net.Search.Grouping
         {
             return GroupValue != null ? GroupValue.GetHashCode() : 0;
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// by Lucene (that is, without specifying the generic closing type of <see cref="SearchGroup{TGroupValue}"/>)
+    /// </summary>
+    public class SearchGroup
+    {
+        /// <summary>
+        /// Prevent direct creation
+        /// </summary>
+        private SearchGroup() { }
 
         private class ShardIter<T>
         {
@@ -361,6 +373,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
+
         /** Merges multiple collections of top groups, for example
          *  obtained from separate index shards.  The provided
          *  groupSort must match how the groups were sorted, and
@@ -382,6 +395,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
     }
+
 
     /// <summary>
     /// LUCENENET specific interface used to provide covariance

@@ -77,6 +77,18 @@ namespace Lucene.Net.Search.Grouping
             MaxScore = oldTopGroups.MaxScore;
             TotalGroupCount = totalGroupCount;
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// by Lucene (that is, without specifying the generic closing type of <see cref="TopGroups{TGroupValue}"/>)
+    /// </summary>
+    public class TopGroups
+    {
+        /// <summary>
+        /// Prevent direct creation
+        /// </summary>
+        private TopGroups() { }
 
         /// <summary>
         /// How the GroupDocs score (if any) should be merged. </summary>
@@ -148,7 +160,7 @@ namespace Lucene.Net.Search.Grouping
                     totalGroupCount += shard.TotalGroupCount;
                 }
             }
-            
+
             var mergedGroupDocs = new GroupDocs<T>[numGroups];
 
             TopDocs[] shardTopDocs = new TopDocs[shardGroups.Length];

@@ -74,8 +74,7 @@ namespace Lucene.Net.Search.Grouping
             AbstractGroupFacetCollector groupedAirportFacetCollector = null;
             TermGroupFacetCollector.GroupedFacetResult airportResult = null;
 
-            foreach (int limit in new int[] { 2, 10, 100, int.MaxValue
-    })
+            foreach (int limit in new int[] { 2, 10, 100, int.MaxValue })
             {
                 // any of these limits is plenty for the data we have
 
@@ -407,7 +406,7 @@ namespace Lucene.Net.Search.Grouping
                     searcher.Search(new TermQuery(new Term("content", searchTerm)), groupFacetCollector);
                     TermGroupFacetCollector.GroupedFacetResult actualFacetResult = groupFacetCollector.MergeSegmentResults(size, minCount, orderByCount);
 
-                    List<TermGroupFacetCollector.FacetEntry> expectedFacetEntries = expectedFacetResult.getFacetEntries();
+                    List<TermGroupFacetCollector.FacetEntry> expectedFacetEntries = expectedFacetResult.GetFacetEntries();
                     List<TermGroupFacetCollector.FacetEntry> actualFacetEntries = actualFacetResult.GetFacetEntries(offset, limit);
 
                     if (VERBOSE)
@@ -428,8 +427,8 @@ namespace Lucene.Net.Search.Grouping
                         Console.WriteLine("Order by count: " + orderByCount);
 
                         Console.WriteLine("\n=== Expected: \n");
-                        Console.WriteLine("Total count " + expectedFacetResult.getTotalCount());
-                        Console.WriteLine("Total missing count " + expectedFacetResult.getTotalMissingCount());
+                        Console.WriteLine("Total count " + expectedFacetResult.TotalCount);
+                        Console.WriteLine("Total missing count " + expectedFacetResult.TotalMissingCount);
                         int counter = 0;
                         foreach (TermGroupFacetCollector.FacetEntry expectedFacetEntry in expectedFacetEntries)
                         {
@@ -457,8 +456,8 @@ namespace Lucene.Net.Search.Grouping
                         Console.WriteLine("\n===================================================================================");
                     }
 
-                    assertEquals(expectedFacetResult.getTotalCount(), actualFacetResult.TotalCount);
-                    assertEquals(expectedFacetResult.getTotalMissingCount(), actualFacetResult.TotalMissingCount);
+                    assertEquals(expectedFacetResult.TotalCount, actualFacetResult.TotalCount);
+                    assertEquals(expectedFacetResult.TotalMissingCount, actualFacetResult.TotalMissingCount);
                     assertEquals(expectedFacetEntries.size(), actualFacetEntries.size());
                     for (int i = 0; i < expectedFacetEntries.size(); i++)
                     {
@@ -587,7 +586,7 @@ namespace Lucene.Net.Search.Grouping
             docNoGroupNoFacet.Add(content);
 
             // LUCENENET NOTE: TreeSet (the class used in Java) allows duplicate keys. However, SortedSet seems to work,
-            // and based on the name of the variable, presuming the keys are meant to be unique.
+            // and based on the name of the variable, presuming the entries are meant to be unique.
             ISet<string> uniqueFacetValues = new SortedSet<string>(new ComparerAnonymousHelper1());
 
             // LUCENENET NOTE: Need HashMap here because of null keys
@@ -881,17 +880,17 @@ namespace Lucene.Net.Search.Grouping
                 this.facetEntries = facetEntries;
             }
 
-            public int getTotalCount()
+            public int TotalCount
             {
-                return totalCount;
+                get { return totalCount; }
             }
 
-            public int getTotalMissingCount()
+            public int TotalMissingCount
             {
-                return totalMissingCount;
+                get { return totalMissingCount; }
             }
 
-            public List<TermGroupFacetCollector.FacetEntry> getFacetEntries()
+            public List<TermGroupFacetCollector.FacetEntry> GetFacetEntries()
             {
                 return facetEntries;
             }

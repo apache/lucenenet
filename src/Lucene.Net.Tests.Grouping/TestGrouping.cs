@@ -99,17 +99,17 @@ namespace Lucene.Net.Search.Grouping
                 groupField += "_dv";
             }
 
-            IAbstractFirstPassGroupingCollector<IComparable> c1 = CreateRandomFirstPassCollector(groupField, groupSort, 10);
+            IAbstractFirstPassGroupingCollector<object> c1 = CreateRandomFirstPassCollector(groupField, groupSort, 10);
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
             indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c1 as Collector);
 
-            IAbstractSecondPassGroupingCollector<IComparable> c2 = CreateSecondPassCollector(c1, groupField, groupSort, null, 0, 5, true, true, true);
+            IAbstractSecondPassGroupingCollector<object> c2 = CreateSecondPassCollector(c1, groupField, groupSort, null, 0, 5, true, true, true);
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
             indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c2 as Collector);
 
-            ITopGroups<IComparable> groups = c2.GetTopGroups(0);
+            ITopGroups<object> groups = c2.GetTopGroups(0);
             assertFalse(float.IsNaN(groups.MaxScore));
 
             assertEquals(7, groups.TotalHitCount);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Grouping
 
             // the later a document is added the higher this docId
             // value
-            IGroupDocs<IComparable> group = groups.Groups[0];
+            IGroupDocs<object> group = groups.Groups[0];
             CompareGroupValue("author3", group);
             assertEquals(2, group.ScoreDocs.Length);
             assertEquals(5, group.ScoreDocs[0].Doc);
@@ -159,9 +159,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(string groupField, Sort groupSort, int topDocs)
+        private IAbstractFirstPassGroupingCollector<object> CreateRandomFirstPassCollector(string groupField, Sort groupSort, int topDocs)
         {
-            IAbstractFirstPassGroupingCollector<IComparable> selected;
+            IAbstractFirstPassGroupingCollector<object> selected;
             if (Random().nextBoolean())
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
@@ -318,8 +318,9 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(c.GetType()))
             {
-                // LUCENENET TODO: Can we remove this cast?
-                var mutableValueGroups = c.GetTopGroups(groupOffset, fillFields) as IEnumerable<ISearchGroup<MutableValue>>;
+                // LUCENENET NOTE: This is IEnumerable instead of ICollection because it 
+                // needs to be covariant to mimic the wildcard generics in Java
+                IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector)c).GetTopGroups(groupOffset, fillFields);
                 if (mutableValueGroups == null)
                 {
                     return null;
@@ -362,9 +363,6 @@ namespace Lucene.Net.Search.Grouping
 
         internal class GroupDoc
         {
-            private static int instanceIndex;
-            internal readonly int instanceId;
-
             internal readonly int id;
             internal readonly BytesRef group;
             internal readonly BytesRef sort1;
@@ -376,8 +374,6 @@ namespace Lucene.Net.Search.Grouping
 
             public GroupDoc(int id, BytesRef group, BytesRef sort1, BytesRef sort2, string content)
             {
-                this.instanceId = instanceIndex++;
-
                 this.id = id;
                 this.group = group;
                 this.sort1 = sort1;
@@ -1026,11 +1022,11 @@ namespace Lucene.Net.Search.Grouping
                         {
                             Console.WriteLine("  groupField=" + groupField);
                         }
-                        IAbstractFirstPassGroupingCollector<IComparable> c1 = CreateRandomFirstPassCollector(groupField, groupSort, groupOffset + topNGroups);
+                        IAbstractFirstPassGroupingCollector<object> c1 = CreateRandomFirstPassCollector(groupField, groupSort, groupOffset + topNGroups);
                         CachingCollector cCache;
                         Collector c;
 
-                        IAbstractAllGroupsCollector<IComparable> allGroupsCollector;
+                        IAbstractAllGroupsCollector<object> allGroupsCollector;
                         if (doAllGroups)
                         {
                             allGroupsCollector = CreateAllGroupsCollector(c1, groupField);
@@ -1126,6 +1122,8 @@ namespace Lucene.Net.Search.Grouping
                         }
 
                         // Get 1st pass top groups
+                        // LUCENENET NOTE: This is IEnumerable rather than ICollection because we need it to be
+                        // covariant in order to mimic Java's wildcard generics
                         IEnumerable<ISearchGroup<BytesRef>> topGroups = GetSearchGroups(c1, groupOffset, fillFields);
                         ITopGroups<BytesRef> groupsResult;
                         if (VERBOSE)
@@ -1149,7 +1147,7 @@ namespace Lucene.Net.Search.Grouping
                         ValueHolder<bool> idvBasedImplsUsedSharded = new ValueHolder<bool>(false);
                         TopGroups<BytesRef> topGroupsShards = SearchShards(s, shards.subSearchers, query, groupSort, docSort,
                            groupOffset, topNGroups, docOffset, docsPerGroup, getScores, getMaxScores, canUseIDV, preFlex, idvBasedImplsUsedSharded);
-                        IAbstractSecondPassGroupingCollector<IComparable> c2;
+                        IAbstractSecondPassGroupingCollector<object> c2;
                         if (topGroups != null)
                         {
 
@@ -1450,8 +1448,8 @@ namespace Lucene.Net.Search.Grouping
             // Run 1st pass collector to get top groups per shard
             Weight w = topSearcher.CreateNormalizedWeight(query);
             List<IEnumerable<ISearchGroup<BytesRef>>> shardGroups = new List<IEnumerable<ISearchGroup<BytesRef>>>();
-            List<IAbstractFirstPassGroupingCollector<IComparable>> firstPassGroupingCollectors = new List<IAbstractFirstPassGroupingCollector<IComparable>>();
-            IAbstractFirstPassGroupingCollector<IComparable> firstPassCollector = null;
+            List<IAbstractFirstPassGroupingCollector<object>> firstPassGroupingCollectors = new List<IAbstractFirstPassGroupingCollector<object>>();
+            IAbstractFirstPassGroupingCollector<object> firstPassCollector = null;
             bool shardsCanUseIDV;
             if (canUseIDV)
             {
@@ -1513,7 +1511,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            ICollection<SearchGroup<BytesRef>> mergedTopGroups = SearchGroup<BytesRef>.Merge(shardGroups, groupOffset, topNGroups, groupSort);
+            ICollection<SearchGroup<BytesRef>> mergedTopGroups = SearchGroup.Merge(shardGroups, groupOffset, topNGroups, groupSort);
             if (VERBOSE)
             {
                 Console.WriteLine(" top groups merged:");
@@ -1537,7 +1535,7 @@ namespace Lucene.Net.Search.Grouping
                 ITopGroups<BytesRef>[] shardTopGroups = new ITopGroups<BytesRef>[subSearchers.Length];
                 for (int shardIDX = 0; shardIDX < subSearchers.Length; shardIDX++)
                 {
-                    IAbstractSecondPassGroupingCollector<IComparable> secondPassCollector = CreateSecondPassCollector(firstPassGroupingCollectors[shardIDX],
+                    IAbstractSecondPassGroupingCollector<object> secondPassCollector = CreateSecondPassCollector(firstPassGroupingCollectors[shardIDX],
                         groupField, mergedTopGroups, groupSort, docSort, docOffset + topNDocs, getScores, getMaxScores, true);
                     // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                     // so this cast is not necessary. Consider eliminating the Collector abstract class.
@@ -1553,8 +1551,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                // LUCENENET TODO: Put Merge() in a TopGroups class
-                TopGroups<BytesRef> mergedGroups = TopGroups<BytesRef>.Merge(shardTopGroups, groupSort, docSort, docOffset, topNDocs, TopGroups<BytesRef>.ScoreMergeMode.None);
+                TopGroups<BytesRef> mergedGroups = TopGroups.Merge(shardTopGroups, groupSort, docSort, docOffset, topNDocs, TopGroups.ScoreMergeMode.None);
                 if (VERBOSE)
                 {
                     Console.WriteLine(" " + mergedGroups.Groups.Length + " merged groups:");

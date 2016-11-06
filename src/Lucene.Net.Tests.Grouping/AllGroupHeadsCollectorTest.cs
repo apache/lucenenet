@@ -30,9 +30,9 @@ namespace Lucene.Net.Search.Grouping
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
                 Random(),
-            dir,
-            NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             FieldInfo.DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
 
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Grouping
                         string searchTerm = "real" + Random().nextInt(3);
                         bool sortByScoreOnly = Random().nextBoolean();
                         Sort sortWithinGroup = GetRandomSort(sortByScoreOnly);
-                        var allGroupHeadsCollector = CreateRandomCollector("group", sortWithinGroup, canUseIDV, valueType);
+                        AbstractAllGroupHeadsCollector allGroupHeadsCollector = CreateRandomCollector("group", sortWithinGroup, canUseIDV, valueType);
                         s.Search(new TermQuery(new Term("content", searchTerm)), allGroupHeadsCollector);
                         int[] expectedGroupHeads = CreateExpectedGroupHeads(searchTerm, groupDocs, sortWithinGroup, sortByScoreOnly, fieldIdToDocID);
                         int[] actualGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads();
@@ -660,7 +660,6 @@ namespace Lucene.Net.Search.Grouping
                 this.sort3 = sort3;
                 this.content = content;
             }
-
         }
     }
 }

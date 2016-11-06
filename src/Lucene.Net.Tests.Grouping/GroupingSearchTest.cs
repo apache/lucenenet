@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Grouping
 
             // the later a document is added the higher this docId
             // value
-            var group = groups.Groups[0];
+            IGroupDocs<object> group = groups.Groups[0];
             CompareGroupValue("author3", group);
             assertEquals(2, group.ScoreDocs.Length);
             assertEquals(5, group.ScoreDocs[0].Doc);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private GroupingSearch CreateRandomGroupingSearch(String groupField, Sort groupSort, int docsInGroup, bool canUseIDV)
+        private GroupingSearch CreateRandomGroupingSearch(string groupField, Sort groupSort, int docsInGroup, bool canUseIDV)
         {
             GroupingSearch groupingSearch;
             if (Random().nextBoolean())
