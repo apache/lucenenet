@@ -7,6 +7,23 @@ using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// FirstPassGroupingCollector is the first of two passes necessary
     /// to collect grouped hits.  This pass gathers the top N sorted
@@ -14,7 +31,7 @@ namespace Lucene.Net.Search.Grouping
     /// is internally collected.
     /// 
     /// <para>
-    /// See {@link org.apache.lucene.search.grouping} for more
+    /// See <a href="https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/grouping/src/java/org/apache/lucene/search/grouping/package.html">org.apache.lucene.search.grouping</a> for more
     /// details including a full code example.
     /// </para>
     /// @lucene.experimental
@@ -39,7 +56,7 @@ namespace Lucene.Net.Search.Grouping
         /// Create the first pass collector.
         /// </summary>
         /// <param name="groupSort">
-        /// The {@link Sort} used to sort the
+        /// The <see cref="Sort"/> used to sort the
         /// groups.  The top sorted document within each group
         /// according to groupSort, determines how that group
         /// sorts against other groups.  This must be non-null,
@@ -404,12 +421,11 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public interface IAbstractFirstPassGroupingCollector<out TGroupValue>
     {
-        // LUCENENET NOTE: We must use IEnumerable rather than ICollection here because we need
-        // this to be covariant
         /// <summary>
         /// Returns top groups, starting from offset.  This may
         /// return null, if no groups were collected, or if the
@@ -418,6 +434,10 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupOffset">The offset in the collected groups</param>
         /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
+        /// <remarks>
+        /// LUCENENET NOTE: We must use <see cref="IEnumerable{TGroupValue}"/> rather than 
+        /// <see cref="ICollection{TGroupValue}"/> here because we need this to be covariant
+        /// </remarks>
         IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields);
     }
 }

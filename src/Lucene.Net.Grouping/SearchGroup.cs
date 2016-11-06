@@ -6,21 +6,43 @@ using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Represents a group that is found during the first pass search.
+    /// 
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public class SearchGroup<TGroupValue> : ISearchGroup<TGroupValue>
     {
-        /** The value that defines this group  */
+        /// <summary>
+        /// The value that defines this group 
+        /// </summary>
         public TGroupValue GroupValue { get; set; }
 
-        /** The sort values used during sorting. These are the
-         *  groupSort field values of the highest rank document
-         *  (by the groupSort) within the group.  Can be
-         * <code>null</code> if <code>fillFields=false</code> had
-         * been passed to {@link AbstractFirstPassGroupingCollector#getTopGroups} */
+        /// <summary>
+        /// The sort values used during sorting. These are the
+        /// groupSort field values of the highest rank document
+        /// (by the groupSort) within the group.  Can be
+        /// <c>null</c> if <c>fillFields=false</c> had
+        /// been passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>
+        /// </summary>
         public object[] SortValues { get; set; }
 
         public override string ToString()
@@ -96,7 +118,10 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        // Holds all shards currently on the same group
+        /// <summary>
+        /// Holds all shards currently on the same group
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         private class MergedGroup<T>
         {
 
@@ -373,16 +398,17 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-
-        /** Merges multiple collections of top groups, for example
-         *  obtained from separate index shards.  The provided
-         *  groupSort must match how the groups were sorted, and
-         *  the provided SearchGroups must have been computed
-         *  with fillFields=true passed to {@link
-         *  AbstractFirstPassGroupingCollector#getTopGroups}.
-         *
-         * <p>NOTE: this returns null if the topGroups is empty.
-         */
+        /// <summary>
+        /// Merges multiple collections of top groups, for example
+        /// obtained from separate index shards.  The provided
+        /// groupSort must match how the groups were sorted, and
+        /// the provided SearchGroups must have been computed
+        /// with <c>fillFields=true</c> passed to
+        /// <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>.
+        /// <para>
+        /// NOTE: this returns null if the topGroups is empty.
+        /// </para>
+        /// </summary>
         public static ICollection<SearchGroup<T>> Merge<T>(IList<IEnumerable<ISearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
         {
             if (topGroups.Count == 0)
@@ -399,12 +425,23 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface used to provide covariance
-    /// with the TGroupValue type
+    /// with the TGroupValue type to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public interface ISearchGroup<out TGroupValue>
     {
+        /// <summary>
+        /// The value that defines this group 
+        /// </summary>
         TGroupValue GroupValue { get; }
+
+        /// <summary>
+        /// The sort values used during sorting. These are the
+        /// groupSort field values of the highest rank document
+        /// (by the groupSort) within the group.  Can be
+        /// <c>null</c> if <c>fillFields=false</c> had
+        /// been passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>
+        /// </summary>
         object[] SortValues { get; set; }
     }
 }

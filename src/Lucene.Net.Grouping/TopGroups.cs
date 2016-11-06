@@ -260,7 +260,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface used to provide covariance
-    /// with the TGroupValue type
+    /// with the TGroupValue type to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public interface ITopGroups<out TGroupValue>

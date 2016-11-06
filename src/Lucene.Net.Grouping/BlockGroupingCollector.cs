@@ -6,6 +6,23 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     // TODO: this sentence is too long for the class summary.
     /// <summary>
     /// BlockGroupingCollector performs grouping with a
@@ -32,7 +49,7 @@ namespace Lucene.Net.Search.Grouping
     /// you to ensure this was the case.
     /// </para>
     /// <para>
-    /// See {@link org.apache.lucene.search.grouping} for more
+    /// See <a href="https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/grouping/src/java/org/apache/lucene/search/grouping/package.html">org.apache.lucene.search.grouping</a> for more
     /// details including a full code example.
     /// </para>
     /// @lucene.experimental
@@ -247,24 +264,28 @@ namespace Lucene.Net.Search.Grouping
             subDocUpto = 0;
         }
 
-        /**
-         * Create the single pass collector.
-         *
-         *  @param groupSort The {@link Sort} used to sort the
-         *    groups.  The top sorted document within each group
-         *    according to groupSort, determines how that group
-         *    sorts against other groups.  This must be non-null,
-         *    ie, if you want to groupSort by relevance use
-         *    Sort.RELEVANCE.
-         *  @param topNGroups How many top groups to keep.
-         *  @param needsScores true if the collected documents
-         *    require scores, either because relevance is included
-         *    in the withinGroupSort or because you plan to pass true
-         *    for either getSscores or getMaxScores to {@link
-         *    #getTopGroups}
-         *  @param lastDocPerGroup a {@link Filter} that marks the
-         *    last document in each group.
-         */
+        /// <summary>
+        /// Create the single pass collector.
+        /// </summary>
+        /// <param name="groupSort">
+        /// The <see cref="Sort"/> used to sort the
+        /// groups.  The top sorted document within each group
+        /// according to groupSort, determines how that group
+        /// sorts against other groups.  This must be non-null,
+        /// ie, if you want to groupSort by relevance use
+        /// <see cref="Sort.RELEVANCE"/>.
+        /// </param>
+        /// <param name="topNGroups">How many top groups to keep.</param>
+        /// <param name="needsScores">
+        /// true if the collected documents
+        /// require scores, either because relevance is included
+        /// in the withinGroupSort or because you plan to pass true
+        /// for either GetScores or GetMaxScores to <see cref="GetTopGroups(Sort, int, int, int, bool)"/>
+        /// </param>
+        /// <param name="lastDocPerGroup">
+        /// a <see cref="Filter"/> that marks the
+        /// last document in each group.
+        /// </param>
         public BlockGroupingCollector(Sort groupSort, int topNGroups, bool needsScores, Filter lastDocPerGroup)
         {
 
@@ -305,32 +326,68 @@ namespace Lucene.Net.Search.Grouping
         // typically they will be presented as a "single" result
         // in the UI?
 
-        /** Returns the grouped results.  Returns null if the
-         *  number of groups collected is <= groupOffset.
-         *
-         *  <p><b>NOTE</b>: This collector is unable to compute
-         *  the groupValue per group so it will always be null.
-         *  This is normally not a problem, as you can obtain the
-         *  value just like you obtain other values for each
-         *  matching document (eg, via stored fields, via
-         *  FieldCache, etc.)
-         *
-         *  @param withinGroupSort The {@link Sort} used to sort
-         *    documents within each group.  Passing null is
-         *    allowed, to sort by relevance.
-         *  @param groupOffset Which group to start from
-         *  @param withinGroupOffset Which document to start from
-         *    within each group
-         *  @param maxDocsPerGroup How many top documents to keep
-         *     within each group.
-         *  @param fillSortFields If true then the Comparable
-         *     values for the sort fields will be set
-         */
+        /// <summary>
+        /// Returns the grouped results.  Returns null if the
+        /// number of groups collected is &lt;= groupOffset.
+        /// 
+        /// <para>
+        /// <b>NOTE</b>: This collector is unable to compute
+        /// the groupValue per group so it will always be null.
+        /// This is normally not a problem, as you can obtain the
+        /// value just like you obtain other values for each
+        /// matching document (eg, via stored fields, via
+        /// FieldCache, etc.)
+        /// </para>
+        /// </summary>
+        /// <param name="withinGroupSort">
+        /// The <see cref="Sort"/> used to sort
+        /// documents within each group.  Passing null is
+        /// allowed, to sort by relevance.
+        /// </param>
+        /// <param name="groupOffset">Which group to start from</param>
+        /// <param name="withinGroupOffset">
+        /// Which document to start from within each group
+        /// </param>
+        /// <param name="maxDocsPerGroup">
+        /// How many top documents to keep within each group.
+        /// </param>
+        /// <param name="fillSortFields">
+        /// If true then the Comparable values for the sort fields will be set
+        /// </param>
         public ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
             return GetTopGroups<object>(withinGroupSort, groupOffset, withinGroupOffset, maxDocsPerGroup, fillSortFields);
         }
 
+        /// <summary>
+        /// Returns the grouped results.  Returns null if the
+        /// number of groups collected is &lt;= groupOffset.
+        /// 
+        /// <para>
+        /// <b>NOTE</b>: This collector is unable to compute
+        /// the groupValue per group so it will always be null.
+        /// This is normally not a problem, as you can obtain the
+        /// value just like you obtain other values for each
+        /// matching document (eg, via stored fields, via
+        /// FieldCache, etc.)
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TGroupValue">The expected return type for group value</typeparam>
+        /// <<param name="withinGroupSort">
+        /// The <see cref="Sort"/> used to sort
+        /// documents within each group.  Passing null is
+        /// allowed, to sort by relevance.
+        /// </param>
+        /// <param name="groupOffset">Which group to start from</param>
+        /// <param name="withinGroupOffset">
+        /// Which document to start from within each group
+        /// </param>
+        /// <param name="maxDocsPerGroup">
+        /// How many top documents to keep within each group.
+        /// </param>
+        /// <param name="fillSortFields">
+        /// If true then the Comparable values for the sort fields will be set
+        /// </param>
         public ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
 
@@ -595,7 +652,6 @@ namespace Lucene.Net.Search.Grouping
                 {
                     comparators[i] = comparators[i].SetNextReader(value);
                 }
-
             }
         }
     }

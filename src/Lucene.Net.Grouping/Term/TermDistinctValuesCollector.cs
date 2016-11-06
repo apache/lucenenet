@@ -7,6 +7,23 @@ using System.Linq;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// A term based implementation of <see cref="AbstractDistinctValuesCollector{TermDistinctValuesCollector.GroupCount}"/> that relies
     /// on <see cref="SortedDocValues"/> to count the distinct values per group.
@@ -24,13 +41,12 @@ namespace Lucene.Net.Search.Grouping.Terms
         private SortedDocValues groupFieldTermIndex;
         private SortedDocValues countFieldTermIndex;
 
-        /**
-         * Constructs {@link TermDistinctValuesCollector} instance.
-         *
-         * @param groupField The field to group by
-         * @param countField The field to count distinct values for
-         * @param groups The top N groups, collected during the first phase search
-         */
+        /// <summary>
+        /// Constructs <see cref="TermDistinctValuesCollector"/> instance.
+        /// </summary>
+        /// <param name="groupField">The field to group by</param>
+        /// <param name="countField">The field to count distinct values for</param>
+        /// <param name="groups">The top N groups, collected during the first phase search</param>
         public TermDistinctValuesCollector(string groupField, string countField, IEnumerable<ISearchGroup<BytesRef>> groups)
         {
             this.groupField = groupField;
@@ -126,9 +142,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        /** Holds distinct values for a single group.
-         *
-         * @lucene.experimental */
+        /// <summary>
+        /// Holds distinct values for a single group.
+        /// 
+        /// @lucene.experimental
+        /// </summary>
         public class GroupCount : AbstractDistinctValuesCollector.GroupCount<BytesRef>
         {
             internal int[] ords;

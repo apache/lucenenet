@@ -5,6 +5,23 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// A base implementation of <see cref="AbstractAllGroupHeadsCollector{GH}"/> for retrieving the most relevant groups when grouping
     /// on a string based group field. More specifically this all concrete implementations of this base implementation
@@ -29,39 +46,48 @@ namespace Lucene.Net.Search.Grouping.Terms
         }
     }
 
+    /// <summary>
+    /// LUCENENET specific class used to mimic the synatax used to access
+    /// static members of <see cref="TermAllGroupHeadsCollector{GH}"/> without
+    /// specifying its generic closing type.
+    /// (TermAllGroupHeadsCollector.Create() rather than TermAllGroupHeadsCollector{GH}.Create()).
+    /// </summary>
     public class TermAllGroupHeadsCollector
     {
         private static readonly int DEFAULT_INITIAL_SIZE = 128;
 
-        // Disallow creation
+        /// <summary>
+        /// Disallow creation
+        /// </summary>
         private TermAllGroupHeadsCollector() { }
 
-        /**
-         * Creates an <code>AbstractAllGroupHeadsCollector</code> instance based on the supplied arguments.
-         * This factory method decides with implementation is best suited.
-         *
-         * Delegates to {@link #create(String, org.apache.lucene.search.Sort, int)} with an initialSize of 128.
-         *
-         * @param groupField      The field to group by
-         * @param sortWithinGroup The sort within each group
-         * @return an <code>AbstractAllGroupHeadsCollector</code> instance based on the supplied arguments
-         */
+        /// <summary>
+        /// Creates an <see cref=AbstractAllGroupHeadsCollector""/> instance based on the supplied arguments.
+        /// This factory method decides with implementation is best suited.
+        /// <para>
+        /// Delegates to <see cref="Create(string, Sort, int)"/> with an initialSize of 128.
+        /// </para>
+        /// </summary>
+        /// <param name="groupField">The field to group by</param>
+        /// <param name="sortWithinGroup">The sort within each group</param>
+        /// <returns>an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments</returns>
         public static AbstractAllGroupHeadsCollector Create(string groupField, Sort sortWithinGroup)
         {
             return Create(groupField, sortWithinGroup, DEFAULT_INITIAL_SIZE);
         }
 
-        /**
-         * Creates an <code>AbstractAllGroupHeadsCollector</code> instance based on the supplied arguments.
-         * This factory method decides with implementation is best suited.
-         *
-         * @param groupField      The field to group by
-         * @param sortWithinGroup The sort within each group
-         * @param initialSize The initial allocation size of the internal int set and group list which should roughly match
-         *                    the total number of expected unique groups. Be aware that the heap usage is
-         *                    4 bytes * initialSize.
-         * @return an <code>AbstractAllGroupHeadsCollector</code> instance based on the supplied arguments
-         */
+        /// <summary>
+        /// Creates an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments.
+        /// This factory method decides with implementation is best suited.
+        /// </summary>
+        /// <param name="groupField">The field to group by</param>
+        /// <param name="sortWithinGroup">The sort within each group</param>
+        /// <param name="initialSize">
+        /// The initial allocation size of the internal int set and group list which should roughly match
+        /// the total number of expected unique groups. Be aware that the heap usage is
+        /// 4 bytes * initialSize.
+        /// </param>
+        /// <returns>an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments</returns>
         public static AbstractAllGroupHeadsCollector Create(string groupField, Sort sortWithinGroup, int initialSize)
         {
             bool sortAllScore = true;
@@ -97,7 +123,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        // Returns when a sort field needs the general impl.
+        /// <summary>
+        /// Returns when a sort field needs the general impl.
+        /// </summary>
         private static bool NeedGeneralImpl(SortField sortField)
         {
             SortField.Type_e sortType = sortField.Type;
@@ -106,7 +134,9 @@ namespace Lucene.Net.Search.Grouping.Terms
         }
     }
 
-    // A general impl that works for any group sort.
+    /// <summary>
+    /// A general impl that works for any group sort.
+    /// </summary>
     internal class GeneralAllGroupHeadsCollector : TermAllGroupHeadsCollector<GeneralAllGroupHeadsCollector.GroupHead>
     {
 
@@ -195,6 +225,8 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /*AbstractAllGroupHeadsCollector.GroupHead<BytesRef>*/
         {
             private readonly GeneralAllGroupHeadsCollector outerInstance;
+            // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
 
             internal readonly FieldComparator[] comparators;
@@ -234,10 +266,11 @@ namespace Lucene.Net.Search.Grouping.Terms
     }
 
 
-    // AbstractAllGroupHeadsCollector optimized for ord fields and scores.
+    /// <summary>
+    /// AbstractAllGroupHeadsCollector optimized for ord fields and scores.
+    /// </summary>
     internal class OrdScoreAllGroupHeadsCollector : TermAllGroupHeadsCollector<OrdScoreAllGroupHeadsCollector.GroupHead>
     {
-        //private readonly TermAllGroupHeadsCollector<GH> outerInstance;
         private readonly SentinelIntSet ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
@@ -246,10 +279,9 @@ namespace Lucene.Net.Search.Grouping.Terms
         private Scorer scorer;
         private GroupHead[] segmentGroupHeads;
 
-        internal OrdScoreAllGroupHeadsCollector(/*TermAllGroupHeadsCollector<GH> outerInstance,*/ string groupField, Sort sortWithinGroup, int initialSize)
+        internal OrdScoreAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
             : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            //this.outerInstance = outerInstance;
             ordSet = new SentinelIntSet(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
@@ -368,6 +400,8 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /*AbstractAllGroupHeadsCollector.GroupHead<BytesRef>*/
         {
             private readonly OrdScoreAllGroupHeadsCollector outerInstance;
+            // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
 
             internal BytesRef[] sortValues;
@@ -465,10 +499,11 @@ namespace Lucene.Net.Search.Grouping.Terms
     }
 
 
-    // AbstractAllGroupHeadsCollector optimized for ord fields.
+    /// <summary>
+    /// AbstractAllGroupHeadsCollector optimized for ord fields.
+    /// </summary>
     internal class OrdAllGroupHeadsCollector : TermAllGroupHeadsCollector<OrdAllGroupHeadsCollector.GroupHead>
     {
-        //private readonly TermAllGroupHeadsCollector<GH> outerInstance;
         private readonly SentinelIntSet ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
@@ -476,10 +511,9 @@ namespace Lucene.Net.Search.Grouping.Terms
         private SortedDocValues[] sortsIndex;
         private GroupHead[] segmentGroupHeads;
 
-        internal OrdAllGroupHeadsCollector(/*TermAllGroupHeadsCollector<GH> outerInstance,*/ string groupField, Sort sortWithinGroup, int initialSize)
+        internal OrdAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            //this.outerInstance = outerInstance;
             ordSet = new SentinelIntSet(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
@@ -587,6 +621,8 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /* AbstractAllGroupHeadsCollector.GroupHead<BytesRef>*/
         {
             private readonly OrdAllGroupHeadsCollector outerInstance;
+            // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
             internal BytesRef[] sortValues;
             internal int[] sortOrds;
@@ -653,10 +689,11 @@ namespace Lucene.Net.Search.Grouping.Terms
     }
 
 
-    // AbstractAllGroupHeadsCollector optimized for scores.
+    /// <summary>
+    /// AbstractAllGroupHeadsCollector optimized for scores.
+    /// </summary>
     internal class ScoreAllGroupHeadsCollector : TermAllGroupHeadsCollector<ScoreAllGroupHeadsCollector.GroupHead>
     {
-        //private readonly TermAllGroupHeadsCollector<GH> outerInstance;
         private readonly SentinelIntSet ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
@@ -664,10 +701,9 @@ namespace Lucene.Net.Search.Grouping.Terms
         private Scorer scorer;
         private GroupHead[] segmentGroupHeads;
 
-        internal ScoreAllGroupHeadsCollector(/*TermAllGroupHeadsCollector<GH> outerInstance,*/ string groupField, Sort sortWithinGroup, int initialSize)
+        internal ScoreAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            //this.outerInstance = outerInstance;
             ordSet = new SentinelIntSet(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
@@ -755,7 +791,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead
         {
             private readonly ScoreAllGroupHeadsCollector outerInstance;
-            // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
             internal float[] scores;

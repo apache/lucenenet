@@ -71,6 +71,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public interface IGroupDocs<out TGroupValue>

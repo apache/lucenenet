@@ -4,6 +4,23 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Base class for computing grouped facets.
     /// @lucene.experimental
@@ -28,17 +45,18 @@ namespace Lucene.Net.Search.Grouping
             segmentResults = new List<AbstractSegmentResult>();
         }
 
-        /**
-         * Returns grouped facet results that were computed over zero or more segments.
-         * Grouped facet counts are merged from zero or more segment results.
-         *
-         * @param size The total number of facets to include. This is typically offset + limit
-         * @param minCount The minimum count a facet entry should have to be included in the grouped facet result
-         * @param orderByCount Whether to sort the facet entries by facet entry count. If <code>false</code> then the facets
-         *                     are sorted lexicographically in ascending order.
-         * @return grouped facet results
-         * @throws IOException If I/O related errors occur during merging segment grouped facet counts.
-         */
+        /// <summary>
+        /// Returns grouped facet results that were computed over zero or more segments.
+        /// Grouped facet counts are merged from zero or more segment results.
+        /// </summary>
+        /// <param name="size">The total number of facets to include. This is typically offset + limit</param>
+        /// <param name="minCount">The minimum count a facet entry should have to be included in the grouped facet result</param>
+        /// <param name="orderByCount">
+        /// Whether to sort the facet entries by facet entry count. If <c>false</c> then the facets
+        /// are sorted lexicographically in ascending order.
+        /// </param>
+        /// <returns>grouped facet results</returns>
+        /// <exception cref="IOException">If I/O related errors occur during merging segment grouped facet counts.</exception>
         public GroupedFacetResult MergeSegmentResults(int size, int minCount, bool orderByCount)
         {
             if (segmentFacetCounts != null)
@@ -126,9 +144,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        /**
-         * The grouped facet result. Containing grouped facet entries, total count and total missing count.
-         */
+        /// <summary>
+        /// The grouped facet result. Containing grouped facet entries, total count and total missing count.
+        /// </summary>
         public class GroupedFacetResult
         {
             private readonly static IComparer<FacetEntry> orderByCountAndValue = new OrderByCountAndValueComparer();
@@ -175,14 +193,13 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            /**
-             * Returns a list of facet entries to be rendered based on the specified offset and limit.
-             * The facet entries are retrieved from the facet entries collected during merging.
-             *
-             * @param offset The offset in the collected facet entries during merging
-             * @param limit The number of facets to return starting from the offset.
-             * @return a list of facet entries to be rendered based on the specified offset and limit
-             */
+            /// <summary>
+            /// Returns a list of facet entries to be rendered based on the specified offset and limit.
+            /// The facet entries are retrieved from the facet entries collected during merging.
+            /// </summary>
+            /// <param name="offset">The offset in the collected facet entries during merging</param>
+            /// <param name="limit">The number of facets to return starting from the offset.</param>
+            /// <returns>a list of facet entries to be rendered based on the specified offset and limit</returns>
             public List<FacetEntry> GetFacetEntries(int offset, int limit)
             {
                 List<FacetEntry> entries = new List<FacetEntry>();
@@ -205,11 +222,9 @@ namespace Lucene.Net.Search.Grouping
                 return entries;
             }
 
-            /**
-             * Returns the sum of all facet entries counts.
-             *
-             * @return the sum of all facet entries counts
-             */
+            /// <summary>
+            /// Gets the sum of all facet entries counts.
+            /// </summary>
             public int TotalCount
             {
                 get
@@ -218,11 +233,9 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            /**
-             * Returns the number of groups that didn't have a facet value.
-             *
-             * @return the number of groups that didn't have a facet value
-             */
+            /// <summary>
+            /// Gets the number of groups that didn't have a facet value.
+            /// </summary>
             public int TotalMissingCount
             {
                 get
@@ -232,9 +245,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        /**
-         * Represents a facet entry with a value and a count.
-         */
+        /// <summary>
+        /// Represents a facet entry with a value and a count.
+        /// </summary>
         public class FacetEntry
         {
 
@@ -275,9 +288,9 @@ namespace Lucene.Net.Search.Grouping
                     '}';
             }
 
-            /**
-             * @return The value of this facet entry
-             */
+            /// <summary>
+            /// Gets the value of this facet entry
+            /// </summary>
             public BytesRef Value
             {
                 get
@@ -286,9 +299,9 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            /**
-             * @return The count (number of groups) of this facet entry.
-             */
+            /// <summary>
+            /// Gets the count (number of groups) of this facet entry.
+            /// </summary>
             public int Count
             {
                 get
@@ -298,10 +311,14 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        /**
-         * Contains the local grouped segment counts for a particular segment.
-         * Each <code>SegmentResult</code> must be added together.
-         */
+        /// <summary>
+        /// Contains the local grouped segment counts for a particular segment.
+        /// Each <see cref="AbstractSegmentResult"/> must be added together.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET NOTE: Renamed from SegmentResult to AbstractSegmentResult
+        /// to avoid naming conflicts with subclasses.
+        /// </remarks>
         protected internal abstract class AbstractSegmentResult
         {
             protected internal readonly int[] counts;
@@ -320,11 +337,10 @@ namespace Lucene.Net.Search.Grouping
                 this.maxTermPos = maxTermPos;
             }
 
-            /**
-             * Go to next term in this <code>SegmentResult</code> in order to retrieve the grouped facet counts.
-             *
-             * @throws IOException If I/O related errors occur
-             */
+            /// <summary>
+            /// Go to next term in this <see cref="AbstractSegmentResult"/> in order to retrieve the grouped facet counts.
+            /// </summary>
+            /// <exception cref="IOException">If I/O related errors occur</exception>
             protected internal abstract void NextTerm();
 
         }

@@ -6,6 +6,23 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Function
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// A collector that collects all groups that match the
     /// query. Only the group value is collected, and the order
@@ -27,12 +44,11 @@ namespace Lucene.Net.Search.Grouping.Function
         private FunctionValues.AbstractValueFiller filler;
         private MutableValue mval;
 
-        /**
-         * Constructs a {@link FunctionAllGroupsCollector} instance.
-         *
-         * @param groupBy The {@link ValueSource} to group by
-         * @param vsContext The ValueSource context
-         */
+        /// <summary>
+        /// Constructs a <see cref="FunctionAllGroupsCollector"/> instance.
+        /// </summary>
+        /// <param name="groupBy">The <see cref="ValueSource"/> to group by</param>
+        /// <param name="vsContext">The <see cref="ValueSource"/> context</param>
         public FunctionAllGroupsCollector(ValueSource groupBy, IDictionary /* Map<?, ?> */ vsContext)
         {
             this.vsContext = vsContext;

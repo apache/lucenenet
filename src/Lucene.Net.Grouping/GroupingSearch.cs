@@ -9,6 +9,23 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Convenience class to perform grouping in a non distributed environment.
     /// @lucene.experimental
@@ -39,36 +56,33 @@ namespace Lucene.Net.Search.Grouping
         private ICollection /* Collection<?> */ matchingGroups;
         private Bits matchingGroupHeads;
 
-        /**
-         * Constructs a <code>GroupingSearch</code> instance that groups documents by index terms using the {@link FieldCache}.
-         * The group field can only have one token per document. This means that the field must not be analysed.
-         *
-         * @param groupField The name of the field to group by.
-         */
+        /// <summary>
+        /// Constructs a <see cref="GroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
+        /// The group field can only have one token per document. This means that the field must not be analysed.
+        /// </summary>
+        /// <param name="groupField">The name of the field to group by.</param>
         public GroupingSearch(string groupField)
             : this(groupField, null, null, null)
         {
         }
 
-        /**
-         * Constructs a <code>GroupingSearch</code> instance that groups documents by function using a {@link ValueSource}
-         * instance.
-         *
-         * @param groupFunction      The function to group by specified as {@link ValueSource}
-         * @param valueSourceContext The context of the specified groupFunction
-         */
+        /// <summary>
+        /// Constructs a <see cref="GroupingSearch"/> instance that groups documents by function using a <see cref="ValueSource"/>
+        /// instance.
+        /// </summary>
+        /// <param name="groupFunction">The function to group by specified as <see cref="ValueSource"/></param>
+        /// <param name="valueSourceContext">The context of the specified groupFunction</param>
         public GroupingSearch(ValueSource groupFunction, IDictionary /* Map<?, ?> */ valueSourceContext)
             : this(null, groupFunction, valueSourceContext, null)
         {
 
         }
 
-        /**
-         * Constructor for grouping documents by doc block.
-         * This constructor can only be used when documents belonging in a group are indexed in one block.
-         *
-         * @param groupEndDocs The filter that marks the last document in all doc blocks
-         */
+        /// <summary>
+        /// Constructor for grouping documents by doc block.
+        /// This constructor can only be used when documents belonging in a group are indexed in one block.
+        /// </summary>
+        /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
         public GroupingSearch(Filter groupEndDocs)
             : this(null, null, null, groupEndDocs)
         {
@@ -82,37 +96,46 @@ namespace Lucene.Net.Search.Grouping
             this.groupEndDocs = groupEndDocs;
         }
 
-        /**
-         * Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
-         *
-         * @param searcher    The {@link org.apache.lucene.search.IndexSearcher} instance to execute the grouped search on.
-         * @param query       The query to execute with the grouping
-         * @param groupOffset The group offset
-         * @param groupLimit  The number of groups to return from the specified group offset
-         * @return the grouped result as a {@link TopGroups} instance
-         * @throws IOException If any I/O related errors occur
-         */
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
         public ITopGroups<object> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<object>(searcher, null, query, groupOffset, groupLimit);
         }
 
+
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <typeparam name="TGroupValue">The expected return type of the search.</typeparam>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
         public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<TGroupValue>(searcher, null, query, groupOffset, groupLimit);
         }
 
-        /**
-         * Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
-         *
-         * @param searcher    The {@link org.apache.lucene.search.IndexSearcher} instance to execute the grouped search on.
-         * @param filter      The filter to execute with the grouping
-         * @param query       The query to execute with the grouping
-         * @param groupOffset The group offset
-         * @param groupLimit  The number of groups to return from the specified group offset
-         * @return the grouped result as a {@link TopGroups} instance
-         * @throws IOException If any I/O related errors occur
-         */
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
         public ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupFunction != null)
@@ -133,6 +156,17 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <typeparam name="TGroupValue">The expected return type of the search.</typeparam>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
         public ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupField != null || groupFunction != null)
@@ -148,19 +182,6 @@ namespace Lucene.Net.Search.Grouping
                 throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
-
-        //protected ITopGroups<object> GroupByFieldOrFunction(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
-        //{
-        //    // LUCENENET TODO: Perhaps there is a better way to infer type without resorting to hard-coding them here, but
-        //    // the original GroupByFieldOrFunction is already aware of the underlying type based on the FirstPassGroupingCollector
-        //    // and SecondPassGroupingCollector.
-        //    if (groupFunction != null)
-        //    {
-        //        return GroupByFieldOrFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
-        //    }
-
-        //    return GroupByFieldOrFunction<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
-        //}
 
         protected ITopGroups<TGroupValue> GroupByFieldOrFunction<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
@@ -323,15 +344,14 @@ namespace Lucene.Net.Search.Grouping
             return c.GetTopGroups<TGroupValue>(sortWithinGroup, groupOffset, groupDocsOffset, topNInsideGroup, fillSortFields);
         }
 
-        /**
-         * Enables caching for the second pass search. The cache will not grow over a specified limit in MB.
-         * The cache is filled during the first pass searched and then replayed during the second pass searched.
-         * If the cache grows beyond the specified limit, then the cache is purged and not used in the second pass search.
-         *
-         * @param maxCacheRAMMB The maximum amount in MB the cache is allowed to hold
-         * @param cacheScores   Whether to cache the scores
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Enables caching for the second pass search. The cache will not grow over a specified limit in MB.
+        /// The cache is filled during the first pass searched and then replayed during the second pass searched.
+        /// If the cache grows beyond the specified limit, then the cache is purged and not used in the second pass search.
+        /// </summary>
+        /// <param name="maxCacheRAMMB">The maximum amount in MB the cache is allowed to hold</param>
+        /// <param name="cacheScores">Whether to cache the scores</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetCachingInMB(double maxCacheRAMMB, bool cacheScores)
         {
             this.maxCacheRAMMB = maxCacheRAMMB;
@@ -340,15 +360,14 @@ namespace Lucene.Net.Search.Grouping
             return this;
         }
 
-        /**
-         * Enables caching for the second pass search. The cache will not contain more than the maximum specified documents.
-         * The cache is filled during the first pass searched and then replayed during the second pass searched.
-         * If the cache grows beyond the specified limit, then the cache is purged and not used in the second pass search.
-         *
-         * @param maxDocsToCache The maximum number of documents the cache is allowed to hold
-         * @param cacheScores    Whether to cache the scores
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Enables caching for the second pass search. The cache will not contain more than the maximum specified documents.
+        /// The cache is filled during the first pass searched and then replayed during the second pass searched.
+        /// If the cache grows beyond the specified limit, then the cache is purged and not used in the second pass search.
+        /// </summary>
+        /// <param name="maxDocsToCache">The maximum number of documents the cache is allowed to hold</param>
+        /// <param name="cacheScores">Whether to cache the scores</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetCaching(int maxDocsToCache, bool cacheScores)
         {
             this.maxDocsToCache = maxDocsToCache;
@@ -357,11 +376,10 @@ namespace Lucene.Net.Search.Grouping
             return this;
         }
 
-        /**
-         * Disables any enabled cache.
-         *
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Disables any enabled cache.
+        /// </summary>
+        /// <returns><c>this</c></returns>
         public GroupingSearch DisableCaching()
         {
             this.maxCacheRAMMB = null;
@@ -369,163 +387,162 @@ namespace Lucene.Net.Search.Grouping
             return this;
         }
 
-        /**
-         * Specifies how groups are sorted.
-         * Defaults to {@link Sort#RELEVANCE}.
-         *
-         * @param groupSort The sort for the groups.
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Specifies how groups are sorted.
+        /// Defaults to <see cref="Sort.RELEVANCE"/>.
+        /// </summary>
+        /// <param name="groupSort">The sort for the groups.</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetGroupSort(Sort groupSort)
         {
             this.groupSort = groupSort;
             return this;
         }
 
-        /**
-         * Specified how documents inside a group are sorted.
-         * Defaults to {@link Sort#RELEVANCE}.
-         *
-         * @param sortWithinGroup The sort for documents inside a group
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Specified how documents inside a group are sorted.
+        /// Defaults to <see cref="Sort.RELEVANCE"/>.
+        /// </summary>
+        /// <param name="sortWithinGroup">The sort for documents inside a group</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetSortWithinGroup(Sort sortWithinGroup)
         {
             this.sortWithinGroup = sortWithinGroup;
             return this;
         }
 
-        /**
-         * Specifies the offset for documents inside a group.
-         *
-         * @param groupDocsOffset The offset for documents inside a
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Specifies the offset for documents inside a group.
+        /// </summary>
+        /// <param name="groupDocsOffset">The offset for documents inside a</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetGroupDocsOffset(int groupDocsOffset)
         {
             this.groupDocsOffset = groupDocsOffset;
             return this;
         }
 
-        /**
-         * Specifies the number of documents to return inside a group from the specified groupDocsOffset.
-         *
-         * @param groupDocsLimit The number of documents to return inside a group
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Specifies the number of documents to return inside a group from the specified groupDocsOffset.
+        /// </summary>
+        /// <param name="groupDocsLimit">The number of documents to return inside a group</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetGroupDocsLimit(int groupDocsLimit)
         {
             this.groupDocsLimit = groupDocsLimit;
             return this;
         }
 
-        /**
-         * Whether to also fill the sort fields per returned group and groups docs.
-         *
-         * @param fillSortFields Whether to also fill the sort fields per returned group and groups docs
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Whether to also fill the sort fields per returned group and groups docs.
+        /// </summary>
+        /// <param name="fillSortFields">Whether to also fill the sort fields per returned group and groups docs</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetFillSortFields(bool fillSortFields)
         {
             this.fillSortFields = fillSortFields;
             return this;
         }
 
-        /**
-         * Whether to include the scores per doc inside a group.
-         *
-         * @param includeScores Whether to include the scores per doc inside a group
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Whether to include the scores per doc inside a group.
+        /// </summary>
+        /// <param name="includeScores">Whether to include the scores per doc inside a group</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetIncludeScores(bool includeScores)
         {
             this.includeScores = includeScores;
             return this;
         }
 
-        /**
-         * Whether to include the score of the most relevant document per group.
-         *
-         * @param includeMaxScore Whether to include the score of the most relevant document per group
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Whether to include the score of the most relevant document per group.
+        /// </summary>
+        /// <param name="includeMaxScore">Whether to include the score of the most relevant document per group</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetIncludeMaxScore(bool includeMaxScore)
         {
             this.includeMaxScore = includeMaxScore;
             return this;
         }
 
-        /**
-         * Whether to also compute all groups matching the query.
-         * This can be used to determine the number of groups, which can be used for accurate pagination.
-         * <p/>
-         * When grouping by doc block the number of groups are automatically included in the {@link TopGroups} and this
-         * option doesn't have any influence.
-         *
-         * @param allGroups to also compute all groups matching the query
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Whether to also compute all groups matching the query.
+        /// This can be used to determine the number of groups, which can be used for accurate pagination.
+        /// <para>
+        /// When grouping by doc block the number of groups are automatically included in the <see cref="TopGroups"/> and this
+        /// option doesn't have any influence.
+        /// </para>
+        /// </summary>
+        /// <param name="allGroups">to also compute all groups matching the query</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetAllGroups(bool allGroups)
         {
             this.allGroups = allGroups;
             return this;
         }
 
-        /**
-         * If {@link #setAllGroups(boolean)} was set to <code>true</code> then all matching groups are returned, otherwise
-         * an empty collection is returned.
-         *
-         * @param <T> The group value type. This can be a {@link BytesRef} or a {@link MutableValue} instance. If grouping
-         *            by doc block this the group value is always <code>null</code>.
-         * @return all matching groups are returned, or an empty collection
-         */
+        /// <summary>
+        /// If <see cref="SetAllGroups(bool)"/> was set to <c>true</c> then all matching groups are returned, otherwise
+        /// an empty collection is returned.
+        /// </summary>
+        /// <typeparam name="T">The group value type. This can be a <see cref="BytesRef"/> or a <see cref="MutableValue"/> instance. 
+        /// If grouping by doc block this the group value is always <c>null</c>.</typeparam>
+        /// <returns>all matching groups are returned, or an empty collection</returns>
         public ICollection<T> GetAllMatchingGroups<T>()
         {
             return (ICollection<T>)matchingGroups;
         }
 
-        // LUCENENET specific used to get the groups if the type is unknown (since the above
-        // method will crash if the wrong type is used)
+        /// <summary>
+        /// If <see cref="SetAllGroups(bool)"/> was set to <c>true</c> then all matching groups are returned, otherwise
+        /// an empty collection is returned.
+        /// </summary>
+        /// <returns>all matching groups are returned, or an empty collection</returns>
+        /// <remarks>
+        /// LUCENENET specific used to get the groups if the type is unknown or if the code expects
+        /// any type, since <see cref="GetAllMatchingGroups{T}"/>
+        /// will throw an exception if the return type is incorrect.
+        /// </remarks>
         public ICollection GetAllMatchingGroups()
         {
             return matchingGroups;
         }
 
-        /**
-         * Whether to compute all group heads (most relevant document per group) matching the query.
-         * <p/>
-         * This feature isn't enabled when grouping by doc block.
-         *
-         * @param allGroupHeads Whether to compute all group heads (most relevant document per group) matching the query
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Whether to compute all group heads (most relevant document per group) matching the query.
+        /// <para>
+        /// This feature isn't enabled when grouping by doc block.
+        /// </para>
+        /// </summary>
+        /// <param name="allGroupHeads">Whether to compute all group heads (most relevant document per group) matching the query</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetAllGroupHeads(bool allGroupHeads)
         {
             this.allGroupHeads = allGroupHeads;
             return this;
         }
 
-        /**
-         * Returns the matching group heads if {@link #setAllGroupHeads(boolean)} was set to true or an empty bit set.
-         *
-         * @return The matching group heads if {@link #setAllGroupHeads(boolean)} was set to true or an empty bit set
-         */
+        /// <summary>
+        /// Returns the matching group heads if <see cref="SetAllGroupHeads(bool)"/> was set to true or an empty bit set.
+        /// </summary>
+        /// <returns>The matching group heads if <see cref="SetAllGroupHeads(bool)"/> was set to true or an empty bit set</returns>
         public Bits GetAllGroupHeads()
         {
             return matchingGroupHeads;
         }
 
-        /**
-         * Sets the initial size of some internal used data structures.
-         * This prevents growing data structures many times. This can improve the performance of the grouping at the cost of
-         * more initial RAM.
-         * <p/>
-         * The {@link #setAllGroups} and {@link #setAllGroupHeads} features use this option.
-         * Defaults to 128.
-         *
-         * @param initialSize The initial size of some internal used data structures
-         * @return <code>this</code>
-         */
+        /// <summary>
+        /// Sets the initial size of some internal used data structures.
+        /// This prevents growing data structures many times. This can improve the performance of the grouping at the cost of
+        /// more initial RAM.
+        /// <para>
+        /// The <see cref="SetAllGroups(bool)"/> and <see cref="SetAllGroupHeads(bool)"/> features use this option.
+        /// Defaults to 128.
+        /// </para>
+        /// </summary>
+        /// <param name="initialSize">The initial size of some internal used data structures</param>
+        /// <returns><c>this</c></returns>
         public GroupingSearch SetInitialSize(int initialSize)
         {
             this.initialSize = initialSize;

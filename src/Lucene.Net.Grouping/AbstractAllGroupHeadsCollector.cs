@@ -3,6 +3,29 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+    /// <summary>
+    /// This collector specializes in collecting the most relevant document (group head) for each group that match the query.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    /// <typeparam name="GH"></typeparam>
     public abstract class AbstractAllGroupHeadsCollector<GH> : AbstractAllGroupHeadsCollector
         where GH : AbstractAllGroupHeadsCollector_GroupHead
     {
@@ -127,12 +150,10 @@ namespace Lucene.Net.Search.Grouping
         /// Contains the result of group head retrieval.
         /// To prevent new object creations of this class for every collect.
         /// </summary>
-        public class TemporalResult
+        protected class TemporalResult
         {
-
             public GH groupHead;
             public bool stop;
-
         }
     }
 
@@ -144,7 +165,7 @@ namespace Lucene.Net.Search.Grouping
     /// </para>
     /// </summary>
     /// <remarks>
-    /// LUCENENET: moved this class from of the <see cref="AbstractAllGroupHeadsCollector{TGroupValue}"/>,
+    /// LUCENENET: moved this class from being a nested class of <see cref="AbstractAllGroupHeadsCollector{TGroupValue}"/>,
     /// made it non-generic so the generic closing type doesn't need to be specified in classes that
     /// use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed 
     /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes 

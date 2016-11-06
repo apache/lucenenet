@@ -5,6 +5,23 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// An implementation of <see cref="AbstractGroupFacetCollector"/> that computes grouped facets based on the indexed terms
     /// from the <see cref="FieldCache"/>.
@@ -18,19 +35,20 @@ namespace Lucene.Net.Search.Grouping.Terms
 
         internal SortedDocValues groupFieldTermsIndex;
 
-        /**
-         * Factory method for creating the right implementation based on the fact whether the facet field contains
-         * multiple tokens per documents.
-         *
-         * @param groupField The group field
-         * @param facetField The facet field
-         * @param facetFieldMultivalued Whether the facet field has multiple tokens per document
-         * @param facetPrefix The facet prefix a facet entry should start with to be included.
-         * @param initialSize The initial allocation size of the internal int set and group facet list which should roughly
-         *                    match the total number of expected unique groups. Be aware that the heap usage is
-         *                    4 bytes * initialSize.
-         * @return <code>TermGroupFacetCollector</code> implementation
-         */
+        /// <summary>
+        /// Factory method for creating the right implementation based on the fact whether the facet field contains
+        /// multiple tokens per documents.
+        /// </summary>
+        /// <param name="groupField">The group field</param>
+        /// <param name="facetField">The facet field</param>
+        /// <param name="facetFieldMultivalued">Whether the facet field has multiple tokens per document</param>
+        /// <param name="facetPrefix">The facet prefix a facet entry should start with to be included.</param>
+        /// <param name="initialSize">
+        /// The initial allocation size of the internal int set and group facet list which should roughly
+        /// match the total number of expected unique groups. Be aware that the heap usage is
+        /// 4 bytes * initialSize.
+        /// </param>
+        /// <returns><see cref="TermGroupFacetCollector"/> implementation</returns>
         public static TermGroupFacetCollector CreateTermGroupFacetCollector(string groupField,
                                                                             string facetField,
                                                                             bool facetFieldMultivalued,
@@ -54,7 +72,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             segmentGroupedFacetHits = new SentinelIntSet(initialSize, int.MinValue);
         }
 
-        // Implementation for single valued facet fields.
+        /// <summary>
+        /// Implementation for single valued facet fields.
+        /// </summary>
         internal class SV : TermGroupFacetCollector
         {
 
@@ -198,7 +218,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        // Implementation for multi valued facet fields.
+        /// <summary>
+        /// Implementation for multi valued facet fields.
+        /// </summary>
         internal class MV : TermGroupFacetCollector
         {
 

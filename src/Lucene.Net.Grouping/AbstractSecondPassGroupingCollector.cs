@@ -6,6 +6,23 @@ using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// SecondPassGroupingCollector is the second of two passes
     /// necessary to collect grouped docs.  This pass gathers the
@@ -13,7 +30,7 @@ namespace Lucene.Net.Search.Grouping
     /// first pass. Concrete subclasses define what a group is and how it
     /// is internally collected.
     /// <para>
-    /// See {@link org.apache.lucene.search.grouping} for more
+    /// See <a href="https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/grouping/src/java/org/apache/lucene/search/grouping/package.html">org.apache.lucene.search.grouping</a> for more
     /// details including a full code example.
     /// </para>
     /// @lucene.experimental
@@ -87,13 +104,12 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        /**
-         * Returns the group the specified doc belongs to or <code>null</code> if no group could be retrieved.
-         *
-         * @param doc The specified doc
-         * @return the group the specified doc belongs to or <code>null</code> if no group could be retrieved
-         * @throws IOException If an I/O related error occurred
-         */
+        /// <summary>
+        /// Returns the group the specified doc belongs to or <c>null</c> if no group could be retrieved.
+        /// </summary>
+        /// <param name="doc">The specified doc</param>
+        /// <returns>the group the specified doc belongs to or <c>null</c> if no group could be retrieved</returns>
+        /// <exception cref="IOException">If an I/O related error occurred</exception>
         protected abstract AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> RetrieveGroup(int doc);
 
         public override AtomicReaderContext NextReader
@@ -142,6 +158,11 @@ namespace Lucene.Net.Search.Grouping
         
     }
 
+    /// <summary>
+    /// LUCENENET specific class used to simulate the syntax used 
+    /// to access nested classes of <see cref="AbstractAllGroupHeadsCollector{GH}"/>
+    /// without referencing the generic closing type.
+    /// </summary>
     public class AbstractSecondPassGroupingCollector
     {
         /// <summary>
@@ -166,6 +187,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public interface IAbstractSecondPassGroupingCollector<out TGroupValue>
