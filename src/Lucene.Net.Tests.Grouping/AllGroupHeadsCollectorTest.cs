@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Grouping
             dir,
             NewIndexWriterConfig(TEST_VERSION_CURRENT,
                 new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseIDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
 
             // 0
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Grouping
                         // B/c of DV based impl we can't see the difference between an empty string and a null value.
                         // For that reason we don't generate empty string groups.
                         randomValue = TestUtil.RandomRealisticUnicodeString(Random());
-                    } while ("".equals(randomValue));
+                    } while ("".Equals(randomValue, StringComparison.Ordinal));
                     groups.Add(new BytesRef(randomValue));
                 }
                 string[] contentStrings = new string[TestUtil.NextInt(Random(), 2, 20)];
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Grouping
                     dir,
                     NewIndexWriterConfig(TEST_VERSION_CURRENT,
                         new MockAnalyzer(Random())));
-                bool preFlex = "Lucene3x".equals(w.w.Config.Codec.Name);
+                bool preFlex = "Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
                 bool canUseIDV = !preFlex;
                 DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
 
@@ -467,7 +467,7 @@ namespace Lucene.Net.Search.Grouping
             IDictionary<BytesRef, List<GroupDoc>> groupHeads = new HashMap<BytesRef, List<GroupDoc>>();
             foreach (GroupDoc groupDoc in groupDocs)
             {
-                if (!groupDoc.content.StartsWith(searchTerm))
+                if (!groupDoc.content.StartsWith(searchTerm, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -568,15 +568,15 @@ namespace Lucene.Net.Search.Grouping
                             cmp = sortByScoreOnly ? fieldIdToDocID[d1.id] - fieldIdToDocID[d2.id] : 0;
                         }
                     }
-                    else if (sf.Field.equals("sort1"))
+                    else if (sf.Field.Equals("sort1", StringComparison.Ordinal))
                     {
                         cmp = d1.sort1.CompareTo(d2.sort1);
                     }
-                    else if (sf.Field.equals("sort2"))
+                    else if (sf.Field.Equals("sort2", StringComparison.Ordinal))
                     {
                         cmp = d1.sort2.CompareTo(d2.sort2);
                     }
-                    else if (sf.Field.equals("sort3"))
+                    else if (sf.Field.Equals("sort3", StringComparison.Ordinal))
                     {
                         cmp = d1.sort3.CompareTo(d2.sort3);
                     }

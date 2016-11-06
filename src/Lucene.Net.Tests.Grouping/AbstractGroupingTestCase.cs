@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Grouping
                 // groups.
                 randomValue = TestUtil.RandomRealisticUnicodeString(Random());
                 //randomValue = TestUtil.randomSimpleString(random());
-            } while ("".equals(randomValue));
+            } while ("".Equals(randomValue, StringComparison.Ordinal));
             return randomValue;
         }
     }

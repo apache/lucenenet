@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             bool useDv = canUseDV && Random().nextBoolean();
 
             // 0
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search.Grouping
                     new MockAnalyzer(random)
                 )
             );
-            bool canUseDV = !"Lucene3x".equals(writer.w.Config.Codec.Name);
+            bool canUseDV = !"Lucene3x".Equals(writer.w.Config.Codec.Name, StringComparison.Ordinal);
             bool useDv = canUseDV && !multipleFacetValuesPerDocument && random.nextBoolean();
 
             Document doc = new Document();
@@ -647,8 +647,8 @@ namespace Lucene.Net.Search.Grouping
                 {
                     if (useDv)
                     {
-                        String facetValue = facetValues[random.nextInt(facetValues.size())];
-                        uniqueFacetValues.add(facetValue);
+                        string facetValue = facetValues[random.nextInt(facetValues.size())];
+                        uniqueFacetValues.Add(facetValue);
                         if (!facetToGroups.ContainsKey(facetValue))
                         {
                             facetToGroups[facetValue] = new HashSet<string>();
@@ -668,7 +668,7 @@ namespace Lucene.Net.Search.Grouping
                         foreach (Field facetField in facetFields)
                         {
                             string facetValue = facetValues[random.nextInt(facetValues.size())];
-                            uniqueFacetValues.add(facetValue);
+                            uniqueFacetValues.Add(facetValue);
                             if (!facetToGroups.ContainsKey(facetValue))
                             {
                                 facetToGroups[facetValue] = new HashSet<string>();
@@ -686,7 +686,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else
                 {
-                    uniqueFacetValues.add(null);
+                    uniqueFacetValues.Add(null);
                     if (!facetToGroups.ContainsKey(null))
                     {
                         facetToGroups.Put(null, new HashSet<string>());
@@ -783,7 +783,7 @@ namespace Lucene.Net.Search.Grouping
                 facetValues = new HashSet<string>();
                 foreach (string facetValue in context.facetValues)
                 {
-                    if (facetValue != null && facetValue.StartsWith(facetPrefix))
+                    if (facetValue != null && facetValue.StartsWith(facetPrefix, StringComparison.Ordinal))
                     {
                         facetValues.add(facetValue);
                     }
@@ -865,7 +865,7 @@ namespace Lucene.Net.Search.Grouping
         {
             BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
-            Debug.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv"));
+            Debug.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
             return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random().nextInt(1024));
         }
 

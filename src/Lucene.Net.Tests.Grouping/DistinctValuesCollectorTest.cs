@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             FieldInfo.DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (FieldInfo.DocValuesType_e?)null;
 
             Document doc = new Document();
@@ -522,7 +522,7 @@ namespace Lucene.Net.Search.Grouping
                 new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy())
               );
 
-            bool canUseDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             FieldInfo.DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (FieldInfo.DocValuesType_e?)null;
 
             int numDocs = 86 + random.nextInt(1087) * RANDOM_MULTIPLIER;

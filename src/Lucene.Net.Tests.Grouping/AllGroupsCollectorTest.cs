@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseIDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
 
             // 0
             Document doc = new Document();

@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping
                                        dir,
                                        NewIndexWriterConfig(TEST_VERSION_CURRENT,
                                                             new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseIDV = !"Lucene3x".equals(w.w.Config.Codec.Name);
+            bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
             // 0
             Document doc = new Document();
             AddGroupField(doc, groupField, "author1", canUseIDV);
@@ -448,11 +448,11 @@ namespace Lucene.Net.Search.Grouping
                             cmp = 0;
                         }
                     }
-                    else if (sf.Field.equals("sort1"))
+                    else if (sf.Field.Equals("sort1", StringComparison.Ordinal))
                     {
                         cmp = d1.sort1.CompareTo(d2.sort1);
                     }
-                    else if (sf.Field.equals("sort2"))
+                    else if (sf.Field.Equals("sort2", StringComparison.Ordinal))
                     {
                         cmp = d1.sort2.CompareTo(d2.sort2);
                     }
@@ -539,11 +539,11 @@ namespace Lucene.Net.Search.Grouping
                 {
                     c = new float?(d.score);
                 }
-                else if (sf.Field.equals("sort1"))
+                else if (sf.Field.Equals("sort1", StringComparison.Ordinal))
                 {
                     c = d.sort1;
                 }
-                else if (sf.Field.equals("sort2"))
+                else if (sf.Field.Equals("sort2", StringComparison.Ordinal))
                 {
                     c = d.sort2;
                 }
@@ -597,7 +597,7 @@ namespace Lucene.Net.Search.Grouping
             foreach (GroupDoc d in groupDocs)
             {
                 // TODO: would be better to filter by searchTerm before sorting!
-                if (!d.content.StartsWith(searchTerm))
+                if (!d.content.StartsWith(searchTerm, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -823,7 +823,7 @@ namespace Lucene.Net.Search.Grouping
                         // groups.
                         randomValue = TestUtil.RandomRealisticUnicodeString(Random());
                         //randomValue = TestUtil.RandomSimpleString(Random());
-                    } while ("".equals(randomValue));
+                    } while ("".Equals(randomValue, StringComparison.Ordinal));
 
                     groups.Add(new BytesRef(randomValue));
                 }
@@ -854,7 +854,7 @@ namespace Lucene.Net.Search.Grouping
                                                             dir,
                                                             NewIndexWriterConfig(TEST_VERSION_CURRENT,
                                                                                  new MockAnalyzer(Random())));
-                bool preFlex = "Lucene3x".equals(w.w.Config.Codec.Name);
+                bool preFlex = "Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
                 bool canUseIDV = !preFlex;
 
                 Document doc = new Document();
@@ -1329,7 +1329,7 @@ namespace Lucene.Net.Search.Grouping
                             }
                         }
 
-                        AssertEquals(docIDToID, expectedGroups, groupsResult, true, true, true, getScores, groupField.EndsWith("_dv"));
+                        AssertEquals(docIDToID, expectedGroups, groupsResult, true, true, true, getScores, groupField.EndsWith("_dv", StringComparison.Ordinal));
 
                         // Confirm merged shards match:
                         AssertEquals(docIDToID, expectedGroups, topGroupsShards, true, false, fillFields, getScores, idvBasedImplsUsedSharded.value);
