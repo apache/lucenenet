@@ -1,12 +1,7 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {

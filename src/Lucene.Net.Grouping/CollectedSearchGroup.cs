@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.Search.Grouping
+﻿namespace Lucene.Net.Search.Grouping
 {
     /// <summary>
     /// Expert: representation of a group in {@link AbstractFirstPassGroupingCollector},

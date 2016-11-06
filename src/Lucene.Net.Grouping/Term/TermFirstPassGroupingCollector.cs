@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Grouping.Terms

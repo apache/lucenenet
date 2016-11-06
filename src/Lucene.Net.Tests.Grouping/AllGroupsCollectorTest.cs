@@ -1,20 +1,15 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
-using Lucene.Net.Search;
+using Lucene.Net.Search.Grouping.Function;
+using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections;
-using Lucene.Net.Search.Grouping.Terms;
 
 namespace Lucene.Net.Search.Grouping
 {

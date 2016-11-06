@@ -1,13 +1,8 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
-using Lucene.Net.Search;
 using Lucene.Net.Util.Mutable;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Grouping.Function
 {
