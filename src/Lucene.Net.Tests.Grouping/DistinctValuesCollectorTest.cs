@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping
         private readonly string countField = "publisher";
         private readonly string dvCountField = "publisher_dv";
 
-        internal class ComparerAnonymousHelper1 : IComparer<IGroupCount<IComparable>>
+        internal class ComparerAnonymousHelper1 : IComparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>
         {
             private readonly DistinctValuesCollectorTest outerInstance;
 
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Grouping
                 this.outerInstance = outerInstance;
             }
 
-            public int Compare(IGroupCount<IComparable> groupCount1, IGroupCount<IComparable> groupCount2)
+            public int Compare(AbstractDistinctValuesCollector.IGroupCount<IComparable> groupCount1, AbstractDistinctValuesCollector.IGroupCount<IComparable> groupCount2)
             {
                 if (groupCount1.GroupValue == null)
                 {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Grouping
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
             indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector as Collector);
-            IAbstractDistinctValuesCollector<IGroupCount<IComparable>> distinctValuesCollector
+            IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                 = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType.GetValueOrDefault());
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Grouping
 
             //var gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
-            var gcs = new List<IGroupCount<IComparable>>(distinctValuesCollector.Groups);
+            var gcs = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
             gcs.Sort(cmp);
             assertEquals(4, gcs.Count);
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Grouping
 
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
             //gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
-            gcs = new List<IGroupCount<IComparable>>(distinctValuesCollector.Groups);
+            gcs = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
             gcs.Sort(cmp);
             assertEquals(3, gcs.Count);
 
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Grouping
 
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
             //gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
-            gcs = new List<IGroupCount<IComparable>>(distinctValuesCollector.Groups);
+            gcs = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
             gcs.Sort(cmp);
             assertEquals(2, gcs.Count);
 
@@ -253,20 +253,20 @@ namespace Lucene.Net.Search.Grouping
                     Sort groupSort = new Sort(new SortField("id", SortField.Type_e.STRING));
                     int topN = 1 + random.nextInt(10);
 
-                    List<IGroupCount<IComparable>> expectedResult = CreateExpectedResult(context, term, groupSort, topN);
+                    List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> expectedResult = CreateExpectedResult(context, term, groupSort, topN);
 
                     IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
                     // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                     // so this cast is not necessary. Consider eliminating the Collector abstract class.
                     searcher.Search(new TermQuery(new Term("content", term)), firstCollector as Collector);
-                    IAbstractDistinctValuesCollector<IGroupCount<IComparable>> distinctValuesCollector
+                    IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                         = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
                     // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                     // so this cast is not necessary. Consider eliminating the Collector abstract class.
                     searcher.Search(new TermQuery(new Term("content", term)), distinctValuesCollector as Collector);
 
                     // LUCENENET TODO: Try to work out how to do this without an O(n) operation
-                    List<IGroupCount<IComparable>> actualResult = new List<IGroupCount<IComparable>>(distinctValuesCollector.Groups);
+                    List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> actualResult = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
 
                     if (VERBOSE)
                     {
@@ -287,8 +287,8 @@ namespace Lucene.Net.Search.Grouping
                     assertEquals(expectedResult.Count, actualResult.Count);
                     for (int i = 0; i < expectedResult.size(); i++)
                     {
-                        IGroupCount<IComparable> expected = expectedResult[i];
-                        IGroupCount<IComparable> actual = actualResult[i];
+                        AbstractDistinctValuesCollector.IGroupCount<IComparable> expected = expectedResult[i];
+                        AbstractDistinctValuesCollector.IGroupCount<IComparable> actual = actualResult[i];
                         AssertValues(expected.GroupValue, actual.GroupValue);
                         assertEquals(expected.UniqueValues.Count(), actual.UniqueValues.Count());
                         List<IComparable> expectedUniqueValues = new List<IComparable>(expected.UniqueValues);
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private void PrintGroups(List<IGroupCount<IComparable>> results)
+        private void PrintGroups(List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> results)
         {
             for (int i = 0; i < results.size(); i++)
             {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(valuesField);
         }
 
-        private IAbstractDistinctValuesCollector<IGroupCount<T>> CreateDistinctCountCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        private IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>> CreateDistinctCountCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
                                                                             string groupField,
                                                                             string countField,
                                                                             FieldInfo.DocValuesType_e? dvType)
@@ -436,11 +436,11 @@ namespace Lucene.Net.Search.Grouping
             IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
             if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
-                return (IAbstractDistinctValuesCollector<IGroupCount<T>>)new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), searchGroups as IEnumerable<ISearchGroup<MutableValue>>);
+                return (IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>>)new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), searchGroups as IEnumerable<ISearchGroup<MutableValue>>);
             }
             else
             {
-                return (IAbstractDistinctValuesCollector<IGroupCount<T>>)new TermDistinctValuesCollector(groupField, countField, searchGroups as IEnumerable<ISearchGroup<BytesRef>>);
+                return (IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>>)new TermDistinctValuesCollector(groupField, countField, searchGroups as IEnumerable<ISearchGroup<BytesRef>>);
             }
         }
 
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        internal class GroupCount : AbstractGroupCount<BytesRef>
+        internal class GroupCount : AbstractDistinctValuesCollector.GroupCount<BytesRef>
         {
             internal GroupCount(BytesRef groupValue, IEnumerable<BytesRef> uniqueValues)
                 : base(groupValue)
@@ -484,9 +484,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private List<IGroupCount<IComparable>> CreateExpectedResult(IndexContext context, string term, Sort groupSort, int topN)
+        private List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> CreateExpectedResult(IndexContext context, string term, Sort groupSort, int topN)
         {
-            List<IGroupCount<IComparable>> result = new List<IGroupCount<IComparable>>();
+            List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> result = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>();
             IDictionary<string, ISet<string>> groupCounts = context.searchTermToGroupCounts[term];
             int i = 0;
             foreach (string group in groupCounts.Keys)

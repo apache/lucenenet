@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Grouping.Function
         /** Holds distinct values for a single group.
          *
          * @lucene.experimental */
-        public class GroupCount : AbstractGroupCount<MutableValue> /*AbstractDistinctValuesCollector.GroupCount<MutableValue>*/
+        public class GroupCount : AbstractDistinctValuesCollector.GroupCount<MutableValue>
         {
             internal GroupCount(MutableValue groupValue)
                 : base(groupValue)

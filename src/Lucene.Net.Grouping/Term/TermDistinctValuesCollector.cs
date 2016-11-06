@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         /** Holds distinct values for a single group.
          *
          * @lucene.experimental */
-        public class GroupCount : AbstractGroupCount<BytesRef> /*AbstractDistinctValuesCollector.GroupCount<BytesRef>*/
+        public class GroupCount : AbstractDistinctValuesCollector.GroupCount<BytesRef>
         {
             internal int[] ords;
 
