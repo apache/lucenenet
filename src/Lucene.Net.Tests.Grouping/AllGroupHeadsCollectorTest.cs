@@ -488,7 +488,6 @@ namespace Lucene.Net.Search.Grouping
             {
                 List<GroupDoc> docs = groupHeads[groupValue];
                 docs.Sort(GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
-                //Collections.Sort(docs, getComparator(docSort, sortByScoreOnly, fieldIdToDocID));
                 allGroupHeads[i++] = docs[0].id;
             }
 
@@ -600,55 +599,6 @@ namespace Lucene.Net.Search.Grouping
         {
             SortField[] sortFields = sort.GetSort();
             return new ComparatorAnonymousHelper(this, sortFields, sortByScoreOnly, fieldIdToDocID);
-            //    return new Comparator<GroupDoc>() {
-            //      @Override
-            //      public int compare(GroupDoc d1, GroupDoc d2)
-            //{
-            //    for (SortField sf : sortFields)
-            //    {
-            //        final int cmp;
-            //        if (sf.getType() == SortField.Type.SCORE)
-            //        {
-            //            if (d1.score > d2.score)
-            //            {
-            //                cmp = -1;
-            //            }
-            //            else if (d1.score < d2.score)
-            //            {
-            //                cmp = 1;
-            //            }
-            //            else
-            //            {
-            //                cmp = sortByScoreOnly ? fieldIdToDocID[d1.id] - fieldIdToDocID[d2.id] : 0;
-            //            }
-            //        }
-            //        else if (sf.getField().equals("sort1"))
-            //        {
-            //            cmp = d1.sort1.compareTo(d2.sort1);
-            //        }
-            //        else if (sf.getField().equals("sort2"))
-            //        {
-            //            cmp = d1.sort2.compareTo(d2.sort2);
-            //        }
-            //        else if (sf.getField().equals("sort3"))
-            //        {
-            //            cmp = d1.sort3.compareTo(d2.sort3);
-            //        }
-            //        else
-            //        {
-            //            assertEquals(sf.getField(), "id");
-            //            cmp = d1.id - d2.id;
-            //        }
-            //        if (cmp != 0)
-            //        {
-            //            return sf.getReverse() ? -cmp : cmp;
-            //        }
-            //    }
-            //    // Our sort always fully tie breaks:
-            //    fail();
-            //    return 0;
-            //}
-            //    };
         }
 
         private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, DocValuesType_e valueType)

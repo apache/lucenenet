@@ -137,32 +137,7 @@ namespace Lucene.Net.Search.Grouping
         public class GroupedFacetResult
         {
             private readonly static IComparer<FacetEntry> orderByCountAndValue = new OrderByCountAndValueComparer();
-            //    private readonly static IComparer<FacetEntry> orderByCountAndValue = new Comparator<FacetEntry>() {
-
-            //      @Override
-            //      public override int Compare(FacetEntry a, FacetEntry b)
-            //    {
-            //        int cmp = b.count - a.count; // Highest count first!
-            //        if (cmp != 0)
-            //        {
-            //            return cmp;
-            //        }
-            //        return a.value.compareTo(b.value);
-            //    }
-
-            //};
-
             private readonly static IComparer<FacetEntry> orderByValue = new OrderByValueComparer();
-
-            //            private readonly static IComparer<FacetEntry> orderByValue = new Comparator<FacetEntry>() {
-
-            //      @Override
-            //      public int compare(FacetEntry a, FacetEntry b)
-            //{
-            //    return a.value.compareTo(b.value);
-            //}
-
-            //    };
 
             private readonly int maxSize;
             private readonly TreeSet<FacetEntry> facetEntries;

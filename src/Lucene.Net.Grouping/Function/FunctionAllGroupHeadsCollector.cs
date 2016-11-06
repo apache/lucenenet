@@ -111,15 +111,16 @@ namespace Lucene.Net.Search.Grouping.Function
         /** Holds current head document for a single group.
          *
          * @lucene.experimental */
-        public class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /*AbstractAllGroupHeadsCollector.GroupHead<MutableValue>*/
+        public class GroupHead : AbstractAllGroupHeadsCollector_GroupHead
         {
 
             private readonly FunctionAllGroupHeadsCollector outerInstance;
+            // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // need to reference the generic closing type MutableValue.
             public readonly MutableValue groupValue;
             internal readonly FieldComparator[] comparators;
 
             internal GroupHead(FunctionAllGroupHeadsCollector outerInstance, MutableValue groupValue, Sort sort, int doc)
-                        /*: base(groupValue, doc + outerInstance.readerContext.DocBase)*/
                         : base(doc + outerInstance.readerContext.DocBase)
             {
                 this.outerInstance = outerInstance;

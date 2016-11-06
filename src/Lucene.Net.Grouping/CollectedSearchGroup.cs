@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// LUCENENET specific interface for passing/comparing the CollectedSearchGroup
-    /// without referencing its generic type
+    /// without referencing its generic closing type
     /// </summary>
     public interface ICollectedSearchGroup
     {

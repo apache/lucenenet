@@ -480,51 +480,6 @@ namespace Lucene.Net.Search.Grouping
         {
             SortField[] sortFields = sort.GetSort();
             return new ComparerAnonymousHelper(this, sortFields);
-            //    return new Comparator<GroupDoc>() {
-            //      @Override
-            //      public int compare(GroupDoc d1, GroupDoc d2)
-            //{
-            //    for (SortField sf : sortFields)
-            //    {
-            //        final int cmp;
-            //        if (sf.getType() == SortField.Type.SCORE)
-            //        {
-            //            if (d1.score > d2.score)
-            //            {
-            //                cmp = -1;
-            //            }
-            //            else if (d1.score < d2.score)
-            //            {
-            //                cmp = 1;
-            //            }
-            //            else
-            //            {
-            //                cmp = 0;
-            //            }
-            //        }
-            //        else if (sf.getField().equals("sort1"))
-            //        {
-            //            cmp = d1.sort1.compareTo(d2.sort1);
-            //        }
-            //        else if (sf.getField().equals("sort2"))
-            //        {
-            //            cmp = d1.sort2.compareTo(d2.sort2);
-            //        }
-            //        else
-            //        {
-            //            assertEquals(sf.getField(), "id");
-            //            cmp = d1.id - d2.id;
-            //        }
-            //        if (cmp != 0)
-            //        {
-            //            return sf.getReverse() ? -cmp : cmp;
-            //        }
-            //    }
-            //    // Our sort always fully tie breaks:
-            //    fail();
-            //    return 0;
-            //}
-            //    };
         }
 
         private IComparable[] FillFields(GroupDoc d, Sort sort)
@@ -645,7 +600,6 @@ namespace Lucene.Net.Search.Grouping
                 BytesRef group = sortedGroups[idx];
                 List<GroupDoc> docs = groups[group];
                 totalGroupedHitCount += docs.size();
-                //Collections.sort(docs, docSortComp);
                 docs.Sort(docSortComp);
                 ScoreDoc[] hits;
                 if (docs.size() > docOffset)
@@ -696,7 +650,6 @@ namespace Lucene.Net.Search.Grouping
         private DirectoryReader GetDocBlockReader(Directory dir, GroupDoc[] groupDocs)
         {
             // Coalesce by group, but in random order:
-            //Collections.shuffle(Arrays.asList(groupDocs), Random());
             groupDocs = CollectionsHelper.Shuffle(Arrays.AsList(groupDocs)).ToArray();
             HashMap<BytesRef, List<GroupDoc>> groupMap = new HashMap<BytesRef, List<GroupDoc>>();
             List<BytesRef> groupValues = new List<BytesRef>();
@@ -1710,7 +1663,6 @@ namespace Lucene.Net.Search.Grouping
             public ShardSearcher(AtomicReaderContext ctx, IndexReaderContext parent)
                             : base(parent)
             {
-                //this.ctx = Collections.SingletonList(ctx);
                 this.ctx = new List<AtomicReaderContext>(new AtomicReaderContext[] { ctx });
             }
 

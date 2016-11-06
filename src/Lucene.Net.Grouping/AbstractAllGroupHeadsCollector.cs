@@ -151,8 +151,8 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     /// <remarks>
     /// LUCENENET: moved this class from of the <see cref="AbstractAllGroupHeadsCollector{TGroupValue}"/>,
-    /// to <see cref="AbstractAllGroupHeadsCollector"/>, made it non-generic so the generic closing type doesn't need 
-    /// to be specified in classes that use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed 
+    /// made it non-generic so the generic closing type doesn't need to be specified in classes that
+    /// use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed 
     /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes 
     /// named GroupHead in derived classes of <see cref="AbstractAllGroupHeadsCollector"/>.
     /// </remarks>
@@ -226,29 +226,4 @@ namespace Lucene.Net.Search.Grouping
         /// <exception cref="IOException">If I/O related errors occur</exception>
         protected abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
     }
-
-    ///// <summary>
-    ///// LUCENENET specific interface used to apply covariance to GH
-    ///// </summary>
-    //public interface IAbstractAllGroupHeadsCollector<out GH>
-    //{
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="maxDoc">The maxDoc of the top level <see cref="Index.IndexReader"/></param>
-    //    /// <returns>a <see cref="FixedBitSet"/> containing all group heads.</returns>
-    //    FixedBitSet RetrieveGroupHeads(int maxDoc);
-
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <returns>an int array containing all group heads. The size of the array is equal to number of collected unique groups.</returns>
-    //    int[] RetrieveGroupHeads();
-
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <returns>the number of group heads found for a query.</returns>
-    //    int GroupHeadsSize { get; }
-    //}
 }

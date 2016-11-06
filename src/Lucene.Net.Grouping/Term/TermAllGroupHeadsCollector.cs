@@ -757,9 +757,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead /*AbstractAllGroupHeadsCollector.GroupHead<BytesRef>*/
+        internal class GroupHead : AbstractAllGroupHeadsCollector_GroupHead
         {
             private readonly ScoreAllGroupHeadsCollector outerInstance;
+            // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
+            // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
             internal float[] scores;
 
@@ -800,7 +802,6 @@ namespace Lucene.Net.Search.Grouping.Terms
                 }
                 this.Doc = doc + outerInstance.readerContext.DocBase;
             }
-
         }
     }
 }

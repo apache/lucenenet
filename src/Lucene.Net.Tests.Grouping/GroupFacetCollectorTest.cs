@@ -586,31 +586,10 @@ namespace Lucene.Net.Search.Grouping
             docNoFacet.Add(content);
             docNoGroupNoFacet.Add(content);
 
+            // LUCENENET NOTE: TreeSet (the class used in Java) allows duplicate keys. However, SortedSet seems to work,
+            // and based on the name of the variable, presuming the keys are meant to be unique.
             ISet<string> uniqueFacetValues = new SortedSet<string>(new ComparerAnonymousHelper1());
-            //    ISet<string> uniqueFacetValues = new SortedSet<string>(new Comparator<String>() {
 
-            //      @Override
-            //      public int compare(String a, String b)
-            //{
-            //    if (a == b)
-            //    {
-            //        return 0;
-            //    }
-            //    else if (a == null)
-            //    {
-            //        return -1;
-            //    }
-            //    else if (b == null)
-            //    {
-            //        return 1;
-            //    }
-            //    else
-            //    {
-            //        return a.compareTo(b);
-            //    }
-            //}
-
-            //    });
             // LUCENENET NOTE: Need HashMap here because of null keys
             IDictionary<string, HashMap<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, HashMap<string, ISet<string>>>();
             int facetWithMostGroups = 0;
@@ -767,8 +746,6 @@ namespace Lucene.Net.Search.Grouping
 
         private GroupedFacetResult CreateExpectedFacetResult(string searchTerm, IndexContext context, int offset, int limit, int minCount, bool orderByCount, string facetPrefix)
         {
-            //IDictionary<string, ISet<string>> facetGroups = context.searchTermToFacetGroups.get(searchTerm);
-            //if (facetGroups == null)
             HashMap<string, ISet<string>> facetGroups;
             if (!context.searchTermToFacetGroups.TryGetValue(searchTerm, out facetGroups))
             {
@@ -824,24 +801,6 @@ namespace Lucene.Net.Search.Grouping
 
             entries.Sort(new ComparerAnonymousHelper2(orderByCount));
 
-            //    Collections.sort(entries, new Comparator<TermGroupFacetCollector.FacetEntry>() {
-
-            //      @Override
-            //      public int compare(TermGroupFacetCollector.FacetEntry a, TermGroupFacetCollector.FacetEntry b)
-            //{
-            //    if (orderByCount)
-            //    {
-            //        int cmp = b.getCount() - a.getCount();
-            //        if (cmp != 0)
-            //        {
-            //            return cmp;
-            //        }
-            //    }
-            //    return a.getValue().compareTo(b.getValue());
-            //}
-
-            //    });
-
             int endOffset = offset + limit;
             List<TermGroupFacetCollector.FacetEntry> entriesResult;
             if (offset >= entries.size())
@@ -850,12 +809,10 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (endOffset >= entries.size())
             {
-                //entriesResult = (List<TermGroupFacetCollector.FacetEntry>)entries.SubList(offset, entries.size());
                 entriesResult = entries.GetRange(offset, entries.size() - offset);
             }
             else
             {
-                //entriesResult = (List<TermGroupFacetCollector.FacetEntry>)entries.SubList(offset, endOffset);
                 entriesResult = entries.GetRange(offset, endOffset - offset);
             }
             return new GroupedFacetResult(totalCount, totalMissCount, entriesResult);

@@ -50,7 +50,6 @@ namespace Lucene.Net.Search.Grouping
             foreach (SearchGroup<TGroupValue> group in groups)
             {
                 //System.out.println("  prep group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
-                //TopDocsCollector collector;
                 ITopDocsCollector collector;
                 if (withinGroupSort == null)
                 {
@@ -156,9 +155,8 @@ namespace Lucene.Net.Search.Grouping
         public class SearchGroupDocs<TGroupValue>
         {
             public readonly TGroupValue groupValue;
-            //public readonly TopDocsCollector<?> collector;
             public readonly ITopDocsCollector collector;
-            public SearchGroupDocs(TGroupValue groupValue, ITopDocsCollector /*TopDocsCollector<?>*/ collector)
+            public SearchGroupDocs(TGroupValue groupValue, ITopDocsCollector collector)
             {
                 this.groupValue = groupValue;
                 this.collector = collector;

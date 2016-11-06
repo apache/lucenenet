@@ -139,6 +139,5 @@ namespace Lucene.Net.Search.Grouping
 
             return selected;
         }
-
     }
 }

@@ -357,26 +357,6 @@ namespace Lucene.Net.Search.Grouping
         private void BuildSortedSet()
         {
             var comparator = new BuildSortedSetComparer(this);
-            //        var comparator = new Comparator<CollectedSearchGroup<?>>() {
-            //      @Override
-            //      public int compare(CollectedSearchGroup<?> o1, CollectedSearchGroup<?> o2)
-            //{
-            //    for (int compIDX = 0; ; compIDX++)
-            //    {
-            //        FieldComparator <?> fc = comparators[compIDX];
-            //        final int c = reversed[compIDX] * fc.compare(o1.comparatorSlot, o2.comparatorSlot);
-            //        if (c != 0)
-            //        {
-            //            return c;
-            //        }
-            //        else if (compIDX == compIDXEnd)
-            //        {
-            //            return o1.topDoc - o2.topDoc;
-            //        }
-            //    }
-            //}
-            //    };
-
             orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparator);
             orderedGroups.UnionWith(groupMap.Values);
             Debug.Assert(orderedGroups.Count > 0);

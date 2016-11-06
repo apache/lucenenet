@@ -79,32 +79,4 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>the group values</returns>
         IEnumerable<TGroupValue> Groups { get; }
     }
-
-    ///// <summary>
-    ///// LUCENENET specific class used to reference <see cref="AbstractAllGroupsCollector{TGroupValue}"/>
-    ///// without refering to its generic closing type.
-    ///// </summary>
-    //public abstract class AbstractAllGroupsCollector : Collector
-    //{
-    //    /// <summary>
-    //    /// Returns the total number of groups for the executed search.
-    //    /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
-    //    /// </summary>
-    //    /// <returns>The total number of groups for the executed search</returns>
-    //    public abstract int GroupCount { get; }
-
-
-    //    // Empty not necessary
-    //    public override Scorer Scorer
-    //    {
-    //        set
-    //        {
-    //        }
-    //    }
-
-    //    public override bool AcceptsDocsOutOfOrder()
-    //    {
-    //        return true;
-    //    }
-    //}
 }
