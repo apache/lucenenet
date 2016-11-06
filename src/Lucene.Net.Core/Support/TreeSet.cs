@@ -21,6 +21,7 @@
 
 using Lucene.Net.Support.C5;
 using System;
+using System.Linq;
 using SCG = System.Collections.Generic;
 
 namespace Lucene.Net.Support
@@ -40,7 +41,7 @@ namespace Lucene.Net.Support
     /// leak possible with other usage modes.</i>
     /// </summary>
     [Serializable]
-    public class TreeSet<T> : SequencedBase<T>, IIndexedSorted<T>, IPersistentSorted<T>
+    public class TreeSet<T> : SequencedBase<T>, IIndexedSorted<T>, IPersistentSorted<T>, SCG.ISet<T>
     {
         #region Fields
 
@@ -535,6 +536,188 @@ namespace Lucene.Net.Support
             }
 
             #endregion
+        }
+
+        #endregion
+
+        #region ISet<T> Members
+
+        /// <summary>
+        /// Modifies the current <see cref="TreeSet{T}"/> object to contain all elements that are present in itself, the specified collection, or both.
+        /// </summary>
+        /// <param name="other"></param>
+        public void UnionWith(SCG.IEnumerable<T> other)
+        {
+            AddAll(other);
+        }
+
+        /// <summary>
+        /// Not implemented
+        /// </summary>
+        /// <param name="other"></param>
+        public void IntersectWith(SCG.IEnumerable<T> other)
+        {
+            throw new NotImplementedException("Implement as required");
+        }
+
+        /// <summary>
+        /// Not implemented
+        /// </summary>
+        /// <param name="other"></param>
+        public void ExceptWith(SCG.IEnumerable<T> other)
+        {
+            throw new NotImplementedException("Implement as required");
+        }
+
+        /// <summary>
+        /// Not implemented
+        /// </summary>
+        /// <param name="other"></param>
+        public void SymmetricExceptWith(SCG.IEnumerable<T> other)
+        {
+            throw new NotImplementedException("Implement as required");
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="TreeSet{T}"/> object is a subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a subset of other; otherwise, <c>false</c>.</returns>
+        public bool IsSubsetOf(SCG.IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
+            if (this.Count == 0)
+            {
+                return true;
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set,
+            // but we need to use the comparison rules of the current set.
+            int foundCount, unfoundCount;
+            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            return foundCount == this.Count;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="TreeSet{T}"/> object is a superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a superset of other; otherwise, <c>false</c>.</returns>
+        public bool IsSupersetOf(SCG.IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
+            ICollection<T> is2 = other as ICollection<T>;
+            if (is2 != null && is2.Count == 0)
+            {
+                return true;
+            }
+            return this.ContainsAll(other);
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="TreeSet{T}"/> object is a proper superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a proper superset of other; otherwise, <c>false</c>.</returns>
+        public bool IsProperSupersetOf(SCG.IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
+            if (this.Count == 0)
+            {
+                return false;
+            }
+            ICollection<T> is2 = other as ICollection<T>;
+            if (is2 != null && is2.Count == 0)
+            {
+                return true;
+            }
+            int foundCount, unfoundCount;
+            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            return foundCount < this.Count && unfoundCount == 0;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="TreeSet{T}"/> object is a proper subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a proper subset of other; otherwise, <c>false</c>.</returns>
+        public bool IsProperSubsetOf(SCG.IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
+            ICollection<T> is2 = other as ICollection<T>;
+            if (is2 != null && this.Count == 0)
+            {
+                return (is2.Count > 0);
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set plus at least one more,
+            // but we need to use the comparison rules of the current set.
+            int foundCount, unfoundCount;
+            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            return foundCount == this.Count && unfoundCount > 0;
+        }
+
+        /// <summary>
+        /// Determines whether the current <see cref="TreeSet{T}"/> object and a specified collection share common elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object and other share at least one common element; otherwise, <c>false</c>.</returns>
+        public bool Overlaps(SCG.IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
+            if (this.Count != 0)
+            {
+                foreach (var local in other)
+                {
+                    if (this.Contains(local))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the current <see cref="TreeSet{T}"/> and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/>.</param>
+        /// <returns><c>true</c> if the current <see cref="TreeSet{T}"/> is equal to other; otherwise, <c>false</c>.</returns>
+        public bool SetEquals(SCG.IEnumerable<T> other)
+        {
+            return this.Count.Equals(other.Count()) && this.ContainsAll(other);
+        }
+
+        private void GetFoundAndUnfoundCounts(SCG.IEnumerable<T> other, out int foundCount, out int unfoundCount)
+        {
+            foundCount = 0;
+            unfoundCount = 0;
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    foundCount++;
+                }
+                else
+                {
+                    unfoundCount++;
+                }
+            }
         }
 
         #endregion
