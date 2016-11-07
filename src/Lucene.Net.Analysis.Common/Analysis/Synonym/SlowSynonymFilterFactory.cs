@@ -206,9 +206,8 @@ namespace Lucene.Net.Analysis.Synonym
             Type clazz = loader.FindClass(cname);
             try
             {
-                TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz,
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new object[] { tokArgs }, CultureInfo.InvariantCulture);
+                TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
+
                 if (tokFactory is IResourceLoaderAware)
                 {
                     ((IResourceLoaderAware)tokFactory).Inform(loader);

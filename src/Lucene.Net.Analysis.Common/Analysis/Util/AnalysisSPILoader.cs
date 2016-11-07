@@ -106,9 +106,7 @@ namespace Lucene.Net.Analysis.Util
             Type service = LookupClass(name);
             try
             {
-                return (S)Activator.CreateInstance(service,
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new object[] { args }, CultureInfo.InvariantCulture);
+                return (S)Activator.CreateInstance(service, new object[] { args });
             }
             catch (Exception e)
             {

@@ -132,9 +132,7 @@ namespace Lucene.Net.Analysis.Synonym
             Type clazz = loader.FindClass(cname /*, typeof(SynonymMap.Parser) */);
             try
             {
-                parser = (SynonymMap.Parser)Activator.CreateInstance(clazz,
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new object[] { dedup, expand, analyzer }, CultureInfo.InvariantCulture);
+                parser = (SynonymMap.Parser)Activator.CreateInstance(clazz, new object[] { dedup, expand, analyzer });
             }
             catch (Exception e)
             {
@@ -162,9 +160,8 @@ namespace Lucene.Net.Analysis.Synonym
             Type clazz = loader.FindClass(cname /*, typeof(TokenizerFactory) */);
             try
             {
-                TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz,
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new object[] { tokArgs }, CultureInfo.InvariantCulture);
+                TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
+
                 if (tokFactory is IResourceLoaderAware)
                 {
                     ((IResourceLoaderAware)tokFactory).Inform(loader);
