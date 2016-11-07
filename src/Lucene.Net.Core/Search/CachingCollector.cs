@@ -484,6 +484,7 @@ namespace Lucene.Net.Search
             return Other.AcceptsDocsOutOfOrder();
         }
 
+        // LUCENENET TODO: Rename to IsCached
         public virtual bool Cached
         {
             get

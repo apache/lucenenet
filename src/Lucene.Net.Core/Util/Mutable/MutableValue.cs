@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 /*
@@ -24,8 +25,13 @@ namespace Lucene.Net.Util.Mutable
     ///
     /// @lucene.internal
     /// </summary>
-    public abstract class MutableValue : IComparable<MutableValue>
+    public abstract class MutableValue : IComparable<MutableValue>, IComparable
     {
+        protected MutableValue()
+        {
+            Exists = true;
+        }
+
         public bool Exists { get; set; }
 
         public abstract void Copy(MutableValue source);
@@ -47,8 +53,27 @@ namespace Lucene.Net.Util.Mutable
                 int c = c1.GetHashCode() - c2.GetHashCode();
                 if (c == 0)
                 {
-                    //c = c1.CanonicalName.CompareTo(c2.CanonicalName);
-                    c = String.Compare(c1.Name, c2.Name, StringComparison.Ordinal);
+                    c = c1.FullName.CompareToOrdinal(c2.FullName);
+                }
+                return c;
+            }
+            return CompareSameType(other);
+        }
+
+
+        // LUCENENET specific implementation, for use with FunctionFirstPassGroupingCollector 
+        // (note that IComparable<T> does not inherit IComparable, so we need to explicitly 
+        // do that here in order to support IComparable)
+        public int CompareTo(object other)
+        {
+            Type c1 = this.GetType();
+            Type c2 = other.GetType();
+            if (c1 != c2)
+            {
+                int c = c1.GetHashCode() - c2.GetHashCode();
+                if (c == 0)
+                {
+                    c = c1.FullName.CompareToOrdinal(c2.FullName);
                 }
                 return c;
             }

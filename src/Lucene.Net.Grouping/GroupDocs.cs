@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Search;
 
-namespace Lucene.Net.Grouping
+namespace Lucene.Net.Search.Grouping
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,41 +24,41 @@ namespace Lucene.Net.Grouping
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class GroupDocs<TGroupValueType>
+    public class GroupDocs<TGroupValue> : IGroupDocs<TGroupValue>
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
         /// may be null if hits did not have the groupField. 
         /// </summary>
-        public readonly TGroupValueType GroupValue;
+        public TGroupValue GroupValue { get; private set; }
 
         /// <summary>
         /// Max score in this group
         /// </summary>
-        public readonly float MaxScore;
+        public float MaxScore { get; private set; }
 
         /// <summary>
         /// Overall aggregated score of this group (currently only set by join queries). 
         /// </summary>
-        public readonly float Score;
+        public float Score { get; private set; }
 
         /// <summary>
-        /// Hits; this may be {@link org.apache.lucene.search.FieldDoc} instances if the
+        /// Hits; this may be <see cref="FieldDoc"/> instances if the
         /// withinGroupSort sorted by fields. 
         /// </summary>
-        public readonly ScoreDoc[] ScoreDocs;
+        public ScoreDoc[] ScoreDocs { get; private set; }
 
         /// <summary>
         /// Total hits within this group
         /// </summary>
-        public readonly int TotalHits;
+        public int TotalHits { get; private set; }
 
         /// <summary>
-        /// Matches the groupSort passed to {@link AbstractFirstPassGroupingCollector}. 
+        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
         /// </summary>
-        public readonly object[] GroupSortValues;
+        public object[] GroupSortValues { get; private set; }
 
-        public GroupDocs(float score, float maxScore, int totalHits, ScoreDoc[] scoreDocs, TGroupValueType groupValue, object[] groupSortValues)
+        public GroupDocs(float score, float maxScore, int totalHits, ScoreDoc[] scoreDocs, TGroupValue groupValue, object[] groupSortValues)
         {
             Score = score;
             MaxScore = maxScore;
@@ -67,5 +67,45 @@ namespace Lucene.Net.Grouping
             GroupValue = groupValue;
             GroupSortValues = groupSortValues;
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// to simulate Java's wildcard generics.
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface IGroupDocs<out TGroupValue>
+    {
+        /// <summary>
+        /// The groupField value for all docs in this group; this
+        /// may be null if hits did not have the groupField. 
+        /// </summary>
+        TGroupValue GroupValue { get; }
+
+        /// <summary>
+        /// Max score in this group
+        /// </summary>
+        float MaxScore { get; }
+
+        /// <summary>
+        /// Overall aggregated score of this group (currently only set by join queries). 
+        /// </summary>
+        float Score { get; }
+
+        /// <summary>
+        /// Hits; this may be <see cref="FieldDoc"/> instances if the
+        /// withinGroupSort sorted by fields. 
+        /// </summary>
+        ScoreDoc[] ScoreDocs { get; }
+
+        /// <summary>
+        /// Total hits within this group
+        /// </summary>
+        int TotalHits { get; }
+
+        /// <summary>
+        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
+        /// </summary>
+        object[] GroupSortValues { get; }
     }
 }

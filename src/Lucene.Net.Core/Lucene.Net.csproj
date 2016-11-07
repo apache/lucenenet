@@ -617,6 +617,7 @@
     <Compile Include="Support\ByteArrayOutputStream.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
     <Compile Include="Support\ByteOrder.cs" />
+    <Compile Include="Support\C5.Support.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\CharacterIterator.cs" />
@@ -642,6 +643,7 @@
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\IDictionaryExtensions.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
+    <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\LongBuffer.cs" />
     <Compile Include="Support\LurchTable.cs" />
@@ -659,6 +661,8 @@
     <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Support\TimeHelper.cs" />
+    <Compile Include="Support\TreeDictionary.cs" />
+    <Compile Include="Support\TreeSet.cs" />
     <Compile Include="Support\UnmodifiableDictionary.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="Support\CollectionsHelper.cs" />

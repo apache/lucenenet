@@ -1,7 +1,6 @@
 ﻿using System;
-using Lucene.Net.Search;
 
-namespace Lucene.Net.Grouping
+namespace Lucene.Net.Search.Grouping
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,39 +24,39 @@ namespace Lucene.Net.Grouping
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class TopGroups<TGroupValueType>
+    public class TopGroups<TGroupValue> : ITopGroups<TGroupValue>
     {
         /// <summary>
         /// Number of documents matching the search </summary>
-        public readonly int TotalHitCount;
+        public int TotalHitCount { get; private set; }
 
         /// <summary>
         /// Number of documents grouped into the topN groups </summary>
-        public readonly int TotalGroupedHitCount;
+        public int TotalGroupedHitCount { get; private set; }
 
         /// <summary>
-        /// The total number of unique groups. If <code>null</code> this value is not computed. </summary>
-        public readonly int? TotalGroupCount;
+        /// The total number of unique groups. If <c>null</c> this value is not computed. </summary>
+        public int? TotalGroupCount { get; private set; }
 
         /// <summary>
         /// Group results in groupSort order </summary>
-        public readonly GroupDocs<TGroupValueType>[] Groups;
+        public IGroupDocs<TGroupValue>[] Groups { get; private set; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
-        public readonly SortField[] GroupSort;
+        public SortField[] GroupSort { get; private set; }
 
         /// <summary>
         /// How docs are sorted within each group </summary>
-        public readonly SortField[] WithinGroupSort;
+        public SortField[] WithinGroupSort { get; private set; }
 
         /// <summary>
         /// Highest score across all hits, or
-        ///  <code>Float.NaN</code> if scores were not computed. 
+        /// <see cref="float.NaN"/> if scores were not computed. 
         /// </summary>
-        public readonly float MaxScore;
+        public float MaxScore { get; private set; }
 
-        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValueType>[] groups, float maxScore)
+        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, IGroupDocs<TGroupValue>[] groups, float maxScore)
         {
             GroupSort = groupSort;
             WithinGroupSort = withinGroupSort;
@@ -68,7 +67,7 @@ namespace Lucene.Net.Grouping
             MaxScore = maxScore;
         }
 
-        public TopGroups(TopGroups<TGroupValueType> oldTopGroups, int? totalGroupCount)
+        public TopGroups(ITopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
         {
             GroupSort = oldTopGroups.GroupSort;
             WithinGroupSort = oldTopGroups.WithinGroupSort;
@@ -78,6 +77,18 @@ namespace Lucene.Net.Grouping
             MaxScore = oldTopGroups.MaxScore;
             TotalGroupCount = totalGroupCount;
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// by Lucene (that is, without specifying the generic closing type of <see cref="TopGroups{TGroupValue}"/>)
+    /// </summary>
+    public class TopGroups
+    {
+        /// <summary>
+        /// Prevent direct creation
+        /// </summary>
+        private TopGroups() { }
 
         /// <summary>
         /// How the GroupDocs score (if any) should be merged. </summary>
@@ -116,7 +127,7 @@ namespace Lucene.Net.Grouping
         /// <b>NOTE</b>: the topDocs in each GroupDocs is actually
         /// an instance of TopDocsAndShards
         /// </summary>
-        public static TopGroups<T> Merge<T>(TopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
+        public static TopGroups<T> Merge<T>(ITopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
         {
             //System.out.println("TopGroups.merge");
 
@@ -149,7 +160,7 @@ namespace Lucene.Net.Grouping
                     totalGroupCount += shard.TotalGroupCount;
                 }
             }
-            
+
             var mergedGroupDocs = new GroupDocs<T>[numGroups];
 
             TopDocs[] shardTopDocs = new TopDocs[shardGroups.Length];
@@ -165,7 +176,7 @@ namespace Lucene.Net.Grouping
                 for (int shardIdx = 0; shardIdx < shardGroups.Length; shardIdx++)
                 {
                     //System.out.println("    shard=" + shardIDX);
-                    TopGroups<T> shard = shardGroups[shardIdx];
+                    ITopGroups<T> shard = shardGroups[shardIdx];
                     var shardGroupDocs = shard.Groups[groupIDX];
                     if (groupValue == null)
                     {
@@ -245,5 +256,43 @@ namespace Lucene.Net.Grouping
 
             return new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used to provide covariance
+    /// with the TGroupValue type to simulate Java's wildcard generics.
+    /// </summary>
+    /// <typeparam name="TGroupValue"></typeparam>
+    public interface ITopGroups<out TGroupValue>
+    {
+        /// <summary>
+        /// Number of documents matching the search </summary>
+        int TotalHitCount { get; }
+
+        /// <summary>
+        /// Number of documents grouped into the topN groups </summary>
+        int TotalGroupedHitCount { get; }
+
+        /// <summary>
+        /// The total number of unique groups. If <c>null</c> this value is not computed. </summary>
+        int? TotalGroupCount { get; }
+
+        /// <summary>
+        /// Group results in groupSort order </summary>
+        IGroupDocs<TGroupValue>[] Groups { get; }
+
+        /// <summary>
+        /// How groups are sorted against each other </summary>
+        SortField[] GroupSort { get; }
+
+        /// <summary>
+        /// How docs are sorted within each group </summary>
+        SortField[] WithinGroupSort { get; }
+
+        /// <summary>
+        /// Highest score across all hits, or
+        /// <see cref="float.NaN"/> if scores were not computed. 
+        /// </summary>
+        float MaxScore { get; }
     }
 }

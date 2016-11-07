@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Support
 {
@@ -52,6 +53,20 @@ namespace Lucene.Net.Support
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary</typeparam>
+    /// <remarks>
+    /// <h2>Unordered Dictionaries</h2>
+    /// <list type="bullet">
+    ///     <item><see cref="Dictionary{TKey, TValue}"/> - use when order is not important and all keys are non-null.</item>
+    ///     <item><see cref="HashMap{TKey, TValue}"/> - use when order is not important and support for a null key is required.</item>
+    /// </list>
+    /// <h2>Ordered Dictionaries</h2>
+    /// <list type="bullet">
+    ///     <item><see cref="LinkedHashMap{TKey, TValue}"/> - use when you need to preserve entry insertion order. Keys are nullable.</item>
+    ///     <item><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Keys must be unique.</item>
+    ///     <item><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys may contain duplicates.</item>
+    ///     <item><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</item>
+    /// </list>
+    /// </remarks>
     [Serializable]
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
@@ -125,9 +140,87 @@ namespace Lucene.Net.Support
             return this[key];
         }
 
+        #region Object overrides
+
+        public override bool Equals(object obj)
+        {
+            if (obj == this)
+                return true;
+
+            if (!(obj is IDictionary<TKey, TValue>))
+                return false;
+            IDictionary<TKey, TValue> m = (IDictionary<TKey, TValue>)obj;
+            if (m.Count != Count)
+                return false;
+
+            try
+            {
+                var i = GetEnumerator();
+                while (i.MoveNext())
+                {
+                    KeyValuePair<TKey, TValue> e = i.Current;
+                    TKey key = e.Key;
+                    TValue value = e.Value;
+                    if (value == null)
+                    {
+                        if (!(m[key] == null && m.ContainsKey(key)))
+                            return false;
+                    }
+                    else
+                    {
+                        if (!value.Equals(m[key]))
+                            return false;
+                    }
+                }
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int h = 0;
+            var i = GetEnumerator();
+            while (i.MoveNext())
+                h += i.Current.GetHashCode();
+            return h;
+        }
+
+        public override string ToString()
+        {
+            var i = GetEnumerator();
+            if (!i.MoveNext())
+                return "{}";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append('{');
+            for (;;)
+            {
+                var e = i.Current;
+                TKey key = e.Key;
+                TValue value = e.Value;
+                sb.Append(key);
+                sb.Append('=');
+                sb.Append(value);
+                if (!i.MoveNext())
+                    return sb.Append('}').ToString();
+                sb.Append(',').Append(' ');
+            }
+        }
+
+        #endregion
+
         #region Implementation of IEnumerable
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public virtual IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             if (!_isValueType && _hasNullValue)
             {
@@ -148,38 +241,38 @@ namespace Lucene.Net.Support
 
         #region Implementation of ICollection<KeyValuePair<TKey,TValue>>
 
-        void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
+        public virtual void Add(KeyValuePair<TKey, TValue> item)
         {
             Add(item.Key, item.Value);
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             _hasNullValue = false;
             _nullValue = default(TValue);
             _dict.Clear();
         }
 
-        bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
+        public virtual bool Contains(KeyValuePair<TKey, TValue> item)
         {
             if (!_isValueType && _comparer.Equals(item.Key, default(TKey)))
             {
                 return _hasNullValue && EqualityComparer<TValue>.Default.Equals(item.Value, _nullValue);
             }
 
-            return ((ICollection<KeyValuePair<TKey, TValue>>)_dict).Contains(item);
+            return _dict.Contains(item);
         }
 
-        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        public virtual void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            ((ICollection<KeyValuePair<TKey, TValue>>)_dict).CopyTo(array, arrayIndex);
+            _dict.CopyTo(array, arrayIndex);
             if (!_isValueType && _hasNullValue)
             {
                 array[array.Length - 1] = new KeyValuePair<TKey, TValue>(default(TKey), _nullValue);
             }
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        public virtual bool Remove(KeyValuePair<TKey, TValue> item)
         {
             if (!_isValueType && _comparer.Equals(item.Key, default(TKey)))
             {
@@ -191,15 +284,15 @@ namespace Lucene.Net.Support
                 return true;
             }
 
-            return ((ICollection<KeyValuePair<TKey, TValue>>)_dict).Remove(item);
+            return _dict.Remove(item);
         }
 
-        public int Count
+        public virtual int Count
         {
             get { return _dict.Count + (_hasNullValue ? 1 : 0); }
         }
 
-        public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get { return false; }
         }
@@ -208,7 +301,7 @@ namespace Lucene.Net.Support
 
         #region Implementation of IDictionary<TKey,TValue>
 
-        public bool ContainsKey(TKey key)
+        public virtual bool ContainsKey(TKey key)
         {
             if (!_isValueType && _comparer.Equals(key, default(TKey)))
             {
@@ -235,7 +328,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public bool Remove(TKey key)
+        public virtual bool Remove(TKey key)
         {
             if (!_isValueType && _comparer.Equals(key, default(TKey)))
             {
@@ -249,7 +342,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public virtual bool TryGetValue(TKey key, out TValue value)
         {
             if (!_isValueType && _comparer.Equals(key, default(TKey)))
             {
@@ -268,7 +361,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public TValue this[TKey key]
+        public virtual TValue this[TKey key]
         {
             get
             {
@@ -285,7 +378,7 @@ namespace Lucene.Net.Support
             set { Add(key, value); }
         }
 
-        public ICollection<TKey> Keys
+        public virtual ICollection<TKey> Keys
         {
             get
             {
@@ -298,7 +391,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public ICollection<TValue> Values
+        public virtual ICollection<TValue> Values
         {
             get
             {
