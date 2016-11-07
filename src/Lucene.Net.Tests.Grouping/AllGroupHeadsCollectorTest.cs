@@ -500,7 +500,15 @@ namespace Lucene.Net.Search.Grouping
             foreach (BytesRef groupValue in groupHeads.Keys)
             {
                 List<GroupDoc> docs = groupHeads[groupValue];
-                docs.Sort(GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
+                // LUCENENET TODO: The original API Collections.Sort does not currently exist.
+                // This call ultimately results in calling TimSort, which is why this line was replaced
+                // with CollectionUtil.TimSort(IList<T>, IComparer<T>).
+                //
+                // NOTE: List.Sort(comparer) won't work in this case because it calls the comparer when the
+                // values are the same, which results in this test failing. TimSort only calls the comparer
+                // when the values differ.
+                //Collections.Sort(docs, GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
+                CollectionUtil.TimSort(docs, GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
                 allGroupHeads[i++] = docs[0].id;
             }
 

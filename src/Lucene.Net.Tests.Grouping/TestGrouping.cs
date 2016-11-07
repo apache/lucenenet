@@ -531,7 +531,16 @@ namespace Lucene.Net.Search.Grouping
 
             IComparer<GroupDoc> groupSortComp = GetComparator(groupSort);
 
-            Array.Sort(groupDocs, groupSortComp);
+            // LUCENENET TODO: The original Java API Arrays.Sort does not currently exist.
+            // This call ultimately results in calling TimSort, which is why this line was replaced
+            // with ArrayUtil.TimSort(T[], IComparer<T>).
+            //
+            // NOTE: Array.Sort(comparer) won't work in this case because it calls the comparer when the
+            // values are the same, which results in this test failing. TimSort only calls the comparer
+            // when the values differ.
+            //Arrays.Sort(groupDocs, groupSortComp);
+            ArrayUtil.TimSort(groupDocs, groupSortComp);
+            
             HashMap<BytesRef, List<GroupDoc>> groups = new HashMap<BytesRef, List<GroupDoc>>();
             List<BytesRef> sortedGroups = new List<BytesRef>();
             List<IComparable[]> sortedGroupFields = new List<IComparable[]>();
@@ -591,7 +600,16 @@ namespace Lucene.Net.Search.Grouping
                 BytesRef group = sortedGroups[idx];
                 List<GroupDoc> docs = groups[group];
                 totalGroupedHitCount += docs.size();
-                docs.Sort(docSortComp);
+
+                // LUCENENET TODO: The original API Collections.Sort does not currently exist.
+                // This call ultimately results in calling TimSort, which is why this line was replaced
+                // with CollectionUtil.TimSort(IList<T>, IComparer<T>).
+                //
+                // NOTE: List.Sort(comparer) won't work in this case because it calls the comparer when the
+                // values are the same, which results in this test failing. TimSort only calls the comparer
+                // when the values differ.
+                //Collections.Sort(docs, docSortComp);
+                CollectionUtil.TimSort(docs, docSortComp);
                 ScoreDoc[] hits;
                 if (docs.size() > docOffset)
                 {
