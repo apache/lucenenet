@@ -529,118 +529,6 @@ namespace Lucene.Net.Support
                 return KeyComparer.GetHashCode(obj.Key) ^ ValueComparer.GetHashCode(obj.Value);
             }
         }
-
-
-        #region TestGenericCollection<TList, TItem>
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestAddRemove()
-        {
-            base.TestAddRemove();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestAddReverseRemove()
-        {
-            base.TestAddReverseRemove();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestClear()
-        {
-            base.TestClear();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestContains()
-        {
-            base.TestContains();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestCopyTo()
-        {
-            base.TestCopyTo();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestIsReadOnly()
-        {
-            base.TestIsReadOnly();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestGetEnumerator()
-        {
-            base.TestGetEnumerator();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestGenericCollection_TestGetEnumerator2()
-        {
-            base.TestGetEnumerator2();
-        }
-
-        #endregion
-
-        #region TestCollection<TList, TFactory, TItem>
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestAddRemove()
-        {
-            base.TestAddRemove();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestAddReverseRemove()
-        {
-            base.TestAddReverseRemove();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestClear()
-        {
-            base.TestClear();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestContains()
-        {
-            base.TestContains();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestCopyTo()
-        {
-            base.TestCopyTo();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestIsReadOnly()
-        {
-            base.TestIsReadOnly();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestGetEnumerator()
-        {
-            base.TestGetEnumerator();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestCollection_TestGetEnumerator2()
-        {
-            base.TestGetEnumerator2();
-        }
-
-        #endregion
-
     }
 
     [TestFixture]
@@ -665,32 +553,6 @@ namespace Lucene.Net.Support
             }
             return results.ToArray();
         }
-
-
-        #region TestDictionary<TDictionary, TFactory, TKey, TValue>
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test, LuceneNetSpecific]
-        public void TestDictionary_TestAddRemoveByKey()
-        {
-            base.TestAddRemoveByKey();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestDictionary_TestKeys()
-        {
-            base.TestKeys();
-        }
-
-        [Test, LuceneNetSpecific]
-        public void TestDictionary_TestValues()
-        {
-            base.TestValues();
-        }
-
-        #endregion
     }
 
 
@@ -717,7 +579,7 @@ namespace Lucene.Net.Support
             return list;
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestAddRemove()
         {
             TList list = new TList();
@@ -738,7 +600,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestAddReverseRemove()
         {
             TList list = new TList();
@@ -759,7 +621,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestClear()
         {
             TList list = new TList();
@@ -774,7 +636,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual(0, list.Count);
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestContains()
         {
             TList list = new TList();
@@ -788,7 +650,7 @@ namespace Lucene.Net.Support
                 Assert.IsTrue(list.Contains(item));
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestCopyTo()
         {
             TList list = new TList();
@@ -808,13 +670,13 @@ namespace Lucene.Net.Support
             Assert.AreEqual(0, items.Count);
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestIsReadOnly()
         {
             Assert.IsFalse(new TList().IsReadOnly);
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestGetEnumerator()
         {
             TList list = new TList();
@@ -830,7 +692,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual(0, items.Count);
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestGetEnumerator2()
         {
             TList list = new TList();
@@ -896,7 +758,7 @@ namespace Lucene.Net.Support
         where TDictionary : IDictionary<TKey, TValue>, IDisposable
         where TFactory : IFactory<TDictionary>, new()
     {
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestAddRemoveByKey()
         {
             KeyValuePair<TKey, TValue>[] sample = GetSample();
@@ -918,7 +780,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestKeys()
         {
             KeyValuePair<TKey, TValue>[] sample = GetSample();
@@ -941,7 +803,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestValues()
         {
             KeyValuePair<TKey, TValue>[] sample = GetSample();
@@ -970,7 +832,7 @@ namespace Lucene.Net.Support
 
         protected readonly TFactory Factory = new TFactory();
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestAddRemove()
         {
             using (TList list = Factory.Create())
@@ -993,7 +855,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestAddReverseRemove()
         {
             using (TList list = Factory.Create())
@@ -1016,7 +878,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestClear()
         {
             using (TList list = Factory.Create())
@@ -1033,7 +895,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestContains()
         {
             using (TList list = Factory.Create())
@@ -1049,7 +911,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestCopyTo()
         {
             using (TList list = Factory.Create())
@@ -1071,14 +933,14 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestIsReadOnly()
         {
             using (TList list = Factory.Create())
                 Assert.IsFalse(list.IsReadOnly);
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestGetEnumerator()
         {
             using (TList list = Factory.Create())
@@ -1096,7 +958,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        // [Test, LuceneNetSpecific] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, LuceneNetSpecific]
         public virtual void TestGetEnumerator2()
         {
             using (TList list = Factory.Create())

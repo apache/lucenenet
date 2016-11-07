@@ -45,7 +45,6 @@ namespace Lucene.Net.Index
             return size;
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestUniqueValuesCompression()
         {
             Directory dir = new RAMDirectory();
@@ -86,7 +85,6 @@ namespace Lucene.Net.Index
             Assert.IsTrue(size2 < size1 + 8 * 20);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDateCompression()
         {
             Directory dir = new RAMDirectory();
@@ -117,7 +115,6 @@ namespace Lucene.Net.Index
             Assert.IsTrue(size2 < size1 + (PackedInts.BitsRequired(day) * 50) / 8);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSingleBigValueCompression()
         {
             Directory dir = new RAMDirectory();
