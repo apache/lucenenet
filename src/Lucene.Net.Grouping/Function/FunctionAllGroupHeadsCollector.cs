@@ -80,9 +80,9 @@ namespace Lucene.Net.Search.Grouping.Function
             this.temporalResult.groupHead = groupHead;
         }
 
-        protected override ICollection<GroupHead> GetCollectedGroupHeads()
+        protected override ICollection<GroupHead> CollectedGroupHeads
         {
-            return groups.Values;
+            get { return groups.Values; }
         }
 
         public override Scorer Scorer

@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Grouping
         {
             FixedBitSet bitSet = new FixedBitSet(maxDoc);
 
-            ICollection<GH> groupHeads = GetCollectedGroupHeads();
+            ICollection<GH> groupHeads = CollectedGroupHeads;
             foreach (GH groupHead in groupHeads)
             {
                 bitSet.Set(groupHead.Doc);
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>an int array containing all group heads. The size of the array is equal to number of collected unique groups.</returns>
         public override int[] RetrieveGroupHeads()
         {
-            ICollection<GH> groupHeads = GetCollectedGroupHeads();
+            ICollection<GH> groupHeads = CollectedGroupHeads;
             int[] docHeads = new int[groupHeads.Count];
 
             int i = 0;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Grouping
         {
             get
             {
-                return GetCollectedGroupHeads().Count;
+                return CollectedGroupHeads.Count;
             }
         }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Grouping
         /// Subsequent calls should return the same group heads.
         /// </summary>
         /// <returns>the collected group heads</returns>
-        protected abstract ICollection<GH> GetCollectedGroupHeads();
+        protected abstract ICollection<GH> CollectedGroupHeads { get; }
 
         public override void Collect(int doc)
         {

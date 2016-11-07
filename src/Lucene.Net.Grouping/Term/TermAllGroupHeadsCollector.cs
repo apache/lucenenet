@@ -185,9 +185,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             temporalResult.groupHead = groupHead;
         }
 
-        protected override ICollection<GroupHead> GetCollectedGroupHeads()
+        protected override ICollection<GroupHead> CollectedGroupHeads
         {
-            return groups.Values;
+            get { return groups.Values; }
         }
 
         public override AtomicReaderContext NextReader
@@ -295,9 +295,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> GetCollectedGroupHeads()
+        protected override ICollection<GroupHead> CollectedGroupHeads
         {
-            return collectedGroups;
+            get { return collectedGroups; }
         }
 
         public override Scorer Scorer
@@ -527,9 +527,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> GetCollectedGroupHeads()
+        protected override ICollection<GroupHead> CollectedGroupHeads
         {
-            return collectedGroups;
+            get { return collectedGroups; }
         }
 
         public override Scorer Scorer
@@ -716,9 +716,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> GetCollectedGroupHeads()
+        protected override ICollection<GroupHead> CollectedGroupHeads
         {
-            return collectedGroups;
+            get { return collectedGroups; }
         }
 
         public override Scorer Scorer
