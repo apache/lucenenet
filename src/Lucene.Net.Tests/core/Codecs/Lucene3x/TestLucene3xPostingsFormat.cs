@@ -42,5 +42,68 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return Codec_Renamed;
             }
         }
+
+
+        #region BasePostingsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestDocsOnly()
+        {
+            base.TestDocsOnly();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqs()
+        {
+            base.TestDocsAndFreqs();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositions()
+        {
+            base.TestDocsAndFreqsAndPositions();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndPayloads();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsets()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsets();
+        }
+
+        [Test]
+        public override void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
+        {
+            base.TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
     }
 }

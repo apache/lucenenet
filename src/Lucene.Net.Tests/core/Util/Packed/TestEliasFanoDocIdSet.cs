@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using NUnit.Framework;
 using System.Collections;
 using System.Diagnostics;
 
@@ -75,5 +76,49 @@ namespace Lucene.Net.Util.Packed
                 return SlowAdvance(target);
             }
         }
+
+
+        #region BaseDocIdSetTestCase<T>
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        /// <summary>
+        /// Test length=0.
+        /// </summary>
+        [Test]
+        public override void TestNoBit()
+        {
+            base.TestNoBit();
+        }
+
+        /// <summary>
+        /// Test length=1.
+        /// </summary>
+        [Test]
+        public override void Test1Bit()
+        {
+            base.Test1Bit();
+        }
+
+        /// <summary>
+        /// Test length=2.
+        /// </summary>
+        [Test]
+        public override void Test2Bits()
+        {
+            base.Test2Bits();
+        }
+
+        /// <summary>
+        /// Compare the content of the set against a <seealso cref="BitSet"/>.
+        /// </summary>
+        [Test]
+        public override void TestAgainstBitSet()
+        {
+            base.TestAgainstBitSet();
+        }
+
+        #endregion
     }
 }

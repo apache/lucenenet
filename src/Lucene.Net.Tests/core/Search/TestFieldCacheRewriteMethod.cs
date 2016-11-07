@@ -60,5 +60,22 @@ namespace Lucene.Net.Search
             Assert.IsFalse(a1.Equals(b));
             QueryUtils.Check(a1);
         }
+
+
+
+        #region TestSnapshotDeletionPolicy
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        /// <summary>
+        /// test a bunch of random regular expressions </summary>
+        [Test, Timeout(60000)]
+        public override void TestRegexps()
+        {
+            base.TestRegexps();
+        }
+
+        #endregion
     }
 }
