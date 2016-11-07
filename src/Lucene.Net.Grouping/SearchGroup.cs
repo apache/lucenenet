@@ -140,39 +140,39 @@ namespace Lucene.Net.Search.Grouping
             }
 
             // Only for assert
-            private bool NeverEquals(object _other)
+            private bool NeverEquals(object other)
             {
-                if (_other is MergedGroup<T>)
+                if (other is MergedGroup<T>)
                 {
-                    MergedGroup<T> other = (MergedGroup<T>)_other;
+                    MergedGroup<T> otherMergedGroup = (MergedGroup<T>)other;
                     if (groupValue == null)
                     {
-                        Debug.Assert(other.groupValue != null);
+                        Debug.Assert(otherMergedGroup.groupValue != null);
                     }
                     else
                     {
-                        Debug.Assert(!groupValue.Equals(other.groupValue));
+                        Debug.Assert(!groupValue.Equals(otherMergedGroup.groupValue));
                     }
                 }
                 return true;
             }
 
-            public override bool Equals(object _other)
+            public override bool Equals(object other)
             {
                 // We never have another MergedGroup instance with
                 // same groupValue
-                Debug.Assert(NeverEquals(_other));
+                Debug.Assert(NeverEquals(other));
 
-                if (_other is MergedGroup<T>)
+                if (other is MergedGroup<T>)
                 {
-                    MergedGroup<T> other = (MergedGroup<T>)_other;
+                    MergedGroup<T> otherMergedGroup = (MergedGroup<T>)other;
                     if (groupValue == null)
                     {
-                        return other == null;
+                        return otherMergedGroup == null;
                     }
                     else
                     {
-                        return groupValue.Equals(other);
+                        return groupValue.Equals(otherMergedGroup);
                     }
                 }
                 else
