@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Grouping
         /// </param>
         /// <returns>grouped facet results</returns>
         /// <exception cref="IOException">If I/O related errors occur during merging segment grouped facet counts.</exception>
-        public GroupedFacetResult MergeSegmentResults(int size, int minCount, bool orderByCount)
+        public virtual GroupedFacetResult MergeSegmentResults(int size, int minCount, bool orderByCount)
         {
             if (segmentFacetCounts != null)
             {
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Grouping
             /// <param name="offset">The offset in the collected facet entries during merging</param>
             /// <param name="limit">The number of facets to return starting from the offset.</param>
             /// <returns>a list of facet entries to be rendered based on the specified offset and limit</returns>
-            public List<FacetEntry> GetFacetEntries(int offset, int limit)
+            public virtual List<FacetEntry> GetFacetEntries(int offset, int limit)
             {
                 List<FacetEntry> entries = new List<FacetEntry>();
 
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the sum of all facet entries counts.
             /// </summary>
-            public int TotalCount
+            public virtual int TotalCount
             {
                 get
                 {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the number of groups that didn't have a facet value.
             /// </summary>
-            public int TotalMissingCount
+            public virtual int TotalMissingCount
             {
                 get
                 {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the value of this facet entry
             /// </summary>
-            public BytesRef Value
+            public virtual BytesRef Value
             {
                 get
                 {
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the count (number of groups) of this facet entry.
             /// </summary>
-            public int Count
+            public virtual int Count
             {
                 get
                 {

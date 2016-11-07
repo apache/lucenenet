@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Grouping
             return false;
         }
 
-        public ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
+        public virtual ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
         {
             GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count()];
 

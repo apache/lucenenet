@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupOffset">The offset in the collected groups</param>
         /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
-        public IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
+        public virtual IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
         {
 
             //System.out.println("FP.getTopGroups groupOffset=" + groupOffset + " fillFields=" + fillFields + " groupMap.size()=" + groupMap.size());
@@ -371,6 +371,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
         }
+
         private void BuildSortedSet()
         {
             var comparator = new BuildSortedSetComparer(this);

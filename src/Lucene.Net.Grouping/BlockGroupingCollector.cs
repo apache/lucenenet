@@ -132,7 +132,6 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-
             public override ICollection<ChildScorer> Children
             {
                 get
@@ -354,7 +353,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillSortFields">
         /// If true then the Comparable values for the sort fields will be set
         /// </param>
-        public ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public virtual ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
             return GetTopGroups<object>(withinGroupSort, groupOffset, withinGroupOffset, maxDocsPerGroup, fillSortFields);
         }
@@ -388,7 +387,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillSortFields">
         /// If true then the Comparable values for the sort fields will be set
         /// </param>
-        public ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public virtual ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
 
             //if (queueFull) {

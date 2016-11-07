@@ -338,7 +338,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            public ICollection<SearchGroup<T>> Merge(IList<IEnumerable<ISearchGroup<T>>> shards, int offset, int topN)
+            public virtual ICollection<SearchGroup<T>> Merge(IList<IEnumerable<ISearchGroup<T>>> shards, int offset, int topN)
             {
 
                 int maxQueueSize = offset + topN;
