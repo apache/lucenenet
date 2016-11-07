@@ -1103,6 +1103,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [Test, LongRunningTest]
+        [DtdProcessingTest]
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
