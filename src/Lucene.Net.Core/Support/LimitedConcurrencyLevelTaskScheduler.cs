@@ -52,7 +52,12 @@ namespace Lucene.Net.Support
         // Inform the ThreadPool that there's work to be executed for this scheduler. 
         private void NotifyThreadPoolOfPendingWork()
         {
-            ThreadPool.UnsafeQueueUserWorkItem(_ =>
+#if FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM
+            ThreadPool.UnsafeQueueUserWorkItem(
+#else
+            ThreadPool.QueueUserWorkItem(
+#endif
+            _ =>
             {
                 // Note that the current thread is now processing work items.
                 // This is necessary to enable inlining of tasks into this thread.
