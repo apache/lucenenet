@@ -19,7 +19,7 @@ using System;
 
 namespace Lucene.Net.Randomized
 {
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class InternalAssumptionViolatedException : NUnit.Framework.InconclusiveException

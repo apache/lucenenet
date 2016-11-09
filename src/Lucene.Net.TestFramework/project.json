@@ -48,6 +48,7 @@
         "System.ServiceModel": "4.0.0.0"
       },
       "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "excludeFiles": [
             "Util/AbstractBeforeAfterRule.cs",
