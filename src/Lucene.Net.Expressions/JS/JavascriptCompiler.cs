@@ -650,11 +650,25 @@ namespace Lucene.Net.Expressions.JS
                         throw new Exception("Error reading Javascript functions from settings");
                     }
                     string typeName = vals[0];
+
+                    Type clazz;
+
                     if (vals[0].Contains("Lucene.Net"))
                     {
-                        typeName = vals[0] + ",Lucene.Net";
+                        clazz = GetType(vals[0] + ", Lucene.Net");
+
+                        // This may be the case if we are compiling components
+                        // with .NET Core projects.
+                        if (clazz == default(Type))
+                        {
+                            clazz = GetType(vals[0] + ", Lucene.Net.Core");
+                        }
                     }
-                    Type clazz = Type.GetType(typeName, true);
+                    else
+                    {
+                        clazz = GetType(typeName);
+                    }
+
                     string methodName = vals[1].Trim();
                     int arity = int.Parse(vals[2]);
                     Type[] args = new Type[arity];
@@ -673,13 +687,35 @@ namespace Lucene.Net.Expressions.JS
             DEFAULT_FUNCTIONS = map;
         }
 
+        private static Type GetType(string typeName)
+        {
+            try
+            {
+                return Type.GetType(typeName, true);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private static IEnumerable<KeyValuePair<string, string>> GetDefaultSettings()
         {
 #if NETSTANDARD
-            var settingsFile = Path.Combine("Properties", "Settings.settings");
-            var configuration = new ConfigurationBuilder().AddConfigFile(settingsFile, optional: false).Build();
+            var assembly = typeof(JavascriptCompiler).GetTypeInfo().Assembly;
+            var settingsFile = string.Join(".", assembly.GetName().Name, "Properties", "Settings.settings");
+            string contents;
 
-            return configuration.GetChildren().Select(section => new KeyValuePair<string, string>(section.Key, section.GetValue("(Default)")));
+            using (var reader = new StreamReader(assembly.GetManifestResourceStream(settingsFile)))
+            {
+                contents = reader.ReadToEnd();
+            }
+
+            var configuration = new ConfigurationBuilder().AddConfigFile(contents, new SettingsConfigurationParser()).Build();
+
+            var settingsSection = configuration.GetSection(SettingsConfigurationParser.SettingsElement);
+            var values = settingsSection.GetChildren().Select(section => new KeyValuePair<string, string>(section.Key, section.GetValue("(Default)"))).ToArray();
+            return values;
 #else
             var props = Properties.Settings.Default;
 

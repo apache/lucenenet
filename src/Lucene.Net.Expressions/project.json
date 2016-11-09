@@ -19,11 +19,14 @@
         "define": [ "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [ "Properties/Settings.Designer.cs" ]
+        },
+        "embed": {
+          "includeFiles": [ "Properties/Settings.settings" ]
         }
       }
     },
-    "net451":{
-      "frameworkAssemblies" : {
+    "net451": {
+      "frameworkAssemblies": {
         "System.Configuration": "4.0.0.0"
       }
     }
