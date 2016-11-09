@@ -461,8 +461,8 @@ namespace Lucene.Net.Index
         ///  executing a merge.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
-#if !NETSTANDARD
-        [Serializable]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
 #endif
         public class MergeException : Exception
         {

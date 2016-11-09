@@ -1520,13 +1520,13 @@ namespace Lucene.Net.Support
 
     #region LurchTable Support
 
-#region Exceptions
+    #region Exceptions
 
     /// <summary>
     /// Exception class: LurchTableCorruptionException
     /// The LurchTable internal datastructure appears to be corrupted.
     /// </summary>
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
     [System.SerializableAttribute()]
 #endif
     [global::System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1535,7 +1535,7 @@ namespace Lucene.Net.Support
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("CSharpTest.Net.Generators", "2.13.222.435")]
     public partial class LurchTableCorruptionException : Exception
     {
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Serialization constructor
         /// </summary>

@@ -24,9 +24,11 @@ namespace Lucene.Net.Support
             : base(comparer)
         { }
 
+#if FEATURE_SERIALIZABLE
         public ValueHashSet(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
+#endif
 
         public ValueHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
             : base(collection, comparer)

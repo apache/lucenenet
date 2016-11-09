@@ -53,12 +53,12 @@ namespace Lucene.Net
         }
 
         internal class SetFromMap<T> : ICollection<T>, IEnumerable<T>, IEnumerable, ISet<T>, IReadOnlyCollection<T>
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
             ,ISerializable, IDeserializationCallback
 #endif
         {
             private readonly IDictionary<T, bool?> m; // The backing map
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
             [NonSerialized]
 #endif
             private ICollection<T> s;
@@ -230,7 +230,7 @@ namespace Lucene.Net
                 throw new NotImplementedException();
             }
 
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
             public void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 throw new NotImplementedException();
