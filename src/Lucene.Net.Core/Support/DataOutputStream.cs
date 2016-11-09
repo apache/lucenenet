@@ -15,7 +15,8 @@ namespace Lucene.Net.Support
     /// </summary>
     public class DataOutputStream : IDataOutput, IDisposable
     {
-        
+        private readonly object _lock = new object();
+
         /// <summary>
         /// The number of bytes written to the data output stream so far.
         /// If this counter overflows, it will be wrapped to <see cref="int.MaxValue"/>.
@@ -62,18 +63,22 @@ namespace Lucene.Net.Support
         /// <code>1</code>.
         /// </summary>
         /// <param name="b">the <code>byte</code> to be written.</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual void Write(int b) 
         {
-            @out.WriteByte((byte)b);
-            IncCount(1);
+            lock (_lock)
+            {
+                @out.WriteByte((byte)b);
+                IncCount(1);
+            }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual void Write(byte[] b, int off, int len)
         {
-            @out.Write(b, off, len);
-            IncCount(len);
+            lock (_lock)
+            {
+                @out.Write(b, off, len);
+                IncCount(len);
+            }
         }
 
         public virtual void Flush() 
