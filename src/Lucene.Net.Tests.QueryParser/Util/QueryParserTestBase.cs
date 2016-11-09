@@ -663,7 +663,7 @@ namespace Lucene.Net.QueryParsers.Util
         private string GetLocalizedDate(int year, int month, int day)
         {
             DateTime d = new DateTime(year, month, day, 23, 59, 59, 999);
-            return d.ToShortDateString();
+            return d.ToString("d");
 
             //// we use the default Locale/TZ since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
@@ -690,7 +690,7 @@ namespace Lucene.Net.QueryParsers.Util
             //endDateExpected.set(Calendar.MILLISECOND, 999);
 
             // we use the default Locale/TZ since LuceneTestCase randomizes it
-            DateTime endDateExpected = new DateTime(2002, 1, 4, 23, 59, 59, 999, new GregorianCalendar());
+            DateTime endDateExpected = new GregorianCalendar().ToDateTime(2002, 1, 4, 23, 59, 59, 999);
             string defaultField = "default";
             string monthField = "month";
             string hourField = "hour";
