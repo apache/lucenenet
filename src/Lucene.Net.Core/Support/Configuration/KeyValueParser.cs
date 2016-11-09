@@ -115,7 +115,7 @@ namespace Lucene.Net.Support.Configuration
 
         private static string GetKey(Stack<string> context, string name)
         {
-            return string.Join(ConfigurationPath.KeyDelimiter, context.Reverse().Concat(new[] { name }));
+            return ConfigurationPath.Combine(context.Reverse().Concat(new[] { name }));
         }
     }
 }

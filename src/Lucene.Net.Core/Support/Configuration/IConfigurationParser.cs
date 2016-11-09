@@ -11,10 +11,8 @@ namespace Lucene.Net.Support.Configuration
 {
     public interface IConfigurationParser
     {
-      
         bool CanParseElement(XElement element);
 
-    
         void ParseElement(XElement element, Stack<string> context, SortedDictionary<string, string> results);
     }
 }

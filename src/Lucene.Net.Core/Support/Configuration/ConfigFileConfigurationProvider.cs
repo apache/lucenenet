@@ -20,7 +20,7 @@ namespace Lucene.Net.Support.Configuration
 
         private readonly IEnumerable<IConfigurationParser> _parsers;
 
-        public ConfigFileConfigurationProvider(string configuration, bool loadFromFile, bool optional,IEnumerable<IConfigurationParser> parsers)
+        public ConfigFileConfigurationProvider(string configuration, bool loadFromFile, bool optional, IEnumerable<IConfigurationParser> parsers)
         {
             _loadFromFile = loadFromFile;
             _configuration = configuration;
