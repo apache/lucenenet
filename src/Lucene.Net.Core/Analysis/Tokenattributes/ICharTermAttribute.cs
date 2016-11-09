@@ -25,7 +25,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// <summary>
     /// The term text of a Token.
     /// </summary>
-    public interface ICharTermAttribute : IAttribute, ICharSequence, ICloneable
+    public interface ICharTermAttribute : IAttribute, ICharSequence
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
         /// <summary>
         /// Copies the contents of buffer, starting at offset for
