@@ -168,7 +168,7 @@
         "System.Xml.Linq": "4.0.0.0"
       },
       "buildOptions": {
-        "define": [ "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM" ],
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_SERIALIZABLE", "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM" ],
         "compile": {
           "exclude": [
             "Analysis/Standard/*",
