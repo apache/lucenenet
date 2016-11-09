@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if NETSTANDARD
+#if !FEATURE_SERIALIZABLE
 using Newtonsoft.Json;
 #endif
 
@@ -33,10 +33,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
-#if NETSTANDARD
-    [JsonConverter(typeof(CharBlockArrayConverter))]
-#else
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#else
+    [JsonConverter(typeof(CharBlockArrayConverter))]
+
 #endif
     public class CharBlockArray : ICharSequence
     {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private const int DefaultBlockSize = 32 * 1024; // 32 KB default size
 
-#if !NETSTANDARD
+#if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         internal sealed class Block

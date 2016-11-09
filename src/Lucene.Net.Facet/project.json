@@ -17,6 +17,9 @@
       }
     },
     "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE" ]
+      }
     }
   }
 }
