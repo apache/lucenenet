@@ -125,6 +125,11 @@ namespace Lucene.Net.Support
                     return Encoding.UTF8;
                 }
             }
+
+            public override void Write(char value)
+            {
+                
+            }
         }
     }
 }

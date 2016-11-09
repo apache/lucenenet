@@ -261,7 +261,13 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             // Test can deadlock if we use SMS:
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler()));
+            IConcurrentMergeScheduler scheduler;
+#if FEATURE_TASKMERGESCHEDULER
+            scheduler = new TaskMergeScheduler();
+#else
+            scheduler = new ConcurrentMergeScheduler();
+#endif
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler));
             writer.AddDocument(new Document());
             writer.Commit();
             CountdownEvent awaitEnterWarm = new CountdownEvent(1);

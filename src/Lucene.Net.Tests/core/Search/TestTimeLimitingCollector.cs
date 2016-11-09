@@ -410,10 +410,17 @@ namespace Lucene.Net.Search
                     {
                         ThreadClass.Sleep(slowdown);
                     }
+#if NETSTANDARD
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+#else
                     catch (ThreadInterruptedException ie)
                     {
                         throw;
                     }
+#endif
                 }
                 Debug.Assert(docId >= 0, " base=" + docBase + " doc=" + doc);
                 bits.Set(docId);

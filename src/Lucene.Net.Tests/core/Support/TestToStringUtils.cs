@@ -28,7 +28,11 @@ namespace Lucene.Net.Core.Support
 
         public override void TearDown()
         {
+#if NET451
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+#else
             CultureInfo.CurrentCulture = originalCulture;
+#endif
             base.TearDown();
         }
 
@@ -76,8 +80,11 @@ namespace Lucene.Net.Core.Support
 #endif
             foreach (CultureInfo culture in cultures)
             {
+#if NET451
+                Thread.CurrentThread.CurrentCulture = culture;
+#else
                 CultureInfo.CurrentCulture = culture;
-
+#endif
                 assertEquals("", ToStringUtils.Boost(boostNormal));
                 assertEquals("^2.5", ToStringUtils.Boost(boostFractional));
                 assertEquals("^5.0", ToStringUtils.Boost(boostNonFractional));

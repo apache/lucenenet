@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Reflection;
 
 namespace Lucene.Net.Support
 {
@@ -164,7 +165,7 @@ namespace Lucene.Net.Support
             }
             catch (Exception x)
             {
-                if (ex.IsAssignableFrom(x.GetType()))
+                if (ex.GetTypeInfo().IsAssignableFrom(x.GetType()))
                 {
                     caught = true;
                 }

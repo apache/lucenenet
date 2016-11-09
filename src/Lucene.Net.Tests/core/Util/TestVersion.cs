@@ -18,6 +18,7 @@
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -55,7 +56,7 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(LuceneVersion.LUCENE_CURRENT, values[i], "Last constant must be LUCENE_CURRENT");
                 }
-                bool dep = typeof(LuceneVersion).GetField(values[i].ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false).Any();
+                bool dep = typeof(LuceneVersion).GetTypeInfo().GetField(values[i].ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false).Any();
                 if (i + 2 != values.Length)
                 {
                     assertTrue(values[i].ToString() + " should be deprecated", dep);

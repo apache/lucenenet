@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFinalSingleton()
 	    {
-		    assertTrue(typeof(NoMergeScheduler).IsSealed);
+		    assertTrue(typeof(NoMergeScheduler).GetTypeInfo().IsSealed);
 		    ConstructorInfo[] ctors = typeof(NoMergeScheduler).GetConstructors(BindingFlags.Instance |
                     BindingFlags.NonPublic |
                     BindingFlags.Public |
