@@ -38,7 +38,7 @@
         "System.Xml.Linq": "4.0.0.0"
       },
       "buildOptions": {
-        "define": [ "FEATURE_DTD_PROCESSING", "FEATURE_EMBEDDED_RESOURCE" ]
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_EMBEDDED_RESOURCE", "FEATURE_SERIALIZABLE" ]
       }
     }
   }
