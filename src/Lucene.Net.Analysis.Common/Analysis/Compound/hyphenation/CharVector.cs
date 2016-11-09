@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
     /// </summary>
     public class CharVector
-#if !NETSTANDARD
+#if FEATURE_CLONEABLE
         : ICloneable
 #endif
     {

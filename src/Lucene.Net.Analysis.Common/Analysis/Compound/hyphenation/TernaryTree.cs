@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
 
     public class TernaryTree
-#if !NETSTANDARD
+#if FEATURE_CLONEABLE
         : ICloneable
 #endif
     {
@@ -556,7 +556,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             private string curkey;
 
             internal class Item
-#if !NETSTANDARD
+#if FEATURE_CLONEABLE
                 : ICloneable
 #endif
             {
