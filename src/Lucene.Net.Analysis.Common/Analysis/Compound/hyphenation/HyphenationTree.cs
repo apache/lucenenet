@@ -176,12 +176,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
             var xmlReaderSettings =
-#if !FEATURE_DTD_PROCESSING
+#if FEATURE_DTD_PROCESSING
                 new XmlReaderSettings
                 {
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new PatternParser.DtdResolver()
-                }
+                };
 #else
                 new XmlReaderSettings();
 #endif

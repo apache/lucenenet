@@ -179,12 +179,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         private XmlReaderSettings GetXmlReaderSettings()
         {
             return
-#if !FEATURE_DTD_PROCESSING
+#if FEATURE_DTD_PROCESSING
                 new XmlReaderSettings
                 {
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new DtdResolver()
-                }
+                };
 #else
                 new XmlReaderSettings();
 #endif
@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return il.ToString();
         }
 
-#if FEATURE_XML_RESOLVER
+#if FEATURE_DTD_PROCESSING
         /// <summary>
         /// LUCENENET specific helper class to force the DTD file to be read from the embedded resource
         /// rather than from the file system.
