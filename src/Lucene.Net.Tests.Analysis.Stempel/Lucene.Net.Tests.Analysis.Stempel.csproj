@@ -51,9 +51,6 @@
     <Compile Include="Stempel\TestStempelPolishStemFilterFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
       <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
       <Name>Lucene.Net.Analysis.Common</Name>
@@ -77,7 +74,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Egothor.Stemmer\testRules.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
