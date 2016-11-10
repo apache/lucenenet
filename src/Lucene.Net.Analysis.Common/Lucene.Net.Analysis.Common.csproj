@@ -29,9 +29,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NET451;FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="icu.net.pcl, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\icu-dotnet.1.0.2-alpha\lib\net451\icu.net.pcl.dll</HintPath>
+    <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\icu.net-x64.54.0.3-alpha\lib\net40\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
@@ -454,6 +457,7 @@
     <Compile Include="Analysis\Util\StopwordAnalyzerBase.cs" />
     <Compile Include="Analysis\Util\TokenFilterFactory.cs" />
     <Compile Include="Analysis\Util\TokenizerFactory.cs" />
+    <Compile Include="Analysis\Util\TypeExtensions.cs" />
     <Compile Include="Analysis\Util\WordlistLoader.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizer.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerFactory.cs" />
@@ -497,45 +501,20 @@
     <EmbeddedResource Include="Analysis\Compound\Hyphenation\hyphenation.dtd" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icudt55.dll">
-      <Link>icudt55.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icudt54.dll">
+      <Link>icudt54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuin55.dll">
-      <Link>icuin55.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icuin54.dll">
+      <Link>icuin54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuio55.dll">
-      <Link>icuio55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icule55.dll">
-      <Link>icule55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\iculx55.dll">
-      <Link>iculx55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icutu55.dll">
-      <Link>icutu55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuuc55.dll">
-      <Link>icuuc55.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icuuc54.dll">
+      <Link>icuuc54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -630,22 +609,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\swedish_stop.txt" />
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icudt56.dll">
-      <Link>icudt56.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icuin56.dll">
-      <Link>icuin56.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icuuc56.dll">
-      <Link>icuuc56.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

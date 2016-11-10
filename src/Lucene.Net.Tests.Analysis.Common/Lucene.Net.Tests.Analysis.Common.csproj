@@ -32,8 +32,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="icu.net.pcl, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\icu-dotnet.1.0.2-alpha\lib\net451\icu.net.pcl.dll</HintPath>
+    <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\icu.net-x64.54.0.3-alpha\lib\net40\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
@@ -390,20 +390,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icudt56.dll">
-      <Link>icudt56.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icudt54.dll">
+      <Link>icudt54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icuin56.dll">
-      <Link>icuin56.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icuin54.dll">
+      <Link>icuin54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\icu-dotnet.1.0.2-alpha\contentFiles\any\any\lib\icuuc56.dll">
-      <Link>icuuc56.dll</Link>
+    <None Include="..\..\packages\icu.net-x64.54.0.3-alpha\content\icuuc54.dll">
+      <Link>icuuc54.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -436,7 +436,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\CharFilters\htmlStripReaderTest.html" />
-    <EmbeddedResource Include="Analysis\CharFilters\MS-Word 14 generated.htm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Cz\customStopWordFile.txt" />
@@ -465,6 +464,9 @@
     <EmbeddedResource Include="Analysis\Compound\compoundDictionary.txt" />
     <EmbeddedResource Include="Analysis\Compound\da_UTF8.xml" />
     <EmbeddedResource Include="Analysis\Compound\da_compoundDictionary.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Analysis\CharFilters\MS-Word14generated.htm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

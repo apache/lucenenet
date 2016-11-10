@@ -34,6 +34,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NET451;FEATURE_CLONEABLE;FEATURE_SERIALIZABLE;FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -42,7 +43,7 @@
       <HintPath>..\..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
   </ItemGroup>
@@ -625,6 +626,7 @@
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
+    <Compile Include="Support\Configuration\Configuration.cs" />
     <Compile Include="Support\CultureContext.cs" />
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />

@@ -33,6 +33,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>Lucene.Net.Tests</RootNamespace>
+    <DefineConstants>$(DefineConstants);NET451</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -196,6 +197,7 @@
     <Compile Include="core\Document\TestDocument.cs" />
     <Compile Include="core\Document\TestField.cs" />
     <Compile Include="core\Index\BinaryTokenStream.cs" />
+    <Compile Include="core\Index\SynchronizedList.cs" />
     <Compile Include="core\Index\Test2BBinaryDocValues.cs" />
     <Compile Include="core\Index\Test2BDocs.cs" />
     <Compile Include="core\Index\Test2BNumericDocValues.cs" />
