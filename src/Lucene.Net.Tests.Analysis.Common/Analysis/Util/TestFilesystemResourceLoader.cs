@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Lucene.Net.Util;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Analysis.Util
         private void assertClasspathDelegation(IResourceLoader rl)
         {
             const string LuceneNetAnalysisCommon = "Lucene.Net.Analysis.Common";
-            var assemblyDirectory = System.IO.Path.GetDirectoryName(typeof(TestFilesystemResourceLoader).Assembly.Location);
+            var assemblyDirectory = System.IO.Path.GetDirectoryName(typeof(TestFilesystemResourceLoader).GetTypeInfo().Assembly.Location);
             var current = new DirectoryInfo(assemblyDirectory);
 
             DirectoryInfo analysisCommonFolder = null;
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
 
             if (analysisCommonFolder == null)
             {
-                throw new InvalidOperationException("Should have been able to find " + LuceneNetAnalysisCommon + " as a parent of " + typeof(TestFilesystemResourceLoader).Assembly.Location);
+                throw new InvalidOperationException("Should have been able to find " + LuceneNetAnalysisCommon + " as a parent of " + typeof(TestFilesystemResourceLoader).GetTypeInfo().Assembly.Location);
             }
 
             var englishStopText = System.IO.Path.Combine(analysisCommonFolder.FullName, @"Analysis\Snowball\english_stop.txt");
