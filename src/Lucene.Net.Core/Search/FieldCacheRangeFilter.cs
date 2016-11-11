@@ -65,7 +65,9 @@ namespace Lucene.Net.Search
 
     public static class FieldCacheRangeFilter
     {
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousStringFieldCacheRangeFilter : FieldCacheRangeFilter<string>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -151,7 +153,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousBytesRefFieldCacheRangeFilter : FieldCacheRangeFilter<BytesRef>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -236,7 +240,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousSbyteFieldCacheRangeFilter : FieldCacheRangeFilter<sbyte?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -301,7 +307,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousShortFieldCacheRangeFilter : FieldCacheRangeFilter<short?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -367,7 +375,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousIntFieldCacheRangeFilter : FieldCacheRangeFilter<int?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -432,7 +442,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousLongFieldCacheRangeFilter : FieldCacheRangeFilter<long?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -497,7 +509,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousFloatFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -567,7 +581,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AnonymousDoubleFieldCacheRangeFilter : FieldCacheRangeFilter<double?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
