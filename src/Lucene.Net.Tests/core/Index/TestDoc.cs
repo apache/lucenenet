@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 }
 
                 //fw = new StreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
-                pw = new StreamWriter(File.Open(f.FullName, FileMode.Open));
+                pw = new StreamWriter(File.Open(f.FullName, FileMode.OpenOrCreate));
                 pw.WriteLine(text);
                 return f;
             }

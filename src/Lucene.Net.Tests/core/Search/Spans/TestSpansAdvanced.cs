@@ -78,9 +78,16 @@ namespace Lucene.Net.Search.Spans
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            MDirectory.Dispose();
-            MDirectory = null;
+            if (Reader != null)
+            {
+                Reader.Dispose();
+            }
+
+            if (MDirectory != null)
+            {
+                MDirectory.Dispose();
+                MDirectory = null;
+            }
             base.TearDown();
         }
 

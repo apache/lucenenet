@@ -4,6 +4,7 @@ namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using System.IO;
+    using System.Reflection;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
     using DataInput = Lucene.Net.Store.DataInput;
@@ -103,10 +104,28 @@ namespace Lucene.Net.Index
             Assert.AreEqual("\u0000", @is.ReadString());
             Assert.AreEqual("Lu\u0000ce\u0000ne", @is.ReadString());
 
-            Assert.Throws<IOException>(() => { @is.ReadVInt(); });           
+            try
+            {
+                @is.ReadVInt();
+                Assert.Fail("Should throw " + expectedEx.Name);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.StartsWith("Invalid vInt"));
+                Assert.IsTrue(expectedEx.IsInstanceOfType(e));
+            }
             Assert.AreEqual(1, @is.ReadVInt()); // guard value
 
-            Assert.Throws<IOException>(() => { @is.ReadVLong(); });
+            try
+            {
+                @is.ReadVLong();
+                Assert.Fail("Should throw " + expectedEx.Name);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.StartsWith("Invalid vLong"));
+                Assert.IsTrue(expectedEx.IsInstanceOfType(e));
+            }
             Assert.AreEqual(1L, @is.ReadVLong()); // guard value
         }
 
