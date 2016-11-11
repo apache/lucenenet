@@ -40,7 +40,9 @@ namespace Lucene.Net.Support
     /// <i>TODO: discuss persistence and its useful usage modes. Warn about the space
     /// leak possible with other usage modes.</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class TreeSet<T> : SequencedBase<T>, IIndexedSorted<T>, IPersistentSorted<T>, SCG.ISet<T>
     {
         #region Fields
@@ -129,7 +131,9 @@ namespace Lucene.Net.Support
         /// <summary>
         /// The type of node in a Red-Black binary tree
         /// </summary>
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class Node
         {
             public bool red = true;
@@ -269,7 +273,9 @@ namespace Lucene.Net.Support
         /// of subtrees waiting to be enumerated. Currently only used for the tree set 
         /// enumerators (tree bag enumerators use an iterator block based enumerator).
         /// </summary>
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class Enumerator : SCG.IEnumerator<T>
         {
             #region Private Fields
@@ -417,7 +423,9 @@ namespace Lucene.Net.Support
         /// An enumerator for a snapshot of a node copy persistent red-black tree
         /// collection.
         /// </summary>
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class SnapEnumerator : SCG.IEnumerator<T>
         {
             #region Private Fields
@@ -2371,7 +2379,9 @@ namespace Lucene.Net.Support
         }
 
         #region Interval nested class
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class Interval : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
         {
             readonly int start, length, stamp;
@@ -3308,7 +3318,9 @@ namespace Lucene.Net.Support
             return ((TreeSet<T>)_snapshot).generation;
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class SnapRef
         {
             public SnapRef Prev, Next;
@@ -3399,7 +3411,9 @@ namespace Lucene.Net.Support
 
         #region TreeSet.Range nested class
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class Range : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
         {
             //We actually need exclusive upper and lower bounds, and flags to 
@@ -3437,7 +3451,9 @@ namespace Lucene.Net.Support
 
             #region TreeSet.Range.Enumerator nested class
 
+#if FEATURE_SERIALIZABLE
             [Serializable]
+#endif
             internal class Enumerator : SCG.IEnumerator<T>
             {
                 #region Private Fields

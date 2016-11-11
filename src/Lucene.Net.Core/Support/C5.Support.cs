@@ -33,7 +33,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// Base class for classes implementing ICollectionValue[T]
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class CollectionValueBase<T> : EnumerableBase<T>, ICollectionValue<T>, IShowable
     {
         #region Event handling
@@ -337,7 +339,9 @@ namespace Lucene.Net.Support.C5
         /// <summary>
         /// 
         /// </summary>
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         protected class RaiseForRemoveAllHandler
         {
             CollectionValueBase<T> collection;
@@ -583,7 +587,9 @@ namespace Lucene.Net.Support.C5
     /// <i>See the source code for <see cref="T:C5.HashDictionary`2"/> for an example</i>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class DictionaryBase<K, V> : CollectionValueBase<KeyValuePair<K, V>>, IDictionary<K, V>
     {
         /// <summary>
@@ -777,7 +783,9 @@ namespace Lucene.Net.Support.C5
             return pairs.Contains(p);
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class LiftedEnumerable<H> : SCG.IEnumerable<KeyValuePair<K, V>> where H : K
         {
             SCG.IEnumerable<H> keys;
@@ -918,7 +926,9 @@ namespace Lucene.Net.Support.C5
 
 
         #region Keys,Values support classes
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class ValuesCollection : CollectionValueBase<V>, ICollectionValue<V>
         {
             private ICollection<KeyValuePair<K, V>> _pairs;
@@ -934,7 +944,9 @@ namespace Lucene.Net.Support.C5
 
             #region Private Enumerator
 
+#if FEATURE_SERIALIZABLE
             [Serializable]
+#endif
             private class ValueEnumerator : MemorySafeEnumerator<V>
             {
                 private ICollection<KeyValuePair<K, V>> _keyValuePairs;
@@ -1014,7 +1026,9 @@ namespace Lucene.Net.Support.C5
             }
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class KeysCollection : CollectionValueBase<K>, ICollectionValue<K>
         {
             ICollection<KeyValuePair<K, V>> _pairs;
@@ -1023,7 +1037,9 @@ namespace Lucene.Net.Support.C5
 
             #region Private Enumerator
 
+#if FEATURE_SERIALIZABLE
             [Serializable]
+#endif
             private class KeyEnumerator : MemorySafeEnumerator<K>
             {
                 private ICollection<KeyValuePair<K, V>> _internalList;
@@ -1241,7 +1257,9 @@ namespace Lucene.Net.Support.C5
     /// <i>See the source code for <see cref="T:C5.TreeDictionary`2"/> for an example</i>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class SortedDictionaryBase<K, V> : DictionaryBase<K, V>, ISortedDictionary<K, V>
     {
         #region Fields
@@ -1510,7 +1528,9 @@ namespace Lucene.Net.Support.C5
         }
 
         #endregion
-        [Serializable]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
         class KeyValuePairComparable : IComparable<KeyValuePair<K, V>>
         {
             IComparable<K> cutter;
@@ -1522,7 +1542,9 @@ namespace Lucene.Net.Support.C5
             public bool Equals(KeyValuePair<K, V> other) { return cutter.Equals(other.Key); }
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class ProjectedDirectedEnumerable : MappedDirectedEnumerable<KeyValuePair<K, V>, K>
         {
             public ProjectedDirectedEnumerable(IDirectedEnumerable<KeyValuePair<K, V>> directedpairs) : base(directedpairs) { }
@@ -1531,7 +1553,9 @@ namespace Lucene.Net.Support.C5
 
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class ProjectedDirectedCollectionValue : MappedDirectedCollectionValue<KeyValuePair<K, V>, K>
         {
             public ProjectedDirectedCollectionValue(IDirectedCollectionValue<KeyValuePair<K, V>> directedpairs) : base(directedpairs) { }
@@ -1540,13 +1564,17 @@ namespace Lucene.Net.Support.C5
 
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         sealed class SortedKeysCollection : SequencedBase<K>, ISorted<K>
         {
 
             #region Private Enumerator
 
+#if FEATURE_SERIALIZABLE
             [Serializable]
+#endif
             private class KeyEnumerator : MemorySafeEnumerator<K>
             {
                 private ICollection<KeyValuePair<K, V>> _internalList;
@@ -1864,7 +1892,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// Base class (abstract) for sequenced collection implementations.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class SequencedBase<T> : DirectedCollectionBase<T>, IDirectedCollectionValue<T>
     {
         #region Fields
@@ -2020,7 +2050,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// Base class (abstract) for ICollection implementations.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class CollectionBase<T> : CollectionValueBase<T>
     {
         #region Fields
@@ -2315,7 +2347,9 @@ namespace Lucene.Net.Support.C5
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class DirectedCollectionBase<T> : CollectionBase<T>, IDirectedCollectionValue<T>
     {
         /// <summary>
@@ -2362,7 +2396,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A generic dictionary class based on a hash set class <see cref="T:C5.HashSet`1"/>. 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class HashDictionary<K, V> : DictionaryBase<K, V>, IDictionary<K, V>
     {
         /// <summary>
@@ -2404,7 +2440,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A set collection class based on linear hashing
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class HashSet<T> : CollectionBase<T>, ICollection<T>
     {
         #region Feature
@@ -2490,7 +2528,9 @@ namespace Lucene.Net.Support.C5
         #endregion
 
         #region Bucket nested class(es)
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class Bucket
         {
             internal T item;
@@ -3014,7 +3054,9 @@ namespace Lucene.Net.Support.C5
 
         #region Enumerator
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         private class HashEnumerator : MemorySafeEnumerator<T>
         {
             private HashSet<T> _hashSet;
@@ -3291,7 +3333,9 @@ namespace Lucene.Net.Support.C5
     /// Holds the real events for a collection
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     internal sealed class EventBlock<T>
     {
         internal EventTypeEnum events;
@@ -3412,7 +3456,9 @@ namespace Lucene.Net.Support.C5
     /// This should really be nested in Guarded collection value, only have a guardereal field
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     internal sealed class ProxyEventBlock<T>
     {
         ICollectionValue<T> proxy, real;
@@ -3557,7 +3603,9 @@ namespace Lucene.Net.Support.C5
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ItemCountEventArgs<T> : EventArgs
     {
         /// <summary>
@@ -3588,7 +3636,9 @@ namespace Lucene.Net.Support.C5
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ItemAtEventArgs<T> : EventArgs
     {
         /// <summary>
@@ -3618,7 +3668,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ClearedEventArgs : EventArgs
     {
         /// <summary>
@@ -3649,7 +3701,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ClearedRangeEventArgs : ClearedEventArgs
     {
         //WE could let this be of type int? to  allow 
@@ -3678,7 +3732,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// An entry in a dictionary from K to V.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public struct KeyValuePair<K, V> : IEquatable<KeyValuePair<K, V>>, IShowable
     {
         /// <summary>
@@ -3801,7 +3857,9 @@ namespace Lucene.Net.Support.C5
     /// Default comparer for dictionary entries in a sorted dictionary.
     /// Entry comparisons only look at keys and uses an externally defined comparer for that.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class KeyValuePairComparer<K, V> : SCG.IComparer<KeyValuePair<K, V>>
     {
         SCG.IComparer<K> comparer;
@@ -3835,7 +3893,9 @@ namespace Lucene.Net.Support.C5
     /// Default equalityComparer for dictionary entries.
     /// Operations only look at keys and uses an externally defined equalityComparer for that.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public sealed class KeyValuePairEqualityComparer<K, V> : SCG.IEqualityComparer<KeyValuePair<K, V>>
     {
         SCG.IEqualityComparer<K> keyequalityComparer;
@@ -3884,7 +3944,9 @@ namespace Lucene.Net.Support.C5
     /// Utility class for building default generic equality comparers.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public static class EqualityComparer<T>
     {
         private static SCG.IEqualityComparer<T> _default;
@@ -3918,23 +3980,23 @@ namespace Lucene.Net.Support.C5
                 var type = typeof(T);
                 var interfaces = type.GetInterfaces();
 
-                if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(ISequenced<>)))
+                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(ISequenced<>)))
                 {
                     return CreateAndCache(SequencedCollectionEqualityComparer.MakeGenericType(new[] { type, type.GetGenericArguments()[0] }));
                 }
 
-                var isequenced = interfaces.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(ISequenced<>)));
+                var isequenced = interfaces.FirstOrDefault(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(ISequenced<>)));
                 if (isequenced != null)
                 {
                     return CreateAndCache(SequencedCollectionEqualityComparer.MakeGenericType(new[] { type, isequenced.GetGenericArguments()[0] }));
                 }
 
-                if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(ICollection<>)))
+                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(ICollection<>)))
                 {
                     return CreateAndCache(UnsequencedCollectionEqualityComparer.MakeGenericType(new[] { type, type.GetGenericArguments()[0] }));
                 }
 
-                var icollection = interfaces.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(ICollection<>)));
+                var icollection = interfaces.FirstOrDefault(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(ICollection<>)));
                 if (icollection != null)
                 {
                     return CreateAndCache(UnsequencedCollectionEqualityComparer.MakeGenericType(new[] { type, icollection.GetGenericArguments()[0] }));
@@ -3957,7 +4019,9 @@ namespace Lucene.Net.Support.C5
     /// <para><b>Note: this will give a new EqualityComparer each time created!</b></para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     internal class ComparerZeroHashCodeEqualityComparer<T> : SCG.IEqualityComparer<T>
     {
         SCG.IComparer<T> comparer;
@@ -3995,7 +4059,9 @@ namespace Lucene.Net.Support.C5
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="W"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class SequencedCollectionEqualityComparer<T, W> : SCG.IEqualityComparer<T>
         where T : ISequenced<W>
     {
@@ -4031,7 +4097,9 @@ namespace Lucene.Net.Support.C5
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="W"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class UnsequencedCollectionEqualityComparer<T, W> : SCG.IEqualityComparer<T>
         where T : ICollection<W>
     {
@@ -4059,7 +4127,9 @@ namespace Lucene.Net.Support.C5
         public bool Equals(T collection1, T collection2) { return collection1 == null ? collection2 == null : collection1.UnsequencedEquals(collection2); }
     }
 
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     internal abstract class MemorySafeEnumerator<T> : SCG.IEnumerator<T>, SCG.IEnumerable<T>, IDisposable
     {
         private static int MainThreadId;
@@ -4149,7 +4219,9 @@ namespace Lucene.Net.Support.C5
         }
     }
 
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     abstract class MappedDirectedEnumerable<T, V> : EnumerableBase<V>, IDirectedEnumerable<V>
     {
         IDirectedEnumerable<T> directedenumerable;
@@ -4186,7 +4258,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A base class for implementing an IEnumerable&lt;T&gt;
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class EnumerableBase<T> : SCG.IEnumerable<T>
     {
         /// <summary>
@@ -4225,7 +4299,9 @@ namespace Lucene.Net.Support.C5
         #endregion
     }
 
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     abstract class MappedDirectedCollectionValue<T, V> : DirectedCollectionValueBase<V>, IDirectedCollectionValue<V>
     {
         IDirectedCollectionValue<T> directedcollectionvalue;
@@ -4278,7 +4354,9 @@ namespace Lucene.Net.Support.C5
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class DirectedCollectionValueBase<T> : CollectionValueBase<T>, IDirectedCollectionValue<T>
     {
         /// <summary>
@@ -4320,7 +4398,9 @@ namespace Lucene.Net.Support.C5
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class CircularQueue<T> : SequencedBase<T>, IQueue<T>, IStack<T>
     {
         #region Fields
@@ -4624,7 +4704,9 @@ namespace Lucene.Net.Support.C5
         }
     }
 
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     abstract class MappedCollectionValue<T, V> : CollectionValueBase<V>, ICollectionValue<V>
     {
         ICollectionValue<T> collectionvalue;
@@ -4651,7 +4733,9 @@ namespace Lucene.Net.Support.C5
         }
     }
 
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     class MultiplicityOne<K> : MappedCollectionValue<K, KeyValuePair<K, int>>
     {
         public MultiplicityOne(ICollectionValue<K> coll) : base(coll) { }
@@ -4661,7 +4745,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// Class containing debugging symbols - to eliminate preprocessor directives
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     internal class Debug
     {
         /// <summary>
@@ -4675,7 +4761,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public static class Showing
     {
         /// <summary>
@@ -6999,7 +7087,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// An exception to throw from library code when an internal inconsistency is encountered.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class InternalException : Exception
     {
         internal InternalException(string message) : base(message) { }
@@ -7011,7 +7101,9 @@ namespace Lucene.Net.Support.C5
     /// (method or set property) is called. No check is made to see if the update operation, 
     /// if allowed, would actually change the collection. </para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ReadOnlyCollectionException : Exception
     {
         /// <summary>
@@ -7028,7 +7120,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class FixedSizeCollectionException : Exception
     {
         /// <summary>
@@ -7045,7 +7139,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class UnlistenableEventException : Exception
     {
         /// <summary>
@@ -7062,7 +7158,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// An exception thrown by the MemorySafeEnumerator if the collection is enumerated by multiple threads concurrently
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ConcurrentEnumerationException : Exception
     {
         /// <summary>
@@ -7083,7 +7181,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by the MemorySafeEnumerator if the collection is enumerated multiple times when the 
     /// memory mode is set to Strict 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class MultipleEnumerationException : Exception
     {
         /// <summary>
@@ -7104,7 +7204,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by enumerators, range views etc. when accessed after 
     /// the underlying collection has been modified.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class CollectionModifiedException : Exception
     {
         /// <summary>
@@ -7127,7 +7229,9 @@ namespace Lucene.Net.Support.C5
     /// Sort, Reverse or Shuffle on some other, overlapping view or the whole list.
     /// </para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ViewDisposedException : Exception
     {
         /// <summary>
@@ -7147,7 +7251,9 @@ namespace Lucene.Net.Support.C5
     /// <para>The typical scenario is a lookup by key in a dictionary with an indexer,
     /// see e.g. <see cref="P:C5.IDictionary`2.Item(`0)"/></para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class NoSuchItemException : Exception
     {
         /// <summary>
@@ -7165,7 +7271,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by an operation on a list (<see cref="T:C5.IList`1"/>)
     /// that only makes sense for a view, not for an underlying list.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class NotAViewException : Exception
     {
         /// <summary>
@@ -7187,7 +7295,9 @@ namespace Lucene.Net.Support.C5
     /// </para>
     /// <para>With dictionaries this can happen with the <see cref="M:C5.IDictionary`2.Add(`0,`1)"/> metod.</para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class DuplicateNotAllowedException : Exception
     {
         /// <summary>
@@ -7204,7 +7314,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class InvalidPriorityQueueHandleException : Exception
     {
         /// <summary>
@@ -7222,7 +7334,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by an operation that need to construct a natural
     /// comparer for a type.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class NotComparableException : Exception
     {
         /// <summary>
@@ -7240,7 +7354,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by operations on a list that expects an argument
     /// that is a view on the same underlying list.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class IncompatibleViewException : Exception
     {
         /// <summary>
