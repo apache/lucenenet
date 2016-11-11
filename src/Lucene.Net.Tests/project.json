@@ -32,7 +32,6 @@
         "core/Support/TestCloseableThreadLocal.cs",
         "core/Support/TestEquatableList.cs",
         "core/Support/TestExceptionSerialization.cs",
-        "core/Support/TestHashMap.cs",
         "core/Support/TestIDisposable.cs",
         "core/Support/TestLRUCache.cs",
         "core/Support/TestOldPatches.cs",

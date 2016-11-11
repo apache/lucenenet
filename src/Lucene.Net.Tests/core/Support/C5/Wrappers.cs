@@ -27,7 +27,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A read-only wrapper class for a generic enumerator
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedEnumerator<T> : IEnumerator<T>
     {
         #region Fields
@@ -98,7 +100,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedEnumerable<T> : System.Collections.Generic.IEnumerable<T>
     {
         #region Fields
@@ -147,7 +151,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedDirectedEnumerable<T> : GuardedEnumerable<T>, IDirectedEnumerable<T>
     {
         #region Fields
@@ -195,7 +201,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedCollectionValue<T> : GuardedEnumerable<T>, ICollectionValue<T>
     {
         #region Events
@@ -409,7 +417,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedDirectedCollectionValue<T> : GuardedCollectionValue<T>, IDirectedCollectionValue<T>
     {
         #region Fields
@@ -474,7 +484,9 @@ namespace Lucene.Net.Support.C5
     /// <i>Suitable for wrapping hash tables, <see cref="T:C5.HashSet`1"/>
     /// and <see cref="T:C5.HashBag`1"/>  </i></para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedCollection<T> : GuardedCollectionValue<T>, ICollection<T>
     {
         #region Fields
@@ -727,7 +739,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedSequenced<T> : GuardedCollection<T>, ISequenced<T>
     {
         #region Fields
@@ -853,7 +867,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>This is mainly interesting as a base of other guard classes</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedSorted<T> : GuardedSequenced<T>, ISorted<T>
     {
         #region Fields
@@ -1086,7 +1102,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>Suitable for wrapping TreeSet, TreeBag and SortedArray</i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedIndexedSorted<T> : GuardedSorted<T>, IIndexedSorted<T>
     {
         #region Fields
@@ -1261,7 +1279,9 @@ namespace Lucene.Net.Support.C5
     /// <see cref="T:C5.HashedArray`1"/>.
     /// </i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedList<T> : GuardedSequenced<T>, IList<T>, System.Collections.Generic.IList<T>
     {
         #region Fields
@@ -1830,7 +1850,9 @@ namespace Lucene.Net.Support.C5
     /// <para>Suitable for wrapping a <see cref="T:C5.CircularQueue`1"/></para>
     /// </summary>
     /// <typeparam name="T">The item type.</typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedQueue<T> : GuardedDirectedCollectionValue<T>, IQueue<T>
     {
         #region Fields
@@ -1887,7 +1909,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>Suitable for wrapping a HashDictionary. <see cref="T:C5.HashDictionary`2"/></i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedDictionary<K, V> : GuardedCollectionValue<KeyValuePair<K, V>>, IDictionary<K, V>
     {
         #region Fields
@@ -2086,7 +2110,9 @@ namespace Lucene.Net.Support.C5
     ///
     /// <i>Suitable for wrapping a Dictionary. <see cref="T:C5.Dictionary`2"/></i>
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class GuardedSortedDictionary<K, V> : GuardedDictionary<K, V>, ISortedDictionary<K, V>
     {
         #region Fields

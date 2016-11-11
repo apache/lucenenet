@@ -27,7 +27,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A bag collection based on a hash table of (item,count) pairs. 
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class HashBag<T> : CollectionBase<T>, ICollection<T>
     {
         #region Fields

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Support.C5
 {
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     class DropMultiplicity<K> : MappedCollectionValue<KeyValuePair<K, int>, K>
     {
         public DropMultiplicity(ICollectionValue<KeyValuePair<K, int>> coll) : base(coll) { }

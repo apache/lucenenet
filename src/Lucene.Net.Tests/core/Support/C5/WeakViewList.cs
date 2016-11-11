@@ -52,12 +52,16 @@ namespace Lucene.Net.Support.C5
     /// This class is shared between the linked list and array list implementations.
     /// </summary>
     /// <typeparam name="V"></typeparam>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     class WeakViewList<V> where V : class
     {
         Node start;
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         internal class Node
         {
             internal WeakReference weakview; internal Node prev, next;

@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Reflection;
 using Lucene.Net.Support.C5;
 using NUnit.Framework;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Support.Templates
             foreach (MethodInfo minfo in this.GetType().GetMethods())
             {
                 if (minfo.GetParameters().Length == 0 &&
-                     minfo.GetCustomAttributes(typeof(TestAttribute), false).Length > 0)
+                     minfo.GetCustomAttributes(typeof(TestAttribute), false).Count() > 0)
                     testMethods.Enqueue(minfo);
             }
         }

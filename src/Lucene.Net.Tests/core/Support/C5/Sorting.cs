@@ -25,7 +25,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// A utility class with functions for sorting arrays with respect to an IComparer&lt;T&gt;
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class Sorting
     {
         Sorting() { }
@@ -90,7 +92,9 @@ namespace Lucene.Net.Support.C5
             new Sorter<T>(array, comparer).HeapSort(start, start + count);
         }
 
+#if FEATURE_SERIALIZABLE
         [Serializable]
+#endif
         class Sorter<T>
         {
             T[] a;

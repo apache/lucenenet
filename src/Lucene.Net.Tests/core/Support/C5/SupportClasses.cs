@@ -341,7 +341,7 @@ namespace Lucene.Net.Support
                         return a.Index == o.Index && itemequalityComparer.Equals(a.Item, o.Item);
                     }
             }
-            throw new ApplicationException("Illegal Action: " + Act);
+            throw new NotSupportedException("Illegal Action: " + Act);
         }
 
         public override string ToString()
