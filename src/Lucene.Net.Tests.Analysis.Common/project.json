@@ -2,7 +2,7 @@
   "version": "4.8.0-alpha",
   "dependencies": {
     "dotnet-test-nunit": "3.4.0-beta-2",
-    "icu.net-x64": "54.0.3-alpha",
+    "icu.net": "54.0.4-alpha",
     "Lucene.Net.Analysis.Common": "4.8.0-alpha",
     "Lucene.Net.TestFramework": "4.8.0-alpha",
     "NETStandard.Library": "1.6.0",
@@ -108,6 +108,15 @@
   },
   "frameworks": {
     "net451": {
+    },
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      },
+      "imports": "dnxcore50"
     }
   },
 
