@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             fragments.Add(new LookupHighlightFragment(text.Substring(startOffset, endOffset - startOffset), true));
                             upto = endOffset;
                         }
-                        else if (prefixToken != null && token.Normalize().StartsWith(prefixToken, StringComparison.Ordinal))
+                        else if (prefixToken != null && token.StartsWith(prefixToken, StringComparison.Ordinal))
                         {
                             fragments.Add(new LookupHighlightFragment(text.Substring(startOffset, prefixToken.Length), true));
                             if (prefixToken.Length < token.Length)
@@ -551,7 +551,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public override void Run()
             {
-#if !NETSTANDARD
+#if FEATURE_THREAD_PRIORITY
                 Priority += 1;
 #endif
                 while (!stop.Get())
