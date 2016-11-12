@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Ignore] // memory hole
+        [Ignore("memory hole")] // memory hole
         [Test]
         [LongRunningTest, Timeout(120000)]
         public virtual void TestOverflow()

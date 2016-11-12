@@ -911,7 +911,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         // memory hole
-        [Ignore]
+        [Ignore("memory hole")]
         [Test]
         public virtual void TestPagedGrowableWriterOverflow()
         {

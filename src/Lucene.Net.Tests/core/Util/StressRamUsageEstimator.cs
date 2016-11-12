@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
         }
 
         // this shows an easy stack overflow because we're counting recursively.
-        [Ignore]
+        [Ignore("this shows an easy stack overflow because we're counting recursively.")]
         [Test]
         public virtual void TestChainedEstimation()
         {
