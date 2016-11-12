@@ -465,9 +465,6 @@
     <EmbeddedResource Include="Analysis\Compound\da_UTF8.xml" />
     <EmbeddedResource Include="Analysis\Compound\da_compoundDictionary.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Analysis\CharFilters\MS-Word14generated.htm" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

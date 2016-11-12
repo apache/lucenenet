@@ -28,6 +28,7 @@ namespace Lucene.Net.Analysis.Th
     /// Test case for ThaiAnalyzer, modified from TestFrenchAnalyzer
     /// 
     /// </summary>
+
     public class TestThaiAnalyzer : BaseTokenStreamTestCase
     {
 
