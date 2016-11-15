@@ -39,7 +39,7 @@ namespace Lucene.Net.Spatial.Util
     /// </summary>
     /// <lucene.internal></lucene.internal>
     public abstract class ShapeFieldCacheProvider<T>
-        where T : Shape
+        where T : IShape
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 

@@ -53,16 +53,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private readonly double ymid;
         private readonly double ymin;
 
-        public QuadPrefixTree(SpatialContext ctx, Rectangle bounds, int maxLevels)
+        public QuadPrefixTree(SpatialContext ctx, IRectangle bounds, int maxLevels)
             : base(ctx, maxLevels)
         {
             //not really sure how big this should be
             // side
             // number
-            xmin = bounds.GetMinX();
-            xmax = bounds.GetMaxX();
-            ymin = bounds.GetMinY();
-            ymax = bounds.GetMaxY();
+            xmin = bounds.MinX;
+            xmax = bounds.MaxX;
+            ymin = bounds.MinY;
+            ymax = bounds.MaxY;
             levelW = new double[maxLevels];
             levelH = new double[maxLevels];
             levelS = new int[maxLevels];
@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         public QuadPrefixTree(SpatialContext ctx, int maxLevels)
-            : this(ctx, ctx.GetWorldBounds(), maxLevels)
+            : this(ctx, ctx.WorldBounds, maxLevels)
         {
         }
 
@@ -127,10 +127,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return maxLevels;
         }
 
-        protected internal override Cell GetCell(Point p, int level)
+        protected internal override Cell GetCell(IPoint p, int level)
         {
             IList<Cell> cells = new List<Cell>(1);
-            Build(xmid, ymid, 0, cells, new StringBuilder(), ctx.MakePoint(p.GetX(), p.GetY()), level);
+            Build(xmid, ymid, 0, cells, new StringBuilder(), ctx.MakePoint(p.X, p.Y), level);
             return cells[0];
         }
 
@@ -146,7 +146,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         private void Build(double x, double y, int level, IList<Cell> matches, StringBuilder
-                                                                                   str, Shape shape, int maxLevel)
+                                                                                   str, IShape shape, int maxLevel)
         {
             Debug.Assert(str.Length == level);
             double w = levelW[level] / 2;
@@ -165,13 +165,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         // if we actually use the range property in the query, this could be useful
         private void CheckBattenberg(char c, double cx, double cy, int level, IList<Cell>
                                                                                   matches, StringBuilder str,
-                                     Shape shape, int maxLevel)
+                                     IShape shape, int maxLevel)
         {
             Debug.Assert(str.Length == level);
             double w = levelW[level] / 2;
             double h = levelH[level] / 2;
             int strlen = str.Length;
-            Rectangle rectangle = ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
+            IRectangle rectangle = ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
             SpatialRelation v = shape.Relate(rectangle);
             if (SpatialRelation.CONTAINS == v)
             {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         internal class QuadCell : Cell
         {
             private readonly QuadPrefixTree _enclosing;
-            private Shape shape;
+            private IShape shape;
 
             public QuadCell(QuadPrefixTree _enclosing, string token)
                 : base(token)
@@ -275,14 +275,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return 4;
             }
 
-            public override Cell GetSubCell(Point p)
+            public override Cell GetSubCell(IPoint p)
             {
                 return _enclosing.GetCell(p, Level + 1);
             }
 
             //not performant!
             //cache
-            public override Shape GetShape()
+            public override IShape GetShape()
             {
                 if (shape == null)
                 {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return shape;
             }
 
-            private Rectangle MakeShape()
+            private IRectangle MakeShape()
             {
                 string token = TokenString;
                 double xmin = _enclosing.xmin;

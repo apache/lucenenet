@@ -27,7 +27,7 @@ namespace Lucene.Net.Spatial.Query
 
         public SpatialOperation Operation { get; set; }
 
-        public SpatialArgs(SpatialOperation operation, Shape shape)
+        public SpatialArgs(SpatialOperation operation, IShape shape)
         {
             if (operation == null || shape == null)
                 throw new ArgumentException("operation and shape are required");
@@ -44,24 +44,24 @@ namespace Lucene.Net.Spatial.Query
         /// <param name="distErrPct">0 to 0.5</param>
         /// <param name="ctx">Mandatory</param>
         /// <returns>A distance (in degrees).</returns>
-        public static double CalcDistanceFromErrPct(Shape shape, double distErrPct, SpatialContext ctx)
+        public static double CalcDistanceFromErrPct(IShape shape, double distErrPct, SpatialContext ctx)
         {
             if (distErrPct < 0 || distErrPct > 0.5)
             {
                 throw new ArgumentException("distErrPct " + distErrPct + " must be between [0 to 0.5]", "distErrPct");
             }
-            if (distErrPct == 0 || shape is Point)
+            if (distErrPct == 0 || shape is IPoint)
             {
                 return 0;
             }
-            Rectangle bbox = shape.GetBoundingBox();
+            IRectangle bbox = shape.BoundingBox;
 
             //Compute the distance from the center to a corner.  Because the distance
             // to a bottom corner vs a top corner can vary in a geospatial scenario,
             // take the closest one (greater precision).
-            Point ctr = bbox.GetCenter();
-            double y = (ctr.GetY() >= 0 ? bbox.GetMaxY() : bbox.GetMinY());
-            double diagonalDist = ctx.GetDistCalc().Distance(ctr, bbox.GetMaxX(), y);
+            IPoint ctr = bbox.Center;
+            double y = (ctr.Y >= 0 ? bbox.MaxY : bbox.MinY);
+            double diagonalDist = ctx.DistCalc.Distance(ctr, bbox.MaxX, y);
             return diagonalDist * distErrPct;
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Spatial.Query
         /// </summary>
         public void Validate()
         {
-            if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
+            if (Operation.IsTargetNeedsArea() && !Shape.HasArea)
             {
                 throw new ArgumentException(Operation + " only supports geometry with area");
             }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Spatial.Query
         // Getters & Setters
         //------------------------------------------------
 
-        public Shape Shape { get; set; }
+        public IShape Shape { get; set; }
 
         /// <summary>
         /// A measure of acceptable error of the shape as a fraction. This effectively

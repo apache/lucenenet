@@ -33,7 +33,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// can only retrieve the central <see cref="Point">Point</see> of the original Shapes.
     /// </summary>
     /// <lucene.internal></lucene.internal>
-    public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<Point>
+    public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<IPoint>
     {
         internal readonly SpatialPrefixTree grid; //
 
@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         private Cell scanCell = null;//re-used in readShape to save GC
 
-        protected internal override Point ReadShape(BytesRef term)
+        protected internal override IPoint ReadShape(BytesRef term)
         {
             scanCell = grid.GetCell(term.Bytes, term.Offset, term.Length, scanCell);
             if (scanCell.Level == grid.MaxLevels && !scanCell.IsLeaf())

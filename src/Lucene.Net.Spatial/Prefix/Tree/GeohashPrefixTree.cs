@@ -38,8 +38,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
         {
-            Rectangle bounds = ctx.GetWorldBounds();
-            if (bounds.GetMinX() != -180)
+            IRectangle bounds = ctx.WorldBounds;
+            if (bounds.MinX != -180)
             {
                 throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " +
                                             bounds);
@@ -72,10 +72,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return Math.Max(Math.Min(level, maxLevels), 1);
         }
 
-        protected internal override Cell GetCell(Point p, int level)
+        protected internal override Cell GetCell(IPoint p, int level)
         {
-            return new GhCell(this, GeohashUtils.EncodeLatLon(p.GetY(), p.GetX
-                                                                            (), level));
+            return new GhCell(this, GeohashUtils.EncodeLatLon(p.Y, p.X, level));
         }
 
         //args are lat,lon (y,x)
@@ -117,7 +116,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         internal class GhCell : Cell
         {
             private readonly GeohashPrefixTree _enclosing;
-            private Shape shape;
+            private IShape shape;
 
             internal GhCell(GeohashPrefixTree _enclosing, string token)
                 : base(token)
@@ -155,14 +154,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
 
             //8x4
-            public override Cell GetSubCell(Point p)
+            public override Cell GetSubCell(IPoint p)
             {
                 return _enclosing.GetCell(p, Level + 1);
             }
 
             //not performant!
             //cache
-            public override Shape GetShape()
+            public override IShape GetShape()
             {
                 if (shape == null)
                 {
@@ -171,7 +170,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return shape;
             }
 
-            public override Point GetCenter()
+            public override IPoint GetCenter()
             {
                 return GeohashUtils.Decode(Geohash, _enclosing.ctx);
             }

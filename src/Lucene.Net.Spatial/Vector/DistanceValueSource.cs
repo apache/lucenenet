@@ -32,11 +32,11 @@ namespace Lucene.Net.Spatial.Vector
     /// </summary>
     public class DistanceValueSource : ValueSource
     {
-        private readonly Point from;
+        private readonly IPoint from;
         private readonly PointVectorStrategy strategy;
         private readonly double multiplier;
 
-        public DistanceValueSource(PointVectorStrategy strategy, Point from, double multiplier)
+        public DistanceValueSource(PointVectorStrategy strategy, IPoint from, double multiplier)
         {
             this.strategy = strategy;
             this.from = from;
@@ -75,9 +75,9 @@ namespace Lucene.Net.Spatial.Vector
 
         public class DistanceFunctionValue : FunctionValues
         {
-            private readonly DistanceCalculator calculator;
+            private readonly IDistanceCalculator calculator;
             private readonly DistanceValueSource enclosingInstance;
-            private readonly Point from;
+            private readonly IPoint from;
             private readonly double nullValue;
             private readonly double multiplier;
 
@@ -95,8 +95,8 @@ namespace Lucene.Net.Spatial.Vector
 
                 from = enclosingInstance.from;
                 multiplier = enclosingInstance.multiplier;
-                calculator = enclosingInstance.strategy.SpatialContext.GetDistCalc();
-                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo() ? 180 * multiplier : double.MaxValue);
+                calculator = enclosingInstance.strategy.SpatialContext.DistCalc;
+                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo ? 180 * multiplier : double.MaxValue);
             }
 
             public override float FloatVal(int doc)

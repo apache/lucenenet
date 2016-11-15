@@ -232,12 +232,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </summary>
         /// <param name="shapeFilter">an optional filter for the returned cells.</param>
         /// <returns>A set of cells (no dups), sorted. Not Modifiable.</returns>
-        public virtual ICollection<Cell> GetSubCells(Shape shapeFilter)
+        public virtual ICollection<Cell> GetSubCells(IShape shapeFilter)
         {
             //Note: Higher-performing subclasses might override to consider the shape filter to generate fewer cells.
-            if (shapeFilter is Point)
+            if (shapeFilter is IPoint)
             {
-                Cell subCell = GetSubCell((Point)shapeFilter);
+                Cell subCell = GetSubCell((IPoint)shapeFilter);
                 subCell.shapeRel = SpatialRelation.CONTAINS;
 #if !NET35
                 return new ReadOnlyCollectionBuilder<Cell>(new[] { subCell }).ToReadOnlyCollection();
@@ -281,7 +281,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <p/>
         /// Precondition: this.getShape().relate(p) != DISJOINT.
         /// </remarks>
-        public abstract Cell GetSubCell(Point p);
+        public abstract Cell GetSubCell(IPoint p);
 
         //TODO Cell getSubCell(byte b)
         /// <summary>Gets the cells at the next grid cell level that cover this cell.</summary>
@@ -298,11 +298,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </summary>
         public abstract int GetSubCellsSize();
 
-        public abstract Shape GetShape();
+        public abstract IShape GetShape();
 
-        public virtual Point GetCenter()
+        public virtual IPoint GetCenter()
         {
-            return GetShape().GetCenter();
+            return GetShape().Center;
         }
 
         #region Equality overrides

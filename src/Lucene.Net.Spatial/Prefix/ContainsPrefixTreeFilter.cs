@@ -39,7 +39,7 @@ namespace Lucene.Net.Spatial.Prefix
     {
         protected readonly bool multiOverlappingIndexedShapes;
 
-        public ContainsPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel, bool multiOverlappingIndexedShapes)
+        public ContainsPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel, bool multiOverlappingIndexedShapes)
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.multiOverlappingIndexedShapes = multiOverlappingIndexedShapes;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         private class ContainsVisitor : BaseTermsEnumTraverser
         {
-            private readonly Shape queryShape;
+            private readonly IShape queryShape;
             private readonly int detailLevel;
             private readonly bool multiOverlappingIndexedShapes;
             private SpatialPrefixTree grid;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Prefix
                 SmallDocSet combinedSubResults = null;
 
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
-                Shape subCellsFilter = queryShape;
+                IShape subCellsFilter = queryShape;
                 if (cell.Level != 0 && ((cell.GetShapeRel() == null || cell.GetShapeRel() == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;

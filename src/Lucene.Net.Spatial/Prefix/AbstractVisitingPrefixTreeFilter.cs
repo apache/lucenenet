@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected internal readonly int prefixGridScanLevel;
 
-        public AbstractVisitingPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, 
+        public AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
                                                 int detailLevel, int prefixGridScanLevel)
             : base(queryShape, fieldName, grid, detailLevel)
         {

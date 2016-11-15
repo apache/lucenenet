@@ -33,7 +33,7 @@ namespace Lucene.Net.Spatial.Prefix
     {
         private readonly bool hasIndexedLeaves;
 
-        public IntersectsPrefixTreeFilter(Shape queryShape, string fieldName, 
+        public IntersectsPrefixTreeFilter(IShape queryShape, string fieldName, 
                                           SpatialPrefixTree grid, int detailLevel,
                                           int prefixGridScanLevel, bool hasIndexedLeaves)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)

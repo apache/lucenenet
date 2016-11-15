@@ -102,10 +102,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 throw new ArgumentException("Level must be in 1 to maxLevels range");
             }
             //TODO cache for each level
-            Cell cell = GetCell(ctx.GetWorldBounds().GetCenter(), level);
-            Rectangle bbox = cell.GetShape().GetBoundingBox();
-            double width = bbox.GetWidth();
-            double height = bbox.GetHeight();
+            Cell cell = GetCell(ctx.WorldBounds.Center, level);
+            IRectangle bbox = cell.GetShape().BoundingBox;
+            double width = bbox.Width;
+            double height = bbox.Height;
             //Use standard cartesian hypotenuse. For geospatial, this answer is larger
             // than the correct one but it's okay to over-estimate.
             return Math.Sqrt(width * width + height * height);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <code>level</code>
         /// .
         /// </summary>
-        protected internal virtual Cell GetCell(Point p, int level)
+        protected internal virtual Cell GetCell(IPoint p, int level)
         {
             return GetCells(p, level, false)[0];
         }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// ~20-25% fewer cells.
         /// </param>
         /// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
-        public virtual IList<Cell> GetCells(Shape shape, int detailLevel
+        public virtual IList<Cell> GetCells(IShape shape, int detailLevel
             , bool inclParents, bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
@@ -203,9 +203,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 throw new ArgumentException("detailLevel > maxLevels");
             }
-            if (shape is Point)
+            if (shape is IPoint)
             {
-                return GetCells((Point)shape, detailLevel, inclParents);
+                return GetCells((IPoint)shape, detailLevel, inclParents);
             }
             IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
             RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells
@@ -218,7 +218,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Returns true if cell was added as a leaf. If it wasn't it recursively
         /// descends.
         /// </remarks>
-        private bool RecursiveGetCells(Cell cell, Shape shape, int
+        private bool RecursiveGetCells(Cell cell, IShape shape, int
              detailLevel, bool inclParents, bool simplify, IList<Cell> result)
         {
             if (cell.Level == detailLevel)
@@ -280,7 +280,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// being fast, as its
         /// called repeatedly when incPlarents is true.
         /// </summary>
-        public virtual IList<Cell> GetCells(Point p, int detailLevel, bool inclParents)
+        public virtual IList<Cell> GetCells(IPoint p, int detailLevel, bool inclParents)
         {
             Cell cell = GetCell(p, detailLevel);
             if (!inclParents)

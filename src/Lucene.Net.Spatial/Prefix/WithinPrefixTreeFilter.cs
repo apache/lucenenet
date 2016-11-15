@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Prefix
         //  minimal query buffer by looking in a DocValues cache holding a representative
         //  point of each disjoint component of a document's shape(s).
 
-        private readonly Shape bufferedQueryShape;//if null then the whole world
+        private readonly IShape bufferedQueryShape;//if null then the whole world
 
         /// <summary>
         /// See
@@ -64,7 +64,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// where non-matching documents are looked for so they can be excluded. If
         /// -1 is used then the whole world is examined (a good default for correctness).
         /// </summary>
-        public WithinPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, 
+        public WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
                                       int detailLevel, int prefixGridScanLevel, double queryBuffer)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
         {
@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// <summary>
         /// Returns a new shape that is larger than shape by at distErr
         /// </summary>
-        protected virtual Shape BufferShape(Shape shape, double distErr)
+        protected virtual IShape BufferShape(IShape shape, double distErr)
         {
             //TODO move this generic code elsewhere?  Spatial4j?
             if (distErr <= 0)
@@ -89,30 +89,30 @@ namespace Lucene.Net.Spatial.Prefix
                 throw new ArgumentException("distErr must be > 0");
             }
             SpatialContext ctx = grid.SpatialContext;
-            if (shape is Point)
+            if (shape is IPoint)
             {
-                return ctx.MakeCircle((Point)shape, distErr);
+                return ctx.MakeCircle((IPoint)shape, distErr);
             }
             else
             {
-                if (shape is Circle)
+                if (shape is ICircle)
                 {
-                    var circle = (Circle)shape;
-                    double newDist = circle.GetRadius() + distErr;
-                    if (ctx.IsGeo() && newDist > 180)
+                    var circle = (ICircle)shape;
+                    double newDist = circle.Radius + distErr;
+                    if (ctx.IsGeo && newDist > 180)
                     {
                         newDist = 180;
                     }
-                    return ctx.MakeCircle(circle.GetCenter(), newDist);
+                    return ctx.MakeCircle(circle.Center, newDist);
                 }
                 else
                 {
-                    Rectangle bbox = shape.GetBoundingBox();
-                    double newMinX = bbox.GetMinX() - distErr;
-                    double newMaxX = bbox.GetMaxX() + distErr;
-                    double newMinY = bbox.GetMinY() - distErr;
-                    double newMaxY = bbox.GetMaxY() + distErr;
-                    if (ctx.IsGeo())
+                    IRectangle bbox = shape.BoundingBox;
+                    double newMinX = bbox.MinX - distErr;
+                    double newMaxX = bbox.MaxX + distErr;
+                    double newMinY = bbox.MinY - distErr;
+                    double newMaxY = bbox.MaxY + distErr;
+                    if (ctx.IsGeo)
                     {
                         if (newMinY < -90)
                         {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Spatial.Prefix
                         {
                             newMaxY = 90;
                         }
-                        if (newMinY == -90 || newMaxY == 90 || bbox.GetWidth() + 2 * distErr > 360)
+                        if (newMinY == -90 || newMaxY == 90 || bbox.Width + 2 * distErr > 360)
                         {
                             newMinX = -180;
                             newMaxX = 180;
@@ -136,10 +136,10 @@ namespace Lucene.Net.Spatial.Prefix
                     else
                     {
                         //restrict to world bounds
-                        newMinX = Math.Max(newMinX, ctx.GetWorldBounds().GetMinX());
-                        newMaxX = Math.Min(newMaxX, ctx.GetWorldBounds().GetMaxX());
-                        newMinY = Math.Max(newMinY, ctx.GetWorldBounds().GetMinY());
-                        newMaxY = Math.Min(newMaxY, ctx.GetWorldBounds().GetMaxY());
+                        newMinX = Math.Max(newMinX, ctx.WorldBounds.MinX);
+                        newMaxX = Math.Min(newMaxX, ctx.WorldBounds.MaxX);
+                        newMinY = Math.Max(newMinY, ctx.WorldBounds.MinY);
+                        newMaxY = Math.Min(newMaxY, ctx.WorldBounds.MaxY);
                     }
                     return ctx.MakeRectangle(newMinX, newMaxX, newMinY, newMaxY);
                 }

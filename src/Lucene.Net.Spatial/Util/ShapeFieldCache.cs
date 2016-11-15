@@ -25,7 +25,7 @@ namespace Lucene.Net.Spatial.Util
     /// associated with a given docId
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ShapeFieldCache<T> where T : Shape
+    public class ShapeFieldCache<T> where T : IShape
     {
         private readonly IList<T>[] cache;
         public int defaultLength;

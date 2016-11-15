@@ -50,12 +50,12 @@ namespace Lucene.Net.Spatial.Serialized
             throw new NotImplementedException();
         }
 
-        public override Field[] CreateIndexableFields(Shape shape)
+        public override Field[] CreateIndexableFields(IShape shape)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueSource MakeDistanceValueSource(Point queryPoint, double multiplier)
+        public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
             throw new NotImplementedException();
         }

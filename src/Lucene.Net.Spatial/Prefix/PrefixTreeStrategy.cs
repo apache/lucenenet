@@ -146,13 +146,13 @@ namespace Lucene.Net.Spatial.Prefix
             set { distErrPct = value; }
         }
 
-        public override Field[] CreateIndexableFields(Shape shape)
+        public override Field[] CreateIndexableFields(IShape shape)
         {
             double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
             return CreateIndexableFields(shape, distErr);
         }
 
-        public virtual Field[] CreateIndexableFields(Shape shape, double distErr)
+        public virtual Field[] CreateIndexableFields(IShape shape, double distErr)
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
             IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
         }
 
-        public override ValueSource MakeDistanceValueSource(Point queryPoint, double multiplier)
+        public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
             var p = provider.GetOrAdd(FieldName, f => new PointPrefixTreeFieldCacheProvider(grid, FieldName, defaultFieldValuesArrayLen));
             return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint, multiplier);

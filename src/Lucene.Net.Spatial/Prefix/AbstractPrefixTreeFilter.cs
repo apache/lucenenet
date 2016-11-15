@@ -29,12 +29,12 @@ namespace Lucene.Net.Spatial.Prefix
     /// </summary>
     public abstract class AbstractPrefixTreeFilter : Filter
     {
-        protected internal readonly Shape queryShape;
+        protected internal readonly IShape queryShape;
         protected internal readonly string fieldName;
         protected internal readonly SpatialPrefixTree grid;//not in equals/hashCode since it's implied for a specific field
         protected internal readonly int detailLevel;
         
-        public AbstractPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel)
+        public AbstractPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel)
         {
             this.queryShape = queryShape;
             this.fieldName = fieldName;
