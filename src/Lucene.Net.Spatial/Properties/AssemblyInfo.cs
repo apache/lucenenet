@@ -16,6 +16,7 @@
  */
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -40,6 +41,9 @@ using System.Security;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5c8e810f-4bf7-472f-9785-8d80a0de6ea8")]
 
+// for testing
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Spatial")]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -50,14 +54,12 @@ using System.Security;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyInformationalVersionAttribute("3.0.3")]
-
-[assembly: AssemblyVersion("3.0.3")]
-[assembly: AssemblyFileVersion("3.0.3")]
+[assembly: AssemblyVersion("4.8.0")]
+[assembly: AssemblyFileVersion("4.8.0")]
 
 
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
+//[assembly: AssemblyDelaySign(false)]
+//[assembly: AssemblyKeyFile("")]
+//[assembly: AssemblyKeyName("")]
 
-[assembly: AllowPartiallyTrustedCallers]
+//[assembly: AllowPartiallyTrustedCallers]
