@@ -57,7 +57,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             string cname = args[PrefixTree];
             if (cname == null)
             {
-                cname = ctx.IsGeo() ? "geohash" : "quad";
+                cname = ctx.IsGeo ? "geohash" : "quad";
             }
             if ("geohash".Equals(cname, StringComparison.OrdinalIgnoreCase))
             {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             string maxDetailDistStr = args[MaxDistErr];
             if (maxDetailDistStr == null)
             {
-                if (!ctx.IsGeo())
+                if (!ctx.IsGeo)
                 {
                     return;
                 }

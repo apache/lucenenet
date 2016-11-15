@@ -17,7 +17,7 @@
 
 using System;
 
-namespace Lucene.Net.Spatial.Query
+namespace Lucene.Net.Spatial.Queries
 {
     [Serializable]
     public class UnsupportedSpatialOperation : InvalidOperationException

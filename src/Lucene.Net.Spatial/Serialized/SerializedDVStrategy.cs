@@ -25,7 +25,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;

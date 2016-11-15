@@ -18,7 +18,7 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -78,7 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 return new DisjointSpatialFilter(this, args, FieldName);
             }
-            Shape shape = args.Shape;
+            IShape shape = args.Shape;
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
 
         

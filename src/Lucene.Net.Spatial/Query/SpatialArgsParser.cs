@@ -21,7 +21,7 @@ using System.Text;
 using Lucene.Net.Support;
 using Spatial4n.Core.Context;
 
-namespace Lucene.Net.Spatial.Query
+namespace Lucene.Net.Spatial.Queries
 {
     public class SpatialArgsParser
     {

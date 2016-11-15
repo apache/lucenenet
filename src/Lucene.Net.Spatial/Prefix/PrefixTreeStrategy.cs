@@ -27,7 +27,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Queries.Function;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;

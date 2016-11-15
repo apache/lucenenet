@@ -20,7 +20,7 @@ using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;

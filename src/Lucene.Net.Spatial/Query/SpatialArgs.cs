@@ -19,7 +19,7 @@ using System;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 
-namespace Lucene.Net.Spatial.Query
+namespace Lucene.Net.Spatial.Queries
 {
     public class SpatialArgs
     {

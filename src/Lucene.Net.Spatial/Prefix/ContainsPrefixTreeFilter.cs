@@ -22,7 +22,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Prefix

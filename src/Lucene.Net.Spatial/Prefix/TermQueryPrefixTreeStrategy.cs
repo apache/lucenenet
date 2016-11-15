@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Query;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 throw new UnsupportedSpatialOperation(op);
             }
-            Shape shape = args.Shape;
+            IShape shape = args.Shape;
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
             IList<Cell> cells = grid.GetCells(shape, detailLevel, false, true);
             //no parents

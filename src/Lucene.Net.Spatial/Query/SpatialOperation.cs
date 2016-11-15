@@ -13,17 +13,19 @@
  * limitations under the License.
  */
 
+using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Lucene.Net.Spatial.Query
+namespace Lucene.Net.Spatial.Queries
 {
-    public class SpatialOperation
+    [Serializable]
+    public abstract class SpatialOperation
     {
         // Private registry
-        private static readonly Dictionary<String, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
+        private static readonly Dictionary<string, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
         private static readonly IList<SpatialOperation> list = new List<SpatialOperation>();
 
         // Geometry Operations
@@ -31,27 +33,130 @@ namespace Lucene.Net.Spatial.Query
         /// <summary>
         /// Bounding box of the *indexed* shape.
         /// </summary>
-        public static readonly SpatialOperation BBoxIntersects = new SpatialOperation("BBoxIntersects", true, false, false);
+        public static readonly SpatialOperation BBoxIntersects = new BBoxIntersectsSpatialOperation();
+
+        private sealed class BBoxIntersectsSpatialOperation : SpatialOperation
+        {
+            internal BBoxIntersectsSpatialOperation()
+                : base("BBoxIntersects", true, false, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return indexedShape.BoundingBox.Relate(queryShape).Intersects();
+            }
+        }
 
         /// <summary>
         /// Bounding box of the *indexed* shape.
         /// </summary>
-        public static readonly SpatialOperation BBoxWithin = new SpatialOperation("BBoxWithin", true, false, false);
+        public static readonly SpatialOperation BBoxWithin = new BBoxWithinSpatialOperation();
 
-        public static readonly SpatialOperation Contains = new SpatialOperation("Contains", true, true, false);
-        public static readonly SpatialOperation Intersects = new SpatialOperation("Intersects", true, false, false);
-        public static readonly SpatialOperation IsEqualTo = new SpatialOperation("IsEqualTo", false, false, false);
-        public static readonly SpatialOperation IsDisjointTo = new SpatialOperation("IsDisjointTo", false, false, false);
-        public static readonly SpatialOperation IsWithin = new SpatialOperation("IsWithin", true, false, true);
-        public static readonly SpatialOperation Overlaps = new SpatialOperation("Overlaps", true, false, true);
+        private sealed class BBoxWithinSpatialOperation : SpatialOperation
+        {
+            internal BBoxWithinSpatialOperation()
+                : base("BBoxWithin", true, false, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                IRectangle bbox = indexedShape.BoundingBox;
+                return bbox.Relate(queryShape) == SpatialRelation.WITHIN || bbox.Equals(queryShape);
+            }
+        }
+
+        public static readonly SpatialOperation Contains = new ContainsSpatialOperation();
+
+        private sealed class ContainsSpatialOperation : SpatialOperation
+        {
+            internal ContainsSpatialOperation()
+                : base("Contains", true, true, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return indexedShape.HasArea && indexedShape.Relate(queryShape) == SpatialRelation.CONTAINS || indexedShape.Equals(queryShape);
+            }
+        }
+
+        public static readonly SpatialOperation Intersects = new IntersectsSpatialOperation();
+
+        private sealed class IntersectsSpatialOperation : SpatialOperation
+        {
+            internal IntersectsSpatialOperation()
+                : base("Intersects", true, false, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return indexedShape.Relate(queryShape).Intersects();
+            }
+        }
+
+        public static readonly SpatialOperation IsEqualTo = new IsEqualToSpatialOperation();
+
+        private sealed class IsEqualToSpatialOperation : SpatialOperation
+        {
+            internal IsEqualToSpatialOperation()
+                : base("IsEqualTo", false, false, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return indexedShape.Equals(queryShape);
+            }
+        }
+
+        public static readonly SpatialOperation IsDisjointTo = new IsDisjointToSpatialOperation();
+
+        private sealed class IsDisjointToSpatialOperation : SpatialOperation
+        {
+            internal IsDisjointToSpatialOperation()
+                : base("IsDisjointTo", false, false, false)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return !indexedShape.Relate(queryShape).Intersects();
+            }
+        }
+
+        public static readonly SpatialOperation IsWithin = new IsWithinSpatialOperation();
+
+        private sealed class IsWithinSpatialOperation : SpatialOperation
+        {
+            internal IsWithinSpatialOperation()
+                : base("IsWithin", true, false, true)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return queryShape.HasArea && (indexedShape.Relate(queryShape) == SpatialRelation.WITHIN || indexedShape.Equals(queryShape));
+            }
+        }
+
+        public static readonly SpatialOperation Overlaps = new OverlapsSpatialOperation();
+
+        private sealed class OverlapsSpatialOperation : SpatialOperation
+        {
+            internal OverlapsSpatialOperation()
+                : base("Overlaps", true, false, true)
+            { }
+
+            public override bool Evaluate(IShape indexedShape, IShape queryShape)
+            {
+                return queryShape.HasArea && indexedShape.Relate(queryShape).Intersects();
+            }
+        }
 
         // Member variables
         private readonly bool scoreIsMeaningful;
         private readonly bool sourceNeedsArea;
         private readonly bool targetNeedsArea;
-        private readonly String name;
+        private readonly string name;
 
-        protected SpatialOperation(String name, bool scoreIsMeaningful, bool sourceNeedsArea, bool targetNeedsArea)
+
+        protected SpatialOperation(string name, bool scoreIsMeaningful, bool sourceNeedsArea, bool targetNeedsArea)
         {
             this.name = name;
             this.scoreIsMeaningful = scoreIsMeaningful;
@@ -62,7 +167,7 @@ namespace Lucene.Net.Spatial.Query
             list.Add(this);
         }
 
-        public static SpatialOperation Get(String v)
+        public static SpatialOperation Get(string v)
         {
             SpatialOperation op;
             if (!registry.TryGetValue(v, out op) || op == null)
@@ -83,6 +188,8 @@ namespace Lucene.Net.Spatial.Query
             return tst.Any(t => op == t);
         }
 
+        public abstract bool Evaluate(IShape indexedShape, IShape queryShape);
+
         // ================================================= Getters / Setters =============================================
 
         public bool IsScoreIsMeaningful()
@@ -100,15 +207,14 @@ namespace Lucene.Net.Spatial.Query
             return targetNeedsArea;
         }
 
-        public String Name
+        public string Name
         {
             get { return name; }
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return name;
         }
-
     }
 }
