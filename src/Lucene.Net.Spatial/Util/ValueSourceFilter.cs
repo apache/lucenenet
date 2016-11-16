@@ -26,9 +26,12 @@ namespace Lucene.Net.Spatial.Util
     /// <summary>
     /// Filter that matches all documents where a valuesource is
     /// in between a range of <c>min</c> and <c>max</c> inclusive.
+    /// @lucene.internal
     /// </summary>
     public class ValueSourceFilter : Filter
     {
+        //TODO see https://issues.apache.org/jira/browse/LUCENE-4251  (move out of spatial & improve)
+
         readonly Filter startingFilter;
         readonly ValueSource source;
         public readonly double min;
@@ -49,27 +52,26 @@ namespace Lucene.Net.Spatial.Util
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             var values = source.GetValues(null, context);
-            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(context, acceptDocs), values, this);
+            return new ValueSourceFilteredDocIdSet(this, startingFilter.GetDocIdSet(context, acceptDocs), values);
         }
 
-        public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
+        internal class ValueSourceFilteredDocIdSet : FilteredDocIdSet
         {
-            private readonly ValueSourceFilter enclosingFilter;
+            private readonly ValueSourceFilter outerInstance;
             private readonly FunctionValues values;
 
-            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, FunctionValues values, ValueSourceFilter caller)
+            public ValueSourceFilteredDocIdSet(ValueSourceFilter outerInstance, DocIdSet innerSet, FunctionValues values)
                 : base(innerSet)
             {
-                this.enclosingFilter = caller;
+                this.outerInstance = outerInstance;
                 this.values = values;
             }
 
             protected override bool Match(int doc)
             {
                 double val = values.DoubleVal(doc);
-                return val >= enclosingFilter.min && val <= enclosingFilter.max;
+                return val >= outerInstance.min && val <= outerInstance.max;
             }
         }
-
     }
 }

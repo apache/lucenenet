@@ -65,34 +65,6 @@ namespace Lucene.Net.Spatial.Util
             shapeValuesource.CreateWeight(context, searcher);
         }
 
-        internal class BoolDocValuesAnonymousHelper : BoolDocValues
-        {
-            private readonly ShapePredicateValueSource outerInstance;
-            private readonly FunctionValues shapeValues;
-
-            public BoolDocValuesAnonymousHelper(ShapePredicateValueSource outerInstance, FunctionValues shapeValues)
-                : base(outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                this.shapeValues = shapeValues;
-            }
-
-            public override bool BoolVal(int doc)
-            {
-                IShape indexedShape = (IShape)shapeValues.ObjectVal(doc);
-                if (indexedShape == null)
-                    return false;
-                return outerInstance.op.Evaluate(indexedShape, outerInstance.queryShape);
-            }
-
-            public override Explanation Explain(int doc)
-            {
-                Explanation exp = base.Explain(doc);
-                exp.AddDetail(shapeValues.Explain(doc));
-                return exp;
-            }
-        }
-
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             FunctionValues shapeValues = shapeValuesource.GetValues(context, readerContext);
@@ -120,6 +92,33 @@ namespace Lucene.Net.Spatial.Util
             //};
         }
 
+        internal class BoolDocValuesAnonymousHelper : BoolDocValues
+        {
+            private readonly ShapePredicateValueSource outerInstance;
+            private readonly FunctionValues shapeValues;
+
+            public BoolDocValuesAnonymousHelper(ShapePredicateValueSource outerInstance, FunctionValues shapeValues)
+                : base(outerInstance)
+            {
+                this.outerInstance = outerInstance;
+                this.shapeValues = shapeValues;
+            }
+
+            public override bool BoolVal(int doc)
+            {
+                IShape indexedShape = (IShape)shapeValues.ObjectVal(doc);
+                if (indexedShape == null)
+                    return false;
+                return outerInstance.op.Evaluate(indexedShape, outerInstance.queryShape);
+            }
+
+            public override Explanation Explain(int doc)
+            {
+                Explanation exp = base.Explain(doc);
+                exp.AddDetail(shapeValues.Explain(doc));
+                return exp;
+            }
+        }
 
         public override bool Equals(object o)
         {

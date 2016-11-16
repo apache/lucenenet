@@ -48,15 +48,13 @@ namespace Lucene.Net.Spatial
         /// <param name="args">Used in spatial intersection</param>
         /// <param name="field">
         /// This field is used to determine which docs have spatial data via
-        /// <see cref="Org.Apache.Lucene.Search.FieldCache.GetDocsWithField(Org.Apache.Lucene.Index.AtomicReader, string)
-        /// 	">Org.Apache.Lucene.Search.FieldCache.GetDocsWithField(Org.Apache.Lucene.Index.AtomicReader, string)
-        /// 	</see>
-        /// .
+        /// <see cref="FieldCache.GetDocsWithField(AtomicReader, string)"/>.
         /// Passing null will assume all docs have spatial data.
         /// </param>
         public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string field)
         {
             this.field = field;
+
             // TODO consider making SpatialArgs cloneable
             SpatialOperation origOp = args.Operation; //copy so we can restore
             args.Operation = SpatialOperation.Intersects; //temporarily set to intersects
@@ -109,11 +107,13 @@ namespace Lucene.Net.Spatial
                 // intersects filter against the world bounds. So do we add a method to the
                 // strategy, perhaps?  But the strategy can't cache it.
                 docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), field);
+
                 int maxDoc = context.AtomicReader.MaxDoc;
                 if (docsWithField.Length() != maxDoc)
                 {
                     throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
                 }
+
                 if (docsWithField is Bits_MatchNoBits)
                 {
                     return null;//match nothing

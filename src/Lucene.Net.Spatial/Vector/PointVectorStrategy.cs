@@ -27,26 +27,26 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Vector
 {
     /// <summary>
-    /// Simple {@link SpatialStrategy} which represents Points in two numeric {@link DoubleField}s.
+    /// Simple <see cref="SpatialStrategy"/> which represents Points in two numeric <see cref="DoubleField"/>s.
     /// 
     /// Note, currently only Points can be indexed by this Strategy.  At query time, the bounding
-    /// box of the given Shape is used to create {@link NumericRangeQuery}s to efficiently
+    /// box of the given Shape is used to create <see cref="NumericRangeQuery"/>s to efficiently
     /// find Points within the Shape.
     /// 
     /// Due to the simple use of numeric fields, this Strategy provides support for sorting by
-    /// distance through {@link DistanceValueSource}
+    /// distance through <see cref="DistanceValueSource"/>
     /// </summary>
     public class PointVectorStrategy : SpatialStrategy
     {
-        public static String SUFFIX_X = "__x";
-        public static String SUFFIX_Y = "__y";
+        public static string SUFFIX_X = "__x";
+        public static string SUFFIX_Y = "__y";
 
-        private readonly String fieldNameX;
-        private readonly String fieldNameY;
+        private readonly string fieldNameX;
+        private readonly string fieldNameY;
 
         public int precisionStep = 8; // same as solr default
 
-        public PointVectorStrategy(SpatialContext ctx, String fieldNamePrefix)
+        public PointVectorStrategy(SpatialContext ctx, string fieldNamePrefix)
             : base(ctx, fieldNamePrefix)
         {
             this.fieldNameX = fieldNamePrefix + SUFFIX_X;
@@ -79,20 +79,23 @@ namespace Lucene.Net.Spatial.Vector
             if (point != null)
                 return CreateIndexableFields(point);
 
-            throw new InvalidOperationException("Can only index Point, not " + shape);
+            throw new NotSupportedException("Can only index IPoint, not " + shape);
         }
 
+        /// <summary>
+        /// See <see cref="CreateIndexableFields(IShape)"/>
+        /// </summary>
         public Field[] CreateIndexableFields(IPoint point)
         {
             FieldType doubleFieldType = new FieldType(DoubleField.TYPE_NOT_STORED)
-                                            {
-                                                NumericPrecisionStep = precisionStep
-                                            };
-            var f = new Field[]
-                        {
-                            new DoubleField(fieldNameX, point.X, doubleFieldType),
-                            new DoubleField(fieldNameY, point.Y, doubleFieldType)
-                        };
+            {
+                NumericPrecisionStep = precisionStep
+            };
+            var f = new Field[2]
+            {
+                new DoubleField(fieldNameX, point.X, doubleFieldType),
+                new DoubleField(fieldNameY, point.Y, doubleFieldType)
+            };
             return f;
         }
 
@@ -101,22 +104,36 @@ namespace Lucene.Net.Spatial.Vector
             return new DistanceValueSource(this, queryPoint, multiplier);
         }
 
+        public override Filter MakeFilter(SpatialArgs args)
+        {
+            //unwrap the CSQ from makeQuery
+            ConstantScoreQuery csq = MakeQuery(args);
+            Filter filter = csq.Filter;
+            if (filter != null)
+                return filter;
+            else
+                return new QueryWrapperFilter(csq.Query);
+        }
+
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
             if (!SpatialOperation.Is(args.Operation,
-                                     SpatialOperation.Intersects,
-                                     SpatialOperation.IsWithin))
+                SpatialOperation.Intersects,
+                SpatialOperation.IsWithin))
+            {
                 throw new UnsupportedSpatialOperation(args.Operation);
+            }
 
             IShape shape = args.Shape;
-            var bbox = shape as IRectangle;
-            if (bbox != null)
-                return new ConstantScoreQuery(new QueryWrapperFilter(MakeWithin(bbox)));
-
-            var circle = shape as ICircle;
-            if (circle != null)
+            if (shape is IRectangle)
             {
-                bbox = circle.BoundingBox;
+                var bbox = (IRectangle)shape;
+                return new ConstantScoreQuery(MakeWithin(bbox));
+            }
+            else if (shape is ICircle)
+            {
+                var circle = (ICircle)shape;
+                var bbox = circle.BoundingBox;
                 var vsf = new ValueSourceFilter(
                     new QueryWrapperFilter(MakeWithin(bbox)),
                     MakeDistanceValueSource(circle.Center),
@@ -124,29 +141,29 @@ namespace Lucene.Net.Spatial.Vector
                     circle.Radius);
                 return new ConstantScoreQuery(vsf);
             }
-
-            throw new NotSupportedException("Only Rectangles and Circles are currently supported, " +
+            
+            throw new NotSupportedException("Only IRectangles and ICircles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
 
         //TODO this is basically old code that hasn't been verified well and should probably be removed
-        public Search.Query MakeQueryDistanceScore(SpatialArgs args)
+        public Query MakeQueryDistanceScore(SpatialArgs args)
         {
             // For starters, just limit the bbox
             var shape = args.Shape;
             if (!(shape is IRectangle || shape is ICircle))
-                throw new InvalidOperationException("Only Rectangles and Circles are currently supported, found ["
+                throw new NotSupportedException("Only Rectangles and Circles are currently supported, found ["
                     + shape.GetType().Name + "]");//TODO
 
             IRectangle bbox = shape.BoundingBox;
             if (bbox.CrossesDateLine)
             {
-                throw new InvalidOperationException("Crossing dateline not yet supported");
+                throw new NotSupportedException("Crossing dateline not yet supported");
             }
 
             ValueSource valueSource = null;
 
-            Search.Query spatial = null;
+            Query spatial = null;
             SpatialOperation op = args.Operation;
 
             if (SpatialOperation.Is(op,
@@ -160,9 +177,10 @@ namespace Lucene.Net.Spatial.Vector
               SpatialOperation.IsWithin))
             {
                 spatial = MakeWithin(bbox);
-                var circle = args.Shape as ICircle;
-                if (circle != null)
+                if (args.Shape is ICircle)
                 {
+                    var circle = (ICircle)args.Shape;
+
                     // Make the ValueSource
                     valueSource = MakeDistanceValueSource(shape.Center);
 
@@ -190,30 +208,17 @@ namespace Lucene.Net.Spatial.Vector
             {
                 valueSource = MakeDistanceValueSource(shape.Center);
             }
-            Search.Query spatialRankingQuery = new FunctionQuery(valueSource);
+            Query spatialRankingQuery = new FunctionQuery(valueSource);
             var bq = new BooleanQuery();
             bq.Add(spatial, BooleanClause.Occur.MUST);
             bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
             return bq;
-
-        }
-
-        public override Filter MakeFilter(SpatialArgs args)
-        {
-            //unwrap the CSQ from makeQuery
-            ConstantScoreQuery csq = MakeQuery(args);
-            Filter filter = csq.Filter;
-            if (filter != null)
-                return filter;
-            else
-                return new QueryWrapperFilter(csq);
         }
 
         /// <summary>
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
-        /// <param name="bbox"></param>
-        private Search.Query MakeWithin(IRectangle bbox)
+        private Query MakeWithin(IRectangle bbox)
         {
             var bq = new BooleanQuery();
             const BooleanClause.Occur MUST = BooleanClause.Occur.MUST;
@@ -232,7 +237,7 @@ namespace Lucene.Net.Spatial.Vector
             return bq;
         }
 
-        private NumericRangeQuery<Double> RangeQuery(String fieldName, double? min, double? max)
+        private NumericRangeQuery<double> RangeQuery(string fieldName, double? min, double? max)
         {
             return NumericRangeQuery.NewDoubleRange(
                 fieldName,
@@ -246,14 +251,16 @@ namespace Lucene.Net.Spatial.Vector
         /// <summary>
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
-        /// <param name="bbox"></param>
-        private Search.Query MakeDisjoint(IRectangle bbox)
+        private Query MakeDisjoint(IRectangle bbox)
         {
             if (bbox.CrossesDateLine)
-                throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
-            Search.Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
-            Search.Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
-            var bq = new BooleanQuery { { qX, BooleanClause.Occur.MUST_NOT }, { qY, BooleanClause.Occur.MUST_NOT } };
+                throw new NotSupportedException("MakeDisjoint doesn't handle dateline cross");
+            Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
+            Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
+
+            var bq = new BooleanQuery();
+            bq.Add(qX, BooleanClause.Occur.MUST_NOT);
+            bq.Add(qY, BooleanClause.Occur.MUST_NOT);
             return bq;
         }
     }

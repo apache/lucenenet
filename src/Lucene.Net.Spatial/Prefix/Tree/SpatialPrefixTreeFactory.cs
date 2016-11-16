@@ -31,21 +31,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <lucene.experimental></lucene.experimental>
     public abstract class SpatialPrefixTreeFactory
     {
-        private const double DefaultGeoMaxDetailKm = 0.001;
-
+        private const double DefaultGeoMaxDetailKm = 0.001;//1m
         public const string PrefixTree = "prefixTree";
-
         public const string MaxLevels = "maxLevels";
-
         public const string MaxDistErr = "maxDistErr";
 
         protected internal IDictionary<string, string> args;
-
         protected internal SpatialContext ctx;
-
         protected internal int? maxLevels;
 
-        //1m
         /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
         /// 	</summary>
         /// <remarks>
@@ -55,8 +49,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)
         {
             SpatialPrefixTreeFactory instance;
-            string cname = args[PrefixTree];
-            if (cname == null)
+            string cname;
+            if (!args.TryGetValue(PrefixTree, out cname))
             {
                 cname = ctx.IsGeo ? "geohash" : "quad";
             }
@@ -64,23 +58,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 instance = new GeohashPrefixTree.Factory();
             }
+            else if ("quad".Equals(cname, StringComparison.OrdinalIgnoreCase))
+            {
+                instance = new QuadPrefixTree.Factory();
+            }
             else
             {
-                if ("quad".Equals(cname, StringComparison.OrdinalIgnoreCase))
+                try
                 {
-                    instance = new QuadPrefixTree.Factory();
+                    Type c = Type.GetType(cname);
+                    instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c);
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        Type c = Type.GetType(cname);
-                        instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception(string.Empty, e);
-                    }
+                    throw new ApplicationException(string.Empty, e);
                 }
             }
             instance.Init(args, ctx);
@@ -96,15 +87,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal virtual void InitMaxLevels()
         {
-            string mlStr = args[MaxLevels];
-            if (mlStr != null)
+            string mlStr;
+            if (args.TryGetValue(MaxLevels, out mlStr))
             {
                 maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;
-            string maxDetailDistStr = args[MaxDistErr];
-            if (maxDetailDistStr == null)
+            string maxDetailDistStr;
+            if (!args.TryGetValue(MaxDistErr, out maxDetailDistStr))
             {
                 if (!ctx.IsGeo)
                 {
@@ -115,16 +106,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else
             {
-                degrees = double.Parse(maxDetailDistStr);
+                degrees = double.Parse(maxDetailDistStr, CultureInfo.InvariantCulture);
             }
             maxLevels = GetLevelForDistance(degrees);
         }
 
         /// <summary>
         /// Calls
-        /// <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)
-        /// 	</see>
-        /// .
+        /// <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)</see>.
         /// </summary>
         protected internal abstract int GetLevelForDistance(double degrees);
 

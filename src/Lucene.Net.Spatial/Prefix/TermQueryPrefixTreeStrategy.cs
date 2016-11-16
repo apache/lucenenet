@@ -44,11 +44,10 @@ namespace Lucene.Net.Spatial.Prefix
     public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
     {
         public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
-            : base(grid, fieldName, false)
+            : base(grid, fieldName, false)//do not simplify indexed cells
         {
         }
 
-        //do not simplify indexed cells
         public override Filter MakeFilter(SpatialArgs args)
         {
             SpatialOperation op = args.Operation;
@@ -58,9 +57,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
             IShape shape = args.Shape;
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
-            IList<Cell> cells = grid.GetCells(shape, detailLevel, false, true);
-            //no parents
-            //simplify
+            IList<Cell> cells = grid.GetCells(shape, detailLevel, false /*no parents*/, true /*simplify*/);
             var terms = new BytesRef[cells.Count];
             int i = 0;
             foreach (Cell cell in cells)

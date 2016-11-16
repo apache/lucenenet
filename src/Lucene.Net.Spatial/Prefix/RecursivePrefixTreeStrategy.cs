@@ -89,8 +89,9 @@ namespace Lucene.Net.Spatial.Prefix
             }
             else if (op == SpatialOperation.IsWithin)
             {
-                return new WithinPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
-                    , -1); //-1 flag is slower but ensures correct results
+                return new WithinPrefixTreeFilter(
+                    shape, FieldName, grid, detailLevel, prefixGridScanLevel, 
+                    -1); //-1 flag is slower but ensures correct results
             }
             else if (op == SpatialOperation.Contains)
             {

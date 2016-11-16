@@ -93,56 +93,53 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 return ctx.MakeCircle((IPoint)shape, distErr);
             }
+            else if (shape is ICircle)
+            {
+                var circle = (ICircle)shape;
+                double newDist = circle.Radius + distErr;
+                if (ctx.IsGeo && newDist > 180)
+                {
+                    newDist = 180;
+                }
+                return ctx.MakeCircle(circle.Center, newDist);
+            }
             else
             {
-                if (shape is ICircle)
+                IRectangle bbox = shape.BoundingBox;
+                double newMinX = bbox.MinX - distErr;
+                double newMaxX = bbox.MaxX + distErr;
+                double newMinY = bbox.MinY - distErr;
+                double newMaxY = bbox.MaxY + distErr;
+                if (ctx.IsGeo)
                 {
-                    var circle = (ICircle)shape;
-                    double newDist = circle.Radius + distErr;
-                    if (ctx.IsGeo && newDist > 180)
+                    if (newMinY < -90)
                     {
-                        newDist = 180;
+                        newMinY = -90;
                     }
-                    return ctx.MakeCircle(circle.Center, newDist);
-                }
-                else
-                {
-                    IRectangle bbox = shape.BoundingBox;
-                    double newMinX = bbox.MinX - distErr;
-                    double newMaxX = bbox.MaxX + distErr;
-                    double newMinY = bbox.MinY - distErr;
-                    double newMaxY = bbox.MaxY + distErr;
-                    if (ctx.IsGeo)
+                    if (newMaxY > 90)
                     {
-                        if (newMinY < -90)
-                        {
-                            newMinY = -90;
-                        }
-                        if (newMaxY > 90)
-                        {
-                            newMaxY = 90;
-                        }
-                        if (newMinY == -90 || newMaxY == 90 || bbox.Width + 2 * distErr > 360)
-                        {
-                            newMinX = -180;
-                            newMaxX = 180;
-                        }
-                        else
-                        {
-                            newMinX = DistanceUtils.NormLonDEG(newMinX);
-                            newMaxX = DistanceUtils.NormLonDEG(newMaxX);
-                        }
+                        newMaxY = 90;
+                    }
+                    if (newMinY == -90 || newMaxY == 90 || bbox.Width + 2 * distErr > 360)
+                    {
+                        newMinX = -180;
+                        newMaxX = 180;
                     }
                     else
                     {
-                        //restrict to world bounds
-                        newMinX = Math.Max(newMinX, ctx.WorldBounds.MinX);
-                        newMaxX = Math.Min(newMaxX, ctx.WorldBounds.MaxX);
-                        newMinY = Math.Max(newMinY, ctx.WorldBounds.MinY);
-                        newMaxY = Math.Min(newMaxY, ctx.WorldBounds.MaxY);
+                        newMinX = DistanceUtils.NormLonDEG(newMinX);
+                        newMaxX = DistanceUtils.NormLonDEG(newMaxX);
                     }
-                    return ctx.MakeRectangle(newMinX, newMaxX, newMinY, newMaxY);
                 }
+                else
+                {
+                    //restrict to world bounds
+                    newMinX = Math.Max(newMinX, ctx.WorldBounds.MinX);
+                    newMaxX = Math.Min(newMaxX, ctx.WorldBounds.MaxX);
+                    newMinY = Math.Max(newMinY, ctx.WorldBounds.MinY);
+                    newMaxY = Math.Min(newMaxY, ctx.WorldBounds.MaxY);
+                }
+                return ctx.MakeRectangle(newMinX, newMaxX, newMinY, newMaxY);
             }
         }
 
@@ -157,10 +154,9 @@ namespace Lucene.Net.Spatial.Prefix
         private sealed class _VisitorTemplate_121 : VisitorTemplate
         {
             private readonly WithinPrefixTreeFilter outerInstance;
+
             private FixedBitSet inside;
-
             private FixedBitSet outside;
-
             private SpatialRelation visitRelation;
 
             public _VisitorTemplate_121(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context, 
@@ -188,7 +184,6 @@ namespace Lucene.Net.Spatial.Prefix
                 return cell.GetSubCells(outerInstance.bufferedQueryShape).GetEnumerator();
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             protected internal override bool Visit(Cell cell)
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
@@ -236,7 +231,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// Returns true if the provided cell, and all its sub-cells down to
             /// detailLevel all intersect the queryShape.
             /// </remarks>
-            private bool AllCellsIntersectQuery(Cell cell, SpatialRelation relate)
+            private bool AllCellsIntersectQuery(Cell cell, SpatialRelation relate/*cell to query*/)
             {
                 if (relate == SpatialRelation.NULL_VALUE)
                 {

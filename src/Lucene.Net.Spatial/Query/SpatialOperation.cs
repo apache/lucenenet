@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,21 @@ using System.Linq;
 
 namespace Lucene.Net.Spatial.Queries
 {
+    /// <summary>
+    /// A clause that compares a stored geometry to a supplied geometry. For more
+    /// explanation of each operation, consider looking at the source implementation
+    /// of <see cref="Evaluate(IShape, IShape)"/>.
+    /// <para>
+    /// See <a href="http://edndoc.esri.com/arcsde/9.1/general_topics/understand_spatial_relations.htm">
+    /// ESRIs docs on spatial relations</a>
+    /// </para>
+    /// @lucene.experimental
+    /// </summary>
     [Serializable]
     public abstract class SpatialOperation
     {
         // Private registry
-        private static readonly Dictionary<string, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
+        private static readonly IDictionary<string, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
         private static readonly IList<SpatialOperation> list = new List<SpatialOperation>();
 
         // Geometry Operations
@@ -163,7 +174,7 @@ namespace Lucene.Net.Spatial.Queries
             this.sourceNeedsArea = sourceNeedsArea;
             this.targetNeedsArea = targetNeedsArea;
             registry[name] = this;
-            registry[name.ToUpper(CultureInfo.CreateSpecificCulture("en-US"))] = this;
+            registry[name.ToUpper(CultureInfo.InvariantCulture)] = this;
             list.Add(this);
         }
 
@@ -172,15 +183,15 @@ namespace Lucene.Net.Spatial.Queries
             SpatialOperation op;
             if (!registry.TryGetValue(v, out op) || op == null)
             {
-                if (!registry.TryGetValue(v.ToUpper(CultureInfo.CreateSpecificCulture("en-US")), out op) || op == null)
+                if (!registry.TryGetValue(v.ToUpper(CultureInfo.InvariantCulture), out op) || op == null)
                     throw new ArgumentException("Unknown Operation: " + v, "v");
             }
             return op;
         }
 
-        public static IList<SpatialOperation> Values()
+        public static IList<SpatialOperation> Values
         {
-            return list;
+            get { return list; }
         }
 
         public static bool Is(SpatialOperation op, params SpatialOperation[] tst)
@@ -188,26 +199,30 @@ namespace Lucene.Net.Spatial.Queries
             return tst.Any(t => op == t);
         }
 
+        /// <summary>
+        /// Returns whether the relationship between indexedShape and queryShape is
+        /// satisfied by this operation.
+        /// </summary>
         public abstract bool Evaluate(IShape indexedShape, IShape queryShape);
 
         // ================================================= Getters / Setters =============================================
 
-        public bool IsScoreIsMeaningful()
+        public virtual bool IsScoreIsMeaningful
         {
-            return scoreIsMeaningful;
+            get { return scoreIsMeaningful; }
         }
 
-        public bool IsSourceNeedsArea()
+        public virtual bool IsSourceNeedsArea
         {
-            return sourceNeedsArea;
+            get { return sourceNeedsArea; }
         }
 
-        public bool IsTargetNeedsArea()
+        public virtual bool IsTargetNeedsArea
         {
-            return targetNeedsArea;
+            get { return targetNeedsArea; }
         }
 
-        public string Name
+        public virtual string Name
         {
             get { return name; }
         }

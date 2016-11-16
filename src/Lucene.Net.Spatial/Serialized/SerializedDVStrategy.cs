@@ -136,11 +136,11 @@ namespace Lucene.Net.Spatial.Serialized
             return new PredicateValueSourceFilter(predicateValueSource);
         }
 
-        /**
-        * Provides access to each shape per document as a ValueSource in which
-        * {@link org.apache.lucene.queries.function.FunctionValues#objectVal(int)} returns a {@link
-        * Shape}.
-        */ //TODO raise to SpatialStrategy
+        /// <summary>
+        /// Provides access to each shape per document as a ValueSource in which
+        /// <see cref="FunctionValues.ObjectVal(int)"/> returns a <see cref="IShape"/>.
+        /// </summary>
+        //TODO raise to SpatialStrategy
         public virtual ValueSource MakeShapeValueSource()
         {
             return new ShapeDocValueSource(this, FieldName, ctx.BinaryCodec);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Spatial.Serialized
 
         /// <summary>
         /// This filter only supports returning a DocSet with a GetBits(). If you try to grab the
-        /// iterator then you'll get an UnsupportedOperationException.
+        /// iterator then you'll get a <see cref="NotSupportedException"/>.
         /// </summary>
         internal class PredicateValueSourceFilter : Filter
         {
@@ -276,10 +276,10 @@ namespace Lucene.Net.Spatial.Serialized
             }
         }//PredicateValueSourceFilter
 
-        /**
-         * Implements a ValueSource by deserializing a Shape in from BinaryDocValues using BinaryCodec.
-         * @see #makeShapeValueSource()
-         */
+        /// <summary>
+        /// Implements a <see cref="ValueSource"/> by deserializing a <see cref="IShape"/> in from <see cref="BinaryDocValues"/> using <see cref="BinaryCodec"/>.
+        /// </summary>
+        /// <seealso cref="MakeShapeValueSource()"/>
         internal class ShapeDocValueSource : ValueSource
         {
             private readonly SerializedDVStrategy outerInstance;

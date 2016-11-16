@@ -75,7 +75,6 @@ namespace Lucene.Net.Spatial.Prefix
                 return results;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             protected internal override bool Visit(Cell cell)
             {
                 if (cell.GetShapeRel() == SpatialRelation.WITHIN || cell.Level == outerInstance.detailLevel)
@@ -86,13 +85,11 @@ namespace Lucene.Net.Spatial.Prefix
                 return true;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             protected internal override void VisitLeaf(Cell cell)
             {
                 CollectDocs(results);
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             protected internal override void VisitScanned(Cell cell)
             {
                 if (outerInstance.queryShape.Relate(cell.GetShape()).Intersects())

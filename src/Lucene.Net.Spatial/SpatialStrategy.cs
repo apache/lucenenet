@@ -28,11 +28,26 @@ namespace Lucene.Net.Spatial
 {
     /// <summary>
     /// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
-    /// <p/>
+    /// <para/>
+    /// Different implementations will support different features. A strategy should
+    /// document these common elements:
+    /// <list type="bullet">
+    ///     <item>Can it index more than one shape per field?</item>
+    ///     <item>What types of shapes can be indexed?</item>
+    ///     <item>What types of query shapes can be used?</item>
+    ///     <item>What types of query operations are supported? This might vary per shape.</item>
+    ///     <item>Does it use the <see cref="FieldCache"/>, or some other type of cache?  When?</item>
+    /// </list>
+    /// If a strategy only supports certain shapes at index or query time, then in
+    /// general it will throw an exception if given an incompatible one.  It will not
+    /// be coerced into compatibility.
+    /// <para/>
     /// Note that a SpatialStrategy is not involved with the Lucene stored field values of shapes, which is
     /// immaterial to indexing and search.
-    /// <p/>
+    /// <para/>
     /// Thread-safe.
+    /// 
+    /// @lucene.experimental
     /// </summary>
     public abstract class SpatialStrategy
     {
@@ -42,8 +57,6 @@ namespace Lucene.Net.Spatial
         /// <summary>
         /// Constructs the spatial strategy with its mandatory arguments.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="fieldName"> </param>
         protected SpatialStrategy(SpatialContext ctx, string fieldName)
         {
             if (ctx == null)
@@ -54,7 +67,7 @@ namespace Lucene.Net.Spatial
             this.fieldName = fieldName;
         }
 
-        public SpatialContext SpatialContext
+        public virtual SpatialContext SpatialContext
         {
             get { return ctx; }
         }
@@ -64,7 +77,7 @@ namespace Lucene.Net.Spatial
         /// fields needed internally.
         /// </summary>
         /// <returns></returns>
-        public String FieldName
+        public virtual string FieldName
         {
             get { return fieldName; }
         }
@@ -90,7 +103,7 @@ namespace Lucene.Net.Spatial
         /// </summary>
         /// <param name="queryPoint"></param>
         /// <returns></returns>
-        public ValueSource MakeDistanceValueSource(IPoint queryPoint)
+        public virtual ValueSource MakeDistanceValueSource(IPoint queryPoint)
         {
             return MakeDistanceValueSource(queryPoint, 1.0);
         }
@@ -136,8 +149,6 @@ namespace Lucene.Net.Spatial
         /// scores will be 1 for indexed points at the center of the query shape and as
         /// low as ~0.1 at its furthest edges.
         /// </summary>
-        /// <param name="queryShape"></param>
-        /// <returns></returns>
         public ValueSource MakeRecipDistanceValueSource(IShape queryShape)
         {
             IRectangle bbox = queryShape.BoundingBox;
@@ -145,7 +156,7 @@ namespace Lucene.Net.Spatial
                 ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
             double distToEdge = diagonalDist * 0.5;
             float c = (float)distToEdge * 0.1f; //one tenth
-            return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.Center), 1f, c, c);
+            return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.Center, 1.0), 1f, c, c);
         }
 
         public override string ToString()

@@ -14,15 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
-#if NET35
-using Lucene.Net.Support;
-#endif
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -30,29 +26,27 @@ namespace Lucene.Net.Spatial.Util
     /// Provides access to a
     /// <see cref="ShapeFieldCache{T}">ShapeFieldCache&lt;T&gt;</see>
     /// for a given
-    /// <see cref="Lucene.Net.Index.AtomicReader">Lucene.Net.Index.AtomicReader
-    /// 	</see>
-    /// .
+    /// <see cref="Lucene.Net.Index.AtomicReader">Lucene.Net.Index.AtomicReader</see>.
+    /// 
     /// If a Cache does not exist for the Reader, then it is built by iterating over
     /// the all terms for a given field, reconstructing the Shape from them, and adding
     /// them to the Cache.
     /// </summary>
-    /// <lucene.internal></lucene.internal>
+    /// @lucene.internal
     public abstract class ShapeFieldCacheProvider<T>
         where T : IShape
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 
 #if !NET35
-        private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
-            new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>(); // WeakHashMap
+        private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
+            new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
 #else
 	    private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
 	        new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
 #endif
 
         protected internal readonly int defaultSize;
-
         protected internal readonly string shapeField;
 
         public ShapeFieldCacheProvider(string shapeField, int defaultSize)
@@ -66,7 +60,6 @@ namespace Lucene.Net.Spatial.Util
 
         private readonly object locker = new object();
 
-        /// <exception cref="System.IO.IOException"></exception>
         public virtual ShapeFieldCache<T> GetCache(AtomicReader reader)
         {
             lock (locker)
@@ -104,7 +97,7 @@ namespace Lucene.Net.Spatial.Util
                         term = te.Next();
                     }
                 }
-                sidx.Add(reader, idx);
+                sidx[reader] = idx;
                 /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
                 log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;

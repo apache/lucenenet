@@ -28,7 +28,10 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Vector
 {
     /// <summary>
-    /// An implementation of the Lucene ValueSource model that returns the distance.
+    /// An implementation of the Lucene ValueSource model that returns the distance
+    /// for a <see cref="PointVectorStrategy"/>.
+    /// 
+    /// @lucene.internal
     /// </summary>
     public class DistanceValueSource : ValueSource
     {
@@ -36,6 +39,9 @@ namespace Lucene.Net.Spatial.Vector
         private readonly PointVectorStrategy strategy;
         private readonly double multiplier;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public DistanceValueSource(PointVectorStrategy strategy, IPoint from, double multiplier)
         {
             this.strategy = strategy;
@@ -43,60 +49,46 @@ namespace Lucene.Net.Spatial.Vector
             this.multiplier = multiplier;
         }
 
+        /// <summary>
+        /// Returns the ValueSource description.
+        /// </summary>
         public override string Description
         {
             get { return "DistanceValueSource(" + strategy + ", " + from + ")"; }
         }
 
+        /// <summary>
+        /// Returns the FunctionValues used by the function query.
+        /// </summary>
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             return new DistanceFunctionValue(this, readerContext.AtomicReader);
         }
 
-        public override bool Equals(object o)
-        {
-            if (this == o) return true;
-
-            var that = o as DistanceValueSource;
-            if (that == null) return false;
-
-            if (!from.Equals(that.from)) return false;
-            if (!strategy.Equals(that.strategy)) return false;
-
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return from.GetHashCode();
-        }
-
         #region Nested type: DistanceFunctionValues
 
-        public class DistanceFunctionValue : FunctionValues
+        internal class DistanceFunctionValue : FunctionValues
         {
+            private readonly DistanceValueSource outerInstance;
             private readonly IDistanceCalculator calculator;
-            private readonly DistanceValueSource enclosingInstance;
             private readonly IPoint from;
             private readonly double nullValue;
-            private readonly double multiplier;
 
             private readonly FieldCache.Doubles ptX, ptY;
             private readonly Bits validX, validY;
 
-            public DistanceFunctionValue(DistanceValueSource enclosingInstance, AtomicReader reader)
+            public DistanceFunctionValue(DistanceValueSource outerInstance, AtomicReader reader)
             {
-                this.enclosingInstance = enclosingInstance;
+                this.outerInstance = outerInstance;
 
-                ptX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameX, true);
-                ptY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameY, true);
-                validX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameX);
-                validY = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameY);
+                ptX = FieldCache.DEFAULT.GetDoubles(reader, outerInstance.strategy.FieldNameX, true);
+                ptY = FieldCache.DEFAULT.GetDoubles(reader, outerInstance.strategy.FieldNameY, true);
+                validX = FieldCache.DEFAULT.GetDocsWithField(reader, outerInstance.strategy.FieldNameX);
+                validY = FieldCache.DEFAULT.GetDocsWithField(reader, outerInstance.strategy.FieldNameY);
 
-                from = enclosingInstance.from;
-                multiplier = enclosingInstance.multiplier;
-                calculator = enclosingInstance.strategy.SpatialContext.DistCalc;
-                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo ? 180 * multiplier : double.MaxValue);
+                from = outerInstance.from;
+                calculator = outerInstance.strategy.SpatialContext.DistCalc;
+                nullValue = (outerInstance.strategy.SpatialContext.IsGeo ? 180 * outerInstance.multiplier : double.MaxValue);
             }
 
             public override float FloatVal(int doc)
@@ -110,17 +102,37 @@ namespace Lucene.Net.Spatial.Vector
                 if (validX.Get(doc))
                 {
                     Debug.Assert(validY.Get(doc));
-                    return calculator.Distance(from, ptX.Get(doc), ptY.Get(doc)) * multiplier;
+                    return calculator.Distance(outerInstance.from, ptX.Get(doc), ptY.Get(doc)) * outerInstance.multiplier;
                 }
                 return nullValue;
             }
 
             public override string ToString(int doc)
             {
-                return enclosingInstance.Description + "=" + FloatVal(doc);
+                return outerInstance.Description + "=" + FloatVal(doc);
             }
         }
 
         #endregion
+
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
+            if (o == null || GetType() != o.GetType()) return false;
+
+            var that = o as DistanceValueSource;
+            if (that == null) return false;
+
+            if (!from.Equals(that.from)) return false;
+            if (!strategy.Equals(that.strategy)) return false;
+            if (multiplier != that.multiplier) return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return from.GetHashCode();
+        }
     }
 }

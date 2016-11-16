@@ -60,10 +60,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// When set via getSubCells(filter), it is the relationship between this cell
         /// and the given shape filter.
         /// </summary>
-        /// <remarks>
-        /// When set via getSubCells(filter), it is the relationship between this cell
-        /// and the given shape filter.
-        /// </remarks>
         protected internal SpatialRelation shapeRel = SpatialRelation.NULL_VALUE;//set in getSubCells(filter), and via setLeaf().
 
         /// <summary>Always false for points.</summary>
@@ -85,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             this.token = token;
             if (token.Length > 0 && token[token.Length - 1] == (char)LEAF_BYTE)
             {
-                this.token = token.Substring(0, token.Length - 1);
+                this.token = token.Substring(0, (token.Length - 1) - 0);
                 SetLeaf();
             }
             if (Level == 0)
@@ -107,15 +103,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             B_fixLeaf();
         }
 
-        #region IComparable<Cell> Members
-
-        public virtual int CompareTo(Cell o)
-        {
-            return string.CompareOrdinal(TokenString, o.TokenString);
-        }
-
-        #endregion
-
         public virtual void Reset(byte[] bytes, int off, int len)
         {
             Debug.Assert(Level != 0);
@@ -124,23 +111,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             this.bytes = bytes;
             b_off = off;
             b_len = len;
-            B_fixLeaf();
-        }
-
-        public virtual void Reset(string token)
-        {
-            Debug.Assert(Level != 0);
-            this.token = token;
-            shapeRel = SpatialRelation.NULL_VALUE;
-
-            //converting string t0 byte[]
-            //bytes = Encoding.UTF8.GetBytes(token);
-            BytesRef utf8Result = new BytesRef(token.Length);
-            UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-            bytes = utf8Result.Bytes;
-
-            b_off = 0;
-            b_len = bytes.Length;
             B_fixLeaf();
         }
 
@@ -181,9 +151,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             leaf = true;
         }
 
-        /*
-         * Note: doesn't contain a trailing leaf byte.
-         */
+        /// <summary>
+        /// Note: doesn't contain a trailing leaf byte.
+        /// </summary>
         public virtual String TokenString
         {
             get
@@ -195,7 +165,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>Note: doesn't contain a trailing leaf byte.</summary>
-        /// <remarks>Note: doesn't contain a trailing leaf byte.</remarks>
         public virtual byte[] GetTokenBytes()
         {
             if (bytes != null)
@@ -207,11 +176,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else
             {
-                //converting string t0 byte[]
-                //bytes = Encoding.UTF8.GetBytes(token);
-                BytesRef utf8Result = new BytesRef(token.Length);
-                UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-                bytes = utf8Result.Bytes;
+                bytes = Encoding.UTF8.GetBytes(token);
                 b_off = 0;
                 b_len = bytes.Length;
             }
@@ -322,6 +287,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             return GetShape().Center;
         }
+
+        #region IComparable<Cell> Members
+
+        public virtual int CompareTo(Cell o)
+        {
+            return string.CompareOrdinal(TokenString, o.TokenString);
+        }
+
+        #endregion
 
         #region Equality overrides
 

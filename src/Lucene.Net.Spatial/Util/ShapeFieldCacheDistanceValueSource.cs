@@ -27,13 +27,18 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Util
 {
     /// <summary>
-    /// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
+    /// An implementation of the Lucene ValueSource that returns the spatial distance
+    /// between an input point and a document's points in
+    /// <see cref="ShapeFieldCacheProvider{T}"/>. The shortest distance is returned if a
+    /// document has more than one point.
+    /// 
+    /// @lucene.internal
     /// </summary>
     public class ShapeFieldCacheDistanceValueSource : ValueSource
     {
-        private readonly ShapeFieldCacheProvider<IPoint> provider;
         private readonly SpatialContext ctx;
         private readonly IPoint from;
+        private readonly ShapeFieldCacheProvider<IPoint> provider;
         private readonly double multiplier;
 
         public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
@@ -45,7 +50,17 @@ namespace Lucene.Net.Spatial.Util
             this.multiplier = multiplier;
         }
 
-        public class CachedDistanceFunctionValue : FunctionValues
+        public override string Description
+        {
+            get { return GetType().Name + "(" + provider + ", " + from + ")"; }
+        }
+
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
+        }
+
+        internal class CachedDistanceFunctionValue : FunctionValues
         {
             private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
             private readonly ShapeFieldCache<IPoint> cache;
@@ -89,22 +104,10 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override string Description
-        {
-            get
-            {
-                return GetType().Name + "(" + provider + ", " + from + ")";
-            }
-        }
-
-        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-        {
-            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
-        }
-
         public override bool Equals(object o)
         {
             if (this == o) return true;
+            if (o == null || GetType() != o.GetType()) return false;
 
             var that = o as ShapeFieldCacheDistanceValueSource;
 
@@ -112,6 +115,7 @@ namespace Lucene.Net.Spatial.Util
             if (!ctx.Equals(that.ctx)) return false;
             if (!from.Equals(that.from)) return false;
             if (!provider.Equals(that.provider)) return false;
+            if (multiplier != that.multiplier) return false;
 
             return true;
         }

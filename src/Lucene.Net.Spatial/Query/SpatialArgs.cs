@@ -25,7 +25,10 @@ namespace Lucene.Net.Spatial.Queries
     {
         public static readonly double DEFAULT_DISTERRPCT = 0.025d;
 
-        public SpatialOperation Operation { get; set; }
+        private SpatialOperation operation;
+        private IShape shape;
+        private double? distErrPct;
+        private double? distErr;
 
         public SpatialArgs(SpatialOperation operation, IShape shape)
         {
@@ -67,13 +70,13 @@ namespace Lucene.Net.Spatial.Queries
 
         /// <summary>
         /// Gets the error distance that specifies how precise the query shape is. This
-        /// looks at {@link #getDistErr()}, {@link #getDistErrPct()}, and {@code
-        /// defaultDistErrPct}.
+        /// looks at <see cref="DistErr"/>, <see cref="DistErrPct"/>, and 
+        /// <paramref name="defaultDistErrPct"/>.
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="defaultDistErrPct">0 to 0.5</param>
         /// <returns>>= 0</returns>
-        public double ResolveDistErr(SpatialContext ctx, double defaultDistErrPct)
+        public virtual double ResolveDistErr(SpatialContext ctx, double defaultDistErrPct)
         {
             if (DistErr != null)
                 return DistErr.Value;
@@ -86,7 +89,7 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         public void Validate()
         {
-            if (Operation.IsTargetNeedsArea() && !Shape.HasArea)
+            if (Operation.IsTargetNeedsArea && !Shape.HasArea)
             {
                 throw new ArgumentException(Operation + " only supports geometry with area");
             }
@@ -97,7 +100,7 @@ namespace Lucene.Net.Spatial.Queries
             }
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return SpatialArgsParser.WriteSpatialArgs(this);
         }
@@ -106,7 +109,17 @@ namespace Lucene.Net.Spatial.Queries
         // Getters & Setters
         //------------------------------------------------
 
-        public IShape Shape { get; set; }
+        public virtual SpatialOperation Operation
+        {
+            get { return operation; }
+            set { operation = value; }
+        }
+
+        public virtual IShape Shape
+        {
+            get { return shape; }
+            set { shape = value; }
+        }
 
         /// <summary>
         /// A measure of acceptable error of the shape as a fraction. This effectively
@@ -115,22 +128,27 @@ namespace Lucene.Net.Spatial.Queries
         /// The default is {@link #DEFAULT_DIST_PRECISION}
         /// </summary>
         /// <returns>0 to 0.5</returns>
-        public double? DistErrPct
+        public virtual double? DistErrPct
         {
             get { return distErrPct; }
             set
             {
                 if (value != null)
-                    distErrPct = value.Value;
+                {
+                    distErrPct = value;
+                }
             }
         }
-        private double? distErrPct;
 
         /// <summary>
         /// The acceptable error of the shape.  This effectively inflates the
         /// size of the shape but should not shrink it.
         /// </summary>
         /// <returns>>= 0</returns>
-        public double? DistErr { get; set; }
+        public virtual double? DistErr
+        {
+            get { return distErr; }
+            set { distErr = value; }
+        }
     }
 }

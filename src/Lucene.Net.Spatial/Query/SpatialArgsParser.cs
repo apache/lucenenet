@@ -20,27 +20,44 @@ using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Support;
 using Spatial4n.Core.Context;
+using Spatial4n.Core.Exceptions;
+using System.Linq;
+using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Queries
 {
+    /// <summary>
+    /// Parses a string that usually looks like "OPERATION(SHAPE)" into a {@link SpatialArgs}
+    /// object. The set of operations supported are defined in {@link SpatialOperation}, such
+    /// as "Intersects" being a common one. The shape portion is defined by WKT {@link com.spatial4j.core.io.WktShapeParser},
+    /// but it can be overridden/customized via {@link #parseShape(String, com.spatial4j.core.context.SpatialContext)}.
+    /// There are some optional name-value pair parameters that follow the closing parenthesis.  Example:
+    /// <code>
+    ///   Intersects(ENVELOPE(-10,-8,22,20)) distErrPct=0.025
+    /// </code>
+    /// <para/>
+    /// In the future it would be good to support something at least semi-standardized like a
+    /// variant of <a href="http://docs.geoserver.org/latest/en/user/filter/ecql_reference.html#spatial-predicate">
+    ///   [E]CQL</a>.
+    ///   
+    /// @lucene.experimental
+    /// </summary>
     public class SpatialArgsParser
     {
-        public const String DIST_ERR_PCT = "distErrPct";
-        public const String DIST_ERR = "distErr";
+        public const string DIST_ERR_PCT = "distErrPct";
+        public const string DIST_ERR = "distErr";
 
         /// <summary>
         /// Writes a close approximation to the parsed input format.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static String WriteSpatialArgs(SpatialArgs args)
+        public static string WriteSpatialArgs(SpatialArgs args)
         {
             var str = new StringBuilder();
             str.Append(args.Operation.Name);
             str.Append('(');
             str.Append(args.Shape);
             if (args.DistErrPct != null)
-                str.Append(" distErrPct=").Append(String.Format("{0:0.00}%", args.DistErrPct * 100d));
+                str.Append(" distErrPct=").Append(string.Format("{0:0.00}%", args.DistErrPct * 100d));
             if (args.DistErr != null)
                 str.Append(" distErr=").Append(args.DistErr);
             str.Append(')');
@@ -50,45 +67,43 @@ namespace Lucene.Net.Spatial.Queries
         /// <summary>
         /// Parses a string such as "Intersects(-10,20,-8,22) distErrPct=0.025".
         /// </summary>
-        /// <param name="v"></param>
-        /// <param name="ctx"></param>
-        /// <returns></returns>
-        public SpatialArgs Parse(String v, SpatialContext ctx)
+        /// <param name="v">The string to parse. Mandatory.</param>
+        /// <param name="ctx">The spatial context. Mandatory.</param>
+        /// <returns>Not null.</returns>
+        /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown</exception>
+        /// <exception cref="ParseException">If there is a problem parsing the string</exception>
+        /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape</exception>
+        public SpatialArgs Parse(string v, SpatialContext ctx)
         {
             int idx = v.IndexOf('(');
             int edx = v.LastIndexOf(')');
 
             if (idx < 0 || idx > edx)
             {
-                throw new ArgumentException("missing parens: " + v);
+                throw new ParseException("missing parens: " + v, -1);
             }
 
-            SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx).Trim());
+            SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx - 0).Trim());
 
             //Substring in .NET is (startPosn, length), But in Java it's (startPosn, endPosn)
             //see http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/String.html#substring(int, int)
-            String body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
+            string body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
             if (body.Length < 1)
             {
-                throw new ArgumentException("missing body : " + v);
+                throw new ParseException("missing body : " + v, idx + 1);
             }
 
-            var shape = ctx.ReadShape(body);
-            var args = new SpatialArgs(op, shape);
+            var shape = ParseShape(body, ctx);
+            var args = NewSpatialArgs(op, shape);
 
             if (v.Length > (edx + 1))
             {
                 body = v.Substring(edx + 1).Trim();
                 if (body.Length > 0)
                 {
-                    Dictionary<String, String> aa = ParseMap(body);
-                    args.DistErrPct = ReadDouble(aa[DIST_ERR_PCT]);
-                    aa.Remove(DIST_ERR_PCT);
-
-                    args.DistErr = ReadDouble(aa[DIST_ERR]);
-                    aa.Remove(DIST_ERR);
-
-                    if (aa.Count != 0)
+                    IDictionary<string, string> aa = ParseMap(body);
+                    ReadNameValuePairs(args, aa);
+                    if (!aa.Any())
                     {
                         throw new ArgumentException("unused parameters: " + aa);
                     }
@@ -98,13 +113,35 @@ namespace Lucene.Net.Spatial.Queries
             return args;
         }
 
-        protected static double? ReadDouble(String v)
+        protected virtual SpatialArgs NewSpatialArgs(SpatialOperation op, IShape shape)
+        {
+            return new SpatialArgs(op, shape);
+        }
+
+        protected virtual void ReadNameValuePairs(SpatialArgs args, IDictionary<string, string> nameValPairs)
+        {
+            string distErrPctStr, distErrStr;
+            nameValPairs.TryGetValue(DIST_ERR_PCT, out distErrPctStr);
+            nameValPairs.TryGetValue(DIST_ERR, out distErrStr);
+            args.DistErrPct = ReadDouble(distErrPctStr);
+            nameValPairs.Remove(DIST_ERR_PCT);
+            args.DistErr = ReadDouble(distErrStr);
+            nameValPairs.Remove(DIST_ERR);
+        }
+
+        protected virtual IShape ParseShape(string str, SpatialContext ctx) 
+        {
+            //return ctx.readShape(str);//still in Spatial4n 0.4 but will be deleted
+            return ctx.ReadShapeFromWkt(str);
+        }
+
+        protected static double? ReadDouble(string v)
         {
             double val;
             return double.TryParse(v, out val) ? val : (double?)null;
         }
 
-        protected static bool ReadBool(String v, bool defaultValue)
+        protected static bool ReadBool(string v, bool defaultValue)
         {
             bool ret;
             return bool.TryParse(v, out ret) ? ret : defaultValue;
@@ -114,21 +151,19 @@ namespace Lucene.Net.Spatial.Queries
         /// Parses "a=b c=d f" (whitespace separated) into name-value pairs. If there
         /// is no '=' as in 'f' above then it's short for f=f.
         /// </summary>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        protected static Dictionary<String, String> ParseMap(String body)
+        protected static IDictionary<string, string> ParseMap(string body)
         {
-            var map = new Dictionary<String, String>();
+            var map = new Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(body, " \n\t");
 
             while (st.HasMoreTokens())
             {
-                String a = st.NextToken();
+                string a = st.NextToken();
                 int idx = a.IndexOf('=');
                 if (idx > 0)
                 {
-                    String k = a.Substring(0, idx);
-                    String v = a.Substring(idx + 1);
+                    string k = a.Substring(0, idx - 0);
+                    string v = a.Substring(idx + 1);
                     map[k] = v;
                 }
                 else

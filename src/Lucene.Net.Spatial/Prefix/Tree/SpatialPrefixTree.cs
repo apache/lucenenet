@@ -111,10 +111,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return Math.Sqrt(width * width + height * height);
         }
 
-        [System.NonSerialized]
-        private Cell worldCell;
+        [NonSerialized]
+        private Cell worldCell;//cached
 
-        //cached
         /// <summary>Returns the level 0 cell which encompasses all spatial data.</summary>
         /// <remarks>
         /// Returns the level 0 cell which encompasses all spatial data. Equivalent to
@@ -223,9 +222,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (cell.Level == detailLevel)
             {
-                cell.SetLeaf();
+                cell.SetLeaf();//FYI might already be a leaf
             }
-            //FYI might already be a leaf
             if (cell.IsLeaf())
             {
                 result.Add(cell);
@@ -235,6 +233,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 result.Add(cell);
             }
+
             ICollection<Cell> subCells = cell.GetSubCells(shape);
             int leaves = 0;
             foreach (Cell subCell in subCells)
@@ -247,20 +246,19 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             //can we simplify?
             if (simplify && leaves == cell.GetSubCellsSize() && cell.Level != 0)
             {
+                //Optimization: substitute the parent as a leaf instead of adding all
+                // children as leaves
+
+                //remove the leaves
                 do
                 {
-                    //Optimization: substitute the parent as a leaf instead of adding all
-                    // children as leaves
-                    //remove the leaves
-                    result.RemoveAt(result.Count - 1);
+                    result.RemoveAt(result.Count - 1);//remove last
                 }
                 while (--leaves > 0);
-                //remove last
                 //add cell as the leaf
                 cell.SetLeaf();
-                if (!inclParents)
+                if (!inclParents)// otherwise it was already added up above
                 {
-                    // otherwise it was already added up above
                     result.Add(cell);
                 }
                 return true;

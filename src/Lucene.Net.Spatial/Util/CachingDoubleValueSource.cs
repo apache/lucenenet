@@ -30,9 +30,9 @@ namespace Lucene.Net.Spatial.Util
     /// </summary>
     public class CachingDoubleValueSource : ValueSource
     {
-        protected readonly IDictionary<int, double> cache;
         protected readonly ValueSource source;
-
+        protected readonly IDictionary<int, double> cache;
+        
         public CachingDoubleValueSource(ValueSource source)
         {
             this.source = source;
@@ -51,26 +51,9 @@ namespace Lucene.Net.Spatial.Util
             return new CachingDoubleFunctionValue(@base, vals, cache);
         }
 
-        public override bool Equals(object o)
-        {
-            if (this == o) return true;
-
-            var that = o as CachingDoubleValueSource;
-
-            if (that == null) return false;
-            if (source != null ? !source.Equals(that.source) : that.source != null) return false;
-
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return source != null ? source.GetHashCode() : 0;
-        }
-
         #region Nested type: CachingDoubleFunctionValue
 
-        public class CachingDoubleFunctionValue : FunctionValues
+        internal class CachingDoubleFunctionValue : FunctionValues
         {
             private readonly IDictionary<int, double> cache;
             private readonly int docBase;
@@ -107,5 +90,22 @@ namespace Lucene.Net.Spatial.Util
         }
 
         #endregion
+
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
+
+            var that = o as CachingDoubleValueSource;
+
+            if (that == null) return false;
+            if (source != null ? !source.Equals(that.source) : that.source != null) return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return source != null ? source.GetHashCode() : 0;
+        }
     }
 }

@@ -97,7 +97,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected internal readonly bool simplifyIndexedCells;
         protected internal int defaultFieldValuesArrayLen = 2;
-        protected internal double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;
+        protected internal double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;// [ 0 TO 0.5 ]
 
         public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells)
             : base(grid.SpatialContext, fieldName)
@@ -155,7 +155,7 @@ namespace Lucene.Net.Spatial.Prefix
         public virtual Field[] CreateIndexableFields(IShape shape, double distErr)
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
-            IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);
+            IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);//intermediates cells
 
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
@@ -175,10 +175,7 @@ namespace Lucene.Net.Spatial.Prefix
             FieldType.Freeze();
         }
 
-        /// <summary>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
-        /// 	</summary>
-        /// <remarks>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
-        /// 	</remarks>
+        /// <summary>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.</summary>
         internal sealed class CellTokenStream : TokenStream
         {
             private readonly ICharTermAttribute termAtt;
@@ -191,7 +188,7 @@ namespace Lucene.Net.Spatial.Prefix
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            internal string nextTokenStringNeedingLeaf;
+            internal string nextTokenStringNeedingLeaf = null;
 
             public override bool IncrementToken()
             {

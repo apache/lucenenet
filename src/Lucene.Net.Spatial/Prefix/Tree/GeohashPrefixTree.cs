@@ -35,27 +35,45 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <lucene.experimental></lucene.experimental>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
+        #region Nested type: Factory
+
+        /// <summary>
+        /// Factory for creating
+        /// <see cref="GeohashPrefixTree">GeohashPrefixTree</see>
+        /// instances with useful defaults
+        /// </summary>
+        public class Factory : SpatialPrefixTreeFactory
+        {
+            protected internal override int GetLevelForDistance(double degrees)
+            {
+                var grid = new GeohashPrefixTree(ctx, GeohashPrefixTree.MaxLevelsPossible);
+                return grid.GetLevelForDistance(degrees);
+            }
+
+            protected internal override SpatialPrefixTree NewSPT()
+            {
+                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : GeohashPrefixTree.MaxLevelsPossible);
+            }
+        }
+
+        #endregion
+
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
         {
             IRectangle bounds = ctx.WorldBounds;
             if (bounds.MinX != -180)
             {
-                throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " +
-                                            bounds);
+                throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " + bounds);
             }
             int Maxp = MaxLevelsPossible;
             if (maxLevels <= 0 || maxLevels > Maxp)
             {
-                throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels
-                    );
+                throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels);
             }
         }
 
-        /// <summary>Any more than this and there's no point (double lat & lon are the same).
-        /// 	</summary>
-        /// <remarks>Any more than this and there's no point (double lat & lon are the same).
-        /// 	</remarks>
+        /// <summary>Any more than this and there's no point (double lat & lon are the same).</summary>
         public static int MaxLevelsPossible
         {
             get { return GeohashUtils.MAX_PRECISION; }
@@ -65,9 +83,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (dist == 0)
             {
-                return maxLevels;
+                return maxLevels;//short circuit
             }
-            //short circuit
+            
             int level = GeohashUtils.LookupHashLenForWidthHeight(dist, dist);
             return Math.Max(Math.Min(level, maxLevels), 1);
         }
@@ -88,35 +106,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return new GhCell(this, bytes, offset, len);
         }
 
-        #region Nested type: Factory
-
-        /// <summary>
-        /// Factory for creating
-        /// <see cref="GeohashPrefixTree">GeohashPrefixTree</see>
-        /// instances with useful defaults
-        /// </summary>
-        public class Factory : SpatialPrefixTreeFactory
-        {
-            protected internal override int GetLevelForDistance(double degrees)
-            {
-                var grid = new GeohashPrefixTree(ctx, MaxLevelsPossible);
-                return grid.GetLevelForDistance(degrees);
-            }
-
-            protected internal override SpatialPrefixTree NewSPT()
-            {
-                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MaxLevelsPossible);
-            }
-        }
-
-        #endregion
-
         #region Nested type: GhCell
 
         internal class GhCell : Cell
         {
-            private IShape shape;
-
             internal GhCell(GeohashPrefixTree outerInstance, string token)
                 : base(outerInstance, token)
             {
@@ -135,8 +128,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override ICollection<Cell> GetSubCells()
             {
-                string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);
-                //sorted
+                string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);//sorted
                 IList<Cell> cells = new List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
@@ -147,17 +139,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override int GetSubCellsSize()
             {
-                return 32;
+                return 32;//8x4
             }
 
-            //8x4
             public override Cell GetSubCell(IPoint p)
             {
-                return outerInstance.GetCell(p, Level + 1);
+                return outerInstance.GetCell(p, Level + 1);//not performant!
             }
 
-            //not performant!
-            //cache
+            private IShape shape;//cache
+
             public override IShape GetShape()
             {
                 if (shape == null)

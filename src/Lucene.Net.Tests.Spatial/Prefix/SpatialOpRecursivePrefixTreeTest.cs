@@ -422,6 +422,7 @@ namespace Lucene.Net.Spatial.Prefix
             public ShapePair(IShape shape1, IShape shape2, bool containsThenWithin, SpatialContext ctx)
                         : base(Arrays.AsList(shape1, shape2), ctx)
             {
+                this.ctx = ctx;
 
                 this.shape1 = shape1;
                 this.shape2 = shape2;

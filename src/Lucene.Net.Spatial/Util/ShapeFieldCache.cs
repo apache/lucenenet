@@ -23,6 +23,11 @@ namespace Lucene.Net.Spatial.Util
     /// <summary>
     /// Bounded Cache of Shapes associated with docIds.  Note, multiple Shapes can be
     /// associated with a given docId
+    /// <para/>
+    /// WARNING: This class holds the data in an extremely inefficient manner as all Points are in memory as objects and they
+    /// are stored in many ArrayLists (one per document).  So it works but doesn't scale.  It will be replaced in the future.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ShapeFieldCache<T> where T : IShape
@@ -36,7 +41,7 @@ namespace Lucene.Net.Spatial.Util
             this.defaultLength = defaultLength;
         }
 
-        public void Add(int docid, T s)
+        public virtual void Add(int docid, T s)
         {
             IList<T> list = cache[docid];
             if (list == null)
@@ -46,10 +51,9 @@ namespace Lucene.Net.Spatial.Util
             list.Add(s);
         }
 
-        public IList<T> GetShapes(int docid)
+        public virtual IList<T> GetShapes(int docid)
         {
             return cache[docid];
         }
-
     }
 }

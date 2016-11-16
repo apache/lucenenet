@@ -84,7 +84,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public abstract class BaseTermsEnumTraverser
         {
-            private readonly AbstractPrefixTreeFilter outerInstance;
+            protected readonly AbstractPrefixTreeFilter outerInstance;
             protected readonly AtomicReaderContext context;
             protected Bits acceptDocs;
             protected readonly int maxDoc;
@@ -92,8 +92,6 @@ namespace Lucene.Net.Spatial.Prefix
             protected TermsEnum termsEnum;//remember to check for null in getDocIdSet
             protected DocsEnum docsEnum;
             
-
-            /// <exception cref="System.IO.IOException"></exception>
             public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
             {
                 this.outerInstance = outerInstance;
@@ -102,14 +100,13 @@ namespace Lucene.Net.Spatial.Prefix
                 AtomicReader reader = context.AtomicReader;
                 this.acceptDocs = acceptDocs;
                 maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(this.outerInstance.fieldName);
+                Terms terms = reader.Terms(outerInstance.fieldName);
                 if (terms != null)
                 {
                     termsEnum = terms.Iterator(null);
                 }
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             protected virtual void CollectDocs(FixedBitSet bitSet)
             {
                 //WARN: keep this specialization in sync
@@ -124,5 +121,22 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         #endregion
+
+        /* Eventually uncomment when needed.
+
+        protected void collectDocs(Collector collector) throws IOException {
+          //WARN: keep this specialization in sync
+          assert termsEnum != null;
+          docsEnum = termsEnum.docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
+          int docid;
+          while ((docid = docsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+            collector.collect(docid);
+          }
+        }
+
+        public abstract class Collector {
+          abstract void collect(int docid) throws IOException;
+        }
+        */
     }
 }

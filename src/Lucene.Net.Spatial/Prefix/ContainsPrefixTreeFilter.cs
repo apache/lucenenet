@@ -38,6 +38,16 @@ namespace Lucene.Net.Spatial.Prefix
     /// <lucene.experimental></lucene.experimental>
     public class ContainsPrefixTreeFilter : AbstractPrefixTreeFilter
     {
+        // Future optimizations:
+        //   Instead of seekExact, use seekCeil with some leap-frogging, like Intersects does.
+
+        /// <summary>
+        /// If the spatial data for a document is comprised of multiple overlapping or adjacent parts,
+        /// it might fail to match a query shape when doing the CONTAINS predicate when the sum of
+        /// those shapes contain the query shape but none do individually. Set this to false to
+        /// increase performance if you don't care about that circumstance (such as if your indexed
+        /// data doesn't even have such conditions).  See LUCENE-5062.
+        /// </summary>
         protected readonly bool multiOverlappingIndexedShapes;
 
         public ContainsPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel, bool multiOverlappingIndexedShapes)
@@ -46,7 +56,18 @@ namespace Lucene.Net.Spatial.Prefix
             this.multiOverlappingIndexedShapes = multiOverlappingIndexedShapes;
         }
 
-        /// <exception cref="System.IO.IOException"></exception>
+        public override bool Equals(object o)
+        {
+            if (!base.Equals(o))
+                return false;
+            return multiOverlappingIndexedShapes == ((ContainsPrefixTreeFilter)o).multiOverlappingIndexedShapes;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() + (multiOverlappingIndexedShapes ? 1 : 0);
+        }
+
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             return new ContainsVisitor(this, context, acceptDocs).Visit(grid.WorldCell, acceptDocs);
@@ -54,23 +75,12 @@ namespace Lucene.Net.Spatial.Prefix
 
         private class ContainsVisitor : BaseTermsEnumTraverser
         {
-            private readonly IShape queryShape;
-            private readonly int detailLevel;
-            private readonly bool multiOverlappingIndexedShapes;
-            private SpatialPrefixTree grid;
-
-            /// <exception cref="System.IO.IOException"></exception>
             public ContainsVisitor(ContainsPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
                 : base(outerInstance, context, acceptDocs)
             {
-                this.queryShape = outerInstance.queryShape;
-                this.detailLevel = outerInstance.detailLevel;
-                this.grid = outerInstance.grid;
-                this.multiOverlappingIndexedShapes = outerInstance.multiOverlappingIndexedShapes;
             }
 
             internal BytesRef termBytes = new BytesRef();
-
             internal Cell nextCell;//see getLeafDocs
 
             /// <remarks>This is the primary algorithm; recursive.  Returns null if finds none.</remarks>
@@ -82,17 +92,19 @@ namespace Lucene.Net.Spatial.Prefix
                     //signals all done
                     return null;
                 }
+
+                ContainsPrefixTreeFilter outerInstance = (ContainsPrefixTreeFilter)base.outerInstance;
+
                 //Leaf docs match all query shape
                 SmallDocSet leafDocs = GetLeafDocs(cell, acceptContains);
-                // Get the AND of all child results
+                // Get the AND of all child results (into combinedSubResults)
                 SmallDocSet combinedSubResults = null;
-
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
-                IShape subCellsFilter = queryShape;
-                if (cell.Level != 0 && ((cell.GetShapeRel() == null || cell.GetShapeRel() == SpatialRelation.WITHIN)))
+                IShape subCellsFilter = outerInstance.queryShape;
+                if (cell.Level != 0 && ((cell.GetShapeRel() == SpatialRelation.NULL_VALUE || cell.GetShapeRel() == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
-                    System.Diagnostics.Debug.Assert(cell.GetShape().Relate(queryShape) == SpatialRelation.WITHIN);
+                    Debug.Assert(cell.GetShape().Relate(outerInstance.queryShape) == SpatialRelation.WITHIN);
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -101,14 +113,14 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         combinedSubResults = null;
                     }
-                    else if (subCell.Level == detailLevel)
+                    else if (subCell.Level == outerInstance.detailLevel)
                     {
                         combinedSubResults = GetDocs(subCell, acceptContains);
                     }
-                    else if (!multiOverlappingIndexedShapes && 
+                    else if (!outerInstance.multiOverlappingIndexedShapes && 
                         subCell.GetShapeRel() == SpatialRelation.WITHIN)
                     {
-                        combinedSubResults = GetLeafDocs(subCell, acceptContains);
+                        combinedSubResults = GetLeafDocs(subCell, acceptContains); //recursion
                     }
                     else
                     {
@@ -130,15 +142,14 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         return combinedSubResults;
                     }
-                    return leafDocs.Union(combinedSubResults);
+                    return leafDocs.Union(combinedSubResults);//union is 'or'
                 }
                 return leafDocs;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             private bool SeekExact(Cell cell)
             {
-                System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
+                Debug.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
                 this.termBytes.Bytes = cell.GetTokenBytes();
                 this.termBytes.Length = this.termBytes.Bytes.Length;
                 if (termsEnum == null)
@@ -146,16 +157,14 @@ namespace Lucene.Net.Spatial.Prefix
                 return this.termsEnum.SeekExact(termBytes);
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             private SmallDocSet GetDocs(Cell cell, Bits acceptContains)
             {
-                System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes));
+                Debug.Assert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes));
                 return this.CollectDocs(acceptContains);
             }
 
             private Cell lastLeaf = null;//just for assertion
 
-            /// <exception cref="System.IO.IOException"></exception>
             private SmallDocSet GetLeafDocs(Cell leafCell, Bits acceptContains)
             {
                 Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
@@ -167,11 +176,10 @@ namespace Lucene.Net.Spatial.Prefix
                 BytesRef nextTerm = this.termsEnum.Next();
                 if (nextTerm == null)
                 {
-                    termsEnum = null;
-                    //signals all done
+                    termsEnum = null;//signals all done
                     return null;
                 }
-                nextCell = grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
+                nextCell = outerInstance.grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
                 if (nextCell.Level == leafCell.Level && nextCell.IsLeaf())
                 {
                     return CollectDocs(acceptContains);
@@ -182,10 +190,10 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             private SmallDocSet CollectDocs(Bits acceptContains)
             {
                 SmallDocSet set = null;
+
                 docsEnum = termsEnum.Docs(acceptContains, docsEnum, DocsEnum.FLAG_NONE);
                 int docid;
                 while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -213,7 +221,6 @@ namespace Lucene.Net.Spatial.Prefix
         private class SmallDocSet : DocIdSet, Bits
         {
             private readonly SentinelIntSet intSet;
-
             private int maxInt = 0;
 
             public SmallDocSet(int size)
@@ -221,7 +228,7 @@ namespace Lucene.Net.Spatial.Prefix
                 intSet = new SentinelIntSet(size, -1);
             }
 
-            public bool Get(int index)
+            public virtual bool Get(int index)
             {
                 return intSet.Exists(index);
             }
@@ -235,7 +242,8 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            int Bits.Length()
+            /// <summary>Largest docid.</summary>
+            public virtual int Length()
             {
                 return maxInt;
             }
@@ -290,10 +298,9 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     this.size = size;
                     this.docs = docs;
-                    this.idx = -1;
                 }
 
-                internal int idx;
+                internal int idx = -1;
 
                 public override int DocID()
                 {
@@ -307,7 +314,6 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                 }
 
-                /// <exception cref="System.IO.IOException"></exception>
                 public override int NextDoc()
                 {
                     if (++idx < size)
@@ -317,7 +323,6 @@ namespace Lucene.Net.Spatial.Prefix
                     return NO_MORE_DOCS;
                 }
 
-                /// <exception cref="System.IO.IOException"></exception>
                 public override int Advance(int target)
                 {
                     //for this small set this is likely faster vs. a binary search
@@ -348,7 +353,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                System.Diagnostics.Debug.Assert(d == intSet.Size());
+                Debug.Assert(d == intSet.Size());
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);
