@@ -203,7 +203,32 @@ namespace Lucene.Net
 
         public static bool removeAll<T>(this ISet<T> s, IEnumerable<T> list)
         {
-            return s.removeAll(list);
+            bool modified = false;
+
+            if (s.Count > list.Count())
+            {
+                for (var i = list.GetEnumerator(); i.MoveNext();)
+                    modified |= s.Remove(i.Current);
+            }
+            else
+            {
+                List<T> toRemove = new List<T>();
+
+                for (var i = s.GetEnumerator(); i.MoveNext();)
+                {
+                    if (list.Contains(i.Current))
+                    {
+                        toRemove.Add(i.Current);
+                    }
+                }
+
+                foreach (var i in toRemove)
+                {
+                    s.Remove(i);
+                    modified = true;
+                }
+            }
+            return modified;
         }
 
         public static void clear<T>(this ISet<T> s)

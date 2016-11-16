@@ -181,14 +181,14 @@ namespace Lucene.Net.Spatial.Prefix
         /// 	</remarks>
         internal sealed class CellTokenStream : TokenStream
         {
-            private readonly CharTermAttribute termAtt;
+            private readonly ICharTermAttribute termAtt;
 
             private IEnumerator<Cell> iter = null;
 
             public CellTokenStream(IEnumerator<Cell> tokens)
             {
                 this.iter = tokens;
-                termAtt = AddAttribute<CharTermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
             }
 
             internal string nextTokenStringNeedingLeaf;

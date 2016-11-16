@@ -24,6 +24,7 @@ using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
+using System.Diagnostics;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -157,8 +158,8 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="System.IO.IOException"></exception>
             private SmallDocSet GetLeafDocs(Cell leafCell, Bits acceptContains)
             {
-                System.Diagnostics.Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
-                System.Diagnostics.Debug.Assert(leafCell.Equals(lastLeaf));//don't call for same leaf again
+                Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
+                Debug.Assert(leafCell.Equals(lastLeaf));//don't call for same leaf again
                 lastLeaf = leafCell;
 
                 if (termsEnum == null)

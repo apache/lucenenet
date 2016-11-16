@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
+using System.Globalization;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -74,7 +75,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     try
                     {
                         Type c = Type.GetType(cname);
-                        instance = (SpatialPrefixTreeFactory)System.Activator.CreateInstance(c);
+                        instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c);
                     }
                     catch (Exception e)
                     {
@@ -86,8 +87,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return instance.NewSPT();
         }
 
-        protected internal virtual void Init(IDictionary<string, string> args, SpatialContext
-             ctx)
+        protected internal virtual void Init(IDictionary<string, string> args, SpatialContext ctx)
         {
             this.args = args;
             this.ctx = ctx;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             string mlStr = args[MaxLevels];
             if (mlStr != null)
             {
-                maxLevels = int.Parse(mlStr);
+                maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;

@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial.Vector
                 return new ConstantScoreQuery(vsf);
             }
 
-            throw new InvalidOperationException("Only Rectangles and Circles are currently supported, " +
+            throw new NotSupportedException("Only Rectangles and Circles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
 

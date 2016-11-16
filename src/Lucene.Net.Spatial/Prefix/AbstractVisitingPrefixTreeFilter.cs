@@ -160,14 +160,15 @@ namespace Lucene.Net.Spatial.Prefix
         public abstract class VisitorTemplate : BaseTermsEnumTraverser
         {
             private readonly AbstractVisitingPrefixTreeFilter outerInstance;
-            private readonly BytesRef curVNodeTerm = new BytesRef();
+
             protected internal readonly bool hasIndexedLeaves;//if false then we can skip looking for them
 
             private VNode curVNode;//current pointer, derived from query shape
-            private BytesRef thisTerm; //the result of termsEnum.term()
-            private Cell scanCell;//curVNode.cell's term.
+            private BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term.
+            private Cell scanCell;
 
-            /// <exception cref="System.IO.IOException"></exception>
+            private BytesRef thisTerm; //the result of termsEnum.term()
+
             public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs,
                                    bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs)
@@ -176,7 +177,6 @@ namespace Lucene.Net.Spatial.Prefix
                 this.hasIndexedLeaves = hasIndexedLeaves;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
             public virtual DocIdSet GetDocIdSet()
             {
                 Debug.Assert(curVNode == null, "Called more than once?");
@@ -192,18 +192,29 @@ namespace Lucene.Net.Spatial.Prefix
                 // all done
                 curVNode = new VNode(null);
                 curVNode.Reset(outerInstance.grid.WorldCell);
+
                 Start();
+
                 AddIntersectingChildren();
-                while (thisTerm != null)
+
+                while (thisTerm != null)//terminates for other reasons too!
                 {
-                    //terminates for other reasons too!
                     //Advance curVNode pointer
                     if (curVNode.children != null)
                     {
                         //-- HAVE CHILDREN: DESCEND
-                        Debug.Assert(curVNode.children.MoveNext());
+
+                        // LUCENENET NOTE: Must call this line before calling MoveNext()
+                        // on the enumerator.
+
                         //if we put it there then it has something
                         PreSiblings(curVNode);
+
+                        // LUCENENET IMPORTANT: Must not call this inline with Debug.Assert
+                        // because the compiler removes Debug.Assert statements in release mode!!
+                        bool hasNext = curVNode.children.MoveNext();
+                        Debug.Assert(hasNext);
+
                         curVNode = curVNode.children.Current;
                     }
                     else
@@ -236,12 +247,11 @@ namespace Lucene.Net.Spatial.Prefix
                     //Seek to curVNode's cell (or skip if termsEnum has moved beyond)
                     curVNodeTerm.Bytes = curVNode.cell.GetTokenBytes();
                     curVNodeTerm.Length = curVNodeTerm.Bytes.Length;
-                    int compare = termsEnum.Comparator.Compare(thisTerm, curVNodeTerm
-                        );
+                    int compare = termsEnum.Comparator.Compare(thisTerm, curVNodeTerm);
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        Debug.Assert(!((AtomicReader)context.Reader).Terms(outerInstance.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
+                        Debug.Assert(!context.AtomicReader.Terms(outerInstance.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {
@@ -257,10 +267,9 @@ namespace Lucene.Net.Spatial.Prefix
                             thisTerm = termsEnum.Term();
                             if (seekStatus == TermsEnum.SeekStatus.NOT_FOUND)
                             {
-                                continue;
+                                continue; // leap frog
                             }
                         }
-                        // leap frog
                         // Visit!
                         bool descend = Visit(curVNode.cell);
                         //advance
@@ -302,10 +311,8 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
-                    Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm
-                                     ));
-                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
-                                                       , thisTerm.Length, scanCell);
+                    Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
+                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf())
                     {
                         VisitLeaf(scanCell);
@@ -373,23 +380,110 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal virtual void Scan(int scanDetailLevel)
             {
                 for (;
-                    thisTerm != null && StringHelper.StartsWith(thisTerm, curVNodeTerm
-                                            );
+                    thisTerm != null && StringHelper.StartsWith(thisTerm, curVNodeTerm);//TODO refactor to use method on curVNode.cell
                     thisTerm = termsEnum.Next())
                 {
-                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
-                                                       , thisTerm.Length, scanCell);
+                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+
                     int termLevel = scanCell.Level;
-                    if (termLevel > scanDetailLevel)
+                    if (termLevel < scanDetailLevel)
                     {
-                        continue;
+                        if (scanCell.IsLeaf())
+                            VisitScanned(scanCell);
                     }
-                    if (termLevel == scanDetailLevel || scanCell.IsLeaf())
+                    else if (termLevel == scanDetailLevel)
                     {
-                        VisitScanned(scanCell);
+                        if (!scanCell.IsLeaf())//LUCENE-5529
+                            VisitScanned(scanCell);
+                    }
+                }//term loop
+            }
+
+            #region Nested type: VNodeCellIterator
+
+            /// <summary>
+            /// Used for
+            /// <see cref="VNode.children">VNode.children</see>
+            /// .
+            /// </summary>
+            private class VNodeCellIterator : IEnumerator<VNode>
+            {
+                private readonly VisitorTemplate outerInstance;
+                internal readonly IEnumerator<Cell> cellIter;
+
+                private readonly VNode vNode;
+                private bool first = true;
+
+                internal VNodeCellIterator(VisitorTemplate outerInstance, IEnumerator<Cell> cellIter, VNode vNode)
+                {
+                    this.outerInstance = outerInstance;
+                    //term loop
+                    this.cellIter = cellIter;
+                    this.vNode = vNode;
+                }
+
+                //it always removes
+
+                #region IEnumerator<VNode> Members
+
+                public void Dispose()
+                {
+                    cellIter.Dispose();
+                }
+
+                public bool MoveNext()
+                {
+                    //Debug.Assert(cellIter.Current != null);
+
+                    // LUCENENET NOTE: The consumer of this class calls
+                    // cellIter.MoveNext() before it is instantiated.
+                    // So, the first call here
+                    // to MoveNext() must not move the cursor.
+                    bool result;
+                    if (!first)
+                    {
+                        result = cellIter.MoveNext();
+                    }
+                    else
+                    {
+                        result = true;
+                        first = false;
+                    }
+
+                    // LUCENENET NOTE: Need to skip this call
+                    // if there are no more results because null
+                    // is not allowed
+                    if (result == true)
+                    {
+                        vNode.Reset(cellIter.Current);
+                    }
+                    return result;
+                }
+
+                public void Reset()
+                {
+                    cellIter.Reset();
+                }
+
+                public VNode Current
+                {
+                    get
+                    {
+                        //Debug.Assert(cellIter.Current != null);
+                        //vNode.Reset(cellIter.Current);
+                        return vNode;
                     }
                 }
+
+                object IEnumerator.Current
+                {
+                    get { return Current; }
+                }
+
+                #endregion
             }
+
+            #endregion
 
             /// <summary>Called first to setup things.</summary>
             /// <remarks>Called first to setup things.</remarks>
@@ -441,68 +535,6 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal virtual void PostSiblings(VNode vNode)
             {
             }
-
-            #region Nested type: VNodeCellIterator
-
-            /// <summary>
-            /// Used for
-            /// <see cref="VNode.children">VNode.children</see>
-            /// .
-            /// </summary>
-            private class VNodeCellIterator : IEnumerator<VNode>
-            {
-                private readonly VisitorTemplate _enclosing;
-                internal readonly IEnumerator<Cell> cellIter;
-
-                private readonly VNode vNode;
-
-                internal VNodeCellIterator(VisitorTemplate _enclosing, IEnumerator<Cell> cellIter, VNode vNode)
-                {
-                    this._enclosing = _enclosing;
-                    //term loop
-                    this.cellIter = cellIter;
-                    this.vNode = vNode;
-                }
-
-                //it always removes
-
-                #region IEnumerator<VNode> Members
-
-                public void Dispose()
-                {
-                    cellIter.Dispose();
-                }
-
-                public bool MoveNext()
-                {
-                    return cellIter.MoveNext();
-                }
-
-                public void Reset()
-                {
-                    cellIter.Reset();
-                }
-
-                public VNode Current
-                {
-                    get
-                    {
-                        Debug.Assert(cellIter.Current != null);
-                        vNode.Reset(cellIter.Current);
-                        return vNode;
-                    }
-                }
-
-                object IEnumerator.Current
-                {
-                    get { return Current; }
-                }
-
-                #endregion
-            }
-
-            #endregion
-
             //class VisitorTemplate
         }
 

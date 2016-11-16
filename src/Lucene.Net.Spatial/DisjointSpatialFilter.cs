@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial
             }
             
             //not so much a chain but a way to conveniently invert the Filter
-            DocIdSet docIdSet = new ChainedFilter(new[] { intersectsFilter }, ChainedFilter.ANDNOT).GetDocIdSet(context, acceptDocs);
+            DocIdSet docIdSet = new ChainedFilter(new Filter[] { intersectsFilter }, ChainedFilter.ANDNOT).GetDocIdSet(context, acceptDocs);
             return BitsFilteredDocIdSet.Wrap(docIdSet, docsWithField);
         }
     }

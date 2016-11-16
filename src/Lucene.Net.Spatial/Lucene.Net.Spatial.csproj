@@ -100,10 +100,12 @@
     <Compile Include="Query\UnsupportedSpatialOperation.cs" />
     <Compile Include="Serialized\SerializedDVStrategy.cs" />
     <Compile Include="SpatialStrategy.cs" />
+    <Compile Include="Util\DistanceToShapeValueSource.cs" />
     <Compile Include="Util\ShapeFieldCacheDistanceValueSource.cs" />
     <Compile Include="Util\CachingDoubleValueSource.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />
+    <Compile Include="Util\ShapePredicateValueSource.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
     <Compile Include="Vector\PointVectorStrategy.cs" />

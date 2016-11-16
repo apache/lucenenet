@@ -195,8 +195,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// ~20-25% fewer cells.
         /// </param>
         /// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
-        public virtual IList<Cell> GetCells(IShape shape, int detailLevel
-            , bool inclParents, bool simplify)
+        public virtual IList<Cell> GetCells(IShape shape, int detailLevel, bool inclParents, 
+            bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
             if (detailLevel > maxLevels)
@@ -208,8 +208,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return GetCells((IPoint)shape, detailLevel, inclParents);
             }
             IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
-            RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells
-                );
+            RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells);
             return cells;
         }
 
@@ -218,8 +217,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Returns true if cell was added as a leaf. If it wasn't it recursively
         /// descends.
         /// </remarks>
-        private bool RecursiveGetCells(Cell cell, IShape shape, int
-             detailLevel, bool inclParents, bool simplify, IList<Cell> result)
+        private bool RecursiveGetCells(Cell cell, IShape shape, int detailLevel, 
+            bool inclParents, bool simplify, 
+            IList<Cell> result)
         {
             if (cell.Level == detailLevel)
             {
@@ -292,11 +292,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 #endif
             }
             string endToken = cell.TokenString;
-            System.Diagnostics.Debug.Assert(endToken.Length == detailLevel);
+            Debug.Assert(endToken.Length == detailLevel);
             IList<Cell> cells = new List<Cell>(detailLevel);
             for (int i = 1; i < detailLevel; i++)
             {
-                cells.Add(GetCell(endToken.Substring(0, i)));
+                cells.Add(GetCell(endToken.Substring(0, i - 0)));
             }
             cells.Add(cell);
             return cells;

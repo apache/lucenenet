@@ -22,6 +22,7 @@ using System.Text;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using Spatial4n.Core.Context;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -33,6 +34,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <lucene.experimental></lucene.experimental>
     public abstract class Cell : IComparable<Cell>
     {
+        /// <summary>
+        /// LUCENENET specific - we need to set the SpatialPrefixTree before calling overridden 
+        /// members of this class, just in case those overridden members require it. This is
+        /// not possible from the subclass because the constructor of the base class runs first.
+        /// So we need to move the reference here and also set it before running the normal constructor
+        /// logic.
+        /// </summary>
+        protected readonly SpatialPrefixTree outerInstance;
+
+
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
 
         /*
@@ -43,13 +54,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private int b_off;
         private int b_len;
 
-        /// <summary>Always false for points.</summary>
-        /// <remarks>
-        /// Always false for points. Otherwise, indicate no further sub-cells are going
-        /// to be provided because shapeRel is WITHIN or maxLevels or a detailLevel is
-        /// hit.
-        /// </remarks>
-        protected internal bool leaf;
+        private string token;//this is the only part of equality
 
         /// <summary>
         /// When set via getSubCells(filter), it is the relationship between this cell
@@ -61,10 +66,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         protected internal SpatialRelation shapeRel = SpatialRelation.NULL_VALUE;//set in getSubCells(filter), and via setLeaf().
 
-        private string token;//this is the only part of equality
+        /// <summary>Always false for points.</summary>
+        /// <remarks>
+        /// Always false for points. Otherwise, indicate no further sub-cells are going
+        /// to be provided because shapeRel is WITHIN or maxLevels or a detailLevel is
+        /// hit.
+        /// </remarks>
+        protected internal bool leaf;
 
-        protected internal Cell(string token)
+        protected internal Cell(SpatialPrefixTree outerInstance, string token)
         {
+            // LUCENENET specific - set the outer instance here
+            // because overrides of GetShape() may require it
+            this.outerInstance = outerInstance;
+
             //NOTE: must sort before letters & numbers
             //this is the only part of equality
             this.token = token;
@@ -79,8 +94,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        protected internal Cell(byte[] bytes, int off, int len)
+        protected internal Cell(SpatialPrefixTree outerInstance, byte[] bytes, int off, int len)
         {
+            // LUCENENET specific - set the outer instance here
+            // because overrides of GetShape() may require it
+            this.outerInstance = outerInstance;
+
             //ensure any lazy instantiation completes to make this threadsafe
             this.bytes = bytes;
             b_off = off;
@@ -170,7 +189,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             get
             {
                 if (token == null)
-                    throw new InvalidOperationException("Somehow we got a null token");
+                    token = Encoding.UTF8.GetString(bytes, b_off, b_len);
                 return token;
             }
         }
@@ -203,8 +222,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             get
             {
-                return token.Length;
-                //return token != null ? token.Length : b_len;
+                return token != null ? token.Length : b_len;
             }
         }
 
