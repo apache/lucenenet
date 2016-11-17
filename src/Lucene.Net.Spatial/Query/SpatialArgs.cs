@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Queries
         /// <summary>
         /// Check if the arguments make sense -- throw an exception if not
         /// </summary>
-        public void Validate()
+        public virtual void Validate()
         {
             if (Operation.IsTargetNeedsArea && !Shape.HasArea)
             {

@@ -32,8 +32,8 @@ namespace Lucene.Net.Spatial.Util
     {
         //TODO see https://issues.apache.org/jira/browse/LUCENE-4251  (move out of spatial & improve)
 
-        readonly Filter startingFilter;
-        readonly ValueSource source;
+        internal readonly Filter startingFilter;
+        internal readonly ValueSource source;
         public readonly double min;
         public readonly double max;
 

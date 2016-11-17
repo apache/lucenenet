@@ -34,8 +34,8 @@ namespace Lucene.Net.Spatial.Vector
     /// </summary>
     public class DistanceValueSource : ValueSource
     {
-        private readonly IPoint from;
         private readonly PointVectorStrategy strategy;
+        private readonly IPoint from;
         private readonly double multiplier;
 
         /// <summary>

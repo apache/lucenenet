@@ -44,7 +44,7 @@ namespace Lucene.Net.Spatial.Vector
         private readonly string fieldNameX;
         private readonly string fieldNameY;
 
-        public int precisionStep = 8; // same as solr default
+        private int precisionStep = 8; // same as solr default
 
         public PointVectorStrategy(SpatialContext ctx, string fieldNamePrefix)
             : base(ctx, fieldNamePrefix)
@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Vector
             this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
         }
 
-        public int PrecisionStep
+        public virtual int PrecisionStep
         {
             set
             {
@@ -63,12 +63,12 @@ namespace Lucene.Net.Spatial.Vector
             }
         }
 
-        public string FieldNameX
+        internal virtual string FieldNameX
         {
             get { return fieldNameX; }
         }
 
-        public string FieldNameY
+        internal virtual string FieldNameY
         {
             get { return fieldNameY; }
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Spatial.Vector
         /// <summary>
         /// See <see cref="CreateIndexableFields(IShape)"/>
         /// </summary>
-        public Field[] CreateIndexableFields(IPoint point)
+        public virtual Field[] CreateIndexableFields(IPoint point)
         {
             FieldType doubleFieldType = new FieldType(DoubleField.TYPE_NOT_STORED)
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Spatial.Vector
         }
 
         //TODO this is basically old code that hasn't been verified well and should probably be removed
-        public Query MakeQueryDistanceScore(SpatialArgs args)
+        public virtual Query MakeQueryDistanceScore(SpatialArgs args)
         {
             // For starters, just limit the bbox
             var shape = args.Shape;

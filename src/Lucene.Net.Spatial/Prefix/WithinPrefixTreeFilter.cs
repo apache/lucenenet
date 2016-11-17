@@ -153,8 +153,6 @@ namespace Lucene.Net.Spatial.Prefix
 
         private sealed class _VisitorTemplate_121 : VisitorTemplate
         {
-            private readonly WithinPrefixTreeFilter outerInstance;
-
             private FixedBitSet inside;
             private FixedBitSet outside;
             private SpatialRelation visitRelation;
@@ -163,7 +161,6 @@ namespace Lucene.Net.Spatial.Prefix
                 Bits acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected internal override void Start()
@@ -181,7 +178,7 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
                 //use buffered query shape instead of orig.  Works with null too.
-                return cell.GetSubCells(outerInstance.bufferedQueryShape).GetEnumerator();
+                return cell.GetSubCells(((WithinPrefixTreeFilter)outerInstance).bufferedQueryShape).GetEnumerator();
             }
 
             protected internal override bool Visit(Cell cell)

@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial
     public abstract class SpatialStrategy
     {
         protected readonly SpatialContext ctx;
-        protected readonly string fieldName;
+        private readonly string fieldName;
 
         /// <summary>
         /// Constructs the spatial strategy with its mandatory arguments.

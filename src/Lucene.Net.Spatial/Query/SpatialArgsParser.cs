@@ -73,7 +73,7 @@ namespace Lucene.Net.Spatial.Queries
         /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown</exception>
         /// <exception cref="ParseException">If there is a problem parsing the string</exception>
         /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape</exception>
-        public SpatialArgs Parse(string v, SpatialContext ctx)
+        public virtual SpatialArgs Parse(string v, SpatialContext ctx)
         {
             int idx = v.IndexOf('(');
             int edx = v.LastIndexOf(')');
@@ -174,6 +174,5 @@ namespace Lucene.Net.Spatial.Queries
 
             return map;
         }
-
     }
 }

@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -47,6 +48,16 @@ namespace Lucene.Net.Spatial.Prefix
             return base.Equals(o) && hasIndexedLeaves == ((IntersectsPrefixTreeFilter)o).hasIndexedLeaves;
         }
 
+        /// <summary>
+        /// LUCENENET specific: need to override GetHashCode to 
+        /// prevent a compiler warning and realistically, the hash code
+        /// should work similarly to Equals.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return HashHelpers.CombineHashCodes(base.GetHashCode(), hasIndexedLeaves.GetHashCode());
+        }
+
         /// <exception cref="System.IO.IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
@@ -57,13 +68,11 @@ namespace Lucene.Net.Spatial.Prefix
 
         private sealed class _VisitorTemplate_55 : VisitorTemplate
         {
-            private readonly IntersectsPrefixTreeFilter outerInstance;
             private FixedBitSet results;
 
             public _VisitorTemplate_55(IntersectsPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected internal override void Start()

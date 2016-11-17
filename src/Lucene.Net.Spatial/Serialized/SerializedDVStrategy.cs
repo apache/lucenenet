@@ -191,14 +191,14 @@ namespace Lucene.Net.Spatial.Serialized
                         this.acceptDocs = acceptDocs;
                     }
 
-                    public bool Get(int index)
+                    public virtual bool Get(int index)
                     {
                         if (acceptDocs != null && !acceptDocs.Get(index))
                             return false;
                         return predFuncValues.BoolVal(index);
                     }
 
-                    public int Length()
+                    public virtual int Length()
                     {
                         return context.Reader.MaxDoc;
                     }
