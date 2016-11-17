@@ -39,13 +39,8 @@ namespace Lucene.Net.Spatial.Util
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 
-#if !NET35
         private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
             new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
-#else
-	    private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
-	        new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
-#endif
 
         protected internal readonly int defaultSize;
         protected internal readonly string shapeField;

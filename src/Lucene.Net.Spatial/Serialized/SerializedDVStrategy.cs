@@ -69,17 +69,6 @@ namespace Lucene.Net.Spatial.Serialized
 
                 //this is a hack to avoid redundant byte array copying by byteStream.toByteArray()
                 byteStream.WriteTo(new OutputStreamAnonymousHelper(bytesRef));
-
-
-                //            byteStream.WriteTo(new FilterOutputStream(null/*not used*/) {
-                //    @Override
-                //    public void write(byte[] b, int off, int len) throws IOException
-                //    {
-                //        bytesRef.bytes = b;
-                //        bytesRef.offset = off;
-                //        bytesRef.length = len;
-                //    }
-                //});
             }
             catch (IOException e)
             {
@@ -157,42 +146,6 @@ namespace Lucene.Net.Spatial.Serialized
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
                 return new DocIdSetAnonymousHelper(this, context, acceptDocs);
-
-                //      return new DocIdSet()
-                //        {
-                //            @Override
-                //        public DocIdSetIterator iterator() throws IOException
-                //        {
-                //          throw new UnsupportedOperationException(
-                //              "Iteration is too slow; instead try FilteredQuery.QUERY_FIRST_FILTER_STRATEGY");
-                //        //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
-                //    }
-
-                //    @Override
-                //        public Bits bits() throws IOException
-                //    {
-                //        //null Map context -- we simply don't have one. That's ok.
-                //        final FunctionValues predFuncValues = predicateValueSource.getValues(null, context);
-
-                //          return new Bits()
-                //    {
-
-                //        @Override
-                //            public boolean get(int index)
-                //    {
-                //        if (acceptDocs != null && !acceptDocs.get(index))
-                //            return false;
-                //        return predFuncValues.boolVal(index);
-                //    }
-
-                //    @Override
-                //            public int length()
-                //    {
-                //        return context.reader().maxDoc();
-                //    }
-                //};
-                //  }
-                //};
             }
 
             internal class DocIdSetAnonymousHelper : DocIdSet
@@ -293,74 +246,6 @@ namespace Lucene.Net.Spatial.Serialized
                 BinaryDocValues docValues = readerContext.AtomicReader.GetBinaryDocValues(fieldName);
 
                 return new FuctionValuesAnonymousHelper(this, docValues);
-
-                //      return new FunctionValues()
-                //{
-                //    int bytesRefDoc = -1;
-                //    BytesRef bytesRef = new BytesRef();//scratch
-
-                //    bool fillBytes(int doc) {
-                //        if (bytesRefDoc != doc)
-                //        {
-                //            docValues.Get(doc, bytesRef);
-                //            bytesRefDoc = doc;
-                //        }
-                //        return bytesRef.length != 0;
-                //    }
-
-                //    @Override
-                //        public boolean exists(int doc)
-                //{
-                //    return fillBytes(doc);
-                //}
-
-                //@Override
-                //        public boolean bytesVal(int doc, BytesRef target)
-                //{
-                //    if (fillBytes(doc))
-                //    {
-                //        target.bytes = bytesRef.bytes;
-                //        target.offset = bytesRef.offset;
-                //        target.length = bytesRef.length;
-                //        return true;
-                //    }
-                //    else
-                //    {
-                //        target.length = 0;
-                //        return false;
-                //    }
-                //}
-
-                //@Override
-                //        public Object objectVal(int docId)
-                //{
-                //    if (!fillBytes(docId))
-                //        return null;
-                //    DataInputStream dataInput = new DataInputStream(
-                //        new ByteArrayInputStream(bytesRef.bytes, bytesRef.offset, bytesRef.length));
-                //    try
-                //    {
-                //        return binaryCodec.readShape(dataInput);
-                //    }
-                //    catch (IOException e)
-                //    {
-                //        throw new RuntimeException(e);
-                //    }
-                //}
-
-                //@Override
-                //        public Explanation explain(int doc)
-                //{
-                //    return new Explanation(Float.NaN, toString(doc));
-                //}
-
-                //@Override
-                //        public String toString(int doc)
-                //{
-                //    return description() + "=" + objectVal(doc);//TODO truncate?
-                //}
-
-                //      };
             }
 
             internal class FuctionValuesAnonymousHelper : FunctionValues

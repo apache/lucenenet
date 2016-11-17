@@ -70,26 +70,6 @@ namespace Lucene.Net.Spatial.Util
             FunctionValues shapeValues = shapeValuesource.GetValues(context, readerContext);
 
             return new BoolDocValuesAnonymousHelper(this, shapeValues);
-
-            //return new BoolDocValues(this)
-            //    {
-            //        @Override
-            //  public boolean boolVal(int doc)
-            //    {
-            //        Shape indexedShape = (Shape)shapeValues.objectVal(doc);
-            //        if (indexedShape == null)
-            //            return false;
-            //        return op.evaluate(indexedShape, queryShape);
-            //    }
-
-            //    @Override
-            //  public Explanation explain(int doc)
-            //    {
-            //        Explanation exp = super.explain(doc);
-            //        exp.addDetail(shapeValues.explain(doc));
-            //        return exp;
-            //    }
-            //};
         }
 
         internal class BoolDocValuesAnonymousHelper : BoolDocValues

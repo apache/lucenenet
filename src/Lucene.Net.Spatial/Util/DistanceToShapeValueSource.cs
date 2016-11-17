@@ -70,27 +70,6 @@ namespace Lucene.Net.Spatial.Util
             FunctionValues shapeValues = shapeValueSource.GetValues(context, readerContext);
 
             return new DoubleDocValuesAnonymousHelper(this, shapeValues);
-
-            //return new DoubleDocValues(this)
-            //    {
-            //        @Override
-            //  public double doubleVal(int doc)
-            //    {
-            //        Shape shape = (Shape)shapeValues.objectVal(doc);
-            //        if (shape == null || shape.isEmpty())
-            //            return nullValue;
-            //        Point pt = shape.getCenter();
-            //        return distCalc.distance(queryPoint, pt) * multiplier;
-            //    }
-
-            //    @Override
-            //  public Explanation explain(int doc)
-            //    {
-            //        Explanation exp = super.explain(doc);
-            //        exp.addDetail(shapeValues.explain(doc));
-            //        return exp;
-            //    }
-            //};
         }
 
         internal class DoubleDocValuesAnonymousHelper : DoubleDocValues

@@ -102,31 +102,8 @@ namespace Lucene.Net.Spatial
             SpatialArgs args1 = MakeArgs1();
             SpatialArgs args2 = MakeArgs2();
             TestEqualsHashcode(args1, args2, new ObjGeneratorQueryAnonymousHelper(strategy));
-            //        testEqualsHashcode(args1, args2, new ObjGenerator() {
-            //  @Override
-            //  public Object gen(SpatialArgs args)
-            //    {
-            //        return strategy.makeQuery(args);
-            //    }
-            //});
             TestEqualsHashcode(args1, args2, new ObjGeneratorFilterAnonymousHelper(strategy));
-            //    testEqualsHashcode(args1, args2, new ObjGenerator()
-            //    {
-            //        @Override
-            //      public Object gen(SpatialArgs args)
-            //    {
-            //        return strategy.makeFilter(args);
-            //    }
-            //});
             TestEqualsHashcode(args1, args2, new ObjGeneratorDistanceValueSourceAnonymousHelper(strategy));
-            //            testEqualsHashcode(args1, args2, new ObjGenerator()
-            //{
-            //    @Override
-            //      public Object gen(SpatialArgs args)
-            //{
-            //    return strategy.makeDistanceValueSource(args.getShape().getCenter());
-            //}
-            //    });
         }
 
         private void TestEqualsHashcode(SpatialArgs args1, SpatialArgs args2, ObjGenerator generator)

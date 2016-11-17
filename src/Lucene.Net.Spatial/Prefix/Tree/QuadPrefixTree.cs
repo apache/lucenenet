@@ -121,10 +121,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             // Format the number to min 3 integer digits and exactly 5 fraction digits
             const string FORMAT_STR = @"000.00000";
-            /*NumberFormat nf = NumberFormat.GetNumberInstance(CultureInfo.Root);
-			nf.SetMaximumFractionDigits(5);
-			nf.SetMinimumFractionDigits(5);
-			nf.SetMinimumIntegerDigits(3);*/
             for (int i = 0; i < maxLevels; i++)
             {
                 @out.WriteLine(i + "]\t" + levelW[i].ToString(FORMAT_STR) + "\t" + levelH[i].ToString(FORMAT_STR) + "\t" +

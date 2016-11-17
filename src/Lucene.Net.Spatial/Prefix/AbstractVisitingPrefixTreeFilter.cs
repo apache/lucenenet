@@ -435,8 +435,6 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     get
                     {
-                        //Debug.Assert(cellIter.Current != null);
-                        //vNode.Reset(cellIter.Current);
                         return vNode;
                     }
                 }
