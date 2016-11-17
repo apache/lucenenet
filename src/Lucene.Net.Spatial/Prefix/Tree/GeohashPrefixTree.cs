@@ -138,9 +138,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return cells;
             }
 
-            public override int GetSubCellsSize()
+            public override int SubCellsSize
             {
-                return 32;//8x4
+                get { return 32; }//8x4
             }
 
             public override Cell GetSubCell(IPoint p)
@@ -150,18 +150,21 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             private IShape shape;//cache
 
-            public override IShape GetShape()
+            public override IShape Shape
             {
-                if (shape == null)
+                get
                 {
-                    shape = GeohashUtils.DecodeBoundary(Geohash, outerInstance.ctx);
+                    if (shape == null)
+                    {
+                        shape = GeohashUtils.DecodeBoundary(Geohash, outerInstance.ctx);
+                    }
+                    return shape;
                 }
-                return shape;
             }
 
-            public override IPoint GetCenter()
+            public override IPoint Center
             {
-                return GeohashUtils.Decode(Geohash, outerInstance.ctx);
+                get { return GeohashUtils.Decode(Geohash, outerInstance.ctx); }
             }
 
             private string Geohash

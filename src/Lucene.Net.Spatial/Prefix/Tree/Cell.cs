@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected internal Cell(SpatialPrefixTree outerInstance, string token)
         {
             // LUCENENET specific - set the outer instance here
-            // because overrides of GetShape() may require it
+            // because overrides of Shape may require it
             this.outerInstance = outerInstance;
 
             //NOTE: must sort before letters & numbers
@@ -84,14 +84,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             if (Level == 0)
             {
-                GetShape();//ensure any lazy instantiation completes to make this threadsafe
+                var x = Shape;//ensure any lazy instantiation completes to make this threadsafe
             }
         }
 
         protected internal Cell(SpatialPrefixTree outerInstance, byte[] bytes, int off, int len)
         {
             // LUCENENET specific - set the outer instance here
-            // because overrides of GetShape() may require it
+            // because overrides of Shape may require it
             this.outerInstance = outerInstance;
 
             //ensure any lazy instantiation completes to make this threadsafe
@@ -126,9 +126,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        public virtual SpatialRelation GetShapeRel()
+        public virtual SpatialRelation ShapeRel
         {
-            return shapeRel;
+            get { return shapeRel; }
         }
 
         /// <summary>For points, this is always false.</summary>
@@ -136,9 +136,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// For points, this is always false.  Otherwise this is true if there are no
         /// further cells with this prefix for the shape (always true at maxLevels).
         /// </remarks>
-        public virtual bool IsLeaf()
+        public virtual bool IsLeaf
         {
-            return leaf;
+            get { return leaf; }
         }
 
         /// <summary>Note: not supported at level 0.</summary>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>
         /// Note: doesn't contain a trailing leaf byte.
         /// </summary>
-        public virtual String TokenString
+        public virtual string TokenString
         {
             get
             {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// 	</see>
         /// . The returned cells
         /// should have
-        /// <see cref="GetShapeRel()">GetShapeRel()</see>
+        /// <see cref="ShapeRel">ShapeRel</see>
         /// set to their relation with
         /// <code>shapeFilter</code>
         /// . In addition,
@@ -236,7 +236,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             IList<Cell> copy = new List<Cell>(cells.Count);
             foreach (Cell cell in cells)
             {
-                SpatialRelation rel = cell.GetShape().Relate(shapeFilter);
+                SpatialRelation rel = cell.Shape.Relate(shapeFilter);
                 if (rel == SpatialRelation.DISJOINT)
                 {
                     continue;
@@ -277,13 +277,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <see cref="GetSubCells()">GetSubCells()</see>
         /// .size() -- usually a constant. Should be &gt;=2
         /// </summary>
-        public abstract int GetSubCellsSize();
+        public abstract int SubCellsSize { get; }
 
-        public abstract IShape GetShape();
+        public abstract IShape Shape { get; }
 
-        public virtual IPoint GetCenter()
+        public virtual IPoint Center
         {
-            return GetShape().Center;
+            get { return Shape.Center; }
         }
 
         #region IComparable<Cell> Members
@@ -310,7 +310,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override string ToString()
         {
-            return TokenString + (IsLeaf() ? ((char)LEAF_BYTE).ToString() : string.Empty);
+            return TokenString + (IsLeaf ? ((char)LEAF_BYTE).ToString() : string.Empty);
         }
 
         #endregion

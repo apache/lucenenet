@@ -101,7 +101,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             //TODO cache for each level
             Cell cell = GetCell(ctx.WorldBounds.Center, level);
-            IRectangle bbox = cell.GetShape().BoundingBox;
+            IRectangle bbox = cell.Shape.BoundingBox;
             double width = bbox.Width;
             double height = bbox.Height;
             //Use standard cartesian hypotenuse. For geospatial, this answer is larger
@@ -222,7 +222,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 cell.SetLeaf();//FYI might already be a leaf
             }
-            if (cell.IsLeaf())
+            if (cell.IsLeaf)
             {
                 result.Add(cell);
                 return true;
@@ -242,7 +242,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 }
             }
             //can we simplify?
-            if (simplify && leaves == cell.GetSubCellsSize() && cell.Level != 0)
+            if (simplify && leaves == cell.SubCellsSize && cell.Level != 0)
             {
                 //Optimization: substitute the parent as a leaf instead of adding all
                 // children as leaves
@@ -307,7 +307,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             foreach (Cell cell in cells)
             {
                 string token = cell.TokenString;
-                if (cell.IsLeaf())
+                if (cell.IsLeaf)
                 {
                     tokens.Add(token + (char)Cell.LEAF_BYTE);
                 }

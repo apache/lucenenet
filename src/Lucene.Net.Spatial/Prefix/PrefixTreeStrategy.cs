@@ -204,7 +204,7 @@ namespace Lucene.Net.Spatial.Prefix
                     Cell cell = iter.Current;
                     string token = cell.TokenString;
                     termAtt.Append(token);
-                    if (cell.IsLeaf())
+                    if (cell.IsLeaf)
                     {
                         nextTokenStringNeedingLeaf = token;
                     }

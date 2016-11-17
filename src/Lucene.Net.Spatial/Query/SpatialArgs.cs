@@ -89,7 +89,7 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         public virtual void Validate()
         {
-            if (Operation.IsTargetNeedsArea && !Shape.HasArea)
+            if (Operation.TargetNeedsArea && !Shape.HasArea)
             {
                 throw new ArgumentException(Operation + " only supports geometry with area");
             }

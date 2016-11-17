@@ -400,7 +400,7 @@ namespace Lucene.Net.Spatial.Prefix
             List<IShape> cellShapes = new List<IShape>(cells.size());
             foreach (Cell cell in cells)
             {
-                cellShapes.Add(cell.GetShape());
+                cellShapes.Add(cell.Shape);
             }
             return new ShapeCollection(cellShapes, ctx).BoundingBox;
         }

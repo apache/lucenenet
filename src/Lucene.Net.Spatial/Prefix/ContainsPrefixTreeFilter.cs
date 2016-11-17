@@ -99,10 +99,10 @@ namespace Lucene.Net.Spatial.Prefix
                 SmallDocSet combinedSubResults = null;
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
                 IShape subCellsFilter = outerInstance.queryShape;
-                if (cell.Level != 0 && ((cell.GetShapeRel() == SpatialRelation.NULL_VALUE || cell.GetShapeRel() == SpatialRelation.WITHIN)))
+                if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NULL_VALUE || cell.ShapeRel == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
-                    Debug.Assert(cell.GetShape().Relate(outerInstance.queryShape) == SpatialRelation.WITHIN);
+                    Debug.Assert(cell.Shape.Relate(outerInstance.queryShape) == SpatialRelation.WITHIN);
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -116,7 +116,7 @@ namespace Lucene.Net.Spatial.Prefix
                         combinedSubResults = GetDocs(subCell, acceptContains);
                     }
                     else if (!outerInstance.multiOverlappingIndexedShapes && 
-                        subCell.GetShapeRel() == SpatialRelation.WITHIN)
+                        subCell.ShapeRel == SpatialRelation.WITHIN)
                     {
                         combinedSubResults = GetLeafDocs(subCell, acceptContains); //recursion
                     }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Spatial.Prefix
                     return null;
                 }
                 nextCell = outerInstance.grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
-                if (nextCell.Level == leafCell.Level && nextCell.IsLeaf())
+                if (nextCell.Level == leafCell.Level && nextCell.IsLeaf)
                 {
                     return CollectDocs(acceptContains);
                 }
@@ -248,9 +248,9 @@ namespace Lucene.Net.Spatial.Prefix
 
             /// <summary>Number of docids.</summary>
             /// <remarks>Number of docids.</remarks>
-            public virtual int Size()
+            public virtual int Size
             {
-                return intSet.Size();
+                get { return intSet.Size(); }
             }
 
             /// <summary>NOTE: modifies and returns either "this" or "other"</summary>
@@ -284,7 +284,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 //if the # of docids is super small, return null since iteration is going
                 // to be faster
-                return Size() > 4 ? this : null;
+                return Size > 4 ? this : null;
             }
 
             private sealed class _DocIdSetIterator_225 : DocIdSetIterator
@@ -336,7 +336,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             public override DocIdSetIterator GetIterator()
             {
-                if (Size() == 0)
+                if (Size == 0)
                 {
                     return null;
                 }

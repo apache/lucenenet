@@ -32,10 +32,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <lucene.experimental></lucene.experimental>
     public abstract class SpatialPrefixTreeFactory
     {
-        private const double DefaultGeoMaxDetailKm = 0.001;//1m
-        public const string PrefixTree = "prefixTree";
-        public const string MaxLevels = "maxLevels";
-        public const string MaxDistErr = "maxDistErr";
+        private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001;//1m
+        public const string PREFIX_TREE = "prefixTree";
+        public const string MAX_LEVELS = "maxLevels";
+        public const string MAX_DIST_ERR = "maxDistErr";
 
         protected internal IDictionary<string, string> args;
         protected internal SpatialContext ctx;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             SpatialPrefixTreeFactory instance;
             string cname;
-            if (!args.TryGetValue(PrefixTree, out cname))
+            if (!args.TryGetValue(PREFIX_TREE, out cname))
             {
                 cname = ctx.IsGeo ? "geohash" : "quad";
             }
@@ -89,21 +89,21 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected internal virtual void InitMaxLevels()
         {
             string mlStr;
-            if (args.TryGetValue(MaxLevels, out mlStr))
+            if (args.TryGetValue(MAX_LEVELS, out mlStr))
             {
                 maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;
             string maxDetailDistStr;
-            if (!args.TryGetValue(MaxDistErr, out maxDetailDistStr))
+            if (!args.TryGetValue(MAX_DIST_ERR, out maxDetailDistStr))
             {
                 if (!ctx.IsGeo)
                 {
                     return;
                 }
                 //let default to max
-                degrees = DistanceUtils.Dist2Degrees(DefaultGeoMaxDetailKm, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
             }
             else
             {

@@ -47,9 +47,9 @@ namespace Lucene.Net.Spatial.Prefix
         protected internal override IPoint ReadShape(BytesRef term)
         {
             scanCell = grid.GetCell(term.Bytes, term.Offset, term.Length, scanCell);
-            if (scanCell.Level == grid.MaxLevels && !scanCell.IsLeaf())
+            if (scanCell.Level == grid.MaxLevels && !scanCell.IsLeaf)
             {
-                return scanCell.GetCenter();
+                return scanCell.Center;
             }
             return null;
         }

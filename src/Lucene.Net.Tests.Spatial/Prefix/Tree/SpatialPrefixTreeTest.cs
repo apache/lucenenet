@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             Cell prevC = null;
             Cell c = trie.WorldCell;
             assertEquals(0, c.Level);
-            assertEquals(ctx.WorldBounds, c.GetShape());
+            assertEquals(ctx.WorldBounds, c.Shape);
             while (c.Level < trie.MaxLevels)
             {
                 prevC = c;
@@ -56,8 +56,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 //c = c.GetSubCells().GetEnumerator().next();//TODO random which one?
 
                 assertEquals(prevC.Level + 1, c.Level);
-                IRectangle prevNShape = (IRectangle)prevC.GetShape();
-                IShape s = c.GetShape();
+                IRectangle prevNShape = (IRectangle)prevC.Shape;
+                IShape s = c.Shape;
                 IRectangle sbox = s.BoundingBox;
                 assertTrue(prevNShape.Width > sbox.Width);
                 assertTrue(prevNShape.Height > sbox.Height);

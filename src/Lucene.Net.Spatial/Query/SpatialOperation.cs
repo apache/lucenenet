@@ -208,17 +208,17 @@ namespace Lucene.Net.Spatial.Queries
 
         // ================================================= Getters / Setters =============================================
 
-        public virtual bool IsScoreIsMeaningful
+        public virtual bool IsScoreMeaningful
         {
             get { return scoreIsMeaningful; }
         }
 
-        public virtual bool IsSourceNeedsArea
+        public virtual bool SourceNeedsArea
         {
             get { return sourceNeedsArea; }
         }
 
-        public virtual bool IsTargetNeedsArea
+        public virtual bool TargetNeedsArea
         {
             get { return targetNeedsArea; }
         }

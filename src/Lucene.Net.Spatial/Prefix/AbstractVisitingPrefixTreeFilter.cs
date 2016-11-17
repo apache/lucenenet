@@ -280,7 +280,7 @@ namespace Lucene.Net.Spatial.Prefix
                     // then add all of those docs
                     Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
                     scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
-                    if (scanCell.Level == cell.Level && scanCell.IsLeaf())
+                    if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {
                         VisitLeaf(scanCell);
                         //advance
@@ -356,12 +356,12 @@ namespace Lucene.Net.Spatial.Prefix
                     int termLevel = scanCell.Level;
                     if (termLevel < scanDetailLevel)
                     {
-                        if (scanCell.IsLeaf())
+                        if (scanCell.IsLeaf)
                             VisitScanned(scanCell);
                     }
                     else if (termLevel == scanDetailLevel)
                     {
-                        if (!scanCell.IsLeaf())//LUCENE-5529
+                        if (!scanCell.IsLeaf)//LUCENE-5529
                             VisitScanned(scanCell);
                     }
                 }//term loop

@@ -185,7 +185,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
-                visitRelation = cell.GetShape().Relate(outerInstance.queryShape);
+                visitRelation = cell.Shape.Relate(outerInstance.queryShape);
                 if (visitRelation == SpatialRelation.WITHIN)
                 {
                     CollectDocs(inside);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
                 Debug.Assert(outerInstance.detailLevel != cell.Level);
-                Debug.Assert(visitRelation == cell.GetShape().Relate(outerInstance.queryShape));
+                Debug.Assert(visitRelation == cell.Shape.Relate(outerInstance.queryShape));
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
                     CollectDocs(inside);
@@ -232,7 +232,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (relate == SpatialRelation.NULL_VALUE)
                 {
-                    relate = cell.GetShape().Relate(outerInstance.queryShape);
+                    relate = cell.Shape.Relate(outerInstance.queryShape);
                 }
                 if (cell.Level == outerInstance.detailLevel)
                 {

@@ -46,21 +46,21 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             protected internal override int GetLevelForDistance(double degrees)
             {
-                var grid = new QuadPrefixTree(ctx, MaxLevelsPossible);
+                var grid = new QuadPrefixTree(ctx, MAX_LEVELS_POSSIBLE);
                 return grid.GetLevelForDistance(degrees);
             }
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new QuadPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MaxLevelsPossible);
+                return new QuadPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MAX_LEVELS_POSSIBLE);
             }
         }
 
         #endregion
 
-        public const int MaxLevelsPossible = 50;//not really sure how big this should be
+        public const int MAX_LEVELS_POSSIBLE = 50;//not really sure how big this should be
 
-        public const int DefaultMaxLevels = 12;
+        public const int DEFAULT_MAX_LEVELS = 12;
         private readonly double xmin;
         private readonly double xmax;
         private readonly double ymin;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         public QuadPrefixTree(SpatialContext ctx)
-            : this(ctx, DefaultMaxLevels)
+            : this(ctx, DEFAULT_MAX_LEVELS)
         {
         }
 
@@ -270,9 +270,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return cells;
             }
 
-            public override int GetSubCellsSize()
+            public override int SubCellsSize
             {
-                return 4;
+                get { return 4; }
             }
 
             public override Cell GetSubCell(IPoint p)
@@ -282,13 +282,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             private IShape shape; //cache
 
-            public override IShape GetShape()
+            public override IShape Shape
             {
-                if (shape == null)
+                get
                 {
-                    shape = MakeShape();
+                    if (shape == null)
+                    {
+                        shape = MakeShape();
+                    }
+                    return shape;
                 }
-                return shape;
             }
 
             private IRectangle MakeShape()
