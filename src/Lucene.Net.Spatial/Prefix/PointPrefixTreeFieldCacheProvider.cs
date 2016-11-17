@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;

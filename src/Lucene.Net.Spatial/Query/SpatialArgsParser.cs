@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Support;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
-using System.Linq;
 using Spatial4n.Core.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Spatial.Queries
 {

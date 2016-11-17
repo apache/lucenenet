@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Spatial4n.Core.Context;
+using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {

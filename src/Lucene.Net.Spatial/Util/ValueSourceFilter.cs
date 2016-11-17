@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Spatial.Util
 {

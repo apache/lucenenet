@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
 using Spatial4n.Core.Shapes;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Util
 {

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
 #if !NET35
 using System.Collections.Concurrent;
 #else
@@ -29,7 +28,6 @@ using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix

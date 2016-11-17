@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;

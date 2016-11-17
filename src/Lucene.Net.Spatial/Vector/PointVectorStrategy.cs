@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
@@ -23,6 +22,7 @@ using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
+using System;
 
 namespace Lucene.Net.Spatial.Vector
 {

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
 using Lucene.Net.Index;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Spatial
 {

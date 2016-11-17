@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Util
 {

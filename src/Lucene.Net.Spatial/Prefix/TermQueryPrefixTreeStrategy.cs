@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Collections.Generic;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix
 {

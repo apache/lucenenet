@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
-using Lucene.Net.Index;
 using Spatial4n.Core.Io;
+using Spatial4n.Core.Shapes;
+using System;
 using System.Collections;
-using Lucene.Net.Spatial.Util;
+using System.IO;
 
 namespace Lucene.Net.Spatial.Serialized
 {

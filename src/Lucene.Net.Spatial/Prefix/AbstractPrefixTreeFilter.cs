@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System.Diagnostics;
 
 namespace Lucene.Net.Spatial.Prefix
 {

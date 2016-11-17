@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
+using System.Collections;
+using System.Diagnostics;
 
 namespace Lucene.Net.Spatial.Vector
 {
