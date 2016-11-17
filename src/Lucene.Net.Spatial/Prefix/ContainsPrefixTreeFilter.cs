@@ -168,7 +168,7 @@ namespace Lucene.Net.Spatial.Prefix
             private SmallDocSet GetLeafDocs(Cell leafCell, Bits acceptContains)
             {
                 Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
-                Debug.Assert(leafCell.Equals(lastLeaf));//don't call for same leaf again
+                Debug.Assert(!leafCell.Equals(lastLeaf));//don't call for same leaf again
                 lastLeaf = leafCell;
 
                 if (termsEnum == null)
