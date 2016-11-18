@@ -36,8 +36,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <p/>
     /// Implementations of this class should be thread-safe and immutable once
     /// initialized.
+    /// 
+    /// @lucene.experimental
     /// </remarks>
-    /// <lucene.experimental></lucene.experimental>
     public abstract class SpatialPrefixTree
     {
         protected internal readonly int maxLevels;
@@ -73,8 +74,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <remarks>
         /// Returns the level of the largest grid in which its longest side is less
         /// than or equal to the provided distance (in degrees). Consequently
-        /// <code>dist</code>
-        /// acts as an error epsilon declaring the amount of detail needed in the
+        /// <paramref name="dist"/> acts as an error epsilon declaring the amount of detail needed in the
         /// grid, such that you can get a grid with just the right amount of
         /// precision.
         /// </remarks>
@@ -115,12 +115,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>Returns the level 0 cell which encompasses all spatial data.</summary>
         /// <remarks>
         /// Returns the level 0 cell which encompasses all spatial data. Equivalent to
-        /// <see cref="GetCell(string)">GetCell(string)</see>
-        /// with "".
+        /// <see cref="GetCell(string)">GetCell(string)</see> with <see cref="string.Empty"/>.
         /// This cell is threadsafe, just like a spatial prefix grid is, although cells aren't
         /// generally threadsafe.
-        /// TODO rename to getTopCell or is this fine?
         /// </remarks>
+        /// TODO rename to GetTopCell or is this fine?
         public virtual Cell WorldCell
         {
             get
@@ -136,8 +135,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>The cell for the specified token.</summary>
         /// <remarks>
         /// The cell for the specified token. The empty string should be equal to
-        /// <see cref="WorldCell">WorldCell</see>
-        /// .
+        /// <see cref="WorldCell">WorldCell</see>.
         /// Precondition: Never called when token length &gt; maxLevel.
         /// </remarks>
         public abstract Cell GetCell(string token);
@@ -155,11 +153,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>
-        /// Returns the cell containing point
-        /// <code>p</code>
-        /// at the specified
-        /// <code>level</code>
-        /// .
+        /// Returns the cell containing point <paramref name="p"/> at the specified <paramref name="level"/>.
         /// </summary>
         protected internal virtual Cell GetCell(IPoint p, int level)
         {
@@ -174,11 +168,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Gets the intersecting cells for the specified shape, without exceeding
         /// detail level. If a cell is within the query shape then it's marked as a
         /// leaf and none of its children are added.
-        /// <p/>
-        /// This implementation checks if shape is a Point and if so returns
-        /// <see cref="GetCells(Point, int, bool)">GetCells(Point, int, bool)
-        /// 	</see>
-        /// .
+        /// <para/>
+        /// This implementation checks if shape is a <see cref="IPoint"/> and if so returns
+        /// <see cref="GetCells(Point, int, bool)"/>.
         /// </remarks>
         /// <param name="shape">the shape; non-null</param>
         /// <param name="detailLevel">the maximum detail level to get cells for</param>
@@ -266,14 +258,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         /// <summary>
         /// A Point-optimized implementation of
-        /// <see cref="GetCells(Shape, int, bool, bool)">GetCells(Shape, int, bool, bool)
-        /// 	</see>
-        /// . That
+        /// <see cref="GetCells(Shape, int, bool, bool)"/>. That
         /// method in facts calls this for points.
-        /// <p/>
-        /// This implementation depends on
-        /// <see cref="GetCell(string)">GetCell(string)</see>
-        /// being fast, as its
+        /// <para/>
+        /// This implementation depends on <see cref="GetCell(string)"/> being fast, as its
         /// called repeatedly when incPlarents is true.
         /// </summary>
         public virtual IList<Cell> GetCells(IPoint p, int detailLevel, bool inclParents)
@@ -298,9 +286,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return cells;
         }
 
-        /// <summary>Will add the trailing leaf byte for leaves.</summary>
-        /// <remarks>Will add the trailing leaf byte for leaves. This isn't particularly efficient.
-        /// 	</remarks>
+        /// <summary>Will add the trailing leaf byte for leaves. This isn't particularly efficient.</summary>
+        [Obsolete("TODO remove; not used and not interesting, don't need collection in & out")]
         public static IList<string> CellsToTokenStrings(ICollection<Cell> cells)
         {
             IList<string> tokens = new List<string>((cells.Count));

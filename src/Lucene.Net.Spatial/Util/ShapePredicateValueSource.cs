@@ -26,7 +26,7 @@ namespace Lucene.Net.Spatial.Util
      */
 
     /// <summary>
-    /// A boolean ValueSource that compares a shape from a provided ValueSource with a given Shape and sees
+    /// A boolean <see cref="ValueSource"/> that compares a shape from a provided <see cref="ValueSource"/> with a given <see cref="IShape">Shape</see> and sees
     /// if it matches a given <see cref="SpatialOperation"/> (the predicate).
     /// 
     /// @lucene.experimental
@@ -41,7 +41,7 @@ namespace Lucene.Net.Spatial.Util
         /// 
         /// </summary>
         /// <param name="shapeValuesource">
-        /// Must yield <see cref="IShape"/> instances from it's objectVal(doc). If null
+        /// Must yield <see cref="IShape"/> instances from it's ObjectVal(doc). If null
         /// then the result is false. This is the left-hand (indexed) side.
         /// </param>
         /// <param name="op">the predicate</param>

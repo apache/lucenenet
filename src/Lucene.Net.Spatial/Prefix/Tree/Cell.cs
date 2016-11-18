@@ -24,12 +24,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
      * limitations under the License.
      */
 
-    /// <summary>Represents a grid cell.</summary>
-    /// <remarks>
+    /// <summary>
     /// Represents a grid cell. These are not necessarily thread-safe, although new
     /// Cell("") (world cell) must be.
-    /// </remarks>
-    /// <lucene.experimental></lucene.experimental>
+    /// 
+    /// @lucene.experimental
+    /// </summary>
     public abstract class Cell : IComparable<Cell>
     {
         /// <summary>
@@ -44,10 +44,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
 
-        /*
-        Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
-        Neither contains the trailing leaf byte.
-        */
+        /// <summary>
+        /// Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
+        /// Neither contains the trailing leaf byte.
+        /// </summary>
         private byte[] bytes;
         private int b_off;
         private int b_len;
@@ -55,10 +55,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private string token;//this is the only part of equality
 
         /// <summary>
-        /// When set via getSubCells(filter), it is the relationship between this cell
+        /// When set via <see cref="GetSubCells(IShape)">GetSubCells(filter)</see>, it is the relationship between this cell
         /// and the given shape filter.
         /// </summary>
-        protected internal SpatialRelation shapeRel = SpatialRelation.NULL_VALUE;//set in getSubCells(filter), and via setLeaf().
+        protected internal SpatialRelation shapeRel = SpatialRelation.NULL_VALUE;//set in GetSubCells(filter), and via SetLeaf().
 
         /// <summary>Always false for points.</summary>
         /// <remarks>
@@ -142,7 +142,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>Note: not supported at level 0.</summary>
-        /// <remarks>Note: not supported at level 0.</remarks>
         public virtual void SetLeaf()
         {
             Debug.Assert(Level != 0);
@@ -192,24 +191,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         //TODO add getParent() and update some algorithms to use this?
         //public Cell getParent();
         /// <summary>
-        /// Like
-        /// <see cref="GetSubCells()">GetSubCells()</see>
-        /// but with the results filtered by a shape. If
-        /// that shape is a
-        /// <see cref="Point">Spatial4n.Core.Shapes.Point</see>
-        /// then it must call
-        /// <see cref="GetSubCell(Point)">GetSubCell(Spatial4n.Core.Shapes.Point)
-        /// 	</see>
-        /// . The returned cells
-        /// should have
-        /// <see cref="ShapeRel">ShapeRel</see>
-        /// set to their relation with
-        /// <code>shapeFilter</code>
-        /// . In addition,
-        /// <see cref="IsLeaf()">IsLeaf()</see>
-        /// must be true when that relation is WITHIN.
-        /// <p/>
-        /// Precondition: Never called when getLevel() == maxLevel.
+        /// Like <see cref="GetSubCells()">GetSubCells()</see> but with the results filtered by a shape. If
+        /// that shape is a <see cref="IPoint"/> then it must call 
+        /// <see cref="GetSubCell(IPoint)"/>. The returned cells
+        /// should have <see cref="ShapeRel">ShapeRel</see> set to their relation with
+        /// <paramref name="shapeFilter"/>. In addition, <see cref="IsLeaf"/>
+        /// must be true when that relation is <see cref="SpatialRelation.WITHIN"/>.
+        /// <para/>
+        /// Precondition: Never called when Level == maxLevel.
         /// </summary>
         /// <param name="shapeFilter">an optional filter for the returned cells.</param>
         /// <returns>A set of cells (no dups), sorted. Not Modifiable.</returns>
@@ -258,9 +247,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <remarks>
         /// Performant implementations are expected to implement this efficiently by
         /// considering the current cell's boundary. Precondition: Never called when
-        /// getLevel() == maxLevel.
+        /// Level == maxLevel.
         /// <p/>
-        /// Precondition: this.getShape().relate(p) != DISJOINT.
+        /// Precondition: this.Shape.Relate(p) != SpatialRelation.DISJOINT.
         /// </remarks>
         public abstract Cell GetSubCell(IPoint p);
 
@@ -268,14 +257,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>Gets the cells at the next grid cell level that cover this cell.</summary>
         /// <remarks>
         /// Gets the cells at the next grid cell level that cover this cell.
-        /// Precondition: Never called when getLevel() == maxLevel.
+        /// Precondition: Never called when Level == maxLevel.
         /// </remarks>
         /// <returns>A set of cells (no dups), sorted, modifiable, not empty, not null.</returns>
         protected internal abstract ICollection<Cell> GetSubCells();
 
         /// <summary>
-        /// <see cref="GetSubCells()">GetSubCells()</see>
-        /// .size() -- usually a constant. Should be &gt;=2
+        /// <see cref="GetSubCells()"/>.Count -- usually a constant. Should be &gt;=2
         /// </summary>
         public abstract int SubCellsSize { get; }
 

@@ -26,22 +26,17 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// A basic implementation of
-    /// <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>
-    /// using a large
-    /// <see cref="Lucene.Net.Queries.TermsFilter">Lucene.Net.Queries.TermsFilter
-    /// 	</see>
-    /// of all the cells from
-    /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(Shape, int, bool, bool)
-    /// 	"SpatialPrefixTree.GetCells(Shape, int, bool, bool)
-    /// 	</see>
-    /// . It only supports the search of indexed Point shapes.
-    /// <p/>
-    /// The precision of query shapes (distErrPct) is an important factor in using
+    /// A basic implementation of <see cref="PrefixTreeStrategy"/> using a large
+    /// <see cref="Lucene.Net.Queries.TermsFilter"/> of all the cells from
+    /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(IShape, int, bool, bool)"/>. 
+    /// It only supports the search of indexed Point shapes.
+    /// <para/>
+    /// The precision of query shapes (DistErrPct) is an important factor in using
     /// this Strategy. If the precision is too precise then it will result in many
     /// terms which will amount to a slower query.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
     {
         public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)

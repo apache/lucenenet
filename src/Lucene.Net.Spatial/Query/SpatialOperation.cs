@@ -201,7 +201,7 @@ namespace Lucene.Net.Spatial.Queries
         }
 
         /// <summary>
-        /// Returns whether the relationship between indexedShape and queryShape is
+        /// Returns whether the relationship between <paramref name="indexedShape"/> and <paramref name="queryShape"/> is
         /// satisfied by this operation.
         /// </summary>
         public abstract bool Evaluate(IShape indexedShape, IShape queryShape);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Spatial.Queries
             get { return sourceNeedsArea; }
         }
 
-        public virtual bool TargetNeedsArea
+        public virtual bool IsTargetNeedsArea
         {
             get { return targetNeedsArea; }
         }

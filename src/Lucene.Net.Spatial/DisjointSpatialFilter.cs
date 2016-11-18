@@ -25,21 +25,15 @@ namespace Lucene.Net.Spatial
      */
 
     /// <summary>
-    /// A Spatial Filter implementing
-    /// <see cref="SpatialOperation.IsDisjointTo">Org.Apache.Lucene.Spatial.Query.SpatialOperation.IsDisjointTo
-    /// 	</see>
-    /// in terms
-    /// of a
-    /// <see cref="SpatialStrategy">SpatialStrategy</see>
-    /// 's support for
-    /// <see cref="SpatialOperation.Intersects">Org.Apache.Lucene.Spatial.Query.SpatialOperation.Intersects
-    /// 	</see>
-    /// .
+    /// A Spatial Filter implementing <see cref="SpatialOperation.IsDisjointTo"/> in terms
+    /// of a <see cref="SpatialStrategy">SpatialStrategy</see>'s support for
+    /// <see cref="SpatialOperation.Intersects"/>.
     /// A document is considered disjoint if it has spatial data that does not
     /// intersect with the query shape.  Another way of looking at this is that it's
     /// a way to invert a query shape.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class DisjointSpatialFilter : Filter
     {
         private readonly string field;//maybe null

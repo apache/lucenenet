@@ -21,6 +21,12 @@ namespace Lucene.Net.Spatial.Queries
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Principally holds the query <see cref="IShape"/> and the <see cref="SpatialOperation"/>.
+    /// It's used as an argument to some methods on <see cref="SpatialStrategy"/>.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
     public class SpatialArgs
     {
         public static readonly double DEFAULT_DISTERRPCT = 0.025d;
@@ -39,7 +45,7 @@ namespace Lucene.Net.Spatial.Queries
         }
 
         /// <summary>
-        /// Computes the distance given a shape and the {@code distErrPct}.  The
+        /// Computes the distance given a shape and the <paramref name="distErrPct"/>.  The
         /// algorithm is the fraction of the distance from the center of the query
         /// shape to its furthest bounding box corner.
         /// </summary>
@@ -75,7 +81,7 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="defaultDistErrPct">0 to 0.5</param>
-        /// <returns>>= 0</returns>
+        /// <returns>&gt;= 0</returns>
         public virtual double ResolveDistErr(SpatialContext ctx, double defaultDistErrPct)
         {
             if (DistErr != null)
@@ -89,7 +95,7 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         public virtual void Validate()
         {
-            if (Operation.TargetNeedsArea && !Shape.HasArea)
+            if (Operation.IsTargetNeedsArea && !Shape.HasArea)
             {
                 throw new ArgumentException(Operation + " only supports geometry with area");
             }
@@ -124,8 +130,6 @@ namespace Lucene.Net.Spatial.Queries
         /// <summary>
         /// A measure of acceptable error of the shape as a fraction. This effectively
         /// inflates the size of the shape but should not shrink it.
-        /// <p/>
-        /// The default is {@link #DEFAULT_DIST_PRECISION}
         /// </summary>
         /// <returns>0 to 0.5</returns>
         public virtual double? DistErrPct
@@ -144,7 +148,7 @@ namespace Lucene.Net.Spatial.Queries
         /// The acceptable error of the shape.  This effectively inflates the
         /// size of the shape but should not shrink it.
         /// </summary>
-        /// <returns>>= 0</returns>
+        /// <returns>&gt;= 0</returns>
         public virtual double? DistErr
         {
             get { return distErr; }

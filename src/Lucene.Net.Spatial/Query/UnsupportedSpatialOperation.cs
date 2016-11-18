@@ -19,6 +19,11 @@ namespace Lucene.Net.Spatial.Queries
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Exception thrown when the <see cref="SpatialStrategy"/> cannot implement the requested operation.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
     [Serializable]
     public class UnsupportedSpatialOperation : NotSupportedException
     {

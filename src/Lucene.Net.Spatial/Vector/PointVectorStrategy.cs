@@ -28,13 +28,28 @@ namespace Lucene.Net.Spatial.Vector
 
     /// <summary>
     /// Simple <see cref="SpatialStrategy"/> which represents Points in two numeric <see cref="DoubleField"/>s.
+    /// The Strategy's best feature is decent distance sort.
     /// 
-    /// Note, currently only Points can be indexed by this Strategy.  At query time, the bounding
-    /// box of the given Shape is used to create <see cref="NumericRangeQuery"/>s to efficiently
-    /// find Points within the Shape.
+    /// <h4>Characteristics:</h4>
+    /// <list type="bullet">
+    ///     <item>Only indexes points; just one per field value.</item>
+    ///     <item>Can query by a rectangle or circle.</item>
+    ///     <item><see cref="SpatialOperation.Intersects"/> and <see cref="SpatialOperation.IsWithin"/> is supported.</item>
+    ///     <item>Uses the FieldCache for <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/> and for
+    ///     searching with a Circle.</item>
+    /// </list>
     /// 
-    /// Due to the simple use of numeric fields, this Strategy provides support for sorting by
-    /// distance through <see cref="DistanceValueSource"/>
+    /// <h4>Implementation:</h4>
+    /// This is a simple Strategy.  Search works with <see cref="NumericRangeQuery"/>s on
+    /// an x & y pair of fields.  A Circle query does the same bbox query but adds a
+    /// ValueSource filter on <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/>.
+    /// <para/>
+    /// One performance shortcoming with this strategy is that a scenario involving
+    /// both a search using a Circle and sort will result in calculations for the
+    /// spatial distance being done twice -- once for the filter and second for the
+    /// sort.
+    /// 
+    /// @lucene.experimental
     /// </summary>
     public class PointVectorStrategy : SpatialStrategy
     {

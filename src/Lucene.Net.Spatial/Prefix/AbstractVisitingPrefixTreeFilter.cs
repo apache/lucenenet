@@ -31,11 +31,11 @@ namespace Lucene.Net.Spatial.Prefix
     /// Traverses a <see cref="SpatialPrefixTree">SpatialPrefixTree</see> indexed field, using the template &
     /// visitor design patterns for subclasses to guide the traversal and collect
     /// matching documents.
-    /// <p/>
-    /// Subclasses implement <see cref="Filter.GetDocIdSet(AtomicReaderContext, Bits)">Lucene.Search.Filter.GetDocIdSet(AtomicReaderContext, Bits)</see>
-    /// by instantiating a custom <see cref="VisitorTemplate">VisitorTemplate</see>
-    /// subclass (i.e. an anonymous inner class) and implement the
+    /// <para/>
+    /// Subclasses implement <see cref="Filter.GetDocIdSet(AtomicReaderContext, Bits)"/>
+    /// by instantiating a custom <see cref="VisitorTemplate"/> subclass (i.e. an anonymous inner class) and implement the
     /// required methods.
+    /// 
     /// @lucene.internal
     /// </summary>
     public abstract class AbstractVisitingPrefixTreeFilter : AbstractPrefixTreeFilter
@@ -75,42 +75,25 @@ namespace Lucene.Net.Spatial.Prefix
 
         /// <summary>
         /// An abstract class designed to make it easy to implement predicates or
-        /// other operations on a
-        /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree
-        /// 	</see>
-        /// indexed field. An instance
+        /// other operations on a <see cref="SpatialPrefixTree"/> indexed field. An instance
         /// of this class is not designed to be re-used across AtomicReaderContext
         /// instances so simply create a new one for each call to, say a
-        /// <see cref="Lucene.Net.Search.Filter.GetDocIdSet(Lucene.Net.Index.AtomicReaderContext, Lucene.Net.Util.Bits)
-        /// 	">Lucene.Net.Search.Filter.GetDocIdSet(Lucene.Net.Index.AtomicReaderContext, Lucene.Net.Util.Bits)
-        /// 	</see>
-        /// .
-        /// The
-        /// <see cref="GetDocIdSet()">GetDocIdSet()</see>
-        /// method here starts the work. It first checks
+        /// <see cref="Lucene.Net.Search.Filter.GetDocIdSet(Lucene.Net.Index.AtomicReaderContext, Lucene.Net.Util.Bits)"/>.
+        /// The <see cref="GetDocIdSet()"/> method here starts the work. It first checks
         /// that there are indexed terms; if not it quickly returns null. Then it calls
-        /// <see cref="Start()">Start()</see>
-        /// so a subclass can set up a return value, like an
-        /// <see cref="Lucene.Net.Util.OpenBitSet">Lucene.Net.Util.OpenBitSet</see>
-        /// . Then it starts the traversal
-        /// process, calling
-        /// <see cref="FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)">FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)
-        /// 	</see>
-        /// which by default finds the top cells that intersect
-        /// <code>queryShape</code>
-        /// . If
+        /// <see cref="Start()">Start()</see> so a subclass can set up a return value, like an
+        /// <see cref="Lucene.Net.Util.FixedBitSet"/>. Then it starts the traversal
+        /// process, calling <see cref="FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>
+        /// which by default finds the top cells that intersect <c>queryShape</c>. If
         /// there isn't an indexed cell for a corresponding cell returned for this
         /// method then it's short-circuited until it finds one, at which point
-        /// <see cref="Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)">Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)
-        /// 	</see>
-        /// is called. At
+        /// <see cref="Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)"/> is called. At
         /// some depths, of the tree, the algorithm switches to a scanning mode that
-        /// finds calls
-        /// <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)">VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)
-        /// 	</see>
+        /// calls <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>
         /// for each leaf cell found.
+        /// 
+        /// @lucene.internal
         /// </summary>
-        /// <lucene.internal></lucene.internal>
         public abstract class VisitorTemplate : BaseTermsEnumTraverser
         {
             /* Future potential optimizations:
@@ -259,9 +242,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>
-            /// Called initially, and whenever
-            /// <see cref="Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)">Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)
-            /// 	</see>
+            /// Called initially, and whenever <see cref="Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>
             /// returns true.
             /// </summary>
             /// <exception cref="System.IO.IOException"></exception>
@@ -319,11 +300,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             /// <summary>
             /// Called when doing a divide & conquer to find the next intersecting cells
-            /// of the query shape that are beneath
-            /// <code>cell</code>
-            /// .
-            /// <code>cell</code>
-            /// is
+            /// of the query shape that are beneath <paramref name="cell"/>. <paramref name="cell"/> is
             /// guaranteed to have an intersection and thus this must return some number
             /// of nodes.
             /// </summary>
@@ -333,16 +310,10 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>
-            /// Scans (
-            /// <code>termsEnum.next()</code>
-            /// ) terms until a term is found that does
+            /// Scans (<c>termsEnum.Next()</c>) terms until a term is found that does
             /// not start with curVNode's cell. If it finds a leaf cell or a cell at
-            /// level
-            /// <code>scanDetailLevel</code>
-            /// then it calls
-            /// <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)">VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)
-            /// 	</see>
-            /// .
+            /// level <paramref name="scanDetailLevel"/> then it calls
+            /// <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>.
             /// </summary>
             /// <exception cref="System.IO.IOException"></exception>
             protected internal virtual void Scan(int scanDetailLevel)
@@ -370,7 +341,7 @@ namespace Lucene.Net.Spatial.Prefix
             #region Nested type: VNodeCellIterator
 
             /// <summary>
-            /// Used for <see cref="VNode.children">VNode.children</see>.
+            /// Used for <see cref="VNode.children"/>.
             /// </summary>
             private class VNodeCellIterator : IEnumerator<VNode>
             {
@@ -459,32 +430,29 @@ namespace Lucene.Net.Spatial.Prefix
 
             /// <summary>
             /// Visit an indexed cell returned from
-            /// <see cref="FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)">FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)
-            /// 	</see>
-            /// .
+            /// <see cref="FindSubCellsToVisit(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>.
             /// </summary>
             /// <param name="cell">An intersecting cell.</param>
             /// <returns>
             /// true to descend to more levels. It is an error to return true
-            /// if cell.level == detailLevel
+            /// if cell.Level == detailLevel
             /// </returns>
             /// <exception cref="System.IO.IOException"></exception>
             protected internal abstract bool Visit(Cell cell);
 
             /// <summary>Called after visit() returns true and an indexed leaf cell is found.</summary>
             /// <remarks>
-            /// Called after visit() returns true and an indexed leaf cell is found. An
+            /// Called after Visit() returns true and an indexed leaf cell is found. An
             /// indexed leaf cell means associated documents generally won't be found at
             /// further detail levels.
             /// </remarks>
             /// <exception cref="System.IO.IOException"></exception>
             protected internal abstract void VisitLeaf(Cell cell);
 
-            /// <summary>The cell is either indexed as a leaf or is the last level of detail.</summary>
-            /// <remarks>
+            /// <summary>
             /// The cell is either indexed as a leaf or is the last level of detail. It
             /// might not even intersect the query shape, so be sure to check for that.
-            /// </remarks>
+            /// </summary>
             /// <exception cref="System.IO.IOException"></exception>
             protected internal abstract void VisitScanned(Cell cell);
 
@@ -503,13 +471,12 @@ namespace Lucene.Net.Spatial.Prefix
         #region Nested type: VNode
 
         /// <summary>
-        /// A Visitor Cell/Cell found via the query shape for
-        /// <see cref="VisitorTemplate">VisitorTemplate</see>
-        /// .
+        /// A Visitor node/cell found via the query shape for <see cref="VisitorTemplate"/>.
         /// Sometimes these are reset(cell). It's like a LinkedList node but forms a
         /// tree.
+        /// 
+        /// @lucene.internal
         /// </summary>
-        /// <lucene.internal></lucene.internal>
         public class VNode
         {
             //Note: The VNode tree adds more code to debug/maintain v.s. a flattened
@@ -521,7 +488,7 @@ namespace Lucene.Net.Spatial.Prefix
             internal IEnumerator<VNode> children;//null, then sometimes set, then null
             internal Cell cell;//not null (except initially before reset())
 
-            /// <summary>call reset(cell) after to set the cell.</summary>
+            /// <summary>Call <see cref="Reset(Cell)"/> after to set the cell.</summary>
             internal VNode(VNode parent)
             {
                 // remember to call reset(cell) after

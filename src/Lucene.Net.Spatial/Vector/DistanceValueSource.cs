@@ -27,7 +27,7 @@ namespace Lucene.Net.Spatial.Vector
      */
 
     /// <summary>
-    /// An implementation of the Lucene ValueSource model that returns the distance
+    /// An implementation of the Lucene <see cref="ValueSource"/> model that returns the distance
     /// for a <see cref="PointVectorStrategy"/>.
     /// 
     /// @lucene.internal
@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Vector
         }
 
         /// <summary>
-        /// Returns the ValueSource description.
+        /// Returns the <see cref="ValueSource"/> description.
         /// </summary>
         public override string Description
         {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Spatial.Vector
         }
 
         /// <summary>
-        /// Returns the FunctionValues used by the function query.
+        /// Returns the <see cref="FunctionValues"/> used by the function query.
         /// </summary>
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {

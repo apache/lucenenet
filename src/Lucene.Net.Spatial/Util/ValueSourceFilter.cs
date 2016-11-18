@@ -24,7 +24,7 @@ namespace Lucene.Net.Spatial.Util
      */
 
     /// <summary>
-    /// Filter that matches all documents where a valuesource is
+    /// <see cref="Filter"/> that matches all documents where a <see cref="ValueSource"/> is
     /// in between a range of <c>min</c> and <c>max</c> inclusive.
     /// @lucene.internal
     /// </summary>

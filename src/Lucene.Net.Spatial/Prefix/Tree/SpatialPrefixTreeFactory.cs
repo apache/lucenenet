@@ -24,12 +24,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
      */
 
     /// <summary>
-    /// Abstract Factory for creating
-    /// <see cref="SpatialPrefixTree">SpatialPrefixTree</see>
-    /// instances with useful
-    /// defaults and passed on configurations defined in a Map.
+    /// Abstract Factory for creating <see cref="SpatialPrefixTree"/> instances with useful
+    /// defaults and passed on configurations defined in a <see cref="IDictionary{TKey, TValue}"/>.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public abstract class SpatialPrefixTreeFactory
     {
         private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001;//1m
@@ -41,8 +40,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected internal SpatialContext ctx;
         protected internal int? maxLevels;
 
-        /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
-        /// 	</summary>
+        /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".</summary>
         /// <remarks>
         /// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
@@ -113,8 +111,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>
-        /// Calls
-        /// <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)</see>.
+        /// Calls <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)</see>.
         /// </summary>
         protected internal abstract int GetLevelForDistance(double degrees);
 

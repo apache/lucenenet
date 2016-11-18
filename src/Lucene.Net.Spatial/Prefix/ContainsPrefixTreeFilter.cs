@@ -27,13 +27,11 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// Finds docs where its indexed shape
-    /// <see cref="SpatialOperation.Contains">CONTAINS</see>
-    /// the query shape. For use on
-    /// <see cref="RecursivePrefixTreeStrategy">RecursivePrefixTreeStrategy</see>
-    /// .
+    /// Finds docs where its indexed shape <see cref="Queries.SpatialOperation.CONTAINS"/>
+    /// the query shape. For use on <see cref="RecursivePrefixTreeStrategy"/>.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class ContainsPrefixTreeFilter : AbstractPrefixTreeFilter
     {
         // Future optimizations:
@@ -247,7 +245,6 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>Number of docids.</summary>
-            /// <remarks>Number of docids.</remarks>
             public virtual int Size
             {
                 get { return intSet.Size(); }

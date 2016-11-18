@@ -24,23 +24,18 @@ namespace Lucene.Net.Spatial.Prefix.Tree
      */
 
     /// <summary>
-    /// A
-    /// <see cref="SpatialPrefixTree">SpatialPrefixTree</see>
-    /// based on
+    /// A <see cref="SpatialPrefixTree">SpatialPrefixTree</see> based on
     /// <a href="http://en.wikipedia.org/wiki/Geohash">Geohashes</a>.
-    /// Uses
-    /// <see cref="Spatial4n.Core.IO.GeohashUtils">Spatial4n.Core.IO.GeohashUtils
-    /// 	</see>
-    /// to do all the geohash work.
+    /// Uses <see cref="GeohashUtils"/> to do all the geohash work.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
         #region Nested type: Factory
 
         /// <summary>
-        /// Factory for creating
-        /// <see cref="GeohashPrefixTree">GeohashPrefixTree</see>
+        /// Factory for creating <see cref="GeohashPrefixTree"/>
         /// instances with useful defaults
         /// </summary>
         public class Factory : SpatialPrefixTreeFactory

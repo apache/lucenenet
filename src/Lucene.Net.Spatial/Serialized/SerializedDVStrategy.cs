@@ -33,12 +33,12 @@ namespace Lucene.Net.Spatial.Serialized
      */
 
     /// <summary>
-    /// A SpatialStrategy based on serializing a Shape stored into BinaryDocValues.
+    /// A <see cref="SpatialStrategy"/> based on serializing a Shape stored into BinaryDocValues.
     /// This is not at all fast; it's designed to be used in conjuction with another index based
-    /// SpatialStrategy that is approximated(like { @link org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy})
+    /// SpatialStrategy that is approximated(like <see cref="Prefix.RecursivePrefixTreeStrategy"/>)
     /// to add precision or eventually make more specific / advanced calculations on the per-document
     /// geometry.
-    /// The serialization uses Spatial4j's {@link com.spatial4j.core.io.BinaryCodec}.
+    /// The serialization uses Spatial4j's <see cref="BinaryCodec"/>.
     ///
     /// @lucene.experimental
     /// </summary>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Spatial.Serialized
         }
 
         /// <summary>
-        /// Returns a Filter that should be used with <see cref="FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.
+        /// Returns a <see cref="Filter"/> that should be used with <see cref="FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.
         /// Use in another manner is likely to result in an <see cref="NotSupportedException"/>
         /// to prevent misuse because the filter can't efficiently work via iteration.
         /// </summary>

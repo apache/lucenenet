@@ -27,7 +27,7 @@ namespace Lucene.Net.Spatial
      */
 
     /// <summary>
-    /// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
+    /// The <see cref="SpatialStrategy"/> encapsulates an approach to indexing and searching based on shapes.
     /// <para/>
     /// Different implementations will support different features. A strategy should
     /// document these common elements:
@@ -76,33 +76,34 @@ namespace Lucene.Net.Spatial
         /// The name of the field or the prefix of them if there are multiple
         /// fields needed internally.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Not null.</returns>
         public virtual string FieldName
         {
             get { return fieldName; }
         }
 
         /// <summary>
-        /// Returns the IndexableField(s) from the <c>shape</c> that are to be
-        /// added to the {@link org.apache.lucene.document.Document}.  These fields
+        /// Returns the IndexableField(s) from the <paramref name="shape"/> that are to be
+        /// added to the <see cref="Document"/>.  These fields
         /// are expected to be marked as indexed and not stored.
         /// <p/>
         /// Note: If you want to <i>store</i> the shape as a string for retrieval in search
         /// results, you could add it like this:
-        /// <pre>document.add(new StoredField(fieldName,ctx.toString(shape)));</pre>
+        /// <code>
+        ///     document.Add(new StoredField(fieldName, ctx.ToString(shape)));
+        /// </code>
         /// The particular string representation used doesn't matter to the Strategy since it
         /// doesn't use it.
         /// </summary>
         /// <param name="shape"></param>
         /// <returns>Not null nor will it have null elements.</returns>
+        /// <exception cref="NotSupportedException">if given a shape incompatible with the strategy</exception>
         public abstract Field[] CreateIndexableFields(IShape shape);
 
         /// <summary>
-        /// See {@link #makeDistanceValueSource(com.spatial4j.core.shape.Point, double)} called with
+        /// See <see cref="MakeDistanceValueSource(IPoint, double)"/> called with
         /// a multiplier of 1.0 (i.e. units of degrees).
         /// </summary>
-        /// <param name="queryPoint"></param>
-        /// <returns></returns>
         public virtual ValueSource MakeDistanceValueSource(IPoint queryPoint)
         {
             return MakeDistanceValueSource(queryPoint, 1.0);
@@ -110,41 +111,42 @@ namespace Lucene.Net.Spatial
 
         /// <summary>
         /// Make a ValueSource returning the distance between the center of the
-        /// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
-        /// then the closest one is chosen.
+        /// indexed shape and <paramref name="queryPoint"/>.  If there are multiple indexed shapes
+        /// then the closest one is chosen. The result is multiplied by <paramref name="multiplier"/>, which
+        /// conveniently is used to get the desired units.
         /// </summary>
         public abstract ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier);
 
         /// <summary>
-        /// Make a (ConstantScore) Query based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
-        /// and {@link Shape} from the supplied {@code args}.
+        /// Make a Query based principally on <see cref="SpatialOperation"/>
+        /// and <see cref="IShape"/> from the supplied <paramref name="args"/>.
         /// The default implementation is
-        /// <pre>return new ConstantScoreQuery(makeFilter(args));</pre>
+        /// <code>return new ConstantScoreQuery(MakeFilter(args));</code>
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public virtual ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
             return new ConstantScoreQuery(MakeFilter(args));
         }
 
         /// <summary>
-        /// Make a Filter based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
-        /// and {@link Shape} from the supplied {@code args}.
-        /// <p />
+        /// Make a Filter based principally on <see cref="SpatialOperation"/>
+        /// and <see cref="IShape"/> from the supplied <paramref name="args"/>.
+        /// <para />
         /// If a subclasses implements
-        /// {@link #makeQuery(org.apache.lucene.spatial.query.SpatialArgs)}
+        /// <see cref="MakeQuery(SpatialArgs)"/>
         /// then this method could be simply:
-        /// <pre>return new QueryWrapperFilter(makeQuery(args).getQuery());</pre>
+        /// <code>return new QueryWrapperFilter(MakeQuery(args).Query);</code>
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public abstract Filter MakeFilter(SpatialArgs args);
 
         /// <summary>
         /// Returns a ValueSource with values ranging from 1 to 0, depending inversely
-        /// on the distance from {@link #makeDistanceValueSource(com.spatial4j.core.shape.Point)}.
-        /// The formula is <c>c/(d + c)</c> where 'd' is the distance and 'c' is
+        /// on the distance from <see cref="MakeDistanceValueSource(IPoint)"/>.
+        /// The formula is <c>c / (d + c)</c> where 'd' is the distance and 'c' is
         /// one tenth the distance to the farthest edge from the center. Thus the
         /// scores will be 1 for indexed points at the center of the query shape and as
         /// low as ~0.1 at its furthest edges.

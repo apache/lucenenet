@@ -44,7 +44,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
             catch (TypeLoadException e) //LUCENENET TODO: Does this match NoClassDefFoundError ??
             {
-                AssumeTrue("This test requires JTS jar: " + e, false);
+                AssumeTrue("This test requires Spatial4n.Core.NTS: " + e, false);
             }
 
             GeohashPrefixTree grid = new GeohashPrefixTree(ctx, 11);//< 1 meter == 11 maxLevels

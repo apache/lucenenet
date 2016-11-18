@@ -25,7 +25,7 @@ namespace Lucene.Net.Spatial.Util
     /// associated with a given docId
     /// <para/>
     /// WARNING: This class holds the data in an extremely inefficient manner as all Points are in memory as objects and they
-    /// are stored in many ArrayLists (one per document).  So it works but doesn't scale.  It will be replaced in the future.
+    /// are stored in many Lists (one per document).  So it works but doesn't scale.  It will be replaced in the future.
     /// <para/>
     /// @lucene.internal
     /// </summary>

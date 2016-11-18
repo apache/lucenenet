@@ -23,26 +23,26 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// A
-    /// <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>
-    /// which uses
-    /// <see cref="AbstractVisitingPrefixTreeFilter">AbstractVisitingPrefixTreeFilter</see>
-    /// .
+    /// A <see cref="PrefixTreeStrategy"/> which uses <see cref="AbstractVisitingPrefixTreeFilter"/>.
     /// This strategy has support for searching non-point shapes (note: not tested).
     /// Even a query shape with distErrPct=0 (fully precise to the grid) should have
     /// good performance for typical data, unless there is a lot of indexed data
     /// coincident with the shape's edge.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
     {
         private int prefixGridScanLevel;
-        
-        /** True if only indexed points shall be supported.  See
-        *  {@link IntersectsPrefixTreeFilter#hasIndexedLeaves}. */
+
+        /// <summary>
+        /// True if only indexed points shall be supported.  See <see cref="IntersectsPrefixTreeFilter.hasIndexedLeaves"/>.
+        /// </summary>
         protected bool pointsOnly = false;
 
-        /** See {@link ContainsPrefixTreeFilter#multiOverlappingIndexedShapes}. */
+        /// <summary>
+        /// See <see cref="ContainsPrefixTreeFilter.multiOverlappingIndexedShapes"/>.
+        /// </summary>
         protected bool multiOverlappingIndexedShapes = true;
 
         public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
@@ -53,8 +53,8 @@ namespace Lucene.Net.Spatial.Prefix
 
         /// <summary>
         /// Sets the grid level [1-maxLevels] at which indexed terms are scanned brute-force
-        /// instead of by grid decomposition.By default this is maxLevels - 4.  The
-        /// final level, maxLevels, is always scanned.
+        /// instead of by grid decomposition. By default this is maxLevels - 4.  The
+        /// final level, maxLevels, is always scanned. Value can be 1 to maxLevels.
         /// </summary>
         public virtual int PrefixGridScanLevel
         {

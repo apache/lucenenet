@@ -26,21 +26,18 @@ namespace Lucene.Net.Spatial.Prefix.Tree
      */
 
     /// <summary>
-    /// A
-    /// <see cref="SpatialPrefixTree">SpatialPrefixTree</see>
-    /// which uses a
+    /// A <see cref="SpatialPrefixTree"/> which uses a
     /// <a href="http://en.wikipedia.org/wiki/Quadtree">quad tree</a> in which an
     /// indexed term will be generated for each cell, 'A', 'B', 'C', 'D'.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class QuadPrefixTree : SpatialPrefixTree
     {
         #region Nested type: Factory
 
         /// <summary>
-        /// Factory for creating
-        /// <see cref="QuadPrefixTree">QuadPrefixTree</see>
-        /// instances with useful defaults
+        /// Factory for creating <see cref="QuadPrefixTree"/> instances with useful defaults
         /// </summary>
         public class Factory : SpatialPrefixTreeFactory
         {

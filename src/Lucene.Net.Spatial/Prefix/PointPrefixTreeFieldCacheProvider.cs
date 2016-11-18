@@ -23,15 +23,14 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// Implementation of
-    /// <see cref="Lucene.Net.Spatial.Util.ShapeFieldCacheProvider{T}">Lucene.Net.Spatial.Util.ShapeFieldCacheProvider&lt;T&gt;
-    /// 	</see>
-    /// designed for
-    /// <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>s.
+    /// Implementation of <see cref="Lucene.Net.Spatial.Util.ShapeFieldCacheProvider{T}"/>
+    /// designed for <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>s.
+    /// 
     /// Note, due to the fragmented representation of Shapes in these Strategies, this implementation
-    /// can only retrieve the central <see cref="Point">Point</see> of the original Shapes.
+    /// can only retrieve the central <see cref="IPoint">Point</see> of the original Shapes.
+    /// 
+    /// @lucene.internal
     /// </summary>
-    /// <lucene.internal></lucene.internal>
     public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<IPoint>
     {
         internal readonly SpatialPrefixTree grid; //

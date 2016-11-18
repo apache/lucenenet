@@ -30,22 +30,19 @@ namespace Lucene.Net.Spatial.Prefix
 
     /// <summary>
     /// Finds docs where its indexed shape is
-    /// <see cref="SpatialOperation.IsWithin">WITHIN</see>
+    /// <see cref="Queries.SpatialOperation.IsWithin">WITHIN</see>
     /// the query shape.  It works by looking at cells outside of the query
     /// shape to ensure documents there are excluded. By default, it will
     /// examine all cells, and it's fairly slow.  If you know that the indexed shapes
     /// are never comprised of multiple disjoint parts (which also means it is not multi-valued),
-    /// then you can pass
-    /// <code>SpatialPrefixTree.getDistanceForLevel(maxLevels)</code>
-    /// as
-    /// the
-    /// <code>queryBuffer</code>
-    /// constructor parameter to minimally look this distance
+    /// then you can pass <c>SpatialPrefixTree.GetDistanceForLevel(maxLevels)</c> as
+    /// the <c>queryBuffer</c> constructor parameter to minimally look this distance
     /// beyond the query shape's edge.  Even if the indexed shapes are sometimes
     /// comprised of multiple disjoint parts, you might want to use this option with
     /// a large buffer as a faster approximation with minimal false-positives.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class WithinPrefixTreeFilter : AbstractVisitingPrefixTreeFilter
     {
         /// TODO LUCENE-4869: implement faster algorithm based on filtering out false-positives of a
@@ -55,12 +52,8 @@ namespace Lucene.Net.Spatial.Prefix
         private readonly IShape bufferedQueryShape;//if null then the whole world
 
         /// <summary>
-        /// See
-        /// <see cref="AbstractVisitingPrefixTreeFilter">AbstractVisitingPrefixTreeFilter.AbstractVisitingPrefixTreeFilter(Shape, string, Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree, int, int)
-        /// 	</see>
-        /// .
-        /// <code>queryBuffer</code>
-        /// is the (minimum) distance beyond the query shape edge
+        /// See <see cref="AbstractVisitingPrefixTreeFilter.AbstractVisitingPrefixTreeFilter(IShape, string, SpatialPrefixTree, int, int)"/>.
+        /// <c>queryBuffer</c> is the (minimum) distance beyond the query shape edge
         /// where non-matching documents are looked for so they can be excluded. If
         /// -1 is used then the whole world is examined (a good default for correctness).
         /// </summary>
@@ -79,7 +72,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <summary>
-        /// Returns a new shape that is larger than shape by at distErr
+        /// Returns a new shape that is larger than shape by at distErr.
         /// </summary>
         protected virtual IShape BufferShape(IShape shape, double distErr)
         {
@@ -224,10 +217,6 @@ namespace Lucene.Net.Spatial.Prefix
             /// Returns true if the provided cell, and all its sub-cells down to
             /// detailLevel all intersect the queryShape.
             /// </summary>
-            /// <remarks>
-            /// Returns true if the provided cell, and all its sub-cells down to
-            /// detailLevel all intersect the queryShape.
-            /// </remarks>
             private bool AllCellsIntersectQuery(Cell cell, SpatialRelation relate/*cell to query*/)
             {
                 if (relate == SpatialRelation.NULL_VALUE)

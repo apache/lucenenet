@@ -25,12 +25,11 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// A Filter matching documents that have an
-    /// <see cref="SpatialRelation.Intersects">SpatialRelation.Intersects
-    /// 	</see>
+    /// A Filter matching documents that have an <see cref="SpatialRelation.Intersects"/>
     /// (i.e. not DISTINCT) relationship with a provided query shape.
+    /// 
+    /// @lucene.internal
     /// </summary>
-    /// <lucene.internal></lucene.internal>
     public class IntersectsPrefixTreeFilter : AbstractVisitingPrefixTreeFilter
     {
         private readonly bool hasIndexedLeaves;

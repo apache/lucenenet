@@ -27,10 +27,10 @@ namespace Lucene.Net.Spatial.Queries
      */
 
     /// <summary>
-    /// Parses a string that usually looks like "OPERATION(SHAPE)" into a {@link SpatialArgs}
-    /// object. The set of operations supported are defined in {@link SpatialOperation}, such
-    /// as "Intersects" being a common one. The shape portion is defined by WKT {@link com.spatial4j.core.io.WktShapeParser},
-    /// but it can be overridden/customized via {@link #parseShape(String, com.spatial4j.core.context.SpatialContext)}.
+    /// Parses a string that usually looks like "OPERATION(SHAPE)" into a <see cref="SpatialArgs"/>
+    /// object. The set of operations supported are defined in <see cref="SpatialOperation"/>, such
+    /// as "Intersects" being a common one. The shape portion is defined by WKT <see cref="Spatial4n.Core.Io.WktShapeParser"/>,
+    /// but it can be overridden/customized via <see cref="ParseShape(string, SpatialContext)"/>.
     /// There are some optional name-value pair parameters that follow the closing parenthesis.  Example:
     /// <code>
     ///   Intersects(ENVELOPE(-10,-8,22,20)) distErrPct=0.025
@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Queries
         }
 
         /// <summary>
-        /// Parses a string such as "Intersects(-10,20,-8,22) distErrPct=0.025".
+        /// Parses a string such as "Intersects(ENVELOPE(-10,-8,22,20)) distErrPct=0.025".
         /// </summary>
         /// <param name="v">The string to parse. Mandatory.</param>
         /// <param name="ctx">The spatial context. Mandatory.</param>
