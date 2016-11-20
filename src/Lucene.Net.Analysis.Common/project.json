@@ -1,7 +1,7 @@
 ﻿{
   "version": "4.8.0-alpha",
   "dependencies": {
-    "icu.net": "54.0.4-alpha",
+    "icu.net": "54.0.8-alpha",
   },
   "buildOptions": {
     "embed": {
