@@ -41,3 +41,6 @@ test-files/analysis/data/
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
+
+# For the build tools that are downloading when building Lucene.NET
+.tools/
