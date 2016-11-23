@@ -297,9 +297,6 @@
     <Compile Include="Analysis\Synonym\TestSynonymMap.cs" />
     <Compile Include="Analysis\Synonym\TestSynonymMapFilter.cs" />
     <Compile Include="Analysis\Synonym\TestWordnetSynonymParser.cs" />
-    <Compile Include="Analysis\Th\TestThaiAnalyzer.cs" />
-    <Compile Include="Analysis\Th\TestThaiTokenizerFactory.cs" />
-    <Compile Include="Analysis\Th\TestThaiWordFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TestApostropheFilter.cs" />
     <Compile Include="Analysis\Tr\TestApostropheFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TestTurkishAnalyzer.cs" />
@@ -317,7 +314,6 @@
     <Compile Include="Analysis\Util\TestElisionFilterFactory.cs" />
     <Compile Include="Analysis\Util\TestFilesystemResourceLoader.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
-    <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
     <Compile Include="Analysis\Wikipedia\TestWikipediaTokenizerFactory.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerTest.cs" />
