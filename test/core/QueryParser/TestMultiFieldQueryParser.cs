@@ -137,22 +137,22 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestBoostsSimple()
 		{
 			IDictionary<string, float> boosts = new Dictionary<string,float>();
-			boosts["b"] = (float) 5;
+            boosts["b"] = (float) 5;
 			boosts["t"] = (float) 10;
 			string[] fields = new string[]{"b", "t"};
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), boosts);
-			
-			
-			//Check for simple
-			Query q = mfqp.Parse("one");
+            mfqp.AllowLeadingWildcard = true;
+
+            //Check for simple
+            Query q = mfqp.Parse("one");
 			Assert.AreEqual("b:one^5.0 t:one^10.0", q.ToString());
 			
 			//Check for AND
 			q = mfqp.Parse("one AND two");
 			Assert.AreEqual("+(b:one^5.0 t:one^10.0) +(b:two^5.0 t:two^10.0)", q.ToString());
-			
-			//Check for OR
-			q = mfqp.Parse("one OR two");
+
+            //Check for OR
+            q = mfqp.Parse("one OR two");
 			Assert.AreEqual("(b:one^5.0 t:one^10.0) (b:two^5.0 t:two^10.0)", q.ToString());
 			
 			//Check for AND and a field
@@ -161,9 +161,29 @@ namespace Lucene.Net.QueryParsers
 			
 			q = mfqp.Parse("one^3 AND two^4");
 			Assert.AreEqual("+((b:one^5.0 t:one^10.0)^3.0) +((b:two^5.0 t:two^10.0)^4.0)", q.ToString());
-		}
-		
-		[Test]
+
+            //Check for simple prefix term with final wildcard
+            q = mfqp.Parse("one*");
+            Assert.AreEqual("b:one*^5.0 t:one*^10.0", q.ToString());
+
+            //Check for simple wildcard term
+            q = mfqp.Parse("*one");
+            Assert.AreEqual("b:*one^5.0 t:*one^10.0", q.ToString());            
+
+            //Check for simple fuzzy term
+            q = mfqp.Parse("one~0.2");
+            Assert.AreEqual("b:one~0.2^5.0 t:one~0.2^10.0", q.ToString());
+
+            //Check for simple text range term
+            q = mfqp.Parse("{one TO ten}");
+            Assert.AreEqual("b:{one TO ten}^5.0 t:{one TO ten}^10.0", q.ToString());
+
+            //Check for simple date range term
+            q = mfqp.Parse("[20020101 TO 20030101]");
+            Assert.AreEqual("b:[20020101 TO 20030101]^5.0 t:[20020101 TO 20030101]^10.0", q.ToString());
+        }
+
+        [Test]
 		public virtual void  TestStaticMethod1()
 		{
 			var fields = new []{"b", "t"};
