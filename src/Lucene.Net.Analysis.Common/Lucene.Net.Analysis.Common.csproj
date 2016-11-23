@@ -30,18 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICU4NET, Version=1.0.5593.31013, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\lib\net45\ICU4NET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ICU4NETExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\lib\net45\ICU4NETExtension.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -413,11 +403,6 @@
     <Compile Include="Analysis\Synonym\SynonymFilterFactory.cs" />
     <Compile Include="Analysis\Synonym\SynonymMap.cs" />
     <Compile Include="Analysis\Synonym\WordnetSynonymParser.cs" />
-    <Compile Include="Analysis\Th\ThaiAnalyzer.cs" />
-    <Compile Include="Analysis\Th\ThaiTokenizer.cs" />
-    <Compile Include="Analysis\Th\ThaiTokenizerFactory.cs" />
-    <Compile Include="Analysis\Th\ThaiWordFilter.cs" />
-    <Compile Include="Analysis\Th\ThaiWordFilterFactory.cs" />
     <Compile Include="Analysis\Tr\ApostropheFilter.cs" />
     <Compile Include="Analysis\Tr\ApostropheFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TurkishAnalyzer.cs" />
@@ -454,7 +439,6 @@
     </Compile>
     <Compile Include="Analysis\Util\CharTokenizer.cs" />
     <Compile Include="Analysis\Util\RollingCharBuffer.cs" />
-    <Compile Include="Analysis\Util\SegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\StopwordAnalyzerBase.cs" />
     <Compile Include="Analysis\Util\TokenFilterFactory.cs" />
     <Compile Include="Analysis\Util\TokenizerFactory.cs" />
@@ -499,49 +483,6 @@
     <EmbeddedResource Include="Analysis\Gl\galician.rslp" />
     <EmbeddedResource Include="Analysis\Pt\portuguese.rslp" />
     <EmbeddedResource Include="Analysis\Compound\Hyphenation\hyphenation.dtd" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icudt55.dll">
-      <Link>icudt55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuin55.dll">
-      <Link>icuin55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuio55.dll">
-      <Link>icuio55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icule55.dll">
-      <Link>icule55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\iculx55.dll">
-      <Link>iculx55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icutu55.dll">
-      <Link>icutu55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuuc55.dll">
-      <Link>icuuc55.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Cz\stopwords.txt" />
@@ -594,9 +535,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\finnish_stop.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Analysis\Th\stopwords.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Ga\stopwords.txt" />
