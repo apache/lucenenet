@@ -96,7 +96,6 @@
     },
     "compile": {
       "exclude": [
-        "Collation"
       ],
       "excludeFiles": [
         "DateTimeHelperClass.cs",

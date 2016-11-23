@@ -1,30 +1,31 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+﻿using Icu.Collation;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
-using Lucene.Net.Analysis.Core;
-using Lucene.Net.Collation;
-using Lucene.Net.Util;
-using NUnit.Framework;
 
-namespace Lucene.Net.Analysis.Collation
+namespace Lucene.Net.Collation
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
 	[TestFixture]
 	[Obsolete("remove when CollationKeyFilter is removed.")]
 	public class TestCollationKeyFilter : CollationTestBase
@@ -43,21 +44,21 @@ namespace Lucene.Net.Analysis.Collation
 		private void InitializeInstanceFields()
 		{
 			this.analyzer = new TestAnalyzer(this, this.collator);
-			this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeBeginningOriginal).KeyData.ToSByteArray()));
-			this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeEndOriginal).KeyData.ToSByteArray()));
-			this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeBeginningOriginal).KeyData.ToSByteArray()));
-			this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeEndOriginal).KeyData.ToSByteArray()));
+            this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeBeginningOriginal).KeyData.ToSByteArray()));
+            this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeEndOriginal).KeyData.ToSByteArray()));
+            this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.SecondRangeBeginningOriginal).KeyData.ToSByteArray()));
+            this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.SecondRangeEndOriginal).KeyData.ToSByteArray()));
 		}
 
 		// the sort order of Ø versus U depends on the version of the rules being used
 		// for the inherited root locale: Ø's order isnt specified in Locale.US since 
 		// its not used in english.
-		internal bool oStrokeFirst = Collator.GetInstance(CultureInfo.GetCultureInfo("")).Compare("Ø", "U") < 0;
+		internal bool oStrokeFirst = Collator.Create(new CultureInfo("")).Compare("Ø", "U") < 0;
 
 		// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
 		// RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
 		// characters properly.
-		private readonly Collator collator = Collator.GetInstance(CultureInfo.GetCultureInfo("ar"));
+        private readonly Collator collator = Collator.Create(new CultureInfo("ar"));
 		private Analyzer analyzer;
 
 		private BytesRef firstRangeBeginning;
@@ -105,14 +106,34 @@ namespace Lucene.Net.Analysis.Collation
 		[Test]
 		public virtual void TestCollationKeySort()
 		{
-			var usAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("us")));
-			var franceAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("fr")));
-			var swedenAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("sv-SE")));
-			var denmarkAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("da-DK")));
+            Analyzer usAnalyzer = new TestAnalyzer(this, Collator.Create(CultureInfo.InvariantCulture));
+            Collator franceCollator = Collator.Create(/*new CultureInfo("fr")*/);
+            franceCollator.FrenchCollation = FrenchCollation.On;
+            Analyzer franceAnalyzer = new TestAnalyzer(this, franceCollator);
+            Analyzer swedenAnalyzer = new TestAnalyzer(this, Collator.Create(new CultureInfo("sv-SE")));
+            Analyzer denmarkAnalyzer = new TestAnalyzer(this, Collator.Create(new CultureInfo("da-DK")));
 
 			// The ICU Collator and Sun java.text.Collator implementations differ in their
 			// orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
-			this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, this.oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
+			this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
+                this.oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
 		}
+
+        // Original Java Code:
+        //public void testCollationKeySort() throws Exception {
+        //  Analyzer usAnalyzer = new TestAnalyzer(Collator.getInstance(Locale.US));
+        //  Analyzer franceAnalyzer 
+        //    = new TestAnalyzer(Collator.getInstance(Locale.FRANCE));
+        //  Analyzer swedenAnalyzer 
+        //    = new TestAnalyzer(Collator.getInstance(new Locale("sv", "se")));
+        //  Analyzer denmarkAnalyzer 
+        //    = new TestAnalyzer(Collator.getInstance(new Locale("da", "dk")));
+    
+        //  // The ICU Collator and Sun java.text.Collator implementations differ in their
+        //  // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
+        //  testCollationKeySort
+        //  (usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
+        //   oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
+        //}
 	}
 }

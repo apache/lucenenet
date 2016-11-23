@@ -1,27 +1,30 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System.IO;
+﻿using Icu.Collation;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.IO;
 
-namespace Lucene.Net.Analysis.Collation
+namespace Lucene.Net.Collation
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
 	[TestFixture]
 	public class TestCollationKeyFilterFactory : BaseTokenStreamFactoryTestCase
 	{
@@ -94,35 +97,40 @@ namespace Lucene.Net.Analysis.Collation
 		[Test]
 		public virtual void TestCustomRules()
 		{
-			Assert.Inconclusive("Havent implemented Custom Rule Collator yet");
-			//RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.getInstance(new Locale("de", "DE"));
+            //RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.Create(new CultureInfo("de-DE"));
 
-			//var DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
+            string DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
 
-			//RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.Rules + DIN5007_2_tailorings);
-			//string tailoredRules = tailoredCollator.Rules;
 
-			//// at this point, you would save these tailoredRules to a file, 
-			//// and use the custom parameter.
-			//var germanUmlaut = "Töne";
-			//var germanOE = "Toene";
-			//IDictionary<string, string> args = new Dictionary<string, string>();
-			//args["custom"] = "rules.txt";
-			//args["strength"] = "primary";
-			//var factory = new CollationKeyFilterFactory(args);
-			//factory.Inform(new StringMockResourceLoader(tailoredRules));
-			//var tsUmlaut = factory.Create(new MockTokenizer(new StringReader(germanUmlaut), MockTokenizer.KEYWORD, false));
-			//var tsOE = factory.Create(new MockTokenizer(new StringReader(germanOE), MockTokenizer.KEYWORD, false));
+            // LUCENENET TODO: Cannot read rules from the RuleBasedCollator. Determine whether this is the correct approach.
+            string tailoredRules = Collator.GetCollationRules("de-DE") + DIN5007_2_tailorings;
 
-			//AssertCollatesToSame(tsUmlaut, tsOE);
+            //RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.Rules + DIN5007_2_tailorings);
+            //string tailoredRules = tailoredCollator.Rules;
+
+            // at this point, you would save these tailoredRules to a file, 
+            // and use the custom parameter.
+            string germanUmlaut = "Töne";
+            string germanOE = "Toene";
+            IDictionary<string, string> args = new Dictionary<string, string>();
+            args["custom"] = "rules.txt";
+            args["strength"] = "primary";
+#pragma warning disable 612, 618
+            CollationKeyFilterFactory factory = new CollationKeyFilterFactory(args);
+#pragma warning restore 612, 618
+            factory.Inform(new StringMockResourceLoader(tailoredRules));
+            TokenStream tsUmlaut = factory.Create(new MockTokenizer(new StringReader(germanUmlaut), MockTokenizer.KEYWORD, false));
+            TokenStream tsOE = factory.Create(new MockTokenizer(new StringReader(germanOE), MockTokenizer.KEYWORD, false));
+
+            AssertCollatesToSame(tsUmlaut, tsOE);
 		}
 		
 		private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
 		{
 			stream1.Reset();
 			stream2.Reset();
-			var term1 = stream1.AddAttribute<CharTermAttribute>();
-			var term2 = stream2.AddAttribute<CharTermAttribute>();
+            ICharTermAttribute term1 = stream1.AddAttribute<ICharTermAttribute>();
+            ICharTermAttribute term2 = stream2.AddAttribute<ICharTermAttribute>();
 			assertTrue(stream1.IncrementToken());
 			assertTrue(stream2.IncrementToken());
 			assertEquals(term1.ToString(), term2.ToString());

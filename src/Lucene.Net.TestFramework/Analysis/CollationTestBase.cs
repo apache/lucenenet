@@ -1,34 +1,34 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Analysis
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 	/// <summary>
 	/// base test class for testing Unicode collation.
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
 
 			Search.Query query = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
+			AreEqual(0, hits.Length, "The index Term should not be included.");
 
 			query = new TermRangeQuery("content", secondBeg, secondEnd, true, true);
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -243,7 +243,7 @@ namespace Lucene.Net.Analysis
 			{
 				string term = TestUtil.RandomSimpleString(Random());
 				IOException priorException = null;
-				TokenStream ts = analyzer.TokenStream("fake", new StreamReader(term));
+				TokenStream ts = analyzer.TokenStream("fake", new StringReader(term));
 				try
 				{
 					ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
@@ -304,16 +304,16 @@ namespace Lucene.Net.Analysis
 						string term = mapping.Key;
 						BytesRef expected = mapping.Value;
 						IOException priorException = null;
-						TokenStream ts = this.Analyzer.TokenStream("fake", new StreamReader(term));
+						TokenStream ts = this.Analyzer.TokenStream("fake", new StringReader(term));
 						try
 						{
 							ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
 							BytesRef bytes = termAtt.BytesRef;
 							ts.Reset();
-							Assert.IsTrue(ts.IncrementToken());
+							IsTrue(ts.IncrementToken());
 							termAtt.FillBytesRef();
-							Assert.AreEqual(expected, bytes);
-							Assert.IsFalse(ts.IncrementToken());
+							AreEqual(expected, bytes);
+							IsFalse(ts.IncrementToken());
 							ts.End();
 						}
 						catch (IOException e)

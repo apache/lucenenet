@@ -1,33 +1,34 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+﻿using Icu;
+using Icu.Collation;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Collation;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Collation
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
 	/// <summary>
 	/// Factory for <seealso cref="CollationKeyFilter"/>.
 	/// <para>
@@ -74,12 +75,12 @@ namespace Lucene.Net.Collation
 	public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
 	{
 		private Collator collator;
-		private readonly String custom;
-		private readonly String language;
-		private readonly String country;
-		private readonly String variant;
-		private readonly String strength;
-		private readonly String decomposition;
+        private readonly string custom;
+        private readonly string language;
+        private readonly string country;
+        private readonly string variant;
+        private readonly string strength;
+        private readonly string decomposition;
 
 		public CollationKeyFilterFactory(IDictionary<string, string> args) : base(args)
 		{
@@ -88,7 +89,7 @@ namespace Lucene.Net.Collation
 			this.country = this.RemoveFromDictionary(args, "country");
 			this.variant = this.RemoveFromDictionary(args, "variant");
 			this.strength = this.RemoveFromDictionary(args, "strength");
-			this.decomposition = this.RemoveFromDictionary(args, "decomposition");
+            this.decomposition = this.RemoveFromDictionary(args, "decomposition");
 			
 			if (this.custom == null && this.language == null)
 			{
@@ -116,7 +117,7 @@ namespace Lucene.Net.Collation
 			else
 			{
 				// create from a custom ruleset
-				//this.collator = this.CreateFromRules(this.custom, loader);
+				this.collator = this.CreateFromRules(this.custom, loader);
 			}
 
 			// set the strength flag, otherwise it will be the default.
@@ -124,19 +125,19 @@ namespace Lucene.Net.Collation
 			{
 				if (this.strength.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.Primary;
+					this.collator.Strength = CollationStrength.Primary;
 				}
 				else if (this.strength.Equals("secondary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.Secondary;
+					this.collator.Strength = CollationStrength.Secondary;
 				}
 				else if (this.strength.Equals("tertiary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.Tertiary;
+                    this.collator.Strength = CollationStrength.Tertiary;
 				}
 				else if (this.strength.Equals("identical", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.Identical;
+                    this.collator.Strength = CollationStrength.Identical;
 				}
 				else
 				{
@@ -144,26 +145,28 @@ namespace Lucene.Net.Collation
 				}
 			}
 
-			// set the decomposition flag, otherwise it will be the default.
-			if (this.decomposition != null)
-			{
-				if (this.decomposition.Equals("no", StringComparison.CurrentCultureIgnoreCase))
-				{
-					this.collator.Decomposition = Collator.NoDecomposition;
-				}
-				else if (this.decomposition.Equals("canonical", StringComparison.CurrentCultureIgnoreCase))
-				{
-					this.collator.Decomposition = Collator.CannonicalDecomposition;
-				}
-				else if (this.decomposition.Equals("full", StringComparison.CurrentCultureIgnoreCase))
-				{
-					this.collator.Decomposition = Collator.FullDecomposition;
-				}
-				else
-				{
-					throw new ArgumentException("Invalid decomposition: " + this.decomposition);
-				}
-			}
+            // LUCENENET TODO: Verify Decomposition > NormalizationMode mapping between the JDK and icu-dotnet
+
+            // set the decomposition flag, otherwise it will be the default.
+            if (this.decomposition != null)
+            {
+                if (this.decomposition.Equals("no", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.collator.NormalizationMode = NormalizationMode.Default; // .Decomposition = Collator.NoDecomposition;
+                }
+                else if (this.decomposition.Equals("canonical", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.collator.NormalizationMode = NormalizationMode.Off; //.Decomposition = Collator.CannonicalDecomposition;
+                }
+                else if (this.decomposition.Equals("full", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.collator.NormalizationMode = NormalizationMode.On; //.Decomposition = Collator.FullDecomposition;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid decomposition: " + this.decomposition);
+                }
+            }
 		}
 
 		public override TokenStream Create(TokenStream input)
@@ -191,66 +194,75 @@ namespace Lucene.Net.Collation
 
 			if (country != null && variant != null)
 			{
-				cultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Single(x =>
-				{
-					if (!x.TwoLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
-						!x.ThreeLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
-						!x.ThreeLetterWindowsLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase))
-					{
-						return false;
-					}
+                cultureInfo = new CultureInfo(string.Concat(language, "-", country, "-", variant));
 
-					var region = new RegionInfo(x.Name);
+                // LUCENENET TODO: This method won't work on .NET core - confirm the above solution works as expected.
+                //cultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Single(x =>
+                //{
+                //	if (!x.TwoLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
+                //		!x.ThreeLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
+                //		!x.ThreeLetterWindowsLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase))
+                //	{
+                //		return false;
+                //	}
 
-					if (!region.TwoLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
-						!region.ThreeLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
-						!region.ThreeLetterWindowsRegionName.Equals(country, StringComparison.OrdinalIgnoreCase))
-					{
-						return false;
-					}
+                //	var region = new RegionInfo(x.Name);
 
-					return x.Name
-						.Replace(x.TwoLetterISOLanguageName, String.Empty)
-						.Replace(region.TwoLetterISORegionName, String.Empty)
-						.Replace("-", String.Empty)
-						.Equals(variant, StringComparison.OrdinalIgnoreCase);
-				});
-			}
+                //	if (!region.TwoLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
+                //		!region.ThreeLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
+                //		!region.ThreeLetterWindowsRegionName.Equals(country, StringComparison.OrdinalIgnoreCase)
+                //                    )
+                //	{
+                //		return false;
+                //	}
+
+                //	return x.Name
+                //		.Replace(x.TwoLetterISOLanguageName, string.Empty)
+                //		.Replace(region.TwoLetterISORegionName, string.Empty)
+                //		.Replace("-", string.Empty)
+                //		.Equals(variant, StringComparison.OrdinalIgnoreCase);
+                //});
+            }
 			else if (country != null)
 			{
-				cultureInfo = CultureInfo.GetCultureInfo(String.Concat(language, "-", country));
+				cultureInfo = new CultureInfo(string.Concat(language, "-", country));
 			}
 			else
 			{
-				cultureInfo = CultureInfo.GetCultureInfo(language);
+				cultureInfo = new CultureInfo(language);
 			}
 
-			return Collator.GetInstance(cultureInfo);
+			return Collator.Create(cultureInfo);
 		}
 
-		/// <summary>
-		/// Read custom rules from a file, and create a RuleBasedCollator
-		/// The file cannot support comments, as # might be in the rules!
-		/// </summary>
-		//private Collator CreateFromRules(string fileName, IResourceLoader loader)
-		//{
-		//	Stream input = null;
-		//	try
-		//	{
-		//		input = loader.OpenResource(fileName);
-		//		var rules = ToUTF8String(input);
-		//		return new RuleBasedCollator(rules);
-		//	}
-		//	catch (ParseException e)
-		//	{
-		//		// invalid rules
-		//		throw new IOException("ParseException thrown while parsing rules", e);
-		//	}
-		//	finally
-		//	{
-		//		IOUtils.CloseWhileHandlingException(input);
-		//	}
-		//}
+         /// <summary>
+         /// Read custom rules from a file, and create a RuleBasedCollator
+         /// The file cannot support comments, as # might be in the rules!
+         /// </summary>
+		private Collator CreateFromRules(string fileName, IResourceLoader loader)
+		{
+			Stream input = null;
+			try
+			{
+				input = loader.OpenResource(fileName);
+				var rules = ToUTF8String(input);
+				return new RuleBasedCollator(rules);
+			}
+            catch (TransliteratorParseException e)
+            {
+                // invalid rules
+                throw new IOException("ParseException thrown while parsing rules", e);
+            }
+            catch (SyntaxErrorException e)
+			{
+                // invalid rules
+                throw new IOException("ParseException thrown while parsing rules", e);
+			}
+			finally
+			{
+				IOUtils.CloseWhileHandlingException(input);
+			}
+		}
 
 		public virtual AbstractAnalysisFactory MultiTermComponent
 		{
