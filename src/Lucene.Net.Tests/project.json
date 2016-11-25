@@ -1,7 +1,7 @@
 ﻿{
   "version": "4.8.0-alpha",
   "dependencies": {
-    "dotnet-test-nunit": "3.4.0-beta-2",
+    "dotnet-test-nunit": "3.4.0-beta-3",
     "Lucene.Net.Codecs": "4.8.0-alpha",
     "Lucene.Net.Facet": "4.8.0-alpha",
     "Lucene.Net.Queries" : "4.8.0-alpha",
