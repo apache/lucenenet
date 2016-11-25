@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using System.Reflection;
 
 /*
  Egothor Software License version 1.00
@@ -72,7 +73,8 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().Assembly.GetManifestResourceStream(RULES_FILE))
+            
+            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -92,7 +94,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().Assembly.GetManifestResourceStream(RULES_FILE))
+            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -112,7 +114,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().Assembly.GetManifestResourceStream(RULES_FILE))
+            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
