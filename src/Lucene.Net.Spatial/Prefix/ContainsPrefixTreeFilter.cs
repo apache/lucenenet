@@ -97,7 +97,7 @@ namespace Lucene.Net.Spatial.Prefix
                 SmallDocSet combinedSubResults = null;
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
                 IShape subCellsFilter = outerInstance.queryShape;
-                if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NULL_VALUE || cell.ShapeRel == SpatialRelation.WITHIN)))
+                if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NOT_SET || cell.ShapeRel == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
                     Debug.Assert(cell.Shape.Relate(outerInstance.queryShape) == SpatialRelation.WITHIN);

@@ -58,7 +58,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             //non-geospatial makes this test a little easier (in gridSnap), and using boundary values 2^X raises
             // the prospect of edge conditions we want to test, plus makes for simpler numbers (no decimals).
-            SpatialContextFactory factory = new SpatialContextFactory();
+            FakeSpatialContextFactory factory = new FakeSpatialContextFactory();
             factory.geo = false;
             factory.worldBounds = new Rectangle(0, 256, -128, 128, null);
             this.ctx = factory.NewSpatialContext();
@@ -67,6 +67,19 @@ namespace Lucene.Net.Spatial.Prefix
                 maxLevels = randomIntBetween(1, 8);//max 64k cells (4^8), also 256*256
             this.grid = new QuadPrefixTree(ctx, maxLevels);
             this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
+        }
+
+        /// <summary>
+        /// LUCENENET specific class used to gain access to protected internal
+        /// member NewSpatialContext(), since we are not strong-named and
+        /// InternalsVisibleTo is not an option from a strong-named class.
+        /// </summary>
+        private class FakeSpatialContextFactory : SpatialContextFactory
+        {
+            new public SpatialContext NewSpatialContext()
+            {
+                return base.NewSpatialContext();
+            }
         }
 
         public virtual void SetupGeohashGrid(int maxLevels)

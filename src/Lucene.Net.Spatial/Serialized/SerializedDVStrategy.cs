@@ -7,7 +7,7 @@ using Lucene.Net.Spatial.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Io;
+using Spatial4n.Core.IO;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections;

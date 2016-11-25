@@ -58,7 +58,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// When set via <see cref="GetSubCells(IShape)">GetSubCells(filter)</see>, it is the relationship between this cell
         /// and the given shape filter.
         /// </summary>
-        protected internal SpatialRelation shapeRel = SpatialRelation.NULL_VALUE;//set in GetSubCells(filter), and via SetLeaf().
+        protected internal SpatialRelation shapeRel;//set in GetSubCells(filter), and via SetLeaf().
 
         /// <summary>Always false for points.</summary>
         /// <remarks>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             Debug.Assert(Level != 0);
             token = null;
-            shapeRel = SpatialRelation.NULL_VALUE;
+            shapeRel = SpatialRelation.NOT_SET;
             this.bytes = bytes;
             b_off = off;
             b_len = len;
