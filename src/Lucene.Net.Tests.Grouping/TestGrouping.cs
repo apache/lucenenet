@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Search.Grouping
@@ -682,7 +683,7 @@ namespace Lucene.Net.Search.Grouping
             List<List<Document>> updateDocs = new List<List<Document>>();
 
             FieldType groupEndType = new FieldType(StringField.TYPE_NOT_STORED);
-            groupEndType.IndexOptions = (FieldInfo.IndexOptions.DOCS_ONLY);
+            groupEndType.IndexOptions = (Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_ONLY);
             groupEndType.OmitNorms = (true);
 
             //Console.WriteLine("TEST: index groups");

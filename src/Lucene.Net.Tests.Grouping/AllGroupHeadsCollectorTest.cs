@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Search.Grouping
@@ -36,8 +37,8 @@ namespace Lucene.Net.Search.Grouping
 
     public class AllGroupHeadsCollectorTest : LuceneTestCase
     {
-        private static readonly FieldInfo.DocValuesType_e[] vts = new FieldInfo.DocValuesType_e[]{
-            FieldInfo.DocValuesType_e.BINARY, FieldInfo.DocValuesType_e.SORTED
+        private static readonly Index.FieldInfo.DocValuesType_e[] vts = new Index.FieldInfo.DocValuesType_e[]{
+            Index.FieldInfo.DocValuesType_e.BINARY, Index.FieldInfo.DocValuesType_e.SORTED
         };
 
         [Test]
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search.Grouping
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
-            FieldInfo.DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
+            Index.FieldInfo.DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
 
             // 0
             Document doc = new Document();
@@ -216,7 +217,7 @@ namespace Lucene.Net.Search.Grouping
                         new MockAnalyzer(Random())));
                 bool preFlex = "Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
                 bool canUseIDV = !preFlex;
-                FieldInfo.DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
+                Index.FieldInfo.DocValuesType_e valueType = vts[Random().nextInt(vts.Length)];
 
                 Document doc = new Document();
                 Document docNoGroup = new Document();
@@ -227,10 +228,10 @@ namespace Lucene.Net.Search.Grouping
                 {
                     switch (valueType)
                     {
-                        case FieldInfo.DocValuesType_e.BINARY:
+                        case Index.FieldInfo.DocValuesType_e.BINARY:
                             valuesField = new BinaryDocValuesField("group_dv", new BytesRef());
                             break;
-                        case FieldInfo.DocValuesType_e.SORTED:
+                        case Index.FieldInfo.DocValuesType_e.SORTED:
                             valuesField = new SortedDocValuesField("group_dv", new BytesRef());
                             break;
                         default:
@@ -322,7 +323,7 @@ namespace Lucene.Net.Search.Grouping
                 try
                 {
                     IndexSearcher s = NewSearcher(r);
-                    if (typeof(SlowCompositeReaderWrapper).IsAssignableFrom(s.IndexReader.GetType()))
+                    if (typeof(SlowCompositeReaderWrapper).GetTypeInfo().IsAssignableFrom(s.IndexReader.GetType()))
                     {
                         canUseIDV = false;
                     }
@@ -622,7 +623,7 @@ namespace Lucene.Net.Search.Grouping
             return new ComparatorAnonymousHelper(this, sortFields, sortByScoreOnly, fieldIdToDocID);
         }
 
-        private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, FieldInfo.DocValuesType_e valueType)
+        private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, Index.FieldInfo.DocValuesType_e valueType)
         {
             AbstractAllGroupHeadsCollector collector;
             if (Random().nextBoolean())
@@ -643,7 +644,7 @@ namespace Lucene.Net.Search.Grouping
             return collector;
         }
 
-        private void AddGroupField(Document doc, string groupField, string value, bool canUseIDV, FieldInfo.DocValuesType_e valueType)
+        private void AddGroupField(Document doc, string groupField, string value, bool canUseIDV, Index.FieldInfo.DocValuesType_e valueType)
         {
             doc.Add(new TextField(groupField, value, Field.Store.YES));
             if (canUseIDV)
@@ -651,10 +652,10 @@ namespace Lucene.Net.Search.Grouping
                 Field valuesField = null;
                 switch (valueType)
                 {
-                    case FieldInfo.DocValuesType_e.BINARY:
+                    case Index.FieldInfo.DocValuesType_e.BINARY:
                         valuesField = new BinaryDocValuesField(groupField + "_dv", new BytesRef(value));
                         break;
-                    case FieldInfo.DocValuesType_e.SORTED:
+                    case Index.FieldInfo.DocValuesType_e.SORTED:
                         valuesField = new SortedDocValuesField(groupField + "_dv", new BytesRef(value));
                         break;
                     default:
