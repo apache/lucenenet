@@ -1,7 +1,7 @@
 ﻿{
   "version": "4.8.0-alpha",
   "dependencies": {
-    "icu.net": "54.0.8-alpha",
+    "icu.net": "54.0.8-alpha"
   },
   "buildOptions": {
     "embed": {
@@ -26,7 +26,7 @@
       "imports": "dnxcore50",
       "dependencies": {
         "Lucene.Net.Core": "4.8.0-alpha",
-        "NETStandard.Library": "1.6.0",
+        "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
         "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ]
@@ -34,7 +34,7 @@
     },
     "net451": {
       "dependencies": {
-        "Lucene.Net.Core": "4.8.0-alpha",
+        "Lucene.Net.Core": "4.8.0-alpha"
       },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0",

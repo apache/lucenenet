@@ -1,0 +1,27 @@
+﻿{
+  "version": "4.8.0-alpha",
+  "dependencies": {
+    "Lucene.Net.Analysis.Common": "4.8.0-alpha"
+  },
+  "buildOptions": {
+    "embed": {
+      "includeFiles": [
+        "Pl/stemmer_20000.tbl",
+        "Pl/stopwords.txt"
+      ]
+    }
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
+    "net451": {
+    }
+  }
+}

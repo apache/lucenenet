@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis.Pl
 {
@@ -77,8 +78,9 @@ namespace Lucene.Net.Analysis.Pl
             {
                 try
                 {
+                    var resource = typeof(PolishAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(IOUtils.GetDecodingReader(typeof(PolishAnalyzer),
-                        typeof(PolishAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8), "#",
+                        resource, Encoding.UTF8), "#",
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
@@ -87,19 +89,19 @@ namespace Lucene.Net.Analysis.Pl
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new SystemException("Unable to load default stopword set", ex);
+                    throw new InvalidOperationException("Unable to load default stopword set", ex);
                 }
 
                 try
                 {
-                    DEFAULT_TABLE = StempelStemmer.Load(typeof(PolishAnalyzer).Assembly.GetManifestResourceStream(
-                        typeof(PolishAnalyzer).Namespace + "." + DEFAULT_STEMMER_FILE));
+                    var resource = typeof(PolishAnalyzer).GetAnalysisResourceName(DEFAULT_STEMMER_FILE);
+                    DEFAULT_TABLE = StempelStemmer.Load(typeof(PolishAnalyzer).GetTypeInfo().Assembly.GetManifestResourceStream(resource));
                 }
                 catch (IOException ex)
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new SystemException("Unable to load default stemming tables", ex);
+                    throw new InvalidOperationException("Unable to load default stemming tables", ex);
                 }
             }
         }
