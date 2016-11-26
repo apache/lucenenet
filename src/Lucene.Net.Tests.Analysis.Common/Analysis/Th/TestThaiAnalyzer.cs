@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Analysis.Th
 {
@@ -137,6 +138,12 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// blast some random large strings through the analyzer </summary>
+        /// 
+#if NETSTANDARD
+        // NUnit does not have TimeoutAttribute for .NET Standard, so it can run for a long time.
+        // https://github.com/nunit/nunit/issues/1658
+        [LongRunningTest]
+#endif
         [Test]
         public virtual void TestRandomHugeStrings()
         {

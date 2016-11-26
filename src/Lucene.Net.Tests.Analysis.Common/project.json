@@ -108,6 +108,9 @@
   },
   "frameworks": {
     "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      },
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
