@@ -82,7 +82,11 @@ namespace Lucene.Net.Util
             CheckSort(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.CHARSET_UTF_8) });
         }
 
-        [Test, LongRunningTest, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestIntermediateMerges()
         {
             // Sort 20 mb worth of data with 1mb buffer, binary merging.
@@ -90,7 +94,11 @@ namespace Lucene.Net.Util
             Assert.IsTrue(info.MergeRounds > 10);
         }
 
-        [Test, MaxTime(120000), LongRunningTest]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestSmallRandom()
         {
             // Sort 20 mb worth of data with 1mb buffer.
@@ -98,7 +106,11 @@ namespace Lucene.Net.Util
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
-        [Test, MaxTime(300000), LongRunningTest]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.

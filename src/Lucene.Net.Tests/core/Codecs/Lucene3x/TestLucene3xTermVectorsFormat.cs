@@ -3,6 +3,7 @@ using NUnit.Framework;
 namespace Lucene.Net.Codecs.Lucene3x
 {
     using System.Collections.Generic;
+    using Attributes;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -72,7 +73,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.TestLotsOfFields();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         // different options for the same field
         public override void TestMixedOptions()
         {

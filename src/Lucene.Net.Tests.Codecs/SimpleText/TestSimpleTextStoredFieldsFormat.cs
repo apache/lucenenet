@@ -75,13 +75,21 @@ namespace Lucene.Net.Codecs.SimpleText
             base.TestReadSkip();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();

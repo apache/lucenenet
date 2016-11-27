@@ -36,6 +36,7 @@ namespace Lucene.Net.Index
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using Attributes;
 
     /*
       Verify we can read the pre-2.1 file format, do searches
@@ -664,7 +665,11 @@ namespace Lucene.Net.Index
          * around, through creates.
          */
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestKeepLastNDeletionPolicyWithCreates()
         {
             const int N = 10;

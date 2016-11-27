@@ -35,6 +35,7 @@ namespace Lucene.Net.Util.Packed
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using Reader = Lucene.Net.Util.Packed.PackedInts.Reader;
+    using Attributes;
 
     [TestFixture]
     public class TestPackedInts : LuceneTestCase
@@ -1115,7 +1116,11 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-        [Test, MaxTime(80000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(80000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestAppendingLongBuffer()
         {
 
@@ -1468,7 +1473,11 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, MaxTime(180000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(180000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long)int.MaxValue * 2);

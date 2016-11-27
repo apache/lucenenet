@@ -119,6 +119,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Attributes\DtdProcessingTestAttribute.cs" />
+    <Compile Include="Attributes\HasTimeoutAttribute.cs" />
     <Compile Include="Attributes\LongRunningTestAttribute.cs" />
     <Compile Include="Attributes\LuceneNetSpecificAttribute.cs" />
     <Compile Include="Codecs\asserting\AssertingCodec.cs">

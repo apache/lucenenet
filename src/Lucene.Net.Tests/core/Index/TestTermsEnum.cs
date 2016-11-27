@@ -227,7 +227,11 @@ namespace Lucene.Net.Index
         }
 
         // Tests Terms.intersect
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();

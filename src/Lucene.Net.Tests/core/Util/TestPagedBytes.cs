@@ -180,7 +180,11 @@ namespace Lucene.Net.Util
 
         [Ignore("memory hole")] // memory hole
         [Test]
-        [LongRunningTest, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [LongRunningTest, HasTimeout]
         public virtual void TestOverflow()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));

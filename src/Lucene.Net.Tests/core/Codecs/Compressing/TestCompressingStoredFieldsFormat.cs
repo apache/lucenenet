@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.Compressing
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Attributes;
 
     [TestFixture]
     public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
@@ -167,7 +168,11 @@ namespace Lucene.Net.Codecs.Compressing
             base.TestWriteReadMerge();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

@@ -7,6 +7,7 @@ using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using Lucene.Net.Support;
     using NUnit.Framework;
     using Bits = Lucene.Net.Util.Bits;
@@ -311,7 +312,11 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test, MaxTime(40000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(40000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestTermVectors()
         {
             Directory d = NewDirectory();

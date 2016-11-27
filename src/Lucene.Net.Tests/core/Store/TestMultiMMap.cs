@@ -5,6 +5,7 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
+    using Attributes;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Documents.Document;
     using Field = Field;
@@ -296,7 +297,11 @@ namespace Lucene.Net.Store
             }
         }
 
-        [Test, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestSeeking()
         {
             for (int i = 0; i < 10; i++)
@@ -328,7 +333,11 @@ namespace Lucene.Net.Store
 
         // note instead of seeking to offset and reading length, this opens slices at the
         // the various offset+length and just does readBytes.
-        [Test, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestSlicedSeeking()
         {
             for (int i = 0; i < 10; i++)

@@ -72,7 +72,11 @@ namespace Lucene.Net.Codecs.Lucene41
         internal static readonly int MAXDOC = Lucene41PostingsFormat.BLOCK_SIZE * 20;
 
         // creates 8 fields with different options and does "duels" of fields against each other
-        [Test, LongRunningTest, MaxTime(50000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(50000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void Test()
         {
             Directory dir = NewDirectory();

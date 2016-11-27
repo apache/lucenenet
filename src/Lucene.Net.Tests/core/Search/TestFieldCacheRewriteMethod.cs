@@ -1,5 +1,6 @@
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Attributes;
     using NUnit.Framework;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
@@ -70,7 +71,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// test a bunch of random regular expressions </summary>
-        [Test, MaxTime(60000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public override void TestRegexps()
         {
             base.TestRegexps();

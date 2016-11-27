@@ -6,6 +6,7 @@ using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using NUnit.Framework;
 
     /*
@@ -194,7 +195,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestRandomWithPrefix()
         {
             Directory dir = NewDirectory();

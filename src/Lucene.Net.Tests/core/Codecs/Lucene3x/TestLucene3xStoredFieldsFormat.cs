@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -110,7 +111,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.TestConcurrentReads();
         }
 
-        [Test, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, HasTimeout]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

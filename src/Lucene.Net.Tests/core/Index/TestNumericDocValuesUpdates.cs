@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
     using Store = Field.Store;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using Attributes;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -1527,7 +1528,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

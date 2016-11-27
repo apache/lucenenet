@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using Lucene.Net.Support;
     using NUnit.Framework;
 
@@ -349,7 +350,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, MaxTime(80000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(80000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();

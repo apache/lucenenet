@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Index;
 using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -55,7 +56,11 @@ namespace Lucene.Net.Codecs.SimpleText
             base.TestLotsOfFields();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         // different options for the same field
         public override void TestMixedOptions()
         {

@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Compressing
 {
+    using Attributes;
     using NUnit.Framework;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
@@ -123,7 +124,11 @@ namespace Lucene.Net.Codecs.Compressing
             base.TestRandom();
         }
 
-        [Test, MaxTime(30000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(30000)]
+#endif
+        [Test, HasTimeout]
         public override void TestMerge()
         {
             base.TestMerge();

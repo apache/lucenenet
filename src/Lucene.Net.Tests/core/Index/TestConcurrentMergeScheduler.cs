@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
+    using Attributes;
 
     [TestFixture]
     public class TestConcurrentMergeScheduler : LuceneTestCase
@@ -196,7 +197,11 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -228,7 +233,11 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -390,7 +399,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();

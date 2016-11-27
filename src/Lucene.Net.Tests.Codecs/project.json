@@ -12,8 +12,11 @@
 
   "frameworks": {
     "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      },
       "imports": "dnxcore50",
-      "dependencies": { 
+      "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"

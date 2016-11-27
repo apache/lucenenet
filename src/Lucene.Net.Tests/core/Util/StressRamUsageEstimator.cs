@@ -120,7 +120,11 @@ namespace Lucene.Net.Util
             return s;
         }
 
-        [Test, LongRunningTest, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestSimpleByteArrays()
         {
             object[][] all = new object[0][];

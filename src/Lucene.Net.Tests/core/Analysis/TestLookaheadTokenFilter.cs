@@ -26,7 +26,11 @@ namespace Lucene.Net.Analysis
     [TestFixture]
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
     {
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
@@ -69,7 +73,11 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestNeverCallingPeek()
         {
             Analyzer a = new NCPAnalyzerAnonymousInnerClassHelper(this);

@@ -4,8 +4,8 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Attributes;
     using Lucene.Net.Analysis;
-    
     using Lucene.Net.Index;
 
     /*
@@ -340,7 +340,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();

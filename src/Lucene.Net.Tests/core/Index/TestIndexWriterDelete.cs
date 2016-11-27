@@ -1292,7 +1292,11 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

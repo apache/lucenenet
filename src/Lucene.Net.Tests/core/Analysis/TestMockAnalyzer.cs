@@ -229,7 +229,11 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// blast some random strings through differently configured tokenizers </summary>
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestRandomRegexps()
         {
             int iters = AtLeast(30);

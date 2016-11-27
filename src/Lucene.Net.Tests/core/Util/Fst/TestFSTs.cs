@@ -265,7 +265,11 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        [Test, LongRunningTest, MaxTime(27000000)] // 45 minutes to be on the safe side
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(27000000)]
+#endif
+        [Test, LongRunningTest, HasTimeout] // 45 minutes to be on the safe side
         public virtual void TestRandomWords()
         {
             TestRandomWords(1000, AtLeast(2));

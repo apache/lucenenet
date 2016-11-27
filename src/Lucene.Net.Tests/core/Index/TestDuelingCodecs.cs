@@ -5,6 +5,7 @@ using System;
 namespace Lucene.Net.Index
 {
     using System.Text.RegularExpressions;
+    using Attributes;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -169,7 +170,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// checks the two indexes are equivalent
         /// </summary>
-        [Test, MaxTime(120000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestEquals()
         {
             AssertReaderEquals(Info, LeftReader, RightReader);

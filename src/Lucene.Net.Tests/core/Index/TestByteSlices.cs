@@ -2,6 +2,7 @@ using System;
 
 namespace Lucene.Net.Index
 {
+    using Attributes;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
@@ -25,7 +26,11 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestByteSlices : LuceneTestCase
     {
-        [Test, MaxTime(300000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(300000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestBasic()
         {
             ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));

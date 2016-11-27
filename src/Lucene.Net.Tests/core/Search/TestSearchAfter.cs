@@ -190,7 +190,11 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        [Test, LongRunningTest, MaxTime(90000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(90000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestQueries()
         {
             // because the first page has a null 'after', we get a normal collector.

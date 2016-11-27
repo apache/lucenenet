@@ -44,7 +44,11 @@ namespace Lucene.Net.Index
     public class Test2BPostings : LuceneTestCase
     {
         [Ignore("Very slow. Enable manually by removing Ignore.")]
-        [Test, LongRunningTest, MaxTime(int.MaxValue)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));

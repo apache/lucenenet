@@ -32,7 +32,11 @@ namespace Lucene.Net.Util.Fst
     public class TestBytesStore : LuceneTestCase
     {
 
-        [Test, LongRunningTest, MaxTime(720000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(720000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestRandom()
         {
 
