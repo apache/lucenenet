@@ -19,6 +19,10 @@
 
 .PARAMETER ExcludeTestCategories
     An array of test categories to exclude in test runs. Default is LongRunningTest
+.PARAMETER ExcludeTestCategoriesNetCore
+    An array of test categories to exclude in test runs when running against .NET Core.
+    Default is LongRunningTest, DtdProcessingTest, HasTimeout
+
 .PARAMETER FrameworksToTest
     An array of frameworks to run tests against. Default is "net451" and "netcoreapp1.0"
 
@@ -47,7 +51,7 @@
     Creates and uploads NuGet packages for .NET Core projects compiled as
     Release. Uploads projects to "http://myget.org/conniey/F/lucenenet-feed".
 .EXAMPLE
-    Build.ps1 -RunTests -ExcludeTestCategories @("DtdProcessingTest", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
+    Build.ps1 -RunTests -ExcludeTestCategoriesNetCore @("DtdProcessingTest", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
 
     Build all .NET Core projects as Release and run all tests. Tests are run
     against "netcoreapp1.0" frameworks and excludes "DtdProcessingTest" and
@@ -72,8 +76,9 @@ param(
     [ValidateSet("Debug", "Release")]
     [string]$Configuration = "Release",
     
-    [string[]]$ExcludeTestCategories = @("LongRunningTest", "DtdProcessingTest"),
-    [string[]]$FrameworksToTest = @("net451", "netcoreapp1.0"),
+    [string[]]$ExcludeTestCategories = @("LongRunningTest"),
+    [string[]]$ExcludeTestCategoriesNetCore = @("LongRunningTest", "DtdProcessingTest", "HasTimeout"),
+    [string[]]$FrameworksToTest = @("netcoreapp1.0"),
     
     [switch]$Quiet,
     [string]$TestResultsDirectory,
@@ -99,6 +104,26 @@ function Compile-Projects($projects) {
     }
 }
 
+function Generate-ExcludeCategoryString ($categories) {
+    $contents = ""
+
+    if ($categories.Count -gt 0) {
+        foreach ($category in $categories) {
+            $formatted = [String]::Format("Category!={0}", $category);
+
+            if ([string]::IsNullOrEmpty($contents)) {
+                $contents = "--where=""$formatted"
+            } else {
+                $contents += " && $formatted"
+            }
+        }
+
+        $contents += '"'
+    }
+
+    return $contents
+}
+
 function Test-Projects($projects) {
     if ([string]::IsNullOrEmpty($TestResultsDirectory)) {
         $TestResultsDirectory = $defaultTestResultsDirectory
@@ -118,24 +143,9 @@ function Test-Projects($projects) {
     $ErrorActionPreference = "Continue"
 
     # Generate the string to exclude categories from being tested
-    $categoryString = ""
-    
-    if ($ExcludeTestCategories.Count -gt 0) {
-        foreach ($category in $ExcludeTestCategories) {
-            $formatted = [String]::Format("Category!={0}", $category);
+    $excludeCategories = Generate-ExcludeCategoryString $ExcludeTestCategories
+    $excludeCategoriesNetCoreApp = Generate-ExcludeCategoryString $ExcludeTestCategoriesNetCore
 
-            if ([string]::IsNullOrEmpty($categoryString)) {
-                $categoryString = "--where=""$formatted"
-            } else {
-                $categoryString += " && $formatted"
-            }
-        }
-
-        $categoryString += '"'
-    }
-
-    Write-Host "Categories to Ignore [$categoryString]"
-    
     foreach ($project in $projects) {
         
         pushd $project.DirectoryName
@@ -146,21 +156,32 @@ function Test-Projects($projects) {
         New-Item $testFolder -ItemType Directory
 
         foreach ($framework in $FrameworksToTest) {
-            Write-Host "Testing [$testName]..."
+            Write-Host "Testing [$testName] on [$framework]..."
             
-            $testResult = "$framework.TestResult.xml"
+            $testResult = "TestResult.$framework.xml"
 
-            if ($Quiet) {
-                
-                $outputLog = "$framework.output.log"
-                & dotnet.exe test --configuration $Configuration --framework $framework $categoryString | Set-Content $outputLog
-
-                Move-Item $outputLog $testFolder\
+            if ($framework.StartsWith("netcore")) {
+                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework $excludeCategoriesNetCoreApp"
             } else {
-                & dotnet.exe test --configuration $Configuration --framework $framework $categoryString
+                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework $excludeCategories"
             }
 
-            Move-Item ".\TestResult.xml" $(Join-Path $testFolder $testResult)
+            Write-Host $testExpression
+            
+            if ($Quiet) {
+                $outputLog = "output.$framework.log"
+
+                Invoke-Expression $testExpression | Set-Content $outputLog
+                Move-Item $outputLog $testFolder\
+            } else {
+                Invoke-Expression $testExpression
+            }
+
+            if (Test-Path ".\TestResult.xml") {
+                Move-Item ".\TestResult.xml" $(Join-Path $testFolder $testResult)
+            } else {
+                Write-Warning "Could not find TestResult.xml."
+            }
         }
 
         popd
