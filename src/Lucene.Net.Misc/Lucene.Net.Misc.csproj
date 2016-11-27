@@ -72,6 +72,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Lucene.Net.Misc.project.json" />
     <None Include="Misc\doc-files\ss.baselineTf.svg" />
     <None Include="Misc\doc-files\ss.computeLengthNorm.svg" />
     <None Include="Misc\doc-files\ss.hyperbolicTf.svg" />

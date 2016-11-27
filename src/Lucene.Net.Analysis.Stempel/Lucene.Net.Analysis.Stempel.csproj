@@ -59,6 +59,7 @@
     <Compile Include="Stempel\StempelFilter.cs" />
     <Compile Include="Stempel\StempelPolishStemFilterFactory.cs" />
     <Compile Include="Stempel\StempelStemmer.cs" />
+    <Compile Include="Util\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pl\stemmer_20000.tbl" />
@@ -75,6 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pl\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.Analysis.Stempel.project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

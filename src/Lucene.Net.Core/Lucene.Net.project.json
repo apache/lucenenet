@@ -1,0 +1,12 @@
+{
+  "runtimes": {
+    "win":{}
+  },  
+  "frameworks": {
+    "net451": {
+      "dependencies": {
+        "System.Collections.Immutable": "1.2.0"
+      }
+    }
+  }
+}

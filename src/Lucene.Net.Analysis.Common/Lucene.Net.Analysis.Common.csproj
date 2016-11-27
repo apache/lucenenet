@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\icu.net.54.0.8-alpha\build\icu.net.props" Condition="Exists('..\..\packages\icu.net.54.0.8-alpha\build\icu.net.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,10 +34,6 @@
     <DefineConstants>$(DefineConstants);NET451;FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\icu.net.54.0.8-alpha\lib\net40\icu.net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -501,7 +496,6 @@
     <EmbeddedResource Include="Analysis\Gl\galician.rslp" />
     <EmbeddedResource Include="Analysis\Pt\portuguese.rslp" />
     <EmbeddedResource Include="Analysis\Compound\Hyphenation\hyphenation.dtd" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Cz\stopwords.txt" />
@@ -595,13 +589,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\swedish_stop.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.Analysis.Common.project.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\icu.net.54.0.8-alpha\build\icu.net.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\icu.net.54.0.8-alpha\build\icu.net.props'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
