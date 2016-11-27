@@ -61,6 +61,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Analysis.S
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Grouping", "src\Lucene.Net.Tests.Grouping\Lucene.Net.Tests.Grouping.xproj", "{C2349F0D-FB66-4544-9C33-4D87F73C6004}"
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Highlighter", "Lucene.Net.Highlighter\Lucene.Net.Highlighter.xproj", "{D48E1C62-CFD2-41A0-B430-AEBC48580282}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Highlighter", "src\Lucene.Net.Highlighter\Lucene.Net.Highlighter.xproj", "{D48E1C62-CFD2-41A0-B430-AEBC48580282}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Spatial", "src\Lucene.Net.Spatial\Lucene.Net.Spatial.xproj", "{35C347F4-24B2-4BE5-8117-A0E3001551CE}"
 EndProject
