@@ -1,0 +1,88 @@
+﻿//using System;
+using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lucene.Net.QueryParsers.Flexible.Spans
+{
+    /// <summary>
+    /// This attribute is used by the {@link UniqueFieldQueryNodeProcessor}
+    /// processor. It holds a value that defines which is the unique field name that
+    /// should be set in every {@link FieldableNode}.
+    /// </summary>
+    /// <seealso cref="UniqueFieldQueryNodeProcessor"/>
+    public class UniqueFieldAttributeImpl : AttributeImpl, IUniqueFieldAttribute
+    {
+        private string uniqueField;
+
+        public UniqueFieldAttributeImpl()
+        {
+            Clear();
+        }
+
+
+        public override void Clear()
+        {
+            this.uniqueField = "";
+        }
+
+
+        public void SetUniqueField(string uniqueField)
+        {
+            this.uniqueField = uniqueField;
+        }
+
+
+        public string GetUniqueField()
+        {
+            return this.uniqueField;
+        }
+
+
+        public override void CopyTo(Attribute target)
+        {
+
+            if (!(target is UniqueFieldAttributeImpl))
+            {
+                throw new System.ArgumentException(
+                    "cannot copy the values from attribute UniqueFieldAttribute to an instance of "
+                        + target.GetType().Name);
+            }
+
+            UniqueFieldAttributeImpl uniqueFieldAttr = (UniqueFieldAttributeImpl)target;
+            uniqueFieldAttr.uniqueField = uniqueField.toString();
+
+        }
+
+
+        public override bool Equals(object other)
+        {
+
+            if (other is UniqueFieldAttributeImpl)
+            {
+
+                return ((UniqueFieldAttributeImpl)other).uniqueField
+                    .equals(this.uniqueField);
+
+            }
+
+            return false;
+
+        }
+
+
+        public override int GetHashCode()
+        {
+            return this.uniqueField.GetHashCode();
+        }
+
+
+        public override string ToString()
+        {
+            return "<uniqueField uniqueField='" + this.uniqueField + "'/>";
+        }
+
+    }
+}

@@ -55,8 +55,138 @@
     <Compile Include="Ext\ExtensionQuery.cs" />
     <Compile Include="Ext\Extensions.cs" />
     <Compile Include="Ext\ParserExtension.cs" />
+    <Compile Include="Flexible\Core\Builders\QueryBuilder.cs" />
+    <Compile Include="Flexible\Core\Builders\QueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Core\Config\AbstractQueryConfig.cs" />
+    <Compile Include="Flexible\Core\Config\ConfigurationKey.cs" />
+    <Compile Include="Flexible\Core\Config\FieldConfig.cs" />
+    <Compile Include="Flexible\Core\Config\FieldConfigListener.cs" />
+    <Compile Include="Flexible\Core\Config\QueryConfigHandler.cs" />
+    <Compile Include="Flexible\Core\Messages\QueryParserMessages.cs" />
+    <Compile Include="Flexible\Core\Nodes\NoTokenFoundQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\AndQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\AnyQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\BooleanQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\BoostQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\DeletedQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\FieldableNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\FieldQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\FieldValuePairQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\FuzzyQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\GroupQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\MatchAllDocsQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\MatchNoDocsQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\ModifierQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\OpaqueQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\OrQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\PathQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\PhraseSlopQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\ProximityQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\QueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\QueryNodeImpl.cs" />
+    <Compile Include="Flexible\Core\Nodes\QuotedFieldQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\RangeQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\SlopQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\TextableQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\TokenizedPhraseQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\ValueQueryNode.cs" />
+    <Compile Include="Flexible\Core\Parser\EscapeQuerySyntax.cs" />
+    <Compile Include="Flexible\Core\Parser\SyntaxParser.cs" />
+    <Compile Include="Flexible\Core\Processors\NoChildOptimizationQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Core\Processors\QueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Core\Processors\QueryNodeProcessorImpl.cs" />
+    <Compile Include="Flexible\Core\Processors\QueryNodeProcessorPipeline.cs" />
+    <Compile Include="Flexible\Core\Processors\RemoveDeletedQueryNodesProcessor.cs" />
+    <Compile Include="Flexible\Core\QueryNodeError.cs" />
+    <Compile Include="Flexible\Core\QueryNodeException.cs" />
+    <Compile Include="Flexible\Core\QueryNodeParseException.cs" />
+    <Compile Include="Flexible\Core\QueryParserHelper.cs" />
+    <Compile Include="Flexible\Core\Util\QueryNodeOperation.cs" />
+    <Compile Include="Flexible\Core\Util\StringUtils.cs" />
+    <Compile Include="Flexible\Core\Util\UnescapedCharSequence.cs" />
+    <Compile Include="Flexible\Messages\Message.cs" />
+    <Compile Include="Flexible\Messages\MessageImpl.cs" />
+    <Compile Include="Flexible\Messages\NLS.cs" />
+    <Compile Include="Flexible\Messages\NLSException.cs" />
+    <Compile Include="Flexible\Precedence\PrecedenceQueryParser.cs" />
+    <Compile Include="Flexible\Precedence\Processors\BooleanModifiersQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Precedence\Processors\PrecedenceQueryNodeProcessorPipeline.cs" />
+    <Compile Include="Flexible\Standard\Builders\AnyQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\BooleanQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\BoostQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\DummyQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\FieldQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\FuzzyQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\GroupQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\MatchAllDocsQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\MatchNoDocsQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\ModifierQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\MultiPhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\NumericRangeQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\PhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\PrefixWildcardQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\RegexpQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\SlopQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\StandardBooleanQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\StandardQueryBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\StandardQueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\TermRangeQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\WildcardQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\CommonQueryParserConfiguration.cs" />
+    <Compile Include="Flexible\Standard\Config\FieldBoostMapFCListener.cs" />
+    <Compile Include="Flexible\Standard\Config\FieldDateResolutionFCListener.cs" />
+    <Compile Include="Flexible\Standard\Config\FuzzyConfig.cs" />
+    <Compile Include="Flexible\Standard\Config\NumberDateFormat.cs" />
+    <Compile Include="Flexible\Standard\Config\NumericConfig.cs" />
+    <Compile Include="Flexible\Standard\Config\NumericFieldConfigListener.cs" />
+    <Compile Include="Flexible\Standard\Config\StandardQueryConfigHandler.cs" />
+    <Compile Include="Flexible\Standard\Nodes\AbstractRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\BooleanModifierNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\MultiPhraseQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\NumericQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\NumericRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\PrefixWildcardQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\RegexpQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\StandardBooleanQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\TermRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\WildcardQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Parser\CharStream.cs" />
+    <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
+    <Compile Include="Flexible\Standard\Parser\FastCharStream.cs" />
+    <Compile Include="Flexible\Standard\Parser\ParseException.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParser.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParserConstants.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParserTokenManager.cs" />
+    <Compile Include="Flexible\Standard\Parser\Token.cs" />
+    <Compile Include="Flexible\Standard\Parser\TokenMgrError.cs" />
+    <Compile Include="Flexible\Standard\Processors\AllowLeadingWildcardProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\AnalyzerQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BooleanQuery2ModifierNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BooleanSingleChildOptimizationQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BoostQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\DefaultPhraseSlopQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\FuzzyQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\GroupQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\LowercaseExpandedTermsQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MatchAllDocsQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MultiFieldQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MultiTermRewriteMethodProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\NumericQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\NumericRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\OpenRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\PhraseSlopQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\RemoveEmptyNonLeafQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\StandardQueryNodeProcessorPipeline.cs" />
+    <Compile Include="Flexible\Standard\Processors\TermRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\WildcardQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\QueryParserUtil.cs" />
+    <Compile Include="Flexible\Standard\StandardQueryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Simple\SimpleQueryParser.cs" />
     <Compile Include="Surround\Parser\CharStream.cs" />
     <Compile Include="Surround\Parser\FastCharStream.cs" />
@@ -95,6 +225,12 @@
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
