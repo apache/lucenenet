@@ -663,7 +663,14 @@ namespace Lucene.Net.Index
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                threads[threadID].Join();
+                try
+                {
+                    threads[threadID].Join();
+                } 
+                catch (Exception e)
+                {
+                    Console.WriteLine("EXCEPTION in ThreadAnonymousInnerClassHelper: " + Environment.NewLine + e);
+                }
             }
 
             Assert.IsTrue(!failed.Get());
