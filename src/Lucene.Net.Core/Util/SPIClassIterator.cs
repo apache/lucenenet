@@ -223,6 +223,11 @@ namespace Lucene.Net.Util
                     return false;
                 }
 
+                if (s_frameworkAssemblyNamePrefixes.Any(p => assembly.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return true;
+                }
+
                 var publicKey = assembly.GetPublicKeyToken();
 
                 if (publicKey == default(byte[]))
@@ -232,8 +237,7 @@ namespace Lucene.Net.Util
 
                 var publicKeyToken = string.Concat(publicKey.Select(i => i.ToString("x2")));
 
-                return s_microsoftKeys.Contains(publicKeyToken)
-                    || s_frameworkAssemblyNamePrefixes.Any(p => assembly.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+                return s_microsoftKeys.Contains(publicKeyToken);
             }
         }
     }
