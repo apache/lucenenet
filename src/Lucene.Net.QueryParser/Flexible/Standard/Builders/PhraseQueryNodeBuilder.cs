@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
                     FieldQueryNode termNode = (FieldQueryNode)child;
 
-                    phraseQuery.Add(termQuery.Term, termNode.GetPositionIncrement());
+                    phraseQuery.Add(termQuery.Term, termNode.PositionIncrement);
 
                 }
 

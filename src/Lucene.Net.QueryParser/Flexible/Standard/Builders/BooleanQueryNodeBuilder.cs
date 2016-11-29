@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             if (node is ModifierQueryNode)
             {
                 ModifierQueryNode mNode = ((ModifierQueryNode)node);
-                switch (mNode.GetModifier())
+                switch (mNode.Modifier)
                 {
 
                     case Modifier.MOD_REQ:

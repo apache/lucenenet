@@ -29,11 +29,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToString()
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "<boolean operation='or'/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<boolean operation='or'>");
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append("\n");
                 sb.Append(child.ToString());
@@ -46,20 +47,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "";
 
             StringBuilder sb = new StringBuilder();
             string filler = "";
-            for (IEnumerator<IQueryNode> it = GetChildren().GetEnumerator(); it.MoveNext();)
+            for (IEnumerator<IQueryNode> it = children.GetEnumerator(); it.MoveNext();)
             {
                 sb.Append(filler).Append(it.Current.ToQueryString(escapeSyntaxParser));
                 filler = " OR ";
             }
 
             // in case is root or the parent is a group node avoid parenthesis
-            if ((GetParent() != null && GetParent() is GroupQueryNode)
-                || IsRoot())
+            if ((Parent != null && Parent is GroupQueryNode)
+                || IsRoot)
                 return sb.ToString();
             else
                 return "( " + sb.ToString() + " )";

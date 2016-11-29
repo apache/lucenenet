@@ -822,10 +822,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int endColumn;
             string im = jjstrLiteralImages[jjmatchedKind];
             curTokenImage = (im == null) ? input_stream.GetImage() : im;
-            beginLine = input_stream.GetBeginLine();
-            beginColumn = input_stream.GetBeginColumn();
-            endLine = input_stream.GetEndLine();
-            endColumn = input_stream.GetEndColumn();
+            beginLine = input_stream.BeginLine;
+            beginColumn = input_stream.BeginColumn;
+            endLine = input_stream.EndLine;
+            endColumn = input_stream.EndColumn;
             t = Token.NewToken(jjmatchedKind, curTokenImage);
 
             t.beginLine = beginLine;
@@ -899,8 +899,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         goto EOFLoop_continue;
                     }
                 }
-                int error_line = input_stream.GetEndLine();
-                int error_column = input_stream.GetEndColumn();
+                int error_line = input_stream.EndLine;
+                int error_column = input_stream.EndColumn;
                 string error_after = null;
                 bool EOFSeen = false;
                 try { input_stream.ReadChar(); input_stream.BackUp(1); }

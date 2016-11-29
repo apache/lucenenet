@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public void Add(IQueryNode child)
         {
 
-            if (IsLeaf() || this.clauses == null || child == null)
+            if (IsLeaf || this.clauses == null || child == null)
             {
                 throw new ArgumentException(NLS
                     .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public void Add(IList<IQueryNode> children)
         {
 
-            if (IsLeaf() || this.clauses == null)
+            if (IsLeaf || this.clauses == null)
             {
                 throw new ArgumentException(NLS
                     .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
@@ -74,16 +74,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
 
-        public virtual bool IsLeaf()
+        public virtual bool IsLeaf
         {
-            return this.isLeaf;
+            get { return this.isLeaf; }
         }
 
 
         public void Set(IList<IQueryNode> children)
         {
 
-            if (IsLeaf() || this.clauses == null)
+            if (IsLeaf || this.clauses == null)
             {
                 //ResourceBundle bundle = ResourceBundle
                 //    .getBundle("org.apache.lucene.queryParser.messages.QueryParserMessages");
@@ -101,7 +101,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 child.RemoveFromParent();
             }
 
-            List<IQueryNode> existingChildren = new List<IQueryNode>(GetChildren());
+            // LUCENENET specific: GetChildren already creates a new list, there is
+            // no need to do it again here and have another O(n) operation
+            IList<IQueryNode> existingChildren = GetChildren();
             foreach (IQueryNode existingChild in existingChildren)
             {
                 existingChild.RemoveFromParent();
@@ -155,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public IList<IQueryNode> GetChildren()
         {
-            if (IsLeaf() || this.clauses == null)
+            if (IsLeaf || this.clauses == null)
             {
                 return null;
             }
@@ -197,14 +199,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
 
-        public virtual IQueryNode GetParent()
+        public virtual IQueryNode Parent
         {
-            return this.parent;
+            get { return this.parent; }
         }
 
-        protected virtual bool IsRoot()
+        protected virtual bool IsRoot
         {
-            return GetParent() == null;
+            get { return Parent == null; }
         }
 
         /**
@@ -252,9 +254,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return a map containing all tags attached to this query node
          */
-        public virtual IDictionary<string, object> GetTagMap()
+        public virtual IDictionary<string, object> TagMap
         {
-            return new Dictionary<string, object>(this.tags);
+            get { return new Dictionary<string, object>(this.tags); }
         }
 
         public virtual void RemoveFromParent()

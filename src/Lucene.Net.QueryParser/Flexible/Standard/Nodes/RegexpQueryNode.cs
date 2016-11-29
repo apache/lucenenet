@@ -85,9 +85,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             set { this.field = value; }
         }
 
-        public virtual string FieldAsString
+        public virtual string GetFieldAsString()
         {
-            get { return field.ToString(); }
+            return field.ToString();
         }
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)

@@ -44,15 +44,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                 if (config != null && (fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG)) != null)
                 {
-                    fuzzyNode.SetPrefixLength(fuzzyConfig.GetPrefixLength());
+                    fuzzyNode.PrefixLength = fuzzyConfig.PrefixLength;
 
-                    if (fuzzyNode.GetSimilarity() < 0)
+                    if (fuzzyNode.Similarity < 0)
                     {
-                        fuzzyNode.SetSimilarity(fuzzyConfig.GetMinSimilarity());
+                        fuzzyNode.Similarity = fuzzyConfig.MinSimilarity;
                     }
 
                 }
-                else if (fuzzyNode.GetSimilarity() < 0)
+                else if (fuzzyNode.Similarity < 0)
                 {
                     throw new ArgumentException("No FUZZY_CONFIG set in the config");
                 }

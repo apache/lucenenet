@@ -32,12 +32,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (query is PhraseQuery)
             {
-                ((PhraseQuery)query).Slop = phraseSlopNode.GetValue();
+                ((PhraseQuery)query).Slop = phraseSlopNode.Value;
 
             }
             else
             {
-                ((MultiPhraseQuery)query).Slop = phraseSlopNode.GetValue();
+                ((MultiPhraseQuery)query).Slop = phraseSlopNode.Value;
             }
 
             return query;

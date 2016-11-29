@@ -48,23 +48,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
                 QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, "");
         }
 
-        public virtual string GetQuery()
+        public virtual string Query
         {
-            return this.query;
+            get { return this.query; }
         }
 
-        /**
-         * @param errorToken
-         *          the errorToken in the query
-         */
-        protected virtual void SetErrorToken(string errorToken)
+        /// <summary>
+        /// The errorToken in the query
+        /// </summary>
+        public virtual string ErrorToken
         {
-            this.errorToken = errorToken;
-        }
-
-        public virtual string GetErrorToken()
-        {
-            return this.errorToken;
+            get { return this.errorToken; }
+            protected set { this.errorToken = value; }
         }
 
         public virtual void SetNonLocalizedMessage(IMessage message)
@@ -79,9 +74,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * 
          * @return line where the problem was found
          */
-        public virtual int GetBeginLine()
+        public virtual int BeginLine
         {
-            return this.beginLine;
+            get { return this.beginLine; }
+            protected set { this.beginLine = value; }
         }
 
         /**
@@ -91,27 +87,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * 
          * @return column of the first char where the problem was found
          */
-        public virtual int GetBeginColumn()
+        public virtual int BeginColumn
         {
-            return this.beginColumn;
-        }
-
-        /**
-         * @param beginLine
-         *          the beginLine to set
-         */
-        protected virtual void SetBeginLine(int beginLine)
-        {
-            this.beginLine = beginLine;
-        }
-
-        /**
-         * @param beginColumn
-         *          the beginColumn to set
-         */
-        protected virtual void SetBeginColumn(int beginColumn)
-        {
-            this.beginColumn = beginColumn;
+            get { return this.beginColumn; }
+            protected set { this.beginColumn = value; }
         }
     }
 }

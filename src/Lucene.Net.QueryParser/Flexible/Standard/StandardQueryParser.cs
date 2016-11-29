@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override string ToString()
         {
-            return "<StandardQueryParser config=\"" + this.GetQueryConfigHandler()
+            return "<StandardQueryParser config=\"" + this.QueryConfigHandler
                 + "\"/>";
         }
 
@@ -81,35 +81,36 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * Gets implicit operator setting, which will be either {@link Operator#AND}
          * or {@link Operator#OR}.
          */
-        public virtual Operator? GetDefaultOperator()
+        public virtual Operator? DefaultOperator
         {
-            return GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
+            get { return QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR); }
+            set { QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, value); }
         }
 
-        /**
-         * Sets the boolean operator of the QueryParser. In default mode (
-         * {@link Operator#OR}) terms without any modifiers are considered optional:
-         * for example <code>capital of Hungary</code> is equal to
-         * <code>capital OR of OR Hungary</code>.<br/>
-         * In {@link Operator#AND} mode terms are considered to be in conjunction: the
-         * above mentioned query is parsed as <code>capital AND of AND Hungary</code>
-         */
-        public virtual void SetDefaultOperator(Operator @operator)
-        {
-            GetQueryConfigHandler().Set(ConfigurationKeys.DEFAULT_OPERATOR, @operator);
-        }
+        ///**
+        // * Sets the boolean operator of the QueryParser. In default mode (
+        // * {@link Operator#OR}) terms without any modifiers are considered optional:
+        // * for example <code>capital of Hungary</code> is equal to
+        // * <code>capital OR of OR Hungary</code>.<br/>
+        // * In {@link Operator#AND} mode terms are considered to be in conjunction: the
+        // * above mentioned query is parsed as <code>capital AND of AND Hungary</code>
+        // */
+        //public virtual void SetDefaultOperator(Operator @operator)
+        //{
+        //    QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, @operator);
+        //}
 
 
         public virtual bool LowercaseExpandedTerms
         {
             get
             {
-                bool? lowercaseExpandedTerms = GetQueryConfigHandler().Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
+                bool? lowercaseExpandedTerms = QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
                 return lowercaseExpandedTerms.HasValue ? lowercaseExpandedTerms.Value : true;
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
+                QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
             }
         }
 
@@ -152,12 +153,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                bool? allowLeadingWildcard = GetQueryConfigHandler().Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
+                bool? allowLeadingWildcard = QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
                 return allowLeadingWildcard.HasValue ? allowLeadingWildcard.Value : false;
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
+                QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
             }
         }
 
@@ -180,12 +181,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                bool? enablePositionsIncrements = GetQueryConfigHandler().Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
+                bool? enablePositionsIncrements = QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
                 return enablePositionsIncrements.HasValue ? enablePositionsIncrements.Value : false;
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
+                QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
             }
         }
 
@@ -228,11 +229,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                return GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
+                return QueryConfigHandler.Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, value);
+                QueryConfigHandler.Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, value);
             }
         }
 
@@ -275,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 fields = new string[0];
             }
 
-            GetQueryConfigHandler().Set(ConfigurationKeys.MULTI_FIELDS, fields);
+            QueryConfigHandler.Set(ConfigurationKeys.MULTI_FIELDS, fields);
 
         }
 
@@ -285,16 +286,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @param fields the fields used to expand the query
          */
-        public virtual void GetMultiFields(string[] fields)
+        public virtual string[] GetMultiFields()
         {
-            GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_FIELDS);
+            return QueryConfigHandler.Get(ConfigurationKeys.MULTI_FIELDS);
         }
 
         public virtual int FuzzyPrefixLength
         {
             get
             {
-                FuzzyConfig fuzzyConfig = GetQueryConfigHandler().Get(ConfigurationKeys.FUZZY_CONFIG);
+                FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
 
                 if (fuzzyConfig == null)
                 {
@@ -302,12 +303,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 }
                 else
                 {
-                    return fuzzyConfig.GetPrefixLength();
+                    return fuzzyConfig.PrefixLength;
                 }
             }
             set
             {
-                QueryConfigHandler config = GetQueryConfigHandler();
+                QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
                 if (fuzzyConfig == null)
@@ -316,7 +317,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);
                 }
 
-                fuzzyConfig.SetPrefixLength(value);
+                fuzzyConfig.PrefixLength = value;
             }
         }
 
@@ -342,25 +343,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         //}
 
-        public virtual void SetNumericConfigMap(IDictionary<string, NumericConfig> numericConfigMap)
-        {
-            GetQueryConfigHandler().Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, numericConfigMap);
-        }
+        //public virtual void SetNumericConfigMap(IDictionary<string, NumericConfig> numericConfigMap)
+        //{
+        //    QueryConfigHandler.Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, numericConfigMap);
+        //}
 
-        public virtual IDictionary<string, NumericConfig> GetNumericConfigMap()
+        public virtual IDictionary<string, NumericConfig> NumericConfigMap
         {
-            return GetQueryConfigHandler().Get(ConfigurationKeys.NUMERIC_CONFIG_MAP);
+            get { return QueryConfigHandler.Get(ConfigurationKeys.NUMERIC_CONFIG_MAP); }
+            set { QueryConfigHandler.Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, value); }
         }
 
         public virtual CultureInfo Locale
         {
             get
             {
-                return GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
+                return QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.LOCALE, value);
+                QueryConfigHandler.Set(ConfigurationKeys.LOCALE, value);
             }
         }
 
@@ -386,11 +388,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                return GetQueryConfigHandler().Get(ConfigurationKeys.TIMEZONE);
+                return QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.TIMEZONE, value);
+                QueryConfigHandler.Set(ConfigurationKeys.TIMEZONE, value);
             }
         }
 
@@ -414,7 +416,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Obsolete]
         public virtual void SetDefaultPhraseSlop(int defaultPhraseSlop)
         {
-            GetQueryConfigHandler().Set(ConfigurationKeys.PHRASE_SLOP, defaultPhraseSlop);
+            QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, defaultPhraseSlop);
         }
 
         ///**
@@ -431,11 +433,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                return GetQueryConfigHandler().Get(ConfigurationKeys.ANALYZER);
+                return QueryConfigHandler.Get(ConfigurationKeys.ANALYZER);
             }
             set
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.ANALYZER, value);
+                QueryConfigHandler.Set(ConfigurationKeys.ANALYZER, value);
             }
         }
 
@@ -502,12 +504,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                int? phraseSlop = GetQueryConfigHandler().Get(ConfigurationKeys.PHRASE_SLOP);
+                int? phraseSlop = QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP);
                 return phraseSlop.HasValue ? phraseSlop.Value : 0;
             }
             set // LUCENENET TODO: obsolete
             {
-                GetQueryConfigHandler().Set(ConfigurationKeys.PHRASE_SLOP, value);
+                QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
             }
         }
 
@@ -534,12 +536,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                FuzzyConfig fuzzyConfig = GetQueryConfigHandler().Get(ConfigurationKeys.FUZZY_CONFIG);
-                return (fuzzyConfig != null) ? fuzzyConfig.GetMinSimilarity() : FuzzyQuery.DefaultMinSimilarity;
+                FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
+                return (fuzzyConfig != null) ? fuzzyConfig.MinSimilarity : FuzzyQuery.DefaultMinSimilarity;
             }
             set
             {
-                QueryConfigHandler config = GetQueryConfigHandler();
+                QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
                 if (fuzzyConfig == null)
@@ -548,7 +550,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);
                 }
 
-                fuzzyConfig.SetMinSimilarity(value);
+                fuzzyConfig.MinSimilarity = value;
             }
         }
 
@@ -571,36 +573,37 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    fuzzyConfig.SetMinSimilarity(fuzzyMinSim);
         //}
 
-        /**
-         * Sets the boost used for each field.
-         * 
-         * @param boosts a collection that maps a field to its boost 
-         */
-        public virtual void SetFieldsBoost(IDictionary<string, float?> boosts)
-        {
-            GetQueryConfigHandler().Set(ConfigurationKeys.FIELD_BOOST_MAP, boosts);
-        }
+        ///**
+        // * Sets the boost used for each field.
+        // * 
+        // * @param boosts a collection that maps a field to its boost 
+        // */
+        //public virtual void SetFieldsBoost(IDictionary<string, float?> boosts)
+        //{
+        //    QueryConfigHandler.Set(ConfigurationKeys.FIELD_BOOST_MAP, boosts);
+        //}
 
         /**
          * Returns the field to boost map used to set boost for each field.
          * 
          * @return the field to boost map 
          */
-        public virtual IDictionary<string, float?> GetFieldsBoost()
+        public virtual IDictionary<string, float?> FieldsBoost
         {
-            return GetQueryConfigHandler().Get(ConfigurationKeys.FIELD_BOOST_MAP);
+            get { return QueryConfigHandler.Get(ConfigurationKeys.FIELD_BOOST_MAP); }
+            set { QueryConfigHandler.Set(ConfigurationKeys.FIELD_BOOST_MAP, value); }
         }
 
-        /**
-         * Sets the default {@link Resolution} used for certain field when
-         * no {@link Resolution} is defined for this field.
-         * 
-         * @param dateResolution the default {@link Resolution}
-         */
+        ///**
+        // * Sets the default {@link Resolution} used for certain field when
+        // * no {@link Resolution} is defined for this field.
+        // * 
+        // * @param dateResolution the default {@link Resolution}
+        // */
 
         public virtual void SetDateResolution(DateTools.Resolution dateResolution)
         {
-            GetQueryConfigHandler().Set(ConfigurationKeys.DATE_RESOLUTION, dateResolution);
+            QueryConfigHandler.Set(ConfigurationKeys.DATE_RESOLUTION, dateResolution);
         }
 
         /**
@@ -609,9 +612,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @return the default {@link Resolution}
          */
-        public virtual DateTools.Resolution? GetDateResolution()
+        public virtual DateTools.Resolution DateResolution
         {
-            return GetQueryConfigHandler().Get(ConfigurationKeys.DATE_RESOLUTION);
+            get { return QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION); }
         }
 
         /**
@@ -624,7 +627,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Obsolete]
         public virtual void SetDateResolution(IDictionary<string, DateTools.Resolution?> dateRes)
         {
-            SetDateResolutionMap(dateRes);
+            DateResolutionMap = dateRes;
         }
 
         /**
@@ -632,19 +635,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @return the field to {@link Resolution} map
          */
-        public virtual IDictionary<string, DateTools.Resolution?> GetDateResolutionMap()
+        public virtual IDictionary<string, DateTools.Resolution?> DateResolutionMap
         {
-            return GetQueryConfigHandler().Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
+            get { return QueryConfigHandler.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP); }
+            set { QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, value); }
         }
 
-        /**
-         * Sets the {@link Resolution} used for each field
-         * 
-         * @param dateRes a collection that maps a field to its {@link Resolution}
-         */
-        public virtual void SetDateResolutionMap(IDictionary<string, DateTools.Resolution?> dateRes)
-        {
-            GetQueryConfigHandler().Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, dateRes);
-        }
+        ///**
+        // * Sets the {@link Resolution} used for each field
+        // * 
+        // * @param dateRes a collection that maps a field to its {@link Resolution}
+        // */
+        //public virtual void SetDateResolutionMap(IDictionary<string, DateTools.Resolution?> dateRes)
+        //{
+        //    QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, dateRes);
+        //}
     }
 }

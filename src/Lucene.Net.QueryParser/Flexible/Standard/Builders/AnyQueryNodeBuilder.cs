@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             }
 
-            bQuery.MinimumNumberShouldMatch = andNode.GetMinimumMatchingElements();
+            bQuery.MinimumNumberShouldMatch = andNode.MinimumMatchingElements;
 
             return bQuery;
 

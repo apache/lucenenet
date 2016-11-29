@@ -46,10 +46,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                     //List<Term> termList = positionTermMap[termNode.GetPositionIncrement()];
                     //if (termList == null)
                     List<Term> termList;
-                    if (!positionTermMap.TryGetValue(termNode.GetPositionIncrement(), out termList) || termList == null)
+                    if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out termList) || termList == null)
                     {
                         termList = new List<Term>();
-                        positionTermMap[termNode.GetPositionIncrement()] = termList;
+                        positionTermMap[termNode.PositionIncrement] = termList;
 
                     }
 

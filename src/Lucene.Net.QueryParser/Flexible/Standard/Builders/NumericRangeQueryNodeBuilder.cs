@@ -44,12 +44,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             /*Number*/
             object upperNumber = upperNumericNode.Value;
 
-            NumericConfig numericConfig = numericRangeNode.GetNumericConfig();
-            FieldType.NumericType numberType = numericConfig.GetType();
+            NumericConfig numericConfig = numericRangeNode.NumericConfig;
+            FieldType.NumericType numberType = numericConfig.Type;
             string field = StringUtils.ToString(numericRangeNode.Field);
             bool minInclusive = numericRangeNode.IsLowerInclusive;
             bool maxInclusive = numericRangeNode.IsUpperInclusive;
-            int precisionStep = numericConfig.GetPrecisionStep();
+            int precisionStep = numericConfig.PrecisionStep;
 
             switch (numberType)
             {

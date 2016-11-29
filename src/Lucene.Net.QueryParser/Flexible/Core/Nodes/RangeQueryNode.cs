@@ -17,10 +17,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         T LowerBound { get; }
 
         T UpperBound { get; }
-
-        bool IsLowerInclusive { get; }
-
-        bool IsUpperInclusive { get; }
     }
 
     /// <summary>
@@ -28,5 +24,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// RangeQueryNode without specifying its generic closing type
     /// </summary>
     public interface IRangeQueryNode
-    { }
+    {
+        bool IsLowerInclusive { get; }
+
+        bool IsUpperInclusive { get; }
+    }
 }

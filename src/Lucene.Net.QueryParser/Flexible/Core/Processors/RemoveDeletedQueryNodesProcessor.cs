@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
 
-            if (!node.IsLeaf())
+            if (!node.IsLeaf)
             {
                 IList<IQueryNode> children = node.GetChildren();
                 bool removeBoolean = false;

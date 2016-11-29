@@ -50,24 +50,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         //    internal abstract string ToQueryString();
         //}
 
-        /** utility class containing the distance condition and number */
-        public class ProximityType
-        {
-            internal int pDistance = 0;
-
-            ProximityQueryNode.Type pType/* = null*/;
-
-            public ProximityType(ProximityQueryNode.Type type)
-                    : this(type, 0)
-            {
-            }
-
-            public ProximityType(ProximityQueryNode.Type type, int distance)
-            {
-                this.pType = type;
-                this.pDistance = distance;
-            }
-        }
+        // LUCENENET NOTE: Moved ProximityType class outside of ProximityQueryNode class to
+        // prevent a naming conflict witht eh ProximityType property.
 
         private ProximityQueryNode.Type proximityType = ProximityQueryNode.Type.SENTENCE;
         private int distance = -1;
@@ -148,9 +132,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public virtual ProximityQueryNode.Type GetProximityType()
+        public virtual ProximityQueryNode.Type ProximityType
         {
-            return this.proximityType;
+            get { return this.proximityType; }
         }
 
         public override string ToString()
@@ -158,14 +142,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             string distanceSTR = ((this.distance == -1) ? ("")
                 : (" distance='" + this.distance) + "'");
 
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "<proximity field='" + this.field + "' inorder='" + this.inorder
                     + "' type='" + this.proximityType.ToString() + "'" + distanceSTR
                     + "/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<proximity field='" + this.field + "' inorder='" + this.inorder
                 + "' type='" + this.proximityType.ToString() + "'" + distanceSTR + ">");
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append("\n");
                 sb.Append(child.ToString());
@@ -182,14 +167,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 + ((this.inorder) ? (" INORDER") : (""));
 
             StringBuilder sb = new StringBuilder();
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
             {
                 // no children case
             }
             else
             {
                 string filler = "";
-                foreach (IQueryNode child in GetChildren())
+                foreach (IQueryNode child in children)
                 {
                     sb.Append(filler).Append(child.ToQueryString(escapeSyntaxParser));
                     filler = " ";
@@ -221,9 +207,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the distance
          */
-        public virtual int GetDistance()
+        public virtual int Distance
         {
-            return this.distance;
+            get { return this.distance; }
         }
 
         /**
@@ -231,11 +217,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public virtual string GetField()
+        public virtual string Field
         {
-            return this.field;
+            get { return this.field; }
+            set { this.field = value; }
         }
 
+        // LUCENENET TODO: This method is not required because Field is already a string property
         /**
          * returns null if the field was not specified in the query string
          * 
@@ -250,20 +238,30 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /**
-         * @param field
-         *          the field to set
-         */
-        public virtual void SetField(string field)
-        {
-            this.field = field;
-        }
-
-        /**
          * @return terms must be matched in the specified order
          */
-        public virtual bool IsInOrder()
+        public virtual bool IsInOrder
         {
-            return this.inorder;
+            get { return this.inorder; }
+        }
+    }
+
+    /** utility class containing the distance condition and number */
+    public class ProximityType
+    {
+        internal int pDistance = 0;
+
+        ProximityQueryNode.Type pType/* = null*/;
+
+        public ProximityType(ProximityQueryNode.Type type)
+                : this(type, 0)
+        {
+        }
+
+        public ProximityType(ProximityQueryNode.Type type, int distance)
+        {
+            this.pType = type;
+            this.pDistance = distance;
         }
     }
 

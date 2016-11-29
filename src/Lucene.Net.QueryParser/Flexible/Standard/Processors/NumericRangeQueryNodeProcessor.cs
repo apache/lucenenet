@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             string lowerText = lower.GetTextAsString();
                             string upperText = upper.GetTextAsString();
-                            /*NumberFormat*/ string numberFormat = numericConfig.GetNumberFormat();
+                            /*NumberFormat*/ string numberFormat = numericConfig.NumberFormat;
                             /*Number*/
                             object lowerNumber = null, upperNumber = null;
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             }
 
-                            switch (numericConfig.GetType())
+                            switch (numericConfig.Type)
                             {
                                 case FieldType.NumericType.LONG:
                                     if (upperNumber != null) upperNumber = Convert.ToInt64(upperNumber);

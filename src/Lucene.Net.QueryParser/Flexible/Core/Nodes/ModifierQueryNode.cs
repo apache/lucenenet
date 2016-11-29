@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
 
 
-        private Modifier modifier = Modifier.MOD_NONE;
+        private Modifier modifier = Nodes.Modifier.MOD_NONE;
 
         /**
          * Used to store the modifier value on the original query string
@@ -54,9 +54,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return GetChildren()[0];
         }
 
-        public virtual Modifier GetModifier()
+        public virtual Modifier Modifier
         {
-            return this.modifier;
+            get { return this.modifier; }
         }
 
 

@@ -28,12 +28,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             string text = fuzzyNode.GetTextAsString();
 
 
-            int numEdits = FuzzyQuery.FloatToEdits(fuzzyNode.GetSimilarity(),
+            int numEdits = FuzzyQuery.FloatToEdits(fuzzyNode.Similarity,
                 text.CodePointCount(0, text.Length));
 
             return new FuzzyQuery(new Term(fuzzyNode.GetFieldAsString(), fuzzyNode
                 .GetTextAsString()), numEdits, fuzzyNode
-                .GetPrefixLength());
+                .PrefixLength);
 
         }
 

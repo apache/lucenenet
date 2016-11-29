@@ -50,7 +50,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
 
             if (node is FieldQueryNode
-                && !(node.GetParent() is IRangeQueryNode))
+                && !(node.Parent is IRangeQueryNode))
             {
 
                 QueryConfigHandler config = GetQueryConfigHandler();
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         {
 
                             /*NumberFormat*/
-                            string numberFormat = numericConfig.GetNumberFormat();
+                            string numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
                             /*Number*/
                             object number = null;
@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                             .AssemblyQualifiedName), e);
                                 }
 
-                                switch (numericConfig.GetType())
+                                switch (numericConfig.Type)
                                 {
                                     case FieldType.NumericType.LONG:
                                         number = Convert.ToInt64(number);

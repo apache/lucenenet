@@ -101,6 +101,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Sets the default <see cref="T:DateTools.Resolution"/> used for certain field when
         /// no <see cref="T:DateTools.Resolution"/> is defined for this field.
         /// </summary>
-        void SetDateResolution(DateTools.Resolution dateResolution); // LUCENENET TODO: Make into property set
+        void SetDateResolution(DateTools.Resolution dateResolution);
     }
 }

@@ -127,7 +127,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected virtual IQueryNode PreProcessNode(IQueryNode node)
         {
-            IQueryNode parent = node.GetParent();
+            IQueryNode parent = node.Parent;
             if (node is BooleanQueryNode)
             {
                 if (parent is BooleanQueryNode)
@@ -168,7 +168,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 ModifierQueryNode modNode = (ModifierQueryNode)node;
 
-                if (modNode.GetModifier() == Modifier.MOD_NONE)
+                if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
                 }
@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             if (node is ModifierQueryNode)
             {
                 ModifierQueryNode modNode = (ModifierQueryNode)node;
-                if (modNode.GetModifier() == Modifier.MOD_NONE)
+                if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     node.SetTag(TAG_MODIFIER, mod);
                 }

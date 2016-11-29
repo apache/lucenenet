@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 && !(node is WildcardQueryNode)
                 && !(node is FuzzyQueryNode)
                 && !(node is RegexpQueryNode)
-                && !(node.GetParent() is IRangeQueryNode))
+                && !(node.Parent is IRangeQueryNode))
             {
 
                 FieldQueryNode fieldNode = ((FieldQueryNode)node);
@@ -314,11 +314,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                                     if (this.positionIncrementsEnabled)
                                     {
-                                        termNode.SetPositionIncrement(position);
+                                        termNode.PositionIncrement = position;
                                     }
                                     else
                                     {
-                                        termNode.SetPositionIncrement(termGroupCount);
+                                        termNode.PositionIncrement = termGroupCount;
                                     }
 
                                     mpq.Add(termNode);
@@ -343,12 +343,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             if (this.positionIncrementsEnabled)
                             {
-                                termNode.SetPositionIncrement(position);
+                                termNode.PositionIncrement = position;
 
                             }
                             else
                             {
-                                termNode.SetPositionIncrement(termGroupCount);
+                                termNode.PositionIncrement = termGroupCount;
                             }
 
                             mpq.Add(termNode);
@@ -394,12 +394,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (this.positionIncrementsEnabled)
                         {
                             position += positionIncrement;
-                            newFieldNode.SetPositionIncrement(position);
+                            newFieldNode.PositionIncrement = position;
 
                         }
                         else
                         {
-                            newFieldNode.SetPositionIncrement(i);
+                            newFieldNode.PositionIncrement = i;
                         }
 
                         pq.Add(newFieldNode);

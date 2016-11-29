@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         {
             RegexpQueryNode regexpNode = (RegexpQueryNode)queryNode;
 
-            RegexpQuery q = new RegexpQuery(new Term(regexpNode.FieldAsString,
+            RegexpQuery q = new RegexpQuery(new Term(regexpNode.GetFieldAsString(),
                 regexpNode.TextToBytesRef()));
 
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode

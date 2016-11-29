@@ -72,9 +72,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * Any subclass of Token that actually wants to return a non-null value can
          * override this method as appropriate.
          */
-        public object GetValue()
+        public virtual object Value
         {
-            return null;
+            get { return null; }
         }
 
         /**

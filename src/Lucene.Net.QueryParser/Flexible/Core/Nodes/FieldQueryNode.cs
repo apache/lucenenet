@@ -118,6 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.text.ToString();
         }
 
+        // LUCENENET TODO: this method is not required because Field is already type string in .NET
         /**
          * returns null if the field was not specified in the query string
          * 
@@ -131,24 +132,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field.ToString();
         }
 
-        public virtual int GetBegin()
+        public virtual int Begin
         {
-            return this.begin;
+            get { return this.begin; }
+            set { this.begin = value; }
         }
 
-        public virtual void SetBegin(int begin)
+        public virtual int End
         {
-            this.begin = begin;
-        }
-
-        public virtual int GetEnd()
-        {
-            return this.end;
-        }
-
-        public virtual void SetEnd(int end)
-        {
-            this.end = end;
+            get { return this.end; }
+            set { this.end = value; }
         }
 
         public virtual string Field
@@ -157,55 +150,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             set { this.field = value; }
         }
 
-        //      @Override
-        //public CharSequence getField()
-        //      {
-        //          return this.field;
-        //      }
-
-        //      @Override
-        //public void setField(CharSequence field)
-        //      {
-        //          this.field = field;
-        //      }
-
-        public virtual int GetPositionIncrement()
+        public virtual int PositionIncrement
         {
-            return this.positionIncrement;
+            get { return this.positionIncrement; }
+            set { this.positionIncrement = value; }
         }
 
-        public virtual void SetPositionIncrement(int pi)
-        {
-            this.positionIncrement = pi;
-        }
-
+        /// <summary>
+        /// Gets or Sets the "original" form of the term.
+        /// </summary>
         public virtual ICharSequence Text
         {
             get { return this.text; }
             set { this.text = value; }
         }
-
-        ///**
-        // * Returns the term.
-        // * 
-        // * @return The "original" form of the term.
-        // */
-
-        //public override string GetText()
-        //{
-        //    return this.text;
-        //}
-
-        ///**
-        // * @param text
-        // *          the text to set
-        // */
-
-        //public override void SetText(string text)
-        //{
-        //    this.text = text;
-        //}
-
 
         public override IQueryNode CloneTree()
         {
@@ -226,16 +184,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return Text.ToString(); }
             set { Text = value.ToCharSequence(); }
         }
-
-        //public override string GetValue()
-        //{
-        //    return GetText();
-        //}
-
-
-        //public override void SetValue(string value)
-        //{
-        //    SetText(value);
-        //}
     }
 }

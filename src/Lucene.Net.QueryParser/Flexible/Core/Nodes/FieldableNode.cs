@@ -16,23 +16,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public interface IFieldableNode : IQueryNode
     {
         /// <summary>
-        /// Gets or Sets the field associated to the node and every node under it.
+        /// Gets or Sets the field name associated to the node and every node under it.
         /// </summary>
         string Field { get; set; }
-
-        //     /**
-        //* Returns the field associated to the node and every node under it.
-        //* 
-        //* @return the field name
-        //*/
-        //     string GetField(); 
-
-        //     /**
-        //      * Associates the node to a field.
-        //      * 
-        //      * @param fieldName
-        //      *          the field name
-        //      */
-        //     void SetField(string fieldName);
     }
 }

@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
             if (node is WildcardQueryNode
                 || node is FuzzyQueryNode
-                || (node is FieldQueryNode && node.GetParent() is IRangeQueryNode)
+                || (node is FieldQueryNode && node.Parent is IRangeQueryNode)
                 || node is RegexpQueryNode)
             {
 

@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
 
             if (node is IFieldableNode &&
-                (node.GetParent() == null || !(node.GetParent() is IFieldableNode)))
+                (node.Parent == null || !(node.Parent is IFieldableNode)))
             {
 
                 IFieldableNode fieldNode = (IFieldableNode)node;

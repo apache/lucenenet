@@ -109,19 +109,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
 
             if (lowerNumberType != null
-                && !lowerNumberType.Equals(numericConfig.GetType()))
+                && !lowerNumberType.Equals(numericConfig.Type))
             {
                 throw new ArgumentException(
                     "lower value's type should be the same as numericConfig type: "
-                        + lowerNumberType + " != " + numericConfig.GetType());
+                        + lowerNumberType + " != " + numericConfig.Type);
             }
 
             if (upperNumberType != null
-                && !upperNumberType.Equals(numericConfig.GetType()))
+                && !upperNumberType.Equals(numericConfig.Type))
             {
                 throw new ArgumentException(
                     "upper value's type should be the same as numericConfig type: "
-                        + upperNumberType + " != " + numericConfig.GetType());
+                        + upperNumberType + " != " + numericConfig.Type);
             }
 
             base.SetBounds(lower, upper, lowerInclusive, upperInclusive);
@@ -134,9 +134,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @return the {@link NumericConfig} associated with the lower and upper bounds
          */
-        public virtual NumericConfig GetNumericConfig()
+        public virtual NumericConfig NumericConfig
         {
-            return this.numericConfig;
+            get { return this.numericConfig; }
         }
 
 
@@ -146,8 +146,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
             sb.Append(IsLowerInclusive).Append("' upperInclusive='").Append(
                 IsUpperInclusive).Append(
-                "' precisionStep='" + numericConfig.GetPrecisionStep()).Append(
-                "' type='" + numericConfig.GetType()).Append("'>\n");
+                "' precisionStep='" + numericConfig.PrecisionStep).Append(
+                "' type='" + numericConfig.Type).Append("'>\n");
 
             sb.Append(LowerBound).Append('\n');
             sb.Append(UpperBound).Append('\n');

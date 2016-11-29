@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         IList<IQueryNode> GetChildren();
 
         /** verify if a node is a Leaf node */
-        bool IsLeaf();
+        bool IsLeaf { get; }
 
         /** verify if a node contains a tag */
         bool ContainsTag(string tagName);
@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          */
         object GetTag(string tagName);
 
-        IQueryNode GetParent();
+        IQueryNode Parent { get; }
 
         /**
          * Recursive clone the QueryNode tree The tags are not copied to the new tree
@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return a map containing all tags attached to this query node
          */
-        IDictionary<string, object> GetTagMap();
+        IDictionary<string, object> TagMap { get; }
 
         /**
          * Removes this query node from its parent.

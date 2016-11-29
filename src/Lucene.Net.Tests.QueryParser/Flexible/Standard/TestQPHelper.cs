@@ -122,7 +122,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             public QPTestParser(Analyzer a)
             {
-                ((QueryNodeProcessorPipeline)GetQueryNodeProcessor())
+                ((QueryNodeProcessorPipeline)QueryNodeProcessor)
                     .Add(new QPTestParserQueryNodeProcessor());
                 this.Analyzer = (a);
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);
 
-            qp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.OR);
+            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.OR);
 
             return qp;
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);
-            qp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
+            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
 
             return qp.Parse(query, "field");
 
@@ -1424,7 +1424,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             StandardQueryParser parser = new StandardQueryParser();
             parser.SetMultiFields(fields);
-            parser.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
+            parser.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
             parser.Analyzer = (new MockAnalyzer(Random()));
 
             BooleanQuery exp = new BooleanQuery();

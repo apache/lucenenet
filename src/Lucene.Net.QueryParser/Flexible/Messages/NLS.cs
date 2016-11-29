@@ -152,11 +152,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             for (int i = 0; i < len; i++)
             {
                 fields[fieldArray[i].Name] = fieldArray[i];
-                loadfieldValue(fieldArray[i], /*isFieldAccessible,*/ clazz);
+                LoadFieldValue(fieldArray[i], /*isFieldAccessible,*/ clazz);
             }
         }
 
-        private static void loadfieldValue(FieldInfo field, Type clazz)
+        private static void LoadFieldValue(FieldInfo field, Type clazz)
         {
             field.SetValue(null, field.Name);
             ValidateMessage(field.Name, clazz);

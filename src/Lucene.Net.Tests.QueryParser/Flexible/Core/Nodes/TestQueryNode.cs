@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             IQueryNode node = new FieldQueryNode("foo", "A", 0, 1);
 
             node.SetTag("TaG", new Object());
-            assertTrue(node.GetTagMap().size() > 0);
+            assertTrue(node.TagMap.size() > 0);
             assertTrue(node.ContainsTag("tAg"));
             assertTrue(node.GetTag("tAg") != null);
 
@@ -42,19 +42,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             BooleanQueryNode booleanNode = new BooleanQueryNode(Collections.EmptyList<IQueryNode>());
             FieldQueryNode fieldNode = new FieldQueryNode("foo", "A", 0, 1);
-            assertNull(fieldNode.GetParent());
+            assertNull(fieldNode.Parent);
 
             booleanNode.Add(fieldNode);
-            assertNotNull(fieldNode.GetParent());
+            assertNotNull(fieldNode.Parent);
 
             fieldNode.RemoveFromParent();
-            assertNull(fieldNode.GetParent());
+            assertNull(fieldNode.Parent);
 
             booleanNode.Add(fieldNode);
-            assertNotNull(fieldNode.GetParent());
+            assertNotNull(fieldNode.Parent);
 
             booleanNode.Set(Collections.EmptyList<IQueryNode>());
-            assertNull(fieldNode.GetParent());
+            assertNull(fieldNode.Parent);
         }
     }
 }

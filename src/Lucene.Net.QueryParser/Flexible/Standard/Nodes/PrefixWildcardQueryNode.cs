@@ -50,7 +50,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         public PrefixWildcardQueryNode(FieldQueryNode fqn)
-            : this(fqn.Field, fqn.Text, fqn.GetBegin(), fqn.GetEnd())
+            : this(fqn.Field, fqn.Text, fqn.Begin, fqn.End)
         {
         }
 

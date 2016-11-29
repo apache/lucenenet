@@ -53,9 +53,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         }
 
-        public virtual int GetMinimumMatchingElements()
+        public virtual int MinimumMatchingElements
         {
-            return this.minimumMatchingmElements;
+            get { return this.minimumMatchingmElements; }
         }
 
         /**
@@ -63,11 +63,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public virtual string GetField()
+        public virtual string Field
         {
-            return this.field;
+            get { return this.field; }
+            set { this.field = value; }
         }
 
+
+        // LUCENENET TODO: No need for GetFieldAsString method because
+        // field is already type string
         /**
          * returns - null if the field was not specified
          * 
@@ -81,14 +85,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field.ToString();
         }
 
-        /**
-         * @param field
-         *          - the field to set
-         */
-        public virtual void SetField(string field)
-        {
-            this.field = field;
-        }
+        ///**
+        // * @param field
+        // *          - the field to set
+        // */
+        //public virtual void SetField(string field)
+        //{
+        //    this.field = field;
+        //}
 
 
         public override IQueryNode CloneTree()
@@ -104,13 +108,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToString()
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "<any field='" + this.field + "'  matchelements="
                     + this.minimumMatchingmElements + "/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<any field='" + this.field + "'  matchelements="
                 + this.minimumMatchingmElements + ">");
-            foreach (IQueryNode clause in GetChildren())
+            foreach (IQueryNode clause in children)
             {
                 sb.Append("\n");
                 sb.Append(clause.ToString());
@@ -124,14 +129,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             string anySTR = "ANY " + this.minimumMatchingmElements;
 
             StringBuilder sb = new StringBuilder();
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
             {
                 // no childs case
             }
             else
             {
                 string filler = "";
-                foreach (IQueryNode clause in GetChildren())
+                foreach (IQueryNode clause in children)
                 {
                     sb.Append(filler).Append(clause.ToQueryString(escapeSyntaxParser));
                     filler = " ";

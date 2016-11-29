@@ -46,16 +46,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the single child which this node boosts
          */
-        public virtual IQueryNode GetChild()
+        public virtual IQueryNode Child
         {
-            IList<IQueryNode> children = GetChildren();
-
-            if (children == null || children.Count == 0)
+            get
             {
-                return null;
-            }
+                IList<IQueryNode> children = GetChildren();
 
-            return children[0];
+                if (children == null || children.Count == 0)
+                {
+                    return null;
+                }
+
+                return children[0];
+            }
 
         }
 
@@ -64,9 +67,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the boost value
          */
-        public virtual float GetValue()
+        public virtual float Value
         {
-            return this.value;
+            get { return this.value; }
         }
 
         /**
@@ -80,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (f == (long)f)
                 return "" + (long)f;
             else
-                return "" + f;
+                return "" + f.ToString("0.0#######"); // LUCENENET TODO: Culture
 
         }
 
@@ -88,15 +91,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override string ToString()
         {
             return "<boost value='" + GetValueString() + "'>" + "\n"
-                + GetChild().ToString() + "\n</boost>";
+                + Child.ToString() + "\n</boost>";
         }
 
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (Child == null)
                 return "";
-            return GetChild().ToQueryString(escapeSyntaxParser) + "^"
+            return Child.ToQueryString(escapeSyntaxParser) + "^"
                 + GetValueString();
         }
 

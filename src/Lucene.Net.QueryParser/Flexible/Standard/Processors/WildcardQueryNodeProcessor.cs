@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                 // do not process wildcards for TermRangeQueryNode children and 
                 // QuotedFieldQueryNode to reproduce the old parser behavior
-                if (fqn.GetParent() is TermRangeQueryNode
+                if (fqn.Parent is TermRangeQueryNode
                     || fqn is QuotedFieldQueryNode
                     || text.Length <= 0)
                 {

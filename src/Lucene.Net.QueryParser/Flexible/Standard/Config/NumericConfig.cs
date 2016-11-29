@@ -39,96 +39,55 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public NumericConfig(int precisionStep, /*NumberFormat*/ string format,
             NumericType type)
         {
-            SetPrecisionStep(precisionStep);
-            SetNumberFormat(format);
-            SetType(type);
-
+            PrecisionStep = precisionStep;
+            NumberFormat = format;
+            Type = type;
         }
 
         /**
-         * Returns the precision used to index the numeric values
+         * Gets or sets the precision used to index the numeric values
          * 
          * @return the precision used to index the numeric values
          * 
          * @see NumericRangeQuery#getPrecisionStep()
          */
-        public virtual int GetPrecisionStep()
+        public virtual int PrecisionStep
         {
-            return precisionStep;
+            get { return precisionStep; }
+            set { precisionStep = value; }
         }
 
         /**
-         * Sets the precision used to index the numeric values
-         * 
-         * @param precisionStep
-         *          the precision used to index the numeric values
-         * 
-         * @see NumericRangeQuery#getPrecisionStep()
-         */
-        public virtual void SetPrecisionStep(int precisionStep)
-        {
-            this.precisionStep = precisionStep;
-        }
-
-        /**
-         * Returns the {@link NumberFormat} used to parse a {@link String} to
-         * {@link Number}
+         * Gets or Sets the {@link NumberFormat} used to parse a {@link String} to
+         * {@link Number}, cannot be <code>null</code>
          * 
          * @return the {@link NumberFormat} used to parse a {@link String} to
          *         {@link Number}
          */
-        public virtual /*NumberFormat*/ string GetNumberFormat()
+        public virtual /*NumberFormat*/ string NumberFormat
         {
-            return format;
+            get { return format; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentException("format cannot be null!");
+                }
+
+                this.format = value;
+            }
         }
 
         /**
-         * Returns the numeric type used to index the numeric values
+         * Gets or Sets the numeric type used to index the numeric values
          * 
          * @return the numeric type used to index the numeric values
          */
-        public virtual NumericType GetType()
+        public virtual NumericType Type
         {
-            return type;
+            get { return type; }
+            set { type = value; }
         }
-
-        /**
-         * Sets the numeric type used to index the numeric values
-         * 
-         * @param type the numeric type used to index the numeric values
-         */
-        public virtual void SetType(NumericType type)
-        {
-
-            //if (type == null)
-            //{
-            //    throw new ArgumentException("type cannot be null!");
-            //}
-
-            this.type = type;
-
-        }
-
-        /**
-         * Sets the {@link NumberFormat} used to parse a {@link String} to
-         * {@link Number}
-         * 
-         * @param format
-         *          the {@link NumberFormat} used to parse a {@link String} to
-         *          {@link Number}, cannot be <code>null</code>
-         */
-        public virtual void SetNumberFormat(/*NumberFormat*/ string format)
-        {
-
-            if (format == null)
-            {
-                throw new ArgumentException("format cannot be null!");
-            }
-
-            this.format = format;
-
-        }
-
 
         public override bool Equals(object obj)
         {

@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             /*NumberFormat*/ string numberFormat)
             : base()
         {
-            SetNumberFormat(numberFormat);
+            NumberFormat = numberFormat;
             Field = field;
             Value = value;
 
@@ -94,27 +94,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /**
-         * Sets the {@link NumberFormat} used to convert the value to {@link String}.
-         * 
-         * @param format the {@link NumberFormat} used to convert the value to {@link String}
-         */
-        public virtual void SetNumberFormat(/*NumberFormat*/ string format)
-        {
-            this.numberFormat = format;
-        }
-
-        /**
-         * Returns the {@link NumberFormat} used to convert the value to {@link String}.
+         * Gets or Sets the {@link NumberFormat} used to convert the value to {@link String}.
          * 
          * @return the {@link NumberFormat} used to convert the value to {@link String}
          */
-        public virtual /*NumberFormat*/ string GetNumberFormat()
+        public virtual /*NumberFormat*/ string NumberFormat
         {
-            return this.numberFormat;
+            get { return this.numberFormat; }
+            set { this.numberFormat = value; }
         }
 
         /**
-         * Returns the numeric value as {@link Number}.
+         * Gets or Sets the numeric value as {@link Number}.
          * 
          * @return the numeric value
          */

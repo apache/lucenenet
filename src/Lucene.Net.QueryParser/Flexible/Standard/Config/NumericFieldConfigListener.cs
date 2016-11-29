@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
 
                 //if (numericConfig != null)
-                if (numericConfigMap.TryGetValue(fieldConfig.GetField(), out numericConfig) && numericConfig != null)
+                if (numericConfigMap.TryGetValue(fieldConfig.Field, out numericConfig) && numericConfig != null)
                 {
                     fieldConfig.Set(ConfigurationKeys.NUMERIC_CONFIG, numericConfig);
                 }

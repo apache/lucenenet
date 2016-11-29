@@ -23,11 +23,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public override string ToString()
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "<multiPhrase/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<multiPhrase>");
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append("\n");
                 sb.Append(child.ToString());
@@ -39,12 +40,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "";
 
             StringBuilder sb = new StringBuilder();
             string filler = "";
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append(filler).Append(child.ToQueryString(escapeSyntaxParser));
                 filler = ",";

@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
-                        if (modNode.GetModifier() == Modifier.MOD_REQ)
+                        if (modNode.Modifier == Modifier.MOD_REQ)
                         {
                             return modNode.GetChild();
                         }
@@ -123,7 +123,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
-                        if (modNode.GetModifier() == Modifier.MOD_NONE)
+                        if (modNode.Modifier == Modifier.MOD_NONE)
                         {
                             return new BooleanModifierNode(modNode.GetChild(), Modifier.MOD_REQ);
                         }
@@ -140,7 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             else
             {
 
-                if (node.GetParent() is AndQueryNode)
+                if (node.Parent is AndQueryNode)
                 {
 
                     if (node is ModifierQueryNode)
@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
-                        if (modNode.GetModifier() == Modifier.MOD_NONE)
+                        if (modNode.Modifier == Modifier.MOD_NONE)
                         {
                             return new BooleanModifierNode(modNode.GetChild(), Modifier.MOD_REQ);
                         }
@@ -218,7 +218,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
             else if (!(node is BooleanQueryNode))
             {
-                this.queryNodeList.Add(ApplyModifier(node, node.GetParent()));
+                this.queryNodeList.Add(ApplyModifier(node, node.Parent));
                 this.latestNodeVerified = false;
 
             }

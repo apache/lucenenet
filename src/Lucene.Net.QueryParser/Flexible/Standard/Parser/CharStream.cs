@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * @deprecated
          * @see #getEndColumn
          */
-        int GetColumn();
+        int Column { get; }
 
         [Obsolete]
         /**
@@ -43,31 +43,31 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * @deprecated
          * @see #getEndLine
          */
-        int GetLine();
+        int Line { get; }
 
         /**
          * Returns the column number of the last character for current token (being
          * matched after the last call to BeginTOken).
          */
-        int GetEndColumn();
+        int EndColumn { get; }
 
         /**
          * Returns the line number of the last character for current token (being
          * matched after the last call to BeginTOken).
          */
-        int GetEndLine();
+        int EndLine { get; }
 
         /**
          * Returns the column number of the first character for current token (being
          * matched after the last call to BeginTOken).
          */
-        int GetBeginColumn();
+        int BeginColumn { get; }
 
         /**
          * Returns the line number of the first character for current token (being
          * matched after the last call to BeginTOken).
          */
-        int GetBeginLine();
+        int BeginLine { get; }
 
         /**
          * Backs up the input stream by amount steps. Lexer calls this method if it

@@ -18,24 +18,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public FuzzyConfig() { }
 
-        public virtual int GetPrefixLength()
+        public virtual int PrefixLength
         {
-            return prefixLength;
+            get { return prefixLength; }
+            set { this.prefixLength = value; }
         }
 
-        public virtual void SetPrefixLength(int prefixLength)
+        public virtual float MinSimilarity
         {
-            this.prefixLength = prefixLength;
-        }
-
-        public virtual float GetMinSimilarity()
-        {
-            return minSimilarity;
-        }
-
-        public virtual void SetMinSimilarity(float minSimilarity)
-        {
-            this.minSimilarity = minSimilarity;
+            get { return minSimilarity; }
+            set { this.minSimilarity = value; }
         }
     }
 }

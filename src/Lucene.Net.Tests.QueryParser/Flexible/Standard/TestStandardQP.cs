@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser(a);
-            qp.SetDefaultOperator(Config.Operator.OR);
+            qp.DefaultOperator = (Config.Operator.OR);
 
             return qp;
         }
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.SetDefaultOperator(Config.Operator.OR);
+            qp.DefaultOperator = (Config.Operator.OR);
         }
 
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.SetDefaultOperator(Config.Operator.AND);
+            qp.DefaultOperator = (Config.Operator.AND);
         }
 
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.GetDateResolutionMap().Put(field, value);
+            qp.DateResolutionMap.Put(field, value);
         }
 
 
@@ -203,11 +203,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StandardQueryParser qp = GetParser(new MockAnalyzer(Random()));
             // make sure OR is the default:
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.GetDefaultOperator());
+            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.DefaultOperator);
             SetDefaultOperatorAND(qp);
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.AND, qp.GetDefaultOperator());
+            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.AND, qp.DefaultOperator);
             SetDefaultOperatorOR(qp);
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.GetDefaultOperator());
+            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.DefaultOperator);
         }
 
 

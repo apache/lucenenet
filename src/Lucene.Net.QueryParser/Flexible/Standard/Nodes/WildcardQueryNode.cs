@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         public WildcardQueryNode(FieldQueryNode fqn)
-            : this(fqn.Field, fqn.Text, fqn.GetBegin(), fqn.GetEnd())
+            : this(fqn.Field, fqn.Text, fqn.Begin, fqn.End)
         {
         }
 

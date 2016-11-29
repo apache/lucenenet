@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
             queryTree = base.Process(queryTree);
 
-            if (!queryTree.IsLeaf())
+            if (!queryTree.IsLeaf)
             {
 
                 IList<IQueryNode> children = queryTree.GetChildren();
@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 foreach (IQueryNode child in children)
                 {
 
-                    if (!child.IsLeaf())
+                    if (!child.IsLeaf)
                     {
 
                         IList<IQueryNode> grandChildren = child.GetChildren();

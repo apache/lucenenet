@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
             if (dateResMap != null)
             {
-                dateResMap.TryGetValue(fieldConfig.GetField(), out dateRes);
+                dateResMap.TryGetValue(fieldConfig.Field, out dateRes);
 
                 //dateRes = dateResMap.Get(
                 //    fieldConfig.GetField());

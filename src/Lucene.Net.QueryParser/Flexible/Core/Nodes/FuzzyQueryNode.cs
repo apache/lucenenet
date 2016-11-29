@@ -63,14 +63,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             SetLeaf(true);
         }
 
-        public virtual void SetPrefixLength(int prefixLength)
+        public virtual int PrefixLength
         {
-            this.prefixLength = prefixLength;
-        }
-
-        public virtual int GetPrefixLength()
-        {
-            return this.prefixLength;
+            get { return this.prefixLength; }
+            set { this.prefixLength = value; }
         }
 
 
@@ -93,11 +89,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 + "' term='" + this.text + "'/>";
         }
 
-        public virtual void SetSimilarity(float similarity)
+        /**
+         * @return the similarity
+         */
+        public virtual float Similarity
         {
-            this.similarity = similarity;
+            get { return this.similarity; }
+            set { this.similarity = value; }
         }
-
 
         public override IQueryNode CloneTree()
         {
@@ -106,14 +105,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             clone.similarity = this.similarity;
 
             return clone;
-        }
-
-        /**
-         * @return the similarity
-         */
-        public virtual float GetSimilarity()
-        {
-            return this.similarity;
         }
     }
 }

@@ -99,7 +99,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
             {
                 ModifierQueryNode modNode = (ModifierQueryNode)node;
 
-                if (modNode.GetModifier() == Modifier.MOD_NONE)
+                if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
                 }

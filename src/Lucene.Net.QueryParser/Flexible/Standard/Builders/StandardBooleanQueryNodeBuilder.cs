@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             if (node is ModifierQueryNode)
             {
                 ModifierQueryNode mNode = ((ModifierQueryNode)node);
-                Modifier modifier = mNode.GetModifier();
+                Modifier modifier = mNode.Modifier;
 
                 if (Modifier.MOD_NONE.Equals(modifier))
                 {

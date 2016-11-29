@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         public virtual Query Build(IQueryNode queryNode)
         {
             BoostQueryNode boostNode = (BoostQueryNode)queryNode;
-            IQueryNode child = boostNode.GetChild();
+            IQueryNode child = boostNode.Child;
 
             if (child == null)
             {
@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             Query query = (Query)child
                 .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
-            query.Boost = boostNode.GetValue();
+            query.Boost = boostNode.Value;
 
             return query;
 

@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
    */
         public PrecedenceQueryParser()
         {
-            SetQueryNodeProcessor(new PrecedenceQueryNodeProcessorPipeline(GetQueryConfigHandler()));
+            SetQueryNodeProcessor(new PrecedenceQueryNodeProcessorPipeline(QueryConfigHandler));
         }
 
         /**
@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         public PrecedenceQueryParser(Analyzer analyer)
             : base(analyer)
         {
-            SetQueryNodeProcessor(new PrecedenceQueryNodeProcessorPipeline(GetQueryConfigHandler()));
+            SetQueryNodeProcessor(new PrecedenceQueryNodeProcessorPipeline(QueryConfigHandler));
         }
     }
 }

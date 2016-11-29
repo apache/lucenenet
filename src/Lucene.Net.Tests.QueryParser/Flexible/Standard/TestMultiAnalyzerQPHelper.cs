@@ -85,7 +85,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             qp.SetDefaultPhraseSlop(0);
 
             // non-default operator:
-            qp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
+            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
             assertEquals("+(multi multi2) +foo", qp.Parse("multi foo", "").toString());
 
         }

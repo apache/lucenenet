@@ -28,11 +28,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToString()
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "<boolean operation='default'/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<boolean operation='default'>");
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append("\n");
                 sb.Append(child.ToString());
@@ -44,20 +45,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChildren() == null || GetChildren().Count == 0)
+            var children = GetChildren();
+            if (children == null || children.Count == 0)
                 return "";
 
             StringBuilder sb = new StringBuilder();
             string filler = "";
-            foreach (IQueryNode child in GetChildren())
+            foreach (IQueryNode child in children)
             {
                 sb.Append(filler).Append(child.ToQueryString(escapeSyntaxParser));
                 filler = " ";
             }
 
             // in case is root or the parent is a group node avoid parenthesis
-            if ((GetParent() != null && GetParent() is GroupQueryNode)
-                || IsRoot())
+            if ((Parent != null && Parent is GroupQueryNode)
+                || IsRoot)
                 return sb.ToString();
             else
                 return "( " + sb.ToString() + " )";
