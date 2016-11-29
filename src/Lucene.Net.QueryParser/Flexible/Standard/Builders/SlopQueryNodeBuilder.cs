@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             SlopQueryNode phraseSlopNode = (SlopQueryNode)queryNode;
 
             Query query = (Query)phraseSlopNode.GetChild().GetTag(
-                QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
+                QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
 
             if (query is PhraseQuery)
             {
@@ -44,12 +44,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
     }
 }

@@ -15,8 +15,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
     /// </summary>
     /// <seealso cref="IQueryBuilder"/>
     /// <seealso cref="QueryTreeBuilder"/>
-    public interface IStandardQueryBuilder : IQueryBuilder
+    public interface IStandardQueryBuilder : IQueryBuilder<Query>
     {
-        new Query Build(IQueryNode queryNode);
+        // LUCENENET specific - we don't need to redeclare Build here because
+        // it already exists in the now generic IQueryBuilder
+        //Query Build(IQueryNode queryNode);
     }
 }

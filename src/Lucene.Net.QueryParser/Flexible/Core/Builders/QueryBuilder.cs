@@ -25,13 +25,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
     /// 
     /// <seealso cref="QueryTreeBuilder"/>
     /// </summary>
-    public interface IQueryBuilder// <TQuery> // LUCENENET specific - made generic so we don't need to deal with cast
+    public interface IQueryBuilder<TQuery> // LUCENENET specific - made generic so we don't need to deal with cast
     {
         /// <summary>
         /// Builds some kind of object from a query tree.
         /// </summary>
         /// <param name="queryNode">the query tree root node</param>
         /// <returns>some object generated from the query tree</returns>
-        object Build(IQueryNode queryNode);
+        /*object*/
+        TQuery Build(IQueryNode queryNode); // LUCENENET specific - made return type generic so we don't need to deal with cast
     }
 }

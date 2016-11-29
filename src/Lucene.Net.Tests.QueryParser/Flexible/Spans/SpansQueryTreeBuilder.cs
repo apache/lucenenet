@@ -18,7 +18,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// - every BooleanQueryNode instance is delegated to the SpanOrQueryNodeBuilder
     /// - every FieldQueryNode instance is delegated to the SpanTermQueryNodeBuilder
     /// </summary>
-    public class SpansQueryTreeBuilder : QueryTreeBuilder, IStandardQueryBuilder
+    public class SpansQueryTreeBuilder : QueryTreeBuilder<Query>, IStandardQueryBuilder
     {
         public SpansQueryTreeBuilder()
         {
@@ -27,18 +27,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         }
 
-
-        Query IStandardQueryBuilder.Build(IQueryNode queryTree)
+        public override Query Build(IQueryNode queryTree)
         {
-            return (Query)base.Build(queryTree);
+            return base.Build(queryTree);
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        public override object Build(IQueryNode queryTree)
-        {
-            return (Query)base.Build(queryTree);
-        }
+        //Query IStandardQueryBuilder.Build(IQueryNode queryTree)
+        //{
+        //    return (Query)base.Build(queryTree);
+        //}
+
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //public override object Build(IQueryNode queryTree)
+        //{
+        //    return (Query)base.Build(queryTree);
+        //}
     }
 }

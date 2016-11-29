@@ -24,13 +24,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="ISyntaxParser"/>
     /// <seealso cref="QueryBuilder"/>
     /// <seealso cref="QueryConfigHandler"/>
-    public class QueryParserHelper // LUCENENET TODO: Make this class generic so we can avoid the cast (to Query) on the Parse method
+    public class QueryParserHelper<TQuery> // Made this class generic so we can avoid the cast (to Query) on the Parse method
     {
         private IQueryNodeProcessor processor;
 
         private ISyntaxParser syntaxParser;
 
-        private IQueryBuilder builder;
+        private IQueryBuilder<TQuery> builder;
 
         private QueryConfigHandler config;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see QueryConfigHandler
          */
         public QueryParserHelper(QueryConfigHandler queryConfigHandler, ISyntaxParser syntaxParser, IQueryNodeProcessor processor,
-            IQueryBuilder builder)
+            IQueryBuilder<TQuery> builder)
         {
             this.syntaxParser = syntaxParser;
             this.config = queryConfigHandler;
@@ -136,7 +136,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #getQueryBuilder()
          * @see QueryBuilder
          */
-        public void SetQueryBuilder(IQueryBuilder queryBuilder)
+        public void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
         {
 
             if (queryBuilder == null)
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #setQueryBuilder(QueryBuilder)
          * @see QueryBuilder
          */
-        public IQueryBuilder GetQueryBuilder()
+        public IQueryBuilder<TQuery> GetQueryBuilder()
         {
             return this.builder;
         }
@@ -242,7 +242,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @throws QueryNodeException
          *           if something wrong happens along the three phases
          */
-        public virtual object Parse(string query, string defaultField)
+        public virtual /*object*/ TQuery Parse(string query, string defaultField)
         {
             IQueryNode queryTree = GetSyntaxParser().Parse(query, defaultField);
 

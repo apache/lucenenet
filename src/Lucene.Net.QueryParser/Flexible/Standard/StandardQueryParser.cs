@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
-    public class StandardQueryParser : QueryParserHelper, ICommonQueryParserConfiguration
+    public class StandardQueryParser : QueryParserHelper<Query>, ICommonQueryParserConfiguration
     {
         
         /**
@@ -70,10 +70,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * @throws QueryNodeException
          *           if something wrong happens along the three phases
          */
-        public override /*Query*/ object Parse(string query, string defaultField) // LUCENENET TODO: Can this be return type Query?
+        public override Query Parse(string query, string defaultField)
         {
 
-            return (Query)base.Parse(query, defaultField);
+            return base.Parse(query, defaultField);
 
         }
 

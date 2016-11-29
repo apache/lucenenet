@@ -32,19 +32,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             foreach (IQueryNode child in children)
             {
                 spanQueries[i++] = (SpanQuery)child
-                    .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
+                    .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
             }
 
             return new SpanOrQuery(spanQueries);
 
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
     }
 }

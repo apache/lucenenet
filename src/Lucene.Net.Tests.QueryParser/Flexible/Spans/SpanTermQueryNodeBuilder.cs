@@ -28,13 +28,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
 
     }
 }

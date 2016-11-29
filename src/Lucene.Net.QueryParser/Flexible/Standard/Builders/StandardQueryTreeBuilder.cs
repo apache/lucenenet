@@ -18,7 +18,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
     /// </summary>
     /// <seealso cref="QueryTreeBuilder"/>
     /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
-    public class StandardQueryTreeBuilder : QueryTreeBuilder, IStandardQueryBuilder
+    public class StandardQueryTreeBuilder : QueryTreeBuilder<Query>, IStandardQueryBuilder
     {
         public StandardQueryTreeBuilder()
         {
@@ -45,16 +45,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         }
 
-        public override object Build(IQueryNode queryNode)
+        public override /*object*/ Query Build(IQueryNode queryNode)
         {
             return base.Build(queryNode);
         }
-        /// <summary>
-        /// LUCENENET specific overload for supporting IStandardQueryBuilder
-        /// </summary>
-        Query IStandardQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return (Query)Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IStandardQueryBuilder
+        ///// </summary>
+        //Query IStandardQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return (Query)Build(queryNode);
+        //}
     }
 }

@@ -29,12 +29,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 .GetTextAsString()));
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
     }
 }

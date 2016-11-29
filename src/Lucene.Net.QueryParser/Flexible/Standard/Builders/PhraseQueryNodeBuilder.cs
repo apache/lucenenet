@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 foreach (IQueryNode child in children)
                 {
                     TermQuery termQuery = (TermQuery)child
-                        .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
+                        .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
                     FieldQueryNode termNode = (FieldQueryNode)child;
 
                     phraseQuery.Add(termQuery.Term, termNode.GetPositionIncrement());
@@ -48,12 +48,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
     }
 }

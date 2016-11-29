@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             mfqp.SetMultiFields(fields);
             mfqp.Analyzer = (a);
 
-            Query q = (Query)mfqp.Parse(qtxt, null);
+            Query q = mfqp.Parse(qtxt, null);
             assertEquals(expectedRes, q.toString());
 
             q = QueryParserUtil.Parse(qtxt, fields, occur, a);
@@ -67,61 +67,61 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             mfqp.SetMultiFields(fields);
             mfqp.Analyzer = (new MockAnalyzer(Random()));
 
-            Query q = (Query)mfqp.Parse("one", null);
+            Query q = mfqp.Parse("one", null);
             assertEquals("b:one t:one", q.toString());
 
-            q = (Query)mfqp.Parse("one two", null);
+            q = mfqp.Parse("one two", null);
             assertEquals("(b:one t:one) (b:two t:two)", q.toString());
 
-            q = (Query)mfqp.Parse("+one +two", null);
+            q = mfqp.Parse("+one +two", null);
             assertEquals("+(b:one t:one) +(b:two t:two)", q.toString());
 
-            q = (Query)mfqp.Parse("+one -two -three", null);
+            q = mfqp.Parse("+one -two -three", null);
             assertEquals("+(b:one t:one) -(b:two t:two) -(b:three t:three)", q
                 .toString());
 
-            q = (Query)mfqp.Parse("one^2 two", null);
+            q = mfqp.Parse("one^2 two", null);
             assertEquals("((b:one t:one)^2.0) (b:two t:two)", q.toString());
 
-            q = (Query)mfqp.Parse("one~ two", null);
+            q = mfqp.Parse("one~ two", null);
             assertEquals("(b:one~2 t:one~2) (b:two t:two)", q.toString());
 
-            q = (Query)mfqp.Parse("one~0.8 two^2", null);
+            q = mfqp.Parse("one~0.8 two^2", null);
             assertEquals("(b:one~0 t:one~0) ((b:two t:two)^2.0)", q.toString());
 
-            q = (Query)mfqp.Parse("one* two*", null);
+            q = mfqp.Parse("one* two*", null);
             assertEquals("(b:one* t:one*) (b:two* t:two*)", q.toString());
 
-            q = (Query)mfqp.Parse("[a TO c] two", null);
+            q = mfqp.Parse("[a TO c] two", null);
             assertEquals("(b:[a TO c] t:[a TO c]) (b:two t:two)", q.toString());
 
-            q = (Query)mfqp.Parse("w?ldcard", null);
+            q = mfqp.Parse("w?ldcard", null);
             assertEquals("b:w?ldcard t:w?ldcard", q.toString());
 
-            q = (Query)mfqp.Parse("\"foo bar\"", null);
+            q = mfqp.Parse("\"foo bar\"", null);
             assertEquals("b:\"foo bar\" t:\"foo bar\"", q.toString());
 
-            q = (Query)mfqp.Parse("\"aa bb cc\" \"dd ee\"", null);
+            q = mfqp.Parse("\"aa bb cc\" \"dd ee\"", null);
             assertEquals("(b:\"aa bb cc\" t:\"aa bb cc\") (b:\"dd ee\" t:\"dd ee\")", q
                 .toString());
 
-            q = (Query)mfqp.Parse("\"foo bar\"~4", null);
+            q = mfqp.Parse("\"foo bar\"~4", null);
             assertEquals("b:\"foo bar\"~4 t:\"foo bar\"~4", q.toString());
 
             // LUCENE-1213: QueryParser was ignoring slop when phrase
             // had a field.
-            q = (Query)mfqp.Parse("b:\"foo bar\"~4", null);
+            q = mfqp.Parse("b:\"foo bar\"~4", null);
             assertEquals("b:\"foo bar\"~4", q.toString());
 
             // make sure that terms which have a field are not touched:
-            q = (Query)mfqp.Parse("one f:two", null);
+            q = mfqp.Parse("one f:two", null);
             assertEquals("(b:one t:one) f:two", q.toString());
 
             // AND mode:
             mfqp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
-            q = (Query)mfqp.Parse("one two", null);
+            q = mfqp.Parse("one two", null);
             assertEquals("+(b:one t:one) +(b:two t:two)", q.toString());
-            q = (Query)mfqp.Parse("\"aa bb cc\" \"dd ee\"", null);
+            q = mfqp.Parse("\"aa bb cc\" \"dd ee\"", null);
             assertEquals("+(b:\"aa bb cc\" t:\"aa bb cc\") +(b:\"dd ee\" t:\"dd ee\")",
                 q.toString());
 
@@ -140,24 +140,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             mfqp.Analyzer = (new MockAnalyzer(Random()));
 
             // Check for simple
-            Query q = (Query)mfqp.Parse("one", null);
+            Query q = mfqp.Parse("one", null);
             assertEquals("b:one^5.0 t:one^10.0", q.toString());
 
             // Check for AND
-            q = (Query)mfqp.Parse("one AND two", null);
+            q = mfqp.Parse("one AND two", null);
             assertEquals("+(b:one^5.0 t:one^10.0) +(b:two^5.0 t:two^10.0)", q
                 .toString());
 
             // Check for OR
-            q = (Query)mfqp.Parse("one OR two", null);
+            q = mfqp.Parse("one OR two", null);
             assertEquals("(b:one^5.0 t:one^10.0) (b:two^5.0 t:two^10.0)", q.toString());
 
             // Check for AND and a field
-            q = (Query)mfqp.Parse("one AND two AND foo:test", null);
+            q = mfqp.Parse("one AND two AND foo:test", null);
             assertEquals("+(b:one^5.0 t:one^10.0) +(b:two^5.0 t:two^10.0) +foo:test", q
                 .toString());
 
-            q = (Query)mfqp.Parse("one^3 AND two^4", null);
+            q = mfqp.Parse("one^3 AND two^4", null);
             assertEquals("+((b:one^5.0 t:one^10.0)^3.0) +((b:two^5.0 t:two^10.0)^4.0)",
                 q.toString());
         }
@@ -334,15 +334,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             parser.SetMultiFields(fields);
             parser.Analyzer = (new AnalyzerReturningNull());
 
-            Query q = (Query)parser.Parse("bla AND blo", null);
+            Query q = parser.Parse("bla AND blo", null);
             assertEquals("+(f2:bla f3:bla) +(f2:blo f3:blo)", q.toString());
             // the following queries are not affected as their terms are not
             // analyzed anyway:
-            q = (Query)parser.Parse("bla*", null);
+            q = parser.Parse("bla*", null);
             assertEquals("f1:bla* f2:bla* f3:bla*", q.toString());
-            q = (Query)parser.Parse("bla~", null);
+            q = parser.Parse("bla~", null);
             assertEquals("f1:bla~2 f2:bla~2 f3:bla~2", q.toString());
-            q = (Query)parser.Parse("[a TO c]", null);
+            q = parser.Parse("[a TO c]", null);
             assertEquals("f1:[a TO c] f2:[a TO c] f3:[a TO c]", q.toString());
         }
 
@@ -362,7 +362,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             mfqp.SetMultiFields(new String[] { "body" });
             mfqp.Analyzer = (analyzer);
             mfqp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
-            Query q = (Query)mfqp.Parse("the footest", null);
+            Query q = mfqp.Parse("the footest", null);
             IndexReader ir = DirectoryReader.Open(ramDir);
             IndexSearcher @is = NewSearcher(ir);
             ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;

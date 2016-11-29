@@ -54,17 +54,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
     /// </para>
     /// <seealso cref="IQueryBuilder"/>
     /// </summary>
-    public class QueryTreeBuilder : IQueryBuilder
+    public class QueryTreeBuilder<TQuery> : IQueryBuilder<TQuery>
     {
         /**
    * This tag is used to tag the nodes in a query tree with the built objects
    * produced from their own associated builder.
    */
-        public static readonly string QUERY_TREE_BUILDER_TAGID = typeof(QueryTreeBuilder).Name;
+        public static readonly string QUERY_TREE_BUILDER_TAGID = typeof(QueryTreeBuilder<TQuery>).Name;
 
-        private IDictionary<Type, IQueryBuilder> queryNodeBuilders;
+        private IDictionary<Type, IQueryBuilder<TQuery>> queryNodeBuilders;
 
-        private IDictionary<string, IQueryBuilder> fieldNameBuilders;
+        private IDictionary<string, IQueryBuilder<TQuery>> fieldNameBuilders;
 
         /**
          * {@link QueryTreeBuilder} constructor.
@@ -80,12 +80,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          * @param fieldName the field name
          * @param builder the builder to be associated
          */
-        public void SetBuilder(string fieldName, IQueryBuilder builder)
+        public void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
         {
 
             if (this.fieldNameBuilders == null)
             {
-                this.fieldNameBuilders = new Dictionary<string, IQueryBuilder>();
+                this.fieldNameBuilders = new Dictionary<string, IQueryBuilder<TQuery>>();
             }
 
             this.fieldNameBuilders[fieldName] = builder;
@@ -98,12 +98,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          * @param builder the builder to be associated
          */
         public void SetBuilder(Type queryNodeClass,
-            IQueryBuilder builder)
+            IQueryBuilder<TQuery> builder)
         {
 
             if (this.queryNodeBuilders == null)
             {
-                this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder>();
+                this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder<TQuery>>();
             }
 
             this.queryNodeBuilders[queryNodeClass] = builder;
@@ -115,9 +115,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
             if (node != null)
             {
-                IQueryBuilder builder = GetBuilder(node);
+                IQueryBuilder<TQuery> builder = GetBuilder(node);
 
-                if (!(builder is QueryTreeBuilder))
+                if (!(builder is QueryTreeBuilder<TQuery>))
                 {
                     IList<IQueryNode> children = node.GetChildren();
 
@@ -139,9 +139,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         }
 
-        private IQueryBuilder GetBuilder(IQueryNode node)
+        private IQueryBuilder<TQuery> GetBuilder(IQueryNode node)
         {
-            IQueryBuilder builder = null;
+            IQueryBuilder<TQuery> builder = null;
 
             if (this.fieldNameBuilders != null && node is IFieldableNode)
             {
@@ -191,7 +191,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         }
 
-        private void ProcessNode(IQueryNode node, IQueryBuilder builder)
+        private void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder)
         {
 
             if (builder == null)
@@ -213,12 +213,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         }
 
-        private IQueryBuilder GetQueryBuilder(Type clazz)
+        private IQueryBuilder<TQuery> GetQueryBuilder(Type clazz)
         {
 
             if (typeof(IQueryNode).IsAssignableFrom(clazz))
             {
-                IQueryBuilder result;
+                IQueryBuilder<TQuery> result;
                 this.queryNodeBuilders.TryGetValue(clazz, out result);
                 return result;
                 //return this.queryNodeBuilders.get(clazz);
@@ -241,11 +241,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          *         builder associated to it
          */
 
-        public virtual object Build(IQueryNode queryNode)
+        public virtual /*object*/ TQuery Build(IQueryNode queryNode)
         {
             Process(queryNode);
 
-            return queryNode.GetTag(QUERY_TREE_BUILDER_TAGID);
+            return (TQuery)queryNode.GetTag(QUERY_TREE_BUILDER_TAGID);
 
         }
     }

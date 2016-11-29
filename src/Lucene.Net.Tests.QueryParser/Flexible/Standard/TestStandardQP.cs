@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public Query Parse(String query, StandardQueryParser qp)
         {
-            return (Query)qp.Parse(query, DefaultField);
+            return qp.Parse(query, DefaultField);
         }
 
 

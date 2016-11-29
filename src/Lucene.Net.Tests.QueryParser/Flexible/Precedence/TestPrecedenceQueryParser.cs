@@ -135,7 +135,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         public Query GetQuery(string query, Analyzer a)
         {
-            return (Query)GetParser(a).Parse(query, "field"); // LUCENENET TODO: There was no cast here in the original - perhaps object is the wrong type on the interface
+            return GetParser(a).Parse(query, "field");
         }
 
         public void assertQueryEquals(string query, Analyzer a, string result)
@@ -154,7 +154,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         {
             PrecedenceQueryParser qp = GetParser(null);
             qp.LowercaseExpandedTerms = (lowercase);
-            Query q = (Query)qp.Parse(query, "field");
+            Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
             if (!s.equals(result))
             {
@@ -166,7 +166,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         public void assertWildcardQueryEquals(String query, String result)
         {
             PrecedenceQueryParser qp = GetParser(null);
-            Query q = (Query)qp.Parse(query, "field");
+            Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
             if (!s.equals(result))
             {
@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);
             qp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
-            return (Query)qp.Parse(query, "field");
+            return qp.Parse(query, "field");
         }
 
         public void assertQueryEqualsDOA(String query, Analyzer a, String result)
@@ -508,7 +508,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         public void assertQueryEquals(PrecedenceQueryParser qp, String field, String query,
             String result)
         {
-            Query q = (Query)qp.Parse(query, field);
+            Query q = qp.Parse(query, field);
             String s = q.ToString(field);
             if (!s.equals(result))
             {
@@ -610,18 +610,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (oneStopAnalyzer);
-            Query q = (Query)qp.Parse("on^1.0", "field");
+            Query q = qp.Parse("on^1.0", "field");
             assertNotNull(q);
-            q = (Query)qp.Parse("\"hello\"^2.0", "field");
-            assertNotNull(q);
-            assertEquals(q.Boost, (float)2.0, (float)0.5);
-            q = (Query)qp.Parse("hello^2.0", "field");
+            q = qp.Parse("\"hello\"^2.0", "field");
             assertNotNull(q);
             assertEquals(q.Boost, (float)2.0, (float)0.5);
-            q = (Query)qp.Parse("\"on\"^1.0", "field");
+            q = qp.Parse("hello^2.0", "field");
+            assertNotNull(q);
+            assertEquals(q.Boost, (float)2.0, (float)0.5);
+            q = qp.Parse("\"on\"^1.0", "field");
             assertNotNull(q);
 
-            q = (Query)GetParser(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).Parse("the^3",
+            q = GetParser(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).Parse("the^3",
                     "field");
             assertNotNull(q);
         }
@@ -670,49 +670,49 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         public void testPrecedence()
         {
             PrecedenceQueryParser parser = GetParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
-            Query query1 = (Query)parser.Parse("A AND B OR C AND D", "field");
-            Query query2 = (Query)parser.Parse("(A AND B) OR (C AND D)", "field");
+            Query query1 = parser.Parse("A AND B OR C AND D", "field");
+            Query query2 = parser.Parse("(A AND B) OR (C AND D)", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A OR B C", "field");
-            query2 = (Query)parser.Parse("(A B) C", "field");
+            query1 = parser.Parse("A OR B C", "field");
+            query2 = parser.Parse("(A B) C", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND B C", "field");
-            query2 = (Query)parser.Parse("(+A +B) C", "field");
+            query1 = parser.Parse("A AND B C", "field");
+            query2 = parser.Parse("(+A +B) C", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND NOT B", "field");
-            query2 = (Query)parser.Parse("+A -B", "field");
+            query1 = parser.Parse("A AND NOT B", "field");
+            query2 = parser.Parse("+A -B", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A OR NOT B", "field");
-            query2 = (Query)parser.Parse("A -B", "field");
+            query1 = parser.Parse("A OR NOT B", "field");
+            query2 = parser.Parse("A -B", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A OR NOT B AND C", "field");
-            query2 = (Query)parser.Parse("A (-B +C)", "field");
+            query1 = parser.Parse("A OR NOT B AND C", "field");
+            query2 = parser.Parse("A (-B +C)", "field");
             assertEquals(query1, query2);
 
             parser.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
-            query1 = (Query)parser.Parse("A AND B OR C AND D", "field");
-            query2 = (Query)parser.Parse("(A AND B) OR (C AND D)", "field");
+            query1 = parser.Parse("A AND B OR C AND D", "field");
+            query2 = parser.Parse("(A AND B) OR (C AND D)", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND B C", "field");
-            query2 = (Query)parser.Parse("(A B) C", "field");
+            query1 = parser.Parse("A AND B C", "field");
+            query2 = parser.Parse("(A B) C", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND B C", "field");
-            query2 = (Query)parser.Parse("(+A +B) C", "field");
+            query1 = parser.Parse("A AND B C", "field");
+            query2 = parser.Parse("(+A +B) C", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND NOT B", "field");
-            query2 = (Query)parser.Parse("+A -B", "field");
+            query1 = parser.Parse("A AND NOT B", "field");
+            query2 = parser.Parse("+A -B", "field");
             assertEquals(query1, query2);
 
-            query1 = (Query)parser.Parse("A AND NOT B OR C", "field");
-            query2 = (Query)parser.Parse("(+A -B) OR C", "field");
+            query1 = parser.Parse("A AND NOT B OR C", "field");
+            query2 = parser.Parse("(+A -B) OR C", "field");
             assertEquals(query1, query2);
 
         }

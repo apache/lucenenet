@@ -526,7 +526,7 @@
 //        {
 //            if (VERBOSE) Console.WriteLine("Parsing: " + queryStr);
 
-//            Query query = (Query)qp.Parse(queryStr, FIELD_NAME);
+//            Query query = qp.Parse(queryStr, FIELD_NAME);
 //            if (VERBOSE) Console.WriteLine("Querying: " + query);
 //            TopDocs topDocs = searcher.Search(query, 1000);
 

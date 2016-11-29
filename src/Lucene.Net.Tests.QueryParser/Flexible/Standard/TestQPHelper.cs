@@ -192,14 +192,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public Query GetQuery(String query, Analyzer a)
         {
-            return (Query)GetParser(a).Parse(query, "field");
+            return GetParser(a).Parse(query, "field");
         }
 
         public Query GetQueryAllowLeadingWildcard(String query, Analyzer a)
         {
             StandardQueryParser parser = GetParser(a);
             parser.AllowLeadingWildcard = (true);
-            return (Query)parser.Parse(query, "field");
+            return parser.Parse(query, "field");
         }
 
         public void assertQueryEquals(String query, Analyzer a, String result)
@@ -227,7 +227,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void assertQueryEquals(StandardQueryParser qp, String field,
             String query, String result)
         {
-            Query q = (Query)qp.Parse(query, field);
+            Query q = qp.Parse(query, field);
             String s = q.ToString(field);
             if (!s.equals(result))
             {
@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser qp = GetParser(null);
             qp.LowercaseExpandedTerms = (lowercase);
             qp.AllowLeadingWildcard = (allowLeadingWildcard);
-            Query q = (Query)qp.Parse(query, "field");
+            Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
             if (!s.equals(result))
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void assertWildcardQueryEquals(String query, String result)
         {
             StandardQueryParser qp = GetParser(null);
-            Query q = (Query)qp.Parse(query, "field");
+            Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
             if (!s.equals(result))
             {
@@ -288,7 +288,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             qp.Analyzer = (a);
             qp.SetDefaultOperator(/*StandardQueryConfigHandler.*/Operator.AND);
 
-            return (Query)qp.Parse(query, "field");
+            return qp.Parse(query, "field");
 
         }
 
@@ -306,15 +306,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void testConstantScoreAutoRewrite()
         {
             StandardQueryParser qp = new StandardQueryParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
-            Query q = (Query)qp.Parse("foo*bar", "field");
+            Query q = qp.Parse("foo*bar", "field");
             assertTrue(q is WildcardQuery);
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
 
-            q = (Query)qp.Parse("foo*", "field");
+            q = qp.Parse("foo*", "field");
             assertTrue(q is PrefixQuery);
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
 
-            q = (Query)qp.Parse("[a TO z]", "field");
+            q = qp.Parse("[a TO z]", "field");
             assertTrue(q is TermRangeQuery);
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
         }
@@ -1008,21 +1008,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (oneStopAnalyzer);
 
-            Query q = (Query)qp.Parse("on^1.0", "field");
+            Query q = qp.Parse("on^1.0", "field");
             assertNotNull(q);
-            q = (Query)qp.Parse("\"hello\"^2.0", "field");
-            assertNotNull(q);
-            assertEquals(q.Boost, (float)2.0, (float)0.5);
-            q = (Query)qp.Parse("hello^2.0", "field");
+            q = qp.Parse("\"hello\"^2.0", "field");
             assertNotNull(q);
             assertEquals(q.Boost, (float)2.0, (float)0.5);
-            q = (Query)qp.Parse("\"on\"^1.0", "field");
+            q = qp.Parse("hello^2.0", "field");
+            assertNotNull(q);
+            assertEquals(q.Boost, (float)2.0, (float)0.5);
+            q = qp.Parse("\"on\"^1.0", "field");
             assertNotNull(q);
 
             StandardQueryParser qp2 = new StandardQueryParser();
             qp2.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET));
 
-            q = (Query)qp2.Parse("the^3", "field");
+            q = qp2.Parse("the^3", "field");
             // "the" is a stop word so the result is an empty query:
             assertNotNull(q);
             assertEquals("", q.toString());
@@ -1106,8 +1106,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
 
-            Query query1 = (Query)qp.Parse("A AND B OR C AND D", "field");
-            Query query2 = (Query)qp.Parse("+A +B +C +D", "field");
+            Query query1 = qp.Parse("A AND B OR C AND D", "field");
+            Query query2 = qp.Parse("+A +B +C +D", "field");
 
             assertEquals(query1, query2);
         }
@@ -1264,15 +1264,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton(new RegExp("the|foo").ToAutomaton());
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopSet));
 
-            Query result = (Query)qp.Parse("a:the OR a:foo", "a");
+            Query result = qp.Parse("a:the OR a:foo", "a");
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
             assertTrue(((BooleanQuery)result).Clauses.size() + " does not equal: "
                 + 0, ((BooleanQuery)result).Clauses.size() == 0);
-            result = (Query)qp.Parse("a:woo OR a:the", "a");
+            result = qp.Parse("a:woo OR a:the", "a");
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a TermQuery", result is TermQuery);
-            result = (Query)qp.Parse(
+            result = qp.Parse(
                     "(fieldX:xxxxx OR fieldy:xxxxxxxx)^2 AND (fieldx:the OR fieldy:foo)",
                     "a");
             assertNotNull("result is null and it shouldn't be", result);
@@ -1325,7 +1325,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
             qp.Locale = new CultureInfo("en");//  (Locale.ENGLISH); // LUCENENET TODO: Fix API - we probably don't want to set Culture to a property
 
-            Query q = (Query)qp.Parse(query, "date");
+            Query q = qp.Parse(query, "date");
             ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
             assertEquals(expected, hits.Length);
         }
@@ -1409,7 +1409,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IndexReader r = DirectoryReader.Open(w, true);
             IndexSearcher s = NewSearcher(r);
 
-            Query q = (Query)new StandardQueryParser(new CannedAnalyzer()).Parse("\"a\"", "field");
+            Query q = new StandardQueryParser(new CannedAnalyzer()).Parse("\"a\"", "field");
             assertTrue(q is MultiPhraseQuery);
             assertEquals(1, s.Search(q, 10).TotalHits);
             r.Dispose();

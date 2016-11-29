@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             RegexpQueryNode regexpNode = (RegexpQueryNode)queryNode;
 
             RegexpQuery q = new RegexpQuery(new Term(regexpNode.FieldAsString,
-        regexpNode.TextToBytesRef()));
+                regexpNode.TextToBytesRef()));
 
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode
                 .GetTag(MultiTermRewriteMethodProcessor.TAG_ID);
@@ -40,12 +40,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             return q;
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
     }
 }

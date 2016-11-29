@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
                 foreach (IQueryNode child in children)
                 {
-                    object obj = child.GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
+                    object obj = child.GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
 
                     if (obj != null)
                     {
@@ -74,13 +74,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         }
 
-        /// <summary>
-        /// LUCENENET specific overload for supporting IQueryBuilder
-        /// </summary>
-        object IQueryBuilder.Build(IQueryNode queryNode)
-        {
-            return Build(queryNode);
-        }
+        ///// <summary>
+        ///// LUCENENET specific overload for supporting IQueryBuilder
+        ///// </summary>
+        //object IQueryBuilder.Build(IQueryNode queryNode)
+        //{
+        //    return Build(queryNode);
+        //}
 
         private static BooleanClause.Occur GetModifierValue(IQueryNode node)
         {
