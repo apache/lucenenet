@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                         "A config handler is expected by the processor UniqueFieldQueryNodeProcessor!");
                 }
 
-                if (!queryConfig.has(SpansQueryConfigHandler.UNIQUE_FIELD))
+                if (!queryConfig.Has(SpansQueryConfigHandler.UNIQUE_FIELD))
                 {
                     throw new ArgumentException(
                         "UniqueFieldAttribute should be defined in the config handler!");

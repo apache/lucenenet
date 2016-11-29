@@ -41,14 +41,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
         }
 
-        public void SetQuery(string query)
+        public virtual void SetQuery(string query)
         {
             this.query = query;
             this.message = new MessageImpl(
                 QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, "");
         }
 
-        public string GetQuery()
+        public virtual string GetQuery()
         {
             return this.query;
         }
@@ -57,17 +57,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @param errorToken
          *          the errorToken in the query
          */
-        protected void SetErrorToken(string errorToken)
+        protected virtual void SetErrorToken(string errorToken)
         {
             this.errorToken = errorToken;
         }
 
-        public string GetErrorToken()
+        public virtual string GetErrorToken()
         {
             return this.errorToken;
         }
 
-        public void SetNonLocalizedMessage(IMessage message)
+        public virtual void SetNonLocalizedMessage(IMessage message)
         {
             this.message = message;
         }
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * 
          * @return line where the problem was found
          */
-        public int GetBeginLine()
+        public virtual int GetBeginLine()
         {
             return this.beginLine;
         }
@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * 
          * @return column of the first char where the problem was found
          */
-        public int GetBeginColumn()
+        public virtual int GetBeginColumn()
         {
             return this.beginColumn;
         }
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @param beginLine
          *          the beginLine to set
          */
-        protected void SetBeginLine(int beginLine)
+        protected virtual void SetBeginLine(int beginLine)
         {
             this.beginLine = beginLine;
         }
@@ -109,7 +109,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @param beginColumn
          *          the beginColumn to set
          */
-        protected void SetBeginColumn(int beginColumn)
+        protected virtual void SetBeginColumn(int beginColumn)
         {
             this.beginColumn = beginColumn;
         }

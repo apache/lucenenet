@@ -56,14 +56,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override IQueryNode CloneTree()
         {
             TokenizedPhraseQueryNode clone = (TokenizedPhraseQueryNode)base
-        .CloneTree();
+                .CloneTree();
 
             // nothing to do
 
             return clone;
         }
 
-        public string Field
+        public virtual string Field
         {
             get
             {

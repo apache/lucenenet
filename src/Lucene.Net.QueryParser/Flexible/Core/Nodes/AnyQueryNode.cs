@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         }
 
-        public int GetMinimumMatchingElements()
+        public virtual int GetMinimumMatchingElements()
         {
             return this.minimumMatchingmElements;
         }
@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public string GetField()
+        public virtual string GetField()
         {
             return this.field;
         }
@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field as a String
          */
-        public string GetFieldAsString()
+        public virtual string GetFieldAsString()
         {
             if (this.field == null)
                 return null;
@@ -85,7 +85,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * @param field
          *          - the field to set
          */
-        public void setField(string field)
+        public virtual void SetField(string field)
         {
             this.field = field;
         }

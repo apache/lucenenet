@@ -21,7 +21,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         }
 
 
-        public Query Build(IQueryNode queryNode)
+        public virtual Query Build(IQueryNode queryNode)
         {
             TokenizedPhraseQueryNode phraseNode = (TokenizedPhraseQueryNode)queryNode;
 

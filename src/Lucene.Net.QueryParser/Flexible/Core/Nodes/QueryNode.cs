@@ -19,8 +19,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser);
 
         /** for printing */
-        
-  //public override string ToString();
+        string ToString();
 
         /** get Children nodes */
         IList<IQueryNode> GetChildren();

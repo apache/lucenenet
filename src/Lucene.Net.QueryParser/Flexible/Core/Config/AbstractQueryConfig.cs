@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          * 
          * @return the value held by the given key
          */
-        public T Get<T>(ConfigurationKey<T> key)
+        public virtual T Get<T>(ConfigurationKey<T> key)
         {
 
             if (key == null)
@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          * @param key the key, cannot be <code>null</code>
          * @return true if there is a value set with the given key, otherwise false
          */
-        public bool has<T>(ConfigurationKey<T> key)
+        public virtual bool Has<T>(ConfigurationKey<T> key)
         {
 
             if (key == null)
@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          * @param key the key, cannot be <code>null</code>
          * @param value value to set
          */
-        public void Set<T>(ConfigurationKey<T> key, T value)
+        public virtual void Set<T>(ConfigurationKey<T> key, T value)
         {
 
             if (key == null)
@@ -101,7 +101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          * @param key the key
          * @return true if the key and value was set and removed, otherwise false
          */
-        public bool Unset<T>(ConfigurationKey<T> key)
+        public virtual bool Unset<T>(ConfigurationKey<T> key)
         {
             if (key == null)
             {

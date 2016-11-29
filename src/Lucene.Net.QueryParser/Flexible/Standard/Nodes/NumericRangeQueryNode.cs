@@ -134,7 +134,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @return the {@link NumericConfig} associated with the lower and upper bounds
          */
-        public NumericConfig GetNumericConfig()
+        public virtual NumericConfig GetNumericConfig()
         {
             return this.numericConfig;
         }

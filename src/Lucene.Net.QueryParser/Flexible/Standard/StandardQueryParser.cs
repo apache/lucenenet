@@ -81,7 +81,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * Gets implicit operator setting, which will be either {@link Operator#AND}
          * or {@link Operator#OR}.
          */
-        public Operator? GetDefaultOperator()
+        public virtual Operator? GetDefaultOperator()
         {
             return GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
         }
@@ -94,13 +94,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * In {@link Operator#AND} mode terms are considered to be in conjunction: the
          * above mentioned query is parsed as <code>capital AND of AND Hungary</code>
          */
-        public void SetDefaultOperator(Operator @operator)
+        public virtual void SetDefaultOperator(Operator @operator)
         {
             GetQueryConfigHandler().Set(ConfigurationKeys.DEFAULT_OPERATOR, @operator);
         }
 
 
-        public bool LowercaseExpandedTerms
+        public virtual bool LowercaseExpandedTerms
         {
             get
             {
@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         //}
 
-        public bool AllowLeadingWildcard
+        public virtual bool AllowLeadingWildcard
         {
             get
             {
@@ -176,7 +176,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    GetQueryConfigHandler().Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, allowLeadingWildcard);
         //}
 
-        public bool EnablePositionIncrements
+        public virtual bool EnablePositionIncrements
         {
             get
             {
@@ -224,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         //}
 
-        public MultiTermQuery.RewriteMethod MultiTermRewriteMethod
+        public virtual MultiTermQuery.RewriteMethod MultiTermRewriteMethod
         {
             get
             {
@@ -267,7 +267,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @param fields the fields used to expand the query
          */
-        public void SetMultiFields(string[] fields)
+        public virtual void SetMultiFields(string[] fields)
         {
 
             if (fields == null)
@@ -285,12 +285,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @param fields the fields used to expand the query
          */
-        public void GetMultiFields(string[] fields)
+        public virtual void GetMultiFields(string[] fields)
         {
             GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_FIELDS);
         }
 
-        public int FuzzyPrefixLength
+        public virtual int FuzzyPrefixLength
         {
             get
             {
@@ -342,17 +342,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         //}
 
-        public void SetNumericConfigMap(IDictionary<string, NumericConfig> numericConfigMap)
+        public virtual void SetNumericConfigMap(IDictionary<string, NumericConfig> numericConfigMap)
         {
             GetQueryConfigHandler().Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, numericConfigMap);
         }
 
-        public IDictionary<string, NumericConfig> GetNumericConfigMap()
+        public virtual IDictionary<string, NumericConfig> GetNumericConfigMap()
         {
             return GetQueryConfigHandler().Get(ConfigurationKeys.NUMERIC_CONFIG_MAP);
         }
 
-        public CultureInfo Locale
+        public virtual CultureInfo Locale
         {
             get
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    return GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
         //}
 
-        public TimeZoneInfo TimeZone
+        public virtual TimeZoneInfo TimeZone
         {
             get
             {
@@ -412,7 +412,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * @deprecated renamed to {@link #setPhraseSlop(int)}
          */
         [Obsolete]
-        public void SetDefaultPhraseSlop(int defaultPhraseSlop)
+        public virtual void SetDefaultPhraseSlop(int defaultPhraseSlop)
         {
             GetQueryConfigHandler().Set(ConfigurationKeys.PHRASE_SLOP, defaultPhraseSlop);
         }
@@ -427,7 +427,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    GetQueryConfigHandler().Set(ConfigurationKeys.PHRASE_SLOP, defaultPhraseSlop);
         //}
 
-        public Analyzer Analyzer
+        public virtual Analyzer Analyzer
         {
             get
             {
@@ -498,14 +498,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    }
         //}
 
-        public int PhraseSlop
+        public virtual int PhraseSlop
         {
             get
             {
                 int? phraseSlop = GetQueryConfigHandler().Get(ConfigurationKeys.PHRASE_SLOP);
                 return phraseSlop.HasValue ? phraseSlop.Value : 0;
             }
-
             set // LUCENENET TODO: obsolete
             {
                 GetQueryConfigHandler().Set(ConfigurationKeys.PHRASE_SLOP, value);
@@ -531,7 +530,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //    }
         //}
 
-        public float FuzzyMinSim
+        public virtual float FuzzyMinSim
         {
             get
             {
@@ -577,7 +576,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @param boosts a collection that maps a field to its boost 
          */
-        public void SetFieldsBoost(IDictionary<string, float?> boosts)
+        public virtual void SetFieldsBoost(IDictionary<string, float?> boosts)
         {
             GetQueryConfigHandler().Set(ConfigurationKeys.FIELD_BOOST_MAP, boosts);
         }
@@ -587,7 +586,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @return the field to boost map 
          */
-        public IDictionary<string, float?> GetFieldsBoost()
+        public virtual IDictionary<string, float?> GetFieldsBoost()
         {
             return GetQueryConfigHandler().Get(ConfigurationKeys.FIELD_BOOST_MAP);
         }
@@ -610,7 +609,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @return the default {@link Resolution}
          */
-        public DateTools.Resolution? GetDateResolution()
+        public virtual DateTools.Resolution? GetDateResolution()
         {
             return GetQueryConfigHandler().Get(ConfigurationKeys.DATE_RESOLUTION);
         }
@@ -623,7 +622,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * @deprecated this method was renamed to {@link #setDateResolutionMap(Map)} 
          */
         [Obsolete]
-        public void SetDateResolution(IDictionary<string, DateTools.Resolution?> dateRes)
+        public virtual void SetDateResolution(IDictionary<string, DateTools.Resolution?> dateRes)
         {
             SetDateResolutionMap(dateRes);
         }
@@ -633,7 +632,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @return the field to {@link Resolution} map
          */
-        public IDictionary<string, DateTools.Resolution?> GetDateResolutionMap()
+        public virtual IDictionary<string, DateTools.Resolution?> GetDateResolutionMap()
         {
             return GetQueryConfigHandler().Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
         }
@@ -643,7 +642,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * 
          * @param dateRes a collection that maps a field to its {@link Resolution}
          */
-        public void SetDateResolutionMap(IDictionary<string, DateTools.Resolution?> dateRes)
+        public virtual void SetDateResolutionMap(IDictionary<string, DateTools.Resolution?> dateRes)
         {
             GetQueryConfigHandler().Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, dateRes);
         }

@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             Add(query);
         }
 
-        public IQueryNode GetChild()
+        public virtual IQueryNode GetChild()
         {
             return GetChildren()[0];
         }
@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return clone;
         }
 
-        public void setChild(IQueryNode child)
+        public virtual void SetChild(IQueryNode child)
         {
             List<IQueryNode> list = new List<IQueryNode>();
             list.Add(child);

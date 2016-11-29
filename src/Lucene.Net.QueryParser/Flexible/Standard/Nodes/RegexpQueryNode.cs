@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             this.text = text.SubSequence(begin, end);
         }
 
-        public BytesRef TextToBytesRef()
+        public virtual BytesRef TextToBytesRef()
         {
             return new BytesRef(text.ToString());
         }

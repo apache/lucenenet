@@ -32,16 +32,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
    */
         public class QueryText : ICloneable
         {
-            internal string value = null;
+            private string value = null;
             /**
              * != null The term's begin position.
              */
-            internal int begin;
+            private int begin;
 
             /**
              * The term's end position.
              */
-            internal int end;
+            private int end;
 
             /**
              * @param value
@@ -72,25 +72,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             /**
              * @return the value
              */
-            public string GetValue()
+            public virtual string Value
             {
-                return value;
+                get { return value; }
             }
 
             /**
              * @return the begin
              */
-            public int GetBegin()
+            public virtual int Begin
             {
-                return begin;
+                get { return begin; }
             }
 
             /**
              * @return the end
              */
-            public int GetEnd()
+            public virtual int End
             {
-                return end;
+                get { return end; }
             }
 
             public override string ToString()
@@ -121,7 +121,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return QueryText List size
          */
-        public IList<QueryText> GetPathElements()
+        public virtual IList<QueryText> GetPathElements()
         {
             return values;
         }
@@ -129,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * Returns the a List with all QueryText elements
          */
-        public void SetPathElements(IList<QueryText> elements)
+        public virtual void SetPathElements(IList<QueryText> elements)
         {
             this.values = elements;
         }
@@ -139,7 +139,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return QueryText List size
          */
-        public QueryText GetPathElement(int index)
+        public virtual QueryText GetPathElement(int index)
         {
             return values[index];
         }
@@ -149,9 +149,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the CharSequence for a specific QueryText element
          */
-        public string GetFirstPathElement()
+        public virtual string GetFirstPathElement()
         {
-            return values[0].value;
+            return values[0].Value;
         }
 
         /**
@@ -159,7 +159,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return a List QueryText element from position startIndex
          */
-        public IList<QueryText> GetPathElements(int startIndex)
+        public virtual IList<QueryText> GetPathElements(int startIndex)
         {
             List<PathQueryNode.QueryText> rValues = new List<PathQueryNode.QueryText>();
             for (int i = startIndex; i < this.values.Count; i++)
@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in values)
             {
-                path.Append("/").Append(pathelement.value);
+                path.Append("/").Append(pathelement.Value);
             }
             return path.ToString();
         }
@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in GetPathElements(1))
             {
-                string value = escaper.Escape(new StringCharSequenceWrapper(pathelement.value), 
+                string value = escaper.Escape(new StringCharSequenceWrapper(pathelement.Value), 
                     CultureInfo.InvariantCulture, EscapeQuerySyntax.Type.STRING).ToString();
                 path.Append("/\"").Append(value).Append("\"");
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             QueryText text = this.values[0];
 
-            return "<path start='" + text.begin + "' end='" + text.end + "' path='"
+            return "<path start='" + text.Begin + "' end='" + text.End + "' path='"
                 + GetPathString() + "'/>";
         }
 

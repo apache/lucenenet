@@ -202,7 +202,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return this.parent;
         }
 
-        protected bool IsRoot()
+        protected virtual bool IsRoot()
         {
             return GetParent() == null;
         }
@@ -223,7 +223,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         // to figure out what is the default field, however, {@link
         // #toQueryString(org.apache.lucene.queryParser.core.parser.EscapeQuerySyntax)}
         // should receive the default field value directly by parameter
-        protected bool IsDefaultField(string fld)
+        protected virtual bool IsDefaultField(string fld)
         {
             if (this.toQueryStringIgnoreFields)
                 return true;

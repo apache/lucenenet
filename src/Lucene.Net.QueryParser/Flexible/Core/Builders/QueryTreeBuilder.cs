@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          * @param fieldName the field name
          * @param builder the builder to be associated
          */
-        public void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
+        public virtual void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
         {
 
             if (this.fieldNameBuilders == null)
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          * @param queryNodeClass the class
          * @param builder the builder to be associated
          */
-        public void SetBuilder(Type queryNodeClass,
+        public virtual void SetBuilder(Type queryNodeClass,
             IQueryBuilder<TQuery> builder)
         {
 

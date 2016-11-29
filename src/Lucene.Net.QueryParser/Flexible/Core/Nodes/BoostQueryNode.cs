@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the single child which this node boosts
          */
-        public IQueryNode GetChild()
+        public virtual IQueryNode GetChild()
         {
             IList<IQueryNode> children = GetChildren();
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the boost value
          */
-        public float GetValue()
+        public virtual float GetValue()
         {
             return this.value;
         }

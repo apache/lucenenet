@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * 
          * @see NumericRangeQuery#getPrecisionStep()
          */
-        public int GetPrecisionStep()
+        public virtual int GetPrecisionStep()
         {
             return precisionStep;
         }
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * 
          * @see NumericRangeQuery#getPrecisionStep()
          */
-        public void SetPrecisionStep(int precisionStep)
+        public virtual void SetPrecisionStep(int precisionStep)
         {
             this.precisionStep = precisionStep;
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * @return the {@link NumberFormat} used to parse a {@link String} to
          *         {@link Number}
          */
-        public /*NumberFormat*/ string GetNumberFormat()
+        public virtual /*NumberFormat*/ string GetNumberFormat()
         {
             return format;
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * 
          * @return the numeric type used to index the numeric values
          */
-        public NumericType GetType()
+        public virtual NumericType GetType()
         {
             return type;
         }
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * 
          * @param type the numeric type used to index the numeric values
          */
-        public void SetType(NumericType type)
+        public virtual void SetType(NumericType type)
         {
 
             //if (type == null)
@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          *          the {@link NumberFormat} used to parse a {@link String} to
          *          {@link Number}, cannot be <code>null</code>
          */
-        public void SetNumberFormat(/*NumberFormat*/ string format)
+        public virtual void SetNumberFormat(/*NumberFormat*/ string format)
         {
 
             if (format == null)

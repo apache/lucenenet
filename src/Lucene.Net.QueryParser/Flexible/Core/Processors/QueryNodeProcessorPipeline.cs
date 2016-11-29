@@ -113,12 +113,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          * @see List#add(int, Object)
          */
 
-        public virtual void Add(int index, IQueryNodeProcessor processor)
-        {
-            this.processors.Insert(index, processor);
-            processor.SetQueryConfigHandler(this.queryConfig);
+        //public virtual void Add(int index, IQueryNodeProcessor processor)
+        //{
+        //    this.processors.Insert(index, processor);
+        //    processor.SetQueryConfigHandler(this.queryConfig);
 
-        }
+        //}
 
         //      /**
         //       * @see List#addAll(Collection)
@@ -278,10 +278,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          * @see List#remove(Object)
          */
 
-        public bool Remove(object o)
-        {
-            return this.processors.Remove(o as IQueryNodeProcessor);
-        }
+        //public virtual bool Remove(object o)
+        //{
+        //    return this.processors.Remove(o as IQueryNodeProcessor);
+        //}
 
         public virtual bool Remove(IQueryNodeProcessor o)
         {
@@ -352,12 +352,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         //          return this.processors.size();
         //      }
 
-        public int Count
+        public virtual int Count
         {
             get { return this.processors.Count; }
         }
 
-        public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get
             {
@@ -379,22 +379,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return this.processors.GetRange(index, count);
         }
 
-        public void Insert(int index, IQueryNodeProcessor item)
+        public virtual void Insert(int index, IQueryNodeProcessor item)
         {
             this.processors.Insert(index, item);
+            item.SetQueryConfigHandler(this.queryConfig);
         }
 
         void ICollection<IQueryNodeProcessor>.Add(IQueryNodeProcessor item)
         {
-            this.processors.Add(item);
+            this.Add(item);
         }
 
-        public bool Contains(IQueryNodeProcessor item)
+        public virtual bool Contains(IQueryNodeProcessor item)
         {
             return this.processors.Contains(item);
         }
 
-        public void CopyTo(IQueryNodeProcessor[] array, int arrayIndex)
+        public virtual void CopyTo(IQueryNodeProcessor[] array, int arrayIndex)
         {
             this.processors.CopyTo(array, arrayIndex);
         }

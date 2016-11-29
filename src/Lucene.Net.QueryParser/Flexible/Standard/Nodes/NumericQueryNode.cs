@@ -98,7 +98,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @param format the {@link NumberFormat} used to convert the value to {@link String}
          */
-        public void SetNumberFormat(/*NumberFormat*/ string format)
+        public virtual void SetNumberFormat(/*NumberFormat*/ string format)
         {
             this.numberFormat = format;
         }
@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @return the {@link NumberFormat} used to convert the value to {@link String}
          */
-        public /*NumberFormat*/ string GetNumberFormat()
+        public virtual /*NumberFormat*/ string GetNumberFormat()
         {
             return this.numberFormat;
         }

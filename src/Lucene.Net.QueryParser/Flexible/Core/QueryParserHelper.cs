@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="ISyntaxParser"/>
     /// <seealso cref="QueryBuilder"/>
     /// <seealso cref="QueryConfigHandler"/>
-    public class QueryParserHelper<TQuery> // Made this class generic so we can avoid the cast (to Query) on the Parse method
+    public class QueryParserHelper<TQuery> // LUCENENET: Made this class generic so we can avoid the cast (to Query) on the Parse method
     {
         private IQueryNodeProcessor processor;
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see QueryNodeProcessor
          * @see #setQueryNodeProcessor(QueryNodeProcessor)
          */
-        public IQueryNodeProcessor GetQueryNodeProcessor()
+        public virtual IQueryNodeProcessor GetQueryNodeProcessor()
         {
             return processor;
         }
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #getQueryNodeProcessor()
          * @see QueryNodeProcessor
          */
-        public void SetQueryNodeProcessor(IQueryNodeProcessor processor)
+        public virtual void SetQueryNodeProcessor(IQueryNodeProcessor processor)
         {
             this.processor = processor;
             this.processor.SetQueryConfigHandler(GetQueryConfigHandler());
@@ -114,7 +114,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #getSyntaxParser()
          * @see SyntaxParser
          */
-        public void SetSyntaxParser(ISyntaxParser syntaxParser)
+        public virtual void SetSyntaxParser(ISyntaxParser syntaxParser)
         {
 
             if (syntaxParser == null)
@@ -136,7 +136,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #getQueryBuilder()
          * @see QueryBuilder
          */
-        public void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
+        public virtual void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
         {
 
             if (queryBuilder == null)
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see QueryConfigHandler
          * @see #setQueryConfigHandler(QueryConfigHandler)
          */
-        public QueryConfigHandler GetQueryConfigHandler()
+        public virtual QueryConfigHandler GetQueryConfigHandler()
         {
             return config;
         }
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #setQueryBuilder(QueryBuilder)
          * @see QueryBuilder
          */
-        public IQueryBuilder<TQuery> GetQueryBuilder()
+        public virtual IQueryBuilder<TQuery> GetQueryBuilder()
         {
             return this.builder;
         }
@@ -188,7 +188,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see SyntaxParser
          * @see #setSyntaxParser(SyntaxParser)
          */
-        public ISyntaxParser GetSyntaxParser()
+        public virtual ISyntaxParser GetSyntaxParser()
         {
             return this.syntaxParser;
         }
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @see #getQueryConfigHandler()
          * @see QueryConfigHandler
          */
-        public void SetQueryConfigHandler(QueryConfigHandler config)
+        public virtual void SetQueryConfigHandler(QueryConfigHandler config)
         {
             this.config = config;
             IQueryNodeProcessor processor = GetQueryNodeProcessor();

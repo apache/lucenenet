@@ -150,7 +150,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * @see #isLowerInclusive()
          * @see #isUpperInclusive()
          */
-        public void SetBounds(T lower, T upper, bool lowerInclusive,
+        public virtual void SetBounds(T lower, T upper, bool lowerInclusive,
             bool upperInclusive)
         {
 

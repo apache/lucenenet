@@ -1145,7 +1145,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         /** Generate ParseException. */
-        public ParseException generateParseException()
+        public virtual ParseException generateParseException()
         {
             jj_expentries.Clear();
             bool[] la1tokens = new bool[34];

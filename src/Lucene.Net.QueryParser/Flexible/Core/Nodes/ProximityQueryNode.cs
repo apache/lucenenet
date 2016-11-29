@@ -47,7 +47,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         //    };*/
         //        }
 
-        // LUCENENET TODO: Implement this on enum
         //    internal abstract string ToQueryString();
         //}
 
@@ -149,7 +148,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public ProximityQueryNode.Type GetProximityType()
+        public virtual ProximityQueryNode.Type GetProximityType()
         {
             return this.proximityType;
         }
@@ -222,7 +221,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the distance
          */
-        public int GetDistance()
+        public virtual int GetDistance()
         {
             return this.distance;
         }
@@ -232,7 +231,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public string GetField()
+        public virtual string GetField()
         {
             return this.field;
         }
@@ -242,7 +241,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public string GetFieldAsString()
+        public virtual string GetFieldAsString()
         {
             if (this.field == null)
                 return null;
@@ -254,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * @param field
          *          the field to set
          */
-        public void SetField(string field)
+        public virtual void SetField(string field)
         {
             this.field = field;
         }
@@ -262,7 +261,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return terms must be matched in the specified order
          */
-        public bool IsInOrder()
+        public virtual bool IsInOrder()
         {
             return this.inorder;
         }

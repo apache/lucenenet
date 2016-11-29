@@ -33,12 +33,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             Add(query);
         }
 
-        public IQueryNode GetChild()
+        public virtual IQueryNode GetChild()
         {
             return GetChildren()[0];
         }
 
-        public int GetValue()
+        public virtual int GetValue()
         {
             return this.value;
         }

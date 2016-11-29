@@ -63,12 +63,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             SetLeaf(true);
         }
 
-        public void SetPrefixLength(int prefixLength)
+        public virtual void SetPrefixLength(int prefixLength)
         {
             this.prefixLength = prefixLength;
         }
 
-        public int GetPrefixLength()
+        public virtual int GetPrefixLength()
         {
             return this.prefixLength;
         }
@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 + "' term='" + this.text + "'/>";
         }
 
-        public void SetSimilarity(float similarity)
+        public virtual void SetSimilarity(float similarity)
         {
             this.similarity = similarity;
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the similarity
          */
-        public float GetSimilarity()
+        public virtual float GetSimilarity()
         {
             return this.similarity;
         }

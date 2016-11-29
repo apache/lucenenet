@@ -49,12 +49,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             this.modifier = mod;
         }
 
-        public IQueryNode GetChild()
+        public virtual IQueryNode GetChild()
         {
             return GetChildren()[0];
         }
 
-        public Modifier GetModifier()
+        public virtual Modifier GetModifier()
         {
             return this.modifier;
         }
@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return clone;
         }
 
-        public void setChild(IQueryNode child)
+        public virtual void SetChild(IQueryNode child)
         {
             List<IQueryNode> list = new List<IQueryNode>();
             list.Add(child);

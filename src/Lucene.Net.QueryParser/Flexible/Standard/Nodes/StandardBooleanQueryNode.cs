@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             this.disableCoord = disableCoord;
         }
 
-        public bool IsDisableCoord
+        public virtual bool DisableCoord
         {
             get { return this.disableCoord; }
         }

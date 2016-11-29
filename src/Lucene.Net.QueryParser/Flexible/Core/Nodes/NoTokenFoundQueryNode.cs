@@ -13,9 +13,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// </summary>
     public class NoTokenFoundQueryNode : DeletedQueryNode
     {
-        //public NoTokenFoundQueryNode()
-        //{
-        //}
+        public NoTokenFoundQueryNode()
+        {
+        }
 
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)

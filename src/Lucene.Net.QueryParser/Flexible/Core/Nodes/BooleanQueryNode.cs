@@ -15,9 +15,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class BooleanQueryNode : QueryNodeImpl
     {
         /**
-   * @param clauses
-   *          - the query nodes to be and'ed
-   */
+        * @param clauses
+        *          - the query nodes to be and'ed
+        */
         public BooleanQueryNode(IList<IQueryNode> clauses)
         {
             SetLeaf(false);

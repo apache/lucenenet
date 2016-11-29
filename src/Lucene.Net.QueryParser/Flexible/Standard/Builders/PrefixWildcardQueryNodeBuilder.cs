@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         }
 
 
-        public Query Build(IQueryNode queryNode)
+        public virtual Query Build(IQueryNode queryNode)
         {
 
             PrefixWildcardQueryNode wildcardNode = (PrefixWildcardQueryNode)queryNode;

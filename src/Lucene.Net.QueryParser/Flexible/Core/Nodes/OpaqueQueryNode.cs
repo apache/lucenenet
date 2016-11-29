@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the schema
          */
-        public string GetSchema()
+        public virtual string GetSchema()
         {
             return this.schema;
         }
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the value
          */
-        public string GetValue()
+        public virtual string GetValue()
         {
             return this.value;
         }

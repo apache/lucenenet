@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          * 
          * @return the field name
          */
-        public string GetField()
+        public virtual string GetField()
         {
             return this.fieldName;
         }

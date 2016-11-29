@@ -77,12 +77,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         }
 
-        protected string GetTermEscaped(IEscapeQuerySyntax escaper)
+        protected virtual string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
             return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntax.Type.NORMAL).ToString();
         }
 
-        protected string GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
+        protected virtual string GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
         {
             return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntax.Type.STRING).ToString();
         }
@@ -110,7 +110,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
          * @return the term
          */
-        public string GetTextAsString()
+        public virtual string GetTextAsString()
         {
             if (this.text == null)
                 return null;
@@ -123,7 +123,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @return the field
          */
-        public string GetFieldAsString()
+        public virtual string GetFieldAsString()
         {
             if (this.field == null)
                 return null;
@@ -131,22 +131,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field.ToString();
         }
 
-        public int GetBegin()
+        public virtual int GetBegin()
         {
             return this.begin;
         }
 
-        public void SetBegin(int begin)
+        public virtual void SetBegin(int begin)
         {
             this.begin = begin;
         }
 
-        public int GetEnd()
+        public virtual int GetEnd()
         {
             return this.end;
         }
 
-        public void setEnd(int end)
+        public virtual void SetEnd(int end)
         {
             this.end = end;
         }
@@ -169,12 +169,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         //          this.field = field;
         //      }
 
-        public int GetPositionIncrement()
+        public virtual int GetPositionIncrement()
         {
             return this.positionIncrement;
         }
 
-        public void SetPositionIncrement(int pi)
+        public virtual void SetPositionIncrement(int pi)
         {
             this.positionIncrement = pi;
         }
@@ -224,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public virtual string Value
         {
             get { return Text.ToString(); }
-            set { Text = new StringCharSequenceWrapper(value); }
+            set { Text = value.ToCharSequence(); }
         }
 
         //public override string GetValue()

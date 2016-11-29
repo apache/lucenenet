@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         {
             StandardBooleanQueryNode booleanNode = (StandardBooleanQueryNode)queryNode;
 
-            BooleanQuery bQuery = new BooleanQuery(booleanNode.IsDisableCoord);
+            BooleanQuery bQuery = new BooleanQuery(booleanNode.DisableCoord);
             IList<IQueryNode> children = booleanNode.GetChildren();
 
             if (children != null)

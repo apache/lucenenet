@@ -46,6 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         /**
          * Create a non-escaped CharSequence
          */
+         // LUCENENET specific overload for text as string
         public UnescapedCharSequence(string text)
         {
             this.chars = new char[text.Length];

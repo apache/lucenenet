@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         }
 
 
-        protected void ProcessChildren(IQueryNode queryTree)
+        protected virtual void ProcessChildren(IQueryNode queryTree)
         {
             IList<IQueryNode> children = queryTree.GetChildren();
             if (children != null && children.Count > 0)
@@ -113,7 +113,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
         }
 
-        protected IQueryNode PostProcessNode(IQueryNode node)
+        protected virtual IQueryNode PostProcessNode(IQueryNode node)
         {
             if (node.ContainsTag(TAG_BOOLEAN_ROOT))
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         }
 
-        protected IQueryNode PreProcessNode(IQueryNode node)
+        protected virtual IQueryNode PreProcessNode(IQueryNode node)
         {
             IQueryNode parent = node.GetParent();
             if (node is BooleanQueryNode)
@@ -150,7 +150,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             return node;
         }
 
-        protected bool IsDefaultBooleanQueryNode(IQueryNode toTest)
+        protected virtual bool IsDefaultBooleanQueryNode(IQueryNode toTest)
         {
             return toTest != null && typeof(BooleanQueryNode).Equals(toTest.GetType());
         }
@@ -179,7 +179,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         }
 
-        protected void TagModifierButDoNotOverride(IQueryNode node, Modifier mod)
+        protected virtual void TagModifierButDoNotOverride(IQueryNode node, Modifier mod)
         {
             if (node is ModifierQueryNode)
             {

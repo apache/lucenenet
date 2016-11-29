@@ -56,12 +56,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         }
 
 
-        public string GetLocalizedMessage()
+        public virtual string GetLocalizedMessage()
         {
             return GetLocalizedMessage(CultureInfo.InvariantCulture);
         }
 
-        public string GetLocalizedMessage(CultureInfo locale)
+        public virtual string GetLocalizedMessage(CultureInfo locale)
         {
             return this.message.GetLocalizedMessage(locale);
         }

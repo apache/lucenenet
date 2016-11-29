@@ -34,9 +34,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * "expectedTokenSequences", and "tokenImage" set.
          */
         public ParseException(Token currentTokenVal,
-           int[][] expectedTokenSequencesVal, string[] tokenImageVal)
+            int[][] expectedTokenSequencesVal, string[] tokenImageVal)
             : base(new MessageImpl(QueryParserMessages.INVALID_SYNTAX, Initialize(
-            currentTokenVal, expectedTokenSequencesVal, tokenImageVal)))
+                currentTokenVal, expectedTokenSequencesVal, tokenImageVal)))
         {
             this.currentToken = currentTokenVal;
             this.expectedTokenSequences = expectedTokenSequencesVal;
