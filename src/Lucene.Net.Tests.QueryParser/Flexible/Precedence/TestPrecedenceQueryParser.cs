@@ -129,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);
-            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.OR); // LUCENENET TODO: Change API back to the way it was..?
+            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.OR); // LUCENENET TODO: Change API back to the way it was..?
             return qp;
         }
 
@@ -181,7 +181,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);
-            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
+            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);
             return qp.Parse(query, "field");
         }
 
@@ -244,11 +244,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random()));
             // make sure OR is the default:
-            assertEquals(/*StandardQueryConfigHandler.*/Operator.OR, qp.DefaultOperator);
-            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/ Operator.AND);
-            assertEquals(/*StandardQueryConfigHandler.*/ Operator.AND, qp.DefaultOperator);
-            qp.DefaultOperator = (/*StandardQueryConfigHandler.*/ Operator.OR);
-            assertEquals(/*StandardQueryConfigHandler.*/ Operator.OR, qp.DefaultOperator);
+            assertEquals(StandardQueryConfigHandler.Operator.OR, qp.DefaultOperator);
+            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);
+            assertEquals(StandardQueryConfigHandler.Operator.AND, qp.DefaultOperator);
+            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.OR);
+            assertEquals(StandardQueryConfigHandler.Operator.OR, qp.DefaultOperator);
 
             assertQueryEquals("a OR !b", null, "a -b");
             assertQueryEquals("a OR ! b", null, "a -b");
@@ -694,7 +694,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             query2 = parser.Parse("A (-B +C)", "field");
             assertEquals(query1, query2);
 
-            parser.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
+            parser.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);
             query1 = parser.Parse("A AND B OR C AND D", "field");
             query2 = parser.Parse("(A AND B) OR (C AND D)", "field");
             assertEquals(query1, query2);

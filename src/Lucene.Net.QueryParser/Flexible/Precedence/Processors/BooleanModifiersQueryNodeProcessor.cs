@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
 
             }
             else if (this.usingAnd && node is BooleanQueryNode
-              && !(node is OrQueryNode))
+                && !(node is OrQueryNode))
             {
 
                 this.childrenBuffer.Clear();

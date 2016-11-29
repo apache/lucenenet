@@ -10,12 +10,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Lucene.Net.Documents.DateTools;
-using static Lucene.Net.QueryParsers.Classic.QueryParserBase;
+using Lucene.Net.Documents;
 using System.IO;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using NUnit.Framework;
+using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser(a);
-            qp.DefaultOperator = (Config.Operator.OR);
+            qp.DefaultOperator = (Operator.OR);
 
             return qp;
         }
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.DefaultOperator = (Config.Operator.OR);
+            qp.DefaultOperator = (Operator.OR);
         }
 
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.DefaultOperator = (Config.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
         }
 
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
 
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC,
-            string field, Resolution value)
+            string field, DateTools.Resolution value)
         {
             Debug.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
@@ -203,11 +203,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StandardQueryParser qp = GetParser(new MockAnalyzer(Random()));
             // make sure OR is the default:
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.DefaultOperator);
+            assertEquals(StandardQueryConfigHandler.Operator.OR, qp.DefaultOperator);
             SetDefaultOperatorAND(qp);
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.AND, qp.DefaultOperator);
+            assertEquals(StandardQueryConfigHandler.Operator.AND, qp.DefaultOperator);
             SetDefaultOperatorOR(qp);
-            assertEquals(/*StandardQueryConfigHandler.*/Config.Operator.OR, qp.DefaultOperator);
+            assertEquals(StandardQueryConfigHandler.Operator.OR, qp.DefaultOperator);
         }
 
 

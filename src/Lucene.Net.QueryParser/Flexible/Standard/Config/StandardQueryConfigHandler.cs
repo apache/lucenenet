@@ -45,6 +45,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new HashMap<string, DateTools.Resolution?>());
 
         }
+
+        /**
+        * Boolean Operator: AND or OR
+        */
+        public enum Operator
+        {
+            AND,
+            OR
+        }
     }
 
     /**
@@ -187,14 +196,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          */
         public readonly static ConfigurationKey<IDictionary<string, NumericConfig>> NUMERIC_CONFIG_MAP = ConfigurationKey.NewInstance<IDictionary<string, NumericConfig>>();
 
-    }
-
-    /**
-     * Boolean Operator: AND or OR
-     */
-    public enum Operator
-    {
-        AND,
-        OR
     }
 }

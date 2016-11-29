@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Lucene.Net.QueryParsers.Classic.QueryParserBase;
+using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 {
@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         private bool positionIncrementsEnabled;
 
-        private Config.Operator defaultOperator;
+        private Operator defaultOperator;
 
         public AnalyzerQueryNodeProcessor()
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 this.positionIncrementsEnabled = false;
                 bool? positionIncrementsEnabled = GetQueryConfigHandler().Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
                 var defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
-                this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Config.Operator.OR;
+                this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Operator.OR;
 
                 if (positionIncrementsEnabled != null)
                 {
@@ -249,7 +249,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     if (currentQuery != null)
                                     {
-                                        if (this.defaultOperator == Config.Operator.OR)
+                                        if (this.defaultOperator == Operator.OR)
                                         {
                                             q.Add(currentQuery);
                                         }
@@ -261,7 +261,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     currentQuery = new FieldQueryNode(field, term, -1, -1);
                                 }
                             }
-                            if (this.defaultOperator == Config.Operator.OR)
+                            if (this.defaultOperator == Operator.OR)
                             {
                                 q.Add(currentQuery);
                             }

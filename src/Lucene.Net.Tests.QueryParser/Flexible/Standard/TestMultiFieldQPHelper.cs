@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals("(b:one t:one) f:two", q.toString());
 
             // AND mode:
-            mfqp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
+            mfqp.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);
             q = mfqp.Parse("one two", null);
             assertEquals("+(b:one t:one) +(b:two t:two)", q.toString());
             q = mfqp.Parse("\"aa bb cc\" \"dd ee\"", null);
@@ -361,7 +361,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             mfqp.SetMultiFields(new String[] { "body" });
             mfqp.Analyzer = (analyzer);
-            mfqp.DefaultOperator = (/*StandardQueryConfigHandler.*/Operator.AND);
+            mfqp.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);
             Query q = mfqp.Parse("the footest", null);
             IndexReader ir = DirectoryReader.Open(ramDir);
             IndexSearcher @is = NewSearcher(ir);
