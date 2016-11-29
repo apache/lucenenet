@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using System.Diagnostics;
+using System.Globalization;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Util
 {
@@ -240,6 +242,16 @@ namespace Lucene.Net.Util
                 haveNextNextGaussian = true;
                 return v1 * multiplier;
             }
+        }
+
+        protected virtual CultureInfo randomLocale(Random random)
+        {
+            return RandomInts.RandomFrom(random, CultureInfo.GetCultures(CultureTypes.AllCultures));
+        }
+
+        protected virtual TimeZoneInfo randomTimeZone(Random random)
+        {
+            return RandomInts.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
         }
     }
 }
