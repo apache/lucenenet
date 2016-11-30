@@ -44,3 +44,6 @@ test-files/analysis/data/
 
 # For the build tools that are downloading when building Lucene.NET
 .tools/
+
+# NUnit test result file produced by nunit3-console.exe
+[Tt]est[Rr]esult.xml

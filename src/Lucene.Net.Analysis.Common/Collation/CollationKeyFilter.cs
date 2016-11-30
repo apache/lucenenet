@@ -1,28 +1,29 @@
-﻿using System;
+﻿using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Collation
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-    /// <summary>
+	/// <summary>
 	/// <para>
 	///   Converts each token into its <seealso cref="java.text.CollationKey"/>, and then
 	///   encodes the CollationKey with <seealso cref="IndexableBinaryStringTools"/>, to allow 
@@ -43,7 +44,7 @@ namespace Lucene.Net.Collation
 	///   <li>
 	///     The language (and country and variant, if specified) of the Locale
 	///     used when constructing the collator via
-	///     <seealso cref="Collator#getInstance(java.util.Locale)"/>.
+	///     <seealso cref="Collator#getInstance(CultureInfo)"/>.
 	///   </li>
 	///   <li>
 	///     The collation strength used - see <seealso cref="Collator#setStrength(int)"/>
@@ -71,34 +72,50 @@ namespace Lucene.Net.Collation
 	[Obsolete("Use <seealso cref=\"CollationAttributeFactory\"/> instead, which encodes")]
 	public sealed class CollationKeyFilter : TokenFilter
 	{
-	  private readonly Collator collator;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+		private readonly Collator collator;
+		private readonly ICharTermAttribute termAtt;
 
-	  /// <param name="input"> Source token stream </param>
-	  /// <param name="collator"> CollationKey generator </param>
-	  public CollationKeyFilter(TokenStream input, Collator collator) : base(input)
-	  {
-		// clone in case JRE doesnt properly sync,
-		// or to reduce contention in case they do
-		this.collator = (Collator) collator.clone();
-	  }
+		/// <param name="input"> Source token stream </param>
+		/// <param name="collator"> CollationKey generator </param>
+		public CollationKeyFilter(TokenStream input, Collator collator) : base(input)
+		{
+			this.collator = collator;
+			this.termAtt = this.AddAttribute<ICharTermAttribute>();
+		}
 
-	  public override bool IncrementToken()
-	  {
-		if (input.IncrementToken())
+		public override bool IncrementToken()
 		{
-		  var collationKey = collator.GetCollationKey(termAtt.ToString()).toByteArray();
-		  int encodedLength = IndexableBinaryStringTools.getEncodedLength(collationKey, 0, collationKey.Length);
-		  termAtt.resizeBuffer(encodedLength);
-		  termAtt.Length = encodedLength;
-		  IndexableBinaryStringTools.encode(collationKey, 0, collationKey.Length, termAtt.buffer(), 0, encodedLength);
-		  return true;
+			if (this.input.IncrementToken())
+			{
+				var collationKey = this.collator.GetSortKey(this.termAtt.ToString()).KeyData.ToSByteArray();
+				var encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);
+				this.termAtt.ResizeBuffer(encodedLength);
+				this.termAtt.Length = encodedLength;
+
+				IndexableBinaryStringTools.Encode(collationKey, 0, collationKey.Length, this.termAtt.Buffer(), 0, encodedLength);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
-		else
-		{
-		  return false;
-		}
-	  }
 	}
 
+	internal static class ByteArrayExtentions
+	{
+		internal static byte[] ToByteArray(this sbyte[] arr)
+		{
+			var unsigned = new byte[arr.Length];
+			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+			return unsigned;
+		}
+
+		internal static sbyte[] ToSByteArray(this byte[] arr)
+		{
+			var unsigned = new sbyte[arr.Length];
+			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+			return unsigned;
+		}
+	}
 }
