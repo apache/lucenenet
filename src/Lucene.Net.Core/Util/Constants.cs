@@ -202,6 +202,12 @@ namespace Lucene.Net.Util
                     return Environment.OSVersion.ToString();
 #endif
                 }
+				
+#if NETSTANDARD
+                if (variable == "PROCESSOR_ARCHITECTURE") {
+                    return RuntimeInformation.OSArchitecture.ToString();
+                }
+#endif
 
                 return System.Environment.GetEnvironmentVariable(variable);
             }
