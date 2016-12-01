@@ -44,22 +44,27 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		protected Node(SpatialPrefixTree spatialPrefixTree, String token)
 		{
 			this.spatialPrefixTree = spatialPrefixTree;
-			this.token = token;
-			if (token.Length > 0 && token[token.Length - 1] == (char)LEAF_BYTE)
-			{
-				this.token = token.Substring(0, token.Length - 1);
-				SetLeaf();
-			}
+			SetToken(token);
 
 			if (GetLevel() == 0)
 				GetShape();//ensure any lazy instantiation completes to make this threadsafe
 		}
 
+		private void SetToken(String theToken)
+		{
+			this.token = theToken;
+			if (token.Length > 0 && token[token.Length - 1] == (char)LEAF_BYTE)
+			{
+				this.token = token.Substring(0, token.Length - 1);
+				SetLeaf();
+			}
+		}
+
 		public virtual void Reset(string newToken)
 		{
 			Debug.Assert(GetLevel() != 0);
-			this.token = newToken;
 			shapeRel = SpatialRelation.NULL_VALUE;
+			SetToken(newToken);
 			b_fixLeaf();
 		}
 

@@ -4,29 +4,142 @@
         <name>Spatial4n.Core</name>
     </assembly>
     <members>
-        <member name="M:Spatial4n.Core.Util.GeohashUtils.EncodeLatLon(System.Double,System.Double)">
+        <!-- Badly formed XML comment ignored for member "T:Spatial4n.Core.Context.SpatialContext" -->
+        <member name="F:Spatial4n.Core.Context.SpatialContext.GEO">
             <summary>
-            Encodes the given latitude and longitude into a geohash
+            A popular default SpatialContext implementation for geospatial.
             </summary>
-            <param name="latitude">Latitude to encode</param>
-            <param name="longitude">Longitude to encode</param>
-            <returns>Geohash encoding of the longitude and latitude</returns>
         </member>
-        <member name="M:Spatial4n.Core.Util.GeohashUtils.Decode(System.String,Spatial4n.Core.Context.SpatialContext)">
-             Decodes the given geohash into a latitude and longitude
+        <member name="M:Spatial4n.Core.Context.SpatialContext.#ctor(System.Boolean,Spatial4n.Core.Distance.DistanceCalculator,Spatial4n.Core.Shapes.Rectangle)">
+            <summary>
             
-             @param geohash Geohash to deocde
-             @return Array with the latitude at index 0, and longitude at index 1
+            </summary>
+            <param name="geo">Establishes geo vs cartesian / Euclidean.</param>
+            <param name="calculator">Optional; defaults to Haversine or cartesian depending on units.</param>
+            <param name="worldBounds">Optional; defaults to GEO_WORLDBOUNDS or MAX_WORLDBOUNDS depending on units.</param> 
         </member>
-        <member name="M:Spatial4n.Core.Util.GeohashUtils.DecodeBoundary(System.String,Spatial4n.Core.Context.SpatialContext)">
-            Returns min-max lat, min-max lon. 
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.GetWorldBounds" -->
+        <member name="M:Spatial4n.Core.Context.SpatialContext.IsGeo">
+            <summary>
+            Is this a geospatial context (true) or simply 2d spatial (false).
+            </summary>
+            <returns></returns>
         </member>
-        <member name="M:Spatial4n.Core.Util.GeohashUtils.GetSubGeohashes(System.String)">
-            Array of geohashes 1 level below the baseGeohash. Sorted. 
+        <member name="M:Spatial4n.Core.Context.SpatialContext.VerifyX(System.Double)">
+            <summary>
+            Ensure fits in {@link #getWorldBounds()}
+            </summary>
+            <param name="x"></param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Util.GeohashUtils.LookupHashLenForWidthHeight(System.Double,System.Double)" -->
-        <member name="F:Spatial4n.Core.Util.GeohashUtils.hashLenToLatHeight">
-            See the table at http://en.wikipedia.org/wiki/Geohash 
+        <member name="M:Spatial4n.Core.Context.SpatialContext.VerifyY(System.Double)">
+            <summary>
+            Ensure fits in {@link #getWorldBounds()}
+            </summary>
+            <param name="y"></param>
+        </member>
+        <member name="M:Spatial4n.Core.Context.SpatialContext.MakePoint(System.Double,System.Double)">
+            <summary>
+            Construct a point.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Context.SpatialContext.MakeRectangle(Spatial4n.Core.Shapes.Point,Spatial4n.Core.Shapes.Point)">
+            <summary>
+            Construct a rectangle. The parameters will be normalized.
+            </summary>
+            <param name="lowerLeft"></param>
+            <param name="upperRight"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Context.SpatialContext.MakeRectangle(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Construct a rectangle. If just one longitude is on the dateline (+/- 180)
+            then potentially adjust its sign to ensure the rectangle does not cross the
+            dateline.
+            </summary>
+            <param name="minX"></param>
+            <param name="maxX"></param>
+            <param name="minY"></param>
+            <param name="maxY"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.MakeCircle(System.Double,System.Double,System.Double)" -->
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.MakeCircle(Spatial4n.Core.Shapes.Point,System.Double)" -->
+        <member name="T:Spatial4n.Core.Context.SpatialContextFactory">
+            <summary>
+            Factory for a SpatialContext.
+            </summary>
+        </member>
+        <member name="M:Spatial4n.Core.Context.SpatialContextFactory.MakeSpatialContext(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            The factory class is lookuped up via "spatialContextFactory" in args
+            then falling back to a Java system property (with initial caps). If neither are specified
+            then {@link SimpleSpatialContextFactory} is chosen.
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Context.SpatialContextFactory.NewSpatialContext">
+            Subclasses should simply construct the instance from the initialized configuration. 
+        </member>
+        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.Distance(Spatial4n.Core.Shapes.Point,Spatial4n.Core.Shapes.Point)">
+            <summary>
+            The distance between <code>from</code> and <code>to</code>.
+            </summary>
+            <param name="from"></param>
+            <param name="to"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.Distance(Spatial4n.Core.Shapes.Point,System.Double,System.Double)">
+            <summary>
+            The distance between <code>from</code> and <code>Point(toX,toY)</code>.
+            </summary>
+            <param name="from"></param>
+            <param name="toX"></param>
+            <param name="toY"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.PointOnBearing(Spatial4n.Core.Shapes.Point,System.Double,System.Double,Spatial4n.Core.Context.SpatialContext,Spatial4n.Core.Shapes.Point)">
+            <summary>
+            Calculates where a destination point is given an origin (<code>from</code>)
+            distance, and bearing (given in degrees -- 0-360).
+            </summary>
+            <param name="from"></param>
+            <param name="distDEG"></param>
+            <param name="bearingDEG"></param>
+            <param name="ctx"></param>
+            <param name="reuse"> </param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.CalcBoxByDistFromPt(Spatial4n.Core.Shapes.Point,System.Double,Spatial4n.Core.Context.SpatialContext,Spatial4n.Core.Shapes.Rectangle)">
+            <summary>
+            Calculates the bounding box of a circle, as specified by its center point
+            and distance.
+            </summary>
+            <param name="from"></param>
+            <param name="distDEG"></param>
+            <param name="ctx"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.CalcBoxByDistFromPt_yHorizAxisDEG(Spatial4n.Core.Shapes.Point,System.Double,Spatial4n.Core.Context.SpatialContext)">
+            <summary>
+            The <code>Y</code> coordinate of the horizontal axis (e.g. left-right line)
+            of a circle.  The horizontal axis of a circle passes through its furthest
+            left-most and right-most edges. On a 2D plane, this result is always
+            <code>from.getY()</code> but, perhaps surprisingly, on a sphere it is going
+            to be slightly different.
+            </summary>
+            <param name="from"></param>
+            <param name="distDEG"></param>
+            <param name="ctx"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Spatial4n.Core.Distance.CartesianDistCalc">
+            <summary>
+            Calculates based on Euclidean / Cartesian 2d plane.
+            </summary>
         </member>
         <member name="F:Spatial4n.Core.Distance.DistanceUtils.EARTH_MEAN_RADIUS_KM">
              <summary>
@@ -175,18 +288,79 @@
             <param name="radians"></param>
             <returns></returns>
         </member>
-        <member name="T:Spatial4n.Core.Shapes.SpatialRelation">
+        <member name="T:Spatial4n.Core.Distance.GeodesicSphereDistCalc">
             <summary>
-            The set of spatial relationships.  Naming is consistent with OGC spec conventions as seen in SQL/MM and others.
-            No equality case.  If two Shape instances are equal then the result might be CONTAINS or WITHIN, and
-            some logic might fail under this edge condition when it's not careful to check.
-            Client code must be written to detect this and act accordingly.  In RectangleImpl.Relate(), it checks
-            for this explicitly, for example. TestShapes2D.assertRelation() checks too.
+            A base class for a Distance Calculator that assumes a spherical earth model. 
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Shapes.SpatialRelationComparators.Combine(Spatial4n.Core.Shapes.SpatialRelation,Spatial4n.Core.Shapes.SpatialRelation)" -->
-        <member name="M:Spatial4n.Core.Shapes.SpatialRelationComparators.Inverse(Spatial4n.Core.Shapes.SpatialRelation)">
-            Not commutative!  WITHIN.inverse().inverse() != WITHIN. 
+        <member name="T:Spatial4n.Core.Io.ParseUtils">
+            <summary>
+            Utility methods related to parsing shapes.
+            </summary>
+        </member>
+        <member name="M:Spatial4n.Core.Io.ParseUtils.ParsePoint(System.String[],System.String,System.Int32)">
+            <summary>
+            Given a string containing <i>dimension</i> values encoded in it, separated by commas, return a String array of length <i>dimension</i>
+            containing the values.
+            </summary>
+            <param name="_out">A preallocated array.  Must be size dimension.  If it is not it will be resized.</param>
+            <param name="externalVal">The value to parse</param>
+            <param name="dimension">The expected number of values for the point</param>
+            <returns>An array of the values that make up the point (aka vector)</returns>
+        </member>
+        <member name="M:Spatial4n.Core.Io.ParseUtils.ParsePointDouble(System.Double[],System.String,System.Int32)">
+            <summary>
+            Given a string containing <i>dimension</i> values encoded in it, separated by commas, return a double array of length <i>dimension</i>
+            containing the values.
+            </summary>
+            <param name="out">A preallocated array.  Must be size dimension.  If it is not it will be resized.</param>
+            <param name="externalVal">The value to parse</param>
+            <param name="dimension">The expected number of values for the point</param>
+            <returns>An array of the values that make up the point (aka vector)</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Io.ParseUtils.ParseLatitudeLongitude(System.Double[],System.String)" -->
+        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.ReadShape(System.String)">
+             <summary>
+             Reads a shape from a given string (ie, X Y, XMin XMax... WKT)
+             <ul>
+               <li>Point: X Y
+               <br /> 1.23 4.56
+               </li>
+               <li>BOX: XMin YMin XMax YMax
+               <br /> 1.23 4.56 7.87 4.56</li>
+               <li><a href="http://en.wikipedia.org/wiki/Well-known_text">
+                 WKT (Well Known Text)</a>
+               <br /> POLYGON( ... )
+               <br /> <b>Note:</b>Polygons and WKT might not be supported by this
+               spatial context; you'll have to use {@link com.spatial4j.core.context.jts.JtsSpatialContext}.
+               </li>
+             </ul>
+             @param value A string representation of the shape; not null.
+             @return A Shape; not null.
+            
+             @see #writeShape
+             </summary>
+             <param name="value"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.WriteShape(Spatial4n.Core.Shapes.Shape)">
+            <summary>
+            Writes a shape to a String, in a format that can be read by {@link #readShape(String)}.
+            </summary>
+            <param name="shape"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.ReadLatCommaLonPoint(System.String)">
+            <summary>
+            Reads geospatial latitude then a comma then longitude.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Spatial4n.Core.Shapes.Circle">
+            <summary>
+            A circle, also known as a point-radius since that is what it is comprised of.
+            </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Spatial4n.Core.Shapes.Shape" -->
         <member name="M:Spatial4n.Core.Shapes.Shape.Relate(Spatial4n.Core.Shapes.Shape)">
@@ -244,63 +418,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.Distance(Spatial4n.Core.Shapes.Point,Spatial4n.Core.Shapes.Point)">
-            <summary>
-            The distance between <code>from</code> and <code>to</code>.
-            </summary>
-            <param name="from"></param>
-            <param name="to"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.Distance(Spatial4n.Core.Shapes.Point,System.Double,System.Double)">
-            <summary>
-            The distance between <code>from</code> and <code>Point(toX,toY)</code>.
-            </summary>
-            <param name="from"></param>
-            <param name="toX"></param>
-            <param name="toY"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.PointOnBearing(Spatial4n.Core.Shapes.Point,System.Double,System.Double,Spatial4n.Core.Context.SpatialContext,Spatial4n.Core.Shapes.Point)">
-            <summary>
-            Calculates where a destination point is given an origin (<code>from</code>)
-            distance, and bearing (given in degrees -- 0-360).
-            </summary>
-            <param name="from"></param>
-            <param name="distDEG"></param>
-            <param name="bearingDEG"></param>
-            <param name="ctx"></param>
-            <param name="reuse"> </param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.CalcBoxByDistFromPt(Spatial4n.Core.Shapes.Point,System.Double,Spatial4n.Core.Context.SpatialContext,Spatial4n.Core.Shapes.Rectangle)">
-            <summary>
-            Calculates the bounding box of a circle, as specified by its center point
-            and distance.
-            </summary>
-            <param name="from"></param>
-            <param name="distDEG"></param>
-            <param name="ctx"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Distance.DistanceCalculator.CalcBoxByDistFromPt_yHorizAxisDEG(Spatial4n.Core.Shapes.Point,System.Double,Spatial4n.Core.Context.SpatialContext)">
-            <summary>
-            The <code>Y</code> coordinate of the horizontal axis (e.g. left-right line)
-            of a circle.  The horizontal axis of a circle passes through its furthest
-            left-most and right-most edges. On a 2D plane, this result is always
-            <code>from.getY()</code> but, perhaps surprisingly, on a sphere it is going
-            to be slightly different.
-            </summary>
-            <param name="from"></param>
-            <param name="distDEG"></param>
-            <param name="ctx"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Spatial4n.Core.Shapes.Circle">
-            <summary>
-            A circle, also known as a point-radius since that is what it is comprised of.
-            </summary>
-        </member>
         <member name="M:Spatial4n.Core.Shapes.Circle.Reset(System.Double,System.Double,System.Double)">
             <summary>
             Expert: Resets the state of this shape given the arguments. This is a
@@ -318,55 +435,6 @@
             {@link com.spatial4j.core.distance.DistanceUnits}.
             </summary>
             <returns></returns>
-        </member>
-        <member name="T:Spatial4n.Core.Context.SpatialContextFactory">
-            <summary>
-            Factory for a SpatialContext.
-            </summary>
-        </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContextFactory.MakeSpatialContext(System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            The factory class is lookuped up via "spatialContextFactory" in args
-            then falling back to a Java system property (with initial caps). If neither are specified
-            then {@link SimpleSpatialContextFactory} is chosen.
-            </summary>
-            <param name="args"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContextFactory.NewSpatialContext">
-            Subclasses should simply construct the instance from the initialized configuration. 
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:Spatial4n.Core.Shapes.Impl.RectangleImpl" -->
-        <member name="M:Spatial4n.Core.Shapes.Rectangle.GetCrossesDateLine">
-            <summary>
-            Only meaningful for geospatial contexts.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Shapes.Rectangle.Reset(System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            Expert: Resets the state of this shape given the arguments. This is a
-            performance feature to avoid excessive Shape object allocation as well as
-            some argument error checking. Mutable shapes is error-prone so use with
-            care.
-            </summary>
-            <param name="minX"></param>
-            <param name="maxX"></param>
-            <param name="minY"></param>
-            <param name="maxY"></param>
-        </member>
-        <member name="M:Spatial4n.Core.Shapes.Impl.RectangleImpl.Equals(Spatial4n.Core.Shapes.Rectangle,System.Object)">
-            <summary>
-            All {@link Rectangle} implementations should use this definition of {@link Object#equals(Object)}.
-            </summary>
-            <param name="thiz"></param>
-            <param name="o"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Spatial4n.Core.Shapes.Impl.GeoCircle">
-            <summary>
-            A circle as it exists on the surface of a sphere.
-            </summary>
         </member>
         <member name="T:Spatial4n.Core.Shapes.Impl.CircleImpl">
             <summary>
@@ -394,6 +462,11 @@
             <param name="thiz"></param>
             <returns></returns>
         </member>
+        <member name="T:Spatial4n.Core.Shapes.Impl.GeoCircle">
+            <summary>
+            A circle as it exists on the surface of a sphere.
+            </summary>
+        </member>
         <member name="M:Spatial4n.Core.Shapes.Impl.GeoCircle.RelateRectanglePhase2(Spatial4n.Core.Shapes.Rectangle,Spatial4n.Core.Shapes.SpatialRelation)">
             <summary>
             Called after bounding box is intersected.
@@ -404,44 +477,6 @@
         </member>
         <member name="M:Spatial4n.Core.Shapes.Impl.GeoCircle.NumCornersIntersect(Spatial4n.Core.Shapes.Rectangle)">
             Returns either 0 for none, 1 for some, or 4 for all. 
-        </member>
-        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.ReadShape(System.String)">
-             <summary>
-             Reads a shape from a given string (ie, X Y, XMin XMax... WKT)
-             <ul>
-               <li>Point: X Y
-               <br /> 1.23 4.56
-               </li>
-               <li>BOX: XMin YMin XMax YMax
-               <br /> 1.23 4.56 7.87 4.56</li>
-               <li><a href="http://en.wikipedia.org/wiki/Well-known_text">
-                 WKT (Well Known Text)</a>
-               <br /> POLYGON( ... )
-               <br /> <b>Note:</b>Polygons and WKT might not be supported by this
-               spatial context; you'll have to use {@link com.spatial4j.core.context.jts.JtsSpatialContext}.
-               </li>
-             </ul>
-             @param value A string representation of the shape; not null.
-             @return A Shape; not null.
-            
-             @see #writeShape
-             </summary>
-             <param name="value"></param>
-             <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.WriteShape(Spatial4n.Core.Shapes.Shape)">
-            <summary>
-            Writes a shape to a String, in a format that can be read by {@link #readShape(String)}.
-            </summary>
-            <param name="shape"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Io.ShapeReadWriter.ReadLatCommaLonPoint(System.String)">
-            <summary>
-            Reads geospatial latitude then a comma then longitude.
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
         </member>
         <member name="T:Spatial4n.Core.Shapes.Impl.PointImpl">
             <summary>
@@ -485,15 +520,32 @@
             <param name="thiz"></param>
             <returns></returns>
         </member>
-        <member name="T:Spatial4n.Core.Distance.CartesianDistCalc">
+        <!-- Badly formed XML comment ignored for member "T:Spatial4n.Core.Shapes.Impl.RectangleImpl" -->
+        <member name="M:Spatial4n.Core.Shapes.Rectangle.GetCrossesDateLine">
             <summary>
-            Calculates based on Euclidean / Cartesian 2d plane.
+            Only meaningful for geospatial contexts.
             </summary>
+            <returns></returns>
         </member>
-        <member name="T:Spatial4n.Core.Distance.GeodesicSphereDistCalc">
+        <member name="M:Spatial4n.Core.Shapes.Rectangle.Reset(System.Double,System.Double,System.Double,System.Double)">
             <summary>
-            A base class for a Distance Calculator that assumes a spherical earth model. 
+            Expert: Resets the state of this shape given the arguments. This is a
+            performance feature to avoid excessive Shape object allocation as well as
+            some argument error checking. Mutable shapes is error-prone so use with
+            care.
             </summary>
+            <param name="minX"></param>
+            <param name="maxX"></param>
+            <param name="minY"></param>
+            <param name="maxY"></param>
+        </member>
+        <member name="M:Spatial4n.Core.Shapes.Impl.RectangleImpl.Equals(Spatial4n.Core.Shapes.Rectangle,System.Object)">
+            <summary>
+            All {@link Rectangle} implementations should use this definition of {@link Object#equals(Object)}.
+            </summary>
+            <param name="thiz"></param>
+            <param name="o"></param>
+            <returns></returns>
         </member>
         <member name="M:Spatial4n.Core.Shapes.MultiShape.#ctor(System.Collections.Generic.IEnumerable{Spatial4n.Core.Shapes.Shape},Spatial4n.Core.Context.SpatialContext)">
             <summary>
@@ -502,94 +554,42 @@
             <param name="geoms"></param>
             <param name="ctx"></param>
         </member>
-        <member name="T:Spatial4n.Core.Io.ParseUtils">
+        <member name="T:Spatial4n.Core.Shapes.SpatialRelation">
             <summary>
-            Utility methods related to parsing shapes.
+            The set of spatial relationships.  Naming is consistent with OGC spec conventions as seen in SQL/MM and others.
+            No equality case.  If two Shape instances are equal then the result might be CONTAINS or WITHIN, and
+            some logic might fail under this edge condition when it's not careful to check.
+            Client code must be written to detect this and act accordingly.  In RectangleImpl.Relate(), it checks
+            for this explicitly, for example. TestShapes2D.assertRelation() checks too.
             </summary>
         </member>
-        <member name="M:Spatial4n.Core.Io.ParseUtils.ParsePoint(System.String[],System.String,System.Int32)">
-            <summary>
-            Given a string containing <i>dimension</i> values encoded in it, separated by commas, return a String array of length <i>dimension</i>
-            containing the values.
-            </summary>
-            <param name="_out">A preallocated array.  Must be size dimension.  If it is not it will be resized.</param>
-            <param name="externalVal">The value to parse</param>
-            <param name="dimension">The expected number of values for the point</param>
-            <returns>An array of the values that make up the point (aka vector)</returns>
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Shapes.SpatialRelationComparators.Combine(Spatial4n.Core.Shapes.SpatialRelation,Spatial4n.Core.Shapes.SpatialRelation)" -->
+        <member name="M:Spatial4n.Core.Shapes.SpatialRelationComparators.Inverse(Spatial4n.Core.Shapes.SpatialRelation)">
+            Not commutative!  WITHIN.inverse().inverse() != WITHIN. 
         </member>
-        <member name="M:Spatial4n.Core.Io.ParseUtils.ParsePointDouble(System.Double[],System.String,System.Int32)">
+        <member name="M:Spatial4n.Core.Util.GeohashUtils.EncodeLatLon(System.Double,System.Double)">
             <summary>
-            Given a string containing <i>dimension</i> values encoded in it, separated by commas, return a double array of length <i>dimension</i>
-            containing the values.
+            Encodes the given latitude and longitude into a geohash
             </summary>
-            <param name="out">A preallocated array.  Must be size dimension.  If it is not it will be resized.</param>
-            <param name="externalVal">The value to parse</param>
-            <param name="dimension">The expected number of values for the point</param>
-            <returns>An array of the values that make up the point (aka vector)</returns>
+            <param name="latitude">Latitude to encode</param>
+            <param name="longitude">Longitude to encode</param>
+            <returns>Geohash encoding of the longitude and latitude</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Io.ParseUtils.ParseLatitudeLongitude(System.Double[],System.String)" -->
-        <!-- Badly formed XML comment ignored for member "T:Spatial4n.Core.Context.SpatialContext" -->
-        <member name="F:Spatial4n.Core.Context.SpatialContext.GEO">
-            <summary>
-            A popular default SpatialContext implementation for geospatial.
-            </summary>
-        </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.#ctor(System.Boolean,Spatial4n.Core.Distance.DistanceCalculator,Spatial4n.Core.Shapes.Rectangle)">
-            <summary>
+        <member name="M:Spatial4n.Core.Util.GeohashUtils.Decode(System.String,Spatial4n.Core.Context.SpatialContext)">
+             Decodes the given geohash into a latitude and longitude
             
-            </summary>
-            <param name="geo">Establishes geo vs cartesian / Euclidean.</param>
-            <param name="calculator">Optional; defaults to Haversine or cartesian depending on units.</param>
-            <param name="worldBounds">Optional; defaults to GEO_WORLDBOUNDS or MAX_WORLDBOUNDS depending on units.</param> 
+             @param geohash Geohash to deocde
+             @return Array with the latitude at index 0, and longitude at index 1
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.GetWorldBounds" -->
-        <member name="M:Spatial4n.Core.Context.SpatialContext.IsGeo">
-            <summary>
-            Is this a geospatial context (true) or simply 2d spatial (false).
-            </summary>
-            <returns></returns>
+        <member name="M:Spatial4n.Core.Util.GeohashUtils.DecodeBoundary(System.String,Spatial4n.Core.Context.SpatialContext)">
+            Returns min-max lat, min-max lon. 
         </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.VerifyX(System.Double)">
-            <summary>
-            Ensure fits in {@link #getWorldBounds()}
-            </summary>
-            <param name="x"></param>
+        <member name="M:Spatial4n.Core.Util.GeohashUtils.GetSubGeohashes(System.String)">
+            Array of geohashes 1 level below the baseGeohash. Sorted. 
         </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.VerifyY(System.Double)">
-            <summary>
-            Ensure fits in {@link #getWorldBounds()}
-            </summary>
-            <param name="y"></param>
+        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Util.GeohashUtils.LookupHashLenForWidthHeight(System.Double,System.Double)" -->
+        <member name="F:Spatial4n.Core.Util.GeohashUtils.hashLenToLatHeight">
+            See the table at http://en.wikipedia.org/wiki/Geohash 
         </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.MakePoint(System.Double,System.Double)">
-            <summary>
-            Construct a point.
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.MakeRectangle(Spatial4n.Core.Shapes.Point,Spatial4n.Core.Shapes.Point)">
-            <summary>
-            Construct a rectangle. The parameters will be normalized.
-            </summary>
-            <param name="lowerLeft"></param>
-            <param name="upperRight"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Spatial4n.Core.Context.SpatialContext.MakeRectangle(System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            Construct a rectangle. If just one longitude is on the dateline (+/- 180)
-            then potentially adjust its sign to ensure the rectangle does not cross the
-            dateline.
-            </summary>
-            <param name="minX"></param>
-            <param name="maxX"></param>
-            <param name="minY"></param>
-            <param name="maxY"></param>
-            <returns></returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.MakeCircle(System.Double,System.Double,System.Double)" -->
-        <!-- Badly formed XML comment ignored for member "M:Spatial4n.Core.Context.SpatialContext.MakeCircle(Spatial4n.Core.Shapes.Point,System.Double)" -->
     </members>
 </doc>

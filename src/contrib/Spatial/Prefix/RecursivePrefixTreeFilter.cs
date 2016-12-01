@@ -142,8 +142,12 @@ if (!scan) {
 								continue;
 							if (termLevel == detailLevel || scanCell.IsLeaf())
 							{
+								Shape cShape;
+								if (termLevel == grid.GetMaxLevels() && queryShape.HasArea())
 								//TODO should put more thought into implications of box vs point
-								Shape cShape = termLevel == grid.GetMaxLevels() ? scanCell.GetCenter() : scanCell.GetShape();
+									cShape = scanCell.GetCenter();
+								else
+									cShape = scanCell.GetShape();
                                 if (queryShape.Relate(cShape) == SpatialRelation.DISJOINT)
 									continue;
 

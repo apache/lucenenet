@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 #if NET35
 using Lucene.Net.Support.Compatibility;
 #else
@@ -40,11 +41,16 @@ namespace Lucene.Net.Spatial.Util
 			termAtt.SetTermBuffer(termAtt.Term + new string(new[] { ch })); // TODO: Not optimal, but works
 		}
 
-		private static readonly ConcurrentDictionary<string, IBits> _docsWithFieldCache = new ConcurrentDictionary<string, IBits>();
+        private static readonly ConcurrentDictionary<Key<string, IndexReader>, IBits> _docsWithFieldCache = new ConcurrentDictionary<Key<string, IndexReader>, IBits>();
 
-		internal static IBits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
+        //john diss: previously _docsWithFieldCache was keyed only by field name, when a cache request would come in it would always
+        //return the entry associated with the first segment reader ever encountered for that field name.
+        //adding the reader to the cache key fixes this issue, though I am not experienced enough with the inner workings of Lucene.net
+        //to know if this is a bad idea for other reasons e.g transient readers or such like
+
+        internal static IBits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
 		{
-			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
+			return _docsWithFieldCache.GetOrAdd(new Key<string,IndexReader>(field, reader), key => DocsWithFieldCacheEntry_CreateValue(key.Item2, new Entry(key.Item1, null), false));
 		}
 
         /// <summary> <p/>
@@ -147,6 +153,50 @@ namespace Lucene.Net.Spatial.Util
 		}
 	}
 
+    //john diss: this is to use in place of Tuple which does not exist in net35
+    internal struct Key<T1, T2> : IEquatable<Key<T1, T2>>
+    {
+        public bool Equals(Key<T1, T2> other)
+        {
+            return EqualityComparer<T1>.Default.Equals(Item1, other.Item1) && EqualityComparer<T2>.Default.Equals(Item2, other.Item2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            return obj is Key<T1, T2> && Equals((Key<T1, T2>)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (EqualityComparer<T1>.Default.GetHashCode(Item1) * 397) ^ EqualityComparer<T2>.Default.GetHashCode(Item2);
+            }
+        }
+
+        public static bool operator ==(Key<T1, T2> left, Key<T1, T2> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Key<T1, T2> left, Key<T1, T2> right)
+        {
+            return !left.Equals(right);
+        }
+
+        public readonly T1 Item1;
+        public readonly T2 Item2;
+
+        public Key(T1 item1, T2 item2)
+        {
+            Item1 = item1;
+            Item2 = item2;
+        }
+    }
 	public static class Arrays
 	{
 		public static void Fill<T>(T[] array, int fromIndex, int toIndex, T value)
@@ -211,5 +261,8 @@ namespace Lucene.Net.Spatial.Util
 		{
 			return field.GetHashCode() ^ (custom == null ? 0 : custom.GetHashCode());
 		}
+
+
 	}
+
 }

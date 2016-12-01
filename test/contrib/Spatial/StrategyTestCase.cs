@@ -253,7 +253,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 assertEquals("Not equal for doc " + gotSD.Doc, expectedScore, gotSD.Score, delta);
             }
 
-            CheckHits.checkExplanations(q, "", indexSearcher);
+            // CheckHits.checkExplanations(q, "", indexSearcher);
         }
     }
 }

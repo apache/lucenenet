@@ -104,9 +104,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Spatial4n.Core.NTS, Version=0.3.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
+    <Reference Include="Spatial4n.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.NTS.dll</HintPath>
+      <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
@@ -119,9 +119,9 @@
       <Link>Paths.cs</Link>
     </Compile>
     <Compile Include="BBox\TestBBoxStrategy.cs" />
-    <Compile Include="CheckHits.cs" />
+    <Compile Include="Compatibility\CompatibilityExtensionsTest.cs" />
+    <Compile Include="Compatibility\FixedBitSetTest.cs" />	
     <Compile Include="Compatibility\TermsFilterTest.cs" />
-    <Compile Include="DistanceStrategyTest.cs" />
     <Compile Include="PortedSolr3Test.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
@@ -158,9 +158,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\contrib\Spatial\Contrib.Spatial.NTS.csproj">
-      <Project>{02d030d0-c7b5-4561-8bdd-41408b2e2f41}</Project>
-      <Name>Contrib.Spatial.NTS</Name>
+    <ProjectReference Include="..\..\..\src\contrib\Spatial\Contrib.Spatial.csproj">
+      <Project>{35C347F4-24B2-4BE5-8117-A0E3001551CE}</Project>
+      <Name>Contrib.Spatial</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>

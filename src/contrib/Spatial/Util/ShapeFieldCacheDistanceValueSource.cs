@@ -63,22 +63,23 @@ namespace Lucene.Net.Spatial.Util
 				return (float)DoubleVal(doc);
 			}
 
-            public override double DoubleVal(int doc)
-            {
-                var vals = cache.GetShapes(doc);
-                if (vals != null)
-                {
+			public override double DoubleVal(int doc)
+			{
+				var vals = cache.GetShapes(doc);
+				if (vals != null)
+				{
                     double v = calculator.Distance(from, vals[0]);
-                    for (int i = 1; i < vals.Count; i++)
-                    {
+					for (int i = 1; i < vals.Count; i++)
+					{
                         v = Math.Min(v, calculator.Distance(from, vals[i]));
-                    }
-                    return v;
-                }
-                return nullValue;
-            }
+					}
+					// Solr's 'recip' function where v = distance and v > 0.
+					return v > 0 ? 1000 / (1 * v + 1000) : 0;
+				}
+				return Double.NaN;
+			}
 
-		    public override string ToString(int doc)
+			public override string ToString(int doc)
 			{
 				return enclosingInstance.Description() + "=" + FloatVal(doc);
 			}
