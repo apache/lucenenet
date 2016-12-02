@@ -649,6 +649,7 @@
     <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
+    <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />

@@ -7,6 +7,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -69,8 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (numericConfig != null)
                         {
 
-                            /*NumberFormat*/
-                            string numberFormat = numericConfig.NumberFormat;
+                            NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
                             /*Number*/
                             object number = null;
@@ -80,8 +80,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                                 try
                                 {
-                                    //number = numberFormat.parse(text);
-                                    number = decimal.Parse(text, NumberStyles.Any);// LUCENENET TODO: use the current culture?
+                                    number = numberFormat.Parse(text);
+                                    //number = decimal.Parse(text, NumberStyles.Any);// LUCENENET TODO: use the current culture?
 
                                 }
                                 catch (FormatException e)

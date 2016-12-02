@@ -18,7 +18,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <seealso cref="NumericConfig"/>
     public class NumericQueryNode : QueryNodeImpl, IFieldValuePairQueryNode<object> // LUCENENET TODO: Can we use Decimal??
     {
-        private /*NumberFormat*/ string numberFormat;
+        private NumberFormat numberFormat;
 
         private string field;
 
@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * @param numberFormat the {@link NumberFormat} used to convert the value to {@link String}
          */
         public NumericQueryNode(string field, /*Number*/ object value,
-            /*NumberFormat*/ string numberFormat)
+            NumberFormat numberFormat)
             : base()
         {
             NumberFormat = numberFormat;
@@ -76,8 +76,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          */
         protected string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(new StringCharSequenceWrapper(string.Format(numberFormat, this.value)) /*numberFormat.format(this.value)*/,
-                CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL).ToString();
+            //return escaper.Escape(new StringCharSequenceWrapper(/*string.Format(numberFormat, this.value))*/ numberFormat.Format(this.value),
+            //    CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL).ToString();
+
+            return escaper.Escape(numberFormat.Format(this.value),
+                CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
         }
 
 
@@ -98,7 +101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @return the {@link NumberFormat} used to convert the value to {@link String}
          */
-        public virtual /*NumberFormat*/ string NumberFormat
+        public virtual NumberFormat NumberFormat
         {
             get { return this.numberFormat; }
             set { this.numberFormat = value; }
@@ -131,7 +134,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public override string ToString()
         {
             return "<numeric field='" + this.field + "' number='"
-                + string.Format(numberFormat, value) + "'/>";
+                + numberFormat.Format(value) + "'/>";
         }
     }
 }

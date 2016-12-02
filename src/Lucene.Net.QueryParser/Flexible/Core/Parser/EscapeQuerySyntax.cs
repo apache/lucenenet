@@ -21,6 +21,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
         /// <param name="locale">locale for the current query</param>
         /// <param name="type">select the type of escape operation to use</param>
         /// <returns>escaped text</returns>
+        // LUCENENET specific overload for text as string
+        string Escape(string text, CultureInfo locale, EscapeQuerySyntax.Type type);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"> text to be escaped</param>
+        /// <param name="locale">locale for the current query</param>
+        /// <param name="type">select the type of escape operation to use</param>
+        /// <returns>escaped text</returns>
         ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntax.Type type);
     }
 

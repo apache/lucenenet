@@ -296,7 +296,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return buffer;
         }
 
-        // LUCENENET TODO: Add overload for string
+        // LUCENENET specific overload for text as string
+        public virtual string Escape(string text, CultureInfo locale, EscapeQuerySyntax.Type type)
+        {
+            if (text == null || text.Length == 0)
+                return text;
+
+            return Escape(text.ToCharSequence(), locale, type).ToString();
+        }
+
         public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntax.Type type)  
         {
             if (text == null || text.Length == 0)

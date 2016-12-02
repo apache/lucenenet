@@ -8,6 +8,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -68,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             string lowerText = lower.GetTextAsString();
                             string upperText = upper.GetTextAsString();
-                            /*NumberFormat*/ string numberFormat = numericConfig.NumberFormat;
+                            NumberFormat numberFormat = numericConfig.NumberFormat;
                             /*Number*/
                             object lowerNumber = null, upperNumber = null;
 
@@ -77,8 +78,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                                 try
                                 {
-                                    //lowerNumber = numberFormat.parse(lowerText);
-                                    lowerNumber = decimal.Parse(lowerText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
+                                    lowerNumber = numberFormat.Parse(lowerText);
+                                    //lowerNumber = decimal.Parse(lowerText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
                                 }
                                 catch (FormatException e)
                                 {
@@ -95,8 +96,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                                 try
                                 {
-                                    //upperNumber = numberFormat.parse(upperText);
-                                    upperNumber = decimal.Parse(upperText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
+                                    upperNumber = numberFormat.Parse(upperText);
+                                    //upperNumber = decimal.Parse(upperText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
                                 }
                                 catch (FormatException e)
                                 {

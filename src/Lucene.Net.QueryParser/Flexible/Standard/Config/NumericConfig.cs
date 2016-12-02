@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     {
         private int precisionStep;
 
-        private /*NumberFormat*/ string format;
+        private NumberFormat format;
 
         private NumericType type;
 
@@ -36,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * @see NumericConfig#setNumberFormat(NumberFormat)
          * @see #setType(org.apache.lucene.document.FieldType.NumericType)
          */
-        public NumericConfig(int precisionStep, /*NumberFormat*/ string format,
+        public NumericConfig(int precisionStep, NumberFormat format,
             NumericType type)
         {
             PrecisionStep = precisionStep;
@@ -64,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * @return the {@link NumberFormat} used to parse a {@link String} to
          *         {@link Number}
          */
-        public virtual /*NumberFormat*/ string NumberFormat
+        public virtual NumberFormat NumberFormat
         {
             get { return format; }
             set
