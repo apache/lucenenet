@@ -11,7 +11,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 {
     public class QueryNodeProcessorPipeline : IQueryNodeProcessor, IList<IQueryNodeProcessor>
     {
-        //private LinkedList<IQueryNodeProcessor> processors = new LinkedList<IQueryNodeProcessor>();
         private List<IQueryNodeProcessor> processors = new List<IQueryNodeProcessor>();
 
         private QueryConfigHandler queryConfig;
@@ -60,14 +59,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
         public virtual IQueryNode Process(IQueryNode queryTree)
         {
-
             foreach (IQueryNodeProcessor processor in this.processors)
             {
                 queryTree = processor.Process(queryTree);
             }
 
             return queryTree;
-
         }
 
         /**
@@ -79,7 +76,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          * @see QueryNodeProcessor#getQueryConfigHandler()
          * @see QueryConfigHandler
          */
-
         public virtual void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;
@@ -88,13 +84,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             {
                 processor.SetQueryConfigHandler(this.queryConfig);
             }
-
         }
 
         /**
          * @see List#add(Object)
          */
-
         public virtual bool Add(IQueryNodeProcessor processor)
         {
             this.processors.Add(processor);
@@ -106,58 +100,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             }
 
             return added;
-
         }
-
-        /**
-         * @see List#add(int, Object)
-         */
-
-        //public virtual void Add(int index, IQueryNodeProcessor processor)
-        //{
-        //    this.processors.Insert(index, processor);
-        //    processor.SetQueryConfigHandler(this.queryConfig);
-
-        //}
-
-        //      /**
-        //       * @see List#addAll(Collection)
-        //       */
-
-        //public virtual bool AddAll(Collection<? extends QueryNodeProcessor> c)
-        //      {
-        //          boolean anyAdded = this.processors.addAll(c);
-
-        //          for (QueryNodeProcessor processor : c)
-        //          {
-        //              processor.setQueryConfigHandler(this.queryConfig);
-        //          }
-
-        //          return anyAdded;
-
-        //      }
-
-        //      /**
-        //       * @see List#addAll(int, Collection)
-        //       */
-        //      @Override
-        //public boolean addAll(int index, Collection<? extends QueryNodeProcessor> c)
-        //      {
-        //          boolean anyAdded = this.processors.addAll(index, c);
-
-        //          for (QueryNodeProcessor processor : c)
-        //          {
-        //              processor.setQueryConfigHandler(this.queryConfig);
-        //          }
-
-        //          return anyAdded;
-
-        //      }
 
         /**
          * @see List#clear()
          */
-
         public virtual void Clear()
         {
             this.processors.Clear();
@@ -166,29 +113,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         /**
          * @see List#contains(Object)
          */
-
         public virtual bool Contains(object o)
         {
             return this.processors.Contains(o);
         }
-
-        //      /**
-        //       * @see List#containsAll(Collection)
-        //       */
-        //      @Override
-        //public boolean containsAll(Collection<?> c)
-        //      {
-        //          return this.processors.containsAll(c);
-        //      }
-
-        //      /**
-        //       * @see List#get(int)
-        //       */
-        //      @Override
-        //public QueryNodeProcessor Get(int index)
-        //      {
-        //          return this.processors.get(index);
-        //      }
 
         public virtual IQueryNodeProcessor this[int index]
         {
@@ -205,130 +133,49 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 {
                     value.SetQueryConfigHandler(this.queryConfig);
                 }
-
-                //return oldProcessor;
             }
         }
 
         /**
-         * @see List#indexOf(Object)
-         */
-
-        public virtual int IndexOf(object o)
-        {
-            return this.processors.IndexOf(o as IQueryNodeProcessor);
-        }
-
+        * @see List#indexOf(Object)
+        */
         public virtual int IndexOf(IQueryNodeProcessor o)
         {
             return this.processors.IndexOf(o);
         }
 
-        //      /**
-        //       * @see List#isEmpty()
-        //       */
-        //      @Override
-        //public boolean isEmpty()
-        //      {
-        //          return this.processors.isEmpty();
-        //      }
-
-        //      /**
-        //       * @see List#iterator()
-        //       */
-        //      @Override
-        //public Iterator<QueryNodeProcessor> iterator()
-        //      {
-        //          return this.processors.iterator();
-        //      }
-
+        /**
+         * @see List#iterator()
+         */
         public virtual IEnumerator<IQueryNodeProcessor> GetEnumerator()
         {
             return this.processors.GetEnumerator();
         }
 
-        //      /**
-        //       * @see List#lastIndexOf(Object)
-        //       */
-        //      @Override
-        //public int lastIndexOf(Object o)
-        //      {
-        //          return this.processors.lastIndexOf(o);
-        //      }
-
-        //      /**
-        //       * @see List#listIterator()
-        //       */
-        //      @Override
-        //public ListIterator<QueryNodeProcessor> listIterator()
-        //      {
-        //          return this.processors.listIterator();
-        //      }
-
-        //      /**
-        //       * @see List#listIterator(int)
-        //       */
-        //      @Override
-        //public ListIterator<QueryNodeProcessor> listIterator(int index)
-        //      {
-        //          return this.processors.listIterator(index);
-        //      }
-
         /**
          * @see List#remove(Object)
          */
-
-        //public virtual bool Remove(object o)
-        //{
-        //    return this.processors.Remove(o as IQueryNodeProcessor);
-        //}
-
         public virtual bool Remove(IQueryNodeProcessor o)
         {
             return this.processors.Remove(o);
         }
 
-        //      /**
-        //       * @see List#remove(int)
-        //       */
-        //      @Override
-        //public QueryNodeProcessor remove(int index)
-        //      {
-        //          return this.processors.remove(index);
-        //      }
-
+        /**
+         * @see List#remove(int)
+         */
         public virtual void RemoveAt(int index)
         {
             this.processors.RemoveAt(index);
         }
-
-        //      /**
-        //       * @see List#removeAll(Collection)
-        //       */
-        //      @Override
-        //public boolean removeAll(Collection<?> c)
-        //      {
-        //          return this.processors.removeAll(c);
-        //      }
 
         public virtual void RemoveRange(int index, int count)
         {
             this.processors.RemoveRange(index, count);
         }
 
-        //      /**
-        //       * @see List#retainAll(Collection)
-        //       */
-        //      @Override
-        //public boolean retainAll(Collection<?> c)
-        //      {
-        //          return this.processors.retainAll(c);
-        //      }
-
         /**
          * @see List#set(int, Object)
          */
-
         public virtual IQueryNodeProcessor Set(int index, IQueryNodeProcessor processor)
         {
             IQueryNodeProcessor oldProcessor = this.processors[index];
@@ -340,17 +187,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             }
 
             return oldProcessor;
-
         }
-
-        //      /**
-        //       * @see List#size()
-        //       */
-        //      @Override
-        //public int size()
-        //      {
-        //          return this.processors.size();
-        //      }
 
         public virtual int Count
         {
@@ -364,15 +201,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 return false;
             }
         }
-
-        //      /**
-        //       * @see List#subList(int, int)
-        //       */
-        //      @Override
-        //public List<QueryNodeProcessor> subList(int fromIndex, int toIndex)
-        //      {
-        //          return this.processors.subList(fromIndex, toIndex);
-        //      }
 
         public virtual List<IQueryNodeProcessor> GetRange(int index, int count)
         {
@@ -404,23 +232,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         {
             return GetEnumerator();
         }
-
-        //      /**
-        //       * @see List#toArray(Object[])
-        //       */
-        //      @Override
-        //public <T> T[] toArray(T[] array)
-        //      {
-        //          return this.processors.toArray(array);
-        //      }
-
-        //      /**
-        //       * @see List#toArray()
-        //       */
-        //      @Override
-        //public Object[] toArray()
-        //      {
-        //          return this.processors.toArray();
-        //      }
     }
 }

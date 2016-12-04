@@ -20,7 +20,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             TokenizedPhraseQueryNode phraseNode = (TokenizedPhraseQueryNode)queryNode;
@@ -31,7 +30,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-
                 foreach (IQueryNode child in children)
                 {
                     TermQuery termQuery = (TermQuery)child
@@ -39,21 +37,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                     FieldQueryNode termNode = (FieldQueryNode)child;
 
                     phraseQuery.Add(termQuery.Term, termNode.PositionIncrement);
-
                 }
-
             }
 
             return phraseQuery;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

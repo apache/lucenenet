@@ -13,26 +13,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
     /// <summary>
     /// Validates every query node in a query node tree. This processor will pass
-    /// fine if the query nodes are only {@link BooleanQueryNode}s,
-    /// {@link OrQueryNode}s or {@link FieldQueryNode}s, otherwise an exception will
+    /// fine if the query nodes are only <see cref="BooleanQueryNode"/>s,
+    /// <see cref="OrQueryNode"/>s or <see cref="FieldQueryNode"/>s, otherwise an exception will
     /// be thrown.
     /// <para/>
-    /// If they are {@link AndQueryNode} or an instance of anything else that
-    /// implements {@link FieldQueryNode} the exception will also be thrown.
+    /// If they are <see cref="AndQueryNode"/> or an instance of anything else that
+    /// implements <see cref="FieldQueryNode"/> the exception will also be thrown.
     /// </summary>
     public class SpansValidatorQueryNodeProcessor : QueryNodeProcessorImpl
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             if (!((node is BooleanQueryNode && !(node is AndQueryNode)) || node
                 .GetType() == typeof(FieldQueryNode)))
             {
@@ -41,15 +37,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             }
 
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

@@ -41,10 +41,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is TermRangeQueryNode)
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
@@ -57,13 +55,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     if (fieldConfig != null)
                     {
-
                         NumericConfig numericConfig = fieldConfig
                             .Get(ConfigurationKeys.NUMERIC_CONFIG);
 
                         if (numericConfig != null)
                         {
-
                             FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
                             FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
 
@@ -75,11 +71,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             if (lowerText.Length > 0)
                             {
-
                                 try
                                 {
                                     lowerNumber = numberFormat.Parse(lowerText);
-                                    //lowerNumber = decimal.Parse(lowerText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
                                 }
                                 catch (FormatException e)
                                 {
@@ -88,16 +82,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                             .GetTextAsString(), numberFormat.GetType()
                                             .AssemblyQualifiedName), e);
                                 }
-
                             }
 
                             if (upperText.Length > 0)
                             {
-
                                 try
                                 {
                                     upperNumber = numberFormat.Parse(upperText);
-                                    //upperNumber = decimal.Parse(upperText, NumberStyles.Any);// LUCENENET TODO: use the current culture?
                                 }
                                 catch (FormatException e)
                                 {
@@ -106,7 +97,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                             .GetTextAsString(), numberFormat.GetType()
                                             .AssemblyQualifiedName), e);
                                 }
-
                             }
 
                             switch (numericConfig.Type)
@@ -139,17 +129,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             return new NumericRangeQueryNode(lowerNode, upperNode,
                                 lowerInclusive, upperInclusive, numericConfig);
-
                         }
-
                     }
-
                 }
-
             }
 
             return node;
-
         }
 
         protected override IQueryNode PreProcessNode(IQueryNode node)

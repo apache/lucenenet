@@ -20,10 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// </summary>
     public class ModifierQueryNode : QueryNodeImpl
     {
-        
         // LUCENENET NOTE: Modifier enum moved outside of this class
-
-
 
         private Modifier modifier = Nodes.Modifier.MOD_NONE;
 
@@ -44,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             Allocate();
-            SetLeaf(false);
+            IsLeaf = false;
             Add(query);
             this.modifier = mod;
         }

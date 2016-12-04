@@ -17,18 +17,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
             return "[NTF]";
         }
 
-
         public override string ToString()
         {
             return "<notokenfound/>";
         }
-
 
         public override IQueryNode CloneTree()
         {

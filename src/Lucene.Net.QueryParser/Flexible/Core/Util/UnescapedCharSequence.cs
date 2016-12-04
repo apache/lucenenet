@@ -99,7 +99,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
                 newLength);
         }
 
-
         public override string ToString()
         {
             return new string(this.chars);

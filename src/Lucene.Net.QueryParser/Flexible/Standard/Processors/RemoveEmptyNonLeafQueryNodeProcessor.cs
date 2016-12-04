@@ -29,74 +29,56 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             queryTree = base.Process(queryTree);
 
             if (!queryTree.IsLeaf)
             {
-
                 IList<IQueryNode> children = queryTree.GetChildren();
 
                 if (children == null || children.Count == 0)
                 {
                     return new MatchNoDocsQueryNode();
                 }
-
             }
 
             return queryTree;
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             try
             {
-
                 foreach (IQueryNode child in children)
                 {
-
                     if (!child.IsLeaf)
                     {
-
                         IList<IQueryNode> grandChildren = child.GetChildren();
 
                         if (grandChildren != null && grandChildren.Count > 0)
                         {
                             this.childrenBuffer.Add(child);
                         }
-
                     }
                     else
                     {
                         this.childrenBuffer.Add(child);
                     }
-
                 }
 
                 children.Clear();
                 children.AddRange(this.childrenBuffer);
-
             }
             finally
             {
@@ -104,7 +86,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
 
             return children;
-
         }
     }
 }

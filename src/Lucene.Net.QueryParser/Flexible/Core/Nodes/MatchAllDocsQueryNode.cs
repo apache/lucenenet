@@ -18,18 +18,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             // empty constructor
         }
 
-
         public override string ToString()
         {
             return "<matchAllDocs field='*' term='*'/>";
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             return "*:*";
         }
-
 
         public override IQueryNode CloneTree()
         {

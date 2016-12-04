@@ -44,7 +44,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return sb.ToString();
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             var children = GetChildren();

@@ -24,10 +24,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
-
             // validates node
             if (!(queryNode is MatchAllDocsQueryNode))
             {
@@ -38,15 +36,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             }
 
             return new MatchAllDocsQuery();
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

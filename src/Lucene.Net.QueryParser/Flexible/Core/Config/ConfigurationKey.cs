@@ -16,18 +16,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     public sealed class ConfigurationKey<T> : ConfigurationKey
     {
         internal ConfigurationKey() { }
-
-        /**
-         * Creates a new instance.
-         * 
-         * @param <T> the value's type
-         * 
-         * @return a new instance
-         */
-        //public static ConfigurationKey<T> NewInstance()
-        //{
-        //    return new ConfigurationKey<T>();
-        //}
     }
 
     /// <summary>
@@ -37,6 +25,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     /// </summary>
     public abstract class ConfigurationKey
     {
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <returns>a new instance</returns>
         public static ConfigurationKey<T> NewInstance<T>()
         {
             return new ConfigurationKey<T>();

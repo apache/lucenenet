@@ -21,10 +21,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is FieldQueryNode)
             {
                 FieldQueryNode fqn = (FieldQueryNode)node;
@@ -32,31 +30,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 if (fqn.Field.ToString().Equals("*")
                     && fqn.Text.ToString().Equals("*"))
                 {
-
                     return new MatchAllDocsQueryNode();
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
-
     }
 }

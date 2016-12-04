@@ -47,7 +47,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             : base(message.Key, throwable)
         {
             this.message = message;
-
         }
 
         /*
@@ -55,7 +54,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * 
          * @see org.apache.lucene.messages.NLSException#getMessageObject()
          */
-
         public virtual IMessage MessageObject
         {
             get { return this.message; }

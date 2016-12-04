@@ -20,11 +20,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         */
         public BooleanQueryNode(IList<IQueryNode> clauses)
         {
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
             Set(clauses);
         }
-
 
         public override string ToString()
         {
@@ -41,7 +40,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             sb.Append("\n</boolean>");
             return sb.ToString();
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -65,7 +63,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return "( " + sb.ToString() + " )";
         }
 
-
         public override IQueryNode CloneTree()
         {
             BooleanQueryNode clone = (BooleanQueryNode)base.CloneTree();
@@ -74,6 +71,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             return clone;
         }
-
     }
 }

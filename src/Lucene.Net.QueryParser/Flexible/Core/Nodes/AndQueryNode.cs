@@ -27,7 +27,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-
         public override string ToString()
         {
             var children = GetChildren();
@@ -44,7 +43,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             sb.Append("\n</boolean>");
             return sb.ToString();
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {

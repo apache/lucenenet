@@ -45,6 +45,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Messages
         public static string NUMBER_CLASS_NOT_SUPPORTED_BY_NUMERIC_RANGE_QUERY;
         public static string UNSUPPORTED_NUMERIC_DATA_TYPE;
         public static string NUMERIC_CANNOT_BE_EMPTY;
-
     }
 }

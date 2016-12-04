@@ -26,25 +26,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          */
         public OpaqueQueryNode(string schema, string value)
         {
-            this.SetLeaf(true);
+            this.IsLeaf = true;
 
             this.schema = schema;
             this.value = value;
-
         }
-
 
         public override string ToString()
         {
             return "<opaque schema='" + this.schema + "' value='" + this.value + "'/>";
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             return "@" + this.schema + ":'" + this.value + "'";
         }
-
 
         public override IQueryNode CloneTree()
         {

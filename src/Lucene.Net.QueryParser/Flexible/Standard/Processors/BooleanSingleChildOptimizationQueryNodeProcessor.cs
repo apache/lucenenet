@@ -23,10 +23,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is BooleanQueryNode)
             {
                 IList<IQueryNode> children = node.GetChildren();
@@ -42,38 +40,27 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (modNode is BooleanModifierNode
                             || modNode.Modifier == Modifier.MOD_NONE)
                         {
-
                             return child;
-
                         }
-
                     }
                     else
                     {
                         return child;
                     }
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

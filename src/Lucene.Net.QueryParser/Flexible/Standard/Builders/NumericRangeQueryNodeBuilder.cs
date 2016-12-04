@@ -31,7 +31,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             NumericRangeQueryNode numericRangeNode = (NumericRangeQueryNode)queryNode;
@@ -53,7 +52,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             switch (numberType)
             {
-
                 case FieldType.NumericType.LONG:
                     return NumericRangeQuery.NewLongRange(field, precisionStep,
                         (long?)lowerNumber, (long?)upperNumber, minInclusive, maxInclusive);
@@ -76,16 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 default:
                     throw new QueryNodeException(new MessageImpl(
                       QueryParserMessages.UNSUPPORTED_NUMERIC_DATA_TYPE, numberType));
-
             }
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

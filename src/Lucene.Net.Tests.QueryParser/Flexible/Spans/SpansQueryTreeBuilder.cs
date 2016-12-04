@@ -31,18 +31,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         {
             return base.Build(queryTree);
         }
-
-        //Query IStandardQueryBuilder.Build(IQueryNode queryTree)
-        //{
-        //    return (Query)base.Build(queryTree);
-        //}
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //public override object Build(IQueryNode queryTree)
-        //{
-        //    return (Query)base.Build(queryTree);
-        //}
     }
 }

@@ -1,5 +1,4 @@
-﻿//using System;
-using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
@@ -22,7 +21,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /**
    * Distance condition: PARAGRAPH, SENTENCE, or NUMBER
    */
-
         public enum Type
         {
             PARAGRAPH,
@@ -30,28 +28,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             NUMBER
         }
 
-        //        public enum Type
-        //        {
-        //            PARAGRAPH /*{
-        //      @Override
-        //            CharSequence toQueryString() { return "WITHIN PARAGRAPH";
-        //        }
-        //    }*/,
-        //            SENTENCE  /*{ 
-        //      @Override
-        //      CharSequence toQueryString() { return "WITHIN SENTENCE"; }
-        //}*/,
-        //            NUMBER   /* {
-        //      @Override
-        //      CharSequence toQueryString() { return "WITHIN"; }
-        //    };*/
-        //        }
-
-        //    internal abstract string ToQueryString();
-        //}
-
         // LUCENENET NOTE: Moved ProximityType class outside of ProximityQueryNode class to
-        // prevent a naming conflict witht eh ProximityType property.
+        // prevent a naming conflict with the ProximityType property.
 
         private ProximityQueryNode.Type proximityType = ProximityQueryNode.Type.SENTENCE;
         private int distance = -1;
@@ -75,8 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             ProximityQueryNode.Type type, int distance, bool inorder)
             : base(clauses)
         {
-
-            SetLeaf(false);
+            IsLeaf = false;
             this.proximityType = type;
             this.inorder = inorder;
             this.field = field;
@@ -87,13 +64,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                     throw new QueryNodeError(new MessageImpl(
                         QueryParserMessages.PARAMETER_VALUE_NOT_SUPPORTED, "distance",
                         distance));
-
                 }
                 else
                 {
                     this.distance = distance;
                 }
-
             }
             ClearFields(clauses, field);
         }
@@ -113,7 +88,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             ProximityQueryNode.Type type, bool inorder)
             : this(clauses, field, type, -1, inorder)
         {
-
         }
 
         private static void ClearFields(IList<IQueryNode> nodes, string field)
@@ -123,7 +97,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (IQueryNode clause in nodes)
             {
-
                 if (clause is FieldQueryNode)
                 {
                     ((FieldQueryNode)clause).toQueryStringIgnoreFields = true;
@@ -159,7 +132,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return sb.ToString();
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             string withinSTR = this.proximityType.ToQueryString()
@@ -191,7 +163,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field + ":(( " + sb.ToString() + " ) " + withinSTR + ")";
             }
         }
-
 
         public override IQueryNode CloneTree()
         {

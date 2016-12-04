@@ -29,7 +29,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             : base(message.Key)
         {
             this.message = message;
-
         }
 
         public QueryNodeException(Exception throwable)
@@ -43,18 +42,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             this.message = message;
         }
 
-
         public virtual IMessage MessageObject
         {
             get { return this.message; }
         }
 
-
         public override string Message
         {
             get { return GetLocalizedMessage(); }
         }
-
 
         public virtual string GetLocalizedMessage()
         {
@@ -65,7 +61,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
             return this.message.GetLocalizedMessage(locale);
         }
-
 
         public override string ToString()
         {

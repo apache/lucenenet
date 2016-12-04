@@ -20,7 +20,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             FieldQueryNode fieldNode = (FieldQueryNode)queryNode;
@@ -28,13 +27,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             return new TermQuery(new Term(fieldNode.GetFieldAsString(), fieldNode
                 .GetTextAsString()));
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

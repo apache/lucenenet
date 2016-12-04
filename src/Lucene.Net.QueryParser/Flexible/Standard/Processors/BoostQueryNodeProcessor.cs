@@ -23,11 +23,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is IFieldableNode &&
                 (node.Parent == null || !(node.Parent is IFieldableNode)))
             {
-
                 IFieldableNode fieldNode = (IFieldableNode)node;
                 QueryConfigHandler config = GetQueryConfigHandler();
 
@@ -44,31 +42,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         {
                             return new BoostQueryNode(node, boost.Value);
                         }
-
                     }
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

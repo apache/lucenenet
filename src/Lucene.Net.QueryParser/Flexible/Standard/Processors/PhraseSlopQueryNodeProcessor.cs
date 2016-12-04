@@ -22,10 +22,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is SlopQueryNode)
             {
                 SlopQueryNode phraseSlopNode = (SlopQueryNode)node;
@@ -35,27 +33,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 {
                     return phraseSlopNode.GetChild();
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

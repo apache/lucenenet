@@ -51,7 +51,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             Analyzer analyzer = GetQueryConfigHandler().Get(ConfigurationKeys.ANALYZER);
@@ -73,24 +72,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 {
                     return base.Process(queryTree);
                 }
-
             }
 
             return queryTree;
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is ITextableQueryNode
                 && !(node is WildcardQueryNode)
                 && !(node is FuzzyQueryNode)
                 && !(node is RegexpQueryNode)
                 && !(node.Parent is IRangeQueryNode))
             {
-
                 FieldQueryNode fieldNode = ((FieldQueryNode)node);
                 string text = fieldNode.GetTextAsString();
                 string field = fieldNode.GetFieldAsString();
@@ -115,7 +109,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     try
                     {
-
                         while (buffer.IncrementToken())
                         {
                             numTokens++;
@@ -124,15 +117,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             if (positionIncrement != 0)
                             {
                                 positionCount += positionIncrement;
-
                             }
                             else
                             {
                                 severalTokensAtSamePosition = true;
                             }
-
                         }
-
                     }
                     catch (IOException e)
                     {
@@ -172,7 +162,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         hasNext = buffer.IncrementToken();
                         Debug.Assert(hasNext == true);
                         term = termAtt.ToString();
-
                     }
                     catch (IOException e)
                     {
@@ -182,7 +171,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     fieldNode.Text = term.ToCharSequence();
 
                     return fieldNode;
-
                 }
                 else if (severalTokensAtSamePosition || !(node is QuotedFieldQueryNode))
                 {
@@ -203,7 +191,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     bool hasNext = buffer.IncrementToken();
                                     Debug.Assert(hasNext == true);
                                     term = termAtt.ToString();
-
                                 }
                                 catch (IOException e)
                                 {
@@ -215,7 +202,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             }
                             return new GroupQueryNode(
                                 new StandardBooleanQueryNode(children, positionCount == 1));
-
                         }
                         else
                         {
@@ -299,7 +285,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
-
                             }
                             catch (IOException e)
                             {
@@ -308,10 +293,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             if (positionIncrement > 0 && multiTerms.Count > 0)
                             {
-
                                 foreach (FieldQueryNode termNode in multiTerms)
                                 {
-
                                     if (this.positionIncrementsEnabled)
                                     {
                                         termNode.PositionIncrement = position;
@@ -322,7 +305,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     }
 
                                     mpq.Add(termNode);
-
                                 }
 
                                 // Only increment once for each "group" of
@@ -330,21 +312,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 termGroupCount++;
 
                                 multiTerms.Clear();
-
                             }
 
                             position += positionIncrement;
                             multiTerms.Add(new FieldQueryNode(field, term, -1, -1));
-
                         }
 
                         foreach (FieldQueryNode termNode in multiTerms)
                         {
-
                             if (this.positionIncrementsEnabled)
                             {
                                 termNode.PositionIncrement = position;
-
                             }
                             else
                             {
@@ -352,17 +330,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             }
 
                             mpq.Add(termNode);
-
                         }
 
                         return mpq;
-
                     }
-
                 }
                 else
                 {
-
                     TokenizedPhraseQueryNode pq = new TokenizedPhraseQueryNode();
 
                     int position = -1;
@@ -382,7 +356,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             {
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
-
                         }
                         catch (IOException e)
                         {
@@ -395,7 +368,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         {
                             position += positionIncrement;
                             newFieldNode.PositionIncrement = position;
-
                         }
                         else
                         {
@@ -403,33 +375,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         }
 
                         pq.Add(newFieldNode);
-
                     }
 
                     return pq;
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

@@ -30,9 +30,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         }
 
 
-        public virtual object[] Arguments
+        public virtual object[] GetArguments()
         {
-            get { return this.arguments; }
+            return this.arguments;
         }
 
 
@@ -50,13 +50,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
 
         public virtual string GetLocalizedMessage(CultureInfo locale)
         {
-            return NLS.GetLocalizedMessage(Key, locale, Arguments);
+            return NLS.GetLocalizedMessage(Key, locale, GetArguments());
         }
 
 
         public override string ToString()
         {
-            object[] args = Arguments;
+            object[] args = GetArguments();
             StringBuilder sb = new StringBuilder(Key);
             if (args != null)
             {

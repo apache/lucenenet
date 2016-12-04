@@ -21,14 +21,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
          */
         public FieldConfig(string fieldName)
         {
-
             if (fieldName == null)
             {
                 throw new ArgumentException("field name should not be null!");
             }
 
             this.fieldName = fieldName;
-
         }
 
         /**

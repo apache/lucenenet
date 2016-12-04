@@ -29,6 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             : this(new FastCharStream(new StringReader("")))
         {
         }
+
         /** Parses a query string, returning a {@link org.apache.lucene.queryparser.flexible.core.nodes.QueryNode}.
         *  @param query  the query string to be parsed.
         *  @throws ParseException if the parsing fails

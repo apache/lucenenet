@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
     /// <summary>
-    /// This query config handler only adds the {@link UniqueFieldAttribute} to it.
+    /// This query config handler only adds the <see cref="IUniqueFieldAttribute"/> to it.
     /// <para/>
     /// It does not return any configuration for a field in specific.
     /// </summary>

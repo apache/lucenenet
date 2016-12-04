@@ -23,7 +23,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             MultiPhraseQueryNode phraseNode = (MultiPhraseQueryNode)queryNode;
@@ -34,7 +33,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-                //TreeDictionary<int?, List<Term>> positionTermMap = new TreeDictionary<int?, List<Term>>();
                 IDictionary<int?, List<Term>> positionTermMap = new SortedDictionary<int?, List<Term>>();
 
                 foreach (IQueryNode child in children)
@@ -43,18 +41,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                     TermQuery termQuery = (TermQuery)termNode
                         .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
 
-                    //List<Term> termList = positionTermMap[termNode.GetPositionIncrement()];
-                    //if (termList == null)
                     List<Term> termList;
                     if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out termList) || termList == null)
                     {
                         termList = new List<Term>();
                         positionTermMap[termNode.PositionIncrement] = termList;
-
                     }
 
                     termList.Add(termQuery.Term);
-
                 }
 
                 foreach (int positionIncrement in positionTermMap.Keys)
@@ -63,21 +57,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
                     phraseQuery.Add(termList.ToArray(/*new Term[termList.size()]*/),
                                 positionIncrement);
-
                 }
-
             }
 
             return phraseQuery;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

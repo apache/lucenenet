@@ -42,19 +42,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 new StandardBooleanQueryNodeBuilder());
             SetBuilder(typeof(MultiPhraseQueryNode), new MultiPhraseQueryNodeBuilder());
             SetBuilder(typeof(MatchAllDocsQueryNode), new MatchAllDocsQueryNodeBuilder());
-
         }
 
-        public override /*object*/ Query Build(IQueryNode queryNode)
+        public override Query Build(IQueryNode queryNode)
         {
             return base.Build(queryNode);
         }
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IStandardQueryBuilder
-        ///// </summary>
-        //Query IStandardQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return (Query)Build(queryNode);
-        //}
     }
 }

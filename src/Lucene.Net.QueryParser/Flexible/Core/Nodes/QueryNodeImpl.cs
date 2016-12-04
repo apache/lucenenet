@@ -30,22 +30,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected virtual void Allocate()
         {
-
             if (this.clauses == null)
             {
                 this.clauses = new List<IQueryNode>();
-
             }
             else
             {
                 this.clauses.Clear();
             }
-
         }
 
         public void Add(IQueryNode child)
         {
-
             if (IsLeaf || this.clauses == null || child == null)
             {
                 throw new ArgumentException(NLS
@@ -54,13 +50,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             this.clauses.Add(child);
             ((QueryNodeImpl)child).SetParent(this);
-
         }
-
 
         public void Add(IList<IQueryNode> children)
         {
-
             if (IsLeaf || this.clauses == null)
             {
                 throw new ArgumentException(NLS
@@ -71,19 +64,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 Add(child);
             }
-
         }
-
 
         public virtual bool IsLeaf
         {
             get { return this.isLeaf; }
+            protected set { this.isLeaf = value; }
         }
-
 
         public void Set(IList<IQueryNode> children)
         {
-
             if (IsLeaf || this.clauses == null)
             {
                 //ResourceBundle bundle = ResourceBundle
@@ -95,7 +85,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 string message = bundle.GetString(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
 
                 throw new ArgumentException(message);
-
             }
 
             // reset parent value
@@ -119,7 +108,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             Add(children);
         }
 
-
         public virtual IQueryNode CloneTree()
         {
             QueryNodeImpl clone = (QueryNodeImpl)this.MemberwiseClone();
@@ -142,22 +130,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return clone;
         }
 
-
-        public virtual /*IQueryNode*/ object Clone()
+        public virtual object Clone()
         {
             return CloneTree();
-        }
-
-        protected virtual void SetLeaf(bool isLeaf)
-        {
-            this.isLeaf = isLeaf;
         }
 
         /**
          * @return a List for QueryNode object. Returns null, for nodes that do not
          *         contain children. All leaf Nodes return null.
          */
-
         public IList<IQueryNode> GetChildren()
         {
             if (IsLeaf || this.clauses == null)
@@ -167,12 +148,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return new List<IQueryNode>(this.clauses);
         }
 
-
         public virtual void SetTag(string tagName, object value)
         {
             this.tags[tagName.ToLower(CultureInfo.InvariantCulture)] = value;
         }
-
 
         public virtual void UnsetTag(string tagName)
         {
@@ -200,7 +179,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 this.parent = parent;
             }
         }
-
 
         public virtual IQueryNode Parent
         {
@@ -246,7 +224,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
          * 
          * @see org.apache.lucene.queryparser.flexible.core.nodes.QueryNode#toString()
          */
-
         public override string ToString()
         {
             return base.ToString();
@@ -267,15 +244,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (this.parent != null)
             {
                 IList<IQueryNode> parentChildren = this.parent.GetChildren();
-                //IEnumerator<IQueryNode> it = parentChildren.GetEnumerator();
-
-                //while (it.MoveNext())
-                //{
-                //    if (it.Current == this)
-                //    {
-                //        it.Remove();
-                //    }
-                //}
 
                 // LUCENENET NOTE: Loop in reverse so we can remove items
                 // without screwing up our iterator.

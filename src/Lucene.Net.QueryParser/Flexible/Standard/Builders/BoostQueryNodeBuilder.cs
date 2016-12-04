@@ -37,15 +37,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             query.Boost = boostNode.Value;
 
             return query;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

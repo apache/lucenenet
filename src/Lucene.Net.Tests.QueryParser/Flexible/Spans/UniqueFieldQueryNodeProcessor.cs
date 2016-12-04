@@ -10,26 +10,22 @@ using System.Threading.Tasks;
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
     /// <summary>
-    /// This processor changes every field name of each {@link FieldableNode} query
+    /// This processor changes every field name of each <see cref="IFieldableNode"/> query
     /// node contained in the query tree to the field name defined in the
-    /// {@link UniqueFieldAttribute}. So, the {@link UniqueFieldAttribute} must be
-    /// defined in the {@link QueryConfigHandler} object set in this processor,
+    /// <see cref="IUniqueFieldAttribute"/>. So, the <see cref="IUniqueFieldAttribute"/> must be
+    /// defined in the <see cref="QueryConfigHandler"/> object set in this processor,
     /// otherwise it throws an exception.
     /// </summary>
-    /// <seealso cref="UniqueFieldAttribute"/>
+    /// <seealso cref="IUniqueFieldAttribute"/>
     public class UniqueFieldQueryNodeProcessor : QueryNodeProcessorImpl
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             if (node is IFieldableNode)
             {
                 IFieldableNode fieldNode = (IFieldableNode)node;
@@ -50,19 +46,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
                 String uniqueField = queryConfig.Get(SpansQueryConfigHandler.UNIQUE_FIELD);
                 fieldNode.Field = (uniqueField);
-
             }
 
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

@@ -202,7 +202,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return parser.Parse(query, "field");
         }
 
-        public void assertQueryEquals(String query, Analyzer a, String result)
+        public void AssertQueryEquals(String query, Analyzer a, String result)
         {
             Query q = GetQuery(query, a);
             String s = q.ToString("field");
@@ -213,7 +213,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        public void assertQueryEqualsAllowLeadingWildcard(String query, Analyzer a, String result)
+        public void AssertQueryEqualsAllowLeadingWildcard(String query, Analyzer a, String result)
         {
             Query q = GetQueryAllowLeadingWildcard(query, a);
             String s = q.ToString("field");
@@ -224,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        public void assertQueryEquals(StandardQueryParser qp, String field,
+        public void AssertQueryEquals(StandardQueryParser qp, String field,
             String query, String result)
         {
             Query q = qp.Parse(query, field);
@@ -236,8 +236,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        public void assertEscapedQueryEquals(String query, Analyzer a, String result)
-
+        public void AssertEscapedQueryEquals(String query, Analyzer a, String result)
         {
             String escapedQuery = QueryParserUtil.Escape(query);
             if (!escapedQuery.equals(result))
@@ -247,7 +246,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        public void assertWildcardQueryEquals(String query, bool lowercase,
+        public void AssertWildcardQueryEquals(String query, bool lowercase,
             String result, bool allowLeadingWildcard)
         {
             StandardQueryParser qp = GetParser(null);
@@ -262,13 +261,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        public void assertWildcardQueryEquals(String query, bool lowercase,
+        public void AssertWildcardQueryEquals(String query, bool lowercase,
             String result)
         {
-            assertWildcardQueryEquals(query, lowercase, result, false);
+            AssertWildcardQueryEquals(query, lowercase, result, false);
         }
 
-        public void assertWildcardQueryEquals(String query, String result)
+        public void AssertWildcardQueryEquals(String query, String result)
         {
             StandardQueryParser qp = GetParser(null);
             Query q = qp.Parse(query, "field");
@@ -292,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
 
-        public void assertQueryEqualsDOA(String query, Analyzer a, String result)
+        public void AssertQueryEqualsDOA(String query, Analyzer a, String result)
         {
             Query q = GetQueryDOA(query, a);
             String s = q.ToString("field");
@@ -323,9 +322,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             // Test Ideographic Space - As wide as a CJK character cell (fullwidth)
             // used google to translate the word "term" to japanese -> ??
-            assertQueryEquals("term\u3000term\u3000term", null,
+            AssertQueryEquals("term\u3000term\u3000term", null,
                 "term\u0020term\u0020term");
-            assertQueryEqualsAllowLeadingWildcard("??\u3000??\u3000??", null, "??\u0020??\u0020??");
+            AssertQueryEqualsAllowLeadingWildcard("??\u3000??\u3000??", null, "??\u0020??\u0020??");
         }
 
         //individual CJK chars as terms, like StandardAnalyzer
@@ -437,64 +436,64 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestSimple()
         {
-            assertQueryEquals("field=a", null, "a");
-            assertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
-            assertQueryEquals("term term term", null, "term term term");
-            assertQueryEquals("t�rm term term", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false),
+            AssertQueryEquals("field=a", null, "a");
+            AssertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
+            AssertQueryEquals("term term term", null, "term term term");
+            AssertQueryEquals("t�rm term term", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false),
                 "t�rm term term");
-            assertQueryEquals("�mlaut", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), "�mlaut");
+            AssertQueryEquals("�mlaut", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), "�mlaut");
 
             // FIXME: change MockAnalyzer to not extend CharTokenizer for this test
             //assertQueryEquals("\"\"", new KeywordAnalyzer(), "");
             //assertQueryEquals("foo:\"\"", new KeywordAnalyzer(), "foo:");
 
-            assertQueryEquals("a AND b", null, "+a +b");
-            assertQueryEquals("(a AND b)", null, "+a +b");
-            assertQueryEquals("c OR (a AND b)", null, "c (+a +b)");
+            AssertQueryEquals("a AND b", null, "+a +b");
+            AssertQueryEquals("(a AND b)", null, "+a +b");
+            AssertQueryEquals("c OR (a AND b)", null, "c (+a +b)");
 
-            assertQueryEquals("a AND NOT b", null, "+a -b");
+            AssertQueryEquals("a AND NOT b", null, "+a -b");
 
-            assertQueryEquals("a AND -b", null, "+a -b");
+            AssertQueryEquals("a AND -b", null, "+a -b");
 
-            assertQueryEquals("a AND !b", null, "+a -b");
+            AssertQueryEquals("a AND !b", null, "+a -b");
 
-            assertQueryEquals("a && b", null, "+a +b");
+            AssertQueryEquals("a && b", null, "+a +b");
 
-            assertQueryEquals("a && ! b", null, "+a -b");
+            AssertQueryEquals("a && ! b", null, "+a -b");
 
-            assertQueryEquals("a OR b", null, "a b");
-            assertQueryEquals("a || b", null, "a b");
+            AssertQueryEquals("a OR b", null, "a b");
+            AssertQueryEquals("a || b", null, "a b");
 
-            assertQueryEquals("a OR !b", null, "a -b");
+            AssertQueryEquals("a OR !b", null, "a -b");
 
-            assertQueryEquals("a OR ! b", null, "a -b");
+            AssertQueryEquals("a OR ! b", null, "a -b");
 
-            assertQueryEquals("a OR -b", null, "a -b");
+            AssertQueryEquals("a OR -b", null, "a -b");
 
-            assertQueryEquals("+term -term term", null, "+term -term term");
-            assertQueryEquals("foo:term AND field:anotherTerm", null,
+            AssertQueryEquals("+term -term term", null, "+term -term term");
+            AssertQueryEquals("foo:term AND field:anotherTerm", null,
                 "+foo:term +anotherterm");
-            assertQueryEquals("term AND \"phrase phrase\"", null,
+            AssertQueryEquals("term AND \"phrase phrase\"", null,
                 "+term +\"phrase phrase\"");
-            assertQueryEquals("\"hello there\"", null, "\"hello there\"");
+            AssertQueryEquals("\"hello there\"", null, "\"hello there\"");
             assertTrue(GetQuery("a AND b", null) is BooleanQuery);
             assertTrue(GetQuery("hello", null) is TermQuery);
             assertTrue(GetQuery("\"hello there\"", null) is PhraseQuery);
 
-            assertQueryEquals("germ term^2.0", null, "germ term^2.0");
-            assertQueryEquals("(term)^2.0", null, "term^2.0");
-            assertQueryEquals("(germ term)^2.0", null, "(germ term)^2.0");
-            assertQueryEquals("term^2.0", null, "term^2.0");
-            assertQueryEquals("term^2", null, "term^2.0");
-            assertQueryEquals("\"germ term\"^2.0", null, "\"germ term\"^2.0");
-            assertQueryEquals("\"term germ\"^2", null, "\"term germ\"^2.0");
+            AssertQueryEquals("germ term^2.0", null, "germ term^2.0");
+            AssertQueryEquals("(term)^2.0", null, "term^2.0");
+            AssertQueryEquals("(germ term)^2.0", null, "(germ term)^2.0");
+            AssertQueryEquals("term^2.0", null, "term^2.0");
+            AssertQueryEquals("term^2", null, "term^2.0");
+            AssertQueryEquals("\"germ term\"^2.0", null, "\"germ term\"^2.0");
+            AssertQueryEquals("\"term germ\"^2", null, "\"term germ\"^2.0");
 
-            assertQueryEquals("(foo OR bar) AND (baz OR boo)", null,
+            AssertQueryEquals("(foo OR bar) AND (baz OR boo)", null,
                 "+(foo bar) +(baz boo)");
-            assertQueryEquals("((a OR b) AND NOT c) OR d", null, "(+(a b) -c) d");
-            assertQueryEquals("+(apple \"steve jobs\") -(foo bar baz)", null,
+            AssertQueryEquals("((a OR b) AND NOT c) OR d", null, "(+(a b) -c) d");
+            AssertQueryEquals("+(apple \"steve jobs\") -(foo bar baz)", null,
                 "+(apple \"steve jobs\") -(foo bar baz)");
-            assertQueryEquals("+title:(dog OR cat) -author:\"bob dole\"", null,
+            AssertQueryEquals("+title:(dog OR cat) -author:\"bob dole\"", null,
                 "+(title:dog title:cat) -author:\"bob dole\"");
 
         }
@@ -502,56 +501,56 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void TestPunct()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
-            assertQueryEquals("a&b", a, "a&b");
-            assertQueryEquals("a&&b", a, "a&&b");
-            assertQueryEquals(".NET", a, ".NET");
+            AssertQueryEquals("a&b", a, "a&b");
+            AssertQueryEquals("a&&b", a, "a&&b");
+            AssertQueryEquals(".NET", a, ".NET");
         }
         [Test]
         public void TestGroup()
         {
-            assertQueryEquals("!(a AND b) OR c", null, "-(+a +b) c");
-            assertQueryEquals("!(a AND b) AND c", null, "-(+a +b) +c");
-            assertQueryEquals("((a AND b) AND c)", null, "+(+a +b) +c");
-            assertQueryEquals("(a AND b) AND c", null, "+(+a +b) +c");
-            assertQueryEquals("b !(a AND b)", null, "b -(+a +b)");
-            assertQueryEquals("(a AND b)^4 OR c", null, "((+a +b)^4.0) c");
+            AssertQueryEquals("!(a AND b) OR c", null, "-(+a +b) c");
+            AssertQueryEquals("!(a AND b) AND c", null, "-(+a +b) +c");
+            AssertQueryEquals("((a AND b) AND c)", null, "+(+a +b) +c");
+            AssertQueryEquals("(a AND b) AND c", null, "+(+a +b) +c");
+            AssertQueryEquals("b !(a AND b)", null, "b -(+a +b)");
+            AssertQueryEquals("(a AND b)^4 OR c", null, "((+a +b)^4.0) c");
         }
         [Test]
         public void TestSlop()
         {
 
-            assertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
-            assertQueryEquals("\"term germ\"~2 flork", null, "\"term germ\"~2 flork");
-            assertQueryEquals("\"term\"~2", null, "term");
-            assertQueryEquals("\" \"~2 germ", null, "germ");
-            assertQueryEquals("\"term germ\"~2^2", null, "\"term germ\"~2^2.0");
+            AssertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
+            AssertQueryEquals("\"term germ\"~2 flork", null, "\"term germ\"~2 flork");
+            AssertQueryEquals("\"term\"~2", null, "term");
+            AssertQueryEquals("\" \"~2 germ", null, "germ");
+            AssertQueryEquals("\"term germ\"~2^2", null, "\"term germ\"~2^2.0");
         }
         [Test]
         public void TestNumber()
         {
             // The numbers go away because SimpleAnalzyer ignores them
-            assertQueryEquals("3", null, "");
-            assertQueryEquals("term 1.0 1 2", null, "term");
-            assertQueryEquals("term term1 term2", null, "term term term");
+            AssertQueryEquals("3", null, "");
+            AssertQueryEquals("term 1.0 1 2", null, "term");
+            AssertQueryEquals("term term1 term2", null, "term term term");
 
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
-            assertQueryEquals("3", a, "3");
-            assertQueryEquals("term 1.0 1 2", a, "term 1.0 1 2");
-            assertQueryEquals("term term1 term2", a, "term term1 term2");
+            AssertQueryEquals("3", a, "3");
+            AssertQueryEquals("term 1.0 1 2", a, "term 1.0 1 2");
+            AssertQueryEquals("term term1 term2", a, "term term1 term2");
         }
         [Test]
         public void TestWildcard()
         {
-            assertQueryEquals("term*", null, "term*");
-            assertQueryEquals("term*^2", null, "term*^2.0");
-            assertQueryEquals("term~", null, "term~2");
-            assertQueryEquals("term~0.7", null, "term~1");
+            AssertQueryEquals("term*", null, "term*");
+            AssertQueryEquals("term*^2", null, "term*^2.0");
+            AssertQueryEquals("term~", null, "term~2");
+            AssertQueryEquals("term~0.7", null, "term~1");
 
-            assertQueryEquals("term~^3", null, "term~2^3.0");
+            AssertQueryEquals("term~^3", null, "term~2^3.0");
 
-            assertQueryEquals("term^3~", null, "term~2^3.0");
-            assertQueryEquals("term*germ", null, "term*germ");
-            assertQueryEquals("term*germ^3", null, "term*germ^3.0");
+            AssertQueryEquals("term^3~", null, "term~2^3.0");
+            AssertQueryEquals("term*germ", null, "term*germ");
+            AssertQueryEquals("term*germ^3", null, "term*germ^3.0");
 
             assertTrue(GetQuery("term*", null) is PrefixQuery);
             assertTrue(GetQuery("term*^2", null) is PrefixQuery);
@@ -564,7 +563,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(2, fq.MaxEdits);
             assertEquals(FuzzyQuery.DefaultPrefixLength, fq.PrefixLength);
 
-            assertQueryNodeException("term~1.1"); // value > 1, throws exception
+            AssertQueryNodeException("term~1.1"); // value > 1, throws exception
 
             assertTrue(GetQuery("term*germ", null) is WildcardQuery);
 
@@ -574,45 +573,45 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
              */
             // First prefix queries:
             // by default, convert to lowercase:
-            assertWildcardQueryEquals("Term*", true, "term*");
+            AssertWildcardQueryEquals("Term*", true, "term*");
             // explicitly set lowercase:
-            assertWildcardQueryEquals("term*", true, "term*");
-            assertWildcardQueryEquals("Term*", true, "term*");
-            assertWildcardQueryEquals("TERM*", true, "term*");
+            AssertWildcardQueryEquals("term*", true, "term*");
+            AssertWildcardQueryEquals("Term*", true, "term*");
+            AssertWildcardQueryEquals("TERM*", true, "term*");
             // explicitly disable lowercase conversion:
-            assertWildcardQueryEquals("term*", false, "term*");
-            assertWildcardQueryEquals("Term*", false, "Term*");
-            assertWildcardQueryEquals("TERM*", false, "TERM*");
+            AssertWildcardQueryEquals("term*", false, "term*");
+            AssertWildcardQueryEquals("Term*", false, "Term*");
+            AssertWildcardQueryEquals("TERM*", false, "TERM*");
             // Then 'full' wildcard queries:
             // by default, convert to lowercase:
-            assertWildcardQueryEquals("Te?m", "te?m");
+            AssertWildcardQueryEquals("Te?m", "te?m");
             // explicitly set lowercase:
-            assertWildcardQueryEquals("te?m", true, "te?m");
-            assertWildcardQueryEquals("Te?m", true, "te?m");
-            assertWildcardQueryEquals("TE?M", true, "te?m");
-            assertWildcardQueryEquals("Te?m*gerM", true, "te?m*germ");
+            AssertWildcardQueryEquals("te?m", true, "te?m");
+            AssertWildcardQueryEquals("Te?m", true, "te?m");
+            AssertWildcardQueryEquals("TE?M", true, "te?m");
+            AssertWildcardQueryEquals("Te?m*gerM", true, "te?m*germ");
             // explicitly disable lowercase conversion:
-            assertWildcardQueryEquals("te?m", false, "te?m");
-            assertWildcardQueryEquals("Te?m", false, "Te?m");
-            assertWildcardQueryEquals("TE?M", false, "TE?M");
-            assertWildcardQueryEquals("Te?m*gerM", false, "Te?m*gerM");
+            AssertWildcardQueryEquals("te?m", false, "te?m");
+            AssertWildcardQueryEquals("Te?m", false, "Te?m");
+            AssertWildcardQueryEquals("TE?M", false, "TE?M");
+            AssertWildcardQueryEquals("Te?m*gerM", false, "Te?m*gerM");
             // Fuzzy queries:
-            assertWildcardQueryEquals("Term~", "term~2");
-            assertWildcardQueryEquals("Term~", true, "term~2");
-            assertWildcardQueryEquals("Term~", false, "Term~2");
+            AssertWildcardQueryEquals("Term~", "term~2");
+            AssertWildcardQueryEquals("Term~", true, "term~2");
+            AssertWildcardQueryEquals("Term~", false, "Term~2");
             // Range queries:
 
             // TODO: implement this on QueryParser
             // Q0002E_INVALID_SYNTAX_CANNOT_PARSE: Syntax Error, cannot parse '[A TO
             // C]': Lexical error at line 1, column 1. Encountered: "[" (91), after
             // : ""
-            assertWildcardQueryEquals("[A TO C]", "[a TO c]");
-            assertWildcardQueryEquals("[A TO C]", true, "[a TO c]");
-            assertWildcardQueryEquals("[A TO C]", false, "[A TO C]");
+            AssertWildcardQueryEquals("[A TO C]", "[a TO c]");
+            AssertWildcardQueryEquals("[A TO C]", true, "[a TO c]");
+            AssertWildcardQueryEquals("[A TO C]", false, "[A TO C]");
             // Test suffix queries: first disallow
             try
             {
-                assertWildcardQueryEquals("*Term", true, "*term");
+                AssertWildcardQueryEquals("*Term", true, "*term");
                 fail();
             }
             catch (QueryNodeException pe)
@@ -621,7 +620,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
             try
             {
-                assertWildcardQueryEquals("?Term", true, "?term");
+                AssertWildcardQueryEquals("?Term", true, "?term");
                 fail();
             }
             catch (QueryNodeException pe)
@@ -629,8 +628,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 // expected exception
             }
             // Test suffix queries: then allow
-            assertWildcardQueryEquals("*Term", true, "*term", true);
-            assertWildcardQueryEquals("?Term", true, "?term", true);
+            AssertWildcardQueryEquals("*Term", true, "*term", true);
+            AssertWildcardQueryEquals("?Term", true, "?term", true);
         }
         [Test]
         public void TestLeadingWildcardType()
@@ -644,39 +643,39 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestQPA()
         {
-            assertQueryEquals("term term^3.0 term", qpAnalyzer, "term term^3.0 term");
-            assertQueryEquals("term stop^3.0 term", qpAnalyzer, "term term");
+            AssertQueryEquals("term term^3.0 term", qpAnalyzer, "term term^3.0 term");
+            AssertQueryEquals("term stop^3.0 term", qpAnalyzer, "term term");
 
-            assertQueryEquals("term term term", qpAnalyzer, "term term term");
-            assertQueryEquals("term +stop term", qpAnalyzer, "term term");
-            assertQueryEquals("term -stop term", qpAnalyzer, "term term");
+            AssertQueryEquals("term term term", qpAnalyzer, "term term term");
+            AssertQueryEquals("term +stop term", qpAnalyzer, "term term");
+            AssertQueryEquals("term -stop term", qpAnalyzer, "term term");
 
-            assertQueryEquals("drop AND (stop) AND roll", qpAnalyzer, "+drop +roll");
-            assertQueryEquals("term +(stop) term", qpAnalyzer, "term term");
-            assertQueryEquals("term -(stop) term", qpAnalyzer, "term term");
+            AssertQueryEquals("drop AND (stop) AND roll", qpAnalyzer, "+drop +roll");
+            AssertQueryEquals("term +(stop) term", qpAnalyzer, "term term");
+            AssertQueryEquals("term -(stop) term", qpAnalyzer, "term term");
 
-            assertQueryEquals("drop AND stop AND roll", qpAnalyzer, "+drop +roll");
-            assertQueryEquals("term phrase term", qpAnalyzer,
+            AssertQueryEquals("drop AND stop AND roll", qpAnalyzer, "+drop +roll");
+            AssertQueryEquals("term phrase term", qpAnalyzer,
                 "term (phrase1 phrase2) term");
 
-            assertQueryEquals("term AND NOT phrase term", qpAnalyzer,
+            AssertQueryEquals("term AND NOT phrase term", qpAnalyzer,
                 "+term -(phrase1 phrase2) term");
 
-            assertQueryEquals("stop^3", qpAnalyzer, "");
-            assertQueryEquals("stop", qpAnalyzer, "");
-            assertQueryEquals("(stop)^3", qpAnalyzer, "");
-            assertQueryEquals("((stop))^3", qpAnalyzer, "");
-            assertQueryEquals("(stop^3)", qpAnalyzer, "");
-            assertQueryEquals("((stop)^3)", qpAnalyzer, "");
-            assertQueryEquals("(stop)", qpAnalyzer, "");
-            assertQueryEquals("((stop))", qpAnalyzer, "");
+            AssertQueryEquals("stop^3", qpAnalyzer, "");
+            AssertQueryEquals("stop", qpAnalyzer, "");
+            AssertQueryEquals("(stop)^3", qpAnalyzer, "");
+            AssertQueryEquals("((stop))^3", qpAnalyzer, "");
+            AssertQueryEquals("(stop^3)", qpAnalyzer, "");
+            AssertQueryEquals("((stop)^3)", qpAnalyzer, "");
+            AssertQueryEquals("(stop)", qpAnalyzer, "");
+            AssertQueryEquals("((stop))", qpAnalyzer, "");
             assertTrue(GetQuery("term term term", qpAnalyzer) is BooleanQuery);
             assertTrue(GetQuery("term +stop", qpAnalyzer) is TermQuery);
         }
         [Test]
         public void TestRange()
         {
-            assertQueryEquals("[ a TO z]", null, "[a TO z]");
+            AssertQueryEquals("[ a TO z]", null, "[a TO z]");
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).GetRewriteMethod());
 
             StandardQueryParser qp = new StandardQueryParser();
@@ -685,52 +684,52 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]", "field")).GetRewriteMethod());
 
             // test open ranges
-            assertQueryEquals("[ a TO * ]", null, "[a TO *]");
-            assertQueryEquals("[ * TO z ]", null, "[* TO z]");
-            assertQueryEquals("[ * TO * ]", null, "[* TO *]");
+            AssertQueryEquals("[ a TO * ]", null, "[a TO *]");
+            AssertQueryEquals("[ * TO z ]", null, "[* TO z]");
+            AssertQueryEquals("[ * TO * ]", null, "[* TO *]");
 
 
-            assertQueryEquals("field>=a", null, "[a TO *]");
-            assertQueryEquals("field>a", null, "{a TO *]");
-            assertQueryEquals("field<=a", null, "[* TO a]");
-            assertQueryEquals("field<a", null, "[* TO a}");
+            AssertQueryEquals("field>=a", null, "[a TO *]");
+            AssertQueryEquals("field>a", null, "{a TO *]");
+            AssertQueryEquals("field<=a", null, "[* TO a]");
+            AssertQueryEquals("field<a", null, "[* TO a}");
 
             // mixing exclude and include bounds
-            assertQueryEquals("{ a TO z ]", null, "{a TO z]");
-            assertQueryEquals("[ a TO z }", null, "[a TO z}");
-            assertQueryEquals("{ a TO * ]", null, "{a TO *]");
-            assertQueryEquals("[ * TO z }", null, "[* TO z}");
+            AssertQueryEquals("{ a TO z ]", null, "{a TO z]");
+            AssertQueryEquals("[ a TO z }", null, "[a TO z}");
+            AssertQueryEquals("{ a TO * ]", null, "{a TO *]");
+            AssertQueryEquals("[ * TO z }", null, "[* TO z}");
 
 
-            assertQueryEquals("[ a TO z ]", null, "[a TO z]");
-            assertQueryEquals("{ a TO z}", null, "{a TO z}");
-            assertQueryEquals("{ a TO z }", null, "{a TO z}");
-            assertQueryEquals("{ a TO z }^2.0", null, "{a TO z}^2.0");
-            assertQueryEquals("[ a TO z] OR bar", null, "[a TO z] bar");
-            assertQueryEquals("[ a TO z] AND bar", null, "+[a TO z] +bar");
-            assertQueryEquals("( bar blar { a TO z}) ", null, "bar blar {a TO z}");
-            assertQueryEquals("gack ( bar blar { a TO z}) ", null,
+            AssertQueryEquals("[ a TO z ]", null, "[a TO z]");
+            AssertQueryEquals("{ a TO z}", null, "{a TO z}");
+            AssertQueryEquals("{ a TO z }", null, "{a TO z}");
+            AssertQueryEquals("{ a TO z }^2.0", null, "{a TO z}^2.0");
+            AssertQueryEquals("[ a TO z] OR bar", null, "[a TO z] bar");
+            AssertQueryEquals("[ a TO z] AND bar", null, "+[a TO z] +bar");
+            AssertQueryEquals("( bar blar { a TO z}) ", null, "bar blar {a TO z}");
+            AssertQueryEquals("gack ( bar blar { a TO z}) ", null,
                 "gack (bar blar {a TO z})");
         }
 
         /** for testing DateTools support */
-        private String getDate(String s, DateTools.Resolution resolution)
+        private String GetDate(String s, DateTools.Resolution resolution)
 
         {
             // we use the default Locale since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
             //return getDate(df.parse(s), resolution);
 
-            return getDate(DateTime.Parse(s), resolution); // TODO: Locale...
+            return GetDate(DateTime.Parse(s), resolution); // TODO: Locale...
         }
 
         /** for testing DateTools support */
-        private String getDate(DateTime d, DateTools.Resolution resolution)
+        private String GetDate(DateTime d, DateTools.Resolution resolution)
         {
             return DateTools.DateToString(d, resolution);
         }
 
-        private String escapeDateString(String s)
+        private String EscapeDateString(String s)
         {
             if (s.Contains(" "))
             {
@@ -742,7 +741,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
 
-        private String getLocalizedDate(int year, int month, int day)
+        private String GetLocalizedDate(int year, int month, int day)
         {
             DateTime d = new DateTime(year, month, day, 23, 59, 59, 999);
             return d.ToShortDateString();
@@ -761,8 +760,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestDateRange()
         {
-            String startDate = getLocalizedDate(2002, 1, 1);
-            String endDate = getLocalizedDate(2002, 1, 4);
+            String startDate = GetLocalizedDate(2002, 1, 1);
+            String endDate = GetLocalizedDate(2002, 1, 4);
 
             //// we use the default Locale/TZ since LuceneTestCase randomizes it
             //Calendar endDateExpected = new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault());
@@ -793,28 +792,28 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
-            assertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
+            AssertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
                 endDateExpected/*.getTime()*/, DateTools.Resolution.MILLISECOND);
 
             // verify if field specific date resolutions are used for these two
             // fields
-            assertDateRangeQueryEquals(qp, monthField, startDate, endDate,
+            AssertDateRangeQueryEquals(qp, monthField, startDate, endDate,
                 endDateExpected/*.getTime()*/, DateTools.Resolution.MONTH);
 
-            assertDateRangeQueryEquals(qp, hourField, startDate, endDate,
+            AssertDateRangeQueryEquals(qp, hourField, startDate, endDate,
                 endDateExpected/*.getTime()*/, DateTools.Resolution.HOUR);
         }
 
-        public void assertDateRangeQueryEquals(StandardQueryParser qp,
+        public void AssertDateRangeQueryEquals(StandardQueryParser qp,
             String field, String startDate, String endDate, DateTime endDateInclusive,
             DateTools.Resolution resolution)
         {
-            assertQueryEquals(qp, field, field + ":[" + escapeDateString(startDate) + " TO " + escapeDateString(endDate)
-                + "]", "[" + getDate(startDate, resolution) + " TO "
-                + getDate(endDateInclusive, resolution) + "]");
-            assertQueryEquals(qp, field, field + ":{" + escapeDateString(startDate) + " TO " + escapeDateString(endDate)
-                + "}", "{" + getDate(startDate, resolution) + " TO "
-                + getDate(endDate, resolution) + "}");
+            AssertQueryEquals(qp, field, field + ":[" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate)
+                + "]", "[" + GetDate(startDate, resolution) + " TO "
+                + GetDate(endDateInclusive, resolution) + "]");
+            AssertQueryEquals(qp, field, field + ":{" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate)
+                + "}", "{" + GetDate(startDate, resolution) + " TO "
+                + GetDate(endDate, resolution) + "}");
         }
         [Test]
         public void TestEscaped()
@@ -842,120 +841,120 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
              * "foo \\AND bar");
              */
 
-            assertQueryEquals("\\*", a, "*");
+            AssertQueryEquals("\\*", a, "*");
 
 
-            assertQueryEquals("\\a", a, "a");
+            AssertQueryEquals("\\a", a, "a");
 
-            assertQueryEquals("a\\-b:c", a, "a-b:c");
-            assertQueryEquals("a\\+b:c", a, "a+b:c");
-            assertQueryEquals("a\\:b:c", a, "a:b:c");
-            assertQueryEquals("a\\\\b:c", a, "a\\b:c");
+            AssertQueryEquals("a\\-b:c", a, "a-b:c");
+            AssertQueryEquals("a\\+b:c", a, "a+b:c");
+            AssertQueryEquals("a\\:b:c", a, "a:b:c");
+            AssertQueryEquals("a\\\\b:c", a, "a\\b:c");
 
-            assertQueryEquals("a:b\\-c", a, "a:b-c");
-            assertQueryEquals("a:b\\+c", a, "a:b+c");
-            assertQueryEquals("a:b\\:c", a, "a:b:c");
-            assertQueryEquals("a:b\\\\c", a, "a:b\\c");
+            AssertQueryEquals("a:b\\-c", a, "a:b-c");
+            AssertQueryEquals("a:b\\+c", a, "a:b+c");
+            AssertQueryEquals("a:b\\:c", a, "a:b:c");
+            AssertQueryEquals("a:b\\\\c", a, "a:b\\c");
 
-            assertQueryEquals("a:b\\-c*", a, "a:b-c*");
-            assertQueryEquals("a:b\\+c*", a, "a:b+c*");
-            assertQueryEquals("a:b\\:c*", a, "a:b:c*");
+            AssertQueryEquals("a:b\\-c*", a, "a:b-c*");
+            AssertQueryEquals("a:b\\+c*", a, "a:b+c*");
+            AssertQueryEquals("a:b\\:c*", a, "a:b:c*");
 
-            assertQueryEquals("a:b\\\\c*", a, "a:b\\c*");
+            AssertQueryEquals("a:b\\\\c*", a, "a:b\\c*");
 
-            assertQueryEquals("a:b\\-?c", a, "a:b-?c");
-            assertQueryEquals("a:b\\+?c", a, "a:b+?c");
-            assertQueryEquals("a:b\\:?c", a, "a:b:?c");
+            AssertQueryEquals("a:b\\-?c", a, "a:b-?c");
+            AssertQueryEquals("a:b\\+?c", a, "a:b+?c");
+            AssertQueryEquals("a:b\\:?c", a, "a:b:?c");
 
-            assertQueryEquals("a:b\\\\?c", a, "a:b\\?c");
+            AssertQueryEquals("a:b\\\\?c", a, "a:b\\?c");
 
-            assertQueryEquals("a:b\\-c~", a, "a:b-c~2");
-            assertQueryEquals("a:b\\+c~", a, "a:b+c~2");
-            assertQueryEquals("a:b\\:c~", a, "a:b:c~2");
-            assertQueryEquals("a:b\\\\c~", a, "a:b\\c~2");
+            AssertQueryEquals("a:b\\-c~", a, "a:b-c~2");
+            AssertQueryEquals("a:b\\+c~", a, "a:b+c~2");
+            AssertQueryEquals("a:b\\:c~", a, "a:b:c~2");
+            AssertQueryEquals("a:b\\\\c~", a, "a:b\\c~2");
 
             // TODO: implement Range queries on QueryParser
-            assertQueryEquals("[ a\\- TO a\\+ ]", null, "[a- TO a+]");
-            assertQueryEquals("[ a\\: TO a\\~ ]", null, "[a: TO a~]");
-            assertQueryEquals("[ a\\\\ TO a\\* ]", null, "[a\\ TO a*]");
+            AssertQueryEquals("[ a\\- TO a\\+ ]", null, "[a- TO a+]");
+            AssertQueryEquals("[ a\\: TO a\\~ ]", null, "[a: TO a~]");
+            AssertQueryEquals("[ a\\\\ TO a\\* ]", null, "[a\\ TO a*]");
 
-            assertQueryEquals(
+            AssertQueryEquals(
                 "[\"c\\:\\\\temp\\\\\\~foo0.txt\" TO \"c\\:\\\\temp\\\\\\~foo9.txt\"]",
                 a, "[c:\\temp\\~foo0.txt TO c:\\temp\\~foo9.txt]");
 
-            assertQueryEquals("a\\\\\\+b", a, "a\\+b");
+            AssertQueryEquals("a\\\\\\+b", a, "a\\+b");
 
-            assertQueryEquals("a \\\"b c\\\" d", a, "a \"b c\" d");
-            assertQueryEquals("\"a \\\"b c\\\" d\"", a, "\"a \"b c\" d\"");
-            assertQueryEquals("\"a \\+b c d\"", a, "\"a +b c d\"");
+            AssertQueryEquals("a \\\"b c\\\" d", a, "a \"b c\" d");
+            AssertQueryEquals("\"a \\\"b c\\\" d\"", a, "\"a \"b c\" d\"");
+            AssertQueryEquals("\"a \\+b c d\"", a, "\"a +b c d\"");
 
-            assertQueryEquals("c\\:\\\\temp\\\\\\~foo.txt", a, "c:\\temp\\~foo.txt");
+            AssertQueryEquals("c\\:\\\\temp\\\\\\~foo.txt", a, "c:\\temp\\~foo.txt");
 
-            assertQueryNodeException("XY\\"); // there must be a character after the
+            AssertQueryNodeException("XY\\"); // there must be a character after the
                                               // escape char
 
             // test unicode escaping
-            assertQueryEquals("a\\u0062c", a, "abc");
-            assertQueryEquals("XY\\u005a", a, "XYZ");
-            assertQueryEquals("XY\\u005A", a, "XYZ");
-            assertQueryEquals("\"a \\\\\\u0028\\u0062\\\" c\"", a, "\"a \\(b\" c\"");
+            AssertQueryEquals("a\\u0062c", a, "abc");
+            AssertQueryEquals("XY\\u005a", a, "XYZ");
+            AssertQueryEquals("XY\\u005A", a, "XYZ");
+            AssertQueryEquals("\"a \\\\\\u0028\\u0062\\\" c\"", a, "\"a \\(b\" c\"");
 
-            assertQueryNodeException("XY\\u005G"); // test non-hex character in escaped
+            AssertQueryNodeException("XY\\u005G"); // test non-hex character in escaped
                                                    // unicode sequence
-            assertQueryNodeException("XY\\u005"); // test incomplete escaped unicode
+            AssertQueryNodeException("XY\\u005"); // test incomplete escaped unicode
                                                   // sequence
 
             // Tests bug LUCENE-800
-            assertQueryEquals("(item:\\\\ item:ABCD\\\\)", a, "item:\\ item:ABCD\\");
-            assertQueryNodeException("(item:\\\\ item:ABCD\\\\))"); // unmatched closing
+            AssertQueryEquals("(item:\\\\ item:ABCD\\\\)", a, "item:\\ item:ABCD\\");
+            AssertQueryNodeException("(item:\\\\ item:ABCD\\\\))"); // unmatched closing
                                                                     // paranthesis
-            assertQueryEquals("\\*", a, "*");
-            assertQueryEquals("\\\\", a, "\\"); // escaped backslash
+            AssertQueryEquals("\\*", a, "*");
+            AssertQueryEquals("\\\\", a, "\\"); // escaped backslash
 
-            assertQueryNodeException("\\"); // a backslash must always be escaped
+            AssertQueryNodeException("\\"); // a backslash must always be escaped
 
             // LUCENE-1189
-            assertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
+            AssertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
         }
         [Test]
         public void TestQueryStringEscaping()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
 
-            assertEscapedQueryEquals("a-b:c", a, "a\\-b\\:c");
-            assertEscapedQueryEquals("a+b:c", a, "a\\+b\\:c");
-            assertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
-            assertEscapedQueryEquals("a\\b:c", a, "a\\\\b\\:c");
+            AssertEscapedQueryEquals("a-b:c", a, "a\\-b\\:c");
+            AssertEscapedQueryEquals("a+b:c", a, "a\\+b\\:c");
+            AssertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
+            AssertEscapedQueryEquals("a\\b:c", a, "a\\\\b\\:c");
 
-            assertEscapedQueryEquals("a:b-c", a, "a\\:b\\-c");
-            assertEscapedQueryEquals("a:b+c", a, "a\\:b\\+c");
-            assertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
-            assertEscapedQueryEquals("a:b\\c", a, "a\\:b\\\\c");
+            AssertEscapedQueryEquals("a:b-c", a, "a\\:b\\-c");
+            AssertEscapedQueryEquals("a:b+c", a, "a\\:b\\+c");
+            AssertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
+            AssertEscapedQueryEquals("a:b\\c", a, "a\\:b\\\\c");
 
-            assertEscapedQueryEquals("a:b-c*", a, "a\\:b\\-c\\*");
-            assertEscapedQueryEquals("a:b+c*", a, "a\\:b\\+c\\*");
-            assertEscapedQueryEquals("a:b:c*", a, "a\\:b\\:c\\*");
+            AssertEscapedQueryEquals("a:b-c*", a, "a\\:b\\-c\\*");
+            AssertEscapedQueryEquals("a:b+c*", a, "a\\:b\\+c\\*");
+            AssertEscapedQueryEquals("a:b:c*", a, "a\\:b\\:c\\*");
 
-            assertEscapedQueryEquals("a:b\\\\c*", a, "a\\:b\\\\\\\\c\\*");
+            AssertEscapedQueryEquals("a:b\\\\c*", a, "a\\:b\\\\\\\\c\\*");
 
-            assertEscapedQueryEquals("a:b-?c", a, "a\\:b\\-\\?c");
-            assertEscapedQueryEquals("a:b+?c", a, "a\\:b\\+\\?c");
-            assertEscapedQueryEquals("a:b:?c", a, "a\\:b\\:\\?c");
+            AssertEscapedQueryEquals("a:b-?c", a, "a\\:b\\-\\?c");
+            AssertEscapedQueryEquals("a:b+?c", a, "a\\:b\\+\\?c");
+            AssertEscapedQueryEquals("a:b:?c", a, "a\\:b\\:\\?c");
 
-            assertEscapedQueryEquals("a:b?c", a, "a\\:b\\?c");
+            AssertEscapedQueryEquals("a:b?c", a, "a\\:b\\?c");
 
-            assertEscapedQueryEquals("a:b-c~", a, "a\\:b\\-c\\~");
-            assertEscapedQueryEquals("a:b+c~", a, "a\\:b\\+c\\~");
-            assertEscapedQueryEquals("a:b:c~", a, "a\\:b\\:c\\~");
-            assertEscapedQueryEquals("a:b\\c~", a, "a\\:b\\\\c\\~");
+            AssertEscapedQueryEquals("a:b-c~", a, "a\\:b\\-c\\~");
+            AssertEscapedQueryEquals("a:b+c~", a, "a\\:b\\+c\\~");
+            AssertEscapedQueryEquals("a:b:c~", a, "a\\:b\\:c\\~");
+            AssertEscapedQueryEquals("a:b\\c~", a, "a\\:b\\\\c\\~");
 
-            assertEscapedQueryEquals("[ a - TO a+ ]", null, "\\[ a \\- TO a\\+ \\]");
-            assertEscapedQueryEquals("[ a : TO a~ ]", null, "\\[ a \\: TO a\\~ \\]");
-            assertEscapedQueryEquals("[ a\\ TO a* ]", null, "\\[ a\\\\ TO a\\* \\]");
+            AssertEscapedQueryEquals("[ a - TO a+ ]", null, "\\[ a \\- TO a\\+ \\]");
+            AssertEscapedQueryEquals("[ a : TO a~ ]", null, "\\[ a \\: TO a\\~ \\]");
+            AssertEscapedQueryEquals("[ a\\ TO a* ]", null, "\\[ a\\\\ TO a\\* \\]");
 
             // LUCENE-881
-            assertEscapedQueryEquals("|| abc ||", a, "\\|\\| abc \\|\\|");
-            assertEscapedQueryEquals("&& abc &&", a, "\\&\\& abc \\&\\&");
+            AssertEscapedQueryEquals("|| abc ||", a, "\\|\\| abc \\|\\|");
+            AssertEscapedQueryEquals("&& abc &&", a, "\\&\\& abc \\&\\&");
         }
 
         [Test]
@@ -971,34 +970,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestTabNewlineCarriageReturn()
         {
-            assertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
 
-            assertQueryEqualsDOA("+weltbank\n+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \n+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \n +worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("+weltbank\n+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \n+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \n +worlbank", null, "+weltbank +worlbank");
 
-            assertQueryEqualsDOA("+weltbank\r+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \r+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \r +worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("+weltbank\r+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \r+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \r +worlbank", null, "+weltbank +worlbank");
 
-            assertQueryEqualsDOA("+weltbank\r\n+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \r\n+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \r\n +worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \r \n +worlbank", null,
+            AssertQueryEqualsDOA("+weltbank\r\n+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \r\n+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \r\n +worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \r \n +worlbank", null,
                 "+weltbank +worlbank");
 
-            assertQueryEqualsDOA("+weltbank\t+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \t+worlbank", null, "+weltbank +worlbank");
-            assertQueryEqualsDOA("weltbank \t +worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("+weltbank\t+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \t+worlbank", null, "+weltbank +worlbank");
+            AssertQueryEqualsDOA("weltbank \t +worlbank", null, "+weltbank +worlbank");
         }
         [Test]
         public void TestSimpleDAO()
         {
-            assertQueryEqualsDOA("term term term", null, "+term +term +term");
-            assertQueryEqualsDOA("term +term term", null, "+term +term +term");
-            assertQueryEqualsDOA("term term +term", null, "+term +term +term");
-            assertQueryEqualsDOA("term +term +term", null, "+term +term +term");
-            assertQueryEqualsDOA("-term term term", null, "-term +term +term");
+            AssertQueryEqualsDOA("term term term", null, "+term +term +term");
+            AssertQueryEqualsDOA("term +term term", null, "+term +term +term");
+            AssertQueryEqualsDOA("term term +term", null, "+term +term +term");
+            AssertQueryEqualsDOA("term +term +term", null, "+term +term +term");
+            AssertQueryEqualsDOA("-term term term", null, "-term +term +term");
         }
         [Test]
         public void TestBoost()
@@ -1029,7 +1028,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(1.0f, q.Boost, 0.01f);
         }
 
-        public void assertQueryNodeException(String queryString)
+        public void AssertQueryNodeException(String queryString)
         {
             try
             {
@@ -1044,13 +1043,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestException()
         {
-            assertQueryNodeException("*leadingWildcard"); // disallowed by default
-            assertQueryNodeException("\"some phrase");
-            assertQueryNodeException("(foo bar");
-            assertQueryNodeException("foo bar))");
-            assertQueryNodeException("field:term:with:colon some more terms");
-            assertQueryNodeException("(sub query)^5.0^2.0 plus more");
-            assertQueryNodeException("secret AND illegal) AND access:confidential");
+            AssertQueryNodeException("*leadingWildcard"); // disallowed by default
+            AssertQueryNodeException("\"some phrase");
+            AssertQueryNodeException("(foo bar");
+            AssertQueryNodeException("foo bar))");
+            AssertQueryNodeException("field:term:with:colon some more terms");
+            AssertQueryNodeException("(sub query)^5.0^2.0 plus more");
+            AssertQueryNodeException("secret AND illegal) AND access:confidential");
         }
         [Test]
         public void TestCustomQueryParserWildcard()
@@ -1319,7 +1318,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertTrue(bq.GetClauses()[1].Query is MatchAllDocsQuery);
         }
 
-        private void assertHits(int expected, String query, IndexSearcher @is)
+        private void AssertHits(int expected, String query, IndexSearcher @is)
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));

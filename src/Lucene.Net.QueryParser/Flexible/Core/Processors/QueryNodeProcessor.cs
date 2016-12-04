@@ -56,6 +56,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          *         otherwise it returns <code>null</code>
          */
         QueryConfigHandler GetQueryConfigHandler();
-
     }
 }

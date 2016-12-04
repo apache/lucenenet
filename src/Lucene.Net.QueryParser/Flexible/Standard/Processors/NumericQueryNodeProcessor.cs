@@ -46,14 +46,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is FieldQueryNode
                 && !(node.Parent is IRangeQueryNode))
             {
-
                 QueryConfigHandler config = GetQueryConfigHandler();
 
                 if (config != null)
@@ -69,7 +66,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                         if (numericConfig != null)
                         {
-
                             NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
                             /*Number*/
@@ -77,12 +73,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             if (text.Length > 0)
                             {
-
                                 try
                                 {
                                     number = numberFormat.Parse(text);
-                                    //number = decimal.Parse(text, NumberStyles.Any);// LUCENENET TODO: use the current culture?
-
                                 }
                                 catch (FormatException e)
                                 {
@@ -122,25 +115,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             return new NumericRangeQueryNode(lowerNode, upperNode, true, true,
                                 numericConfig);
-
                         }
-
                     }
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
             return node;
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {

@@ -48,8 +48,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             else
                 op = ANDOperation.NONE;
 
-            //try
-            //{
             IQueryNode result = null;
             switch (op)
             {
@@ -72,14 +70,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
                     result.Add(q2.CloneTree().GetChildren());
                     return result;
             }
-            //}
-            //catch (CloneNotSupportedException e)
-            //{
-            //    throw new QueryNodeError(e);
-            //}
 
             return null;
-
         }
     }
 }

@@ -31,35 +31,29 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             bool? allowsLeadingWildcard = GetQueryConfigHandler().Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
 
             if (allowsLeadingWildcard != null)
             {
-
                 if (!allowsLeadingWildcard.Value)
                 {
                     return base.Process(queryTree);
                 }
-
             }
 
             return queryTree;
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is WildcardQueryNode)
             {
                 WildcardQueryNode wildcardNode = (WildcardQueryNode)node;
 
                 if (wildcardNode.Text.Length > 0)
                 {
-
                     // Validate if the wildcard was escaped
                     if (UnescapedCharSequence.WasEscaped(wildcardNode.Text, 0))
                         return node;
@@ -73,28 +67,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     .ToQueryString(new EscapeQuerySyntaxImpl())));
                     }
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
-
     }
 }

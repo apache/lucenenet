@@ -26,12 +26,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             NEGATIVE, ZERO, POSITIVE
         }
 
-        
-
-        //  private readonly static int[] DATE_STYLES = {DateFormat.FULL, DateFormat.LONG,
-        //DateFormat.MEDIUM, DateFormat.SHORT};
-        private readonly static DateStyle[] DATE_STYLES = {DateStyle.FULL, DateStyle.LONG,
-            DateStyle.MEDIUM, DateStyle.SHORT};
+        private readonly static DateFormat[] DATE_STYLES = {DateFormat.FULL, DateFormat.LONG,
+            DateFormat.MEDIUM, DateFormat.SHORT};
 
         private readonly static int PRECISION_STEP = 8;
         private readonly static String FIELD_NAME = "field";
@@ -40,8 +36,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static IDictionary<String, /*Number*/ object> RANDOM_NUMBER_MAP;
         private readonly static IEscapeQuerySyntax ESCAPER = new EscapeQuerySyntaxImpl();
         private readonly static String DATE_FIELD_NAME = "date";
-        private static DateStyle DATE_STYLE;
-        private static DateStyle TIME_STYLE;
+        private static DateFormat DATE_STYLE;
+        private static DateFormat TIME_STYLE;
 
         private static Analyzer ANALYZER;
 
@@ -59,17 +55,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static bool checkDateFormatSanity(/*DateFormat*/string dateFormat, long date)
         {
             DateTime result;
-            return DateTime.TryParseExact(new DateTime(date).ToString(dateFormat),
+            return DateTime.TryParseExact(new DateTime(NumberDateFormat.EPOCH).AddMilliseconds(date).ToString(dateFormat),
                 dateFormat, CultureInfo.CurrentCulture, DateTimeStyles.RoundtripKind, out result);
-            //try
-            //{
-            //    return date == dateFormat.parse(dateFormat.format(new DateTime(date)))
-            //      .getTime();
-            //}
-            //catch (ParseException e)
-            //{
-            //    return false;
-            //}
         }
 
         [TestFixtureSetUp]
@@ -109,14 +96,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //dateFormat.applyPattern(dateFormat.toPattern() + " G s Z yyyy");
                 //dateFormat.setTimeZone(TIMEZONE);
 
-                //DATE_FORMAT = new NumberDateFormat(dateFormat);
-
-                //dateFormat = GetDateFormat((FormattingStyle)DATE_STYLE, (FormattingStyle)TIME_STYLE, LOCALE, TIMEZONE);
-
-                // LUCENENET TODO: NumberDateFormat...?
-                // DATE_FORMAT = GetDateFormat((FormattingStyle)DATE_STYLE, (FormattingStyle)TIME_STYLE, LOCALE, TIMEZONE);
                 DATE_FORMAT = new NumberDateFormat(DATE_STYLE, TIME_STYLE, LOCALE, TIMEZONE);
-
+                dateFormat = DATE_FORMAT.GetDateFormat();
 
                 do
                 {
@@ -133,13 +114,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     randomDate = Math.Abs(randomDate);
                 } while (randomDate == 0L);
 
-                //dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, randomDate);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, randomDate);
 
-                //dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, 0);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, 0);
 
-                // LUCENENET TODO: passing a negative number for ticks is invalid in .NET
-                //dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat,
-                //          -randomDate);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat,
+                          -randomDate);
 
                 count++;
             } while (!dateFormatSanityCheckPass);
@@ -150,12 +130,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //NUMBER_FORMAT.setMaximumIntegerDigits((Random().nextInt() & 20) + 1);
             //NUMBER_FORMAT.setMinimumIntegerDigits((Random().nextInt() & 20) + 1);
 
-            //NUMBER_FORMAT = (NumberFormatInfo)LOCALE.NumberFormat.Clone();
-            //NUMBER_FORMAT.NumberDecimalDigits = (Random().nextInt() & 20) + 1;
-            //NUMBER_FORMAT.CurrencyDecimalDigits = (Random().nextInt() & 20) + 1;
-
-            //NUMBER_FORMAT = GetNumberFormat();
-
             NUMBER_FORMAT = new NumberFormat(LOCALE);
 
             double randomDouble;
@@ -163,16 +137,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             int randomInt;
             float randomFloat;
 
-            while ((randomLong = Convert.ToInt64(normalizeNumber(Math.Abs(Random().nextLong()))
+            while ((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random().nextLong()))
                 )) == 0L)
                 ;
-            while ((randomDouble = Convert.ToDouble(normalizeNumber(Math.Abs(Random().NextDouble()))
+            while ((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random().NextDouble()))
                 )) == 0.0)
                 ;
-            while ((randomFloat = Convert.ToSingle(normalizeNumber(Math.Abs(Random().nextFloat()))
+            while ((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random().nextFloat()))
                 )) == 0.0f)
                 ;
-            while ((randomInt = Convert.ToInt32(normalizeNumber(Math.Abs(Random().nextInt())))) == 0)
+            while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random().nextInt())))) == 0)
                 ;
 
             randomNumberMap.Put(FieldType.NumericType.LONG.ToString(), randomLong);
@@ -251,7 +225,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
 
-        private static /*Number*/ object getNumberType(NumberType? numberType, String fieldName)
+        private static /*Number*/ object GetNumberType(NumberType? numberType, String fieldName)
         {
 
             if (numberType == null)
@@ -310,28 +284,28 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
 
             /*Number*/
-            object number = getNumberType(numberType, FieldType.NumericType.DOUBLE
+            object number = GetNumberType(numberType, FieldType.NumericType.DOUBLE
                 .ToString());
             numericFieldMap[FieldType.NumericType.DOUBLE.ToString()].DoubleValue = Convert.ToDouble(
                 number);
 
-            number = getNumberType(numberType, FieldType.NumericType.INT.ToString());
+            number = GetNumberType(numberType, FieldType.NumericType.INT.ToString());
             numericFieldMap[FieldType.NumericType.INT.ToString()].IntValue = Convert.ToInt32(
                 number);
 
-            number = getNumberType(numberType, FieldType.NumericType.LONG.ToString());
+            number = GetNumberType(numberType, FieldType.NumericType.LONG.ToString());
             numericFieldMap[FieldType.NumericType.LONG.ToString()].LongValue = Convert.ToInt64(
                 number);
 
-            number = getNumberType(numberType, FieldType.NumericType.FLOAT.ToString());
+            number = GetNumberType(numberType, FieldType.NumericType.FLOAT.ToString());
             numericFieldMap[FieldType.NumericType.FLOAT.ToString()].FloatValue = Convert.ToSingle(
                 number);
 
-            number = getNumberType(numberType, DATE_FIELD_NAME);
+            number = GetNumberType(numberType, DATE_FIELD_NAME);
             numericFieldMap[DATE_FIELD_NAME].LongValue = Convert.ToInt64(number);
         }
 
-        private static DateStyle randomDateStyle(Random random)
+        private static DateFormat randomDateStyle(Random random)
         {
             return DATE_STYLES[random.nextInt(DATE_STYLES.Length)];
         }
@@ -436,8 +410,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
             {
-                String lowerStr = numberToString(getNumberType(lowerType, type.ToString()));
-                String upperStr = numberToString(getNumberType(upperType, type.ToString()));
+                String lowerStr = NumberToString(GetNumberType(lowerType, type.ToString()));
+                String upperStr = NumberToString(GetNumberType(upperType, type.ToString()));
 
                 sb.append("+").append(type.ToString()).append(':').append(lowerInclusiveStr)
                   .append('"').append(lowerStr).append("\" TO \"").append(upperStr)
@@ -445,9 +419,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
             /*Number*/
-            object lowerDateNumber = getNumberType(lowerType, DATE_FIELD_NAME);
+            object lowerDateNumber = GetNumberType(lowerType, DATE_FIELD_NAME);
             /*Number*/
-            object upperDateNumber = getNumberType(upperType, DATE_FIELD_NAME);
+            object upperDateNumber = GetNumberType(upperType, DATE_FIELD_NAME);
             String lowerDateStr;
             String upperDateStr;
 
@@ -456,11 +430,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //lowerDateStr = ESCAPER.Escape(
                 //    DATE_FORMAT.format(new DateTime(lowerDateNumber.longValue())), LOCALE,
                 //    EscapeQuerySyntax.Type.STRING).toString();
-
-                //lowerDateStr = ESCAPER.Escape(
-                //        string.Format(LOCALE, "{0:" + DATE_FORMAT + "}", new DateTime(Convert.ToInt64(lowerDateNumber))),
-                //        LOCALE,
-                //        EscapeQuerySyntax.Type.STRING).toString();
 
                 lowerDateStr = ESCAPER.Escape(
                             DATE_FORMAT.Format(Convert.ToInt64(lowerDateNumber)),
@@ -477,11 +446,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //upperDateStr = ESCAPER.Escape(
                 //      DATE_FORMAT.format(new DateTime(upperDateNumber.longValue())), LOCALE,
                 //      EscapeQuerySyntax.Type.STRING).toString();
-
-                //upperDateStr = ESCAPER.Escape(
-                //            string.Format(LOCALE, "{0:" + DATE_FORMAT + "}", new DateTime(Convert.ToInt64(upperDateNumber))),
-                //            LOCALE,
-                //            EscapeQuerySyntax.Type.STRING).toString();
 
                 upperDateStr = ESCAPER.Escape(
                                 DATE_FORMAT.Format(Convert.ToInt64(upperDateNumber)),
@@ -510,7 +474,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
             {
-                String boundStr = numberToString(getNumberType(boundType, type.ToString()));
+                String boundStr = NumberToString(GetNumberType(boundType, type.ToString()));
 
                 sb.append("+").append(type.ToString()).append(@operator).append('"').append(boundStr).append('"').append(' ');
             }
@@ -519,13 +483,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //    DATE_FORMAT.format(new Date(getNumberType(boundType, DATE_FIELD_NAME)
             //        .longValue())), LOCALE, EscapeQuerySyntax.Type.STRING).toString();
 
-            //string boundDateStr = ESCAPER.Escape(
-            //                string.Format(LOCALE, "{0:" + DATE_FORMAT + "}", new DateTime(Convert.ToInt64(getNumberType(boundType, DATE_FIELD_NAME)))),
-            //                LOCALE,
-            //                EscapeQuerySyntax.Type.STRING).toString();
-
             string boundDateStr = ESCAPER.Escape(
-                                DATE_FORMAT.Format(Convert.ToInt64(getNumberType(boundType, DATE_FIELD_NAME))),
+                                DATE_FORMAT.Format(Convert.ToInt64(GetNumberType(boundType, DATE_FIELD_NAME))),
                                 LOCALE,
                                 EscapeQuerySyntax.Type.STRING).toString();
 
@@ -541,7 +500,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
             {
-                String numberStr = numberToString(getNumberType(numberType, type.ToString()));
+                String numberStr = NumberToString(GetNumberType(numberType, type.ToString()));
                 sb.append('+').append(type.ToString()).append(":\"").append(numberStr)
                           .append("\" ");
             }
@@ -550,13 +509,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //    DATE_FORMAT.format(new DateTime(getNumberType(numberType, DATE_FIELD_NAME)
             //        .longValue())), LOCALE, EscapeQuerySyntax.Type.STRING).toString();
 
-            //string dateStr = ESCAPER.Escape(
-            //                string.Format(LOCALE, "{0:" + DATE_FORMAT + "}", new DateTime(Convert.ToInt64(getNumberType(numberType, DATE_FIELD_NAME)))),
-            //                LOCALE,
-            //                EscapeQuerySyntax.Type.STRING).toString();
-
             string dateStr = ESCAPER.Escape(
-                                DATE_FORMAT.Format(Convert.ToInt64(getNumberType(numberType, DATE_FIELD_NAME))),
+                                DATE_FORMAT.Format(Convert.ToInt64(GetNumberType(numberType, DATE_FIELD_NAME))),
                                 LOCALE,
                                 EscapeQuerySyntax.Type.STRING).toString();
 
@@ -585,22 +539,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(msg, expectedDocCount, topDocs.TotalHits);
         }
 
-        private static String numberToString(/*Number*/ object number)
+        private static String NumberToString(/*Number*/ object number)
         {
-            //return number == null ? "*" : ESCAPER.Escape(/*NUMBER_FORMAT.format(number)*/ string.Format("{0:" + NUMBER_FORMAT + "}", number).ToCharSequence(),
-            //    LOCALE, EscapeQuerySyntax.Type.STRING).toString();
             return number == null ? "*" : ESCAPER.Escape(NUMBER_FORMAT.Format(number),
                 LOCALE, EscapeQuerySyntax.Type.STRING).toString();
         }
 
-        private static /*Number*/ object normalizeNumber(/*Number*/ object number)
+        private static /*Number*/ object NormalizeNumber(/*Number*/ object number)
         {
-            //return decimal.Parse(string.Format("{0:" + NUMBER_FORMAT + "}", number));
             return NUMBER_FORMAT.Parse(NUMBER_FORMAT.Format(number));
         }
 
         [TestFixtureTearDown]
-        public static void afterClass()
+        public static void AfterClass()
         {
             searcher = null;
             reader.Dispose();
@@ -609,126 +560,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             directory = null;
             qp = null;
         }
-
-
-        //private string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale, TimeZoneInfo timeZone)
-        //{
-        //    string datePattern = "", timePattern = "";
-
-        //    switch (dateStyle)
-        //    {
-        //        case DateFormat.SHORT:
-        //            datePattern = locale.DateTimeFormat.ShortDatePattern;
-        //            break;
-        //        case DateFormat.MEDIUM:
-        //            datePattern = locale.DateTimeFormat.LongDatePattern
-        //                .Replace("dddd,", "").Replace(", dddd", "") // Remove the day of the week
-        //                .Replace("MMMM", "MMM"); // Replace month with abbreviated month
-        //            break;
-        //        case DateFormat.LONG:
-        //            datePattern = locale.DateTimeFormat.LongDatePattern
-        //                .Replace("dddd,", "").Replace(", dddd", ""); // Remove the day of the week
-        //            break;
-        //        case DateFormat.FULL:
-        //            datePattern = locale.DateTimeFormat.LongDatePattern;
-        //            break;
-        //    }
-
-        //    switch (timeStyle)
-        //    {
-        //        case DateFormat.SHORT:
-        //            timePattern = locale.DateTimeFormat.ShortTimePattern;
-        //            break;
-        //        case DateFormat.MEDIUM:
-        //            timePattern = locale.DateTimeFormat.LongTimePattern;
-        //            break;
-        //        case DateFormat.LONG:
-        //            timePattern = locale.DateTimeFormat.LongTimePattern; // LUCENENET TODO: Time zone info not being added
-        //            break;
-        //        case DateFormat.FULL:
-        //            timePattern = locale.DateTimeFormat.LongTimePattern; // LUCENENET TODO: Time zone info not being added, but Java doc is unclear on what the difference is between this and LONG
-        //            break;
-        //    }
-
-        //    return string.Concat(datePattern, " ", timePattern);
-        //}
-
-        //private string GetNumberFormat()
-        //{
-        //    string integerDigits = string.Join("", Enumerable.Repeat("#", Random().nextInt(20))) + "0";
-        //    string fractionalDigits = "." + string.Join("", Enumerable.Repeat("#", Random().nextInt(21)));
-
-        //    return integerDigits + fractionalDigits;
-        //}
-
-        //private class RandomNumberFormatProvider : IFormatProvider
-        //{
-        //    private readonly CultureInfo locale;
-
-        //    public RandomNumberFormatProvider(CultureInfo locale)
-        //    {
-        //        this.locale = locale;
-        //    }
-
-        //    public object GetFormat(Type formatType)
-        //    {
-        //        if (formatType == typeof(NumberFormatInfo))
-        //            return GetRandomNumberFormat();
-
-        //        return null;
-        //    }
-
-        //    private NumberFormatInfo GetRandomNumberFormat()
-        //    {
-        //        var culture = locale;
-        //        if (culture == null)
-        //            culture = CultureInfo.CurrentCulture;
-
-        //        var NUMBER_FORMAT = (NumberFormatInfo)culture.NumberFormat.Clone();
-        //        NUMBER_FORMAT.NumberDecimalDigits = (Random().nextInt() & 20) + 1;
-        //        NUMBER_FORMAT.CurrencyDecimalDigits = (Random().nextInt() & 20) + 1;
-
-        //        return NUMBER_FORMAT;
-        //    }
-        //}
-
-        //internal class TestFormatProvider : IFormatProvider, ICustomFormatter
-        //{
-        //    private readonly CultureInfo locale;
-
-        //    public string Format(string format, object arg, IFormatProvider formatProvider)
-        //    {
-        //        return "MM/dd/yyyy";
-        //    }
-
-        //    //public RandomNumberFormatProvider(CultureInfo locale)
-        //    //{
-        //    //    this.locale = locale;
-        //    //}
-
-        //    public object GetFormat(Type formatType)
-        //    {
-        //        if (formatType == typeof(NumberFormatInfo))
-        //            //return GetRandomNumberFormat();
-        //            //return "MM/dd/yyyy";
-        //            return this;
-
-        //        return null;
-        //    }
-
-        //    //private NumberFormatInfo GetRandomNumberFormat()
-        //    //{
-        //    //    var culture = locale;
-        //    //    if (culture == null)
-        //    //        culture = CultureInfo.CurrentCulture;
-
-        //    //    var NUMBER_FORMAT = (NumberFormatInfo)culture.NumberFormat.Clone();
-        //    //    NUMBER_FORMAT.NumberDecimalDigits = (Random().nextInt() & 20) + 1;
-        //    //    NUMBER_FORMAT.CurrencyDecimalDigits = (Random().nextInt() & 20) + 1;
-
-        //    //    return NUMBER_FORMAT;
-        //    //}
-
-        //}
     }
 }

@@ -261,7 +261,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 }
                 return false;
             }
-
         }
     }
 }

@@ -32,7 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         /// </summary>
         /// <param name="queryNode">the query tree root node</param>
         /// <returns>some object generated from the query tree</returns>
-        /*object*/
         TQuery Build(IQueryNode queryNode); // LUCENENET specific - made return type generic so we don't need to deal with cast
     }
 }

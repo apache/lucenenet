@@ -53,7 +53,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
             if (IsDefaultField(this.field))
@@ -70,7 +69,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             return "<wildcard field='" + this.field + "' term='" + this.text + "'/>";
         }
-
 
         public override IQueryNode CloneTree()
         {

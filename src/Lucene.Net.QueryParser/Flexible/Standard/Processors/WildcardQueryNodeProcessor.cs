@@ -27,10 +27,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             // the old Lucene Parser ignores FuzzyQueryNode that are also PrefixWildcardQueryNode or WildcardQueryNode
             // we do the same here, also ignore empty terms
             if (node is FieldQueryNode || node is FuzzyQueryNode)
@@ -54,18 +52,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 {
                     PrefixWildcardQueryNode prefixWildcardQN = new PrefixWildcardQueryNode(fqn);
                     return prefixWildcardQN;
-
                 }
                 else if (IsWildcard(text))
                 {
                     WildcardQueryNode wildcardQN = new WildcardQueryNode(fqn);
                     return wildcardQN;
                 }
-
             }
 
             return node;
-
         }
 
         private bool IsWildcard(string text)
@@ -112,20 +107,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             return false;
         }
 
-
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

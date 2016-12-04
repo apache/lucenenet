@@ -19,25 +19,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             // empty constructor
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
             return "[DELETEDCHILD]";
         }
-
 
         public override string ToString()
         {
             return "<deleted/>";
         }
 
-
         public override IQueryNode CloneTree()
         {
             DeletedQueryNode clone = (DeletedQueryNode)base.CloneTree();
 
             return clone;
-
         }
     }
 }

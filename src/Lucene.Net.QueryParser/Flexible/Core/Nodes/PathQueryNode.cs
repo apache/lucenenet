@@ -164,14 +164,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             List<PathQueryNode.QueryText> rValues = new List<PathQueryNode.QueryText>();
             for (int i = startIndex; i < this.values.Count; i++)
             {
-                //try
-                //{
                 rValues.Add((QueryText)this.values[i].Clone());
-                //}
-                //catch (CloneNotSupportedException e)
-                //{
-                //    // this will not happen
-                //}
             }
             return rValues;
         }
@@ -202,7 +195,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return path.ToString();
         }
 
-
         public override string ToString()
         {
             QueryText text = this.values[0];
@@ -210,7 +202,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return "<path start='" + text.Begin + "' end='" + text.End + "' path='"
                 + GetPathString() + "'/>";
         }
-
 
         public override IQueryNode CloneTree()
         {

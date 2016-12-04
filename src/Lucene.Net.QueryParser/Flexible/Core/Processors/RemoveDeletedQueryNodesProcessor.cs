@@ -19,7 +19,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             queryTree = base.Process(queryTree);
@@ -27,19 +26,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             if (queryTree is DeletedQueryNode
                 && !(queryTree is MatchNoDocsQueryNode))
             {
-
                 return new MatchNoDocsQueryNode();
-
             }
 
             return queryTree;
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (!node.IsLeaf)
             {
                 IList<IQueryNode> children = node.GetChildren();
@@ -48,7 +42,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 if (children == null || children.Count == 0)
                 {
                     removeBoolean = true;
-
                 }
                 else
                 {
@@ -61,34 +54,27 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                         {
                             removeBoolean = false;
                             break;
-
                         }
-
                     }
-
                 }
 
                 if (removeBoolean)
                 {
                     return new DeletedQueryNode();
                 }
-
             }
 
             return node;
         }
 
-
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
             for (int i = 0; i < children.Count; i++)
             {
-
                 if (children[i] is DeletedQueryNode)
                 {
                     children.RemoveAt(i--);
                 }
-
             }
 
             return children;

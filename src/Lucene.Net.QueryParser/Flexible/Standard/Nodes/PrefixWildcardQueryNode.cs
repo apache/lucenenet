@@ -54,13 +54,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
         }
 
-
         public override string ToString()
         {
             return "<prefixWildcard field='" + this.field + "' term='" + this.text
                 + "'/>";
         }
-
 
         public override IQueryNode CloneTree()
         {

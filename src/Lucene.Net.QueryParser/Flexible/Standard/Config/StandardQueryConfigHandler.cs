@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler;
+using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {
@@ -22,8 +22,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
     public class StandardQueryConfigHandler : QueryConfigHandler
     {
-        
-
         public StandardQueryConfigHandler()
         {
             // Add listener that will build the FieldConfig.
@@ -43,7 +41,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.LOCALE, CultureInfo.InvariantCulture);
             Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
             Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new HashMap<string, DateTools.Resolution?>());
-
         }
 
         /**
@@ -61,7 +58,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
    */
     public sealed class ConfigurationKeys
     {
-
         /**
          * Key used to set whether position increments is enabled
          * 
@@ -195,6 +191,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
          * @see StandardQueryParser#getNumericConfigMap()
          */
         public readonly static ConfigurationKey<IDictionary<string, NumericConfig>> NUMERIC_CONFIG_MAP = ConfigurationKey.NewInstance<IDictionary<string, NumericConfig>>();
-
     }
 }

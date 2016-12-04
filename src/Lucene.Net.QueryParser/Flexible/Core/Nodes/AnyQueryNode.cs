@@ -29,13 +29,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             if (clauses != null)
             {
-
                 foreach (IQueryNode clause in clauses)
                 {
-
                     if (clause is FieldQueryNode)
                     {
-
                         if (clause is QueryNodeImpl)
                         {
                             ((QueryNodeImpl)clause).toQueryStringIgnoreFields = true;
@@ -45,12 +42,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                         {
                             ((IFieldableNode)clause).Field = field;
                         }
-
                     }
                 }
-
             }
-
         }
 
         public virtual int MinimumMatchingElements
@@ -58,11 +52,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return this.minimumMatchingmElements; }
         }
 
-        /**
-         * returns null if the field was not specified
-         * 
-         * @return the field
-         */
+        /// <summary>
+        /// Gets or sets the field name. Returns null if the field was not specified.
+        /// </summary>
         public virtual string Field
         {
             get { return this.field; }
@@ -84,16 +76,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             else
                 return this.field.ToString();
         }
-
-        ///**
-        // * @param field
-        // *          - the field to set
-        // */
-        //public virtual void SetField(string field)
-        //{
-        //    this.field = field;
-        //}
-
 
         public override IQueryNode CloneTree()
         {

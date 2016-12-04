@@ -29,7 +29,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             StandardBooleanQueryNode booleanNode = (StandardBooleanQueryNode)queryNode;
@@ -39,7 +38,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-
                 foreach (IQueryNode child in children)
                 {
                     object obj = child.GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
@@ -54,35 +52,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         }
                         catch (BooleanQuery.TooManyClauses ex)
                         {
-
                             throw new QueryNodeException(new MessageImpl(
                                 QueryParserMessages.TOO_MANY_BOOLEAN_CLAUSES, BooleanQuery
                                     .MaxClauseCount, queryNode
                                     .ToQueryString(new EscapeQuerySyntaxImpl())), ex);
-
                         }
-
                     }
-
                 }
-
             }
 
             return bQuery;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
 
         private static BooleanClause.Occur GetModifierValue(IQueryNode node)
         {
-
             if (node is ModifierQueryNode)
             {
                 ModifierQueryNode mNode = ((ModifierQueryNode)node);
@@ -91,12 +74,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 if (Modifier.MOD_NONE.Equals(modifier))
                 {
                     return BooleanClause.Occur.SHOULD;
-
                 }
                 else if (Modifier.MOD_NOT.Equals(modifier))
                 {
                     return BooleanClause.Occur.MUST_NOT;
-
                 }
                 else
                 {
@@ -105,8 +86,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             }
 
             return BooleanClause.Occur.SHOULD;
-
         }
-
     }
 }

@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             for (int i = 0; i < fields.Length; i++)
             {
-                Query q = qp.Parse(queries[i], fields[i]) as Query;
+                Query q = qp.Parse(queries[i], fields[i]);
 
                 if (q != null && // q never null, just being defensive
                     (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Count > 0))
@@ -105,7 +105,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             for (int i = 0; i < fields.Length; i++)
             {
-                Query q = qp.Parse(query, fields[i]) as Query;
+                Query q = qp.Parse(query, fields[i]);
 
                 if (q != null && // q never null, just being defensive
                     (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Count > 0))
@@ -165,7 +165,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             for (int i = 0; i < fields.Length; i++)
             {
-                Query q = qp.Parse(queries[i], fields[i]) as Query;
+                Query q = qp.Parse(queries[i], fields[i]);
 
                 if (q != null && // q never null, just being defensive
                     (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Count > 0))

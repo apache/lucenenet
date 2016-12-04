@@ -27,7 +27,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             this.config = config;
         }
 
-        
         public virtual void BuildFieldConfig(FieldConfig fieldConfig)
         {
             DateTools.Resolution? dateRes = null;
@@ -36,9 +35,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             if (dateResMap != null)
             {
                 dateResMap.TryGetValue(fieldConfig.Field, out dateRes);
-
-                //dateRes = dateResMap.Get(
-                //    fieldConfig.GetField());
             }
 
             if (dateRes == null)

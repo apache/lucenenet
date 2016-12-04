@@ -31,7 +31,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             input = r;
         }
 
-
         public char ReadChar()
         {
             if (bufferPosition >= bufferLength)
@@ -80,7 +79,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return ReadChar();
         }
 
-
         public void BackUp(int amount)
         {
             bufferPosition -= amount;
@@ -90,7 +88,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
             return new string(buffer, tokenStart, bufferPosition - tokenStart);
         }
-
 
         public char[] GetSuffix(int len)
         {
@@ -114,14 +111,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
             get { return bufferStart + bufferPosition; }
         }
+
         public int Line
         {
             get { return 1; }
         }
+
         public int EndColumn
         {
             get { return bufferStart + bufferPosition; }
         }
+
         public int EndLine
         {
             get { return 1; }

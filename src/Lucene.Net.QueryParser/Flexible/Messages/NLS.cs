@@ -56,7 +56,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
 
             if (args.Length > 0)
             {
-                //str = MessageFormat.Format(str, args);
                 str = string.Format(locale, str, args);
             }
 
@@ -97,7 +96,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             // Set the UI culture to the passed in locale.
             using (var culture = new CultureContext(locale, locale))
             {
-
                 // slow resource checking
                 // need to loop thru all registered resource bundles
                 for (IEnumerator<string> it = bundles.Keys.GetEnumerator(); it.MoveNext();)
@@ -117,23 +115,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                             // just continue it might be on the next resource bundle
                         }
                     }
-
-
-                    //ResourceBundle resourceBundle = ResourceBundle.getBundle(clazz.Name,
-                    //    locale);
-                    //if (resourceBundle != null)
-                    //{
-                    //    try
-                    //    {
-                    //        object obj = resourceBundle.getObject(messageKey);
-                    //        if (obj != null)
-                    //            return obj;
-                    //    }
-                    //    catch (MissingResourceException e)
-                    //    {
-                    //        // just continue it might be on the next resource bundle
-                    //    }
-                    //}
                 }
                 // if resource is not found
                 return null;
@@ -144,15 +125,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             FieldInfo[] fieldArray = clazz.GetFields();
 
-            //bool isFieldAccessible = (clazz.getModifiers() & Modifier.PUBLIC) != 0;
-
             // build a map of field names to Field objects
             int len = fieldArray.Length;
             IDictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(len * 2);
             for (int i = 0; i < len; i++)
             {
                 fields[fieldArray[i].Name] = fieldArray[i];
-                LoadFieldValue(fieldArray[i], /*isFieldAccessible,*/ clazz);
+                LoadFieldValue(fieldArray[i], clazz);
             }
         }
 
@@ -160,56 +139,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             field.SetValue(null, field.Name);
             ValidateMessage(field.Name, clazz);
-
-
-            //int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
-            //int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
-            //if ((field.getModifiers() & MOD_MASK) != MOD_EXPECTED)
-            //    return;
-
-            //// Set a value for this empty field.
-            //if (!isFieldAccessible)
-            //    MakeAccessible(field);
-            //try
-            //{
-            //    field.SetValue(null, field.Name);
-            //    ValidateMessage(field.Name, clazz);
-            //}
-            //catch (ArgumentException e)
-            //{
-            //    // should not happen
-            //}
-            ////catch (IllegalAccessException e)
-            ////{
-            ////    // should not happen
-            ////}
         }
-
-        //private static void loadfieldValue(FieldInfo field, bool isFieldAccessible,
-        //    Type clazz)
-        //{
-        //    int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
-        //    int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
-        //    if ((field.getModifiers() & MOD_MASK) != MOD_EXPECTED)
-        //        return;
-
-        //    // Set a value for this empty field.
-        //    if (!isFieldAccessible)
-        //        MakeAccessible(field);
-        //    try
-        //    {
-        //        field.SetValue(null, field.Name);
-        //        ValidateMessage(field.Name, clazz);
-        //    }
-        //    catch (ArgumentException e)
-        //    {
-        //        // should not happen
-        //    }
-        //    //catch (IllegalAccessException e)
-        //    //{
-        //    //    // should not happen
-        //    //}
-        //}
 
         /**
          * @param key
@@ -240,31 +170,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 // since this code is just a test to see if the message is present on the
                 // system
             }
-
-            //// Test if the message is present in the resource bundle
-            //try
-            //{
-            //    ResourceBundle resourceBundle = ResourceBundle.getBundle(clazz.Name,
-            //        CultureInfo.InvariantCulture);
-            //    if (resourceBundle != null)
-            //    {
-            //        Object obj = resourceBundle.getObject(key);
-            //        //if (obj == null)
-            //        //  System.err.println("WARN: Message with key:" + key + " and locale: "
-            //        //      + Locale.getDefault() + " not found.");
-            //    }
-            //}
-            //catch (MissingResourceException e)
-            //{
-            //    //System.err.println("WARN: Message with key:" + key + " and locale: "
-            //    //    + Locale.getDefault() + " not found.");
-            //}
-            //catch (Exception e)
-            //{
-            //    // ignore all other errors and exceptions
-            //    // since this code is just a test to see if the message is present on the
-            //    // system
-            //}
         }
 
         /// <summary>
@@ -280,27 +185,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             return Type.GetType(clazz.Namespace + "." + clazz.Name + "Bundle, " + clazz.Assembly.FullName);
         }
-
-  //      /*
-  //       * Make a class field accessible
-  //       */
-  //      private static void MakeAccessible(FieldInfo field)
-  //      {
-  //          if (System.getSecurityManager() == null)
-  //          {
-  //              field.setAccessible(true);
-  //          }
-  //          else
-  //          {
-  //              AccessController.doPrivileged(new PrivilegedAction<Void>() {
-  //      @Override
-  //      public Void run()
-  //      {
-  //          field.setAccessible(true);
-  //          return null;
-  //      }
-  //  });
-  //  }
-  //}
     }
 }

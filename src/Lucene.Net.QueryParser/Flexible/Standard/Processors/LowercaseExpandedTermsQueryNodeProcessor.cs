@@ -28,7 +28,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             bool? lowercaseExpandedTerms = GetQueryConfigHandler().Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
@@ -39,13 +38,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
 
             return queryTree;
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
             if (locale == null)
             {
@@ -57,31 +53,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 || (node is FieldQueryNode && node.Parent is IRangeQueryNode)
                 || node is RegexpQueryNode)
             {
-
                 ITextableQueryNode txtNode = (ITextableQueryNode)node;
                 ICharSequence text = txtNode.Text;
                 txtNode.Text = text != null ? UnescapedCharSequence.ToLowerCase(text, locale) : null;
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
-
     }
 }

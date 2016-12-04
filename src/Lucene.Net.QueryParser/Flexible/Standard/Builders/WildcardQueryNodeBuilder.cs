@@ -23,7 +23,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             WildcardQueryNode wildcardNode = (WildcardQueryNode)queryNode;
@@ -39,13 +38,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             return q;
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

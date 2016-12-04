@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Lucene.Net.Documents.FieldType;
+using NumericType = Lucene.Net.Documents.FieldType.NumericType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
@@ -41,7 +41,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         private static NumericType GetNumericDataType(/*Number*/ object number)
         {
-
             if (number is long)
             {
                 return NumericType.LONG;
@@ -65,7 +64,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                         QueryParserMessages.NUMBER_CLASS_NOT_SUPPORTED_BY_NUMERIC_RANGE_QUERY,
                         number.GetType()));
             }
-
         }
 
         /**
@@ -126,7 +124,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
             base.SetBounds(lower, upper, lowerInclusive, upperInclusive);
             this.numericConfig = numericConfig;
-
         }
 
         /**
@@ -138,7 +135,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             get { return this.numericConfig; }
         }
-
 
         public override string ToString()
         {
@@ -154,7 +150,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             sb.Append("</numericRange>");
 
             return sb.ToString();
-
         }
     }
 }

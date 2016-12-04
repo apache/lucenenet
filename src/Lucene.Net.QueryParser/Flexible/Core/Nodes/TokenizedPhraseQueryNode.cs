@@ -15,10 +15,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     {
         public TokenizedPhraseQueryNode()
         {
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
         }
-
 
         public override string ToString()
         {
@@ -37,7 +36,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         // This text representation is not re-parseable
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             var children = GetChildren();

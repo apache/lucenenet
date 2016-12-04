@@ -22,7 +22,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             SlopQueryNode phraseSlopNode = (SlopQueryNode)queryNode;
@@ -33,7 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             if (query is PhraseQuery)
             {
                 ((PhraseQuery)query).Slop = phraseSlopNode.Value;
-
             }
             else
             {
@@ -41,15 +39,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             }
 
             return query;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

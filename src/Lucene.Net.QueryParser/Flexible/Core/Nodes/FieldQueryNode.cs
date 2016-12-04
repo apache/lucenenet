@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             this.text = text;
             this.begin = begin;
             this.end = end;
-            this.SetLeaf(true);
+            this.IsLeaf = true;
 
         }
 
@@ -176,7 +176,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             fqn.toQueryStringIgnoreFields = this.toQueryStringIgnoreFields;
 
             return fqn;
-
         }
 
         public virtual string Value

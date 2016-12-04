@@ -47,7 +47,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
             if (IsDefaultField(this.field))
@@ -59,7 +58,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field + ":" + "\"" + GetTermEscapeQuoted(escaper) + "\"";
             }
         }
-
 
         public override string ToString()
         {

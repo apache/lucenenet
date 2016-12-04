@@ -21,12 +21,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             FuzzyQueryNode fuzzyNode = (FuzzyQueryNode)queryNode;
             string text = fuzzyNode.GetTextAsString();
-
 
             int numEdits = FuzzyQuery.FloatToEdits(fuzzyNode.Similarity,
                 text.CodePointCount(0, text.Length));
@@ -34,15 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             return new FuzzyQuery(new Term(fuzzyNode.GetFieldAsString(), fuzzyNode
                 .GetTextAsString()), numEdits, fuzzyNode
                 .PrefixLength);
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

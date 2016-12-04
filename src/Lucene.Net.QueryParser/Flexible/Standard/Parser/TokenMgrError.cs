@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     [Serializable]
     public class TokenMgrError : Exception
     {
-        /**
-   * The version identifier for this Serializable class.
-   * Increment only if the <i>serialized</i> form of the
-   * class changes.
-   */
-        private static readonly long serialVersionUID = 1L;
-
         /*
          * Ordinals for various reasons why an Error of this type can be thrown.
          */
@@ -90,8 +84,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     default:
                         if ((ch = str[i]) < 0x20 || ch > 0x7e)
                         {
-                            //string s = "0000" + Integer.toString(ch, 16);
-                            string s = "0000" + Convert.ToString(ch, 16);
+                            string s = "0000" + Number.ToString(ch, 16);
                             retval.Append("\\u" + s.Substring(s.Length - 4, /*s.Length - (s.Length - 4)*/ 4));
                         }
                         else

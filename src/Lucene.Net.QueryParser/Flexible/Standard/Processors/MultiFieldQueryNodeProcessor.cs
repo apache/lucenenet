@@ -31,33 +31,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override void ProcessChildren(IQueryNode queryTree)
         {
-
             if (this.processChildren)
             {
                 base.ProcessChildren(queryTree);
-
             }
             else
             {
                 this.processChildren = true;
             }
-
         }
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             if (node is IFieldableNode)
             {
                 this.processChildren = false;
@@ -80,7 +72,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (fields.Length == 1)
                         {
                             return fieldNode;
-
                         }
                         else
                         {
@@ -89,42 +80,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             for (int i = 1; i < fields.Length; i++)
                             {
-                                //try
-                                //{
                                 fieldNode = (IFieldableNode)fieldNode.CloneTree();
                                 fieldNode.Field = fields[i];
 
                                 children.Add(fieldNode);
-
-                                //}
-                                //catch (CloneNotSupportedException e)
-                                //{
-                                //    // should never happen
-                                //}
-
                             }
 
                             return new GroupQueryNode(new OrQueryNode(children));
-
                         }
-
                     }
-
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
-
     }
 }

@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             this.value = value;
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
             Add(query);
         }
@@ -59,7 +59,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
                 return children[0];
             }
-
         }
 
         /**
@@ -84,16 +83,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return "" + (long)f;
             else
                 return "" + f.ToString("0.0#######"); // LUCENENET TODO: Culture
-
         }
-
 
         public override string ToString()
         {
             return "<boost value='" + GetValueString() + "'>" + "\n"
                 + Child.ToString() + "\n</boost>";
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -102,7 +98,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return Child.ToQueryString(escapeSyntaxParser) + "^"
                 + GetValueString();
         }
-
 
         public override IQueryNode CloneTree()
         {

@@ -39,10 +39,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is TermRangeQueryNode)
             {
                 TermRangeQueryNode termRangeNode = (TermRangeQueryNode)node;
@@ -130,35 +128,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                         part2 = DateTools.DateToString(d2, dateRes);
                         upper.Text = new StringCharSequenceWrapper(part2);
-
                     }
-
                 }
                 catch (Exception e)
                 {
                     // do nothing
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

@@ -32,35 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private static readonly string[] escapableWordTokens = { "AND", "OR", "NOT",
             "TO", "WITHIN", "SENTENCE", "PARAGRAPH", "INORDER" };
 
-        //// LUCENENET specific overload for string
-        //private static string EscapeChar(string str, CultureInfo locale)
-        //{
-        //    if (str == null || str.Length == 0)
-        //        return str;
-
-        //    string buffer = str;
-
-        //    // regular escapable Char for terms
-        //    for (int i = 0; i < escapableTermChars.Length; i++)
-        //    {
-        //        buffer = ReplaceIgnoreCase(buffer, escapableTermChars[i].ToLower(locale),
-        //            "\\", locale);
-        //    }
-
-        //    // First Character of a term as more escaping chars
-        //    for (int i = 0; i < escapableTermExtraFirstChars.Length; i++)
-        //    {
-        //        if (buffer[0] == escapableTermExtraFirstChars[i][0])
-        //        {
-        //            buffer = "\\" + buffer[0]
-        //                + buffer.Substring(1, buffer.Length - 1);
-        //            break;
-        //        }
-        //    }
-
-        //    return buffer;
-        //}
-
         private static ICharSequence EscapeChar(ICharSequence str, CultureInfo locale)
         {
             if (str == null || str.Length == 0)
@@ -89,22 +60,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return buffer;
         }
 
-        //// LUCENENET specific overload for string
-        //private string EscapeQuoted(string str, CultureInfo locale)
-        //{
-        //    if (str == null || str.Length == 0)
-        //        return str;
-
-        //    string buffer = str;
-
-        //    for (int i = 0; i < escapableQuotedChars.Length; i++)
-        //    {
-        //        buffer = ReplaceIgnoreCase(buffer, escapableTermChars[i].ToLower(locale),
-        //            "\\", locale);
-        //    }
-        //    return buffer;
-        //}
-
         private ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale)
         {
             if (str == null || str.Length == 0)
@@ -119,25 +74,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             return buffer;
         }
-
-        //// LUCENENET specific overload for string
-        //private static string EscapeTerm(string term, CultureInfo locale)
-        //{
-        //    if (term == null)
-        //        return term;
-
-        //    // Escape single Chars
-        //    term = EscapeChar(term, locale);
-        //    term = EscapeWhiteChar(term, locale);
-
-        //    // Escape Parser Words
-        //    for (int i = 0; i < escapableWordTokens.Length; i++)
-        //    {
-        //        if (escapableWordTokens[i].Equals(term.ToString(), StringComparison.OrdinalIgnoreCase))
-        //            return "\\" + term;
-        //    }
-        //    return term;
-        //}
 
         private static ICharSequence EscapeTerm(ICharSequence term, CultureInfo locale)
         {
@@ -168,7 +104,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          *          the new character to prefix sequence1 in return string.
          * @return the new String
          */
-        // LUCENENET specific overload for string
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
@@ -228,48 +163,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
             }
             
-
             if (result.Length == 0 && copyStart == 0)
                 return @string;
             result.Append(@string.ToString().Substring(copyStart));
             return result.ToString().ToCharSequence();
         }
-
-        //private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
-        //   string sequence1, string escapeChar, CultureInfo locale)
-        //{
-        //    if (escapeChar == null || sequence1 == null || @string == null)
-        //        throw new NullReferenceException(); // LUCNENET TODO: ArgumentException...
-
-        //    return new StringCharSequenceWrapper(
-        //        ReplaceIgnoreCase(@string.ToString(), sequence1, escapeChar, locale));
-        //}
-
-        ///**
-        // * escape all tokens that are part of the parser syntax on a given string
-        // * 
-        // * @param str
-        // *          string to get replaced
-        // * @param locale
-        // *          locale to be used when performing string compares
-        // * @return the new String
-        // */
-        //// LUCENENET specific overload for string
-        //private static string EscapeWhiteChar(string str,
-        //    CultureInfo locale)
-        //{
-        //    if (str == null || str.Length == 0)
-        //        return str;
-
-        //    string buffer = str;
-
-        //    for (int i = 0; i < escapableWhiteChars.Length; i++)
-        //    {
-        //        buffer = ReplaceIgnoreCase(buffer, escapableWhiteChars[i].ToLower(locale),
-        //            "\\", locale);
-        //    }
-        //    return buffer;
-        //}
 
         /**
          * escape all tokens that are part of the parser syntax on a given string
@@ -443,6 +341,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     QueryParserMessages.INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE, c));
             }
         }
-
     }
 }

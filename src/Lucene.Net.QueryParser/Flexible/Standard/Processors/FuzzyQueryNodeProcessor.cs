@@ -23,18 +23,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="FuzzyQueryNode"/>
     public class FuzzyQueryNodeProcessor : QueryNodeProcessorImpl
     {
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             if (node is FuzzyQueryNode)
             {
                 FuzzyQueryNode fuzzyNode = (FuzzyQueryNode)node;
@@ -50,26 +45,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     {
                         fuzzyNode.Similarity = fuzzyConfig.MinSimilarity;
                     }
-
                 }
                 else if (fuzzyNode.Similarity < 0)
                 {
                     throw new ArgumentException("No FUZZY_CONFIG set in the config");
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
-
     }
 }

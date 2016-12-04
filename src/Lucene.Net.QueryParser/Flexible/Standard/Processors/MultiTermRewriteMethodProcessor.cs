@@ -21,16 +21,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     {
         public static readonly string TAG_ID = "MultiTermRewriteMethodConfiguration";
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             // set setMultiTermRewriteMethod for WildcardQueryNode and
             // PrefixWildcardQueryNode
             if (node is WildcardQueryNode
                 || node is IAbstractRangeQueryNode || node is RegexpQueryNode)
             {
-
                 MultiTermQuery.RewriteMethod rewriteMethod = GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
 
                 if (rewriteMethod == null)
@@ -43,18 +40,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                 // use a TAG to take the value to the Builder
                 node.SetTag(MultiTermRewriteMethodProcessor.TAG_ID, rewriteMethod);
-
             }
 
             return node;
         }
 
-
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
             return node;
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {

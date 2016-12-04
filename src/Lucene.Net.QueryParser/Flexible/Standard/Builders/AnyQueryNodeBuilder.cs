@@ -23,7 +23,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             AnyQueryNode andNode = (AnyQueryNode)queryNode;
@@ -33,7 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-
                 foreach (IQueryNode child in children)
                 {
                     object obj = child.GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
@@ -48,33 +46,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         }
                         catch (BooleanQuery.TooManyClauses ex)
                         {
-
                             throw new QueryNodeException(new MessageImpl(
                                /*
                                 * IQQQ.Q0028E_TOO_MANY_BOOLEAN_CLAUSES,
                                 * BooleanQuery.getMaxClauseCount()
                                 */QueryParserMessages.EMPTY_MESSAGE), ex);
-
                         }
-
                     }
-
                 }
-
             }
 
             bQuery.MinimumNumberShouldMatch = andNode.MinimumMatchingElements;
 
             return bQuery;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

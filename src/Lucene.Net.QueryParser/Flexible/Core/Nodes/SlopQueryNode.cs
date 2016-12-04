@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             this.value = value;
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
             Add(query);
         }
@@ -60,16 +60,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return "" + (long)f;
             else
                 return "" + f;
-
         }
-
 
         public override string ToString()
         {
             return "<slop value='" + GetValueString() + "'>" + "\n"
                 + GetChild().ToString() + "\n</slop>";
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -111,6 +108,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 }
             }
         }
-
     }
 }

@@ -14,7 +14,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     public interface IMessage
     {
         string Key { get; }
-        object[] Arguments { get; }
+        object[] GetArguments();
         string GetLocalizedMessage();
         string GetLocalizedMessage(CultureInfo locale);
     }

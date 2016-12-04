@@ -57,12 +57,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             return new BytesRef(text.ToString());
         }
 
-
         public override string ToString()
         {
             return "<regexp field='" + this.field + "' term='" + this.text + "'/>";
         }
-
 
         public override IQueryNode CloneTree()
         {
@@ -71,7 +69,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             clone.text = this.text;
             return clone;
         }
-
 
         public virtual ICharSequence Text
         {
@@ -94,6 +91,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             return IsDefaultField(field) ? "/" + text + "/" : field + ":/" + text + "/";
         }
-
     }
 }

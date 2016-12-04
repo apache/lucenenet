@@ -33,7 +33,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             Operator? op = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
@@ -47,13 +46,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
             this.usingAnd = Operator.AND == op;
 
             return base.Process(queryTree);
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is AndQueryNode)
             {
                 this.childrenBuffer.Clear();
@@ -65,12 +61,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
                 }
 
                 node.Set(this.childrenBuffer);
-
             }
             else if (this.usingAnd && node is BooleanQueryNode
                 && !(node is OrQueryNode))
             {
-
                 this.childrenBuffer.Clear();
                 IList<IQueryNode> children = node.GetChildren();
 
@@ -80,21 +74,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
                 }
 
                 node.Set(this.childrenBuffer);
-
             }
 
             return node;
-
         }
 
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
-
             // check if modifier is not already defined and is default
             if (!(node is ModifierQueryNode))
             {
                 return new ModifierQueryNode(node, mod);
-
             }
             else
             {
@@ -104,25 +94,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
                 }
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
             return node;
         }
 
-
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }

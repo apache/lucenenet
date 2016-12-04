@@ -13,28 +13,17 @@ using System.Threading.Tasks;
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
     /// <summary>
-    /// This builder creates {@link SpanTermQuery}s from a {@link FieldQueryNode}
+    /// This builder creates <see cref="SpanTermQuery"/>s from a <see cref="FieldQueryNode"/>
     /// object.
     /// </summary>
     public class SpanTermQueryNodeBuilder : IStandardQueryBuilder
     {
-
         public virtual Query Build(IQueryNode node)
         {
             FieldQueryNode fieldQueryNode = (FieldQueryNode)node;
 
             return new SpanTermQuery(new Term(fieldQueryNode.GetFieldAsString(),
                 fieldQueryNode.GetTextAsString()));
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
-
     }
 }

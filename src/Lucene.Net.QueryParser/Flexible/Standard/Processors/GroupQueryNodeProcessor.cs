@@ -41,7 +41,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         public virtual IQueryNode Process(IQueryNode queryTree)
         {
             Operator? defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
@@ -73,7 +72,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 {
                     actualQueryNodeList[i] = Process(node);
                 }
-
             }
 
             this.usingAnd = false;
@@ -83,101 +81,79 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 queryTree.Set(actualQueryNodeList);
 
                 return queryTree;
-
             }
             else
             {
                 return new BooleanQueryNode(actualQueryNodeList);
             }
-
         }
 
         /**
          */
         private IQueryNode ApplyModifier(IQueryNode node, IQueryNode parent)
         {
-
             if (this.usingAnd)
             {
-
                 if (parent is OrQueryNode)
                 {
-
                     if (node is ModifierQueryNode)
                     {
-
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
                         if (modNode.Modifier == Modifier.MOD_REQ)
                         {
                             return modNode.GetChild();
                         }
-
                     }
-
                 }
                 else
                 {
-
                     if (node is ModifierQueryNode)
                     {
-
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
                         if (modNode.Modifier == Modifier.MOD_NONE)
                         {
                             return new BooleanModifierNode(modNode.GetChild(), Modifier.MOD_REQ);
                         }
-
                     }
                     else
                     {
                         return new BooleanModifierNode(node, Modifier.MOD_REQ);
                     }
-
                 }
-
             }
             else
             {
-
                 if (node.Parent is AndQueryNode)
                 {
-
                     if (node is ModifierQueryNode)
                     {
-
                         ModifierQueryNode modNode = (ModifierQueryNode)node;
 
                         if (modNode.Modifier == Modifier.MOD_NONE)
                         {
                             return new BooleanModifierNode(modNode.GetChild(), Modifier.MOD_REQ);
                         }
-
                     }
                     else
                     {
                         return new BooleanModifierNode(node, Modifier.MOD_REQ);
                     }
-
                 }
-
             }
 
             return node;
-
         }
 
         private void ReadTree(IQueryNode node)
         {
-
             if (node is BooleanQueryNode)
             {
                 IList<IQueryNode> children = node.GetChildren();
 
                 if (children != null && children.Count > 0)
                 {
-
                     for (int i = 0; i < children.Count - 1; i++)
                     {
                         ReadTree(children[i]);
@@ -185,27 +161,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     ProcessNode(node);
                     ReadTree(children[children.Count - 1]);
-
                 }
                 else
                 {
                     ProcessNode(node);
                 }
-
             }
             else
             {
                 ProcessNode(node);
             }
-
         }
 
         private void ProcessNode(IQueryNode node)
         {
-
             if (node is AndQueryNode || node is OrQueryNode)
             {
-
                 if (!this.latestNodeVerified && this.queryNodeList.Any())
                 {
                     var value = this.queryNodeList[this.queryNodeList.Count - 1];
@@ -213,25 +184,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     this.queryNodeList.Add(ApplyModifier(value, node));
                     this.latestNodeVerified = true;
-
                 }
-
             }
             else if (!(node is BooleanQueryNode))
             {
                 this.queryNodeList.Add(ApplyModifier(node, node.Parent));
                 this.latestNodeVerified = false;
-
             }
-
         }
-
 
         public virtual QueryConfigHandler GetQueryConfigHandler()
         {
             return this.queryConfig;
         }
-
 
         public virtual void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler)
         {

@@ -18,15 +18,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// You can modify this class to customize your error reporting
     /// mechanisms so long as you retain the public fields.
     /// </summary>
+    [Serializable]
     public class ParseException : QueryNodeParseException
     {
-        /**
-   * The version identifier for this Serializable class.
-   * Increment only if the <i>serialized</i> form of the
-   * class changes.
-   */
-        private static readonly long serialVersionUID = 1L;
-
         /**
          * This constructor is used by the method "generateParseException"
          * in the generated parser.  Calling this constructor generates
@@ -52,7 +46,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * relevant information.  The JavaCC generated code does not use
          * these constructors.
          */
-
         public ParseException()
             : base(new MessageImpl(QueryParserMessages.INVALID_SYNTAX, "Error"))
         {
@@ -63,7 +56,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             : base(message)
         {
         }
-
 
         /**
          * This is the last token that has been consumed successfully.  If
@@ -150,7 +142,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /**
          * The end of line string for this machine.
          */
-        //protected String eol = System.getProperty("line.separator", "\n");
         protected string eol = Environment.NewLine;
 
         /**

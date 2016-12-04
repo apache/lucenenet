@@ -29,18 +29,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
         {
             for (int i = 0; i < Count; i++)
             {
-
                 if (this[i].GetType().Equals(typeof(BooleanQuery2ModifierNodeProcessor)))
                 {
                     RemoveAt(i--);
                 }
-
             }
 
-
             Add(new BooleanModifiersQueryNodeProcessor());
-
         }
-
     }
 }

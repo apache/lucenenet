@@ -92,7 +92,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override bool Equals(object obj)
         {
-
             if (obj == this) return true;
 
             if (obj is NumericConfig)
@@ -105,11 +104,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                 {
                     return true;
                 }
-
             }
 
             return false;
-
         }
     }
 }

@@ -65,7 +65,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             {
                 processor.SetQueryConfigHandler(queryConfigHandler);
             }
-
         }
 
         /**
@@ -101,7 +100,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
             this.processor = processor;
             this.processor.SetQueryConfigHandler(QueryConfigHandler);
-
         }
 
         /**
@@ -116,14 +114,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          */
         public virtual void SetSyntaxParser(ISyntaxParser syntaxParser)
         {
-
             if (syntaxParser == null)
             {
                 throw new ArgumentException("textParser should not be null!");
             }
 
             this.syntaxParser = syntaxParser;
-
         }
 
         /**
@@ -138,14 +134,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          */
         public virtual void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
         {
-
             if (queryBuilder == null)
             {
                 throw new ArgumentException("queryBuilder should not be null!");
             }
 
             this.builder = queryBuilder;
-
         }
 
         /**
@@ -214,7 +208,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             {
                 processor.SetQueryConfigHandler(config);
             }
-
         }
 
         /**
@@ -242,7 +235,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
          * @throws QueryNodeException
          *           if something wrong happens along the three phases
          */
-        public virtual /*object*/ TQuery Parse(string query, string defaultField)
+        public virtual TQuery Parse(string query, string defaultField)
         {
             IQueryNode queryTree = SyntaxParser.Parse(query, defaultField);
 
@@ -254,7 +247,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             }
 
             return QueryBuilder.Build(queryTree);
-
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          */
         protected AbstractRangeQueryNode()
         {
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
         }
 
@@ -72,29 +72,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 }
             }
         }
-
-        /**
-         * Sets the field associated with this node.
-         * 
-         * @param fieldName the field associated with this node
-         */
-        //      @Override
-        //public void setField(CharSequence fieldName)
-        //      {
-        //          T lower = getLowerBound();
-        //          T upper = getUpperBound();
-
-        //          if (lower != null)
-        //          {
-        //              lower.setField(fieldName);
-        //          }
-
-        //          if (upper != null)
-        //          {
-        //              upper.setField(fieldName);
-        //          }
-
-        //      }
 
         /**
          * Returns the lower bound node.
@@ -153,7 +130,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public virtual void SetBounds(T lower, T upper, bool lowerInclusive,
             bool upperInclusive)
         {
-
             if (lower != null && upper != null)
             {
                 string lowerField = StringUtils.ToString(lower.Field);
@@ -175,11 +151,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 children.Add(upper);
 
                 Set(children);
-
             }
-
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -191,7 +164,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             if (lowerInclusive)
             {
                 sb.Append('[');
-
             }
             else
             {
@@ -201,7 +173,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             if (lower != null)
             {
                 sb.Append(lower.ToQueryString(escapeSyntaxParser));
-
             }
             else
             {
@@ -213,7 +184,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             if (upper != null)
             {
                 sb.Append(upper.ToQueryString(escapeSyntaxParser));
-
             }
             else
             {
@@ -223,7 +193,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             if (upperInclusive)
             {
                 sb.Append(']');
-
             }
             else
             {
@@ -231,9 +200,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
 
             return sb.ToString();
-
         }
-
 
         public override string ToString()
         {
@@ -246,7 +213,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             sb.Append("</").Append(GetType().AssemblyQualifiedName).Append(">\n");
 
             return sb.ToString();
-
         }
     }
 

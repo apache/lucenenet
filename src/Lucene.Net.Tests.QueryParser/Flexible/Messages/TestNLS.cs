@@ -14,18 +14,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestMessageLoading()
         {
-            //string message = MessagesTestBundle.ResourceManager.GetString("Q0001E_INVALID_SYNTAX");
-
-            //fail("not implemented");
-
             IMessage invalidSyntax = new MessageImpl(
                 MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
             /* 
              * if the default locale is ja, you get ja as a fallback:
              * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
              */
-            //if (!Locale.getDefault().getLanguage().equals("ja"))
-            //    assertEquals("Syntax Error: XXX", invalidSyntax.getLocalizedMessage(Locale.ENGLISH));
             if (!CultureInfo.CurrentUICulture.Equals(new CultureInfo("ja")))
                 assertEquals("Syntax Error: XXX", invalidSyntax.GetLocalizedMessage(new CultureInfo("en")));
         }
@@ -48,7 +42,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
              * if the default locale is ja, you get ja as a fallback:
              * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
              */
-            //if (!Locale.getDefault().getLanguage().equals("ja"))
             if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
                 assertEquals("Truncated unicode escape sequence.", message);
 
@@ -58,8 +51,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
              * if the default locale is ja, you get ja as a fallback:
              * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
              */
-            //if (!Locale.getDefault().getLanguage().equals("ja"))
-            //if (!CultureInfo.CurrentUICulture.Equals(new CultureInfo("ja-JP")))
             if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
                 assertEquals("Syntax Error: XXX", message);
         }
@@ -80,7 +71,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestNLSLoading_xx_XX()
         {
-            //Locale locale = new Locale("xx", "XX", "");
             CultureInfo locale = new CultureInfo("xx-XX");
             String message = NLS.GetLocalizedMessage(
                 MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
@@ -89,7 +79,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
              * if the default locale is ja, you get ja as a fallback:
              * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
              */
-            //if (!Locale.getDefault().getLanguage().equals("ja"))
             if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
                 assertEquals("Truncated unicode escape sequence.", message);
 
@@ -99,17 +88,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
              * if the default locale is ja, you get ja as a fallback:
              * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
              */
-            //if (!Locale.getDefault().getLanguage().equals("ja"))
             if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
                 assertEquals("Syntax Error: XXX", message);
         }
 
-        // LUCENENET TODO: This doesn't compile because the resources don't contain this message
-
         [Test]
         public void TestMissingMessage()
         {
-            //Locale locale = Locale.ENGLISH;
             CultureInfo locale = new CultureInfo("en");
             String message = NLS.GetLocalizedMessage(
                 MessagesTestBundle.Q0005E_MESSAGE_NOT_IN_BUNDLE, locale);

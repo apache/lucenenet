@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             : base(field, term, begin, end)
         {
             this.similarity = minSimilarity;
-            SetLeaf(true);
+            IsLeaf = true;
         }
 
         public virtual int PrefixLength
@@ -68,7 +68,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return this.prefixLength; }
             set { this.prefixLength = value; }
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
@@ -81,7 +80,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field + ":" + GetTermEscaped(escaper) + "~" + this.similarity;
             }
         }
-
 
         public override string ToString()
         {

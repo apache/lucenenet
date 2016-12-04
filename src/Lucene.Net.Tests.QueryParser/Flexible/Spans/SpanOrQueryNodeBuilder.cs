@@ -12,15 +12,14 @@ using System.Threading.Tasks;
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
     /// <summary>
-    /// This builder creates {@link SpanOrQuery}s from a {@link BooleanQueryNode}.
+    /// This builder creates <see cref="SpanOrQuery"/>s from a <see cref="BooleanQueryNode"/>.
     /// <para/>
-    /// It assumes that the {@link BooleanQueryNode} instance has at least one child.
+    /// It assumes that the <see cref="BooleanQueryNode"/> instance has at least one child.
     /// </summary>
     public class SpanOrQueryNodeBuilder : IStandardQueryBuilder
     {
         public virtual Query Build(IQueryNode node)
         {
-
             // validates node
             BooleanQueryNode booleanNode = (BooleanQueryNode)node;
 
@@ -38,13 +37,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             return new SpanOrQuery(spanQueries);
 
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

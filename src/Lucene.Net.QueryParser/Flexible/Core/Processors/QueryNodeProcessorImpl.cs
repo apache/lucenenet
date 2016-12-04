@@ -24,7 +24,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             this.queryConfig = queryConfigHandler;
         }
 
-
         public virtual IQueryNode Process(IQueryNode queryTree)
         {
             return ProcessIteration(queryTree);
@@ -39,7 +38,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             queryTree = PostProcessNode(queryTree);
 
             return queryTree;
-
         }
 
         /**
@@ -52,18 +50,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          */
         protected virtual void ProcessChildren(IQueryNode queryTree)
         {
-
             IList<IQueryNode> children = queryTree.GetChildren();
             ChildrenList newChildren;
 
             if (children != null && children.Count > 0)
             {
-
                 newChildren = AllocateChildrenList();
 
                 try
                 {
-
                     foreach (IQueryNode child in children)
                     {
                         var child2 = ProcessIteration(child);
@@ -75,21 +70,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                         }
 
                         newChildren.Add(child2);
-
                     }
 
                     IList<IQueryNode> orderedChildrenList = SetChildrenOrder(newChildren);
 
                     queryTree.Set(orderedChildrenList);
-
                 }
                 finally
                 {
                     newChildren.beingUsed = false;
                 }
-
             }
-
         }
 
         private ChildrenList AllocateChildrenList()
@@ -98,29 +89,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
             foreach (ChildrenList auxList in this.childrenListPool)
             {
-
                 if (!auxList.beingUsed)
                 {
                     list = auxList;
                     list.Clear();
 
                     break;
-
                 }
-
             }
 
             if (list == null)
             {
                 list = new ChildrenList();
                 this.childrenListPool.Add(list);
-
             }
 
             list.beingUsed = true;
 
             return list;
-
         }
 
         /**
@@ -133,7 +119,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
          * @see QueryNodeProcessor#getQueryConfigHandler()
          * @see QueryConfigHandler
          */
-
         public virtual void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;

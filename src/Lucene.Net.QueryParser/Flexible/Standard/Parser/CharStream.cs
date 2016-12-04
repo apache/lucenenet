@@ -112,6 +112,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
          * affect the lexer's operation.
          */
         void Done();
-
     }
 }

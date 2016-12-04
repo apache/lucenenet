@@ -21,22 +21,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             ModifierQueryNode modifierNode = (ModifierQueryNode)queryNode;
 
             return (Query)(modifierNode).GetChild().GetTag(
                 QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

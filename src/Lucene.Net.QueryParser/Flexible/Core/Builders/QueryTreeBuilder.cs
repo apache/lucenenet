@@ -146,20 +146,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             if (this.fieldNameBuilders != null && node is IFieldableNode)
             {
                 string field = ((IFieldableNode)node).Field;
-
-                //if (field != null)
-                //{
-                //    field = field.ToString();
-                //}
-
-                //builder = this.fieldNameBuilders[field];
                 this.fieldNameBuilders.TryGetValue(field, out builder);
-
             }
 
             if (builder == null && this.queryNodeBuilders != null)
             {
-
                 Type clazz = node.GetType();
 
                 do
@@ -178,30 +169,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                             {
                                 break;
                             }
-
                         }
-
                     }
-
                 } while (builder == null && (clazz = clazz.BaseType) != null);
-
             }
 
             return builder;
-
         }
 
         private void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder)
         {
-
             if (builder == null)
             {
-
                 throw new QueryNodeException(new MessageImpl(
                     QueryParserMessages.LUCENE_QUERY_CONVERSION_ERROR, node
                         .ToQueryString(new EscapeQuerySyntaxImpl()), node.GetType()
                         .Name));
-
             }
 
             object obj = builder.Build(node);
@@ -215,17 +198,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         private IQueryBuilder<TQuery> GetQueryBuilder(Type clazz)
         {
-
             if (typeof(IQueryNode).IsAssignableFrom(clazz))
             {
                 IQueryBuilder<TQuery> result;
                 this.queryNodeBuilders.TryGetValue(clazz, out result);
                 return result;
-                //return this.queryNodeBuilders.get(clazz);
             }
 
             return null;
-
         }
 
         /**
@@ -240,13 +220,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
          *         {@link QueryNodeException} or if there is a node which had no
          *         builder associated to it
          */
-
-        public virtual /*object*/ TQuery Build(IQueryNode queryNode)
+        public virtual TQuery Build(IQueryNode queryNode)
         {
             Process(queryNode);
 
             return (TQuery)queryNode.GetTag(QUERY_TREE_BUILDER_TAGID);
-
         }
     }
 }

@@ -20,10 +20,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         public OpenRangeQueryNodeProcessor() { }
 
-
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is TermRangeQueryNode)
             {
                 TermRangeQueryNode rangeNode = (TermRangeQueryNode)node;
@@ -51,15 +49,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
             return node;
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {

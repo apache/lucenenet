@@ -23,7 +23,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // empty constructor
         }
 
-
         public virtual Query Build(IQueryNode queryNode)
         {
             TermRangeQueryNode rangeNode = (TermRangeQueryNode)queryNode;
@@ -55,15 +54,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             }
 
             return rangeQuery;
-
         }
-
-        ///// <summary>
-        ///// LUCENENET specific overload for supporting IQueryBuilder
-        ///// </summary>
-        //object IQueryBuilder.Build(IQueryNode queryNode)
-        //{
-        //    return Build(queryNode);
-        //}
     }
 }

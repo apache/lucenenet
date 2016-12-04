@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             Allocate();
-            SetLeaf(false);
+            IsLeaf = false;
             Add(query);
         }
 
@@ -38,7 +38,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             return GetChildren()[0];
         }
-
 
         public override string ToString()
         {
@@ -54,7 +53,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return "( " + GetChild().ToQueryString(escapeSyntaxParser) + " )";
         }
 
-
         public override IQueryNode CloneTree()
         {
             GroupQueryNode clone = (GroupQueryNode)base.CloneTree();
@@ -68,6 +66,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             list.Add(child);
             this.Set(list);
         }
-
     }
 }

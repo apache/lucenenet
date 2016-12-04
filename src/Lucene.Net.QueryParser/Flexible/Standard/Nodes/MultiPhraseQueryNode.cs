@@ -16,9 +16,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     {
         public MultiPhraseQueryNode()
         {
-            SetLeaf(false);
+            IsLeaf = false;
             Allocate();
-
         }
 
         public override string ToString()
@@ -37,7 +36,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             return sb.ToString();
         }
 
-
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             var children = GetChildren();
@@ -55,7 +53,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             return "[MTP[" + sb.ToString() + "]]";
         }
 
-
         public override IQueryNode CloneTree()
         {
             MultiPhraseQueryNode clone = (MultiPhraseQueryNode)base.CloneTree();
@@ -64,7 +61,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
             return clone;
         }
-
 
         public virtual string Field
         {
@@ -75,7 +71,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 if (children == null || children.Count == 0)
                 {
                     return null;
-
                 }
                 else
                 {
@@ -88,19 +83,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
                 if (children != null)
                 {
-
                     foreach (IQueryNode child in children)
                     {
-
                         if (child is IFieldableNode)
                         {
                             ((IFieldableNode)child).Field = value;
                         }
-
                     }
                 }
             }
-
         }
     }
 }

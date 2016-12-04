@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /**
-         * Returns the field associated with this node.
+         * Gets or Sets the field associated with this node.
          * 
          * @return the field associated with this node
          */
@@ -56,17 +56,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /**
-         * Sets the field associated with this node.
-         * 
-         * @param fieldName the field associated with this node
-         */
-        //      @Override
-        //public void setField(CharSequence fieldName)
-        //      {
-        //          this.field = fieldName;
-        //      }
-
-        /**
          * This method is used to get the value converted to {@link String} and
          * escaped using the given {@link EscapeQuerySyntax}.
          * 
@@ -76,9 +65,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          */
         protected string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
-            //return escaper.Escape(new StringCharSequenceWrapper(/*string.Format(numberFormat, this.value))*/ numberFormat.Format(this.value),
-            //    CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL).ToString();
-
             return escaper.Escape(numberFormat.Format(this.value),
                 CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
         }
@@ -112,24 +98,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
          * 
          * @return the numeric value
          */
-
         public virtual object Value
         {
             get { return value; }
             set { this.value = value; }
         }
-
-        /**
-         * Sets the numeric value.
-         * 
-         * @param value the numeric value
-         */
-        //      @Override
-        //public void setValue(Number value)
-        //      {
-        //          this.value = value;
-        //      }
-
 
         public override string ToString()
         {

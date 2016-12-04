@@ -32,7 +32,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // empty constructor
         }
 
-
         public override IQueryNode Process(IQueryNode queryTree)
         {
             QueryConfigHandler queryConfig = GetQueryConfigHandler();
@@ -46,67 +45,48 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     this.defaultPhraseSlop = defaultPhraseSlop.Value;
 
                     return base.Process(queryTree);
-
                 }
-
             }
 
             return queryTree;
-
         }
-
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-
             if (node is TokenizedPhraseQueryNode
                 || node is MultiPhraseQueryNode)
             {
-
                 return new SlopQueryNode(node, this.defaultPhraseSlop);
-
             }
 
             return node;
-
         }
-
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-
             if (node is SlopQueryNode)
             {
                 this.processChildren = false;
-
             }
 
             return node;
-
         }
-
 
         protected override void ProcessChildren(IQueryNode queryTree)
         {
-
             if (this.processChildren)
             {
                 base.ProcessChildren(queryTree);
-
             }
             else
             {
                 this.processChildren = true;
             }
-
         }
-
 
         protected override IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children)
         {
-
             return children;
-
         }
     }
 }
