@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -89,7 +90,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 //    .getBundle("org.apache.lucene.queryParser.messages.QueryParserMessages");
                 //String message = bundle.getObject("Q0008E.NODE_ACTION_NOT_SUPPORTED")
                 //    .toString();
-                string message = Lucene.Net.QueryParsers.Properties.Resources.NODE_ACTION_NOT_SUPPORTED;
+                //ResourceManager bundle =  QueryParserMessages.NODE_ACTION_NOT_SUPPORTED;
+                ResourceManager bundle = new ResourceManager(typeof(QueryParserMessagesBundle));
+                string message = bundle.GetString(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
 
                 throw new ArgumentException(message);
 

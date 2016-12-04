@@ -22,14 +22,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class MessagesTestBundle {
+    internal class MessagesTestBundleBundle {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal MessagesTestBundle() {
+        internal MessagesTestBundleBundle() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Messages.MessagesTestBundle", typeof(MessagesTestBundle).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Messages.MessagesTestBundleBundle", typeof(MessagesTestBundleBundle).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax Error: {0}.
+        /// </summary>
+        internal static string Q0001E_INVALID_SYNTAX {
+            get {
+                return ResourceManager.GetString("Q0001E_INVALID_SYNTAX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Truncated unicode escape sequence..
+        /// </summary>
+        internal static string Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION {
+            get {
+                return ResourceManager.GetString("Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION", resourceCulture);
             }
         }
     }

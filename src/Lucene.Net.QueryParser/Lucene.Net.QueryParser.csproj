@@ -63,6 +63,11 @@
     <Compile Include="Flexible\Core\Config\FieldConfigListener.cs" />
     <Compile Include="Flexible\Core\Config\QueryConfigHandler.cs" />
     <Compile Include="Flexible\Core\Messages\QueryParserMessages.cs" />
+    <Compile Include="Flexible\Core\Messages\QueryParserMessagesBundle.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QueryParserMessagesBundle.resx</DependentUpon>
+    </Compile>
     <Compile Include="Flexible\Core\Nodes\NoTokenFoundQueryNode.cs" />
     <Compile Include="Flexible\Core\Nodes\AndQueryNode.cs" />
     <Compile Include="Flexible\Core\Nodes\AnyQueryNode.cs" />
@@ -182,11 +187,6 @@
     <Compile Include="Flexible\Standard\QueryParserUtil.cs" />
     <Compile Include="Flexible\Standard\StandardQueryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Simple\SimpleQueryParser.cs" />
     <Compile Include="Surround\Parser\CharStream.cs" />
     <Compile Include="Surround\Parser\FastCharStream.cs" />
@@ -227,9 +227,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="Flexible\Core\Messages\QueryParserMessagesBundle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>QueryParserMessagesBundle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

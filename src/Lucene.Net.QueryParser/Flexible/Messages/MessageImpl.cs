@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
 
         public virtual string GetLocalizedMessage()
         {
-            return GetLocalizedMessage(CultureInfo.InvariantCulture);
+            return GetLocalizedMessage(CultureInfo.CurrentUICulture);
         }
 
 

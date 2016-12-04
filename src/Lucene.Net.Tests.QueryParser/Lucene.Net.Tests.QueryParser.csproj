@@ -53,10 +53,10 @@
     <Compile Include="Flexible\Core\Builders\TestQueryTreeBuilder.cs" />
     <Compile Include="Flexible\Core\Nodes\TestQueryNode.cs" />
     <Compile Include="Flexible\Messages\MessagesTestBundle.cs" />
-    <Compile Include="Flexible\Messages\MessagesTestBundle.Designer.cs">
+    <Compile Include="Flexible\Messages\MessagesTestBundleBundle.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>MessagesTestBundle.resx</DependentUpon>
+      <DependentUpon>MessagesTestBundleBundle.resx</DependentUpon>
     </Compile>
     <Compile Include="Flexible\Messages\TestNLS.cs" />
     <Compile Include="Flexible\Precedence\TestPrecedenceQueryParser.cs" />
@@ -112,13 +112,10 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundle.ja-JP.resx">
-      <DependentUpon>MessagesTestBundle.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundle.resx">
-      <DependentUpon>MessagesTestBundle.cs</DependentUpon>
+    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.ja.resx" />
+    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MessagesTestBundle.Designer.cs</LastGenOutput>
+      <LastGenOutput>MessagesTestBundleBundle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -54,18 +54,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             string str = GetLocalizedMessage(key, locale);
 
-            // LUCENENET TODO: Figure out what the equivalent of this is
-            //if (args.Length > 0)
-            //{
-            //    str = MessageFormat.Format(str, args);
-            //}
+            if (args.Length > 0)
+            {
+                //str = MessageFormat.Format(str, args);
+                str = string.Format(locale, str, args);
+            }
 
             return str;
         }
 
         public static string GetLocalizedMessage(string key, params object[] args)
         {
-            return GetLocalizedMessage(key, CultureInfo.InvariantCulture, args);
+            return GetLocalizedMessage(key, CultureInfo.CurrentUICulture, args);
         }
 
         /**
@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 for (IEnumerator<string> it = bundles.Keys.GetEnumerator(); it.MoveNext();)
                 {
                     Type clazz = bundles[it.Current];
-                    ResourceManager resourceBundle = new ResourceManager(clazz);
+                    ResourceManager resourceBundle = new ResourceManager(GetResourceType(clazz));
                     if (resourceBundle != null)
                     {
                         try
@@ -220,7 +220,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             // Test if the message is present in the resource bundle
             try
             {
-                ResourceManager resourceBundle = new ResourceManager(clazz);
+                ResourceManager resourceBundle = new ResourceManager(GetResourceType(clazz));
                 if (resourceBundle != null)
                 {
                     object obj = resourceBundle.GetObject(key);
@@ -265,6 +265,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             //    // since this code is just a test to see if the message is present on the
             //    // system
             //}
+        }
+
+        /// <summary>
+        /// LUCENENET specific method for converting the NLS type to the .NET resource type.
+        /// In Java, these were one and the same, but in .NET it is not possible to create resources
+        /// in Visual Studio with the same class name as a resource class because the resource generation process already
+        /// creates a backing class with the same name as the resource. So, by convention the resources must be
+        /// named &lt;messages class name&gt;Bundle in order to be found by NLS.
+        /// </summary>
+        /// <param name="clazz">The type of the NLS class where the field strings are located that identify resources.</param>
+        /// <returns>The type of resources (the class name + "Resources" suffix), as a .NET <see cref="Type"/> instance.</returns>
+        private static Type GetResourceType(Type clazz)
+        {
+            return Type.GetType(clazz.Namespace + "." + clazz.Name + "Bundle, " + clazz.Assembly.FullName);
         }
 
   //      /*
