@@ -337,7 +337,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testInclusiveNumericRange()
+        public void TestInclusiveNumericRange()
         {
             assertRangeQuery(NumberType.ZERO, NumberType.ZERO, true, true, 1);
             assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 2);
@@ -349,7 +349,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         // test disabled since standard syntax parser does not work with inclusive and
         // exclusive at the same time
-        public void testInclusiveLowerNumericRange()
+        public void TestInclusiveLowerNumericRange()
         {
             assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, false, true, 1);
             assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, true, 1);
@@ -360,7 +360,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         // test disabled since standard syntax parser does not work with inclusive and
         // exclusive at the same time
-        public void testInclusiveUpperNumericRange()
+        public void TestInclusiveUpperNumericRange()
         {
             assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, true, false, 1);
             assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, false, 1);
@@ -369,7 +369,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testExclusiveNumericRange()
+        public void TestExclusiveNumericRange()
         {
             assertRangeQuery(NumberType.ZERO, NumberType.ZERO, false, false, 0);
             assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, false, 0);
@@ -379,7 +379,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testOpenRangeNumericQuery()
+        public void TestOpenRangeNumericQuery()
         {
             assertOpenRangeQuery(NumberType.ZERO, "<", 1);
             assertOpenRangeQuery(NumberType.POSITIVE, "<", 2);
@@ -417,7 +417,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testSimpleNumericQuery()
+        public void TestSimpleNumericQuery()
         {
             assertSimpleQuery(NumberType.ZERO, 1);
             assertSimpleQuery(NumberType.POSITIVE, 1);
@@ -499,7 +499,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     upperInclusiveStr);
 
 
-            testQuery(sb.toString(), expectedDocCount);
+            TestQuery(sb.toString(), expectedDocCount);
 
         }
 
@@ -532,7 +532,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             sb.append("+").append(DATE_FIELD_NAME).append(@operator).append('"').append(boundDateStr).append('"');
 
 
-            testQuery(sb.toString(), expectedDocCount);
+            TestQuery(sb.toString(), expectedDocCount);
         }
 
         public void assertSimpleQuery(NumberType numberType, int expectedDocCount)
@@ -564,11 +564,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     .append('"');
 
 
-            testQuery(sb.toString(), expectedDocCount);
+            TestQuery(sb.toString(), expectedDocCount);
 
         }
 
-        private void testQuery(String queryStr, int expectedDocCount)
+        private void TestQuery(String queryStr, int expectedDocCount)
         {
             if (VERBOSE) Console.WriteLine("Parsing: " + queryStr);
 

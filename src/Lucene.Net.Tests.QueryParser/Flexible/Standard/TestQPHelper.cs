@@ -303,7 +303,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
         [Test]
-        public void testConstantScoreAutoRewrite()
+        public void TestConstantScoreAutoRewrite()
         {
             StandardQueryParser qp = new StandardQueryParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
             Query q = qp.Parse("foo*bar", "field");
@@ -319,7 +319,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
         }
         [Test]
-        public void testCJK()
+        public void TestCJK()
         {
             // Test Ideographic Space - As wide as a CJK character cell (fullwidth)
             // used google to translate the word "term" to japanese -> ??
@@ -360,7 +360,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
         [Test]
-        public void testCJKTerm()
+        public void TestCJKTerm()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
@@ -380,7 +380,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
         [Test]
-        public void testCJKBoostedTerm()
+        public void TestCJKBoostedTerm()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
@@ -394,7 +394,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(expected, GetQuery("中国^0.5", analyzer));
         }
         [Test]
-        public void testCJKPhrase()
+        public void TestCJKPhrase()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
@@ -407,7 +407,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(expected, GetQuery("\"中国\"", analyzer));
         }
         [Test]
-        public void testCJKBoostedPhrase()
+        public void TestCJKBoostedPhrase()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
@@ -421,7 +421,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(expected, GetQuery("\"中国\"^0.5", analyzer));
         }
         [Test]
-        public void testCJKSloppyPhrase()
+        public void TestCJKSloppyPhrase()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
@@ -435,7 +435,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(expected, GetQuery("\"中国\"~3", analyzer));
         }
         [Test]
-        public void testSimple()
+        public void TestSimple()
         {
             assertQueryEquals("field=a", null, "a");
             assertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
@@ -499,7 +499,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
         [Test]
-        public void testPunct()
+        public void TestPunct()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
             assertQueryEquals("a&b", a, "a&b");
@@ -507,7 +507,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEquals(".NET", a, ".NET");
         }
         [Test]
-        public void testGroup()
+        public void TestGroup()
         {
             assertQueryEquals("!(a AND b) OR c", null, "-(+a +b) c");
             assertQueryEquals("!(a AND b) AND c", null, "-(+a +b) +c");
@@ -517,7 +517,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEquals("(a AND b)^4 OR c", null, "((+a +b)^4.0) c");
         }
         [Test]
-        public void testSlop()
+        public void TestSlop()
         {
 
             assertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
@@ -527,7 +527,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEquals("\"term germ\"~2^2", null, "\"term germ\"~2^2.0");
         }
         [Test]
-        public void testNumber()
+        public void TestNumber()
         {
             // The numbers go away because SimpleAnalzyer ignores them
             assertQueryEquals("3", null, "");
@@ -540,7 +540,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEquals("term term1 term2", a, "term term1 term2");
         }
         [Test]
-        public void testWildcard()
+        public void TestWildcard()
         {
             assertQueryEquals("term*", null, "term*");
             assertQueryEquals("term*^2", null, "term*^2.0");
@@ -633,7 +633,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertWildcardQueryEquals("?Term", true, "?term", true);
         }
         [Test]
-        public void testLeadingWildcardType()
+        public void TestLeadingWildcardType()
         {
             StandardQueryParser qp = GetParser(null);
             qp.AllowLeadingWildcard = (true);
@@ -642,7 +642,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(typeof(WildcardQuery), qp.Parse("*term*", "field").GetType());
         }
         [Test]
-        public void testQPA()
+        public void TestQPA()
         {
             assertQueryEquals("term term^3.0 term", qpAnalyzer, "term term^3.0 term");
             assertQueryEquals("term stop^3.0 term", qpAnalyzer, "term term");
@@ -674,7 +674,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertTrue(GetQuery("term +stop", qpAnalyzer) is TermQuery);
         }
         [Test]
-        public void testRange()
+        public void TestRange()
         {
             assertQueryEquals("[ a TO z]", null, "[a TO z]");
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).GetRewriteMethod());
@@ -759,7 +759,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //return df.format(calendar.getTime());
         }
         [Test]
-        public void testDateRange()
+        public void TestDateRange()
         {
             String startDate = getLocalizedDate(2002, 1, 1);
             String endDate = getLocalizedDate(2002, 1, 4);
@@ -817,7 +817,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 + getDate(endDate, resolution) + "}");
         }
         [Test]
-        public void testEscaped()
+        public void TestEscaped()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
 
@@ -918,7 +918,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
         }
         [Test]
-        public void testQueryStringEscaping()
+        public void TestQueryStringEscaping()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
 
@@ -960,7 +960,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         [Test]
         [Ignore("flexible queryparser shouldn't escape wildcard terms")]
-        public void testEscapedWildcard()
+        public void TestEscapedWildcard()
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
@@ -969,7 +969,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(q, qp.Parse("foo\\?ba?r", "field"));
         }
         [Test]
-        public void testTabNewlineCarriageReturn()
+        public void TestTabNewlineCarriageReturn()
         {
             assertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
 
@@ -992,7 +992,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEqualsDOA("weltbank \t +worlbank", null, "+weltbank +worlbank");
         }
         [Test]
-        public void testSimpleDAO()
+        public void TestSimpleDAO()
         {
             assertQueryEqualsDOA("term term term", null, "+term +term +term");
             assertQueryEqualsDOA("term +term term", null, "+term +term +term");
@@ -1001,7 +1001,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryEqualsDOA("-term term term", null, "-term +term +term");
         }
         [Test]
-        public void testBoost()
+        public void TestBoost()
         {
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton(BasicAutomata.MakeString("on"));
             Analyzer oneStopAnalyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopSet);
@@ -1042,7 +1042,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             fail("ParseException expected, not thrown");
         }
         [Test]
-        public void testException()
+        public void TestException()
         {
             assertQueryNodeException("*leadingWildcard"); // disallowed by default
             assertQueryNodeException("\"some phrase");
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertQueryNodeException("secret AND illegal) AND access:confidential");
         }
         [Test]
-        public void testCustomQueryParserWildcard()
+        public void TestCustomQueryParserWildcard()
         {
             try
             {
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
         [Test]
-        public void testCustomQueryParserFuzzy()
+        public void TestCustomQueryParserFuzzy()
         {
             try
             {
@@ -1080,7 +1080,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testBooleanQuery()
+        public void TestBooleanQuery()
         {
             BooleanQuery.MaxClauseCount = (2);
             try
@@ -1101,7 +1101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          * This test differs from TestPrecedenceQueryParser
          */
         [Test]
-        public void testPrecedence()
+        public void TestPrecedence()
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
@@ -1114,7 +1114,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         // [Test]
         // Todo: Convert from DateField to DateUtil
-        //  public void testLocalDateFormat() throws IOException, QueryNodeException {
+        //  public void TestLocalDateFormat() throws IOException, QueryNodeException {
         //    Directory ramDir = newDirectory();
         //    IndexWriter iw = new IndexWriter(ramDir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random, MockTokenizer.WHITESPACE, false)));
         //    addDateDoc("a", 2005, 12, 2, 10, 15, 33, iw);
@@ -1143,7 +1143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         //  }
 
         [Test]
-        public void testStarParsing()
+        public void TestStarParsing()
         {
             // final int[] type = new int[1];
             // StandardQueryParser qp = new StandardQueryParser("field", new
@@ -1207,7 +1207,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
         [Test]
-        public void testRegexps()
+        public void TestRegexps()
         {
             StandardQueryParser qp = new StandardQueryParser();
             String df = "field";
@@ -1258,7 +1258,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(two, qp.Parse("/foo/ /bar/", df));
         }
         [Test]
-        public void testStopwords()
+        public void TestStopwords()
         {
             StandardQueryParser qp = new StandardQueryParser();
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton(new RegExp("the|foo").ToAutomaton());
@@ -1283,7 +1283,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 + 2, ((BooleanQuery)result).Clauses.size() == 2);
         }
         [Test]
-        public void testPositionIncrement()
+        public void TestPositionIncrement()
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
         [Test]
-        public void testMatchAllDocs()
+        public void TestMatchAllDocs()
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
@@ -1399,7 +1399,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
         }
         [Test]
-        public void testMultiPhraseQuery()
+        public void TestMultiPhraseQuery()
         {
             Store.Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new CannedAnalyzer()));
@@ -1417,7 +1417,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             dir.Dispose();
         }
         [Test]
-        public void testRegexQueryParsing()
+        public void TestRegexQueryParsing()
         {
             String[]
             fields = { "b", "t" };

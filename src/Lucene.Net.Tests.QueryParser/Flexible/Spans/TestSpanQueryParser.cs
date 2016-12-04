@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         }
 
         [Test]
-        public void testTermSpans()
+        public void TestTermSpans()
         {
             assertEquals(GetSpanQuery("field:term").toString(), "term");
             assertEquals(GetSpanQuery("term").toString(), "term");
@@ -130,7 +130,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         }
 
         [Test]
-        public void testUniqueField()
+        public void TestUniqueField()
         {
             assertEquals(GetSpanQuery("field", "term").toString(), "field:term");
             assertEquals(GetSpanQuery("field", "field:term").toString(), "field:term");
@@ -140,7 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         }
 
         [Test]
-        public void testOrSpans()
+        public void TestOrSpans()
         {
             assertEquals(GetSpanQuery("term1 term2").toString(),
             "spanOr([term1, term2])");
@@ -153,7 +153,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         }
 
         [Test]
-        public void testQueryValidator()
+        public void TestQueryValidator()
         {
 
             try

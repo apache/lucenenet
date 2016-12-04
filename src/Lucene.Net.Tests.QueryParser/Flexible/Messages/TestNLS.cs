@@ -12,7 +12,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     public class TestNLS : LuceneTestCase
     {
         [Test]
-        public void testMessageLoading()
+        public void TestMessageLoading()
         {
             //string message = MessagesTestBundle.ResourceManager.GetString("Q0001E_INVALID_SYNTAX");
 
@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         }
 
         [Test]
-        public void testMessageLoading_ja()
+        public void TestMessageLoading_ja()
         {
             IMessage invalidSyntax = new MessageImpl(
                 MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         }
 
         [Test]
-        public void testNLSLoading()
+        public void TestNLSLoading()
         {
             String message = NLS
                 .GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, new CultureInfo("en"));
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         }
 
         [Test]
-        public void testNLSLoading_ja()
+        public void TestNLSLoading_ja()
         {
             String message = NLS.GetLocalizedMessage(
                 MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         }
 
         [Test]
-        public void testNLSLoading_xx_XX()
+        public void TestNLSLoading_xx_XX()
         {
             //Locale locale = new Locale("xx", "XX", "");
             CultureInfo locale = new CultureInfo("xx-XX");
@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         // LUCENENET TODO: This doesn't compile because the resources don't contain this message
 
         [Test]
-        public void testMissingMessage()
+        public void TestMissingMessage()
         {
             //Locale locale = Locale.ENGLISH;
             CultureInfo locale = new CultureInfo("en");

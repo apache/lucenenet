@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static int multiToken = 0;
 
         [Test]
-        public void testMultiAnalyzer()
+        public void TestMultiAnalyzer()
         {
 
             StandardQueryParser qp = new StandardQueryParser();
@@ -90,7 +90,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
 
-        // public void testMultiAnalyzerWithSubclassOfQueryParser() throws
+        // public void TestMultiAnalyzerWithSubclassOfQueryParser() throws
         // ParseException {
         // this test doesn't make sense when using the new QueryParser API
         // DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer());
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         // }
 
         [Test]
-        public void testPosIncrementAnalyzer()
+        public void TestPosIncrementAnalyzer()
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new PosIncrementAnalyzer());

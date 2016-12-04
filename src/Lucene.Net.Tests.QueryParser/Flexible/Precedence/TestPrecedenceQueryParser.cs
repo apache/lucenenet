@@ -197,7 +197,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testSimple()
+        public void TestSimple()
         {
             assertQueryEquals("term term term", null, "term term term");
             assertQueryEquals("türm term term", null, "türm term term");
@@ -256,7 +256,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testPunct()
+        public void TestPunct()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
             assertQueryEquals("a&b", a, "a&b");
@@ -265,7 +265,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testSlop()
+        public void TestSlop()
         {
             assertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
             assertQueryEquals("\"term germ\"~2 flork", null, "\"term germ\"~2 flork");
@@ -275,7 +275,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testNumber()
+        public void TestNumber()
         {
             // The numbers go away because SimpleAnalzyer ignores them
             assertQueryEquals("3", null, "");
@@ -289,7 +289,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testWildcard()
+        public void TestWildcard()
         {
             assertQueryEquals("term*", null, "term*");
             assertQueryEquals("term*^2", null, "term*^2.0");
@@ -360,7 +360,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testQPA()
+        public void TestQPA()
         {
             assertQueryEquals("term term term", qpAnalyzer, "term term term");
             assertQueryEquals("term +stop term", qpAnalyzer, "term term");
@@ -379,7 +379,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testRange()
+        public void TestRange()
         {
             assertQueryEquals("[ a TO z]", null, "[a TO z]");
             assertTrue(GetQuery("[ a TO z]", null) is TermRangeQuery);
@@ -448,7 +448,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testDateRange()
+        public void TestDateRange()
         {
             String startDate = getLocalizedDate(2002, 1, 1, false);
             String endDate = getLocalizedDate(2002, 1, 4, false);
@@ -532,7 +532,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testEscaped()
+        public void TestEscaped()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
 
@@ -569,7 +569,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testTabNewlineCarriageReturn()
+        public void TestTabNewlineCarriageReturn()
         {
             assertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
 
@@ -593,7 +593,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testSimpleDAO()
+        public void TestSimpleDAO()
         {
             assertQueryEqualsDOA("term term term", null, "+term +term +term");
             assertQueryEqualsDOA("term +term term", null, "+term +term +term");
@@ -603,7 +603,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testBoost()
+        public void TestBoost()
         {
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton(BasicAutomata.MakeString("on"));
             Analyzer oneStopAnalyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopSet);
@@ -627,7 +627,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testException()
+        public void TestException()
         {
             try
             {
@@ -640,7 +640,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         [Test]
-        public void testBooleanQuery()
+        public void TestBooleanQuery()
         {
             BooleanQuery.MaxClauseCount = (2);
             try
@@ -656,7 +656,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         // LUCENE-792
         [Test]
-        public void testNOT()
+        public void TestNOT()
         {
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
             assertQueryEquals("NOT foo AND bar", a, "-foo +bar");
@@ -667,7 +667,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
          * issue has been corrected.
          */
         [Test]
-        public void testPrecedence()
+        public void TestPrecedence()
         {
             PrecedenceQueryParser parser = GetParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
             Query query1 = parser.Parse("A AND B OR C AND D", "field");

@@ -560,7 +560,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /** test a more complex query with field weights */
         [Test]
-        public virtual void testWeightedOR()
+        public virtual void TestWeightedOR()
         {
             IDictionary<string, float> weights = new Dictionary<string, float>();
             weights["field0"] = 5f;
@@ -708,7 +708,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         [Test]
-        public virtual void testRandomQueries2()
+        public virtual void TestRandomQueries2()
         {
             char[] chars = new char[] { 'a', '1', '|', '&', ' ', '(', ')', '"', '-', '~' };
             StringBuilder sb = new StringBuilder();

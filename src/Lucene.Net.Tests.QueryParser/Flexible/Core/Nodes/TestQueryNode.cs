@@ -13,7 +13,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     {
         /* LUCENE-2227 bug in QueryNodeImpl.add() */
         [Test]
-        public void testAddChildren()
+        public void TestAddChildren()
         {
             IQueryNode nodeA = new FieldQueryNode("foo", "A", 0, 1);
             IQueryNode nodeB = new FieldQueryNode("foo", "B", 1, 2);
@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         /* LUCENE-3045 bug in QueryNodeImpl.containsTag(String key)*/
         [Test]
-        public void testTags()
+        public void TestTags()
         {
             IQueryNode node = new FieldQueryNode("foo", "A", 0, 1);
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         /* LUCENE-5099 - QueryNodeProcessorImpl should set parent to null before returning on processing */
         [Test]
-        public void testRemoveFromParent()
+        public void TestRemoveFromParent()
         {
             BooleanQueryNode booleanNode = new BooleanQueryNode(Collections.EmptyList<IQueryNode>());
             FieldQueryNode fieldNode = new FieldQueryNode("foo", "A", 0, 1);

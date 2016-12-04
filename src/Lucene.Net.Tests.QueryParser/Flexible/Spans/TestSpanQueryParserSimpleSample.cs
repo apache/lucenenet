@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     public class TestSpanQueryParserSimpleSample : LuceneTestCase
     {
         [Test]
-        public void testBasicDemo()
+        public void TestBasicDemo()
         {
             ISyntaxParser queryParser = new StandardSyntaxParser();
 

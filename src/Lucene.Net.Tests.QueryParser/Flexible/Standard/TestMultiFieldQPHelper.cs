@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         * corresponding static form (qtxt, fields[]).
         */
         [Test]
-        public void testStopwordsParsing()
+        public void TestStopwordsParsing()
         {
             assertStopQueryEquals("one", "b:one t:one");
             assertStopQueryEquals("one stop", "b:one t:one");
@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testSimple()
+        public void TestSimple()
         {
             String[]
             fields = { "b", "t" };
@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testBoostsSimple()
+        public void TestBoostsSimple()
         {
             IDictionary<String, float?> boosts = new Dictionary<String, float?>(); // LUCENENET TODO: make this non-nullable..?
             boosts.Put("b", 5);
@@ -163,7 +163,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStaticMethod1()
+        public void TestStaticMethod1()
         {
             String[]
             fields = { "b", "t" };
@@ -209,7 +209,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStaticMethod2()
+        public void TestStaticMethod2()
         {
             String[]
             fields = { "b", "t" };
@@ -237,7 +237,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStaticMethod2Old()
+        public void TestStaticMethod2Old()
         {
             String[]
             fields = { "b", "t" };
@@ -270,7 +270,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStaticMethod3()
+        public void TestStaticMethod3()
         {
             String[]
             queries = { "one", "two", "three" };
@@ -298,7 +298,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStaticMethod3Old()
+        public void TestStaticMethod3Old()
         {
             String[]
             queries = { "one", "two" };
@@ -326,7 +326,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testAnalyzerReturningNull()
+        public void TestAnalyzerReturningNull()
         {
             String[]
             fields = new String[] { "f1", "f2", "f3" };
@@ -347,7 +347,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        public void testStopWordSearching()
+        public void TestStopWordSearching()
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             Store.Directory ramDir = NewDirectory();
