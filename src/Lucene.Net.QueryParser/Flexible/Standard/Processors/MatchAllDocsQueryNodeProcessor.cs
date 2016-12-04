@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldQueryNode fqn = (FieldQueryNode)node;
 
                 if (fqn.Field.ToString().Equals("*")
-                    && fqn.Text.Equals("*"))
+                    && fqn.Text.ToString().Equals("*"))
                 {
 
                     return new MatchAllDocsQueryNode();
