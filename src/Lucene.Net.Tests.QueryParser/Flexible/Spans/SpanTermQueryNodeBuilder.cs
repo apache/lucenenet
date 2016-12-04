@@ -19,7 +19,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     public class SpanTermQueryNodeBuilder : IStandardQueryBuilder
     {
 
-        public Query Build(IQueryNode node)
+        public virtual Query Build(IQueryNode node)
         {
             FieldQueryNode fieldQueryNode = (FieldQueryNode)node;
 

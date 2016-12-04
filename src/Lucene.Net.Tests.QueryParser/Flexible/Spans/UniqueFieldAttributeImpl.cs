@@ -29,15 +29,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         }
 
 
-        public void SetUniqueField(string uniqueField)
+        public virtual string UniqueField
         {
-            this.uniqueField = uniqueField;
-        }
-
-
-        public string GetUniqueField()
-        {
-            return this.uniqueField;
+            get { return this.uniqueField; }
+            set { this.uniqueField = value; }
         }
 
 

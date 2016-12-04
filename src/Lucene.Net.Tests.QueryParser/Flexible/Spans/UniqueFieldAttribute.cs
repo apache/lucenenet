@@ -15,8 +15,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// <seealso cref="UniqueFieldQueryNodeProcessor"/>
     public interface IUniqueFieldAttribute : IAttribute
     {
-        void SetUniqueField(string uniqueField);
-
-        string GetUniqueField();
+        string UniqueField { get; set; }
     }
 }
