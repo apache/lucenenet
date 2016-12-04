@@ -1,9 +1,5 @@
 ﻿using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Lucene.Net.Documents.FieldType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config

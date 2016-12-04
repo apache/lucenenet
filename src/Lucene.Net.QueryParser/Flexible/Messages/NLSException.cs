@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.QueryParsers.Flexible.Messages
+﻿namespace Lucene.Net.QueryParsers.Flexible.Messages
 {
     /// <summary>
     /// Interface that exceptions should implement to support lazy loading of messages.

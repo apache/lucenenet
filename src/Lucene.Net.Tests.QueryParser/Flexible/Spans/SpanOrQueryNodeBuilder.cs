@@ -3,11 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Standard.Builders;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {

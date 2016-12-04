@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
@@ -12,13 +8,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     [Serializable]
     public class Token
     {
-        /**
-       * The version identifier for this Serializable class.
-       * Increment only if the <i>serialized</i> form of the
-       * class changes.
-       */
-        private static readonly long serialVersionUID = 1L;
-
         /**
          * An integer that describes the kind of this token.  This numbering
          * system is determined by JavaCCParser, and a table of these numbers is

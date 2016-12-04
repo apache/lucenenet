@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.QueryParsers.Flexible.Core.Config
+﻿namespace Lucene.Net.QueryParsers.Flexible.Core.Config
 {
     /// <summary>
     /// This interface should be implemented by classes that wants to listen for

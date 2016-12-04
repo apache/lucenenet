@@ -1,11 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {

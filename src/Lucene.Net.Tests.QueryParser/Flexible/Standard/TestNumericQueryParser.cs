@@ -1,5 +1,4 @@
-﻿using Lucene.Net;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
@@ -13,9 +12,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {

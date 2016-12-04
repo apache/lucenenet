@@ -3,10 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NumericType = Lucene.Net.Documents.FieldType.NumericType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes

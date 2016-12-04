@@ -1,11 +1,8 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 {

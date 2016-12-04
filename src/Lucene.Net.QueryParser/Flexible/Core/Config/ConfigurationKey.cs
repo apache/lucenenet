@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.QueryParsers.Flexible.Core.Config
+﻿namespace Lucene.Net.QueryParsers.Flexible.Core.Config
 {
     /// <summary>
     /// An instance of this class represents a key that is used to retrieve a value

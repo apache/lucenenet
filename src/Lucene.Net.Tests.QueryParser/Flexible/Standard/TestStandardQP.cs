@@ -1,20 +1,15 @@
 ﻿using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Flexible.Core;
-using Lucene.Net.QueryParsers.Flexible.Standard;
+using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Util;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lucene.Net.Documents;
-using System.IO;
-using Lucene.Net.Index;
-using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.IO;
 using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
