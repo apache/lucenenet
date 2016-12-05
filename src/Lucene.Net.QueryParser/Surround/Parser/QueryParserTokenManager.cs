@@ -685,7 +685,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if (jjmatchedKind != 0x7fffffff)
                 {
                     if (jjmatchedPos + 1 < curPos)
-                        input_stream.Backup(curPos - jjmatchedPos - 1);
+                        input_stream.BackUp(curPos - jjmatchedPos - 1);
                     if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 63 /*077*/))) != 0L)
                     {
                         matchedToken = JjFillToken();
@@ -704,7 +704,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 int error_column = input_stream.EndColumn;
                 string error_after = null;
                 bool EOFSeen = false;
-                try { input_stream.ReadChar(); input_stream.Backup(1); }
+                try { input_stream.ReadChar(); input_stream.BackUp(1); }
                 catch (System.IO.IOException /*e1*/)
                 {
                     EOFSeen = true;
@@ -719,7 +719,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 if (!EOFSeen)
                 {
-                    input_stream.Backup(1);
+                    input_stream.BackUp(1);
                     error_after = curPos <= 1 ? "" : input_stream.Image;
                 }
                 throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);

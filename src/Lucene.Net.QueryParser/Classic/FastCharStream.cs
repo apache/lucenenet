@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Classic
 			return ReadChar();
 		}
 		
-		public void  Backup(int amount)
+		public void  BackUp(int amount)
 		{
 			bufferPosition -= amount;
 		}

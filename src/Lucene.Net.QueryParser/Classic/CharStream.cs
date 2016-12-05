@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Classic
 		/// (longer) token. So, they will be used again as the prefix of the next
 		/// token and it is the implemetation's responsibility to do this right.
 		/// </summary>
-		void  Backup(int amount);
+		void BackUp(int amount);
 		
 		/// <summary> 
         /// Returns the next character that marks the beginning of the next token.
