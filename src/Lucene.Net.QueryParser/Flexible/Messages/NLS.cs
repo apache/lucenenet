@@ -40,11 +40,43 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     /// </summary>
     public class NLS
     {
+        /// <summary>
+        /// LUCENENET specific factory reference to inject instances of <see cref="ResourceManager"/>
+        /// into this class.
+        /// </summary>
+        private static IResourceManagerFactory resourceManagerFactory = new BundleResourceManagerFactory();
         private static IDictionary<string, Type> bundles = new Dictionary<string, Type>(0);
 
         protected NLS()
         {
             // Do not instantiate
+        }
+
+        /// <summary>
+        /// Gets the static <see cref="IResourceManagerFactory"/> instance responsible
+        /// for creating <see cref="ResourceManager"/> instances in this class. LUCENENET specific.
+        /// </summary>
+        // LUCENENET NOTE: Don't make this into a property in case we need to make it into an extension method
+        // in a centralized DI configuration builder.
+        public static IResourceManagerFactory GetResourceManagerFactory()
+        {
+            return resourceManagerFactory;
+        }
+
+        /// <summary>
+        /// Sets the <see cref="IResourceManagerFactory"/> used to create instances of <see cref="ResourceManager"/>
+        /// for retrieving localized resources. Defaults to <see cref="BundleResourceManagerFactory"/> if not set. LUCENENET specific.
+        /// </summary>
+        /// <param name="resourceManagerFactory">The <see cref="IResourceManagerFactory"/> instance. Cannot be <c>null</c>.</param>
+        // LUCENENET NOTE: Don't make this into a property in case we need to make it into an extension method
+        // in a centralized DI configuration builder.
+        public static void SetResourceManagerFactory(IResourceManagerFactory resourceManagerFactory)
+        {
+            if (resourceManagerFactory == null)
+            {
+                throw new ArgumentNullException("resourceManagerFactory");
+            }
+            NLS.resourceManagerFactory = resourceManagerFactory;
         }
 
         public static string GetLocalizedMessage(string key)
@@ -112,7 +144,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 for (IEnumerator<string> it = bundles.Keys.GetEnumerator(); it.MoveNext();)
                 {
                     Type clazz = bundles[it.Current];
-                    ResourceManager resourceBundle = new ResourceManager(GetResourceType(clazz));
+                    ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
                     if (resourceBundle != null)
                     {
                         try
@@ -124,6 +156,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                         catch (MissingManifestResourceException e)
                         {
                             // just continue it might be on the next resource bundle
+                        }
+                        finally
+                        {
+                            resourceManagerFactory.Release(resourceBundle);
                         }
                     }
                 }
@@ -162,13 +198,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             // Test if the message is present in the resource bundle
             try
             {
-                ResourceManager resourceBundle = new ResourceManager(GetResourceType(clazz));
+                ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
                 if (resourceBundle != null)
                 {
-                    object obj = resourceBundle.GetObject(key);
-                    //if (obj == null)
-                    //  System.err.println("WARN: Message with key:" + key + " and locale: "
-                    //      + Locale.getDefault() + " not found.");
+                    try
+                    {
+                        object obj = resourceBundle.GetObject(key);
+                        //if (obj == null)
+                        //  System.err.println("WARN: Message with key:" + key + " and locale: "
+                        //      + Locale.getDefault() + " not found.");
+                    }
+                    finally
+                    {
+                        resourceManagerFactory.Release(resourceBundle);
+                    }
                 }
             }
             catch (MissingManifestResourceException e)
@@ -182,20 +225,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 // since this code is just a test to see if the message is present on the
                 // system
             }
-        }
-
-        /// <summary>
-        /// LUCENENET specific method for converting the NLS type to the .NET resource type.
-        /// In Java, these were one and the same, but in .NET it is not possible to create resources
-        /// in Visual Studio with the same class name as a resource class because the resource generation process already
-        /// creates a backing class with the same name as the resource. So, by convention the resources must be
-        /// named &lt;messages class name&gt;Bundle in order to be found by NLS.
-        /// </summary>
-        /// <param name="clazz">The type of the NLS class where the field strings are located that identify resources.</param>
-        /// <returns>The type of resources (the class name + "Resources" suffix), as a .NET <see cref="Type"/> instance.</returns>
-        private static Type GetResourceType(Type clazz)
-        {
-            return Type.GetType(clazz.Namespace + "." + clazz.Name + "Bundle, " + clazz.Assembly.FullName);
         }
     }
 }

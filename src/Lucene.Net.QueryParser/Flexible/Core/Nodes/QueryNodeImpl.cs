@@ -92,8 +92,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (IsLeaf || this.clauses == null)
             {
-                ResourceManager bundle = new ResourceManager(typeof(QueryParserMessagesBundle));
-                string message = bundle.GetString(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
+                var factory = NLS.GetResourceManagerFactory();
+                ResourceManager bundle = factory.Create(typeof(QueryParserMessages));
+                string message;
+                try
+                {
+                    message = bundle.GetString(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
+                }
+                finally
+                {
+                    factory.Release(bundle);
+                }
 
                 throw new ArgumentException(message);
             }
