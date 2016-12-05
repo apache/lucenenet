@@ -110,7 +110,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //dateFormat.applyPattern(dateFormat.toPattern() + " G s Z yyyy");
                 //dateFormat.setTimeZone(TIMEZONE);
 
-                DATE_FORMAT = new NumberDateFormat(DATE_STYLE, TIME_STYLE, LOCALE, TIMEZONE);
+                DATE_FORMAT = new NumberDateFormat(DATE_STYLE, TIME_STYLE, LOCALE)
+                {
+                    TimeZone = TIMEZONE
+                };
                 dateFormat = DATE_FORMAT.GetDateFormat();
 
                 do

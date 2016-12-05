@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         private readonly string dateFormat;
         private readonly DateFormat dateStyle;
         private readonly DateFormat timeStyle;
-        private readonly TimeZoneInfo timeZone;
+        private TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
         /**
          * Constructs a {@link NumberDateFormat} object using the given {@link DateFormat}.
@@ -58,12 +58,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             this.dateFormat = dateFormat;
         }
 
-        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale, TimeZoneInfo timeZone)
+        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale)
             : base(locale)
         {
             this.dateStyle = dateStyle;
             this.timeStyle = timeStyle;
-            this.timeZone = timeZone;
+        }
+
+        public virtual TimeZoneInfo TimeZone
+        {
+            get { return this.timeZone; }
+            set { this.timeZone = value; }
         }
 
         public override string Format(double number)
