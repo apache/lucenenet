@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 foreach (IQueryNode child in children)
                 {
                     TermQuery termQuery = (TermQuery)child
-                        .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                        .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
                     FieldQueryNode termNode = (FieldQueryNode)child;
 
                     phraseQuery.Add(termQuery.Term, termNode.PositionIncrement);

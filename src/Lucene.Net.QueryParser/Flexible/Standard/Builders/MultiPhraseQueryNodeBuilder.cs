@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 {
                     FieldQueryNode termNode = (FieldQueryNode)child;
                     TermQuery termQuery = (TermQuery)termNode
-                        .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                        .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
                     List<Term> termList;
                     if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out termList) || termList == null)

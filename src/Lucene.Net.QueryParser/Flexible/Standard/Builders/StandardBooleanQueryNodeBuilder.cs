@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             {
                 foreach (IQueryNode child in children)
                 {
-                    object obj = child.GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                    object obj = child.GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
                     if (obj != null)
                     {

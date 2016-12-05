@@ -51,14 +51,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
     /// </para>
     /// <seealso cref="IQueryBuilder"/>
     /// </summary>
-    public class QueryTreeBuilder<TQuery> : IQueryBuilder<TQuery>
+    public class QueryTreeBuilder<TQuery> : QueryTreeBuilder, IQueryBuilder<TQuery>
     {
-        /**
-   * This tag is used to tag the nodes in a query tree with the built objects
-   * produced from their own associated builder.
-   */
-        public static readonly string QUERY_TREE_BUILDER_TAGID = typeof(QueryTreeBuilder<TQuery>).Name;
-
         private IDictionary<Type, IQueryBuilder<TQuery>> queryNodeBuilders;
 
         private IDictionary<string, IQueryBuilder<TQuery>> fieldNameBuilders;
@@ -223,5 +217,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
             return (TQuery)queryNode.GetTag(QUERY_TREE_BUILDER_TAGID);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class for accessing static members of <see cref="QueryTreeBuilder{TQuery}"/>
+    /// without referencing its generic closing type.
+    /// </summary>
+    public abstract class QueryTreeBuilder
+    {
+        /// <summary>
+        /// This tag is used to tag the nodes in a query tree with the built objects
+        /// produced from their own associated builder.
+        /// </summary>
+        public static readonly string QUERY_TREE_BUILDER_TAGID = typeof(QueryTreeBuilder).Name;
     }
 }

@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             }
 
             Query query = (Query)child
-                .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
             query.Boost = boostNode.Value;
 
             return query;

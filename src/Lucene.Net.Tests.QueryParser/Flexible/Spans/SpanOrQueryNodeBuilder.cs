@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             foreach (IQueryNode child in children)
             {
                 spanQueries[i++] = (SpanQuery)child
-                    .GetTag(QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                    .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
             }
 
             return new SpanOrQuery(spanQueries);

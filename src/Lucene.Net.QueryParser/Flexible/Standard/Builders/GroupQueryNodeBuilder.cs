@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             GroupQueryNode groupNode = (GroupQueryNode)queryNode;
 
             return (Query)(groupNode).GetChild().GetTag(
-                QueryTreeBuilder<Query>.QUERY_TREE_BUILDER_TAGID);
+                QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
         }
     }
 }
