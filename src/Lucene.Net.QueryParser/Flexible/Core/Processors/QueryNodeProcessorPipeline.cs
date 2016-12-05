@@ -23,54 +23,60 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
      * limitations under the License.
      */
 
+    /// <summary>
+    /// A <see cref="QueryNodeProcessorPipeline"/> class should be used to build a query
+    /// node processor pipeline.
+    /// <para/>
+    /// When a query node tree is processed using this class, it passes the query
+    /// node tree to each processor on the pipeline and the result from each
+    /// processor is passed to the next one, always following the order the
+    /// processors were on the pipeline.
+    /// <para/>
+    /// When a <see cref="QueryConfigHandler"/> object is set on a
+    /// <see cref="QueryNodeProcessorPipeline"/>, it also takes care of setting this
+    /// <see cref="QueryConfigHandler"/> on all processor on pipeline.
+    /// </summary>
     public class QueryNodeProcessorPipeline : IQueryNodeProcessor, IList<IQueryNodeProcessor>
     {
         private List<IQueryNodeProcessor> processors = new List<IQueryNodeProcessor>();
 
         private QueryConfigHandler queryConfig;
 
-        /**
-         * Constructs an empty query node processor pipeline.
-         */
+        /// <summary>
+        /// Constructs an empty query node processor pipeline.
+        /// </summary>
         public QueryNodeProcessorPipeline()
         {
             // empty constructor
         }
 
-        /**
-         * Constructs with a {@link QueryConfigHandler} object.
-         */
+        /// <summary>
+        /// Constructs with a <see cref="QueryConfigHandler"/> object.
+        /// </summary>
         public QueryNodeProcessorPipeline(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;
         }
 
-        /**
-         * For reference about this method check:
-         * {@link QueryNodeProcessor#getQueryConfigHandler()}.
-         * 
-         * @return QueryConfigHandler the query configuration handler to be set.
-         * 
-         * @see QueryNodeProcessor#setQueryConfigHandler(QueryConfigHandler)
-         * @see QueryConfigHandler
-         */
+        /// <summary>
+        /// For reference about this method check:
+        /// <see cref="IQueryNodeProcessor.GetQueryConfigHandler()"/>.
+        /// </summary>
+        /// <returns><see cref="QueryConfigHandler"/> the query configuration handler to be set.</returns>
+        /// <seealso cref="IQueryNodeProcessor.SetQueryConfigHandler(QueryConfigHandler)"/>
+        /// <seealso cref="QueryConfigHandler"/>
         public virtual QueryConfigHandler GetQueryConfigHandler()
         {
             return this.queryConfig;
         }
 
-        /**
-         * For reference about this method check:
-         * {@link QueryNodeProcessor#process(QueryNode)}.
-         * 
-         * @param queryTree the query node tree to be processed
-         * 
-         * @throws QueryNodeException if something goes wrong during the query node
-         *         processing
-         * 
-         * @see QueryNode
-         */
-
+        /// <summary>
+        /// For reference about this method check:
+        /// <see cref="IQueryNodeProcessor.Process(IQueryNode)"/>.
+        /// </summary>
+        /// <param name="queryTree">the query node tree to be processed</param>
+        /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
+        /// <seealso cref="IQueryNode"/>
         public virtual IQueryNode Process(IQueryNode queryTree)
         {
             foreach (IQueryNodeProcessor processor in this.processors)
@@ -81,15 +87,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return queryTree;
         }
 
-        /**
-         * For reference about this method check:
-         * {@link QueryNodeProcessor#setQueryConfigHandler(QueryConfigHandler)}.
-         * 
-         * @param queryConfigHandler the query configuration handler to be set.
-         * 
-         * @see QueryNodeProcessor#getQueryConfigHandler()
-         * @see QueryConfigHandler
-         */
+        /// <summary>
+        /// For reference about this method check:
+        /// <see cref="IQueryNodeProcessor.SetQueryConfigHandler(QueryConfigHandler)"/>.
+        /// </summary>
+        /// <param name="queryConfigHandler">the query configuration handler to be set.</param>
+        /// <seealso cref="IQueryNodeProcessor.GetQueryConfigHandler()"/>
+        /// <seealso cref="QueryConfigHandler"/>
         public virtual void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;
@@ -100,9 +104,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             }
         }
 
-        /**
-         * @see List#add(Object)
-         */
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/> 
+        /// </summary>
         public virtual bool Add(IQueryNodeProcessor processor)
         {
             this.processors.Add(processor);
@@ -116,22 +120,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return added;
         }
 
-        /**
-         * @see List#clear()
-         */
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Clear()"/> 
+        /// </summary>
         public virtual void Clear()
         {
             this.processors.Clear();
         }
 
-        /**
-         * @see List#contains(Object)
-         */
         public virtual bool Contains(object o)
         {
             return this.processors.Contains(o);
         }
 
+        /// <summary>
+        /// <see cref="IList{IQueryNodeProcessor}.this[int]"/> 
+        /// </summary>
         public virtual IQueryNodeProcessor this[int index]
         {
             get
@@ -150,33 +154,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             }
         }
 
-        /**
-        * @see List#indexOf(Object)
-        */
+        /// <summary>
+        /// <see cref="IList{IQueryNodeProcessor}.IndexOf(IQueryNodeProcessor)"/>
+        /// </summary>
         public virtual int IndexOf(IQueryNodeProcessor o)
         {
             return this.processors.IndexOf(o);
         }
 
-        /**
-         * @see List#iterator()
-         */
+        /// <summary>
+        /// <see cref="IEnumerable{IQueryNodeProcessor}.GetEnumerator()"/>
+        /// </summary>
         public virtual IEnumerator<IQueryNodeProcessor> GetEnumerator()
         {
             return this.processors.GetEnumerator();
         }
 
-        /**
-         * @see List#remove(Object)
-         */
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Remove(IQueryNodeProcessor)"/> 
+        /// </summary>
         public virtual bool Remove(IQueryNodeProcessor o)
         {
             return this.processors.Remove(o);
         }
 
-        /**
-         * @see List#remove(int)
-         */
+        /// <summary>
+        /// <see cref="IList{IQueryNodeProcessor}.RemoveAt(int)"/> 
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void RemoveAt(int index)
         {
             this.processors.RemoveAt(index);
@@ -187,9 +192,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             this.processors.RemoveRange(index, count);
         }
 
-        /**
-         * @see List#set(int, Object)
-         */
         public virtual IQueryNodeProcessor Set(int index, IQueryNodeProcessor processor)
         {
             IQueryNodeProcessor oldProcessor = this.processors[index];
@@ -203,11 +205,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return oldProcessor;
         }
 
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Count"/> 
+        /// </summary>
         public virtual int Count
         {
             get { return this.processors.Count; }
         }
 
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.IsReadOnly"/> 
+        /// </summary>
         public virtual bool IsReadOnly
         {
             get
@@ -227,21 +235,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             item.SetQueryConfigHandler(this.queryConfig);
         }
 
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/> 
+        /// </summary>
         void ICollection<IQueryNodeProcessor>.Add(IQueryNodeProcessor item)
         {
             this.Add(item);
         }
 
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.Contains(IQueryNodeProcessor)"/> 
+        /// </summary>
         public virtual bool Contains(IQueryNodeProcessor item)
         {
             return this.processors.Contains(item);
         }
 
+        /// <summary>
+        /// <see cref="ICollection{IQueryNodeProcessor}.CopyTo(IQueryNodeProcessor[], int)"/> 
+        /// </summary>
         public virtual void CopyTo(IQueryNodeProcessor[] array, int arrayIndex)
         {
             this.processors.CopyTo(array, arrayIndex);
         }
 
+        /// <summary>
+        /// <see cref="IEnumerable.GetEnumerator()"/> 
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

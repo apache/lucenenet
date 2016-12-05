@@ -48,7 +48,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             }
 
             return new SpanOrQuery(spanQueries);
-
         }
     }
 }

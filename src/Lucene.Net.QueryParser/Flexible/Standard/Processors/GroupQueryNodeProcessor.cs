@@ -28,13 +28,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// The {@link SyntaxParser}
+    /// The <see cref="Core.Parser.ISyntaxParser"/>
     /// generates query node trees that consider the boolean operator precedence, but
     /// Lucene current syntax does not support boolean precedence, so this processor
     /// remove all the precedence and apply the equivalent modifier according to the
     /// boolean operation defined on an specific query node.
     /// <para/>
-    /// If there is a {@link GroupQueryNode} in the query node tree, the query node
+    /// If there is a <see cref="GroupQueryNode"/> in the query node tree, the query node
     /// tree is not merged with the one above it.
     /// <para/>
     /// Example: TODO: describe a good example to show how this processor works
@@ -103,8 +103,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             }
         }
 
-        /**
-         */
         private IQueryNode ApplyModifier(IQueryNode node, IQueryNode parent)
         {
             if (this.usingAnd)

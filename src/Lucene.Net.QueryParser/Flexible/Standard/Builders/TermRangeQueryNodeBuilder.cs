@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link TermRangeQuery} object from a {@link TermRangeQueryNode}
+    /// Builds a <see cref="TermRangeQuery"/> object from a <see cref="TermRangeQueryNode"/>
     /// object.
     /// </summary>
     public class TermRangeQueryNodeBuilder : IStandardQueryBuilder

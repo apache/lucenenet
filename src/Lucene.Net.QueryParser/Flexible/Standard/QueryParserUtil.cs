@@ -24,31 +24,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
     /// <summary>
     /// This class defines utility methods to (help) parse query strings into
-    /// {@link Query} objects.
+    /// <see cref="Query"/> objects.
     /// </summary>
     public sealed class QueryParserUtil
     {
-        /**
-   * Parses a query which searches on the fields specified.
-   * <p>
-   * If x fields are specified, this effectively constructs:
-   * 
-   * <pre>
-   * <code>
-   * (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
-   * </code>
-   * </pre>
-   * 
-   * @param queries
-   *          Queries strings to parse
-   * @param fields
-   *          Fields to search on
-   * @param analyzer
-   *          Analyzer to use
-   * @throws IllegalArgumentException
-   *           if the length of the queries array differs from the length of the
-   *           fields array
-   */
+        /// <summary>
+        /// Parses a query which searches on the fields specified.
+        /// <para/>
+        /// If x fields are specified, this effectively constructs:
+        /// <code>
+        /// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
+        /// </code>
+        /// </summary>
+        /// <param name="queries">Queries strings to parse</param>
+        /// <param name="fields">Fields to search on</param>
+        /// <param name="analyzer">Analyzer to use</param>
+        /// <exception cref="ArgumentException">
+        /// if the length of the queries array differs from the length of the
+        /// fields array
+        /// </exception>
         public static Query Parse(string[] queries, string[] fields, Analyzer analyzer)
         {
             if (queries.Length != fields.Length)
@@ -71,42 +65,32 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return bQuery;
         }
 
-        /**
-         * Parses a query, searching on the fields specified. Use this if you need to
-         * specify certain fields as required, and others as prohibited.
-         * <p>
-         * 
-         * Usage:
-         * <pre class="prettyprint">
-         * <code>
-         * String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-         * BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-         *                BooleanClause.Occur.MUST,
-         *                BooleanClause.Occur.MUST_NOT};
-         * MultiFieldQueryParser.parse(&quot;query&quot;, fields, flags, analyzer);
-         * </code>
-         * </pre>
-         *<p>
-         * The code above would construct a query:
-         * 
-         * <pre>
-         * <code>
-         * (filename:query) +(contents:query) -(description:query)
-         * </code>
-         * </pre>
-         * 
-         * @param query
-         *          Query string to parse
-         * @param fields
-         *          Fields to search on
-         * @param flags
-         *          Flags describing the fields
-         * @param analyzer
-         *          Analyzer to use
-         * @throws IllegalArgumentException
-         *           if the length of the fields array differs from the length of the
-         *           flags array
-         */
+        /// <summary>
+        /// Parses a query, searching on the fields specified. Use this if you need to
+        /// specify certain fields as required, and others as prohibited.
+        /// <para/>
+        /// Usage:
+        /// <code>
+        /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+        /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
+        ///     BooleanClause.Occur.MUST,
+        ///     BooleanClause.Occur.MUST_NOT};
+        /// MultiFieldQueryParser.Parse(&quot;query&quot;, fields, flags, analyzer);
+        /// </code>
+        /// <para/>
+        /// The code above would construct a query:
+        /// <code>
+        /// (filename:query) +(contents:query) -(description:query)
+        /// </code>
+        /// </summary>
+        /// <param name="query">Query string to parse</param>
+        /// <param name="fields">Fields to search on</param>
+        /// <param name="flags">Flags describing the fields</param>
+        /// <param name="analyzer">Analyzer to use</param>
+        /// <exception cref="ArgumentException">
+        /// if the length of the fields array differs from the length of the
+        /// flags array
+        /// </exception>
         public static Query Parse(string query, string[] fields,
             BooleanClause.Occur[] flags, Analyzer analyzer)
         {
@@ -130,42 +114,32 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return bQuery;
         }
 
-        /**
-         * Parses a query, searching on the fields specified. Use this if you need to
-         * specify certain fields as required, and others as prohibited.
-         * <p>
-         * 
-         * Usage:
-         * <pre class="prettyprint">
-         * <code>
-         * String[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
-         * String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-         * BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-         *                BooleanClause.Occur.MUST,
-         *                BooleanClause.Occur.MUST_NOT};
-         * MultiFieldQueryParser.parse(query, fields, flags, analyzer);
-         * </code>
-         * </pre>
-         *<p>
-         * The code above would construct a query:
-         * 
-         * <pre>
-         * <code>
-         * (filename:query1) +(contents:query2) -(description:query3)
-         * </code>
-         * </pre>
-         * 
-         * @param queries
-         *          Queries string to parse
-         * @param fields
-         *          Fields to search on
-         * @param flags
-         *          Flags describing the fields
-         * @param analyzer
-         *          Analyzer to use
-         * @throws IllegalArgumentException
-         *           if the length of the queries, fields, and flags array differ
-         */
+        /// <summary>
+        /// Parses a query, searching on the fields specified. Use this if you need to
+        /// specify certain fields as required, and others as prohibited.
+        /// <para/>
+        /// Usage:
+        /// <code>
+        /// string[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
+        /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+        /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
+        ///     BooleanClause.Occur.MUST,
+        ///     BooleanClause.Occur.MUST_NOT};
+        /// MultiFieldQueryParser.Parse(query, fields, flags, analyzer);
+        /// </code>
+        /// <para/>
+        /// The code above would construct a query:
+        /// <code>
+        /// (filename:query1) +(contents:query2) -(description:query3)
+        /// </code>
+        /// </summary>
+        /// <param name="queries">Queries string to parse</param>
+        /// <param name="fields">Fields to search on</param>
+        /// <param name="flags">Flags describing the fields</param>
+        /// <param name="analyzer">Analyzer to use</param>
+        /// <exception cref="ArgumentException">
+        /// if the length of the queries, fields, and flags array differ
+        /// </exception>
         public static Query Parse(string[] queries, string[] fields,
             BooleanClause.Occur[] flags, Analyzer analyzer)
         {
@@ -190,10 +164,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return bQuery;
         }
 
-        /**
-         * Returns a String where those characters that TextParser expects to be
-         * escaped are escaped by a preceding <code>\</code>.
-         */
+        /// <summary>
+        /// Returns a string where those characters that TextParser expects to be
+        /// escaped are escaped by a preceding <c>\</c>.
+        /// </summary>
         public static string Escape(string s)
         {
             StringBuilder sb = new StringBuilder();

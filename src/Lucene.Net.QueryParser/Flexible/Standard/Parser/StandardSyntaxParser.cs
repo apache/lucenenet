@@ -44,10 +44,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
         }
 
-        /** Parses a query string, returning a {@link org.apache.lucene.queryparser.flexible.core.nodes.QueryNode}.
-        *  @param query  the query string to be parsed.
-        *  @throws ParseException if the parsing fails
-        */
+        /// <summary>
+        /// Parses a query string, returning a <see cref="IQueryNode"/>.
+        /// </summary>
+        /// <param name="query">the query string to be parsed.</param>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        /// <exception cref="ParseException">if the parsing fails</exception>
         public IQueryNode Parse(string query, string field)
         {
             ReInit(new FastCharStream(new StringReader(query)));
@@ -952,11 +955,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return false;
         }
 
-        /** Generated Token Manager. */
+        /// <summary>Generated Token Manager.</summary>
         public StandardSyntaxParserTokenManager token_source;
-        /** Current token. */
+        /// <summary>Current token.</summary>
         public Token token;
-        /** Next token. */
+        /// <summary>Next token.</summary>
         public Token jj_nt;
         private int jj_ntk;
         private Token jj_scanpos, jj_lastpos;
@@ -982,7 +985,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private bool jj_rescan = false;
         private int jj_gc = 0;
 
-        /** Constructor with user supplied CharStream. */
+        /// <summary>
+        /// Constructor with user supplied <see cref="ICharStream"/>.
+        /// </summary>
         public StandardSyntaxParser(ICharStream stream)
         {
             token_source = new StandardSyntaxParserTokenManager(stream);
@@ -993,7 +998,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             for (int i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
         }
 
-        /** Reinitialise. */
+        /// <summary>Reinitialize.</summary>
         public void ReInit(ICharStream stream)
         {
             token_source.ReInit(stream);
@@ -1004,7 +1009,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             for (int i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
         }
 
-        /** Constructor with generated Token Manager. */
+        /// <summary>Constructor with generated Token Manager.</summary>
         public StandardSyntaxParser(StandardSyntaxParserTokenManager tm)
         {
             token_source = tm;
@@ -1015,7 +1020,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             for (int i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
         }
 
-        /** Reinitialise. */
+        /// <summary>Reinitialize.</summary>
         public void ReInit(StandardSyntaxParserTokenManager tm)
         {
             token_source = tm;
@@ -1087,7 +1092,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
 
-        /** Get the next Token. */
+        /// <summary>Get the next Token.</summary>
         public Token getNextToken()
         {
             if (token.next != null) token = token.next;
@@ -1097,7 +1102,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return token;
         }
 
-        /** Get the specific Token. */
+        /// <summary>Get the specific Token.</summary>
         public Token getToken(int index)
         {
             Token t = token;
@@ -1159,7 +1164,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
         }
 
-        /** Generate ParseException. */
+        /// <summary>Generate ParseException.</summary>
         public virtual ParseException generateParseException()
         {
             jj_expentries.Clear();
@@ -1206,12 +1211,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return new ParseException(token, exptokseq, StandardSyntaxParserConstants.TokenImage);
         }
 
-        /** Enable tracing. */
+        /// <summary>Enable tracing.</summary>
         public void enable_tracing()
         {
         }
 
-        /** Disable tracing. */
+        /// <summary>Disable tracing.</summary>
         public void disable_tracing()
         {
         }

@@ -22,9 +22,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds no object, it only returns the {@link Query} object set on the
-    /// {@link ModifierQueryNode} object using a
-    /// {@link QueryTreeBuilder#QUERY_TREE_BUILDER_TAGID} tag.
+    /// Builds no object, it only returns the <see cref="Query"/> object set on the
+    /// <see cref="ModifierQueryNode"/> object using a
+    /// <see cref="QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID"/> tag.
     /// </summary>
     public class ModifierQueryNodeBuilder : IStandardQueryBuilder
     {

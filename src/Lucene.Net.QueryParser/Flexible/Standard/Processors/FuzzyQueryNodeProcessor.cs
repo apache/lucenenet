@@ -26,14 +26,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
     /// <summary>
     /// This processor iterates the query node tree looking for every
-    /// {@link FuzzyQueryNode}, when this kind of node is found, it checks on the
+    /// <see cref="FuzzyQueryNode"/>, when this kind of node is found, it checks on the
     /// query configuration for
-    /// {@link ConfigurationKeys#FUZZY_CONFIG}, gets the
+    /// <see cref="ConfigurationKeys.FUZZY_CONFIG"/>, gets the
     /// fuzzy prefix length and default similarity from it and set to the fuzzy node.
-    /// For more information about fuzzy prefix length check: {@link FuzzyQuery}.
+    /// For more information about fuzzy prefix length check: <see cref="Search.FuzzyQuery"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#FUZZY_CONFIG"/>
-    /// <seealso cref="FuzzyQuery"/>
+    /// <seealso cref="ConfigurationKeys.FUZZY_CONFIG"/>
+    /// <seealso cref="Search.FuzzyQuery"/>
     /// <seealso cref="FuzzyQueryNode"/>
     public class FuzzyQueryNodeProcessor : QueryNodeProcessorImpl
     {

@@ -23,15 +23,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link OrQueryNode} represents an OR boolean operation performed on a list
+    /// A <see cref="OrQueryNode"/> represents an OR boolean operation performed on a list
     /// of nodes.
     /// </summary>
     public class OrQueryNode : BooleanQueryNode
     {
-        /**
-   * @param clauses
-   *          - the query nodes to be or'ed
-   */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">the query nodes to be or'ed</param>
         public OrQueryNode(IList<IQueryNode> clauses)
             : base(clauses)
         {

@@ -25,13 +25,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// The {@link StandardSyntaxParser} creates {@link PrefixWildcardQueryNode} nodes which
+    /// The <see cref="Parser.StandardSyntaxParser"/> creates <see cref="PrefixWildcardQueryNode"/> nodes which
     /// have values containing the prefixed wildcard. However, Lucene
-    /// {@link PrefixQuery} cannot contain the prefixed wildcard. So, this processor
+    /// <see cref="Search.PrefixQuery"/> cannot contain the prefixed wildcard. So, this processor
     /// basically removed the prefixed wildcard from the
-    /// {@link PrefixWildcardQueryNode} value.
+    /// <see cref="PrefixWildcardQueryNode"/> value.
     /// </summary>
-    /// <seealso cref="PrefixQuery"/>
+    /// <seealso cref="Search.PrefixQuery"/>
     /// <seealso cref="PrefixWildcardQueryNode"/>
     public class WildcardQueryNodeProcessor : QueryNodeProcessorImpl
     {

@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link BoostQueryNode} boosts the QueryNode tree which is under this node.
+    /// A <see cref="BoostQueryNode"/> boosts the QueryNode tree which is under this node.
     /// So, it must only and always have one child.
     /// 
     /// The boost value may vary from 0.0 to 1.0.
@@ -32,14 +32,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     {
         private float value = 0;
 
-        /**
-         * Constructs a boost node
-         * 
-         * @param query
-         *          the query to be boosted
-         * @param value
-         *          the boost value, it may vary from 0.0 to 1.0
-         */
+        /// <summary>
+        /// Constructs a boost node
+        /// </summary>
+        /// <param name="query">the query to be boosted</param>
+        /// <param name="value">the boost value, it may vary from 0.0 to 1.0</param>
         public BoostQueryNode(IQueryNode query, float value)
         {
             if (query == null)
@@ -54,11 +51,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             Add(query);
         }
 
-        /**
-         * Returns the single child which this node boosts.
-         * 
-         * @return the single child which this node boosts
-         */
+        /// <summary>
+        /// Gets the single child which this node boosts.
+        /// </summary>
         public virtual IQueryNode Child
         {
             get
@@ -74,21 +69,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        /**
-         * Returns the boost value. It may vary from 0.0 to 1.0.
-         * 
-         * @return the boost value
-         */
+        /// <summary>
+        /// Gets the boost value. It may vary from 0.0 to 1.0.
+        /// </summary>
         public virtual float Value
         {
             get { return this.value; }
         }
 
-        /**
-         * Returns the boost value parsed to a string.
-         * 
-         * @return the parsed value
-         */
+        /// <summary>
+        /// Returns the boost value parsed to a string.
+        /// </summary>
+        /// <returns>the parsed value</returns>
         private string GetValueString()
         {
             float f = this.value;

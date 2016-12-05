@@ -28,15 +28,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds {@link NumericRangeQuery}s out of {@link NumericRangeQueryNode}s.
+    /// Builds <see cref="NumericRangeQuery"/>s out of <see cref="NumericRangeQueryNode"/>s.
     /// </summary>
     /// <seealso cref="NumericRangeQuery"/>
     /// <seealso cref="NumericRangeQueryNode"/>
     public class NumericRangeQueryNodeBuilder : IStandardQueryBuilder
     {
-        /**
-   * Constructs a {@link NumericRangeQueryNodeBuilder} object.
-   */
+        /// <summary>
+        /// Constructs a <see cref="NumericRangeQueryNodeBuilder"/> object.
+        /// </summary>
         public NumericRangeQueryNodeBuilder()
         {
             // empty constructor

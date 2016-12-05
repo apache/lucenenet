@@ -31,9 +31,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     }
 
     /// <summary>
-    /// This {@link Format} parses {@link Long} into date strings and vice-versa. It
-    /// uses the given {@link DateFormat} to parse and format dates, but before, it
-    /// converts {@link Long} to {@link Date} objects or vice-versa.
+    /// This <see cref="NumberFormat"/> parses <see cref="long"/> into date strings and vice-versa. It
+    /// uses the given <paramref name="dateFormat"/> and <see cref="CultureInfo">locale</see> to parse and format dates, but before, it
+    /// converts <see cref="long"/> to <see cref="DateTime"/> objects or vice-versa.
+    /// <para/>
+    /// Note that the <see cref="long"/> value the dates are parsed into and out of represent the number of milliseconds
+    /// since January 1, 1970 0:00:00, also known as the "epoch".
     /// </summary>
     public class NumberDateFormat : NumberFormat
     {
@@ -47,17 +50,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         private readonly DateFormat timeStyle;
         private TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
-        /**
-         * Constructs a {@link NumberDateFormat} object using the given {@link DateFormat}.
-         * 
-         * @param dateFormat {@link DateFormat} used to parse and format dates
-         */
+        /// <summary>
+        /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateFormat"/>
+        /// and <paramref name="locale"/>.
+        /// </summary>
+        /// <param name="dateFormat">Date format used to parse and format dates</param>
+        /// <param name="locale"></param>
         public NumberDateFormat(string dateFormat, CultureInfo locale)
             : base(locale)
         {
             this.dateFormat = dateFormat;
         }
 
+        /// <summary>
+        /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateStyle"/>,
+        /// <paramref name="timeStyle"/>, and <paramref name="locale"/>.
+        /// </summary>
         public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale)
             : base(locale)
         {

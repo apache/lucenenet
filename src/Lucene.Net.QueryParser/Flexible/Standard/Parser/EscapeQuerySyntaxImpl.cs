@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
      */
 
     /// <summary>
-    /// Implementation of {@link EscapeQuerySyntax} for the standard lucene
+    /// Implementation of <see cref="IEscapeQuerySyntax"/> for the standard lucene
     /// syntax.
     /// </summary>
     public class EscapeQuerySyntaxImpl : IEscapeQuerySyntax
@@ -107,17 +107,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return term;
         }
 
-        /**
-         * replace with ignore case
-         * 
-         * @param string
-         *          string to get replaced
-         * @param sequence1
-         *          the old character sequence in lowercase
-         * @param escapeChar
-         *          the new character to prefix sequence1 in return string.
-         * @return the new String
-         */
+        /// <summary>
+        /// replace with ignore case
+        /// </summary>
+        /// <param name="string">string to get replaced</param>
+        /// <param name="sequence1">the old character sequence in lowercase</param>
+        /// <param name="escapeChar">the new character to prefix sequence1 in return string.</param>
+        /// <param name="locale"></param>
+        /// <returns>the new <see cref="ICharSequence"/></returns>
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
@@ -183,15 +180,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return result.ToString().ToCharSequence();
         }
 
-        /**
-         * escape all tokens that are part of the parser syntax on a given string
-         * 
-         * @param str
-         *          string to get replaced
-         * @param locale
-         *          locale to be used when performing string compares
-         * @return the new String
-         */
+        /// <summary>
+        /// escape all tokens that are part of the parser syntax on a given string
+        /// </summary>
+        /// <param name="str">string to get replaced</param>
+        /// <param name="locale">locale to be used when performing string compares</param>
+        /// <returns>the new <see cref="ICharSequence"/></returns>
         private static ICharSequence EscapeWhiteChar(ICharSequence str,
             CultureInfo locale)
         {
@@ -245,14 +239,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
         }
 
-        /**
-         * Returns a String where the escape char has been removed, or kept only once
-         * if there was a double escape.
-         * 
-         * Supports escaped unicode characters, e. g. translates <code>A</code> to
-         * <code>A</code>.
-         * 
-         */
+        /// <summary>
+        /// Returns a string where the escape char has been removed, or kept only once
+        /// if there was a double escape.
+        /// <para/>
+        /// Supports escaped unicode characters, e. g. translates <c>A</c> to
+        /// <c>A</c>.
+        /// </summary>
         public static UnescapedCharSequence DiscardEscapeChar(string input)
         {
             // Create char array to hold unescaped char sequence
@@ -334,7 +327,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return new UnescapedCharSequence(output, wasEscaped, 0, length);
         }
 
-        /** Returns the numeric value of the hexadecimal character */
+        /// <summary>
+        /// Returns the numeric value of the hexadecimal character
+        /// </summary>
         private static int HexToInt(char c)
         {
             if ('0' <= c && c <= '9')

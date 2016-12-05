@@ -26,10 +26,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
     /// <summary>
     /// This processor iterates the query node tree looking for every
-    /// {@link FieldableNode} that has {@link ConfigurationKeys#BOOST} in its
-    /// config. If there is, the boost is applied to that {@link FieldableNode}.
+    /// <see cref="IFieldableNode"/> that has <see cref="ConfigurationKeys.BOOST"/> in its
+    /// config. If there is, the boost is applied to that <see cref="IFieldableNode"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#BOOST"/>
+    /// <seealso cref="ConfigurationKeys.BOOST"/>
     /// <seealso cref="QueryConfigHandler"/>
     /// <seealso cref="IFieldableNode"/>
     public class BoostQueryNodeProcessor : QueryNodeProcessorImpl

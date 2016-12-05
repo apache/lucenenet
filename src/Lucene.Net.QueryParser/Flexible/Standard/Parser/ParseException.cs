@@ -35,12 +35,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     [Serializable]
     public class ParseException : QueryNodeParseException
     {
-        /**
-         * This constructor is used by the method "generateParseException"
-         * in the generated parser.  Calling this constructor generates
-         * a new object of this type with the fields "currentToken",
-         * "expectedTokenSequences", and "tokenImage" set.
-         */
+        /// <summary>
+        /// This constructor is used by the method "generateParseException"
+        /// in the generated parser.  Calling this constructor generates
+        /// a new object of this type with the fields "currentToken",
+        /// "expectedTokenSequences", and "tokenImage" set.
+        /// </summary>
         public ParseException(Token currentTokenVal,
             int[][] expectedTokenSequencesVal, string[] tokenImageVal)
             : base(new MessageImpl(QueryParserMessages.INVALID_SYNTAX, Initialize(
@@ -51,54 +51,60 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             this.tokenImage = tokenImageVal;
         }
 
-        /**
-         * The following constructors are for use by you for whatever
-         * purpose you can think of.  Constructing the exception in this
-         * manner makes the exception behave in the normal way - i.e., as
-         * documented in the class "Throwable".  The fields "errorToken",
-         * "expectedTokenSequences", and "tokenImage" do not contain
-         * relevant information.  The JavaCC generated code does not use
-         * these constructors.
-         */
+        /// <summary>
+        /// The following constructors are for use by you for whatever
+        /// purpose you can think of.  Constructing the exception in this
+        /// manner makes the exception behave in the normal way - i.e., as
+        /// documented in the class "Throwable".  The fields "errorToken",
+        /// "expectedTokenSequences", and "tokenImage" do not contain
+        /// relevant information.  The JavaCC generated code does not use
+        /// these constructors.
+        /// </summary>
         public ParseException()
             : base(new MessageImpl(QueryParserMessages.INVALID_SYNTAX, "Error"))
         {
         }
 
-        /** Constructor with message. */
+        /// <summary>
+        /// Constructor with message.
+        /// </summary>
         public ParseException(IMessage message)
             : base(message)
         {
         }
 
-        /**
-         * This is the last token that has been consumed successfully.  If
-         * this object has been created due to a parse error, the token
-         * followng this token will (therefore) be the first error token.
-         */
+        /// <summary>
+        /// This is the last token that has been consumed successfully.  If
+        /// this object has been created due to a parse error, the token
+        /// followng this token will (therefore) be the first error token.
+        /// </summary>
         public Token currentToken;
 
-        /**
-         * Each entry in this array is an array of integers.  Each array
-         * of integers represents a sequence of tokens (by their ordinal
-         * values) that is expected at this point of the parse.
-         */
+        /// <summary>
+        /// Each entry in this array is an array of integers.  Each array
+        /// of integers represents a sequence of tokens (by their ordinal
+        /// values) that is expected at this point of the parse.
+        /// </summary>
         public int[][] expectedTokenSequences;
 
-        /**
-         * This is a reference to the "tokenImage" array of the generated
-         * parser within which the parse error occurred.  This array is
-         * defined in the generated ...Constants interface.
-         */
+        /// <summary>
+        /// This is a reference to the "tokenImage" array of the generated
+        /// parser within which the parse error occurred.  This array is
+        /// defined in the generated ...Constants interface.
+        /// </summary>
         public string[] tokenImage;
 
-        /**
-         * It uses "currentToken" and "expectedTokenSequences" to generate a parse
-         * error message and returns it.  If this object has been created
-         * due to a parse error, and you do not catch it (it gets thrown
-         * from the parser) the correct error message
-         * gets displayed.
-         */
+        /// <summary>
+        /// It uses <paramref name="currentToken"/> and <paramref name="expectedTokenSequences"/> to generate a parse
+        /// error message and returns it.  If this object has been created
+        /// due to a parse error, and you do not catch it (it gets thrown
+        /// from the parser) the correct error message
+        /// gets displayed.
+        /// </summary>
+        /// <param name="currentToken"></param>
+        /// <param name="expectedTokenSequences"></param>
+        /// <param name="tokenImage"></param>
+        /// <returns></returns>
         private static string Initialize(Token currentToken,
                                  int[][] expectedTokenSequences,
                                  string[] tokenImage)
@@ -153,16 +159,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return retval;
         }
 
-        /**
-         * The end of line string for this machine.
-         */
+        /// <summary>
+        /// The end of line string for this machine.
+        /// </summary>
         protected string eol = Environment.NewLine;
 
-        /**
-         * Used to convert raw characters to their escaped version
-         * when these raw version cannot be used as part of an ASCII
-         * string literal.
-         */
+        /// <summary>
+        /// Used to convert raw characters to their escaped version
+        /// when these raw version cannot be used as part of an ASCII
+        /// string literal.
+        /// </summary>
         static string Add_Escapes(string str)
         {
             StringBuilder retval = new StringBuilder();

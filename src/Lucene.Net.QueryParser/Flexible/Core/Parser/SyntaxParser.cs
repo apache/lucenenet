@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
      */
 
     /// <summary>
-    /// A parser needs to implement {@link SyntaxParser} interface
+    /// A parser needs to implement <see cref="ISyntaxParser"/> interface
     /// </summary>
     public interface ISyntaxParser
     {

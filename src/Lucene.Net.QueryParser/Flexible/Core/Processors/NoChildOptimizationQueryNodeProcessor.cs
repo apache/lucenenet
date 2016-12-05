@@ -21,7 +21,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
      */
 
     /// <summary>
-    /// A {@link NoChildOptimizationQueryNodeProcessor} removes every
+    /// A <see cref="NoChildOptimizationQueryNodeProcessor"/> removes every
     /// BooleanQueryNode, BoostQueryNode, TokenizedPhraseQueryNode or
     /// ModifierQueryNode that do not have a valid children.
     /// <para>

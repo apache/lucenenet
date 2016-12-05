@@ -23,9 +23,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
     /// <summary>
     /// This listener listens for every field configuration request and assign a
-    /// {@link ConfigurationKeys#DATE_RESOLUTION} to the equivalent {@link FieldConfig} based
-    /// on a defined map: fieldName -> {@link Resolution} stored in
-    /// {@link ConfigurationKeys#FIELD_DATE_RESOLUTION_MAP}.
+    /// <see cref="ConfigurationKeys.DATE_RESOLUTION"/> to the equivalent <see cref="FieldConfig"/> based
+    /// on a defined map: fieldName -> <see cref="DateTools.Resolution"/> stored in
+    /// <see cref="ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP"/>.
     /// </summary>
     /// <seealso cref="ConfigurationKeys#DATE_RESOLUTION"/>
     /// <seealso cref="ConfigurationKeys#FIELD_DATE_RESOLUTION_MAP"/>

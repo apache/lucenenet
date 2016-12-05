@@ -22,6 +22,49 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
      * limitations under the License.
      */
 
+    /// <summary>
+    /// This is a default implementation for the <see cref="IQueryNodeProcessor"/>
+    /// interface, it's an abstract class, so it should be extended by classes that
+    /// want to process a <see cref="IQueryNode"/> tree.
+    /// <para>
+    /// This class process <see cref="IQueryNode"/>s from left to right in the tree. While
+    /// it's walking down the tree, for every node,
+    /// <see cref="PreProcessNode(IQueryNode)"/> is invoked. After a node's children are
+    /// processed, <see cref="PostProcessNode(IQueryNode)"/> is invoked for that node.
+    /// <see cref="SetChildrenOrder(IList{IQueryNode})"/> is invoked before
+    /// <see cref="PostProcessNode(IQueryNode)"/> only if the node has at least one child,
+    /// in <see cref="SetChildrenOrder(IList{IQueryNode})"/> the implementor might redefine the
+    /// children order or remove any children from the children list.
+    /// </para>
+    /// <para>
+    /// Here is an example about how it process the nodes:
+    /// </para>
+    /// <pre>
+    ///      a
+    ///     / \
+    ///    b   e
+    ///   / \
+    ///  c   d
+    /// </pre>
+    /// <para>
+    /// Here is the order the methods would be invoked for the tree described above:
+    /// </para>
+    /// <code>
+    ///     PreProcessNode( a );
+    ///     PreProcessNode( b );
+    ///     PreProcessNode( c );
+    ///     PostProcessNode( c );
+    ///     PreProcessNode( d );
+    ///     PostProcessNode( d );
+    ///     SetChildrenOrder( bChildrenList );
+    ///     PostProcessNode( b );
+    ///     PreProcessNode( e );
+    ///     PostProcessNode( e );
+    ///     SetChildrenOrder( aChildrenList );
+    ///     PostProcessNode( a )
+    /// </code>
+    /// </summary>
+    /// <seealso cref="IQueryNodeProcessor"/>
     public abstract class QueryNodeProcessorImpl : IQueryNodeProcessor
     {
         private List<ChildrenList> childrenListPool = new List<ChildrenList>();
@@ -54,14 +97,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return queryTree;
         }
 
-        /**
-         * This method is called every time a child is processed.
-         * 
-         * @param queryTree
-         *          the query node child to be processed
-         * @throws QueryNodeException
-         *           if something goes wrong during the query node processing
-         */
+        /// <summary>
+        /// This method is called every time a child is processed.
+        /// </summary>
+        /// <param name="queryTree">the query node child to be processed</param>
+        /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
         protected virtual void ProcessChildren(IQueryNode queryTree)
         {
             IList<IQueryNode> children = queryTree.GetChildren();
@@ -123,74 +163,53 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return list;
         }
 
-        /**
-         * For reference about this method check:
-         * {@link QueryNodeProcessor#setQueryConfigHandler(QueryConfigHandler)}.
-         * 
-         * @param queryConfigHandler
-         *          the query configuration handler to be set.
-         * 
-         * @see QueryNodeProcessor#getQueryConfigHandler()
-         * @see QueryConfigHandler
-         */
+        /// <summary>
+        /// For reference about this method check:
+        /// <see cref="IQueryNodeProcessor.SetQueryConfigHandler(QueryConfigHandler)"/>.
+        /// </summary>
+        /// <param name="queryConfigHandler">the query configuration handler to be set.</param>
+        /// <seealso cref="IQueryNodeProcessor.SetQueryConfigHandler(QueryConfigHandler)"/>
+        /// <seealso cref="QueryConfigHandler"/>
         public virtual void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;
         }
 
-        /**
-         * For reference about this method check:
-         * {@link QueryNodeProcessor#getQueryConfigHandler()}.
-         * 
-         * @return QueryConfigHandler the query configuration handler to be set.
-         * 
-         * @see QueryNodeProcessor#setQueryConfigHandler(QueryConfigHandler)
-         * @see QueryConfigHandler
-         */
+        /// <summary>
+        /// For reference about this method check:
+        /// <see cref="IQueryNodeProcessor.GetQueryConfigHandler()"/>.
+        /// </summary>
+        /// <returns><see cref="QueryConfigHandler"/> the query configuration handler to be set.</returns>
+        /// <seealso cref="IQueryNodeProcessor.SetQueryConfigHandler(QueryConfigHandler)"/>
+        /// <seealso cref="QueryConfigHandler"/>
         public virtual QueryConfigHandler GetQueryConfigHandler()
         {
             return this.queryConfig;
         }
 
-        /**
-         * This method is invoked for every node when walking down the tree.
-         * 
-         * @param node
-         *          the query node to be pre-processed
-         * 
-         * @return a query node
-         * 
-         * @throws QueryNodeException
-         *           if something goes wrong during the query node processing
-         */
+        /// <summary>
+        /// This method is invoked for every node when walking down the tree.
+        /// </summary>
+        /// <param name="node">the query node to be pre-processed</param>
+        /// <returns>a query node</returns>
+        /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
         protected abstract IQueryNode PreProcessNode(IQueryNode node);
 
-        /**
-         * This method is invoked for every node when walking up the tree.
-         * 
-         * @param node
-         *          node the query node to be post-processed
-         * 
-         * @return a query node
-         * 
-         * @throws QueryNodeException
-         *           if something goes wrong during the query node processing
-         */
+        /// <summary>
+        /// This method is invoked for every node when walking up the tree.
+        /// </summary>
+        /// <param name="node">node the query node to be post-processed</param>
+        /// <returns>a query node</returns>
+        /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
         protected abstract IQueryNode PostProcessNode(IQueryNode node);
 
-        /**
-         * This method is invoked for every node that has at least on child. It's
-         * invoked right before {@link #postProcessNode(QueryNode)} is invoked.
-         * 
-         * @param children
-         *          the list containing all current node's children
-         * 
-         * @return a new list containing all children that should be set to the
-         *         current node
-         * 
-         * @throws QueryNodeException
-         *           if something goes wrong during the query node processing
-         */
+        /// <summary>
+        /// This method is invoked for every node that has at least on child. It's
+        /// invoked right before <see cref="PostProcessNode(IQueryNode)"/> is invoked.
+        /// </summary>
+        /// <param name="children">the list containing all current node's children</param>
+        /// <returns>a new list containing all children that should be set to the current node</returns>
+        /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
         protected abstract IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children);
 
         private class ChildrenList : List<IQueryNode>

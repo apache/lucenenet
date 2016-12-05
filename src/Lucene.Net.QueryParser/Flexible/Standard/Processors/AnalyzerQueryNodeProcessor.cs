@@ -32,24 +32,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor verifies if {@link ConfigurationKeys#ANALYZER}
-    /// is defined in the {@link QueryConfigHandler}. If it is and the analyzer is
-    /// not <code>null</code>, it looks for every {@link FieldQueryNode} that is not
-    /// {@link WildcardQueryNode}, {@link FuzzyQueryNode} or
-    /// {@link RangeQueryNode} contained in the query node tree, then it applies
-    /// the analyzer to that {@link FieldQueryNode} object.
+    /// This processor verifies if <see cref="ConfigurationKeys.ANALYZER"/>
+    /// is defined in the <see cref="Core.Config.QueryConfigHandler"/>. If it is and the analyzer is
+    /// not <c>null</c>, it looks for every <see cref="FieldQueryNode"/> that is not
+    /// <see cref="WildcardQueryNode"/>, <see cref="FuzzyQueryNode"/> or
+    /// <see cref="IRangeQueryNode"/> contained in the query node tree, then it applies
+    /// the analyzer to that <see cref="FieldQueryNode"/> object.
     /// <para/>
     /// If the analyzer return only one term, the returned term is set to the
-    /// {@link FieldQueryNode} and it's returned.
+    /// <see cref="FieldQueryNode"/> and it's returned.
     /// <para/>
-    /// If the analyzer return more than one term, a {@link TokenizedPhraseQueryNode}
-    /// or {@link MultiPhraseQueryNode} is created, whether there is one or more
+    /// If the analyzer return more than one term, a <see cref="TokenizedPhraseQueryNode"/>
+    /// or <see cref="MultiPhraseQueryNode"/> is created, whether there is one or more
     /// terms at the same position, and it's returned.
     /// <para/>
-    /// If no term is returned by the analyzer a {@link NoTokenFoundQueryNode} object
+    /// If no term is returned by the analyzer a <see cref="NoTokenFoundQueryNode"/> object
     /// is returned.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#ANALYZER"/>
+    /// <seealso cref="ConfigurationKeys.ANALYZER"/>
     /// <seealso cref="Analyzer"/>
     /// <seealso cref="TokenStream"/>
     public class AnalyzerQueryNodeProcessor : QueryNodeProcessorImpl

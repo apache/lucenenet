@@ -29,11 +29,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
     /// <summary>
     /// This query configuration handler is used for almost every processor defined
-    /// in the {@link StandardQueryNodeProcessorPipeline} processor pipeline. It holds
+    /// in the <see cref="Processors.StandardQueryNodeProcessorPipeline"/> processor pipeline. It holds
     /// configuration methods that reproduce the configuration methods that could be set on the old
     /// lucene 2.4 QueryParser class.
     /// </summary>
-    /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
+    /// <seealso cref="Processors.StandardQueryNodeProcessorPipeline"/>
     public class StandardQueryConfigHandler : QueryConfigHandler
     {
         public StandardQueryConfigHandler()
@@ -57,9 +57,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new HashMap<string, DateTools.Resolution?>());
         }
 
-        /**
-        * Boolean Operator: AND or OR
-        */
+        /// <summary>
+        /// Boolean Operator: AND or OR
+        /// </summary>
         public enum Operator
         {
             AND,
@@ -67,143 +67,112 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         }
     }
 
-    /**
-   * Class holding keys for StandardQueryNodeProcessorPipeline options.
-   */
+    /// <summary>
+    /// Class holding keys for <see cref="Processors.StandardQueryNodeProcessorPipeline"/> options.
+    /// </summary>
     public sealed class ConfigurationKeys
     {
-        /**
-         * Key used to set whether position increments is enabled
-         * 
-         * @see StandardQueryParser#setEnablePositionIncrements(boolean)
-         * @see StandardQueryParser#getEnablePositionIncrements()
-         */
+        /// <summary>
+        /// Key used to set whether position increments is enabled
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.EnablePositionIncrements"/>
         public readonly static ConfigurationKey<bool?> ENABLE_POSITION_INCREMENTS = ConfigurationKey.NewInstance<bool?>();
 
-        /**
-         * Key used to set whether expanded terms should be lower-cased
-         * 
-         * @see StandardQueryParser#setLowercaseExpandedTerms(boolean)
-         * @see StandardQueryParser#getLowercaseExpandedTerms()
-         */
+        /// <summary>
+        /// Key used to set whether expanded terms should be lower-cased
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.LowercaseExpandedTerms"/>
         public readonly static ConfigurationKey<bool?> LOWERCASE_EXPANDED_TERMS = ConfigurationKey.NewInstance<bool?>();
 
-        /**
-         * Key used to set whether leading wildcards are supported
-         * 
-         * @see StandardQueryParser#setAllowLeadingWildcard(boolean)
-         * @see StandardQueryParser#getAllowLeadingWildcard()
-         */
+        /// <summary>
+        /// Key used to set whether leading wildcards are supported
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.AllowLeadingWildcard"/>
         public readonly static ConfigurationKey<bool?> ALLOW_LEADING_WILDCARD = ConfigurationKey.NewInstance<bool?>();
 
-        /**
-         * Key used to set the {@link Analyzer} used for terms found in the query
-         * 
-         * @see StandardQueryParser#setAnalyzer(Analyzer)
-         * @see StandardQueryParser#getAnalyzer()
-         */
+        /// <summary>
+        /// Key used to set the <see cref="Analyzer"/> used for terms found in the query
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.Analyzer"/>
         public readonly static ConfigurationKey<Analyzer> ANALYZER = ConfigurationKey.NewInstance<Analyzer>();
 
-        /**
-         * Key used to set the default boolean operator
-         * 
-         * @see StandardQueryParser#setDefaultOperator(org.apache.lucene.queryparser.flexible.standard.config.StandardQueryConfigHandler.Operator)
-         * @see StandardQueryParser#getDefaultOperator()
-         */
+        /// <summary>
+        /// Key used to set the default boolean operator
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.DefaultOperator"/>
         public readonly static ConfigurationKey<Operator?> DEFAULT_OPERATOR = ConfigurationKey.NewInstance<Operator?>();
 
-        /**
-         * Key used to set the default phrase slop
-         * 
-         * @see StandardQueryParser#setPhraseSlop(int)
-         * @see StandardQueryParser#getPhraseSlop()
-         */
+        /// <summary>
+        /// Key used to set the default phrase slop
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.PhraseSlop"/>
         public readonly static ConfigurationKey<int?> PHRASE_SLOP = ConfigurationKey.NewInstance<int?>();
 
-        /**
-         * Key used to set the {@link Locale} used when parsing the query
-         * 
-         * @see StandardQueryParser#setLocale(Locale)
-         * @see StandardQueryParser#getLocale()
-         */
+        /// <summary>
+        ///  Key used to set the <see cref="CultureInfo">locale</see> used when parsing the query
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.Locale"/>
         public readonly static ConfigurationKey<CultureInfo> LOCALE = ConfigurationKey.NewInstance<CultureInfo>();
 
         public readonly static ConfigurationKey<TimeZoneInfo> TIMEZONE = ConfigurationKey.NewInstance<TimeZoneInfo>();
 
-        /**
-         * Key used to set the {@link RewriteMethod} used when creating queries
-         * 
-         * @see StandardQueryParser#setMultiTermRewriteMethod(org.apache.lucene.search.MultiTermQuery.RewriteMethod)
-         * @see StandardQueryParser#getMultiTermRewriteMethod()
-         */
+        /// <summary>
+        /// Key used to set the <see cref="MultiTermQuery.RewriteMethod"/> used when creating queries
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.MultiTermRewriteMethod"/> 
         public readonly static ConfigurationKey<MultiTermQuery.RewriteMethod> MULTI_TERM_REWRITE_METHOD = ConfigurationKey.NewInstance<MultiTermQuery.RewriteMethod>();
 
-        /**
-         * Key used to set the fields a query should be expanded to when the field
-         * is <code>null</code>
-         * 
-         * @see StandardQueryParser#setMultiFields(CharSequence[])
-         * @see StandardQueryParser#getMultiFields(CharSequence[])
-         */
+        /// <summary>
+        /// Key used to set the fields a query should be expanded to when the field
+        /// is <c>null</c>
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.SetMultiFields(string[])"/>
+        /// <seealso cref="StandardQueryParser.GetMultiFields()"/>
         public readonly static ConfigurationKey<string[]> MULTI_FIELDS = ConfigurationKey.NewInstance<string[]>();
 
-        /**
-         * Key used to set a field to boost map that is used to set the boost for each field
-         * 
-         * @see StandardQueryParser#setFieldsBoost(Map)
-         * @see StandardQueryParser#getFieldsBoost()
-         */
+        /// <summary>
+        /// Key used to set a field to boost map that is used to set the boost for each field
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.FieldsBoost"/>
         public readonly static ConfigurationKey<IDictionary<string, float?>> FIELD_BOOST_MAP = ConfigurationKey.NewInstance<IDictionary<string, float?>>();
 
-        /**
-         * Key used to set a field to {@link Resolution} map that is used
-         * to normalize each date field value.
-         * 
-         * @see StandardQueryParser#setDateResolutionMap(Map)
-         * @see StandardQueryParser#getDateResolutionMap()
-         */
+        /// <summary>
+        /// Key used to set a field to <see cref="DateTools.Resolution"/> map that is used
+        /// to normalize each date field value.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.DateResolutionMap"/>
         public readonly static ConfigurationKey<IDictionary<string, DateTools.Resolution?>> FIELD_DATE_RESOLUTION_MAP = ConfigurationKey.NewInstance<IDictionary<string, DateTools.Resolution?>>();
 
-        /**
-         * Key used to set the {@link FuzzyConfig} used to create fuzzy queries.
-         * 
-         * @see StandardQueryParser#setFuzzyMinSim(float)
-         * @see StandardQueryParser#setFuzzyPrefixLength(int)
-         * @see StandardQueryParser#getFuzzyMinSim()
-         * @see StandardQueryParser#getFuzzyPrefixLength()
-         */
+        /// <summary>
+        /// Key used to set the <see cref="FuzzyConfig"/> used to create fuzzy queries.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.FuzzyMinSim"/>
+        /// <seealso cref="StandardQueryParser.FuzzyPrefixLength"/>
         public readonly static ConfigurationKey<FuzzyConfig> FUZZY_CONFIG = ConfigurationKey.NewInstance<FuzzyConfig>();
 
-        /**
-         * Key used to set default {@link Resolution}.
-         * 
-         * @see StandardQueryParser#setDateResolution(org.apache.lucene.document.DateTools.Resolution)
-         * @see StandardQueryParser#getDateResolution()
-         */
+        /// <summary>
+        /// Key used to set default <see cref="DateTools.Resolution"/>.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.SetDateResolution(DateTools.Resolution)"/>
+        /// <seealso cref="StandardQueryParser.DateResolution"/>
         public readonly static ConfigurationKey<DateTools.Resolution> DATE_RESOLUTION = ConfigurationKey.NewInstance<DateTools.Resolution>();
 
-        /**
-         * Key used to set the boost value in {@link FieldConfig} objects.
-         * 
-         * @see StandardQueryParser#setFieldsBoost(Map)
-         * @see StandardQueryParser#getFieldsBoost()
-         */
+        /// <summary>
+        /// Key used to set the boost value in <see cref="FieldConfig"/> objects.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.FieldsBoost"/>
         public readonly static ConfigurationKey<float?> BOOST = ConfigurationKey.NewInstance<float?>();
 
-        /**
-         * Key used to set a field to its {@link NumericConfig}.
-         * 
-         * @see StandardQueryParser#setNumericConfigMap(Map)
-         * @see StandardQueryParser#getNumericConfigMap()
-         */
+        /// <summary>
+        /// Key used to set a field to its <see cref="NumericConfig"/>.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.NumericConfigMap"/>
         public readonly static ConfigurationKey<NumericConfig> NUMERIC_CONFIG = ConfigurationKey.NewInstance<NumericConfig>();
 
-        /**
-         * Key used to set the {@link NumericConfig} in {@link FieldConfig} for numeric fields.
-         * 
-         * @see StandardQueryParser#setNumericConfigMap(Map)
-         * @see StandardQueryParser#getNumericConfigMap()
-         */
+        /// <summary>
+        /// Key used to set the <see cref="NumericConfig"/> in <see cref="FieldConfig"/> for numeric fields.
+        /// </summary>
+        /// <seealso cref="StandardQueryParser.NumericConfigMap"/>
         public readonly static ConfigurationKey<IDictionary<string, NumericConfig>> NUMERIC_CONFIG_MAP = ConfigurationKey.NewInstance<IDictionary<string, NumericConfig>>();
     }
 }

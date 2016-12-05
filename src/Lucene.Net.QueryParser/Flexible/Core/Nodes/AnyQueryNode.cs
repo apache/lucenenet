@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link AnyQueryNode} represents an ANY operator performed on a list of
+    /// A <see cref="AnyQueryNode"/> represents an ANY operator performed on a list of
     /// nodes.
     /// </summary>
     public class AnyQueryNode : AndQueryNode
@@ -30,10 +30,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private string field = null;
         private int minimumMatchingmElements = 0;
 
-        /**
-         * @param clauses
-         *          - the query nodes to be or'ed
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">the query nodes to be or'ed</param>
+        /// <param name="field"></param>
+        /// <param name="minimumMatchingElements"></param>
         public AnyQueryNode(IList<IQueryNode> clauses, string field,
             int minimumMatchingElements)
             : base(clauses)
@@ -78,11 +80,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         // LUCENENET TODO: No need for GetFieldAsString method because
         // field is already type string
-        /**
-         * returns - null if the field was not specified
-         * 
-         * @return the field as a String
-         */
+        /// <summary>
+        /// null if the field was not specified
+        /// </summary>
+        /// <returns>the field as a <see cref="string"/></returns>
         public virtual string GetFieldAsString()
         {
             if (this.field == null)
@@ -100,7 +101,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             return clone;
         }
-
 
         public override string ToString()
         {

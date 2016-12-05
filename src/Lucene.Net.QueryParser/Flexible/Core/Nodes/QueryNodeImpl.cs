@@ -27,12 +27,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link QueryNodeImpl} is the default implementation of the interface
-    /// {@link QueryNode}
+    /// A <see cref="QueryNodeImpl"/> is the default implementation of the interface
+    /// <see cref="IQueryNode"/>
     /// </summary>
     public abstract class QueryNodeImpl : IQueryNode, ICloneable
     {
-        /* index default field */
+        /// <summary>
+        /// index default field
+        /// </summary>
         // TODO remove PLAINTEXT_FIELD_NAME replacing it with configuration APIs
         public static readonly string PLAINTEXT_FIELD_NAME = "_plain";
 
@@ -144,10 +146,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return CloneTree();
         }
 
-        /**
-         * @return a List for QueryNode object. Returns null, for nodes that do not
-         *         contain children. All leaf Nodes return null.
-         */
+        /// <summary>
+        /// a List for QueryNode object. Returns null, for nodes that do not
+        /// contain children. All leaf Nodes return null.
+        /// </summary>
         public IList<IQueryNode> GetChildren()
         {
             if (IsLeaf || this.clauses == null)
@@ -167,7 +169,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             this.tags.Remove(tagName.ToLower(CultureInfo.InvariantCulture));
         }
 
-        /** verify if a node contains a tag */
+        /// <summary>
+        /// verify if a node contains a tag
+        /// </summary>
         public virtual bool ContainsTag(string tagName)
         {
             return this.tags.ContainsKey(tagName.ToLower(CultureInfo.InvariantCulture));
@@ -199,17 +203,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return Parent == null; }
         }
 
-        /**
-         * If set to true the the method toQueryString will not write field names
-         */
+        /// <summary>
+        /// If set to true the the method toQueryString will not write field names
+        /// </summary>
         protected internal bool toQueryStringIgnoreFields = false;
 
-        /**
-         * This method is use toQueryString to detect if fld is the default field
-         * 
-         * @param fld - field name
-         * @return true if fld is the default field
-         */
+        /// <summary>
+        /// This method is use toQueryString to detect if fld is the default field
+        /// </summary>
+        /// <param name="fld">field name</param>
+        /// <returns>true if fld is the default field</returns>
         // TODO: remove this method, it's commonly used by {@link
         // #toQueryString(org.apache.lucene.queryParser.core.parser.EscapeQuerySyntax)}
         // to figure out what is the default field, however, {@link
@@ -226,23 +229,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return false;
         }
 
-        /**
-         * Every implementation of this class should return pseudo xml like this:
-         * 
-         * For FieldQueryNode: &lt;field start='1' end='2' field='subject' text='foo'/&gt;
-         * 
-         * @see org.apache.lucene.queryparser.flexible.core.nodes.QueryNode#toString()
-         */
+        /// <summary>
+        /// Every implementation of this class should return pseudo xml like this:
+        /// 
+        /// For FieldQueryNode: &lt;field start='1' end='2' field='subject' text='foo'/&gt;
+        /// </summary>
+        /// <seealso cref="IQueryNode.ToString()"/>
         public override string ToString()
         {
             return base.ToString();
         }
 
-        /**
-         * Returns a map containing all tags attached to this query node.
-         * 
-         * @return a map containing all tags attached to this query node
-         */
+        /// <summary>
+        /// Gets a map containing all tags attached to this query node.
+        /// </summary>
         public virtual IDictionary<string, object> TagMap
         {
             get { return new Dictionary<string, object>(this.tags); }

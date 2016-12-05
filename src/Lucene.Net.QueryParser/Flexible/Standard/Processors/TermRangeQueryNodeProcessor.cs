@@ -29,22 +29,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processors process {@link TermRangeQueryNode}s. It reads the lower and
-    /// upper bounds value from the {@link TermRangeQueryNode} object and try
-    /// to parse their values using a {@link DateFormat}. If the values cannot be
-    /// parsed to a date value, it will only create the {@link TermRangeQueryNode}
+    /// This processors process <see cref="TermRangeQueryNode"/>s. It reads the lower and
+    /// upper bounds value from the <see cref="TermRangeQueryNode"/> object and try
+    /// to parse their values using a <paramref name="dateFormat"/>. If the values cannot be
+    /// parsed to a date value, it will only create the <see cref="TermRangeQueryNode"/>
     /// using the non-parsed values.
     /// <para/>
-    /// If a {@link ConfigurationKeys#LOCALE} is defined in the
-    /// {@link QueryConfigHandler} it will be used to parse the date, otherwise
-    /// {@link Locale#getDefault()} will be used.
+    /// If a <see cref="ConfigurationKeys.LOCALE"/> is defined in the
+    /// <see cref="QueryConfigHandler"/> it will be used to parse the date, otherwise
+    /// <see cref="CultureInfo.CurrentCulture"/> will be used.
     /// <para/>
-    /// If a {@link ConfigurationKeys#DATE_RESOLUTION} is defined and the
-    /// {@link Resolution} is not <code>null</code> it will also be used to parse the
+    /// If a <see cref="ConfigurationKeys.DATE_RESOLUTION"/> is defined and the
+    /// <see cref="DateTools.Resolution"/> is not <c>null</c> it will also be used to parse the
     /// date value.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#DATE_RESOLUTION"/>
-    /// <seealso cref="ConfigurationKeys#LOCALE"/>
+    /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
+    /// <seealso cref="ConfigurationKeys.LOCALE"/>
     /// <seealso cref="TermRangeQueryNode"/>
     public class TermRangeQueryNodeProcessor : QueryNodeProcessorImpl
     {

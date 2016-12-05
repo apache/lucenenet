@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// A query node implements {@link FieldableNode} interface to indicate that its
+    /// A query node implements <see cref="IFieldableNode"/> interface to indicate that its
     /// children and itself are associated to a specific field.
     /// 
     /// If it has any children which also implements this interface, it must ensure

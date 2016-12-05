@@ -23,9 +23,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor removes invalid {@link SlopQueryNode} objects in the query
-    /// node tree. A {@link SlopQueryNode} is invalid if its child is neither a
-    /// {@link TokenizedPhraseQueryNode} nor a {@link MultiPhraseQueryNode}.
+    /// This processor removes invalid <see cref="SlopQueryNode"/> objects in the query
+    /// node tree. A <see cref="SlopQueryNode"/> is invalid if its child is neither a
+    /// <see cref="TokenizedPhraseQueryNode"/> nor a <see cref="MultiPhraseQueryNode"/>.
     /// </summary>
     /// <seealso cref="SlopQueryNode"/>
     public class PhraseSlopQueryNodeProcessor : QueryNodeProcessorImpl

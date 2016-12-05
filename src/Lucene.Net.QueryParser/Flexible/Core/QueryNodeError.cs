@@ -23,17 +23,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <summary>
     /// Error class with NLS support
     /// </summary>
-    /// <seealso cref="Messages.NLS"/>
-    /// <seealso cref="Messages.Message"/>
+    /// <seealso cref="NLS"/>
+    /// <seealso cref="IMessage"/>
     [Serializable]
     public class QueryNodeError : Exception, INLSException
     {
         private IMessage message;
 
-        /**
-         * @param message
-         *          - NLS Message Object
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message">NLS Message Object</param>
         public QueryNodeError(IMessage message)
             : base(message.Key)
         {
@@ -41,32 +41,29 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 
         }
 
-        /**
-         * @param throwable
-         *          - @see java.lang.Error
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="throwable">An exception instance to wrap</param>
         public QueryNodeError(Exception throwable)
             : base(throwable.Message, throwable)
         {
         }
 
-        /**
-         * @param message
-         *          - NLS Message Object
-         * @param throwable
-         *          - @see java.lang.Error
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message">NLS Message Object</param>
+        /// <param name="throwable">An exception instance to wrap</param>
         public QueryNodeError(IMessage message, Exception throwable)
             : base(message.Key, throwable)
         {
             this.message = message;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.apache.lucene.messages.NLSException#getMessageObject()
-         */
+        /// <summary>
+        /// <see cref="INLSException.MessageObject"/> 
+        /// </summary>
         public virtual IMessage MessageObject
         {
             get { return this.message; }

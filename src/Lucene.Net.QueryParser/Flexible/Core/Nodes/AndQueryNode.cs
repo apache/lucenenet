@@ -23,15 +23,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link AndQueryNode} represents an AND boolean operation performed on a
+    /// A <see cref="AndQueryNode"/> represents an AND boolean operation performed on a
     /// list of nodes.
     /// </summary>
     public class AndQueryNode : BooleanQueryNode
     {
-        /**
-   * @param clauses
-   *          - the query nodes to be and'ed
-   */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">the query nodes to be and'ed</param>
         public AndQueryNode(IList<IQueryNode> clauses)
             : base(clauses)
         {

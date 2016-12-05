@@ -30,12 +30,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
     /// <summary>
     /// This processor verifies if
-    /// {@link ConfigurationKeys#ALLOW_LEADING_WILDCARD} is defined in the
-    /// {@link QueryConfigHandler}. If it is and leading wildcard is not allowed, it
-    /// looks for every {@link WildcardQueryNode} contained in the query node tree
+    /// <see cref="ConfigurationKeys.ALLOW_LEADING_WILDCARD"/> is defined in the
+    /// <see cref="QueryConfigHandler"/>. If it is and leading wildcard is not allowed, it
+    /// looks for every <see cref="WildcardQueryNode"/> contained in the query node tree
     /// and throws an exception if any of them has a leading wildcard ('*' or '?').
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#ALLOW_LEADING_WILDCARD"/>
+    /// <seealso cref="ConfigurationKeys.ALLOW_LEADING_WILDCARD"/>
     public class AllowLeadingWildcardProcessor : QueryNodeProcessorImpl
     {
         public AllowLeadingWildcardProcessor()

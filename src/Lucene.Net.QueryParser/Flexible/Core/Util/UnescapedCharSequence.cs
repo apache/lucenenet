@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
      */
 
     /// <summary>
-    /// CharsSequence with escaped chars information.
+    /// <see cref="ICharSequence"/> with escaped chars information.
     /// </summary>
     public sealed class UnescapedCharSequence : ICharSequence
     {
@@ -30,9 +30,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         private bool[] wasEscaped;
 
-        /**
-         * Create a escaped CharSequence
-         */
+        /// <summary>
+        /// Create a escaped <see cref="ICharSequence"/>
+        /// </summary>
         public UnescapedCharSequence(char[] chars, bool[] wasEscaped, int offset,
             int length)
         {
@@ -42,9 +42,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             System.Array.Copy(wasEscaped, offset, this.wasEscaped, 0, length);
         }
 
-        /**
-         * Create a non-escaped CharSequence
-         */
+        /// <summary>
+        /// Create a non-escaped <see cref="ICharSequence"/>
+        /// </summary>
         public UnescapedCharSequence(ICharSequence text)
         {
             this.chars = new char[text.Length];
@@ -56,9 +56,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             }
         }
 
-        /**
-         * Create a non-escaped CharSequence
-         */
+        /// <summary>
+        /// Create a non-escaped <see cref="ICharSequence"/>
+        /// </summary>
          // LUCENENET specific overload for text as string
         public UnescapedCharSequence(string text)
         {
@@ -71,9 +71,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             }
         }
 
-        /**
-         * Create a copy of an existent UnescapedCharSequence
-         */
+        /// <summary>
+        /// Create a copy of an existent <see cref="UnescapedCharSequence"/>
+        /// </summary>
         private UnescapedCharSequence(UnescapedCharSequence text)
         {
             this.chars = new char[text.Length];
@@ -117,11 +117,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             return new string(this.chars);
         }
 
-        /**
-         * Return a escaped String
-         * 
-         * @return a escaped String
-         */
+        /// <summary>
+        /// Return an escaped <see cref="string"/>
+        /// </summary>
+        /// <returns>an escaped <see cref="string"/></returns>
         public string ToStringEscaped()
         {
             // non efficient implementation
@@ -140,13 +139,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             return result.ToString();
         }
 
-        /**
-         * Return a escaped String
-         * 
-         * @param enabledChars
-         *          - array of chars to be escaped
-         * @return a escaped String
-         */
+        /// <summary>
+        /// Return an escaped <see cref="string"/>
+        /// </summary>
+        /// <param name="enabledChars">array of chars to be escaped</param>
+        /// <returns>an escaped <see cref="string"/></returns>
         public ICharSequence ToStringEscaped(char[] enabledChars)
         {
             // TODO: non efficient implementation, refactor this code

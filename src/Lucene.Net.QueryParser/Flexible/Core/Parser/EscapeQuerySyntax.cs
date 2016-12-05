@@ -21,8 +21,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
      */
 
     /// <summary>
-    /// A parser needs to implement {@link EscapeQuerySyntax} to allow the QueryNode
-    /// to escape the queries, when the toQueryString method is called.
+    /// A parser needs to implement <see cref="IEscapeQuerySyntax"/> to allow the <see cref="Nodes.IQueryNode"/> 
+    /// to escape the queries, when the ToQueryString method is called.
     /// </summary>
     public interface IEscapeQuerySyntax
     {
@@ -46,6 +46,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
         ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntax.Type type);
     }
 
+    /// <summary>
+    /// LUCENENET specific static class for mimicking the syntax used for EscapeQuerySyntax.Type
+    /// in Java, since interfaces cannot contain nested enums in .NET anyway.
+    /// </summary>
     public static class EscapeQuerySyntax
     {
         /// <summary>

@@ -21,52 +21,49 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
      */
 
     /// <summary>
-    /// A {@link QueryNodeProcessor} is an interface for classes that process a
-    /// {@link QueryNode} tree.
+    /// An <see cref="IQueryNodeProcessor"/> is an interface for classes that process a
+    /// <see cref="IQueryNode"/> tree.
     /// <para>
     /// The implementor of this class should perform some operation on a query node
     /// tree and return the same or another query node tree.
     /// </para>
     /// <para>
-    /// It also may carry a {@link QueryConfigHandler} object that contains
+    /// It also may carry a <see cref="QueryConfigHandler"/> object that contains
     /// configuration about the query represented by the query tree or the
     /// collection/index where it's intended to be executed.
     /// </para>
     /// <para>
-    /// In case there is any {@link QueryConfigHandler} associated to the query tree
+    /// In case there is any <see cref="QueryConfigHandler"/> associated to the query tree
     /// to be processed, it should be set using
-    /// {@link QueryNodeProcessor#setQueryConfigHandler(QueryConfigHandler)} before
-    /// {@link QueryNodeProcessor#process(QueryNode)} is invoked.
+    /// <see cref="SetQueryConfigHandler(QueryConfigHandler)"/> before
+    /// <see cref="Process(IQueryNode)"/> is invoked.
     /// </para>
     /// </summary>
     /// <seealso cref="IQueryNode"/>
-    /// <seealso cref="QueryNodeProcessor"/>
+    /// <seealso cref="IQueryNodeProcessor"/>
     /// <seealso cref="QueryConfigHandler"/>
     public interface IQueryNodeProcessor
     {
-        /**
-        * Processes a query node tree. It may return the same or another query tree.
-        * I should never return <code>null</code>.
-        * 
-        * @param queryTree
-        *          tree root node
-        * 
-        * @return the processed query tree
-        */
+        /// <summary>
+        /// Processes a query node tree. It may return the same or another query tree.
+        /// I should never return <c>null</c>.
+        /// </summary>
+        /// <param name="queryTree">tree root node</param>
+        /// <returns>the processed query tree</returns>
         IQueryNode Process(IQueryNode queryTree);
 
-        /**
-         * Sets the {@link QueryConfigHandler} associated to the query tree.
-         */
+        /// <summary>
+        /// Sets the <see cref="QueryConfigHandler"/> associated to the query tree.
+        /// </summary>
+        /// <param name="queryConfigHandler"></param>
         void SetQueryConfigHandler(QueryConfigHandler queryConfigHandler);
 
-        /**
-         * Returns the {@link QueryConfigHandler} associated to the query tree if any,
-         * otherwise it returns <code>null</code>
-         * 
-         * @return the {@link QueryConfigHandler} associated to the query tree if any,
-         *         otherwise it returns <code>null</code>
-         */
+        /// <summary>
+        /// Returns the <see cref="QueryConfigHandler"/> associated to the query tree if any,
+        /// otherwise it returns <c>null</c>
+        /// </summary>
+        /// <returns>the <see cref="QueryConfigHandler"/> associated to the query tree if any,
+        /// otherwise it returns <c>null</c></returns>
         QueryConfigHandler GetQueryConfigHandler();
     }
 }

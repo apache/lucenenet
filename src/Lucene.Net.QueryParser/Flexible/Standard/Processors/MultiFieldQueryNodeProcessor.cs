@@ -27,15 +27,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// This processor is used to expand terms so the query looks for the same term
     /// in different fields. It also boosts a query based on its field.
     /// <para/>
-    /// This processor looks for every {@link FieldableNode} contained in the query
-    /// node tree. If a {@link FieldableNode} is found, it checks if there is a
-    /// {@link ConfigurationKeys#MULTI_FIELDS} defined in the {@link QueryConfigHandler}. If
-    /// there is, the {@link FieldableNode} is cloned N times and the clones are
-    /// added to a {@link BooleanQueryNode} together with the original node. N is
+    /// This processor looks for every <see cref="IFieldableNode"/> contained in the query
+    /// node tree. If a <see cref="IFieldableNode"/> is found, it checks if there is a
+    /// <see cref="ConfigurationKeys.MULTI_FIELDS"/> defined in the <see cref="Core.Config.QueryConfigHandler"/>. If
+    /// there is, the <see cref="IFieldableNode"/> is cloned N times and the clones are
+    /// added to a <see cref="BooleanQueryNode"/> together with the original node. N is
     /// defined by the number of fields that it will be expanded to. The
-    /// {@link BooleanQueryNode} is returned.
+    /// <see cref="BooleanQueryNode"/> is returned.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#MULTI_FIELDS"/>
+    /// <seealso cref="ConfigurationKeys.MULTI_FIELDS"/>
     public class MultiFieldQueryNodeProcessor : QueryNodeProcessorImpl
     {
         private bool processChildren = true;

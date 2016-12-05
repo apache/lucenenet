@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link WildcardQuery} object from a {@link WildcardQueryNode}
+    /// Builds a <see cref="WildcardQuery"/> object from a <see cref="WildcardQueryNode"/>
     /// object.
     /// </summary>
     public class WildcardQueryNodeBuilder : IStandardQueryBuilder

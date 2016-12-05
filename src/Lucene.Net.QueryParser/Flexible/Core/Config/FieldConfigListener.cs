@@ -20,14 +20,14 @@
     /// <summary>
     /// This interface should be implemented by classes that wants to listen for
     /// field configuration requests. The implementation receives a
-    /// {@link FieldConfig} object and may add/change its configuration.
+    /// <see cref="FieldConfig"/> object and may add/change its configuration.
     /// </summary>
     /// <seealso cref="FieldConfig"/>
     /// <seealso cref="QueryConfigHandler"/>
     public interface IFieldConfigListener
     {
         /// <summary>
-        /// This method is called ever time a field configuration is requested.
+        /// This method is called every time a field configuration is requested.
         /// </summary>
         /// <param name="fieldConfig">the field configuration requested, should never be null</param>
         void BuildFieldConfig(FieldConfig fieldConfig);

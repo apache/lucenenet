@@ -22,11 +22,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor converts every {@link WildcardQueryNode} that is "*:*" to
-    /// {@link MatchAllDocsQueryNode}.
+    /// This processor converts every <see cref="Nodes.WildcardQueryNode"/> that is "*:*" to
+    /// <see cref="MatchAllDocsQueryNode"/>.
     /// </summary>
     /// <seealso cref="MatchAllDocsQueryNode"/>
-    /// <seealso cref="MatchAllDocsQuery"/>
+    /// <seealso cref="Search.MatchAllDocsQuery"/>
     public class MatchAllDocsQueryNodeProcessor : QueryNodeProcessorImpl
     {
         public MatchAllDocsQueryNodeProcessor()

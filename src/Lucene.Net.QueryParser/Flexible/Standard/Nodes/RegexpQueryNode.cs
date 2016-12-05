@@ -23,40 +23,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
      */
 
     /// <summary>
-    /// A {@link RegexpQueryNode} represents {@link RegexpQuery} query Examples: /[a-z]|[0-9]/
+    /// A <see cref="RegexpQueryNode"/> represents <see cref="Search.RegexpQuery"/> query Examples: /[a-z]|[0-9]/
     /// </summary>
     public class RegexpQueryNode : QueryNodeImpl, ITextableQueryNode, IFieldableNode
     {
         private ICharSequence text;
         private string field;
 
-        /**
-         * @param field
-         *          - field name
-         * @param text
-         *          - value that contains a regular expression
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
-         // LUCENENET specific overload for passing text as string
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value that contains a regular expression</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
+        // LUCENENET specific overload for passing text as string
         public RegexpQueryNode(string field, string text, int begin,
             int end)
             : this(field, new StringCharSequenceWrapper(text), begin, end)
         {
         }
 
-        /**
-         * @param field
-         *          - field name
-         * @param text
-         *          - value that contains a regular expression
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value that contains a regular expression</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public RegexpQueryNode(string field, ICharSequence text, int begin,
             int end)
         {

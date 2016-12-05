@@ -20,9 +20,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link DeletedQueryNode} represents a node that was deleted from the query
+    /// A <see cref="DeletedQueryNode"/> represents a node that was deleted from the query
     /// node tree. It can be removed from the tree using the
-    /// {@link RemoveDeletedQueryNodesProcessor} processor.
+    /// <see cref="Processors.RemoveDeletedQueryNodesProcessor"/> processor.
     /// </summary>
     public class DeletedQueryNode : QueryNodeImpl
     {

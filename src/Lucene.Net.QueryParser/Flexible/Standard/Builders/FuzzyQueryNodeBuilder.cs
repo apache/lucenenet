@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link FuzzyQuery} object from a {@link FuzzyQueryNode} object.
+    /// Builds a <see cref="FuzzyQuery"/> object from a <see cref="FuzzyQueryNode"/> object.
     /// </summary>
     public class FuzzyQueryNodeBuilder : IStandardQueryBuilder
     {

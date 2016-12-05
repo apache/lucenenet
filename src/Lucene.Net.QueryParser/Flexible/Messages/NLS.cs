@@ -81,15 +81,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             return GetLocalizedMessage(key, CultureInfo.CurrentUICulture, args);
         }
 
-        /**
-         * Initialize a given class with the message bundle Keys Should be called from
-         * a class that extends NLS in a static block at class load time.
-         * 
-         * @param bundleName
-         *          Property file with that contains the message bundle
-         * @param clazz
-         *          where constants will reside
-         */
+        /// <summary>
+        /// Initialize a given class with the message bundle Keys Should be called from
+        /// a class that extends NLS in a static block at class load time.
+        /// </summary>
+        /// <param name="bundleName">Property file with that contains the message bundle</param>
+        /// <param name="clazz">where constants will reside</param>
         protected static void InitializeMessages(string bundleName, Type clazz)
         {
             try
@@ -155,10 +152,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             ValidateMessage(field.Name, clazz);
         }
 
-        /**
-         * @param key
-         *          - Message Key
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key">Message Key</param>
+        /// <param name="clazz"></param>
         private static void ValidateMessage(string key, Type clazz)
         {
             // Test if the message is present in the resource bundle

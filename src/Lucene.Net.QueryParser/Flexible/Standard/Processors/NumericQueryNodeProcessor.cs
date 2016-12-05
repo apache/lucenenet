@@ -31,29 +31,29 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor is used to convert {@link FieldQueryNode}s to
-    /// {@link NumericRangeQueryNode}s. It looks for
-    /// {@link ConfigurationKeys#NUMERIC_CONFIG} set in the {@link FieldConfig} of
-    /// every {@link FieldQueryNode} found. If
-    /// {@link ConfigurationKeys#NUMERIC_CONFIG} is found, it considers that
-    /// {@link FieldQueryNode} to be a numeric query and convert it to
-    /// {@link NumericRangeQueryNode} with upper and lower inclusive and lower and
-    /// upper equals to the value represented by the {@link FieldQueryNode} converted
-    /// to {@link Number}. It means that <b>field:1</b> is converted to <b>field:[1
+    /// This processor is used to convert <see cref="FieldQueryNode"/>s to
+    /// <see cref="NumericRangeQueryNode"/>s. It looks for
+    /// <see cref="ConfigurationKeys.NUMERIC_CONFIG"/> set in the <see cref="FieldConfig"/> of
+    /// every <see cref="FieldQueryNode"/> found. If
+    /// <see cref="ConfigurationKeys.NUMERIC_CONFIG"/> is found, it considers that
+    /// <see cref="FieldQueryNode"/> to be a numeric query and convert it to
+    /// <see cref="NumericRangeQueryNode"/> with upper and lower inclusive and lower and
+    /// upper equals to the value represented by the <see cref="FieldQueryNode"/> converted
+    /// to <see cref="object"/> representing a .NET numeric type. It means that <b>field:1</b> is converted to <b>field:[1
     /// TO 1]</b>.
     /// <para/>
-    /// Note that {@link FieldQueryNode}s children of a
-    /// {@link RangeQueryNode} are ignored.
+    /// Note that <see cref="FieldQueryNode"/>s children of a
+    /// <see cref="RangeQueryNode"/> are ignored.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#NUMERIC_CONFIG"/>
+    /// <seealso cref="ConfigurationKeys.NUMERIC_CONFIG"/>
     /// <seealso cref="FieldQueryNode"/>
     /// <seealso cref="NumericConfig"/>
     /// <seealso cref="NumericQueryNode"/>
     public class NumericQueryNodeProcessor : QueryNodeProcessorImpl
     {
-        /**
-   * Constructs a {@link NumericQueryNodeProcessor} object.
-   */
+        /// <summary>
+        /// Constructs a <see cref="NumericQueryNodeProcessor"/> object.
+        /// </summary>
         public NumericQueryNodeProcessor()
         {
             // empty constructor

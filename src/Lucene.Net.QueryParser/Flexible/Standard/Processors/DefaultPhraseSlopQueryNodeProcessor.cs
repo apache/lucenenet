@@ -25,15 +25,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor verifies if {@link ConfigurationKeys#PHRASE_SLOP}
-    /// is defined in the {@link QueryConfigHandler}. If it is, it looks for every
-    /// {@link TokenizedPhraseQueryNode} and {@link MultiPhraseQueryNode} that does
-    /// not have any {@link SlopQueryNode} applied to it and creates an
-    /// {@link SlopQueryNode} and apply to it. The new {@link SlopQueryNode} has the
+    /// This processor verifies if <see cref="ConfigurationKeys.PHRASE_SLOP"/>
+    /// is defined in the <see cref="QueryConfigHandler"/>. If it is, it looks for every
+    /// <see cref="TokenizedPhraseQueryNode"/> and <see cref="MultiPhraseQueryNode"/> that does
+    /// not have any <see cref="SlopQueryNode"/> applied to it and creates an
+    /// <see cref="SlopQueryNode"/> and apply to it. The new <see cref="SlopQueryNode"/> has the
     /// same slop value defined in the configuration.
     /// </summary>
     /// <seealso cref="SlopQueryNode"/>
-    /// <seealso cref="ConfigurationKeys#PHRASE_SLOP"/>
+    /// <seealso cref="ConfigurationKeys.PHRASE_SLOP"/>
     public class DefaultPhraseSlopQueryNodeProcessor : QueryNodeProcessorImpl
     {
         private bool processChildren = true;

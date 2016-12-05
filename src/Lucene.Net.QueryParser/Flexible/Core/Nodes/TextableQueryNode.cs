@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// Interface for a node that has text as a {@link CharSequence}
+    /// Interface for a node that has text as a <see cref="ICharSequence"/>
     /// </summary>
     public interface ITextableQueryNode
     {

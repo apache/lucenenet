@@ -21,23 +21,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
      */
 
     /// <summary>
-    /// A {@link PrefixWildcardQueryNode} represents wildcardquery that matches abc*
+    /// A <see cref="PrefixWildcardQueryNode"/> represents wildcardquery that matches abc*
     /// or *. This does not apply to phrases, this is a special case on the original
     /// lucene parser. TODO: refactor the code to remove this special case from the
     /// parser. and probably do it on a Processor
     /// </summary>
     public class PrefixWildcardQueryNode : WildcardQueryNode
     {
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value including the wildcard
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value including the wildcard</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         // LUCENENET specific overload for passing text as string
         public PrefixWildcardQueryNode(string field, string text,
             int begin, int end)
@@ -45,16 +42,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
         }
 
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value including the wildcard
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value including the wildcard</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public PrefixWildcardQueryNode(string field, ICharSequence text,
             int begin, int end)
             : base(field, text, begin, end)

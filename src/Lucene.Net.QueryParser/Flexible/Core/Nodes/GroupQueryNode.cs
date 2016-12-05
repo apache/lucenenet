@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link GroupQueryNode} represents a location where the original user typed
+    /// A <see cref="GroupQueryNode"/> represents a location where the original user typed
     /// real parenthesis on the query string. This class is useful for queries like:
     /// a) a AND b OR c b) ( a AND b) OR c
     /// 
@@ -31,9 +31,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// </summary>
     public class GroupQueryNode : QueryNodeImpl
     {
-        /**
-   * This QueryNode is used to identify parenthesis on the original query string
-   */
+        /// <summary>
+        /// This IQueryNode is used to identify parenthesis on the original query string
+        /// </summary>
         public GroupQueryNode(IQueryNode query)
         {
             if (query == null)

@@ -19,11 +19,11 @@
 
     /// <summary>
     /// An instance of this class represents a key that is used to retrieve a value
-    /// from {@link AbstractQueryConfig}. It also holds the value's type, which is
+    /// from <see cref="AbstractQueryConfig"/>. It also holds the value's type, which is
     /// defined in the generic argument.
     /// </summary>
     /// <seealso cref="AbstractQueryConfig"/>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">the value's type</typeparam>
     public sealed class ConfigurationKey<T> : ConfigurationKey
     {
         internal ConfigurationKey() { }

@@ -21,13 +21,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
      */
 
     /// <summary>
-    /// This class is the base of {@link QueryConfigHandler} and {@link FieldConfig}.
+    /// This class is the base of <see cref="QueryConfigHandler"/> and <see cref="FieldConfig"/>.
     /// It has operations to set, unset and get configuration values.
     /// <para>
     /// Each configuration is is a key->value pair. The key should be an unique
-    /// {@link ConfigurationKey} instance and it also holds the value's type.
+    /// <see cref="ConfigurationKey{T}"/> instance and it also holds the value's type.
     /// </para>
-    /// <seealso cref="ConfigurationKey"/>
+    /// <seealso cref="ConfigurationKey{T}"/>
     /// </summary>
     public abstract class AbstractQueryConfig
     {
@@ -38,15 +38,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             // although this class is public, it can only be constructed from package
         }
 
-        /**
-         * Returns the value held by the given key.
-         * 
-         * @param <T> the value's type
-         * 
-         * @param key the key, cannot be <code>null</code>
-         * 
-         * @return the value held by the given key
-         */
+        /// <summary>
+        /// Returns the value held by the given key.
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <param name="key">the key, cannot be <c>null</c></param>
+        /// <returns>the value held by the given key</returns>
         public virtual T Get<T>(ConfigurationKey<T> key)
         {
             if (key == null)
@@ -58,13 +55,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             return result == null ? default(T) : (T)result;
         }
 
-        /**
-         * Returns true if there is a value set with the given key, otherwise false.
-         * 
-         * @param <T> the value's type
-         * @param key the key, cannot be <code>null</code>
-         * @return true if there is a value set with the given key, otherwise false
-         */
+        /// <summary>
+        /// Returns <c>true</c> if there is a value set with the given key, otherwise <c>false</c>.
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <param name="key">the key, cannot be <c>null</c></param>
+        /// <returns><c>true</c> if there is a value set with the given key, otherwise <c>false</c></returns>
         public virtual bool Has<T>(ConfigurationKey<T> key)
         {
             if (key == null)
@@ -75,13 +71,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             return this.configMap.ContainsKey(key);
         }
 
-        /**
-         * Sets a key and its value.
-         * 
-         * @param <T> the value's type
-         * @param key the key, cannot be <code>null</code>
-         * @param value value to set
-         */
+        /// <summary>
+        /// Sets a key and its value.
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <param name="key">the key, cannot be <c>null</c></param>
+        /// <param name="value">value to set</param>
         public virtual void Set<T>(ConfigurationKey<T> key, T value)
         {
             if (key == null)
@@ -99,13 +94,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             }
         }
 
-        /**
-         * Unsets the given key and its value.
-         * 
-         * @param <T> the value's type
-         * @param key the key
-         * @return true if the key and value was set and removed, otherwise false
-         */
+        /// <summary>
+        /// Unsets the given key and its value.
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <param name="key">the key</param>
+        /// <returns><c>true</c> if the key and value was set and removed, otherwise <c>false</c></returns>
         public virtual bool Unset<T>(ConfigurationKey<T> key)
         {
             if (key == null)

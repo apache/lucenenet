@@ -26,8 +26,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
      */
 
     /// <summary>
-    /// This query node represents a range query composed by {@link NumericQueryNode}
-    /// bounds, which means the bound values are {@link Number}s.
+    /// This query node represents a range query composed by <see cref="NumericQueryNode"/>
+    /// bounds, which means the bound values are <see cref="object"/>s representing a .NET numeric type.
     /// </summary>
     /// <seealso cref="NumericQueryNode"/>
     /// <seealso cref="AbstractRangeQueryNode{T}"/>
@@ -35,18 +35,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     {
         public NumericConfig numericConfig;
 
-        /**
-       * Constructs a {@link NumericRangeQueryNode} object using the given
-       * {@link NumericQueryNode} as its bounds and {@link NumericConfig}.
-       * 
-       * @param lower the lower bound
-       * @param upper the upper bound
-       * @param lowerInclusive <code>true</code> if the lower bound is inclusive, otherwise, <code>false</code>
-       * @param upperInclusive <code>true</code> if the upper bound is inclusive, otherwise, <code>false</code>
-       * @param numericConfig the {@link NumericConfig} that represents associated with the upper and lower bounds
-       * 
-       * @see #setBounds(NumericQueryNode, NumericQueryNode, boolean, boolean, NumericConfig)
-       */
+        /// <summary>
+        /// Constructs a <see cref="NumericRangeQueryNode"/> object using the given
+        /// <see cref="NumericQueryNode"/> as its bounds and <see cref="Config.NumericConfig"/>.
+        /// </summary>
+        /// <param name="lower">the lower bound</param>
+        /// <param name="upper">the upper bound</param>
+        /// <param name="lowerInclusive"><c>true</c> if the lower bound is inclusive, otherwise, <c>false</c></param>
+        /// <param name="upperInclusive"><c>true</c> if the upper bound is inclusive, otherwise, <c>false</c></param>
+        /// <param name="numericConfig">the <see cref="Config.NumericConfig"/> that represents associated with the upper and lower bounds</param>
+        /// <seealso cref="SetBounds(NumericQueryNode, NumericQueryNode, bool, bool, NumericConfig)"/>
         public NumericRangeQueryNode(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
@@ -80,17 +78,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
         }
 
-        /**
-         * Sets the upper and lower bounds of this range query node and the
-         * {@link NumericConfig} associated with these bounds.
-         * 
-         * @param lower the lower bound
-         * @param upper the upper bound
-         * @param lowerInclusive <code>true</code> if the lower bound is inclusive, otherwise, <code>false</code>
-         * @param upperInclusive <code>true</code> if the upper bound is inclusive, otherwise, <code>false</code>
-         * @param numericConfig the {@link NumericConfig} that represents associated with the upper and lower bounds
-         * 
-         */
+        /// <summary>
+        /// Sets the upper and lower bounds of this range query node and the
+        /// <see cref="Config.NumericConfig"/> associated with these bounds.
+        /// </summary>
+        /// <param name="lower">the lower bound</param>
+        /// <param name="upper">the upper bound</param>
+        /// <param name="lowerInclusive"><c>true</c> if the lower bound is inclusive, otherwise, <c>false</c></param>
+        /// <param name="upperInclusive"><c>true</c> if the upper bound is inclusive, otherwise, <c>false</c></param>
+        /// <param name="numericConfig">the <see cref="Config.NumericConfig"/> that represents associated with the upper and lower bounds</param>
         public virtual void SetBounds(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
@@ -140,11 +136,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             this.numericConfig = numericConfig;
         }
 
-        /**
-         * Returns the {@link NumericConfig} associated with the lower and upper bounds.
-         * 
-         * @return the {@link NumericConfig} associated with the lower and upper bounds
-         */
+        /// <summary>
+        /// Gets the <see cref="Config.NumericConfig"/> associated with the lower and upper bounds.
+        /// </summary>
         public virtual NumericConfig NumericConfig
         {
             get { return this.numericConfig; }

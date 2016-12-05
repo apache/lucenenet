@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// This interface should be implemented by a {@link QueryNode} that represents
+    /// This interface should be implemented by an <see cref="IQueryNode"/> that represents
     /// some kind of range query.
     /// </summary>
     /// <typeparam name="T"></typeparam>

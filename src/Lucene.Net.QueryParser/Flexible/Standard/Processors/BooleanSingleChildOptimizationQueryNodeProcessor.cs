@@ -23,10 +23,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor removes every {@link BooleanQueryNode} that contains only one
-    /// child and returns this child. If this child is {@link ModifierQueryNode} that
+    /// This processor removes every <see cref="BooleanQueryNode"/> that contains only one
+    /// child and returns this child. If this child is <see cref="ModifierQueryNode"/> that
     /// was defined by the user. A modifier is not defined by the user when it's a
-    /// {@link BooleanModifierNode}
+    /// <see cref="BooleanModifierNode"/>
     /// </summary>
     /// <seealso cref="ModifierQueryNode"/>
     public class BooleanSingleChildOptimizationQueryNodeProcessor : QueryNodeProcessorImpl

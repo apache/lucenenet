@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link PhraseQuery} object from a {@link TokenizedPhraseQueryNode}
+    /// Builds a <see cref="PhraseQuery"/> object from a <see cref="TokenizedPhraseQueryNode"/>
     /// object.
     /// </summary>
     public class PhraseQueryNodeBuilder : IStandardQueryBuilder

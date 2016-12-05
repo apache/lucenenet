@@ -21,12 +21,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
      */
 
     /// <summary>
-    /// A {@link StandardBooleanQueryNode} has the same behavior as
-    /// {@link BooleanQueryNode}. It only indicates if the coord should be enabled or
+    /// A <see cref="StandardBooleanQueryNode"/> has the same behavior as
+    /// <see cref="BooleanQueryNode"/>. It only indicates if the coord should be enabled or
     /// not for this boolean query. 
     /// </summary>
-    /// <seealso cref="Similarity#coord(int, int)"/>
-    /// <seealso cref="BooleanQuery"/>
+    /// <seealso cref="Search.Similarities.Similarity.Coord(int, int)"/>
+    /// <seealso cref="Search.BooleanQuery"/>
     public class StandardBooleanQueryNode : BooleanQueryNode
     {
         private bool disableCoord;

@@ -21,21 +21,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link QuotedFieldQueryNode} represents phrase query. Example:
+    /// A <see cref="QuotedFieldQueryNode"/> represents phrase query. Example:
     /// "life is great"
     /// </summary>
     public class QuotedFieldQueryNode : FieldQueryNode
     {
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         // LUCENENET specific overload for text string
         public QuotedFieldQueryNode(string field, string text, int begin,
             int end)
@@ -43,16 +40,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
         }
 
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public QuotedFieldQueryNode(string field, ICharSequence text, int begin,
             int end)
             : base(field, text, begin, end)

@@ -22,16 +22,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link BooleanQueryNode} represents a list of elements which do not have an
+    /// A <see cref="BooleanQueryNode"/> represents a list of elements which do not have an
     /// explicit boolean operator defined between them. It can be used to express a
     /// boolean query that intends to use the default boolean operator.
     /// </summary>
     public class BooleanQueryNode : QueryNodeImpl
     {
-        /**
-        * @param clauses
-        *          - the query nodes to be and'ed
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">the query nodes to be and'ed</param>
         public BooleanQueryNode(IList<IQueryNode> clauses)
         {
             IsLeaf = false;

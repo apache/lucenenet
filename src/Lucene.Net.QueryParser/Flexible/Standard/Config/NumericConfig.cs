@@ -23,10 +23,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
     /// <summary>
     /// This class holds the configuration used to parse numeric queries and create
-    /// {@link NumericRangeQuery}s.
+    /// <see cref="Search.NumericRangeQuery"/>s.
     /// </summary>
-    /// <seealso cref="NumericRangeQuery"/>
-    /// <seealso cref="NumberFormat"/>
+    /// <seealso cref="Search.NumericRangeQuery"/>
+    /// <seealso cref="Support.NumberFormat"/>
     public class NumericConfig
     {
         private int precisionStep;
@@ -35,21 +35,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         private NumericType type;
 
-        /**
-         * Constructs a {@link NumericConfig} object.
-         * 
-         * @param precisionStep
-         *          the precision used to index the numeric values
-         * @param format
-         *          the {@link NumberFormat} used to parse a {@link String} to
-         *          {@link Number}
-         * @param type
-         *          the numeric type used to index the numeric values
-         * 
-         * @see NumericConfig#setPrecisionStep(int)
-         * @see NumericConfig#setNumberFormat(NumberFormat)
-         * @see #setType(org.apache.lucene.document.FieldType.NumericType)
-         */
+        /// <summary>
+        /// Constructs a <see cref="NumericConfig"/> object.
+        /// </summary>
+        /// <param name="precisionStep">the precision used to index the numeric values</param>
+        /// <param name="format">the <see cref="NumberFormat"/> used to parse a <see cref="string"/> to an <see cref="object"/> representing a .NET numeric type.</param>
+        /// <param name="type">the numeric type used to index the numeric values</param>
+        /// <seealso cref="NumericConfig.PrecisionStep"/>
+        /// <seealso cref="NumericConfig.NumberFormat"/>
+        /// <seealso cref="Type"/>
         public NumericConfig(int precisionStep, NumberFormat format,
             NumericType type)
         {
@@ -58,26 +52,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Type = type;
         }
 
-        /**
-         * Gets or sets the precision used to index the numeric values
-         * 
-         * @return the precision used to index the numeric values
-         * 
-         * @see NumericRangeQuery#getPrecisionStep()
-         */
+        /// <summary>
+        /// Gets or sets the precision used to index the numeric values
+        /// </summary>
+        /// <seealso cref="Search.NumericRangeQuery{T}.PrecisionStep"/>
         public virtual int PrecisionStep
         {
             get { return precisionStep; }
             set { precisionStep = value; }
         }
 
-        /**
-         * Gets or Sets the {@link NumberFormat} used to parse a {@link String} to
-         * {@link Number}, cannot be <code>null</code>
-         * 
-         * @return the {@link NumberFormat} used to parse a {@link String} to
-         *         {@link Number}
-         */
+        /// <summary>
+        /// Gets or Sets the <seealso cref="Support.NumberFormat"/> used to parse a <see cref="string"/> to
+        /// <see cref="object"/> representing a .NET numeric type, cannot be <c>null</c>
+        /// </summary>
         public virtual NumberFormat NumberFormat
         {
             get { return format; }
@@ -92,11 +80,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             }
         }
 
-        /**
-         * Gets or Sets the numeric type used to index the numeric values
-         * 
-         * @return the numeric type used to index the numeric values
-         */
+        /// <summary>
+        /// Gets or Sets the numeric type used to index the numeric values
+        /// </summary>
         public virtual NumericType Type
         {
             get { return type; }

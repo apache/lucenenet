@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
      */
 
     /// <summary>
-    /// Configuration parameters for {@link FuzzyQuery}s
+    /// Configuration parameters for <see cref="FuzzyQuery"/>s
     /// </summary>
     public class FuzzyConfig
     {

@@ -28,13 +28,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// This builder does the same as the {@link BooleanQueryNodeBuilder}, but this
-    /// considers if the built {@link BooleanQuery} should have its coord disabled or
+    /// This builder does the same as the <see cref="BooleanQueryNodeBuilder"/>, but this
+    /// considers if the built <see cref="BooleanQuery"/> should have its coord disabled or
     /// not.
     /// </summary>
     /// <seealso cref="BooleanQueryNodeBuilder"/>
     /// <seealso cref="BooleanQuery"/>
-    /// <seealso cref="Similarity#coord(int, int)"/>
+    /// <seealso cref="Search.Similarities.Similarity.Coord(int, int)"/>
     public class StandardBooleanQueryNodeBuilder : IStandardQueryBuilder
     {
         public StandardBooleanQueryNodeBuilder()

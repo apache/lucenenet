@@ -32,23 +32,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor is used to convert {@link TermRangeQueryNode}s to
-    /// {@link NumericRangeQueryNode}s. It looks for
-    /// {@link ConfigurationKeys#NUMERIC_CONFIG} set in the {@link FieldConfig} of
-    /// every {@link TermRangeQueryNode} found. If
-    /// {@link ConfigurationKeys#NUMERIC_CONFIG} is found, it considers that
-    /// {@link TermRangeQueryNode} to be a numeric range query and convert it to
-    /// {@link NumericRangeQueryNode}.
+    /// This processor is used to convert <see cref="TermRangeQueryNode"/>s to
+    /// <see cref="NumericRangeQueryNode"/>s. It looks for
+    /// <see cref="ConfigurationKeys.NUMERIC_CONFIG"/> set in the <see cref="FieldConfig"/> of
+    /// every <see cref="TermRangeQueryNode"/> found. If
+    /// <see cref="ConfigurationKeys.NUMERIC_CONFIG"/> is found, it considers that
+    /// <see cref="TermRangeQueryNode"/> to be a numeric range query and convert it to
+    /// <see cref="NumericRangeQueryNode"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#NUMERIC_CONFIG"/>
+    /// <seealso cref="ConfigurationKeys.NUMERIC_CONFIG"/>
     /// <seealso cref="TermRangeQueryNode"/>
     /// <seealso cref="NumericConfig"/>
     /// <seealso cref="NumericRangeQueryNode"/>
     public class NumericRangeQueryNodeProcessor : QueryNodeProcessorImpl
     {
-        /**
-   * Constructs an empty {@link NumericRangeQueryNode} object.
-   */
+        /// <summary>
+        /// Constructs an empty <see cref="NumericRangeQueryNode"/> object.
+        /// </summary>
         public NumericRangeQueryNodeProcessor()
         {
             // empty constructor

@@ -23,15 +23,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     /// <summary>
     /// This class can be used to hold any query configuration and no field
     /// configuration. For field configuration, it creates an empty
-    /// {@link FieldConfig} object and delegate it to field config listeners, 
+    /// <see cref="FieldConfig"/> object and delegate it to field config listeners, 
     /// these are responsible for setting up all the field configuration.
     /// <para>
-    /// {@link QueryConfigHandler} should be extended by classes that intends to
-    /// provide configuration to {@link QueryNodeProcessor} objects.
+    /// <see cref="QueryConfigHandler"/> should be extended by classes that intends to
+    /// provide configuration to <see cref="Processors.IQueryNodeProcessor"/> objects.
     /// </para>
     /// <para>
-    /// The class that extends {@link QueryConfigHandler} should also provide
-    /// {@link FieldConfig} objects for each collection field.
+    /// The class that extends <see cref="QueryConfigHandler"/> should also provide
+    /// <see cref="FieldConfig"/> objects for each collection field.
     /// </para>
     /// </summary>
     /// <seealso cref="FieldConfig"/>
@@ -41,19 +41,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     {
         private readonly LinkedList<IFieldConfigListener> listeners = new LinkedList<IFieldConfigListener>();
 
-        /**
-         * Returns an implementation of
-         * {@link FieldConfig} for a specific field name. If the implemented
-         * {@link QueryConfigHandler} does not know a specific field name, it may
-         * return <code>null</code>, indicating there is no configuration for that
-         * field.
-         * 
-         * @param fieldName
-         *          the field name
-         * @return a {@link FieldConfig} object containing the field name
-         *         configuration or <code>null</code>, if the implemented
-         *         {@link QueryConfigHandler} has no configuration for that field
-         */
+        /// <summary>
+        /// Returns an implementation of
+        /// <see cref="FieldConfig"/> for a specific field name. If the implemented
+        /// <see cref="QueryConfigHandler"/> does not know a specific field name, it may
+        /// return <c>null</c>, indicating there is no configuration for that
+        /// field.
+        /// </summary>
+        /// <param name="fieldName">the field name</param>
+        /// <returns>A <see cref="FieldConfig"/>object containing the field name
+        /// configuration or <c>null</c>, if the implemented
+        /// <see cref="QueryConfigHandler"/> has no configuration for that field</returns>
         public virtual FieldConfig GetFieldConfig(string fieldName)
         {
             FieldConfig fieldConfig = new FieldConfig(StringUtils.ToString(fieldName));
@@ -67,13 +65,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
 
         }
 
-        /**
-         * Adds a listener. The added listeners are called in the order they are
-         * added.
-         * 
-         * @param listener
-         *          the listener to be added
-         */
+        /// <summary>
+        /// Adds a listener. The added listeners are called in the order they are
+        /// added.
+        /// </summary>
+        /// <param name="listener">the listener to be added</param>
         public virtual void AddFieldConfigListener(IFieldConfigListener listener)
         {
             this.listeners.AddLast(listener);

@@ -25,8 +25,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds an empty {@link BooleanQuery} object from a
-    /// {@link MatchNoDocsQueryNode} object.
+    /// Builds an empty <see cref="BooleanQuery"/> object from a
+    /// <see cref="MatchNoDocsQueryNode"/> object.
     /// </summary>
     public class MatchNoDocsQueryNodeBuilder : IStandardQueryBuilder
     {

@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link TokenizedPhraseQueryNode} represents a node created by a code that
+    /// A <see cref="TokenizedPhraseQueryNode"/> represents a node created by a code that
     /// tokenizes/lemmatizes/analyzes.
     /// </summary>
     public class TokenizedPhraseQueryNode : QueryNodeImpl, IFieldableNode

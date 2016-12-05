@@ -21,11 +21,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
      */
 
     /// <summary>
-    /// This processor pipeline extends {@link StandardQueryNodeProcessorPipeline} and enables
+    /// This processor pipeline extends <see cref="StandardQueryNodeProcessorPipeline"/> and enables
     /// boolean precedence on it.
     /// <para>
-    /// EXPERT: the precedence is enabled by removing {@link GroupQueryNodeProcessor} from the
-    /// {@link StandardQueryNodeProcessorPipeline} and appending {@link BooleanModifiersQueryNodeProcessor}
+    /// EXPERT: the precedence is enabled by removing <see cref="GroupQueryNodeProcessor"/> from the
+    /// <see cref="StandardQueryNodeProcessorPipeline"/> and appending <see cref="BooleanModifiersQueryNodeProcessor"/>
     /// to the pipeline.
     /// </para>
     /// </summary>
@@ -33,9 +33,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
     /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
     public class PrecedenceQueryNodeProcessorPipeline : StandardQueryNodeProcessorPipeline
     {
-        /**
-   * @see StandardQueryNodeProcessorPipeline#StandardQueryNodeProcessorPipeline(QueryConfigHandler)
-   */
+        /// <summary>
+        /// <see cref="StandardQueryNodeProcessorPipeline.StandardQueryNodeProcessorPipeline(QueryConfigHandler)"/>
+        /// </summary>
         public PrecedenceQueryNodeProcessorPipeline(QueryConfigHandler queryConfig)
             : base(queryConfig)
         {

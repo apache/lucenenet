@@ -42,30 +42,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             this.arguments = args;
         }
 
-
         public virtual object[] GetArguments()
         {
             return this.arguments;
         }
-
 
         public virtual string Key
         {
             get { return this.key; }
         }
 
-
         public virtual string GetLocalizedMessage()
         {
             return GetLocalizedMessage(CultureInfo.CurrentUICulture);
         }
 
-
         public virtual string GetLocalizedMessage(CultureInfo locale)
         {
             return NLS.GetLocalizedMessage(Key, locale, GetArguments());
         }
-
 
         public override string ToString()
         {

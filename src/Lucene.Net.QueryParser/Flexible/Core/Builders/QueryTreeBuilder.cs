@@ -45,11 +45,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
     /// </para>
     /// <para>
     /// The children are usually built before the parent node. However, if a builder
-    /// associated to a node is an instance of <see cref="QueryTreeBuilder"/>, the node is
+    /// associated to a node is an instance of <see cref="QueryTreeBuilder{TQuery}"/>, the node is
     /// delegated to this builder and it's responsible to build the node and its
     /// children.
     /// </para>
-    /// <seealso cref="IQueryBuilder"/>
+    /// <seealso cref="IQueryBuilder{TQuery}"/>
     /// </summary>
     public class QueryTreeBuilder<TQuery> : QueryTreeBuilder, IQueryBuilder<TQuery>
     {
@@ -57,20 +57,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         private IDictionary<string, IQueryBuilder<TQuery>> fieldNameBuilders;
 
-        /**
-         * {@link QueryTreeBuilder} constructor.
-         */
+        /// <summary>
+        /// <see cref="QueryTreeBuilder{TQuery}"/> constructor.
+        /// </summary>
         public QueryTreeBuilder()
         {
             // empty constructor
         }
 
-        /**
-         * Associates a field name with a builder.
-         * 
-         * @param fieldName the field name
-         * @param builder the builder to be associated
-         */
+        /// <summary>
+        /// Associates a field name with a builder.
+        /// </summary>
+        /// <param name="fieldName">the field name</param>
+        /// <param name="builder">the builder to be associated</param>
         public virtual void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
         {
 
@@ -82,28 +81,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             this.fieldNameBuilders[fieldName] = builder;
         }
 
-        /**
-         * Associates a class with a builder
-         * 
-         * @param queryNodeClass the class
-         * @param builder the builder to be associated
-         */
+        /// <summary>
+        /// Associates a <see cref="Type">class</see> (that implements <see cref="IQueryNode"/>) with a builder
+        /// </summary>
+        /// <param name="queryNodeClass">The type (a class that implements <see cref="IQueryNode"/>)</param>
+        /// <param name="builder">the builder to be associated</param>
         public virtual void SetBuilder(Type queryNodeClass,
             IQueryBuilder<TQuery> builder)
         {
-
             if (this.queryNodeBuilders == null)
             {
                 this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder<TQuery>>();
             }
 
             this.queryNodeBuilders[queryNodeClass] = builder;
-
         }
 
         private void Process(IQueryNode node)
         {
-
             if (node != null)
             {
                 IQueryBuilder<TQuery> builder = GetBuilder(node);
@@ -119,15 +114,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                         {
                             Process(child);
                         }
-
                     }
-
                 }
 
                 ProcessNode(node, builder);
-
             }
-
         }
 
         private IQueryBuilder<TQuery> GetBuilder(IQueryNode node)
@@ -199,18 +190,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             return null;
         }
 
-        /**
-         * Builds some kind of object from a query tree. Each node in the query tree
-         * is built using an specific builder associated to it.
-         * 
-         * @param queryNode the query tree root node
-         * 
-         * @return the built object
-         * 
-         * @throws QueryNodeException if some node builder throws a
-         *         {@link QueryNodeException} or if there is a node which had no
-         *         builder associated to it
-         */
+        /// <summary>
+        /// Builds some kind of object from a query tree. Each node in the query tree
+        /// is built using an specific builder associated to it.
+        /// </summary>
+        /// <param name="queryNode">the query tree root node</param>
+        /// <returns>the built object</returns>
+        /// <exception cref="QueryNodeException">if some node builder throws a 
+        /// <see cref="QueryNodeException"/> or if there is a node which had no
+        /// builder associated to it</exception>
         public virtual TQuery Build(IQueryNode queryNode)
         {
             Process(queryNode);

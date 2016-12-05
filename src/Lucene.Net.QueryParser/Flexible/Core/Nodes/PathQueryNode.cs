@@ -25,47 +25,45 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link PathQueryNode} is used to store queries like
+    /// A <see cref="PathQueryNode"/> is used to store queries like
     /// /company/USA/California /product/shoes/brown. QueryText are objects that
     /// contain the text, begin position and end position in the query.
     /// <para>
     /// Example how the text parser creates these objects:
     /// </para>
     /// <code>
-    /// List values = new List();
-    /// values.add(new PathQueryNode.QueryText("company", 1, 7));
-    /// values.add(new PathQueryNode.QueryText("USA", 9, 12));
-    /// values.add(new PathQueryNode.QueryText("California", 14, 23));
+    /// IList&lt;PathQueryNode.QueryText&gt; values = new List&lt;PathQueryNode.QueryText&gt;();
+    /// values.Add(new PathQueryNode.QueryText("company", 1, 7));
+    /// values.Add(new PathQueryNode.QueryText("USA", 9, 12));
+    /// values.Add(new PathQueryNode.QueryText("California", 14, 23));
     /// QueryNode q = new PathQueryNode(values);
     /// </code>
-    /// 
     /// </summary>
     public class PathQueryNode : QueryNodeImpl
     {
-        /**
-   * Term text with a beginning and end position
-   */
+        /// <summary>
+        /// Term text with a beginning and end position
+        /// </summary>
         public class QueryText : ICloneable
         {
             private string value = null;
-            /**
-             * != null The term's begin position.
-             */
+
+            /// <summary>
+            /// != null The term's begin position.
+            /// </summary>
             private int begin;
 
-            /**
-             * The term's end position.
-             */
+            /// <summary>
+            /// The term's end position.
+            /// </summary>
             private int end;
 
-            /**
-             * @param value
-             *          - text value
-             * @param begin
-             *          - position in the query string
-             * @param end
-             *          - position in the query string
-             */
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value">text value</param>
+            /// <param name="begin">position in the query string</param>
+            /// <param name="end">position in the query string</param>
             public QueryText(string value, int begin, int end)
                 : base()
             {
@@ -84,25 +82,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return clone;
             }
 
-            /**
-             * @return the value
-             */
+            /// <summary>
+            /// Gets the value
+            /// </summary>
             public virtual string Value
             {
                 get { return value; }
             }
 
-            /**
-             * @return the begin
-             */
+            /// <summary>
+            /// Gets the begin
+            /// </summary>
             public virtual int Begin
             {
                 get { return begin; }
             }
 
-            /**
-             * @return the end
-             */
+            /// <summary>
+            /// Gets the end
+            /// </summary>
             public virtual int End
             {
                 get { return end; }
@@ -116,10 +114,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private IList<QueryText> values = null;
 
-        /**
-         * @param pathElements
-         *          - List of QueryText objects
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pathElements">List of QueryText objects</param>
         public PathQueryNode(IList<QueryText> pathElements)
         {
             this.values = pathElements;
@@ -141,31 +139,30 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             set { this.values = value; }
         }
 
-        /**
-         * Returns the a specific QueryText element
-         * 
-         * @return QueryText List size
-         */
+        /// <summary>
+        /// Returns the a specific QueryText element
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns>QueryText List size</returns>
         public virtual QueryText GetPathElement(int index)
         {
             return values[index];
         }
 
-        /**
-         * Returns the CharSequence value of a specific QueryText element
-         * 
-         * @return the CharSequence for a specific QueryText element
-         */
+        /// <summary>
+        /// Returns the <see cref="string"/> value of a specific QueryText element
+        /// </summary>
+        /// <returns>The <see cref="string"/> for a specific QueryText element</returns>
         public virtual string GetFirstPathElement()
         {
             return values[0].Value;
         }
 
-        /**
-         * Returns a List QueryText element from position startIndex
-         * 
-         * @return a List QueryText element from position startIndex
-         */
+        /// <summary>
+        /// Returns a List QueryText element from position <paramref name="startIndex"/> 
+        /// </summary>
+        /// <param name="startIndex"></param>
+        /// <returns>a List QueryText element from position <paramref name="startIndex"/></returns>
         public virtual IList<QueryText> GetPathElements(int startIndex)
         {
             List<PathQueryNode.QueryText> rValues = new List<PathQueryNode.QueryText>();

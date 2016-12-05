@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link NoTokenFoundQueryNode} is used if a term is convert into no tokens
+    /// A <see cref="NoTokenFoundQueryNode"/> is used if a term is convert into no tokens
     /// by the tokenizer/lemmatizer/analyzer (null).
     /// </summary>
     public class NoTokenFoundQueryNode : DeletedQueryNode

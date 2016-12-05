@@ -31,6 +31,75 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
      * limitations under the License.
      */
 
+    /// <summary>
+    /// This class is a helper that enables users to easily use the Lucene query
+    /// parser.
+    /// <para/>
+    /// To construct a Query object from a query string, use the
+    /// <see cref="Parse(string, string)"/> method:
+    /// <code>
+    /// StandardQueryParser queryParserHelper = new StandardQueryParser();
+    /// Query query = queryParserHelper.Parse("a AND b", "defaultField");
+    /// </code>
+    /// <para/>
+    /// To change any configuration before parsing the query string do, for example:
+    /// <code>
+    /// // the query config handler returned by StandardQueryParser is a
+    /// // StandardQueryConfigHandler
+    /// queryParserHelper.QueryConfigHandler.Analyzer = new WhitespaceAnalyzer();
+    /// </code>
+    /// <para/>
+    /// The syntax for query strings is as follows (copied from the old QueryParser
+    /// javadoc):
+    /// <para/>
+    /// A Query is a series of clauses. A clause may be prefixed by:
+    /// <list type="bullet">
+    ///     <item>
+    ///     a plus (<c>+</c>) or a minus (<c>-</c>) sign, indicating that
+    ///     the clause is required or prohibited respectively; or
+    ///     </item>
+    ///     <item>
+    ///     a term followed by a colon, indicating the field to be searched. This
+    ///     enables one to construct queries which search multiple fields.
+    ///     </item>
+    /// </list>
+    /// 
+    /// A clause may be either:
+    /// <list type="bullet">
+    ///     <item>
+    ///     a term, indicating all the documents that contain this term; or
+    ///     </item>
+    ///     <item>
+    ///     a nested query, enclosed in parentheses. Note that this may be used with
+    ///     a <c>+</c>/<c>-</c> prefix to require any of a set of terms.
+    ///     </item>
+    /// </list>
+    /// 
+    /// Thus, in BNF, the query grammar is:
+    /// <code>
+    ///     Query  ::= ( Clause )*
+    ///     Clause ::= [&quot;+&quot;, &quot;-&quot;] [&lt;TERM&gt; &quot;:&quot;] ( &lt;TERM&gt; | &quot;(&quot; Query &quot;)&quot; )
+    /// </code>
+    /// 
+    /// <para>
+    /// Examples of appropriately formatted queries can be found in the query syntax documentation.
+    /// </para>
+    /// <para>
+    /// The text parser used by this helper is a <see cref="StandardSyntaxParser"/>.
+    /// </para>
+    /// <para>
+    /// The query node processor used by this helper is a
+    /// <see cref="StandardQueryNodeProcessorPipeline"/>.
+    /// </para>
+    /// <para>
+    /// The builder used by this helper is a <see cref="StandardQueryTreeBuilder"/>.
+    /// </para>
+    /// </summary>
+    /// <seealso cref="StandardQueryParser"/>
+    /// <seealso cref="StandardQueryConfigHandler"/>
+    /// <seealso cref="StandardSyntaxParser"/>
+    /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
+    /// <seealso cref="StandardQueryTreeBuilder"/>
     public class StandardQueryParser : QueryParserHelper<Query>, ICommonQueryParserConfiguration
     {
         /// <summary>
@@ -46,7 +115,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         /// <summary>
         /// Constructs a <see cref="StandardQueryParser"/> object and sets an
-        /// <see cref="Analyzer"/> to it. The same as:
+        /// <see cref="Analysis.Analyzer"/> to it. The same as:
         /// <code>
         /// StandardQueryParser qp = new StandardQueryParser();
         /// qp.QueryConfigHandler.Analyzer = analyzer;
@@ -98,7 +167,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Set to <c>true</c> to allow leading wildcard characters.
         /// <para/>
         /// When set, <c>*</c> or <c>?</c> are allowed as the first
-        /// character of a PrefixQuery and WildcardQuery. Note that this can produce
+        /// character of a <see cref="PrefixQuery"/> and <see cref="WildcardQuery"/>. Note that this can produce
         /// very slow queries on big indexes.
         /// <para/>
         /// Default: false.
@@ -120,7 +189,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Set to <c>true</c> to allow leading wildcard characters.
         /// <para/>
         /// When set, <c>*</c> or <c>?</c> are allowed as the first
-        /// character of a PrefixQuery and WildcardQuery. Note that this can produce
+        /// character of a <see cref="PrefixQuery"/> and <see cref="WildcardQuery"/>. Note that this can produce
         /// very slow queries on big indexes.
         /// <para/>
         /// Default: false.
@@ -142,7 +211,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Set to <c>true</c> to enable position increments in result query.
         /// <para/>
         /// When set, result phrase and multi-phrase queries will be aware of position
-        /// increments. Useful when e.g. a StopFilter increases the position increment
+        /// increments. Useful when e.g. a <see cref="Analysis.Core.StopFilter"/> increases the position increment
         /// of the token that follows an omitted token.
         /// <para/>
         /// Default: false.
@@ -299,7 +368,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /// <summary>
-        /// Gets the default slop for phrases. If zero, then exact phrase matches are
+        /// Gets or Sets the default slop for phrases. If zero, then exact phrase matches are
         /// required. Default value is zero. NOTE: Setter is deprecated.
         /// </summary>
         public virtual int PhraseSlop

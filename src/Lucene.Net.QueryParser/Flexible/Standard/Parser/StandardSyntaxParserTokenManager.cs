@@ -25,9 +25,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// </summary>
     public class StandardSyntaxParserTokenManager /*: StandardSyntaxParserConstants*/
     {
-        /** Debug output. */
+        /// <summary>Debug output.</summary>
         public TextWriter debugStream = Console.Out;
-        /** Set debug output. */
+        /// <summary>Set debug output.</summary>
         public void setDebugStream(TextWriter ds) { debugStream = ds; }
         private int jjStopStringLiteralDfa_2(int pos, long active0)
         {
@@ -751,21 +751,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
         }
 
-        /** Token literal values. */
+        /// <summary>Token literal values.</summary>
         public static readonly string[] jjstrLiteralImages = {
             "", null, null, null, null, null, null, null, null, null, null, "\x002B", "\x002D",
             "\x0028", "\x0029", "\x003A", "\x003D", "\x003C", "\x003C\x003D", "\x003E", "\x003E\x003D", "\x005E", null, null,
             null, null, "\x005B", "\x007B", null, "\x0054\x004F", "\x005D", "\x007D", null, null,
         };
 
-        /** Lexer state names. */
+        /// <summary>Lexer state names.</summary>
         public static readonly string[] lexStateNames = {
            "Boost",
            "Range",
            "DEFAULT",
         };
 
-        /** Lex State array. */
+        /// <summary>Lex State array.</summary>
         public static readonly int[] jjnewLexState = {
            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1,
            -1, 1, 1, 2, -1, 2, 2, -1, -1,
@@ -780,20 +780,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private readonly uint[] jjrounds = new uint[33];
         private readonly int[] jjstateSet = new int[66];
         protected char curChar;
-        /** Constructor. */
+        /// <summary>Constructor.</summary>
         public StandardSyntaxParserTokenManager(ICharStream stream)
         {
             input_stream = stream;
         }
 
-        /** Constructor. */
+        /// <summary>Constructor.</summary>
         public StandardSyntaxParserTokenManager(ICharStream stream, int lexState)
             : this(stream)
         {
             SwitchTo(lexState);
         }
 
-        /** Reinitialise parser. */
+        /// <summary>Reinitialize parser.</summary>
         public void ReInit(ICharStream stream)
         {
             jjmatchedPos = jjnewStateCnt = 0;
@@ -809,14 +809,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 jjrounds[i] = 0x80000000;
         }
 
-        /** Reinitialise parser. */
+        /// <summary>Reinitialize parser.</summary>
         public void ReInit(ICharStream stream, int lexState)
         {
             ReInit(stream);
             SwitchTo(lexState);
         }
 
-        /** Switch to specified lex state. */
+        /// <summary>Switch to specified lex state.</summary>
         public void SwitchTo(int lexState)
         {
             if (lexState >= 3 || lexState < 0)
@@ -856,7 +856,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         internal int jjmatchedPos;
         internal int jjmatchedKind;
 
-        /** Get the next Token. */
+        /// <summary>Get the next Token.</summary>
         public Token getNextToken()
         {
             Token matchedToken;

@@ -23,15 +23,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor removes every {@link QueryNode} that is not a leaf and has not
+    /// This processor removes every <see cref="IQueryNode"/> that is not a leaf and has not
     /// children. If after processing the entire tree the root node is not a leaf and
-    /// has no children, a {@link MatchNoDocsQueryNode} object is returned.
+    /// has no children, a <see cref="MatchNoDocsQueryNode"/> object is returned.
     /// <para/>
     /// This processor is used at the end of a pipeline to avoid invalid query node
-    /// tree structures like a {@link GroupQueryNode} or {@link ModifierQueryNode}
+    /// tree structures like a <see cref="GroupQueryNode"/> or <see cref="ModifierQueryNode"/>
     /// with no children.
     /// </summary>
-    /// <seealso cref="QueryNode"/>
+    /// <seealso cref="IQueryNode"/>
     /// <seealso cref="MatchNoDocsQueryNode"/>
     public class RemoveEmptyNonLeafQueryNodeProcessor : QueryNodeProcessorImpl
     {

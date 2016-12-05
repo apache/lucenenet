@@ -24,15 +24,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 
     /// <summary>
     /// This exception should be thrown if something wrong happens when dealing with
-    /// {@link QueryNode}s.
+    /// <see cref="Nodes.IQueryNode"/>s.
     /// <para>
     /// It also supports NLS messages.
     /// </para>
     /// </summary>
-    /// <seealso cref="Message"/>
+    /// <seealso cref="IMessage"/>
     /// <seealso cref="NLS"/>
-    /// <seealso cref="NLSException"/>
-    /// <seealso cref="IQueryNode"/>
+    /// <seealso cref="INLSException"/>
+    /// <seealso cref="Nodes.IQueryNode"/>
     [Serializable]
     public class QueryNodeException : Exception, INLSException
     {

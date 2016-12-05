@@ -21,75 +21,86 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link QueryNode} is a interface implemented by all nodes on a QueryNode
+    /// A <see cref="IQueryNode"/> is a interface implemented by all nodes on a <see cref="IQueryNode"/>
     /// tree.
     /// </summary>
     public interface IQueryNode
     {
-        /** convert to a query string understood by the query parser */
+        /// <summary>
+        /// convert to a query string understood by the query parser
+        /// </summary>
         // TODO: this interface might be changed in the future
         string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser);
 
-        /** for printing */
+        /// <summary>
+        /// for printing
+        /// </summary>
         string ToString();
 
-        /** get Children nodes */
+        /// <summary>
+        /// get Children nodes
+        /// </summary>
         IList<IQueryNode> GetChildren();
 
-        /** verify if a node is a Leaf node */
+        /// <summary>
+        /// verify if a node is a Leaf node
+        /// </summary>
         bool IsLeaf { get; }
 
-        /** verify if a node contains a tag */
+        /// <summary>
+        /// verify if a node contains a tag
+        /// </summary>
         bool ContainsTag(string tagName);
 
-        /**
-         * Returns object stored under that tag name
-         */
+        /// <summary>
+        /// Returns object stored under that tag name
+        /// </summary>
         object GetTag(string tagName);
 
         IQueryNode Parent { get; }
 
-        /**
-         * Recursive clone the QueryNode tree The tags are not copied to the new tree
-         * when you call the cloneTree() method
-         * 
-         * @return the cloned tree
-         */
+        /// <summary>
+        /// Recursive clone the <see cref="IQueryNode"/> tree. The tags are not copied to the new tree
+        /// when you call the <see cref="CloneTree()"/> method.
+        /// </summary>
+        /// <returns>the cloned tree</returns>
         IQueryNode CloneTree();
 
         // Below are the methods that can change state of a QueryNode
         // Write Operations (not Thread Safe)
 
-        // add a new child to a non Leaf node
+        /// <summary>
+        /// add a new child to a non Leaf node
+        /// </summary>
         void Add(IQueryNode child);
 
         void Add(IList<IQueryNode> children);
 
-        // reset the children of a node
+        /// <summary>
+        /// reset the children of a node
+        /// </summary>
         void Set(IList<IQueryNode> children);
 
-        /**
-         * Associate the specified value with the specified tagName. If the tagName
-         * already exists, the old value is replaced. The tagName and value cannot be
-         * null. tagName will be converted to lowercase.
-         */
+        /// <summary>
+        /// Associate the specified value with the specified <paramref name="tagName"/>. If the <paramref name="tagName"/>
+        /// already exists, the old value is replaced. The <paramref name="tagName"/> and <paramref name="value"/> cannot be
+        /// null. <paramref name="tagName"/> will be converted to lowercase.
+        /// </summary>
         void SetTag(string tagName, object value);
 
-        /**
-         * Unset a tag. tagName will be converted to lowercase.
-         */
+        /// <summary>
+        /// Unset a tag. <paramref name="tagName"/> will be converted to lowercase.
+        /// </summary>
         void UnsetTag(string tagName);
 
-        /**
-         * Returns a map containing all tags attached to this query node. 
-         * 
-         * @return a map containing all tags attached to this query node
-         */
+        /// <summary>
+        /// Gets a map containing all tags attached to this query node. 
+        /// </summary>
         IDictionary<string, object> TagMap { get; }
 
-        /**
-         * Removes this query node from its parent.
-         */
+        /// <summary>
+        /// Removes this query node from its parent.
+        /// </summary>
         void RemoveFromParent();
     }
 }

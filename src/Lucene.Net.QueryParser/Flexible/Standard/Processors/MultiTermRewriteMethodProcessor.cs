@@ -27,8 +27,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
     /// <summary>
     /// This processor instates the default
-    /// {@link org.apache.lucene.search.MultiTermQuery.RewriteMethod},
-    /// {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}, for multi-term
+    /// <see cref="MultiTermQuery.RewriteMethod"/>,
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>, for multi-term
     /// query nodes.
     /// </summary>
     public class MultiTermRewriteMethodProcessor : QueryNodeProcessorImpl

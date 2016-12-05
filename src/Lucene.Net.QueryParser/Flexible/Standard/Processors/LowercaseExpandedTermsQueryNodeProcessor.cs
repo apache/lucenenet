@@ -28,13 +28,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
     /// <summary>
     /// This processor verifies if 
-    /// {@link ConfigurationKeys#LOWERCASE_EXPANDED_TERMS} is defined in the
-    /// {@link QueryConfigHandler}. If it is and the expanded terms should be
-    /// lower-cased, it looks for every {@link WildcardQueryNode},
-    /// {@link FuzzyQueryNode} and children of a {@link RangeQueryNode} and lower-case its
+    /// <see cref="ConfigurationKeys.LOWERCASE_EXPANDED_TERMS"/> is defined in the
+    /// <see cref="Core.Config.QueryConfigHandler"/>. If it is and the expanded terms should be
+    /// lower-cased, it looks for every <see cref="WildcardQueryNode"/>,
+    /// <see cref="FuzzyQueryNode"/> and children of a <see cref="IRangeQueryNode"/> and lower-case its
     /// term.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#LOWERCASE_EXPANDED_TERMS"/>.
+    /// <seealso cref="ConfigurationKeys.LOWERCASE_EXPANDED_TERMS"/>.
     public class LowercaseExpandedTermsQueryNodeProcessor : QueryNodeProcessorImpl
     {
         public LowercaseExpandedTermsQueryNodeProcessor()

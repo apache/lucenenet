@@ -25,8 +25,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link MatchAllDocsQuery} object from a
-    /// {@link MatchAllDocsQueryNode} object.
+    /// Builds a <see cref="MatchAllDocsQuery"/> object from a
+    /// <see cref="MatchAllDocsQueryNode"/> object.
     /// </summary>
     public class MatchAllDocsQueryNodeBuilder : IStandardQueryBuilder
     {

@@ -22,9 +22,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
     /// <summary>
     /// This interface should be implemented by every class that wants to build
-    /// {@link Query} objects from {@link QueryNode} objects. 
+    /// <see cref="Query"/> objects from <see cref="Core.Nodes.IQueryNode"/> objects. 
     /// </summary>
-    /// <seealso cref="IQueryBuilder"/>
+    /// <seealso cref="IQueryBuilder{TQuery}"/>
     /// <seealso cref="QueryTreeBuilder"/>
     public interface IStandardQueryBuilder : IQueryBuilder<Query>
     {

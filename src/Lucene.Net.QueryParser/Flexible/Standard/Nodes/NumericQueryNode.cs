@@ -24,8 +24,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
     /// <summary>
     /// This query node represents a field query that holds a numeric value. It is
-    /// similar to {@link FieldQueryNode}, however the {@link #getValue()} returns a
-    /// {@link Number}.
+    /// similar to <see cref="FieldQueryNode"/>, however the <see cref="Value"/> returns an
+    /// <see cref="object"/> representing a .NET numeric type.
     /// </summary>
     /// <seealso cref="NumericConfig"/>
     public class NumericQueryNode : QueryNodeImpl, IFieldValuePairQueryNode<object> // LUCENENET TODO: Can we use Decimal??
@@ -36,15 +36,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         private /*Number*/ object value;
 
-        /**
-         * Creates a {@link NumericQueryNode} object using the given field,
-         * {@link Number} value and {@link NumberFormat} used to convert the value to
-         * {@link String}.
-         * 
-         * @param field the field associated with this query node
-         * @param value the value hold by this node
-         * @param numberFormat the {@link NumberFormat} used to convert the value to {@link String}
-         */
+        /// <summary>
+        /// Creates a <see cref="NumericQueryNode"/> object using the given field,
+        /// <see cref="object"/> (representing a .NET numeric type) value and <see cref="Support.NumberFormat"/> used to convert the value to
+        /// <see cref="string"/>.
+        /// </summary>
+        /// <param name="field">the field associated with this query node</param>
+        /// <param name="value">the value hold by this node</param>
+        /// <param name="numberFormat">the <see cref="Support.NumberFormat"/> used to convert the value to <see cref="string"/></param>
         public NumericQueryNode(string field, /*Number*/ object value,
             NumberFormat numberFormat)
             : base()
@@ -55,32 +54,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         }
 
-        /**
-         * Gets or Sets the field associated with this node.
-         * 
-         * @return the field associated with this node
-         */
-
+        /// <summary>
+        /// Gets or Sets the field associated with this node.
+        /// </summary>
         public virtual string Field
         {
             get { return this.field; }
             set { this.field = value; }
         }
 
-        /**
-         * This method is used to get the value converted to {@link String} and
-         * escaped using the given {@link EscapeQuerySyntax}.
-         * 
-         * @param escaper the {@link EscapeQuerySyntax} used to escape the value {@link String}
-         * 
-         * @return the value converte to {@link String} and escaped
-         */
+        /// <summary>
+        /// This method is used to get the value converted to <see cref="string"/> and
+        /// escaped using the given <see cref="IEscapeQuerySyntax"/.
+        /// </summary>
+        /// <param name="escaper">The <see cref="IEscapeQuerySyntax"/> used to escape the value <see cref="string"/></param>
+        /// <returns>The value converted to <see cref="string"/> and escaped</returns>
         protected string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
             return escaper.Escape(numberFormat.Format(this.value),
                 CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -94,22 +87,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
         }
 
-        /**
-         * Gets or Sets the {@link NumberFormat} used to convert the value to {@link String}.
-         * 
-         * @return the {@link NumberFormat} used to convert the value to {@link String}
-         */
+        /// <summary>
+        /// Gets or Sets the <see cref="Support.NumberFormat"/> used to convert the value to <see cref="string"/>.
+        /// </summary>
         public virtual NumberFormat NumberFormat
         {
             get { return this.numberFormat; }
             set { this.numberFormat = value; }
         }
 
-        /**
-         * Gets or Sets the numeric value as {@link Number}.
-         * 
-         * @return the numeric value
-         */
+        /// <summary>
+        /// Gets or Sets the numeric value as <see cref="object"/> representing a .NET numeric type.
+        /// </summary>
         public virtual object Value
         {
             get { return value; }

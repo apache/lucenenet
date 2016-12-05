@@ -22,21 +22,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
      */
 
     /// <summary>
-    /// A {@link WildcardQueryNode} represents wildcard query This does not apply to
+    /// A <see cref="WildcardQueryNode"/> represents wildcard query This does not apply to
     /// phrases. Examples: a*b*c Fl?w? m?ke*g
     /// </summary>
     public class WildcardQueryNode : FieldQueryNode
     {
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value that contains one or more wild card characters (? or *)
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value that contains one or more wild card characters (? or *)</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         // LUCENENET specific overload for passing text as string
         public WildcardQueryNode(string field, string text, int begin,
             int end)
@@ -44,16 +41,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
         }
 
-        /**
-        * @param field
-        *          - field name
-        * @param text
-        *          - value that contains one or more wild card characters (? or *)
-        * @param begin
-        *          - position in the query string
-        * @param end
-        *          - position in the query string
-        */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value that contains one or more wild card characters (? or *)</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public WildcardQueryNode(string field, ICharSequence text, int begin,
             int end)
             : base(field, text, begin, end)

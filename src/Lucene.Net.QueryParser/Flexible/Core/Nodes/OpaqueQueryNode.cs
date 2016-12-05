@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link OpaqueQueryNode} is used for specify values that are not supposed to
+    /// A <see cref="OpaqueQueryNode"/> is used for specify values that are not supposed to
     /// be parsed by the parser. For example: and XPATH query in the middle of a
     /// query string a b @xpath:'/bookstore/book[1]/title' c d
     /// </summary>
@@ -30,12 +30,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private string value = null;
 
-        /**
-         * @param schema
-         *          - schema identifier
-         * @param value
-         *          - value that was not parsed
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="schema">schema identifier</param>
+        /// <param name="value">value that was not parsed</param>
         public OpaqueQueryNode(string schema, string value)
         {
             this.IsLeaf = true;
@@ -64,17 +63,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return clone;
         }
 
-        /**
-         * @return the schema
-         */
+        /// <summary>
+        /// Gets the schema
+        /// </summary>
         public virtual string Schema
         {
             get { return this.schema; }
         }
 
-        /**
-         * @return the value
-         */
+        /// <summary>
+        /// Gets the value
+        /// </summary>
         public virtual string Value
         {
             get { return this.value; }

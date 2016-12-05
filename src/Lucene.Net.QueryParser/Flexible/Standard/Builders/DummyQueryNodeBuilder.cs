@@ -21,15 +21,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// This builder does nothing. Commonly used for {@link QueryNode} objects that
+    /// This builder does nothing. Commonly used for <see cref="IQueryNode"/> objects that
     /// are built by its parent's builder.
     /// </summary>
     /// <seealso cref="IStandardQueryBuilder"/>
-    /// <seealso cref="QueryTreeBuilder"/>
+    /// <seealso cref="Core.Builders.QueryTreeBuilder{TQuery}"/>
     public class DummyQueryNodeBuilder : IStandardQueryBuilder
     {
         /// <summary>
-        /// Constructs a {@link DummyQueryNodeBuilder} object.
+        /// Constructs a <see cref="DummyQueryNodeBuilder"/> object.
         /// </summary>
         public DummyQueryNodeBuilder()
         {

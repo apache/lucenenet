@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link ModifierQueryNode} indicates the modifier value (+,-,?,NONE) for
+    /// A <see cref="ModifierQueryNode"/> indicates the modifier value (+,-,?,NONE) for
     /// each term on the query string. For example "+t1 -t2 t3" will have a tree of:
     /// <blockquote>
     /// &lt;BooleanQueryNode&gt; &lt;ModifierQueryNode modifier="MOD_REQ"&gt; &lt;t1/&gt;
@@ -38,14 +38,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private Modifier modifier = Nodes.Modifier.MOD_NONE;
 
-        /**
-         * Used to store the modifier value on the original query string
-         * 
-         * @param query
-         *          - QueryNode subtree
-         * @param mod
-         *          - Modifier Value
-         */
+        /// <summary>
+        /// Used to store the modifier value on the original query string
+        /// </summary>
+        /// <param name="query">QueryNode subtree</param>
+        /// <param name="mod">Modifier Value</param>
         public ModifierQueryNode(IQueryNode query, Modifier mod)
         {
             if (query == null)
@@ -70,13 +67,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return this.modifier; }
         }
 
-
         public override string ToString()
         {
             return "<modifier operation='" + this.modifier.ToString() + "'>" + "\n"
                 + GetChild().ToString() + "\n</modifier>";
         }
-
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
@@ -104,7 +99,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-
         public override IQueryNode CloneTree()
         {
             ModifierQueryNode clone = (ModifierQueryNode)base.CloneTree();
@@ -122,9 +116,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
     }
 
-    /**
-   * Modifier type: such as required (REQ), prohibited (NOT)
-   */
+    /// <summary>
+    /// Modifier type: such as required (REQ), prohibited (NOT)
+    /// </summary>
     public enum Modifier
     {
         MOD_NONE,

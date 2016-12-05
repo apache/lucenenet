@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link TermQuery} object from a {@link FieldQueryNode} object.
+    /// Builds a <see cref="TermQuery"/> object from a <see cref="FieldQueryNode"/> object.
     /// </summary>
     public class FieldQueryNodeBuilder : IStandardQueryBuilder
     {

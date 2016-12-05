@@ -24,12 +24,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
     /// <summary>
     /// This query tree builder only defines the necessary map to build a
-    /// {@link Query} tree object. It should be used to generate a {@link Query} tree
+    /// <see cref="Query"/> tree object. It should be used to generate a <see cref="Query"/> tree
     /// object from a query node tree processed by a
-    /// {@link StandardQueryNodeProcessorPipeline}.
+    /// <see cref="Processors.StandardQueryNodeProcessorPipeline"/>.
     /// </summary>
     /// <seealso cref="QueryTreeBuilder"/>
-    /// <seealso cref="StandardQueryNodeProcessorPipeline"/>
+    /// <seealso cref="Processors.StandardQueryNodeProcessorPipeline"/>
     public class StandardQueryTreeBuilder : QueryTreeBuilder<Query>, IStandardQueryBuilder
     {
         public StandardQueryTreeBuilder()

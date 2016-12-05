@@ -22,15 +22,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
      */
     /// <summary>
-    /// Query node for <see cref="PhraseQuery"/>'s slop factor.
+    /// Query node for <see cref="Search.PhraseQuery"/>'s slop factor.
     /// </summary>
     public class PhraseSlopQueryNode : QueryNodeImpl, IFieldableNode
     {
         private int value = 0;
 
-        /**
-         * @exception QueryNodeError throw in overridden method to disallow
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="value"></param>
+        /// <exception cref="QueryNodeError">throw in overridden method to disallow</exception>
         public PhraseSlopQueryNode(IQueryNode query, int value)
         {
             if (query == null)

@@ -21,7 +21,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link FuzzyQueryNode} represents a element that contains
+    /// A <see cref="FuzzyQueryNode"/> represents a element that contains
     /// field/text/similarity tuple
     /// </summary>
     public class FuzzyQueryNode : FieldQueryNode
@@ -30,24 +30,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private int prefixLength;
 
-        /**
-         * @param field
-         *          Name of the field query will use.
-         * @param termStr
-         *          Term token to use for building term for the query
-         */
-        /**
-         * @param field
-         *          - Field name
-         * @param term
-         *          - Value
-         * @param minSimilarity
-         *          - similarity value
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">Name of the field query will use.</param>
+        /// <param name="term">Term token to use for building term for the query</param>
+        /// <param name="minSimilarity">similarity value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
          // LUCENENET specific overload for string term
         public FuzzyQueryNode(string field, string term,
             float minSimilarity, int begin, int end)
@@ -55,18 +45,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
         }
 
-        /**
-         * @param field
-         *          - Field name
-         * @param term
-         *          - Value
-         * @param minSimilarity
-         *          - similarity value
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">Name of the field query will use.</param>
+        /// <param name="term">Term token to use for building term for the query</param>
+        /// <param name="minSimilarity">similarity value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public FuzzyQueryNode(string field, ICharSequence term,
             float minSimilarity, int begin, int end)
             : base(field, term, begin, end)
@@ -99,9 +85,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 + "' term='" + this.text + "'/>";
         }
 
-        /**
-         * @return the similarity
-         */
+        /// <summary>
+        /// Gets or Sets the similarity
+        /// </summary>
         public virtual float Similarity
         {
             get { return this.similarity; }

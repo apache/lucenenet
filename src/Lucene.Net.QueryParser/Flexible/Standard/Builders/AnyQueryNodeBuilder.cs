@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a BooleanQuery of SHOULD clauses, possibly with
+    /// Builds a <see cref="BooleanQuery"/> of SHOULD clauses, possibly with
     /// some minimum number to match.
     /// </summary>
     public class AnyQueryNodeBuilder : IStandardQueryBuilder
@@ -60,10 +60,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         catch (BooleanQuery.TooManyClauses ex)
                         {
                             throw new QueryNodeException(new MessageImpl(
-                               /*
-                                * IQQQ.Q0028E_TOO_MANY_BOOLEAN_CLAUSES,
-                                * BooleanQuery.getMaxClauseCount()
-                                */QueryParserMessages.EMPTY_MESSAGE), ex);
+                                /*
+                                 * IQQQ.Q0028E_TOO_MANY_BOOLEAN_CLAUSES,
+                                 * BooleanQuery.getMaxClauseCount()
+                                 */QueryParserMessages.EMPTY_MESSAGE), ex);
                         }
                     }
                 }

@@ -27,26 +27,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor is used to apply the correct {@link ModifierQueryNode} to
-    /// {@link BooleanQueryNode}s children. This is a variant of
-    /// {@link BooleanModifiersQueryNodeProcessor} which ignores precedence.
+    /// This processor is used to apply the correct <see cref="ModifierQueryNode"/> to
+    /// <see cref="BooleanQueryNode"/>s children. This is a variant of
+    /// <see cref="Precedence.Processors.BooleanModifiersQueryNodeProcessor"/> which ignores precedence.
     /// <para/>
-    /// The {@link StandardSyntaxParser} knows the rules of precedence, but lucene
+    /// The <see cref="Parser.StandardSyntaxParser"/> knows the rules of precedence, but lucene
     /// does not. e.g. <code>(A AND B OR C AND D)</code> ist treated like
     /// <code>(+A +B +C +D)</code>.
     /// <para/>
     /// This processor walks through the query node tree looking for
-    /// {@link BooleanQueryNode}s. If an {@link AndQueryNode} is found, every child,
-    /// which is not a {@link ModifierQueryNode} or the {@link ModifierQueryNode} is
-    /// {@link Modifier#MOD_NONE}, becomes a {@link Modifier#MOD_REQ}. For default
-    /// {@link BooleanQueryNode}, it checks the default operator is
-    /// {@link Operator#AND}, if it is, the same operation when an
-    /// {@link AndQueryNode} is found is applied to it. Each {@link BooleanQueryNode}
-    /// which direct parent is also a {@link BooleanQueryNode} is removed (to ignore
+    /// <see cref="BooleanQueryNode"/>s. If an <see cref="AndQueryNode"/> is found, every child,
+    /// which is not a <see cref="ModifierQueryNode"/> or the <see cref="ModifierQueryNode"/> is
+    /// <see cref="Modifier.MOD_NONE"/>, becomes a <see cref="Modifier.MOD_REQ"/>. For default
+    /// <see cref="BooleanQueryNode"/>, it checks the default operator is
+    /// <see cref="Operator.AND"/>, if it is, the same operation when an
+    /// <see cref="AndQueryNode"/> is found is applied to it. Each <see cref="BooleanQueryNode"/>
+    /// which direct parent is also a <see cref="BooleanQueryNode"/> is removed (to ignore
     /// the rules of precedence).
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#DEFAULT_OPERATOR"/>
-    /// <seealso cref="BooleanModifiersQueryNodeProcessor"/>
+    /// <seealso cref="ConfigurationKeys.DEFAULT_OPERATOR"/>
+    /// <seealso cref="Precedence.Processors.BooleanModifiersQueryNodeProcessor"/>
     public class BooleanQuery2ModifierNodeProcessor : IQueryNodeProcessor
     {
         internal readonly static string TAG_REMOVE = "remove";

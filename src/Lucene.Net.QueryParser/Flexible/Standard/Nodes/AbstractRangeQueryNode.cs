@@ -33,24 +33,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         private bool lowerInclusive, upperInclusive;
 
-        /**
-         * Constructs an {@link AbstractRangeQueryNode}, it should be invoked only by
-         * its extenders.
-         */
+        /// <summary>
+        /// Constructs an <see cref="AbstractRangeQueryNode{T}"/>, it should be invoked only by
+        /// its extenders.
+        /// </summary>
         protected AbstractRangeQueryNode()
         {
             IsLeaf = false;
             Allocate();
         }
 
-        /**
-         * Gets or Sets the field associated with this node.
-         * 
-         * @return the field associated with this node
-         * 
-         * @see FieldableNode
-         */
-
+        /// <summary>
+        /// Gets or Sets the field associated with this node.
+        /// </summary>
+        /// <seealso cref="IFieldableNode"/>
         public virtual string Field
         {
             get
@@ -88,60 +84,55 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
         }
 
-        /**
-         * Returns the lower bound node.
-         * 
-         * @return the lower bound node.
-         */
+        /// <summary>
+        /// Gets the lower bound node.
+        /// </summary>
         public virtual IFieldableNode LowerBound
         {
             get { return (IFieldableNode)GetChildren()[0]; }
         }
 
-        /**
-         * Returns the upper bound node.
-         * 
-         * @return the upper bound node.
-         */
+        /// <summary>
+        /// Gets the upper bound node.
+        /// </summary>
         public virtual IFieldableNode UpperBound
         {
             get { return (IFieldableNode)GetChildren()[1]; }
         }
 
-        /**
-         * Returns whether the lower bound is inclusive or exclusive.
-         * 
-         * @return <code>true</code> if the lower bound is inclusive, otherwise, <code>false</code>
-         */
-
+        /// <summary>
+        /// Gets whether the lower bound is inclusive or exclusive. 
+        /// </summary>
+        /// <remarks>
+        /// <c>true</c> if the lower bound is inclusive, otherwise, <c>false</c>
+        /// </remarks>
         public virtual bool IsLowerInclusive
         {
             get { return lowerInclusive; }
         }
 
-        /**
-         * Returns whether the upper bound is inclusive or exclusive.
-         * 
-         * @return <code>true</code> if the upper bound is inclusive, otherwise, <code>false</code>
-         */
+        /// <summary>
+        /// Gets whether the upper bound is inclusive or exclusive.
+        /// </summary>
+        /// <remarks>
+        /// <c>true</c> if the upper bound is inclusive, otherwise, <c>false</c>
+        /// </remarks>
         public virtual bool IsUpperInclusive
         {
             get { return upperInclusive; }
         }
 
-        /**
-         * Sets the lower and upper bounds.
-         * 
-         * @param lower the lower bound, <code>null</code> if lower bound is open
-         * @param upper the upper bound, <code>null</code> if upper bound is open
-         * @param lowerInclusive <code>true</code> if the lower bound is inclusive, otherwise, <code>false</code>
-         * @param upperInclusive <code>true</code> if the upper bound is inclusive, otherwise, <code>false</code>
-         * 
-         * @see #getLowerBound()
-         * @see #getUpperBound()
-         * @see #isLowerInclusive()
-         * @see #isUpperInclusive()
-         */
+        /// <summary>
+        /// Sets the lower and upper bounds.
+        /// </summary>
+        /// <param name="lower">the lower bound, <c>null</c> if lower bound is open</param>
+        /// <param name="upper">the upper bound, <c>null</c> if upper bound is open</param>
+        /// <param name="lowerInclusive"><c>true</c> if the lower bound is inclusive, otherwise, <c>false</c></param>
+        /// <param name="upperInclusive"><c>true</c> if the upper bound is inclusive, otherwise, <c>false</c></param>
+        /// <seealso cref="LowerBound"/>
+        /// <seealso cref="UpperBound"/>
+        /// <seealso cref="IsLowerInclusive"/>
+        /// <seealso cref="IsUpperInclusive"/>
         public virtual void SetBounds(T lower, T upper, bool lowerInclusive,
             bool upperInclusive)
         {

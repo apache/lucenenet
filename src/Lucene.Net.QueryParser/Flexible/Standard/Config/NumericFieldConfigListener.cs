@@ -22,24 +22,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
      */
 
     /// <summary>
-    /// This listener is used to listen to {@link FieldConfig} requests in
-    /// {@link QueryConfigHandler} and add {@link ConfigurationKeys#NUMERIC_CONFIG}
-    /// based on the {@link ConfigurationKeys#NUMERIC_CONFIG_MAP} set in the
-    /// {@link QueryConfigHandler}.
+    /// This listener is used to listen to <see cref="FieldConfig"/> requests in
+    /// <see cref="QueryConfigHandler"/> and add <see cref="ConfigurationKeys.NUMERIC_CONFIG"/>
+    /// based on the <see cref="ConfigurationKeys.NUMERIC_CONFIG_MAP"/> set in the
+    /// <see cref="QueryConfigHandler"/>.
     /// </summary>
     /// <seealso cref="NumericConfig"/>
     /// <seealso cref="QueryConfigHandler"/>
-    /// <seealso cref="ConfigurationKeys#NUMERIC_CONFIG"/>
-    /// <seealso cref="ConfigurationKeys#NUMERIC_CONFIG_MAP"/>
+    /// <seealso cref="ConfigurationKeys.NUMERIC_CONFIG"/>
+    /// <seealso cref="ConfigurationKeys.NUMERIC_CONFIG_MAP"/>
     public class NumericFieldConfigListener : IFieldConfigListener
     {
         private readonly QueryConfigHandler config;
 
-        /**
-         * Construcs a {@link NumericFieldConfigListener} object using the given {@link QueryConfigHandler}.
-         * 
-         * @param config the {@link QueryConfigHandler} it will listen too
-         */
+        /// <summary>
+        /// Constructs a <see cref="NumericFieldConfigListener"/> object using the given <see cref="QueryConfigHandler"/>.
+        /// </summary>
+        /// <param name="config">the <see cref="QueryConfigHandler"/> it will listen too</param>
         public NumericFieldConfigListener(QueryConfigHandler config)
         {
             if (config == null)

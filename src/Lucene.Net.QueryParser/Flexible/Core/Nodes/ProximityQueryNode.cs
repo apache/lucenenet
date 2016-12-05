@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link ProximityQueryNode} represents a query where the terms should meet
+    /// A <see cref="ProximityQueryNode"/> represents a query where the terms should meet
     /// specific distance conditions. (a b c) WITHIN [SENTENCE|PARAGRAPH|NUMBER]
     /// [INORDER] ("a" "b" "c") WITHIN [SENTENCE|PARAGRAPH|NUMBER] [INORDER]
     /// 
@@ -33,9 +33,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// </summary>
     public class ProximityQueryNode : BooleanQueryNode
     {
-        /**
-   * Distance condition: PARAGRAPH, SENTENCE, or NUMBER
-   */
+        /// <summary>
+        /// Distance condition: PARAGRAPH, SENTENCE, or NUMBER
+        /// </summary>
         public enum Type
         {
             PARAGRAPH,
@@ -51,19 +51,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private bool inorder = false;
         private string field = null;
 
-        /**
-         * @param clauses
-         *          - QueryNode children
-         * @param field
-         *          - field name
-         * @param type
-         *          - type of proximity query
-         * @param distance
-         *          - positive integer that specifies the distance
-         * @param inorder
-         *          - true, if the tokens should be matched in the order of the
-         *          clauses
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">QueryNode children</param>
+        /// <param name="field">field name</param>
+        /// <param name="type">type of proximity query</param>
+        /// <param name="distance">positive integer that specifies the distance</param>
+        /// <param name="inorder">true, if the tokens should be matched in the order of the clauses</param>
         public ProximityQueryNode(IList<IQueryNode> clauses, string field,
             ProximityQueryNode.Type type, int distance, bool inorder)
             : base(clauses)
@@ -88,17 +83,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             ClearFields(clauses, field);
         }
 
-        /**
-         * @param clauses
-         *          - QueryNode children
-         * @param field
-         *          - field name
-         * @param type
-         *          - type of proximity query
-         * @param inorder
-         *          - true, if the tokens should be matched in the order of the
-         *          clauses
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clauses">QueryNode children</param>
+        /// <param name="field">field name</param>
+        /// <param name="type">type of proximity query</param>
+        /// <param name="inorder">true, if the tokens should be matched in the order of the clauses</param>
         public ProximityQueryNode(IList<IQueryNode> clauses, string field,
             ProximityQueryNode.Type type, bool inorder)
             : this(clauses, field, type, -1, inorder)
@@ -190,19 +181,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return clone;
         }
 
-        /**
-         * @return the distance
-         */
+        /// <summary>
+        /// Gets the distance
+        /// </summary>
         public virtual int Distance
         {
             get { return this.distance; }
         }
 
-        /**
-         * returns null if the field was not specified in the query string
-         * 
-         * @return the field
-         */
+        /// <summary>
+        /// Gets or Sets the field. Returns null if the field was not specified in the query string.
+        /// </summary>
         public virtual string Field
         {
             get { return this.field; }
@@ -210,11 +199,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         // LUCENENET TODO: This method is not required because Field is already a string property
-        /**
-         * returns null if the field was not specified in the query string
-         * 
-         * @return the field
-         */
+        /// <summary>
+        /// Gets the field as a string. Returns null if the field was not specified in the query string.
+        /// </summary>
+        /// <returns></returns>
         public virtual string GetFieldAsString()
         {
             if (this.field == null)
@@ -223,16 +211,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return this.field.ToString();
         }
 
-        /**
-         * @return terms must be matched in the specified order
-         */
+        /// <summary>
+        /// terms must be matched in the specified order
+        /// </summary>
         public virtual bool IsInOrder
         {
             get { return this.inorder; }
         }
     }
 
-    /** utility class containing the distance condition and number */
+    /// <summary>
+    /// utility class containing the distance condition and number
+    /// </summary>
     public class ProximityType
     {
         internal int pDistance = 0;

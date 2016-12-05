@@ -22,45 +22,42 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link FieldQueryNode} represents a element that contains field/text tuple
+    /// A <see cref="FieldQueryNode"/> represents a element that contains field/text tuple
     /// </summary>
     public class FieldQueryNode : QueryNodeImpl, IFieldValuePairQueryNode<string>, ITextableQueryNode
     {
-        /**
-   * The term's field
-   */
+        /// <summary>
+        /// The term's field
+        /// </summary>
         protected string field;
 
-        /**
-         * The term's text.
-         */
+        /// <summary>
+        /// The term's text.
+        /// </summary>
         protected ICharSequence text;
 
-        /**
-         * The term's begin position.
-         */
+        /// <summary>
+        /// The term's begin position.
+        /// </summary>
         protected int begin;
 
-        /**
-         * The term's end position.
-         */
+        /// <summary>
+        /// The term's end position.
+        /// </summary>
         protected int end;
 
-        /**
-         * The term's position increment.
-         */
+        /// <summary>
+        /// The term's position increment.
+        /// </summary>
         protected int positionIncrement;
 
-        /**
-         * @param field
-         *          - field name
-         * @param text
-         *          - value
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
          // LUCENENET specific overload for passing text as string
         public FieldQueryNode(string field, string text, int begin,
             int end)
@@ -68,16 +65,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
         }
 
-        /**
-         * @param field
-         *          - field name
-         * @param text
-         *          - value
-         * @param begin
-         *          - position in the query string
-         * @param end
-         *          - position in the query string
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
         public FieldQueryNode(string field, ICharSequence text, int begin,
             int end)
         {
@@ -119,9 +113,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 + this.field + "' text='" + this.text + "'/>";
         }
 
-        /**
-         * @return the term
-         */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>the term</returns>
         public virtual string GetTextAsString()
         {
             if (this.text == null)
@@ -131,11 +126,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         // LUCENENET TODO: this method is not required because Field is already type string in .NET
-        /**
-         * returns null if the field was not specified in the query string
-         * 
-         * @return the field
-         */
+        /// <summary>
+        /// null if the field was not specified in the query string
+        /// </summary>
+        /// <returns>the field</returns>
         public virtual string GetFieldAsString()
         {
             if (this.field == null)

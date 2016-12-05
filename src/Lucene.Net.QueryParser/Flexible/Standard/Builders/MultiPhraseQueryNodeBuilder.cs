@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link MultiPhraseQuery} object from a {@link MultiPhraseQueryNode}
+    /// Builds a <see cref="MultiPhraseQuery"/> object from a <see cref="MultiPhraseQueryNode"/>
     /// object.
     /// </summary>
     public class MultiPhraseQueryNodeBuilder : IStandardQueryBuilder

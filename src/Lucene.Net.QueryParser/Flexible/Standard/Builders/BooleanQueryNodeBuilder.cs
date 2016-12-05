@@ -27,13 +27,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link BooleanQuery} object from a {@link BooleanQueryNode} object.
-    /// Every children in the {@link BooleanQueryNode} object must be already tagged
-    /// using {@link QueryTreeBuilder#QUERY_TREE_BUILDER_TAGID} with a {@link Query}
+    /// Builds a <see cref="BooleanQuery"/> object from a <see cref="BooleanQueryNode"/> object.
+    /// Every children in the <see cref="BooleanQueryNode"/> object must be already tagged
+    /// using <see cref="QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID"/> with a <see cref="Query"/>
     /// object.
     /// <para>
-    /// It takes in consideration if the children is a {@link ModifierQueryNode} to
-    /// define the {@link BooleanClause}.
+    /// It takes in consideration if the children is a <see cref="ModifierQueryNode"/> to
+    /// define the <see cref="BooleanClause"/>.
     /// </para>
     /// </summary>
     public class BooleanQueryNodeBuilder : IStandardQueryBuilder

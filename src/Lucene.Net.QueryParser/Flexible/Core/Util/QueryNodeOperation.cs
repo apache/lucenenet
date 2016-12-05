@@ -35,15 +35,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             BOTH, Q1, Q2, NONE
         }
 
-        /**
-         * perform a logical and of 2 QueryNode trees. if q1 and q2 are ANDQueryNode
-         * nodes it uses head Node from q1 and adds the children of q2 to q1 if q1 is
-         * a AND node and q2 is not, add q2 as a child of the head node of q1 if q2 is
-         * a AND node and q1 is not, add q1 as a child of the head node of q2 if q1
-         * and q2 are not ANDQueryNode nodes, create a AND node and make q1 and q2
-         * children of that node if q1 or q2 is null it returns the not null node if
-         * q1 = q2 = null it returns null
-         */
+        /// <summary>
+        /// perform a logical and of 2 QueryNode trees. if q1 and q2 are ANDQueryNode
+        /// nodes it uses head Node from q1 and adds the children of q2 to q1 if q1 is
+        /// a AND node and q2 is not, add q2 as a child of the head node of q1 if q2 is
+        /// a AND node and q1 is not, add q1 as a child of the head node of q2 if q1
+        /// and q2 are not ANDQueryNode nodes, create a AND node and make q1 and q2
+        /// children of that node if q1 or q2 is null it returns the not null node if
+        /// q1 = q2 = null it returns null
+        /// </summary>
         public static IQueryNode LogicalAnd(IQueryNode q1, IQueryNode q2)
         {
             if (q1 == null)

@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A {@link MatchAllDocsQueryNode} indicates that a query node tree or subtree
+    /// A <see cref="MatchAllDocsQueryNode"/> indicates that a query node tree or subtree
     /// will match all documents if executed in the index.
     /// </summary>
     public class MatchAllDocsQueryNode : QueryNodeImpl

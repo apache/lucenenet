@@ -22,10 +22,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// This builder basically reads the {@link Query} object set on the
-    /// {@link BoostQueryNode} child using
-    /// {@link QueryTreeBuilder#QUERY_TREE_BUILDER_TAGID} and applies the boost value
-    /// defined in the {@link BoostQueryNode}.
+    /// This builder basically reads the <see cref="Query"/> object set on the
+    /// <see cref="BoostQueryNode"/> child using
+    /// <see cref="QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID"/> and applies the boost value
+    /// defined in the <see cref="BoostQueryNode"/>.
     /// </summary>
     public class BoostQueryNodeBuilder : IStandardQueryBuilder
     {

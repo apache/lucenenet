@@ -22,12 +22,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
     /// <summary>
     /// This listener listens for every field configuration request and assign a
-    /// {@link ConfigurationKeys#BOOST} to the
-    /// equivalent {@link FieldConfig} based on a defined map: fieldName -> boostValue stored in
-    /// {@link ConfigurationKeys#FIELD_BOOST_MAP}.
+    /// <see cref="ConfigurationKeys.BOOST"/> to the
+    /// equivalent <see cref="FieldConfig"/> based on a defined map: fieldName -> boostValue stored in
+    /// <see cref="ConfigurationKeys.FIELD_BOOST_MAP"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#FIELD_BOOST_MAP"/>
-    /// <seealso cref="ConfigurationKeys#BOOST"/>
+    /// <seealso cref="ConfigurationKeys.FIELD_BOOST_MAP"/>
+    /// <seealso cref="ConfigurationKeys.BOOST"/>
     /// <seealso cref="FieldConfig"/>
     /// <seealso cref="IFieldConfigListener"/>
     public class FieldBoostMapFCListener : IFieldConfigListener

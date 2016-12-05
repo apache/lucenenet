@@ -26,12 +26,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     {
         private string fieldName;
 
-        /**
-         * Constructs a {@link FieldConfig}
-         * 
-         * @param fieldName the field name, it cannot be null
-         * @throws IllegalArgumentException if the field name is null
-         */
+        /// <summary>
+        /// Constructs a <see cref="FieldConfig"/>
+        /// </summary>
+        /// <param name="fieldName">the field name, it cannot be null</param>
+        /// <exception cref="ArgumentException">if the field name is null</exception>
         public FieldConfig(string fieldName)
         {
             if (fieldName == null)
@@ -42,11 +41,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             this.fieldName = fieldName;
         }
 
-        /**
-         * Returns the field name this configuration represents.
-         * 
-         * @return the field name
-         */
+        /// <summary>
+        /// Gets the field name this configuration represents.
+        /// </summary>
         public virtual string Field
         {
             get { return this.fieldName; }

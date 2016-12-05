@@ -26,8 +26,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// string to the query node tree.
     /// </summary>
     /// <seealso cref="QueryNodeException"/>
-    /// <seealso cref="ISyntaxParser"/>
-    /// <seealso cref="IQueryNode"/>
+    /// <seealso cref="Parser.ISyntaxParser"/>
+    /// <seealso cref="Nodes.IQueryNode"/>
     [Serializable]
     public class QueryNodeParseException : QueryNodeException
     {
@@ -80,26 +80,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             this.message = message;
         }
 
-        /**
-         * For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the
-         * string is returned For the case where the parser is not able to figure out
-         * the line and column number -1 will be returned
-         * 
-         * @return line where the problem was found
-         */
+        /// <summary>
+        /// For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the
+        /// string is returned. For the case where the parser is not able to figure out
+        /// the line and column number -1 will be returned.
+        /// Returns line where the problem was found.
+        /// </summary>
         public virtual int BeginLine
         {
             get { return this.beginLine; }
             protected set { this.beginLine = value; }
         }
 
-        /**
-         * For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the
-         * string is returned For the case where the parser is not able to figure out
-         * the line and column number -1 will be returned
-         * 
-         * @return column of the first char where the problem was found
-         */
+        /// <summary>
+        /// For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the
+        /// string is returned. For the case where the parser is not able to figure out
+        /// the line and column number -1 will be returned. 
+        /// Returns column of the first char where the problem was found.
+        /// </summary>
         public virtual int BeginColumn
         {
             get { return this.beginColumn; }

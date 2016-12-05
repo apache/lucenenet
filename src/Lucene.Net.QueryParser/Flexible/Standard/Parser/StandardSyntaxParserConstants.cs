@@ -97,6 +97,9 @@
         public const int DEFAULT = 2;
     }
 
+    /// <summary>
+    /// Token literal values and constants.
+    /// </summary>
     public static class StandardSyntaxParserConstants
     {
         /// <summary>Literal token values.</summary>

@@ -22,8 +22,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// An efficient implementation of JavaCC's CharStream interface.  <p>Note that
     /// this does not do line-number counting, but instead keeps track of the
-    /// character position of the token in the input, as required by Lucene's {@link
-    /// org.apache.lucene.analysis.Token} API. 
+    /// character position of the token in the input, as required by Lucene's
+    /// <see cref="Token"/> API. 
     /// </summary>
     public sealed class FastCharStream : ICharStream
     {
@@ -37,7 +37,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         TextReader input;            // source of chars
 
-        /** Constructs from a Reader. */
+        /// <summary>
+        /// Constructs from a <see cref="TextReader"/>.
+        /// </summary>
         public FastCharStream(TextReader r)
         {
             input = r;

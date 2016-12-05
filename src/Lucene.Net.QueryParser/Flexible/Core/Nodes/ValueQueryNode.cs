@@ -18,10 +18,10 @@
      */
 
     /// <summary>
-    /// This interface should be implemented by {@link QueryNode} that holds an
+    /// This interface should be implemented by <see cref="IQueryNode"/> that holds an
     /// arbitrary value.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">the value's type</typeparam>
     public interface IValueQueryNode<T> : IQueryNode
     {
         T Value { get; set; }

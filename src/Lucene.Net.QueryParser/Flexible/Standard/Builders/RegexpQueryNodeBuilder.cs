@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
      */
 
     /// <summary>
-    /// Builds a {@link RegexpQuery} object from a {@link RegexpQueryNode} object.
+    /// Builds a <see cref="RegexpQuery"/> object from a <see cref="RegexpQueryNode"/> object.
     /// </summary>
     public class RegexpQueryNodeBuilder : IStandardQueryBuilder
     {
