@@ -87,16 +87,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.AND:
-                            jj_consume_token(RegexpToken.AND);
+                            Jj_consume_token(RegexpToken.AND);
                             ret = CONJ_AND;
                             break;
                         case RegexpToken.OR:
-                            jj_consume_token(RegexpToken.OR);
+                            Jj_consume_token(RegexpToken.OR);
                             ret = CONJ_OR;
                             break;
                         default:
                             jj_la1[0] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     break;
@@ -119,20 +119,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.PLUS:
-                            jj_consume_token(RegexpToken.PLUS);
+                            Jj_consume_token(RegexpToken.PLUS);
                             ret = Modifier.MOD_REQ;
                             break;
                         case RegexpToken.MINUS:
-                            jj_consume_token(RegexpToken.MINUS);
+                            Jj_consume_token(RegexpToken.MINUS);
                             ret = Modifier.MOD_NOT;
                             break;
                         case RegexpToken.NOT:
-                            jj_consume_token(RegexpToken.NOT);
+                            Jj_consume_token(RegexpToken.NOT);
                             ret = Modifier.MOD_NOT;
                             break;
                         default:
                             jj_la1[2] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     break;
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
             IQueryNode q;
             q = Query(field);
-            jj_consume_token(0);
+            Jj_consume_token(0);
             { if (true) return q; }
             throw new Exception("Missing return statement in function");
         }
@@ -227,7 +227,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         jj_la1[5] = jj_gen;
                         goto label_2_break;
                 }
-                jj_consume_token(RegexpToken.OR);
+                Jj_consume_token(RegexpToken.OR);
                 c = ConjQuery(field);
                 if (clauses == null)
                 {
@@ -265,7 +265,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         jj_la1[6] = jj_gen;
                         goto label_3_break;
                 }
-                jj_consume_token(RegexpToken.AND);
+                Jj_consume_token(RegexpToken.AND);
                 c = ModClause(field);
                 if (clauses == null)
                 {
@@ -346,9 +346,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             bool lowerInclusive, upperInclusive;
 
             bool group = false;
-            if (jj_2_2(3))
+            if (Jj_2_2(3))
             {
-                fieldToken = jj_consume_token(RegexpToken.TERM);
+                fieldToken = Jj_consume_token(RegexpToken.TERM);
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.OP_COLON:
@@ -356,14 +356,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
                             case RegexpToken.OP_COLON:
-                                jj_consume_token(RegexpToken.OP_COLON);
+                                Jj_consume_token(RegexpToken.OP_COLON);
                                 break;
                             case RegexpToken.OP_EQUAL:
-                                jj_consume_token(RegexpToken.OP_EQUAL);
+                                Jj_consume_token(RegexpToken.OP_EQUAL);
                                 break;
                             default:
                                 jj_la1[7] = jj_gen;
-                                jj_consume_token(-1);
+                                Jj_consume_token(-1);
                                 throw new ParseException();
                         }
                         field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
@@ -376,37 +376,37 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
                             case RegexpToken.OP_LESSTHAN:
-                                @operator = jj_consume_token(RegexpToken.OP_LESSTHAN);
+                                @operator = Jj_consume_token(RegexpToken.OP_LESSTHAN);
                                 break;
                             case RegexpToken.OP_LESSTHANEQ:
-                                @operator = jj_consume_token(RegexpToken.OP_LESSTHANEQ);
+                                @operator = Jj_consume_token(RegexpToken.OP_LESSTHANEQ);
                                 break;
                             case RegexpToken.OP_MORETHAN:
-                                @operator = jj_consume_token(RegexpToken.OP_MORETHAN);
+                                @operator = Jj_consume_token(RegexpToken.OP_MORETHAN);
                                 break;
                             case RegexpToken.OP_MORETHANEQ:
-                                @operator = jj_consume_token(RegexpToken.OP_MORETHANEQ);
+                                @operator = Jj_consume_token(RegexpToken.OP_MORETHANEQ);
                                 break;
                             default:
                                 jj_la1[8] = jj_gen;
-                                jj_consume_token(-1);
+                                Jj_consume_token(-1);
                                 throw new ParseException();
                         }
                         field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
                             case RegexpToken.TERM:
-                                term = jj_consume_token(RegexpToken.TERM);
+                                term = Jj_consume_token(RegexpToken.TERM);
                                 break;
                             case RegexpToken.QUOTED:
-                                term = jj_consume_token(RegexpToken.QUOTED);
+                                term = Jj_consume_token(RegexpToken.QUOTED);
                                 break;
                             case RegexpToken.NUMBER:
-                                term = jj_consume_token(RegexpToken.NUMBER);
+                                term = Jj_consume_token(RegexpToken.NUMBER);
                                 break;
                             default:
                                 jj_la1[9] = jj_gen;
-                                jj_consume_token(-1);
+                                Jj_consume_token(-1);
                                 throw new ParseException();
                         }
                         if (term.kind == RegexpToken.QUOTED)
@@ -459,7 +459,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         break;
                     default:
                         jj_la1[10] = jj_gen;
-                        jj_consume_token(-1);
+                        Jj_consume_token(-1);
                         throw new ParseException();
                 }
             }
@@ -474,20 +474,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     case RegexpToken.RANGEIN_START:
                     case RegexpToken.RANGEEX_START:
                     case RegexpToken.NUMBER:
-                        if (jj_2_1(2))
+                        if (Jj_2_1(2))
                         {
-                            fieldToken = jj_consume_token(RegexpToken.TERM);
+                            fieldToken = Jj_consume_token(RegexpToken.TERM);
                             switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                             {
                                 case RegexpToken.OP_COLON:
-                                    jj_consume_token(RegexpToken.OP_COLON);
+                                    Jj_consume_token(RegexpToken.OP_COLON);
                                     break;
                                 case RegexpToken.OP_EQUAL:
-                                    jj_consume_token(RegexpToken.OP_EQUAL);
+                                    Jj_consume_token(RegexpToken.OP_EQUAL);
                                     break;
                                 default:
                                     jj_la1[11] = jj_gen;
-                                    jj_consume_token(-1);
+                                    Jj_consume_token(-1);
                                     throw new ParseException();
                             }
                             field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
@@ -507,14 +507,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 q = Term(field);
                                 break;
                             case RegexpToken.LPAREN:
-                                jj_consume_token(RegexpToken.LPAREN);
+                                Jj_consume_token(RegexpToken.LPAREN);
                                 q = Query(field);
-                                jj_consume_token(RegexpToken.RPAREN);
+                                Jj_consume_token(RegexpToken.RPAREN);
                                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                                 {
                                     case RegexpToken.CARAT:
-                                        jj_consume_token(RegexpToken.CARAT);
-                                        boost = jj_consume_token(RegexpToken.NUMBER);
+                                        Jj_consume_token(RegexpToken.CARAT);
+                                        boost = Jj_consume_token(RegexpToken.NUMBER);
                                         break;
                                     default:
                                         jj_la1[12] = jj_gen;
@@ -524,13 +524,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 break;
                             default:
                                 jj_la1[13] = jj_gen;
-                                jj_consume_token(-1);
+                                Jj_consume_token(-1);
                                 throw new ParseException();
                         }
                         break;
                     default:
                         jj_la1[14] = jj_gen;
-                        jj_consume_token(-1);
+                        Jj_consume_token(-1);
                         throw new ParseException();
                 }
             }
@@ -580,25 +580,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.TERM:
-                            term = jj_consume_token(RegexpToken.TERM);
+                            term = Jj_consume_token(RegexpToken.TERM);
                             q = new FieldQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
                             break;
                         case RegexpToken.REGEXPTERM:
-                            term = jj_consume_token(RegexpToken.REGEXPTERM);
+                            term = Jj_consume_token(RegexpToken.REGEXPTERM);
                             regexp = true;
                             break;
                         case RegexpToken.NUMBER:
-                            term = jj_consume_token(RegexpToken.NUMBER);
+                            term = Jj_consume_token(RegexpToken.NUMBER);
                             break;
                         default:
                             jj_la1[15] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.FUZZY_SLOP:
-                            fuzzySlop = jj_consume_token(RegexpToken.FUZZY_SLOP);
+                            fuzzySlop = Jj_consume_token(RegexpToken.FUZZY_SLOP);
                             fuzzy = true;
                             break;
                         default:
@@ -608,12 +608,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.CARAT:
-                            jj_consume_token(RegexpToken.CARAT);
-                            boost = jj_consume_token(RegexpToken.NUMBER);
+                            Jj_consume_token(RegexpToken.CARAT);
+                            boost = Jj_consume_token(RegexpToken.NUMBER);
                             switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                             {
                                 case RegexpToken.FUZZY_SLOP:
-                                    fuzzySlop = jj_consume_token(RegexpToken.FUZZY_SLOP);
+                                    fuzzySlop = Jj_consume_token(RegexpToken.FUZZY_SLOP);
                                     fuzzy = true;
                                     break;
                                 default:
@@ -656,34 +656,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.RANGEIN_START:
-                            jj_consume_token(RegexpToken.RANGEIN_START);
+                            Jj_consume_token(RegexpToken.RANGEIN_START);
                             startInc = true;
                             break;
                         case RegexpToken.RANGEEX_START:
-                            jj_consume_token(RegexpToken.RANGEEX_START);
+                            Jj_consume_token(RegexpToken.RANGEEX_START);
                             break;
                         default:
                             jj_la1[19] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.RANGE_GOOP:
-                            goop1 = jj_consume_token(RegexpToken.RANGE_GOOP);
+                            goop1 = Jj_consume_token(RegexpToken.RANGE_GOOP);
                             break;
                         case RegexpToken.RANGE_QUOTED:
-                            goop1 = jj_consume_token(RegexpToken.RANGE_QUOTED);
+                            goop1 = Jj_consume_token(RegexpToken.RANGE_QUOTED);
                             break;
                         default:
                             jj_la1[20] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.RANGE_TO:
-                            jj_consume_token(RegexpToken.RANGE_TO);
+                            Jj_consume_token(RegexpToken.RANGE_TO);
                             break;
                         default:
                             jj_la1[21] = jj_gen;
@@ -692,35 +692,35 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.RANGE_GOOP:
-                            goop2 = jj_consume_token(RegexpToken.RANGE_GOOP);
+                            goop2 = Jj_consume_token(RegexpToken.RANGE_GOOP);
                             break;
                         case RegexpToken.RANGE_QUOTED:
-                            goop2 = jj_consume_token(RegexpToken.RANGE_QUOTED);
+                            goop2 = Jj_consume_token(RegexpToken.RANGE_QUOTED);
                             break;
                         default:
                             jj_la1[22] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.RANGEIN_END:
-                            jj_consume_token(RegexpToken.RANGEIN_END);
+                            Jj_consume_token(RegexpToken.RANGEIN_END);
                             endInc = true;
                             break;
                         case RegexpToken.RANGEEX_END:
-                            jj_consume_token(RegexpToken.RANGEEX_END);
+                            Jj_consume_token(RegexpToken.RANGEEX_END);
                             break;
                         default:
                             jj_la1[23] = jj_gen;
-                            jj_consume_token(-1);
+                            Jj_consume_token(-1);
                             throw new ParseException();
                     }
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.CARAT:
-                            jj_consume_token(RegexpToken.CARAT);
-                            boost = jj_consume_token(RegexpToken.NUMBER);
+                            Jj_consume_token(RegexpToken.CARAT);
+                            boost = Jj_consume_token(RegexpToken.NUMBER);
                             break;
                         default:
                             jj_la1[24] = jj_gen;
@@ -742,12 +742,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     q = new TermRangeQueryNode(qLower, qUpper, startInc ? true : false, endInc ? true : false);
                     break;
                 case RegexpToken.QUOTED:
-                    term = jj_consume_token(RegexpToken.QUOTED);
+                    term = Jj_consume_token(RegexpToken.QUOTED);
                     q = new QuotedFieldQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image.Substring(1, (term.image.Length - 1) - 1)), term.beginColumn + 1, term.endColumn - 1);
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.FUZZY_SLOP:
-                            fuzzySlop = jj_consume_token(RegexpToken.FUZZY_SLOP);
+                            fuzzySlop = Jj_consume_token(RegexpToken.FUZZY_SLOP);
                             break;
                         default:
                             jj_la1[25] = jj_gen;
@@ -756,8 +756,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.CARAT:
-                            jj_consume_token(RegexpToken.CARAT);
-                            boost = jj_consume_token(RegexpToken.NUMBER);
+                            Jj_consume_token(RegexpToken.CARAT);
+                            boost = Jj_consume_token(RegexpToken.NUMBER);
                             break;
                         default:
                             jj_la1[26] = jj_gen;
@@ -784,7 +784,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     break;
                 default:
                     jj_la1[27] = jj_gen;
-                    jj_consume_token(-1);
+                    Jj_consume_token(-1);
                     throw new ParseException();
             }
             if (boost != null)
@@ -812,158 +812,158 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             throw new Exception("Missing return statement in function");
         }
 
-        private bool jj_2_1(int xla)
+        private bool Jj_2_1(int xla)
         {
             jj_la = xla; jj_lastpos = jj_scanpos = token;
-            try { return !jj_3_1(); }
+            try { return !Jj_3_1(); }
 #pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
 #pragma warning restore 168
-            finally { jj_save(0, xla); }
+            finally { Jj_save(0, xla); }
         }
 
-        private bool jj_2_2(int xla)
+        private bool Jj_2_2(int xla)
         {
             jj_la = xla; jj_lastpos = jj_scanpos = token;
-            try { return !jj_3_2(); }
+            try { return !Jj_3_2(); }
 #pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
 #pragma warning restore 168
-            finally { jj_save(1, xla); }
+            finally { Jj_save(1, xla); }
         }
 
-        private bool jj_3_2()
+        private bool Jj_3_2()
         {
-            if (jj_scan_token(RegexpToken.TERM)) return true;
+            if (Jj_scan_token(RegexpToken.TERM)) return true;
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_3R_4())
+            if (Jj_3R_4())
             {
                 jj_scanpos = xsp;
-                if (jj_3R_5()) return true;
+                if (Jj_3R_5()) return true;
             }
             return false;
         }
 
-        private bool jj_3R_12()
+        private bool Jj_3R_12()
         {
-            if (jj_scan_token(RegexpToken.RANGEIN_START)) return true;
+            if (Jj_scan_token(RegexpToken.RANGEIN_START)) return true;
             return false;
         }
 
-        private bool jj_3R_11()
+        private bool Jj_3R_11()
         {
-            if (jj_scan_token(RegexpToken.REGEXPTERM)) return true;
+            if (Jj_scan_token(RegexpToken.REGEXPTERM)) return true;
             return false;
         }
 
-        private bool jj_3_1()
+        private bool Jj_3_1()
         {
-            if (jj_scan_token(RegexpToken.TERM)) return true;
+            if (Jj_scan_token(RegexpToken.TERM)) return true;
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_scan_token(15))
+            if (Jj_scan_token(15))
             {
                 jj_scanpos = xsp;
-                if (jj_scan_token(16)) return true;
+                if (Jj_scan_token(16)) return true;
             }
             return false;
         }
 
-        private bool jj_3R_8()
+        private bool Jj_3R_8()
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_3R_12())
+            if (Jj_3R_12())
             {
                 jj_scanpos = xsp;
-                if (jj_scan_token(27)) return true;
+                if (Jj_scan_token(27)) return true;
             }
             return false;
         }
 
-        private bool jj_3R_10()
+        private bool Jj_3R_10()
         {
-            if (jj_scan_token(RegexpToken.TERM)) return true;
+            if (Jj_scan_token(RegexpToken.TERM)) return true;
             return false;
         }
 
-        private bool jj_3R_7()
+        private bool Jj_3R_7()
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_3R_10())
+            if (Jj_3R_10())
             {
                 jj_scanpos = xsp;
-                if (jj_3R_11())
+                if (Jj_3R_11())
                 {
                     jj_scanpos = xsp;
-                    if (jj_scan_token(28)) return true;
+                    if (Jj_scan_token(28)) return true;
                 }
             }
             return false;
         }
 
-        private bool jj_3R_9()
+        private bool Jj_3R_9()
         {
-            if (jj_scan_token(RegexpToken.QUOTED)) return true;
+            if (Jj_scan_token(RegexpToken.QUOTED)) return true;
             return false;
         }
 
-        private bool jj_3R_5()
+        private bool Jj_3R_5()
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_scan_token(17))
+            if (Jj_scan_token(17))
             {
                 jj_scanpos = xsp;
-                if (jj_scan_token(18))
+                if (Jj_scan_token(18))
                 {
                     jj_scanpos = xsp;
-                    if (jj_scan_token(19))
+                    if (Jj_scan_token(19))
                     {
                         jj_scanpos = xsp;
-                        if (jj_scan_token(20)) return true;
+                        if (Jj_scan_token(20)) return true;
                     }
                 }
             }
             xsp = jj_scanpos;
-            if (jj_scan_token(23))
+            if (Jj_scan_token(23))
             {
                 jj_scanpos = xsp;
-                if (jj_scan_token(22))
+                if (Jj_scan_token(22))
                 {
                     jj_scanpos = xsp;
-                    if (jj_scan_token(28)) return true;
+                    if (Jj_scan_token(28)) return true;
                 }
             }
             return false;
         }
 
-        private bool jj_3R_4()
+        private bool Jj_3R_4()
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_scan_token(15))
+            if (Jj_scan_token(15))
             {
                 jj_scanpos = xsp;
-                if (jj_scan_token(16)) return true;
+                if (Jj_scan_token(16)) return true;
             }
-            if (jj_3R_6()) return true;
+            if (Jj_3R_6()) return true;
             return false;
         }
 
-        private bool jj_3R_6()
+        private bool Jj_3R_6()
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (jj_3R_7())
+            if (Jj_3R_7())
             {
                 jj_scanpos = xsp;
-                if (jj_3R_8())
+                if (Jj_3R_8())
                 {
                     jj_scanpos = xsp;
-                    if (jj_3R_9()) return true;
+                    if (Jj_3R_9()) return true;
                 }
             }
             return false;
@@ -984,14 +984,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         static private int[] jj_la1_1;
         static StandardSyntaxParser()
         {
-            jj_la1_init_0();
-            jj_la1_init_1();
+            Jj_la1_init_0();
+            Jj_la1_init_1();
         }
-        private static void jj_la1_init_0()
+        private static void Jj_la1_init_0()
         {
             jj_la1_0 = new uint[] { 0x300, 0x300, 0x1c00, 0x1c00, 0x1ec03c00, 0x200, 0x100, 0x18000, 0x1e0000, 0x10c00000, 0x1f8000, 0x18000, 0x200000, 0x1ec02000, 0x1ec02000, 0x12800000, 0x1000000, 0x1000000, 0x200000, 0xc000000, 0x0, 0x20000000, 0x0, 0xc0000000, 0x200000, 0x1000000, 0x200000, 0x1ec00000, };
         }
-        private static void jj_la1_init_1()
+        private static void Jj_la1_init_1()
         {
             jj_la1_1 = new int[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, };
         }
@@ -1045,11 +1045,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             for (int i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
         }
 
-        private Token jj_consume_token(int kind)
+        private Token Jj_consume_token(int kind)
         {
             Token oldToken;
             if ((oldToken = token).next != null) token = token.next;
-            else token = token.next = token_source.getNextToken();
+            else token = token.next = token_source.GetNextToken();
             jj_ntk = -1;
             if (token.kind == kind)
             {
@@ -1071,19 +1071,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             token = oldToken;
             jj_kind = kind;
-            throw generateParseException();
+            throw GenerateParseException();
         }
 
         internal sealed class LookaheadSuccess : Exception { }
         readonly private LookaheadSuccess jj_ls = new LookaheadSuccess();
-        private bool jj_scan_token(int kind)
+        private bool Jj_scan_token(int kind)
         {
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
                 if (jj_scanpos.next == null)
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.GetNextToken();
                 }
                 else
                 {
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 int i = 0; Token tok = token;
                 while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
-                if (tok != null) jj_add_error_token(kind, i);
+                if (tok != null) Jj_add_error_token(kind, i);
             }
             if (jj_scanpos.kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
@@ -1107,23 +1107,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
 
         /// <summary>Get the next Token.</summary>
-        public Token getNextToken()
+        public Token GetNextToken()
         {
             if (token.next != null) token = token.next;
-            else token = token.next = token_source.getNextToken();
+            else token = token.next = token_source.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
             return token;
         }
 
         /// <summary>Get the specific Token.</summary>
-        public Token getToken(int index)
+        public Token GetToken(int index)
         {
             Token t = token;
             for (int i = 0; i < index; i++)
             {
                 if (t.next != null) t = t.next;
-                else t = t.next = token_source.getNextToken();
+                else t = t.next = token_source.GetNextToken();
             }
             return t;
         }
@@ -1131,7 +1131,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int Jj_ntk()
         {
             if ((jj_nt = token.next) == null)
-                return (jj_ntk = (token.next = token_source.getNextToken()).kind);
+                return (jj_ntk = (token.next = token_source.GetNextToken()).kind);
             else
                 return (jj_ntk = jj_nt.kind);
         }
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int[] jj_lasttokens = new int[100];
         private int jj_endpos;
 
-        private void jj_add_error_token(int kind, int pos)
+        private void Jj_add_error_token(int kind, int pos)
         {
             if (pos >= 100) return;
             if (pos == jj_endpos + 1)
@@ -1179,7 +1179,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         /// <summary>Generate ParseException.</summary>
-        public virtual ParseException generateParseException()
+        public virtual ParseException GenerateParseException()
         {
             jj_expentries.Clear();
             bool[] la1tokens = new bool[34];
@@ -1215,8 +1215,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
             }
             jj_endpos = 0;
-            jj_rescan_token();
-            jj_add_error_token(0, 0);
+            Jj_rescan_token();
+            Jj_add_error_token(0, 0);
             int[][] exptokseq = new int[jj_expentries.Count][];
             for (int i = 0; i < jj_expentries.Count; i++)
             {
@@ -1226,16 +1226,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         /// <summary>Enable tracing.</summary>
-        public void enable_tracing()
+        public void Enable_tracing()
         {
         }
 
         /// <summary>Disable tracing.</summary>
-        public void disable_tracing()
+        public void Disable_tracing()
         {
         }
 
-        private void jj_rescan_token()
+        private void Jj_rescan_token()
         {
             jj_rescan = true;
             for (int i = 0; i < 2; i++)
@@ -1250,8 +1250,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
                             switch (i)
                             {
-                                case 0: jj_3_1(); break;
-                                case 1: jj_3_2(); break;
+                                case 0: Jj_3_1(); break;
+                                case 1: Jj_3_2(); break;
                             }
                         }
                         p = p.next;
@@ -1264,7 +1264,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             jj_rescan = false;
         }
 
-        private void jj_save(int index, int xla)
+        private void Jj_save(int index, int xla)
         {
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
