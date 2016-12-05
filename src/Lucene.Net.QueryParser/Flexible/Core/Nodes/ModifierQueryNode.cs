@@ -83,8 +83,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (GetChild() == null)
                 return "";
 
-            String leftParenthensis = "";
-            String rightParenthensis = "";
+            string leftParenthensis = "";
+            string rightParenthensis = "";
 
             if (GetChild() != null && GetChild() is ModifierQueryNode)
             {
