@@ -131,22 +131,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        /**
-         * Returns the a List with all QueryText elements
-         * 
-         * @return QueryText List size
-         */
-        public virtual IList<QueryText> GetPathElements()
+        /// <summary>
+        /// Gets or Sets the a List with all QueryText elements
+        /// </summary>
+        /// <returns>QueryText List size</returns>
+        public virtual IList<QueryText> PathElements
         {
-            return values;
-        }
-
-        /**
-         * Returns the a List with all QueryText elements
-         */
-        public virtual void SetPathElements(IList<QueryText> elements)
-        {
-            this.values = elements;
+            get { return values; }
+            set { this.values = value; }
         }
 
         /**
