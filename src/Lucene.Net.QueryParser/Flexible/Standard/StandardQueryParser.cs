@@ -393,7 +393,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
-                return (fuzzyConfig != null) ? fuzzyConfig.MinSimilarity : FuzzyQuery.DefaultMinSimilarity;
+                return (fuzzyConfig != null) ? fuzzyConfig.MinSimilarity
+#pragma warning disable 612, 618
+                    : FuzzyQuery.DefaultMinSimilarity;
+#pragma warning restore 612, 618
             }
             set
             {

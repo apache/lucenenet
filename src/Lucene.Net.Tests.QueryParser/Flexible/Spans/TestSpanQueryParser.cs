@@ -175,7 +175,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, wildcard queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -186,7 +188,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, range queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -197,7 +201,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, boost queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -208,7 +214,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, fuzzy queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -219,7 +227,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, quoted queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -230,7 +240,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, parenthesized queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -241,7 +253,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
                 fail("QueryNodeException was expected, and queries should not be supported");
 
             }
+#pragma warning disable 168
             catch (QueryNodeException ex)
+#pragma warning restore 168
             {
                 // expected exception
             }

@@ -82,7 +82,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int jjMoveStringLiteralDfa1_2(long active0)
         {
             try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 jjStopStringLiteralDfa_2(0, active0);
                 return 1;
@@ -421,7 +423,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 33 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
                 catch (IOException e) { return curPos; }
+#pragma warning restore 168
             }
         }
         private int jjMoveStringLiteralDfa0_0()
@@ -507,7 +511,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
                 catch (IOException e) { return curPos; }
+#pragma warning restore 168
             }
         }
         private int jjStopStringLiteralDfa_1(int pos, long active0)
@@ -546,7 +552,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int jjMoveStringLiteralDfa1_1(long active0)
         {
             try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 jjStopStringLiteralDfa_1(0, active0);
                 return 1;
@@ -567,7 +575,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             jjmatchedKind = kind;
             jjmatchedPos = pos;
             try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
             catch (IOException e) { return pos + 1; }
+#pragma warning restore 168
             return jjMoveNfa_1(state, pos + 1);
         }
         private int jjMoveNfa_1(int startState, int curPos)
@@ -708,7 +718,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
+#pragma warning disable 168
                 catch (IOException e) { return curPos; }
+#pragma warning restore 168
             }
         }
         internal static readonly int[] jjnextStates = {
@@ -869,7 +881,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 {
                     curChar = input_stream.BeginToken();
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     jjmatchedKind = 0;
                     matchedToken = jjFillToken();
@@ -917,7 +931,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 string error_after = null;
                 bool EOFSeen = false;
                 try { input_stream.ReadChar(); input_stream.BackUp(1); }
+#pragma warning disable 168
                 catch (IOException e1)
+#pragma warning restore 168
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1 ? "" : input_stream.GetImage();

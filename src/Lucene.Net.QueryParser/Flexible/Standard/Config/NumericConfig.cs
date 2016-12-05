@@ -107,5 +107,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
             return false;
         }
+
+        /// <summary>
+        /// LUCENENET specific - Visual Studio provides a compiler warning if
+        /// <see cref="Equals(object)"/> is overridden without <see cref="GetHashCode()"/>,
+        /// so we provide an implementation that mirrors <see cref="Equals(object)"/>.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return HashHelpers.CombineHashCodes(
+                base.GetHashCode(), 
+                this.precisionStep.GetHashCode(), 
+                this.type.GetHashCode(), 
+                this.format.GetHashCode());
+        }
     }
 }

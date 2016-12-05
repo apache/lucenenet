@@ -329,7 +329,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 GetQuery("term~1.1", null); // value > 1, throws exception
                 fail();
             }
+#pragma warning disable 168
             catch (ParseException pe)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -482,14 +484,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             IDictionary<string, DateTools.Resolution?> fieldMap = new HashMap<string, DateTools.Resolution?>();
             // set a field specific date resolution
             fieldMap.Put(monthField, DateTools.Resolution.MONTH);
+#pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
+#pragma warning restore 612, 618
 
             // set default date resolution to MILLISECOND
             qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
 
             // set second field specific date resolution
             fieldMap.Put(hourField, DateTools.Resolution.HOUR);
+#pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
+#pragma warning restore 612, 618
 
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
@@ -648,7 +654,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 assertQueryEquals("\"some phrase", null, "abc");
                 fail("ParseException expected, not thrown");
             }
+#pragma warning disable 168
             catch (QueryNodeParseException expected)
+#pragma warning restore 168
             {
             }
         }
@@ -662,7 +670,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 GetParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).Parse("one two three", "field");
                 fail("ParseException expected due to too many boolean clauses");
             }
+#pragma warning disable 168
             catch (QueryNodeException expected)
+#pragma warning restore 168
             {
                 // too many boolean clauses, so ParseException is expected
             }

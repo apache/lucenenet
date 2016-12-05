@@ -203,7 +203,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 q = QueryParserUtil.Parse(queries5, fields, new MockAnalyzer(Random()));
                 fail();
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception, array length differs
             }
@@ -243,7 +245,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception, array length differs
             }
@@ -276,7 +280,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception, array length differs
             }
@@ -304,7 +310,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception, array length differs
             }
@@ -332,7 +340,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception, array length differs
             }

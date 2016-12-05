@@ -225,7 +225,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             FieldType ft = new FieldType(LongField.TYPE_NOT_STORED);
             ft.Stored = (true);
             ft.NumericPrecisionStep = (PRECISION_STEP);
-            LongField dateField = new LongField(DATE_FIELD_NAME, 0l, ft);
+            LongField dateField = new LongField(DATE_FIELD_NAME, 0L, ft);
             numericFieldMap.Put(DATE_FIELD_NAME, dateField);
             doc.Add(dateField);
 

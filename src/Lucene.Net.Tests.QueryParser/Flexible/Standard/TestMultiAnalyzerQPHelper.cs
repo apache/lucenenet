@@ -90,12 +90,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 .toString());
 
             // phrase after changing default slop
+#pragma warning disable 612, 618
             qp.SetDefaultPhraseSlop(99);
+#pragma warning restore 612, 618
             assertEquals("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar",
                 "").toString());
             assertEquals("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse(
                 "\"multi foo\" \"foo bar\"~2", "").toString());
+#pragma warning disable 612, 618
             qp.SetDefaultPhraseSlop(0);
+#pragma warning restore 612, 618
 
             // non-default operator:
             qp.DefaultOperator = (StandardQueryConfigHandler.Operator.AND);

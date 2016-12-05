@@ -546,7 +546,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
+#pragma warning disable 168
                 catch (Exception ignored)
+#pragma warning restore 168
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                          * boost number is invalid)
@@ -567,7 +569,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             bool endInc = false;
             IQueryNode q = null;
             FieldQueryNode qLower, qUpper;
+#pragma warning disable 612, 618
             float defaultMinSimilarity = Search.FuzzyQuery.DefaultMinSimilarity;
+#pragma warning restore 612, 618
             switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
             {
                 case RegexpToken.TERM:
@@ -628,7 +632,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         {
                             fms = Convert.ToSingle(fuzzySlop.image.Substring(1), CultureInfo.InvariantCulture);
                         }
+#pragma warning disable 168
                         catch (Exception ignored) { }
+#pragma warning restore 168
                         if (fms < 0.0f)
                         {
                             { if (true) throw new ParseException(new MessageImpl(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
@@ -766,7 +772,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             phraseSlop = (int)Convert.ToSingle(fuzzySlop.image.Substring(1), CultureInfo.InvariantCulture);
                             q = new SlopQueryNode(q, phraseSlop);
                         }
+#pragma warning disable 168
                         catch (Exception ignored)
+#pragma warning restore 168
                         {
                             /* Should this be handled somehow? (defaults to "no PhraseSlop", if
                            * slop number is invalid)
@@ -791,7 +799,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
+#pragma warning disable 168
                 catch (Exception ignored)
+#pragma warning restore 168
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                        * boost number is invalid)
@@ -806,7 +816,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
             jj_la = xla; jj_lastpos = jj_scanpos = token;
             try { return !jj_3_1(); }
+#pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
+#pragma warning restore 168
             finally { jj_save(0, xla); }
         }
 
@@ -814,7 +826,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         {
             jj_la = xla; jj_lastpos = jj_scanpos = token;
             try { return !jj_3_2(); }
+#pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
+#pragma warning restore 168
             finally { jj_save(1, xla); }
         }
 
@@ -1243,7 +1257,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         p = p.next;
                     } while (p != null);
                 }
+#pragma warning disable 168
                 catch (LookaheadSuccess ls) { }
+#pragma warning restore 168
             }
             jj_rescan = false;
         }

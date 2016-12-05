@@ -37,8 +37,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             FuzzyQueryNode fuzzyNode = (FuzzyQueryNode)queryNode;
             string text = fuzzyNode.GetTextAsString();
 
+#pragma warning disable 612, 618
             int numEdits = FuzzyQuery.FloatToEdits(fuzzyNode.Similarity,
                 text.CodePointCount(0, text.Length));
+#pragma warning restore 612, 618
 
             return new FuzzyQuery(new Term(fuzzyNode.GetFieldAsString(), fuzzyNode
                 .GetTextAsString()), numEdits, fuzzyNode

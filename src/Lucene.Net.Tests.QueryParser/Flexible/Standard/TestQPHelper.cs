@@ -628,7 +628,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 AssertWildcardQueryEquals("*Term", true, "*term");
                 fail();
             }
+#pragma warning disable 168
             catch (QueryNodeException pe)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -637,7 +639,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 AssertWildcardQueryEquals("?Term", true, "?term");
                 fail();
             }
+#pragma warning disable 168
             catch (QueryNodeException pe)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -795,14 +799,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             // set a field specific date resolution    
             dateRes.Put(monthField, DateTools.Resolution.MONTH);
+#pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
+#pragma warning restore 612, 618
 
             // set default date resolution to MILLISECOND
             qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
 
             // set second field specific date resolution
             dateRes.Put(hourField, DateTools.Resolution.HOUR);
+#pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
+#pragma warning restore 612, 618
 
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
@@ -1048,7 +1056,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             {
                 GetQuery(queryString, null);
             }
+#pragma warning disable 168
             catch (QueryNodeException expected)
+#pragma warning restore 168
             {
                 return;
             }
@@ -1073,7 +1083,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 new QPTestParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).Parse("a?t", "contents");
                 fail("Wildcard queries should not be allowed");
             }
+#pragma warning disable 168
             catch (QueryNodeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -1086,7 +1098,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 new QPTestParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).Parse("xunit~", "contents");
                 fail("Fuzzy queries should not be allowed");
             }
+#pragma warning disable 168
             catch (QueryNodeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -1104,7 +1118,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 qp.Parse("one two three", "field");
                 fail("ParseException expected due to too many boolean clauses");
             }
+#pragma warning disable 168
             catch (QueryNodeException expected)
+#pragma warning restore 168
             {
                 // too many boolean clauses, so ParseException is expected
             }

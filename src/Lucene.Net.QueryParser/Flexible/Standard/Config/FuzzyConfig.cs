@@ -26,7 +26,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     {
         private int prefixLength = FuzzyQuery.DefaultPrefixLength;
 
+#pragma warning disable 612, 618
         private float minSimilarity = FuzzyQuery.DefaultMinSimilarity;
+#pragma warning restore 612, 618
 
         public FuzzyConfig() { }
 

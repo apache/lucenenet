@@ -116,7 +116,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 input.Dispose();
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
             }
         }

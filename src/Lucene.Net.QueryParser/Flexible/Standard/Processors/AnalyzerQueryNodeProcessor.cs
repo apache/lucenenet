@@ -138,7 +138,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             }
                         }
                     }
+#pragma warning disable 168
                     catch (IOException e)
+#pragma warning restore 168
                     {
                         // ignore
                     }
@@ -177,7 +179,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         Debug.Assert(hasNext == true);
                         term = termAtt.ToString();
                     }
+#pragma warning disable 168
                     catch (IOException e)
+#pragma warning restore 168
                     {
                         // safe to ignore, because we know the number of tokens
                     }
@@ -206,7 +210,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     Debug.Assert(hasNext == true);
                                     term = termAtt.ToString();
                                 }
+#pragma warning disable 168
                                 catch (IOException e)
+#pragma warning restore 168
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -231,7 +237,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     Debug.Assert(hasNext == true);
                                     term = termAtt.ToString();
                                 }
+#pragma warning disable 168
                                 catch (IOException e)
+#pragma warning restore 168
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -300,7 +308,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
+#pragma warning disable 168
                             catch (IOException e)
+#pragma warning restore 168
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -371,7 +381,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
+#pragma warning disable 168
                         catch (IOException e)
+#pragma warning restore 168
                         {
                             // safe to ignore, because we know the number of tokens
                         }

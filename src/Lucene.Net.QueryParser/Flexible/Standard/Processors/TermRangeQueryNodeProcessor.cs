@@ -144,7 +144,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         upper.Text = new StringCharSequenceWrapper(part2);
                     }
                 }
+#pragma warning disable 168
                 catch (Exception e)
+#pragma warning restore 168
                 {
                     // do nothing
                 }
