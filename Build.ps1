@@ -167,9 +167,9 @@ function Test-Projects($projects) {
             $testResult = "TestResult.$framework.xml"
 
             if ($framework.StartsWith("netcore")) {
-                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework $excludeCategoriesNetCoreApp"
+                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategoriesNetCoreApp"
             } else {
-                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework $excludeCategories"
+                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategories"
             }
 
             Write-Host $testExpression
@@ -205,7 +205,7 @@ function Create-NuGetPackages($projects) {
     foreach ($project in $projects) {
         pushd $project.DirectoryName
 
-        & dotnet.exe pack --configuration $Configuration --output $NuGetPackageDirectory
+        & dotnet.exe pack --configuration $Configuration --output $NuGetPackageDirectory --no-build
 
         popd
     }
