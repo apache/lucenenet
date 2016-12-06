@@ -1245,43 +1245,43 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsOnly()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_ONLY, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqs()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositions()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndPayloads()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, true);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsets()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, true);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test, Timeout(300000)]
         public virtual void TestRandom()
         {
             int iters = 5;
