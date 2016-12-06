@@ -33,22 +33,19 @@ namespace Lucene.Net.QueryParsers.Classic
 	public class ParseException : Exception
 	{
         /// <summary>
-        /// This constructor is used by the method "GenerateParseException"
+        /// This constructor is used by the method GenerateParseException()
         /// in the generated parser.  Calling this constructor generates
-        /// a new object of this type with the fields "currentToken",
-        /// "expectedTokenSequences", and "tokenImage" set.
+        /// a new object of this type with the fields <paramref name="currentToken"/>,
+        /// <paramref name="expectedTokenSequences"/>, and <paramref name="tokenImage"/> set.
         /// </summary>
-        /// <param name="currentTokenVal"></param>
-        /// <param name="expectedTokenSequencesVal"></param>
-        /// <param name="tokenImageVal"></param>
-        public ParseException(Token currentTokenVal,
-                        int[][] expectedTokenSequencesVal,
-                        string[] tokenImageVal)
-            : base(Initialize(currentTokenVal, expectedTokenSequencesVal, tokenImageVal))
+        public ParseException(Token currentToken,
+                        int[][] expectedTokenSequences,
+                        string[] tokenImage)
+            : base(Initialize(currentToken, expectedTokenSequences, tokenImage))
         {
-            currentToken = currentTokenVal;
-            expectedTokenSequences = expectedTokenSequencesVal;
-            tokenImage = tokenImageVal;
+            this.currentToken = currentToken;
+            this.expectedTokenSequences = expectedTokenSequences;
+            this.tokenImage = tokenImage;
         }
 
         /**
@@ -96,16 +93,12 @@ namespace Lucene.Net.QueryParsers.Classic
 
 
         /// <summary>
-        /// It uses "currentToken" and "expectedTokenSequences" to generate a parse
+        /// It uses <paramref name="currentToken"/> and <paramref name="expectedTokenSequences"/> to generate a parse
         /// error message and returns it.  If this object has been created
         /// due to a parse error, and you do not catch it (it gets thrown
         /// from the parser) the correct error message
         /// gets displayed.
         /// </summary>
-        /// <param name="currentToken"></param>
-        /// <param name="expectedTokenSequences"></param>
-        /// <param name="tokenImage"></param>
-        /// <returns></returns>
         private static string Initialize(Token currentToken,
             int[][] expectedTokenSequences,
             string[] tokenImage)

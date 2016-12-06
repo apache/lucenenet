@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>
         /// Returns the next character that marks the beginning of the next token.
         /// All characters must remain in the buffer between two successive calls
-        /// to this method to implement backup correctly.
+        /// to this method to implement <see cref="BackUp(int)"/> correctly.
         /// </summary>
         char BeginToken();
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <code>
         /// {
         ///     string t = GetImage();
-        ///     return t.Substring(t.Length - len, t.Length - (t.Length - len)).ToCharArray();
+        ///     return t.Substring(t.Length - len, len).ToCharArray();
         /// }
         /// </code>
         /// </summary>

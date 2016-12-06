@@ -33,9 +33,9 @@ namespace Lucene.Net.QueryParsers.Classic
 		}
 		
 		/// <summary>Debug output. </summary>
-		public StreamWriter debugStream;
+		public TextWriter debugStream;
 		/// <summary>Set debug output. </summary>
-		public virtual void  SetDebugStream(StreamWriter ds)
+		public virtual void SetDebugStream(TextWriter ds)
 		{
 			debugStream = ds;
 		}

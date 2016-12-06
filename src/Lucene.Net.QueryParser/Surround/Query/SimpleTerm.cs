@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         /// <summary>
         /// Callback to visit each matching term during "rewrite"
-        /// in <see cref="M:VisitMatchingTerm(Term)"/>
+        /// in <see cref="VisitMatchingTerm(Term)"/>
         /// </summary>
         public interface IMatchingTermVisitor
         {

@@ -28,9 +28,9 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
      */
 
     /// <summary>
-    /// QueryParser which permits complex phrase query syntax eg "(john jon
+    /// <see cref="QueryParser"/> which permits complex phrase query syntax eg "(john jon
     /// jonathan~) peters*".
-    /// <p>
+    /// <para>
     /// Performs potentially multiple passes over Query text to parse any nested
     /// logic in PhraseQueries. - First pass takes any PhraseQuery content between
     /// quotes and stores for subsequent pass. All other query content is parsed as
@@ -38,14 +38,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
     /// embedded clauses are referring to the same field and therefore can be
     /// rewritten as Span queries. All PhraseQuery clauses are expressed as
     /// ComplexPhraseQuery objects
-    /// </p>
-    /// <p>
-    /// This could arguably be done in one pass using a new QueryParser but here I am
+    /// </para>
+    /// <para>
+    /// This could arguably be done in one pass using a new <see cref="QueryParser"/> but here I am
     /// working within the constraints of the existing parser as a base class. This
     /// currently simply feeds all phrase content through an analyzer to select
     /// phrase terms - any "special" syntax such as * ~ * etc are not given special
     /// status
-    /// </p>
+    /// </para>
     /// </summary>
     public class ComplexPhraseQueryParser : Classic.QueryParser
     {
@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         private bool isPass2ResolvingPhrases;
 
         /// <summary>
-        /// When <code>inOrder</code> is true, the search terms must
+        /// When <see cref="InOrder"/> is true, the search terms must
         /// exists in the documents as the same order as in query.
         /// Choose between ordered (true) or un-ordered (false) proximity search.
         /// </summary>

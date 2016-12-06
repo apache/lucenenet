@@ -20,7 +20,9 @@ namespace Lucene.Net.QueryParsers.Classic
      */
 	
 	/// <summary>
-    /// An efficient implementation of JavaCC's CharStream interface.  <p/>Note that
+    /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.  
+    /// <para/>
+    /// Note that
 	/// this does not do line-number counting, but instead keeps track of the
 	/// character position of the token in the input, as required by Lucene's <see cref="Lucene.Net.Analysis.Token" />
 	/// API.
@@ -36,11 +38,11 @@ namespace Lucene.Net.QueryParsers.Classic
 		internal int bufferStart = 0; // position in file of buffer
 		
 		internal System.IO.TextReader input; // source of chars
-		
-		/// <summary>
-        /// Constructs from a Reader. 
+
+        /// <summary>
+        /// Constructs from a <see cref="System.IO.TextReader"/>. 
         /// </summary>
-		public FastCharStream(System.IO.TextReader r)
+        public FastCharStream(System.IO.TextReader r)
 		{
 			input = r;
 		}

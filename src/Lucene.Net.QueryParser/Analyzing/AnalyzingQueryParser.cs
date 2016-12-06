@@ -26,14 +26,14 @@ namespace Lucene.Net.QueryParsers.Analyzing
      */
 
     /// <summary>
-    /// Overrides Lucene's default QueryParser so that Fuzzy-, Prefix-, Range-, and WildcardQuerys
-    /// are also passed through the given analyzer, but wildcard characters <code>*</code> and
-    /// <code>?</code> don't get removed from the search terms.
-    /// 
-    /// <p><b>Warning:</b> This class should only be used with analyzers that do not use stopwords
-    /// or that add tokens. Also, several stemming analyzers are inappropriate: for example, GermanAnalyzer 
-    /// will turn <code>H&auml;user</code> into <code>hau</code>, but <code>H?user</code> will 
-    /// become <code>h?user</code> when using this parser and thus no match would be found (i.e.
+    /// Overrides Lucene's default <see cref="QueryParser"/> so that Fuzzy-, Prefix-, Range-, and WildcardQuerys
+    /// are also passed through the given analyzer, but wildcard characters <c>*</c> and
+    /// <c>?</c> don't get removed from the search terms.
+    /// <para/>
+    /// <b>Warning:</b> This class should only be used with analyzers that do not use stopwords
+    /// or that add tokens. Also, several stemming analyzers are inappropriate: for example, <see cref="Analysis.De.GermanAnalyzer"/>  
+    /// will turn <c>H&auml;user</c> into <c>hau</c>, but <c>H?user</c> will 
+    /// become <c>h?user</c> when using this parser and thus no match would be found (i.e.
     /// using this parser will be no improvement over QueryParser in such cases). 
     /// </summary>
     public class AnalyzingQueryParser : Classic.QueryParser
@@ -53,10 +53,10 @@ namespace Lucene.Net.QueryParsers.Analyzing
         /// character as its last character. Since this is a special case
         /// of generic wildcard term, and such a query can be optimized easily,
         /// this usually results in a different query object.
-        /// <p>
+        /// <para/>
         /// Depending on analyzer and settings, a prefix term may (most probably will)
         /// be lower-cased automatically. It <b>will</b> go through the default Analyzer.
-        /// <p>
+        /// <para/>
         /// Overrides super class, by passing terms through analyzer.
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
@@ -112,13 +112,13 @@ namespace Lucene.Net.QueryParsers.Analyzing
         /// <summary>
         /// Called when parser parses an input term
         /// that uses prefix notation; that is, contains a single '*' wildcard
-        /// character as its last character.Since this is a special case
+        /// character as its last character. Since this is a special case
         /// of generic wildcard term, and such a query can be optimized easily,
         /// this usually results in a different query object.
-        /// <p>
+        /// <para/>
         /// Depending on analyzer and settings, a prefix term may (most probably will)
         /// be lower-cased automatically. It <b>will</b> go through the default Analyzer.
-        /// <p>
+        /// <para/>
         /// Overrides super class, by passing terms through analyzer.
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
@@ -132,10 +132,10 @@ namespace Lucene.Net.QueryParsers.Analyzing
 
         /// <summary>
         /// Called when parser parses an input term that has the fuzzy suffix (~) appended.
-        /// <p>
+        /// <para/>
         /// Depending on analyzer and settings, a fuzzy term may (most probably will)
         /// be lower-cased automatically. It <b>will</b> go through the default Analyzer.
-        /// <p>
+        /// <para/>
         /// Overrides super class, by passing terms through analyzer.
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         }
 
         /// <summary>
-        /// Returns the analyzed form for the given chunk
+        /// Returns the analyzed form for the given chunk.
         /// 
         /// If the analyzer produces more than one output token from the given chunk,
         /// a ParseException is thrown.

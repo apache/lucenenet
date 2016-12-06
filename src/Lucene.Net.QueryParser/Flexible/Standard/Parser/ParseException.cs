@@ -206,7 +206,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     default:
                         if ((ch = str[i]) < 0x20 || ch > 0x7e)
                         {
-                            //string s = "0000" + Integer.toString(ch, 16);
                             string s = "0000" + Convert.ToString(ch, 16);
                             retval.Append("\\u" + s.Substring(s.Length - 4, s.Length - (s.Length - 4)));
                         }

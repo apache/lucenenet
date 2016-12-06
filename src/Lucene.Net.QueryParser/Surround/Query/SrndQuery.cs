@@ -71,10 +71,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public abstract Search.Query MakeLuceneQueryFieldNoBoost(string fieldName, BasicQueryFactory qf);
 
         /// <summary>
-        /// This method is used by <see cref="M:GetHashCode()"/> and <see cref="M:Equals(Object)"/>,
+        /// This method is used by <see cref="GetHashCode()"/> and <see cref="Equals(Object)"/>,
         /// see LUCENE-2945.
         /// </summary>
-        /// <returns></returns>
         public abstract override string ToString();
 
         public virtual bool IsFieldsSubQueryAcceptable { get { return true; } }
@@ -97,9 +96,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         /// <summary>
-        /// For subclasses of <see cref="SrndQuery"/> within the package
-        /// {@link org.apache.lucene.queryparser.surround.query}
-        /// it is not necessary to override this method, <see cref="M:ToString()"/>
+        /// For subclasses of <see cref="SrndQuery"/> within the namespace
+        /// <see cref="Lucene.Net.QueryParsers.Surround.Query"/>
+        /// it is not necessary to override this method, <see cref="ToString()"/>
         /// </summary>
         public override int GetHashCode()
         {
@@ -107,13 +106,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         /// <summary>
-        /// For subclasses of <see cref="SrndQuery"/> within the package
-        /// {@link org.apache.lucene.queryparser.surround.query}
-        /// it is not necessary to override this method,
-        /// @see #toString()
+        /// For subclasses of <see cref="SrndQuery"/> within the namespace
+        /// <see cref="Lucene.Net.QueryParsers.Surround.Query"/>
+        /// it is not necessary to override this method, <see cref="ToString()"/>
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
