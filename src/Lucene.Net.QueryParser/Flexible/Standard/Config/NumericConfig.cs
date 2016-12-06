@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
-using static Lucene.Net.Documents.FieldType;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         private NumberFormat format;
 
-        private NumericType type;
+        private FieldType.NumericType type;
 
         /// <summary>
         /// Constructs a <see cref="NumericConfig"/> object.
@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <seealso cref="NumericConfig.NumberFormat"/>
         /// <seealso cref="Type"/>
         public NumericConfig(int precisionStep, NumberFormat format,
-            NumericType type)
+            FieldType.NumericType type)
         {
             PrecisionStep = precisionStep;
             NumberFormat = format;
@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <summary>
         /// Gets or Sets the numeric type used to index the numeric values
         /// </summary>
-        public virtual NumericType Type
+        public virtual FieldType.NumericType Type
         {
             get { return type; }
             set { type = value; }
