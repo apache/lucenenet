@@ -79,5 +79,61 @@ namespace Lucene.Net.Index.Sorter
                 assertEquals("Cannot sort an index with a Sort that refers to the relevance score", e.Message);
             }
         }
+
+
+        #region SorterTestBase
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestBinaryDocValuesField()
+        {
+            base.TestBinaryDocValuesField();
+        }
+
+        [Test]
+        public override void TestDocsAndPositionsEnum()
+        {
+            base.TestDocsAndPositionsEnum();
+        }
+
+        [Test]
+        public override void TestDocsEnum()
+        {
+            base.TestDocsEnum();
+        }
+
+        [Test]
+        public override void TestNormValues()
+        {
+            base.TestNormValues();
+        }
+
+        [Test]
+        public override void TestNumericDocValuesField()
+        {
+            base.TestNumericDocValuesField();
+        }
+
+        [Test]
+        public override void TestSortedDocValuesField()
+        {
+            base.TestSortedDocValuesField();
+        }
+
+        [Test]
+        public override void TestSortedSetDocValuesField()
+        {
+            base.TestSortedSetDocValuesField();
+        }
+
+        [Test]
+        public override void TestTermVectors()
+        {
+            base.TestTermVectors();
+        }
+
+        #endregion
     }
 }

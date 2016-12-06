@@ -177,5 +177,19 @@ namespace Lucene.Net.Search
             result = search.Search(q, TermRangeFilter.NewStringRange("rand", maxRP, null, T, F), numDocs).ScoreDocs;
             Assert.AreEqual(1, result.Length, "max,nul,T,T");
         }
+
+
+        #region SorterTestBase
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestPad()
+        {
+            base.TestPad();
+        }
+
+        #endregion
     }
 }

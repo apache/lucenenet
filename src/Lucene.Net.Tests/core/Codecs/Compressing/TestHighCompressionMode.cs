@@ -28,5 +28,55 @@ namespace Lucene.Net.Codecs.Compressing
             base.SetUp();
             Mode = CompressionMode.HIGH_COMPRESSION;
         }
+
+
+        #region AbstractTestCompressionMode
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestDecompress()
+        {
+            base.TestDecompress();
+        }
+
+        [Test]
+        public override void TestPartialDecompress()
+        {
+            base.TestPartialDecompress();
+        }
+
+        [Test]
+        public override void TestEmptySequence()
+        {
+            base.TestEmptySequence();
+        }
+
+        [Test]
+        public override void TestShortSequence()
+        {
+            base.TestShortSequence();
+        }
+
+        [Test]
+        public override void TestIncompressible()
+        {
+            base.TestIncompressible();
+        }
+
+        [Test]
+        public override void TestConstant()
+        {
+            base.TestConstant();
+        }
+
+        [Test]
+        public override void TestLUCENE5201()
+        {
+            base.TestLUCENE5201();
+        }
+        #endregion
+
     }
 }

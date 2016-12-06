@@ -153,55 +153,55 @@ namespace Lucene.Net.Util
             DoTest(strategy, Random().Next(20000));
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestEmpty()
         {
             SortTest(new Entry[0]);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestOne()
         {
             DoTest(RandomStrategy, 1);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwo()
         {
             DoTest(RandomStrategy, 2);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandom()
         {
             DoTest(RandomStrategy);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandomLowCardinality()
         {
             DoTest(RandomLowCardinalityStrategy, 2);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAscending()
         {
             DoTest(AscendingStrategy, 2);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAscendingSequences()
         {
             DoTest(AscendingSequencesStrategy, 2);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDescending()
         {
             DoTest(DescendingStrategy, 2);
         }
 
-        [Test]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestStrictlyDescendingStrategy()
         {
             DoTest(StrictlyDescendingStrategy, 2);

@@ -927,5 +927,24 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
+
+        #region TestExplanations
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+
+        /// <summary>
+        /// Placeholder: JUnit freaks if you don't have one test ... making
+        /// class abstract doesn't help
+        /// </summary>
+        [Test]
+        public override void TestNoop()
+        {
+            base.TestNoop();
+        }
+
+        #endregion
     }
 }

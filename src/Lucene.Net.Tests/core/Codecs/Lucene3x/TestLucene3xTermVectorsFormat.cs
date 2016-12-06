@@ -46,5 +46,72 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
         }
+
+
+        #region BaseTermVectorsFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        // only one doc with vectors
+        public override void TestRareVectors()
+        {
+            base.TestRareVectors();
+        }
+
+        [Test]
+        public override void TestHighFreqs()
+        {
+            base.TestHighFreqs();
+        }
+
+        [Test]
+        public override void TestLotsOfFields()
+        {
+            base.TestLotsOfFields();
+        }
+
+        [Test, Timeout(300000)]
+        // different options for the same field
+        public override void TestMixedOptions()
+        {
+            base.TestMixedOptions();
+        }
+
+        [Test]
+        public override void TestRandom()
+        {
+            base.TestRandom();
+        }
+
+        [Test]
+        public override void TestMerge()
+        {
+            base.TestMerge();
+        }
+
+        [Test]
+        // run random tests from different threads to make sure the per-thread clones
+        // don't share mutable data
+        public override void TestClone()
+        {
+            base.TestClone();
+        }
+
+        #endregion
+
+        #region BaseIndexFileFormatTestCase
+        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
+        // context in Visual Studio. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        [Test]
+        public override void TestMergeStability()
+        {
+            base.TestMergeStability();
+        }
+
+        #endregion
     }
 }
