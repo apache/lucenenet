@@ -30,17 +30,16 @@ namespace Lucene.Net.QueryParsers.Ext
     /// the parser the <see cref="ParserExtension"/> can be customized and plugged into an
     /// instance of <see cref="ExtendableQueryParser"/>, a direct subclass of
     /// <see cref="Classic.QueryParser"/>.
-    ///  
-    /// <see cref="Extensions"/>
-    /// <see cref="ExtendableQueryParser"/>
     /// </summary>
+    /// <seealso cref="Extensions"/>
+    /// <seealso cref="ExtendableQueryParser"/>
     public abstract class ParserExtension
     {
         /// <summary>
         /// Processes the given <see cref="ExtensionQuery"/> and returns a corresponding
         /// <see cref="Query"/> instance. Subclasses must either return a <see cref="Query"/>
         /// instance or raise a <see cref="ParseException"/>. This method must not return
-        /// <code>null</code>.
+        /// <c>null</c>.
         /// </summary>
         /// <param name="query">the extension query</param>
         /// <returns>a new query instance</returns>

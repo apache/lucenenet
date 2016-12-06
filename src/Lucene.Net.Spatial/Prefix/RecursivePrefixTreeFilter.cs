@@ -66,9 +66,9 @@ if (!scan) {
             this.fieldName = fieldName;
             this.grid = grid;
             this.queryShape = queryShape;
-            this.prefixGridScanLevel = Math.Max(1, Math.Min(prefixGridScanLevel, grid.GetMaxLevels() - 1));
+            this.prefixGridScanLevel = Math.Max(1, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
             this.detailLevel = detailLevel;
-            Debug.Assert(detailLevel <= grid.GetMaxLevels());
+            Debug.Assert(detailLevel <= grid.MaxLevels);
         }
 
         public override DocIdSet GetDocIdSet(Index.IndexReader reader /*, Bits acceptDocs*/)

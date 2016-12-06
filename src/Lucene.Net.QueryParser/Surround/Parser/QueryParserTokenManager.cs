@@ -26,18 +26,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// </summary>
     public class QueryParserTokenManager //: QueryParserConstants
     {
-        private void InitBlock()
-        {
-            StreamWriter temp_writer;
-            temp_writer = new StreamWriter(Console.OpenStandardOutput(), Console.Out.Encoding);
-            temp_writer.AutoFlush = true;
-            debugStream = temp_writer;
-        }
-
         /// <summary>Debug output. </summary>
-        public StreamWriter debugStream;
+        public TextWriter debugStream;
         /// <summary>Set debug output. </summary>
-        public virtual void SetDebugStream(StreamWriter ds)
+        public virtual void SetDebugStream(TextWriter ds)
         {
             debugStream = ds;
         }
@@ -546,18 +538,19 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         //    "\50", "\51", "\54", "\72", "\136", null, null, null, null, null, null 
         //};
 
+        /// <summary>Token literal values.</summary>
         public static readonly string[] jjstrLiteralImages = {
             "", null, null, null, null, null, null, null, null, null, null, null, null, 
             "\x0028" /*"\50"*/, "\x0029" /*"\51"*/, "\x002C" /*"\54"*/, "\x003A" /*"\72"*/, "\x005E" /*"\136"*/, null, null, null, null, null, null 
         };
 
-        /** Lexer state names. */
+        /// <summary>Lexer state names.</summary>
         public static readonly string[] lexStateNames = {
            "Boost",
            "DEFAULT"
         };
 
-        /** Lex State array. */
+        /// <summary>Lex State array.</summary>
         public static readonly int[] jjnewLexState = {
            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 1, 
         };
@@ -572,21 +565,20 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         private readonly int[] jjstateSet = new int[76];
         protected internal char curChar;
 
-        /** Constructor. */
+        /// <summary>Constructor.</summary>
         public QueryParserTokenManager(ICharStream stream)
         {
-            InitBlock();
             input_stream = stream;
         }
 
-        /** Constructor. */
+        /// <summary>Constructor.</summary>
         public QueryParserTokenManager(ICharStream stream, int lexState)
             : this(stream)
         {
             SwitchTo(lexState);
         }
 
-        /** Reinitialise parser. */
+        /// <summary>Reinitialize parser.</summary>
         public void ReInit(ICharStream stream)
         {
             jjmatchedPos = jjnewStateCnt = 0;
@@ -602,14 +594,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 jjrounds[i] = 0x80000000;
         }
 
-        /** Reinitialise parser. */
+        /// <summary>Reinitialize parser.</summary>
         public void ReInit(ICharStream stream, int lexState)
         {
             ReInit(stream);
             SwitchTo(lexState);
         }
 
-        /** Switch to specified lex state. */
+        /// <summary>Switch to specified lex state.</summary>
         public void SwitchTo(int lexState)
         {
             if (lexState >= 2 || lexState < 0)
@@ -685,7 +677,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if (jjmatchedKind != 0x7fffffff)
                 {
                     if (jjmatchedPos + 1 < curPos)
-                        input_stream.Backup(curPos - jjmatchedPos - 1);
+                        input_stream.BackUp(curPos - jjmatchedPos - 1);
                     if ((jjtoToken[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 63 /*077*/))) != 0L)
                     {
                         matchedToken = JjFillToken();
@@ -704,7 +696,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 int error_column = input_stream.EndColumn;
                 string error_after = null;
                 bool EOFSeen = false;
-                try { input_stream.ReadChar(); input_stream.Backup(1); }
+                try { input_stream.ReadChar(); input_stream.BackUp(1); }
                 catch (System.IO.IOException /*e1*/)
                 {
                     EOFSeen = true;
@@ -719,7 +711,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 if (!EOFSeen)
                 {
-                    input_stream.Backup(1);
+                    input_stream.BackUp(1);
                     error_after = curPos <= 1 ? "" : input_stream.Image;
                 }
                 throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);

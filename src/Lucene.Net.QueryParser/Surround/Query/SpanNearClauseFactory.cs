@@ -25,27 +25,29 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
     /// <summary>
     /// SpanNearClauseFactory:
-    /// 
+    /// <para/>
     /// Operations:
     /// 
-    /// - create for a field name and an indexreader.
+    /// <list type="bullet">
+    ///     <item>create for a field name and an indexreader.</item>
     /// 
-    /// - add a weighted Term
-    /// this should add a corresponding SpanTermQuery, or
-    /// increase the weight of an existing one.
-    /// - add a weighted subquery SpanNearQuery
+    ///     <item>add a weighted Term - this should add a corresponding SpanTermQuery, or increase the weight of an existing one.</item>
     /// 
-    /// - create a clause for SpanNearQuery from the things added above.
+    ///     <item>add a weighted subquery SpanNearQuery</item>
+    /// 
+    ///     <item>create a clause for SpanNearQuery from the things added above.</item>
+    /// </list>
+    /// <para/>
     /// For this, create an array of SpanQuery's from the added ones.
     /// The clause normally is a SpanOrQuery over the added subquery SpanNearQuery
     /// the SpanTermQuery's for the added Term's
-    /// 
+    /// <para/>
     /// When  it is necessary to suppress double subqueries as much as possible:
     /// GetHashCode() and Equals() on unweighted SpanQuery are needed (possibly via GetTerms(),
     /// the terms are individually hashable).
     /// Idem SpanNearQuery: hash on the subqueries and the slop.
     /// Evt. merge SpanNearQuery's by adding the weights of the corresponding subqueries.
-    /// 
+    /// <para/>
     /// To be determined:
     /// Are SpanQuery weights handled correctly during search by Lucene?
     /// Should the resulting SpanOrQuery be sorted?

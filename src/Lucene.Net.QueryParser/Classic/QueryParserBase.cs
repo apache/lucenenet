@@ -31,6 +31,9 @@ namespace Lucene.Net.QueryParsers.Classic
      * limitations under the License.
      */
 
+    /// <summary>
+    /// This class is overridden by <see cref="QueryParser"/>.
+    /// </summary>
     public abstract class QueryParserBase : QueryBuilder, ICommonQueryParserConfiguration
     {
         /// <summary>
@@ -51,11 +54,11 @@ namespace Lucene.Net.QueryParsers.Classic
         // the nested class:
         
         /// <summary>
-        /// Alternative form of QueryParser.Operator.AND
+        /// Alternative form of <see cref="QueryParserBase.Operator.AND"/> 
         /// </summary>
         public const Operator AND_OPERATOR = Operator.AND;
         /// <summary>
-        /// Alternative form of QueryParser.Operator.OR
+        /// Alternative form of <see cref="QueryParserBase.Operator.OR"/> 
         /// </summary>
         public const Operator OR_OPERATOR = Operator.OR;
 
@@ -71,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// The default operator for parsing queries. 
-        /// Use <see cref="QueryParserBase.SetDefaultOperator"/> to change it.
+        /// Use <see cref="QueryParserBase.DefaultOperator"/> to change it.
         /// </summary>
         public enum Operator
         {
@@ -160,13 +163,10 @@ namespace Lucene.Net.QueryParsers.Classic
         public abstract Query TopLevelQuery(string field);
 
         /// <summary>
-        /// Parses a query string, returning a <see cref="T:Query"/>.
+        /// Parses a query string, returning a <see cref="Query"/>.
         /// </summary>
-        /// <remarks>
-        /// throws ParseException if the parsing fails
-        /// </remarks>
         /// <param name="query">the query string to be parsed.</param>
-        /// <returns></returns>
+        /// <exception cref="ParseException">if the parsing fails</exception>
         public virtual Query Parse(string query)
         {
             ReInit(new FastCharStream(new StringReader(query)));
@@ -230,30 +230,31 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual int PhraseSlop { get; set; }
 
         /// <summary>
-        /// Set to <code>true</code> to allow leading wildcard characters.
-        /// <p>
-        /// When set, <code>*</code> or <code>?</code> are allowed as
+        /// Set to <c>true</c> to allow leading wildcard characters.
+        /// <para/>
+        /// When set, <c>*</c> or <c>?</c> are allowed as
         /// the first character of a PrefixQuery and WildcardQuery.
         /// Note that this can produce very slow
         /// queries on big indexes.
-        /// <p>
+        /// <para/>
         /// Default: false.
         /// </summary>
         public virtual bool AllowLeadingWildcard { get; set; }
 
         /// <summary>
         /// Gets or Sets the boolean operator of the QueryParser.
-        /// In default mode (<code>OR_OPERATOR</code>) terms without any modifiers
-        /// are considered optional: for example <code>capital of Hungary</code> is equal to
-        /// <code>capital OR of OR Hungary</code>.<br/>
-        /// In <code>AND_OPERATOR</code> mode terms are considered to be in conjunction: the
-        /// above mentioned query is parsed as <code>capital AND of AND Hungary
+        /// In default mode (<see cref="OR_OPERATOR"/>) terms without any modifiers
+        /// are considered optional: for example <c>capital of Hungary</c> is equal to
+        /// <c>capital OR of OR Hungary</c>.
+        /// <para/>
+        /// In <see cref="AND_OPERATOR"/> mode terms are considered to be in conjunction: the
+        /// above mentioned query is parsed as <c>capital AND of AND Hungary</c>
         /// </summary>
         public virtual Operator DefaultOperator { get; set; }
 
         /// <summary>
         /// Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
-        //  lower-cased or not.  Default is <code>true</code>.
+        //  lower-cased or not.  Default is <c>true</c>.
         /// </summary>
         public virtual bool LowercaseExpandedTerms { get; set; }
 
@@ -261,7 +262,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// By default QueryParser uses <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
         /// when creating a <see cref="PrefixQuery"/>, <see cref="WildcardQuery"/> or <see cref="TermRangeQuery"/>. This implementation is generally preferable because it
         /// a) Runs faster b) Does not have the scarcity of terms unduly influence score
-        /// c) avoids any <see cref="TooManyClauses"/> exception.
+        /// c) avoids any <see cref="BooleanQuery.TooManyClauses"/> exception.
         /// However, if your application really needs to use the
         /// old-fashioned <see cref="BooleanQuery"/> expansion rewriting and the above
         /// points are not relevant then use this to change
@@ -313,8 +314,6 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Returns null, if no default or field specific date resolution has been set 
         /// for the given field.
         /// </summary>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
         public virtual DateTools.Resolution GetDateResolution(string fieldName)
         {
             if (string.IsNullOrEmpty(fieldName))
@@ -417,13 +416,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Base implementation delegates to <see cref="GetFieldQuery(string,string,bool)"/>.
         /// This method may be overridden, for example, to return
-        /// a SpanNearQuery instead of a PhraseQuery.
+        /// a <see cref="Search.Spans.SpanNearQuery"/> instead of a <see cref="PhraseQuery"/>.
         /// </summary>
-        /// <param name="field"></param>
-        /// <param name="queryText"></param>
-        /// <param name="slop"></param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns></returns>
         protected internal virtual Query GetFieldQuery(string field, string queryText, int slop)
         {
             Query query = GetFieldQuery(field, queryText, true);
@@ -502,20 +497,20 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }
 
-        /// <summary>Builds a new BooleanClause instance</summary>
+        /// <summary>Builds a new <see cref="BooleanClause"/> instance</summary>
         /// <param name="q">sub query</param>
         /// <param name="occur">how this clause should occur when matching documents</param>
-        /// <returns> new BooleanClause instance</returns>
+        /// <returns> new <see cref="BooleanClause"/> instance</returns>
         protected internal virtual BooleanClause NewBooleanClause(Query q, BooleanClause.Occur occur)
         {
             return new BooleanClause(q, occur);
         }
 
         /// <summary>
-        /// Builds a new PrefixQuery instance
+        /// Builds a new <see cref="PrefixQuery"/> instance
         /// </summary>
         /// <param name="prefix">Prefix term</param>
-        /// <returns>new PrefixQuery instance</returns>
+        /// <returns>new <see cref="PrefixQuery"/> instance</returns>
         protected internal virtual Query NewPrefixQuery(Term prefix)
         {
             PrefixQuery query = new PrefixQuery(prefix);
@@ -524,10 +519,10 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Builds a new RegexpQuery instance
+        /// Builds a new <see cref="RegexpQuery"/> instance
         /// </summary>
         /// <param name="regexp">Regexp term</param>
-        /// <returns>new RegexpQuery instance</returns>
+        /// <returns>new <see cref="RegexpQuery"/> instance</returns>
         protected internal virtual Query NewRegexpQuery(Term regexp)
         {
             RegexpQuery query = new RegexpQuery(regexp);
@@ -536,12 +531,12 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Builds a new FuzzyQuery instance
+        /// Builds a new <see cref="FuzzyQuery"/> instance
         /// </summary>
         /// <param name="term">Term</param>
         /// <param name="minimumSimilarity">minimum similarity</param>
         /// <param name="prefixLength">prefix length</param>
-        /// <returns>new FuzzyQuery Instance</returns>
+        /// <returns>new <see cref="FuzzyQuery"/> Instance</returns>
         protected internal virtual Query NewFuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
@@ -591,14 +586,14 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Builds a new {@link TermRangeQuery} instance
+        /// Builds a new <see cref="TermRangeQuery"/> instance
         /// </summary>
         /// <param name="field">Field</param>
         /// <param name="part1">min</param>
         /// <param name="part2">max</param>
         /// <param name="startInclusive">true if the start of the range is inclusive</param>
         /// <param name="endInclusive">true if the end of the range is inclusive</param>
-        /// <returns>new <see cref="T:TermRangeQuery"/> instance</returns>
+        /// <returns>new <see cref="TermRangeQuery"/> instance</returns>
         protected internal virtual Query NewRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive)
         {
             BytesRef start;
@@ -629,19 +624,19 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// Builds a new MatchAllDocsQuery instance
+        /// Builds a new <see cref="MatchAllDocsQuery"/> instance
         /// </summary>
-        /// <returns>new MatchAllDocsQuery instance</returns>
+        /// <returns>new <see cref="MatchAllDocsQuery"/> instance</returns>
         protected internal virtual Query NewMatchAllDocsQuery()
         {
             return new MatchAllDocsQuery();
         }
 
         /// <summary>
-        /// Builds a new WildcardQuery instance
+        /// Builds a new <see cref="WildcardQuery"/> instance
         /// </summary>
         /// <param name="t">wildcard term</param>
-        /// <returns>new WildcardQuery instance</returns>
+        /// <returns>new <see cref="WildcardQuery"/> instance</returns>
         protected internal virtual Query NewWildcardQuery(Term t)
         {
             WildcardQuery query = new WildcardQuery(t);
@@ -652,14 +647,14 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Factory method for generating query, given a set of clauses.
         /// By default creates a boolean query composed of clauses passed in.
-        ///
+        /// <para/>
         /// Can be overridden by extending classes, to modify query being
         /// returned.
         /// </summary>
-        /// <param name="clauses">List that contains {@link org.apache.lucene.search.BooleanClause} instances 
+        /// <param name="clauses">List that contains <see cref="BooleanClause"/> instances 
         /// to join.</param>
-        /// <exception cref="T:ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> object.</returns>
+        /// <exception cref="ParseException">throw in overridden method to disallow</exception>
+        /// <returns>Resulting <see cref="Query"/> object.</returns>
         protected internal virtual Query GetBooleanQuery(IList<BooleanClause> clauses)
         {
             return GetBooleanQuery(clauses, false);
@@ -668,15 +663,15 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Factory method for generating query, given a set of clauses.
         /// By default creates a boolean query composed of clauses passed in.
-        /// 
+        /// <para/>
         /// Can be overridden by extending classes, to modify query being
         /// returned.
         /// </summary>
-        /// <param name="clauses">List that contains <see cref="T:BooleanClause"/> instances
+        /// <param name="clauses">List that contains <see cref="BooleanClause"/> instances
         /// to join.</param>
         /// <param name="disableCoord">true if coord scoring should be disabled.</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> object.</returns>
+        /// <returns>Resulting <see cref="Query"/> object.</returns>
         protected internal virtual Query GetBooleanQuery(IList<BooleanClause> clauses, bool disableCoord)
         {
             if (clauses.Count == 0)
@@ -696,12 +691,12 @@ namespace Lucene.Net.QueryParsers.Classic
         /// parses an input term token that contains one or more wildcard
         /// characters (? and *), but is not a prefix term token (one
         /// that has just a single * character at the end)
-        /// <p>
+        /// <para/>
         /// Depending on settings, prefix term may be lower-cased
         /// automatically. It will not go through the default Analyzer,
         /// however, since normal Analyzers are unlikely to work properly
         /// with wildcard templates.
-        /// <p>
+        /// <para/>
         /// Can be overridden by extending classes, to provide custom handling for
         /// wildcard queries, which may be necessary due to missing analyzer calls.
         /// </summary>
@@ -709,7 +704,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <param name="termStr">Term token that contains one or more wild card
         /// characters (? or *), but is not simple prefix term</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> built for the term</returns>
+        /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetWildcardQuery(string field, string termStr)
         {
             if ("*".Equals(field))
@@ -730,12 +725,12 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Factory method for generating a query. Called when parser
         /// parses an input term token that contains a regular expression
         /// query.
-        /// <p>
+        /// <para/>
         /// Depending on settings, pattern term may be lower-cased
         /// automatically. It will not go through the default Analyzer,
         /// however, since normal Analyzers are unlikely to work properly
         /// with regular expression templates.
-        /// <p>
+        /// <para/>
         /// Can be overridden by extending classes, to provide custom handling for
         /// regular expression queries, which may be necessary due to missing analyzer
         /// calls.
@@ -743,7 +738,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="termStr">Term token that contains a regular expression</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> built for the term</returns>
+        /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetRegexpQuery(string field, string termStr)
         {
             if (LowercaseExpandedTerms)
@@ -756,24 +751,24 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Factory method for generating a query (similar to
-        /// <see cref="M:GetWildcardQuery"/>). Called when parser parses an input term
+        /// <see cref="GetWildcardQuery(string, string)"/>). Called when parser parses an input term
         /// token that uses prefix notation; that is, contains a single '*' wildcard
         /// character as its last character. Since this is a special case
         /// of generic wildcard term, and such a query can be optimized easily,
         /// this usually results in a different query object.
-        /// <p>
+        /// <para/>
         /// Depending on settings, a prefix term may be lower-cased
         /// automatically. It will not go through the default Analyzer,
         /// however, since normal Analyzers are unlikely to work properly
         /// with wildcard templates.
-        /// <p>
+        /// <para/>
         /// Can be overridden by extending classes, to provide custom handling for
         /// wild card queries, which may be necessary due to missing analyzer calls.
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="termStr">Term token to use for building term for the query</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> built for the term</returns>
+        /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetPrefixQuery(string field, string termStr)
         {
             if (!AllowLeadingWildcard && termStr.StartsWith("*"))
@@ -788,14 +783,14 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Factory method for generating a query (similar to
-        /// <see cref="M:GetWildcardQuery"/>). Called when parser parses
+        /// <see cref="GetWildcardQuery(string, string)"/>). Called when parser parses
         /// an input term token that has the fuzzy suffix (~) appended.
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="termStr">Term token to use for building term for the query</param>
         /// <param name="minSimilarity">minimum similarity</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
-        /// <returns>Resulting <see cref="T:Query"/> built for the term</returns>
+        /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetFuzzyQuery(string field, string termStr, float minSimilarity)
         {
             if (LowercaseExpandedTerms)
@@ -900,12 +895,10 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Returns a string where the escape char has been
         /// removed, or kept only once if there was a double escape.
-        /// 
+        /// <para/>
         /// Supports escaped unicode characters, e. g. translates 
-        /// <code>\\u0041</code> to <code>A</code>.
+        /// <c>\\u0041</c> to <c>A</c>.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         internal virtual string DiscardEscapeChar(string input)
         {
             // Create char array to hold unescaped char sequence

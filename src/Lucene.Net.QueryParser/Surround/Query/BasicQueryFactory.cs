@@ -102,8 +102,6 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// Two BasicQueryFactory's are equal when they generate
         /// the same types of basic queries, or both cannot generate queries anymore.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (!(obj is BasicQueryFactory))

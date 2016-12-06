@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of bits in this set </summary>
-        int Length();
+        int Length(); // LUCENENET TODO: Change to property getter
     }
 
     public static class BitsHelpers

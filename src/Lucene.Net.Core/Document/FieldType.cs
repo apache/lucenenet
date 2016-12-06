@@ -32,7 +32,7 @@ namespace Lucene.Net.Documents
         /// Data type of the numeric value
         /// @since 3.2
         /// </summary>
-        public enum NumericType
+        public enum NumericType // LUCENENET TODO: Move outside of FieldType class
         {
             /// <summary>
             /// 32-bit integer numeric type </summary>

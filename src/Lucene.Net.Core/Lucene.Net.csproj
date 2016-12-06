@@ -610,6 +610,7 @@
     <Compile Include="Support\BitSetSupport.cs" />
     <Compile Include="Support\BufferExceptions.cs" />
     <Compile Include="Support\BuildType.cs" />
+    <Compile Include="Support\BundleResourceManagerFactory.cs" />
     <Compile Include="Support\ByteArrayOutputStream.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
     <Compile Include="Support\ByteOrder.cs" />
@@ -639,6 +640,7 @@
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\IDictionaryExtensions.cs" />
+    <Compile Include="Support\IResourceManagerFactory.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
@@ -646,6 +648,7 @@
     <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
+    <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />

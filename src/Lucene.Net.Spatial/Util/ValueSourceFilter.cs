@@ -1,36 +1,39 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
-    /// Filter that matches all documents where a valuesource is
+    /// <see cref="Filter"/> that matches all documents where a <see cref="ValueSource"/> is
     /// in between a range of <c>min</c> and <c>max</c> inclusive.
+    /// @lucene.internal
     /// </summary>
     public class ValueSourceFilter : Filter
     {
-        readonly Filter startingFilter;
-        readonly ValueSource source;
+        //TODO see https://issues.apache.org/jira/browse/LUCENE-4251  (move out of spatial & improve)
+
+        internal readonly Filter startingFilter;
+        internal readonly ValueSource source;
         public readonly double min;
         public readonly double max;
 
@@ -46,30 +49,29 @@ namespace Lucene.Net.Spatial.Util
             this.max = max;
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             var values = source.GetValues(null, context);
-            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(context, acceptDocs), values, this);
+            return new ValueSourceFilteredDocIdSet(this, startingFilter.GetDocIdSet(context, acceptDocs), values);
         }
 
-        public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
+        internal class ValueSourceFilteredDocIdSet : FilteredDocIdSet
         {
-            private readonly ValueSourceFilter enclosingFilter;
+            private readonly ValueSourceFilter outerInstance;
             private readonly FunctionValues values;
 
-            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, FunctionValues values, ValueSourceFilter caller)
+            public ValueSourceFilteredDocIdSet(ValueSourceFilter outerInstance, DocIdSet innerSet, FunctionValues values)
                 : base(innerSet)
             {
-                this.enclosingFilter = caller;
+                this.outerInstance = outerInstance;
                 this.values = values;
             }
 
-            public override bool Match(int doc)
+            protected override bool Match(int doc)
             {
                 double val = values.DoubleVal(doc);
-                return val >= enclosingFilter.min && val <= enclosingFilter.max;
+                return val >= outerInstance.min && val <= outerInstance.max;
             }
         }
-
     }
 }

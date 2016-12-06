@@ -23,6 +23,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Query that matches wildcards
+    /// </summary>
     public class SrndTruncQuery : SimpleTerm
     {
         public SrndTruncQuery(string truncated, char unlimited, char mask)

@@ -31,39 +31,39 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// <summary>
         /// Whether terms of multi-term queries (e.g., wildcard,
         /// prefix, fuzzy and range) should be automatically
-        /// lower-cased or not.  Default is <code>true</code>.
+        /// lower-cased or not.  Default is <c>true</c>.
         /// </summary>
         bool LowercaseExpandedTerms { get; set; }
 
         /// <summary>
-        /// Set to <code>true</code> to allow leading wildcard characters.
-        /// <p>
-        /// When set, <code>*</code> or <code>?</code> are allowed as the first
-        /// character of a PrefixQuery and WildcardQuery. Note that this can produce
+        /// Set to <c>true</c> to allow leading wildcard characters.
+        /// <para/>
+        /// When set, <c>*</c> or <c>?</c> are allowed as the first
+        /// character of a <see cref="PrefixQuery"/> and <see cref="WildcardQuery"/>. Note that this can produce
         /// very slow queries on big indexes.
-        /// <p>
+        /// <para/>
         /// Default: false.
         /// </summary>
         bool AllowLeadingWildcard { get; set; }
 
         /// <summary>
-        /// Set to <code>true</code> to enable position increments in result query.
-        /// <p>
+        /// Set to <c>true</c> to enable position increments in result query.
+        /// <para/>
         /// When set, result phrase and multi-phrase queries will be aware of position
-        /// increments. Useful when e.g. a StopFilter increases the position increment
+        /// increments. Useful when e.g. a <see cref="Analysis.Core.StopFilter"/> increases the position increment
         /// of the token that follows an omitted token.
-        /// <p>
+        /// <para/>
         /// Default: false.
         /// </summary>
         bool EnablePositionIncrements { get; set; }
 
         /// <summary>
         /// By default, it uses 
-        /// {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} when creating a
+        /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> when creating a
         /// prefix, wildcard and range queries. This implementation is generally
         /// preferable because it a) Runs faster b) Does not have the scarcity of terms
-        /// unduly influence score c) avoids any {@link TooManyListenersException}
-        /// exception. However, if your application really needs to use the
+        /// unduly influence score c) avoids any exception due to too many listeners.
+        /// However, if your application really needs to use the
         /// old-fashioned boolean queries expansion rewriting and the above points are
         /// not relevant then use this change the rewrite method.
         /// </summary>
@@ -98,8 +98,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         float FuzzyMinSim { get; set; }
 
         /// <summary>
-        /// Sets the default <see cref="T:DateTools.Resolution"/> used for certain field when
-        /// no <see cref="T:DateTools.Resolution"/> is defined for this field.
+        /// Sets the default <see cref="DateTools.Resolution"/> used for certain field when
+        /// no <see cref="DateTools.Resolution"/> is defined for this field.
         /// </summary>
         void SetDateResolution(DateTools.Resolution dateResolution);
     }

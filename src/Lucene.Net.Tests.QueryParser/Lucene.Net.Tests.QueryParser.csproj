@@ -47,6 +47,31 @@
     <Compile Include="Ext\ExtensionStub.cs" />
     <Compile Include="Ext\TestExtendableQueryParser.cs" />
     <Compile Include="Ext\TestExtensions.cs" />
+    <Compile Include="Flexible\Core\Builders\TestQueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Core\Nodes\TestQueryNode.cs" />
+    <Compile Include="Flexible\Messages\MessagesTestBundle.cs" />
+    <Compile Include="Flexible\Messages\MessagesTestBundleBundle.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MessagesTestBundleBundle.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Flexible\Messages\TestNLS.cs" />
+    <Compile Include="Flexible\Precedence\TestPrecedenceQueryParser.cs" />
+    <Compile Include="Flexible\Spans\SpanOrQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Spans\SpansQueryConfigHandler.cs" />
+    <Compile Include="Flexible\Spans\SpansQueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Spans\SpansValidatorQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Spans\SpanTermQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Spans\TestSpanQueryParser.cs" />
+    <Compile Include="Flexible\Spans\TestSpanQueryParserSimpleSample.cs" />
+    <Compile Include="Flexible\Spans\UniqueFieldAttribute.cs" />
+    <Compile Include="Flexible\Spans\UniqueFieldAttributeImpl.cs" />
+    <Compile Include="Flexible\Spans\UniqueFieldQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\TestMultiAnalyzerQPHelper.cs" />
+    <Compile Include="Flexible\Standard\TestMultiFieldQPHelper.cs" />
+    <Compile Include="Flexible\Standard\TestNumericQueryParser.cs" />
+    <Compile Include="Flexible\Standard\TestQPHelper.cs" />
+    <Compile Include="Flexible\Standard\TestStandardQP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classic\TestMultiAnalyzer.cs" />
     <Compile Include="Simple\TestSimpleQueryParser.cs" />
@@ -82,6 +107,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.Tests.QueryParser.project.json" />
+    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.ja.resx" />
+    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MessagesTestBundleBundle.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

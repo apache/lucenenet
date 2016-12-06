@@ -29,70 +29,70 @@ namespace Lucene.Net.QueryParsers.Simple
      */
 
     /// <summary>
-    /// SimpleQueryParser is used to parse human readable query syntax.
-    /// <p>
+    /// <see cref="SimpleQueryParser"/> is used to parse human readable query syntax.
+    /// <para/>
     /// The main idea behind this parser is that a person should be able to type
     /// whatever they want to represent a query, and this parser will do its best
     /// to interpret what to search for no matter how poorly composed the request
     /// may be. Tokens are considered to be any of a term, phrase, or subquery for the
     /// operations described below.  Whitespace including ' ' '\n' '\r' and '\t'
     /// and certain operators may be used to delimit tokens ( ) + | " .
-    /// <p>
+    /// <para/>
     /// Any errors in query syntax will be ignored and the parser will attempt
     /// to decipher what it can; however, this may mean odd or unexpected results.
     /// <h4>Query Operators</h4>
-    /// <ul>
-    ///  <li>'{@code +}' specifies {@code AND} operation: <tt>token1+token2</tt>
-    ///  <li>'{@code |}' specifies {@code OR} operation: <tt>token1|token2</tt>
-    ///  <li>'{@code -}' negates a single token: <tt>-token0</tt>
-    ///  <li>'{@code "}' creates phrases of terms: <tt>"term1 term2 ..."</tt>
-    ///  <li>'{@code *}' at the end of terms specifies prefix query: <tt>term*</tt>
-    ///  <li>'{@code ~}N' at the end of terms specifies fuzzy query: <tt>term~1</tt>
-    ///  <li>'{@code ~}N' at the end of phrases specifies near query: <tt>"term1 term2"~5</tt>
-    ///  <li>'{@code (}' and '{@code )}' specifies precedence: <tt>token1 + (token2 | token3)</tt>
-    /// </ul>
-    /// <p>
-    /// The {@link #setDefaultOperator default operator} is {@code OR} if no other operator is specified.
-    /// For example, the following will {@code OR} {@code token1} and {@code token2} together:
-    /// <tt>token1 token2</tt>
-    /// <p>
+    /// <list type="bullet">
+    ///  <item>'<c>+</c>' specifies <c>AND</c> operation: <c>token1+token2</c></item>
+    ///  <item>'<c>|</c>' specifies <c>OR</c> operation: <c>token1|token2</c></item>
+    ///  <item>'<c>-</c>' negates a single token: <c>-token0</c></item>
+    ///  <item>'<c>"</c>' creates phrases of terms: <c>"term1 term2 ..."</c></item>
+    ///  <item>'<c>*</c>' at the end of terms specifies prefix query: <c>term*</c></item>
+    ///  <item>'<c>~</c>N' at the end of terms specifies fuzzy query: <c>term~1</c></item>
+    ///  <item>'<c>~</c>N' at the end of phrases specifies near query: <c>"term1 term2"~5</c></item>
+    ///  <item>'<c>(</c>' and '<c>)</c>' specifies precedence: <c>token1 + (token2 | token3)</c></item>
+    /// </list>
+    /// <para/>
+    /// The default operator is <c>OR</c> if no other operator is specified.
+    /// For example, the following will <c>OR</c> <c>token1</c> and <c>token2</c> together:
+    /// <c>token1 token2</c>
+    /// <para/>
     /// Normal operator precedence will be simple order from right to left.
-    /// For example, the following will evaluate {@code token1 OR token2} first,
-    /// then {@code AND} with {@code token3}:
-    /// <blockquote>token1 | token2 + token3</blockquote>
+    /// For example, the following will evaluate <c>token1 OR token2</c> first,
+    /// then <c>AND</c> with <c>token3</c>:
+    /// <code>token1 | token2 + token3</code>
     /// <h4>Escaping</h4>
-    /// <p>
+    /// <para/>
     /// An individual term may contain any possible character with certain characters
-    /// requiring escaping using a '{@code \}'.  The following characters will need to be escaped in
+    /// requiring escaping using a '<c>\</c>'.  The following characters will need to be escaped in
     /// terms and phrases:
-    /// {@code + | " ( ) ' \}
-    /// <p>
-    /// The '{@code -}' operator is a special case.  On individual terms (not phrases) the first
-    /// character of a term that is {@code -} must be escaped; however, any '{@code -}' characters
+    /// <c>+ | " ( ) ' \</c>
+    /// <para/>
+    /// The '<c>-</c>' operator is a special case.  On individual terms (not phrases) the first
+    /// character of a term that is <c>-</c> must be escaped; however, any '<c>-</c>' characters
     /// beyond the first character do not need to be escaped.
     /// For example:
-    /// <ul>
-    ///   <li>{@code -term1}   -- Specifies {@code NOT} operation against {@code term1}
-    ///   <li>{@code \-term1}  -- Searches for the term {@code -term1}.
-    ///   <li>{@code term-1}   -- Searches for the term {@code term-1}.
-    ///   <li>{@code term\-1}  -- Searches for the term {@code term-1}.
-    /// </ul>
-    /// <p>
-    /// The '{@code *}' operator is a special case. On individual terms (not phrases) the last
-    /// character of a term that is '{@code *}' must be escaped; however, any '{@code *}' characters
+    /// <list type="bullet">
+    ///   <item><c>-term1</c>   -- Specifies <c>NOT</c> operation against <c>term1</c></item>
+    ///   <item><c>\-term1</c>  -- Searches for the term <c>-term1</c>.</item>
+    ///   <item><c>term-1</c>   -- Searches for the term <c>term-1</c>.</item>
+    ///   <item><c>term\-1</c>  -- Searches for the term <c>term-1</c>.</item>
+    /// </list>
+    /// <para/>
+    /// The '<c>*</c>' operator is a special case. On individual terms (not phrases) the last
+    /// character of a term that is '<c>*</c>' must be escaped; however, any '<c>*</c>' characters
     /// before the last character do not need to be escaped:
-    /// <ul>
-    ///   <li>{@code term1*}  --  Searches for the prefix {@code term1}
-    ///   <li>{@code term1\*} --  Searches for the term {@code term1*}
-    ///   <li>{@code term*1}  --  Searches for the term {@code term*1}
-    ///   <li>{@code term\*1} --  Searches for the term {@code term*1}
-    /// </ul>
-    /// <p>
+    /// <list type="bullet">
+    ///   <item><c>term1*</c>  --  Searches for the prefix <c>term1</c></item>
+    ///   <item><c>term1\*</c> --  Searches for the term <c>term1*</c></item>
+    ///   <item><c>term*1</c>  --  Searches for the term <c>term*1</c></item>
+    ///   <item><c>term\*1</c> --  Searches for the term <c>term*1</c></item>
+    /// </list>
+    /// <para/>
     /// Note that above examples consider the terms before text processing.
     /// </summary>
     public class SimpleQueryParser : QueryBuilder
     {
-        /** Map of fields to query against with their weights */
+        /// <summary>Map of fields to query against with their weights</summary>
         protected readonly IDictionary<string, float> weights;
 
         // TODO: Make these into a [Flags] enum in .NET??
@@ -122,32 +122,19 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private BooleanClause.Occur defaultOperator = BooleanClause.Occur.SHOULD;
 
-        /// <summary>
-        /// Creates a new parser searching over a single field.
-        /// </summary>
-        /// <param name="analyzer"></param>
-        /// <param name="field"></param>
+        /// <summary>Creates a new parser searching over a single field.</summary>
         public SimpleQueryParser(Analyzer analyzer, string field)
             : this(analyzer, new HashMap<string, float>() { { field, 1.0F } })
         {
         }
 
-        /// <summary>
-        /// Creates a new parser searching over multiple fields with different weights.
-        /// </summary>
-        /// <param name="analyzer"></param>
-        /// <param name="weights"></param>
+        /// <summary>Creates a new parser searching over multiple fields with different weights.</summary>
         public SimpleQueryParser(Analyzer analyzer, IDictionary<string, float> weights)
             : this(analyzer, weights, -1)
         {
         }
 
-        /// <summary>
-        /// Creates a new parser with custom flags used to enable/disable certain features.
-        /// </summary>
-        /// <param name="analyzer"></param>
-        /// <param name="weights"></param>
-        /// <param name="flags"></param>
+        /// <summary>Creates a new parser with custom flags used to enable/disable certain features.</summary>
         public SimpleQueryParser(Analyzer analyzer, IDictionary<string, float> weights, int flags)
             : base(analyzer)
         {
@@ -155,11 +142,7 @@ namespace Lucene.Net.QueryParsers.Simple
             this.flags = flags;
         }
 
-        /// <summary>
-        /// Parses the query text and returns parsed query (or null if empty)
-        /// </summary>
-        /// <param name="queryText"></param>
-        /// <returns></returns>
+        /// <summary>Parses the query text and returns parsed query (or null if empty)</summary>
         public Query Parse(string queryText)
         {
             char[] data = queryText.ToCharArray();
@@ -501,8 +484,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// is consumed to be added to our existing query tree
         /// this method will only add to the existing tree if the branch contained in state is not null
         /// </summary>
-        /// <param name="state"></param>
-        /// <param name="branch"></param>
         private void BuildQueryTree(State state, Query branch)
         {
             if (branch != null)
@@ -557,7 +538,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Helper parsing fuzziness from parsing state
         /// </summary>
-        /// <param name="state"></param>
         /// <returns>slop/edit distance, 0 in the case of non-parsing slop/edit string</returns>
         private int ParseFuzziness(State state)
         {
@@ -596,8 +576,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Helper returning true if the state has reached the end of token.
         /// </summary>
-        /// <param name="state"></param>
-        /// <returns></returns>
         private bool TokenFinished(State state)
         {
             if ((state.Data[state.Index] == '"' && (flags & PHRASE_OPERATOR) != 0)
@@ -618,8 +596,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Factory method to generate a standard query (no phrase or prefix operators).
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         protected virtual Query NewDefaultQuery(string text)
         {
             BooleanQuery bq = new BooleanQuery(true);
@@ -638,9 +614,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Factory method to generate a fuzzy query.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="fuzziness"></param>
-        /// <returns></returns>
         protected virtual Query NewFuzzyQuery(string text, int fuzziness)
         {
             BooleanQuery bq = new BooleanQuery(true);
@@ -659,9 +632,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Factory method to generate a phrase query with slop.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="slop"></param>
-        /// <returns></returns>
         protected virtual Query NewPhraseQuery(string text, int slop)
         {
             BooleanQuery bq = new BooleanQuery(true);
@@ -680,8 +650,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Factory method to generate a prefix query.
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         protected virtual Query NewPrefixQuery(string text)
         {
             BooleanQuery bq = new BooleanQuery(true);
@@ -697,8 +665,6 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>
         /// Helper to simplify boolean queries with 0 or 1 clause
         /// </summary>
-        /// <param name="bq"></param>
-        /// <returns></returns>
         protected virtual Query Simplify(BooleanQuery bq)
         {
             if (!bq.Clauses.Any())
@@ -717,7 +683,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /// <summary>
         /// Gets or Sets the implicit operator setting, which will be
-        /// either {@code SHOULD} or {@code MUST}.
+        /// either <see cref="BooleanClause.Occur.SHOULD"/> or <see cref="BooleanClause.Occur.MUST"/>.
         /// </summary>
         public virtual BooleanClause.Occur DefaultOperator
         {

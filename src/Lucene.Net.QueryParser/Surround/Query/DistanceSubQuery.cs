@@ -24,9 +24,9 @@
     public interface IDistanceSubQuery
     {
         /// <summary>
-        /// When distanceSubQueryNotAllowed() returns non null, the reason why the subquery
+        /// When <see cref="DistanceSubQueryNotAllowed()"/> returns non null, the reason why the subquery
         /// is not allowed as a distance subquery is returned.
-        /// <br>When distanceSubQueryNotAllowed() returns null addSpanNearQueries() can be used
+        /// <para/>When <see cref="DistanceSubQueryNotAllowed()"/> returns null <see cref="AddSpanQueries(SpanNearClauseFactory)"/> can be used
         /// in the creation of the span near clause for the subquery.
         /// </summary>
         string DistanceSubQueryNotAllowed();

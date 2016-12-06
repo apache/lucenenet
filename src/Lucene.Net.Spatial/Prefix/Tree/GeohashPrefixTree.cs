@@ -1,61 +1,75 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
-using System.Collections.Generic;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using Spatial4n.Core.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
-    /// A
-    /// <see cref="SpatialPrefixTree">SpatialPrefixTree</see>
-    /// based on
+    /// A <see cref="SpatialPrefixTree">SpatialPrefixTree</see> based on
     /// <a href="http://en.wikipedia.org/wiki/Geohash">Geohashes</a>.
-    /// Uses
-    /// <see cref="Spatial4n.Core.IO.GeohashUtils">Spatial4n.Core.IO.GeohashUtils
-    /// 	</see>
-    /// to do all the geohash work.
+    /// Uses <see cref="GeohashUtils"/> to do all the geohash work.
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
+        #region Nested type: Factory
+
+        /// <summary>
+        /// Factory for creating <see cref="GeohashPrefixTree"/>
+        /// instances with useful defaults
+        /// </summary>
+        public class Factory : SpatialPrefixTreeFactory
+        {
+            protected internal override int GetLevelForDistance(double degrees)
+            {
+                var grid = new GeohashPrefixTree(ctx, GeohashPrefixTree.MaxLevelsPossible);
+                return grid.GetLevelForDistance(degrees);
+            }
+
+            protected internal override SpatialPrefixTree NewSPT()
+            {
+                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : GeohashPrefixTree.MaxLevelsPossible);
+            }
+        }
+
+        #endregion
+
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
         {
-            Rectangle bounds = ctx.GetWorldBounds();
-            if (bounds.GetMinX() != -180)
+            IRectangle bounds = ctx.WorldBounds;
+            if (bounds.MinX != -180)
             {
-                throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " +
-                                            bounds);
+                throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " + bounds);
             }
             int Maxp = MaxLevelsPossible;
             if (maxLevels <= 0 || maxLevels > Maxp)
             {
-                throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels
-                    );
+                throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels);
             }
         }
 
-        /// <summary>Any more than this and there's no point (double lat & lon are the same).
-        /// 	</summary>
-        /// <remarks>Any more than this and there's no point (double lat & lon are the same).
-        /// 	</remarks>
+        /// <summary>Any more than this and there's no point (double lat & lon are the same).</summary>
         public static int MaxLevelsPossible
         {
             get { return GeohashUtils.MAX_PRECISION; }
@@ -65,17 +79,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (dist == 0)
             {
-                return maxLevels;
+                return maxLevels;//short circuit
             }
-            //short circuit
+            
             int level = GeohashUtils.LookupHashLenForWidthHeight(dist, dist);
             return Math.Max(Math.Min(level, maxLevels), 1);
         }
 
-        protected internal override Cell GetCell(Point p, int level)
+        protected internal override Cell GetCell(IPoint p, int level)
         {
-            return new GhCell(this, GeohashUtils.EncodeLatLon(p.GetY(), p.GetX
-                                                                            (), level));
+            return new GhCell(this, GeohashUtils.EncodeLatLon(p.Y, p.X, level));
         }
 
         //args are lat,lon (y,x)
@@ -89,46 +102,18 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return new GhCell(this, bytes, offset, len);
         }
 
-        #region Nested type: Factory
-
-        /// <summary>
-        /// Factory for creating
-        /// <see cref="GeohashPrefixTree">GeohashPrefixTree</see>
-        /// instances with useful defaults
-        /// </summary>
-        public class Factory : SpatialPrefixTreeFactory
-        {
-            protected internal override int GetLevelForDistance(double degrees)
-            {
-                var grid = new GeohashPrefixTree(ctx, MaxLevelsPossible);
-                return grid.GetLevelForDistance(degrees);
-            }
-
-            protected internal override SpatialPrefixTree NewSPT()
-            {
-                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MaxLevelsPossible);
-            }
-        }
-
-        #endregion
-
         #region Nested type: GhCell
 
         internal class GhCell : Cell
         {
-            private readonly GeohashPrefixTree _enclosing;
-            private Shape shape;
-
-            internal GhCell(GeohashPrefixTree _enclosing, string token)
-                : base(token)
+            internal GhCell(GeohashPrefixTree outerInstance, string token)
+                : base(outerInstance, token)
             {
-                this._enclosing = _enclosing;
             }
 
-            internal GhCell(GeohashPrefixTree _enclosing, byte[] bytes, int off, int len)
-                : base(bytes, off, len)
+            internal GhCell(GeohashPrefixTree outerInstance, byte[] bytes, int off, int len)
+                : base(outerInstance, bytes, off, len)
             {
-                this._enclosing = _enclosing;
             }
 
             public override void Reset(byte[] bytes, int off, int len)
@@ -139,41 +124,42 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override ICollection<Cell> GetSubCells()
             {
-                string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);
-                //sorted
+                string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);//sorted
                 IList<Cell> cells = new List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
-                    cells.Add(new GhCell(_enclosing, hash));
+                    cells.Add(new GhCell((GeohashPrefixTree)outerInstance, hash));
                 }
                 return cells;
             }
 
-            public override int GetSubCellsSize()
+            public override int SubCellsSize
             {
-                return 32;
+                get { return 32; }//8x4
             }
 
-            //8x4
-            public override Cell GetSubCell(Point p)
+            public override Cell GetSubCell(IPoint p)
             {
-                return _enclosing.GetCell(p, Level + 1);
+                return outerInstance.GetCell(p, Level + 1);//not performant!
             }
 
-            //not performant!
-            //cache
-            public override Shape GetShape()
+            private IShape shape;//cache
+
+            public override IShape Shape
             {
-                if (shape == null)
+                get
                 {
-                    shape = GeohashUtils.DecodeBoundary(Geohash, _enclosing.ctx);
+                    if (shape == null)
+                    {
+                        shape = GeohashUtils.DecodeBoundary(Geohash, outerInstance.ctx);
+                    }
+                    return shape;
                 }
-                return shape;
             }
 
-            public override Point GetCenter()
+            public override IPoint Center
             {
-                return GeohashUtils.Decode(Geohash, _enclosing.ctx);
+                get { return GeohashUtils.Decode(Geohash, outerInstance.ctx); }
             }
 
             private string Geohash

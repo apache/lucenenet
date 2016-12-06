@@ -22,6 +22,23 @@ namespace Lucene.Net.QueryParsers.Ext
      * limitations under the License.
      */
 
+    /// <summary>
+    /// The <see cref="Extensions"/> class represents an extension mapping to associate
+    /// <see cref="ParserExtension"/> instances with extension keys. An extension key is a
+    /// string encoded into a Lucene standard query parser field symbol recognized by
+    /// <see cref="ExtendableQueryParser"/>. The query parser passes each extension field
+    /// token to <see cref="SplitExtensionField(string, string)"/> to separate the
+    /// extension key from the field identifier.
+    /// <para/>
+    /// In addition to the key to extension mapping this class also defines the field
+    /// name overloading scheme. <see cref="ExtendableQueryParser"/> uses the given
+    /// extension to split the actual field name and extension key by calling
+    /// <see cref="SplitExtensionField(string, string)"/>. To change the order or the key
+    /// / field name encoding scheme users can subclass <see cref="Extensions"/> to
+    /// implement their own.
+    /// </summary>
+    /// <seealso cref="ExtendableQueryParser"/>
+    /// <seealso cref="ParserExtension"/>
     public class Extensions
     {
         private readonly IDictionary<string, ParserExtension> extensions = new Dictionary<string, ParserExtension>();
@@ -34,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Ext
 
         /// <summary>
         /// Creates a new <see cref="Extensions"/> instance with the
-        /// <see cref="#DEFAULT_EXTENSION_FIELD_DELIMITER"/> as a delimiter character.
+        /// <see cref="DEFAULT_EXTENSION_FIELD_DELIMITER"/> as a delimiter character.
         /// </summary>
         public Extensions()
             : this(DEFAULT_EXTENSION_FIELD_DELIMITER)
@@ -106,7 +123,7 @@ namespace Lucene.Net.QueryParsers.Ext
 
         /// <summary>
         /// Escapes an extension field. The default implementation is equivalent to
-        /// <see cref="QueryParser.Escape(string)"/>.
+        /// <see cref="QueryParserBase.Escape(string)"/>.
         /// </summary>
         /// <param name="extfield">the extension field identifier</param>
         /// <returns>the extension field identifier with all special chars escaped with
@@ -123,12 +140,12 @@ namespace Lucene.Net.QueryParsers.Ext
         /// of the extension key and the field. By default the extension key is
         /// appended to the end of the returned string while the field is added to the
         /// beginning. Special Query characters are escaped in the result.
-        /// <p>
+        /// <para>
         /// Note: <see cref="Extensions"/> subclasses must maintain the contract between
-        /// <see cref="M:BuildExtensionField(string)"/> and
-        /// <see cref="M:BuildExtensionField(string, string)"/> where the latter inverts the
+        /// <see cref="BuildExtensionField(string)"/> and
+        /// <see cref="BuildExtensionField(string, string)"/> where the latter inverts the
         /// former.
-        /// </p>
+        /// </para>
         /// </summary>
         /// <param name="extensionKey">the extension key</param>
         /// <returns>escaped extension field identifier</returns>
@@ -144,16 +161,17 @@ namespace Lucene.Net.QueryParsers.Ext
         /// of the extension key and the field. By default the extension key is
         /// appended to the end of the returned string while the field is added to the
         /// beginning. Special Query characters are escaped in the result.
-        /// <p>
+        /// <para>
         /// Note: <see cref="Extensions"/> subclasses must maintain the contract between
-        /// <see cref="M:BuildExtensionField(string)"/> and
-        /// <see cref="M:BuildExtensionField(string, string)"/> where the latter inverts the
+        /// <see cref="BuildExtensionField(string)"/> and
+        /// <see cref="BuildExtensionField(string, string)"/> where the latter inverts the
         /// former.
+        /// </para>
         /// </summary>
         /// <param name="extensionKey">the extension key</param>
         /// <param name="field">the field to apply the extension on.</param>
         /// <returns>escaped extension field identifier</returns>
-        /// <remarks>See <see cref="M:BuildExtensionField(string)"/> to use the default query field</remarks>
+        /// <remarks>See <see cref="BuildExtensionField(string)"/> to use the default query field</remarks>
         public virtual string BuildExtensionField(string extensionKey, string field)
         {
             StringBuilder builder = new StringBuilder(field);
@@ -162,6 +180,6 @@ namespace Lucene.Net.QueryParsers.Ext
             return EscapeExtensionField(builder.ToString());
         }
 
-        // NOTE: Pair<T, T> was eliminated in favor of the built in Tuple<T, T> type.
+        // LUCENENET NOTE: Pair<T, T> was eliminated in favor of the built in Tuple<T, T> type.
     }
 }

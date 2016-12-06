@@ -1,52 +1,70 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
-using Lucene.Net.Search.Function;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
+using System;
+using System.Collections;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
-    /// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
+    /// An implementation of the Lucene ValueSource that returns the spatial distance
+    /// between an input point and a document's points in
+    /// <see cref="ShapeFieldCacheProvider{T}"/>. The shortest distance is returned if a
+    /// document has more than one point.
+    /// 
+    /// @lucene.internal
     /// </summary>
     public class ShapeFieldCacheDistanceValueSource : ValueSource
     {
-        private readonly ShapeFieldCacheProvider<Point> provider;
         private readonly SpatialContext ctx;
-        private readonly Point from;
+        private readonly IPoint from;
+        private readonly ShapeFieldCacheProvider<IPoint> provider;
+        private readonly double multiplier;
 
-        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, ShapeFieldCacheProvider<Point> provider, Point from)
+        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
+            ShapeFieldCacheProvider<IPoint> provider, IPoint from, double multiplier)
         {
             this.ctx = ctx;
             this.from = from;
             this.provider = provider;
+            this.multiplier = multiplier;
         }
 
-        public class CachedDistanceFunctionValue : FunctionValues
+        public override string Description
+        {
+            get { return GetType().Name + "(" + provider + ", " + from + ")"; }
+        }
+
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
+        }
+
+        internal class CachedDistanceFunctionValue : FunctionValues
         {
             private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
-            private readonly ShapeFieldCache<Point> cache;
-            private readonly Point from;
-            private readonly DistanceCalculator calculator;
+            private readonly ShapeFieldCache<IPoint> cache;
+            private readonly IPoint from;
+            private readonly IDistanceCalculator calculator;
             private readonly double nullValue;
 
             public CachedDistanceFunctionValue(AtomicReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
@@ -55,8 +73,8 @@ namespace Lucene.Net.Spatial.Util
                 this.enclosingInstance = enclosingInstance;
 
                 from = enclosingInstance.from;
-                calculator = enclosingInstance.ctx.GetDistCalc();
-                nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
+                calculator = enclosingInstance.ctx.DistCalc;
+                nullValue = (enclosingInstance.ctx.IsGeo ? 180 * enclosingInstance.multiplier : double.MaxValue);
             }
 
             public override float FloatVal(int doc)
@@ -74,7 +92,7 @@ namespace Lucene.Net.Spatial.Util
                     {
                         v = Math.Min(v, calculator.Distance(from, vals[i]));
                     }
-                    return v;
+                    return v * enclosingInstance.multiplier;
                 }
                 return nullValue;
             }
@@ -85,22 +103,10 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override string Description
-        {
-            get
-            {
-                return GetType().Name + "(" + provider + ", " + from + ")";
-            }
-        }
-
-        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
-        {
-            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
-        }
-
         public override bool Equals(object o)
         {
             if (this == o) return true;
+            if (o == null || GetType() != o.GetType()) return false;
 
             var that = o as ShapeFieldCacheDistanceValueSource;
 
@@ -108,6 +114,7 @@ namespace Lucene.Net.Spatial.Util
             if (!ctx.Equals(that.ctx)) return false;
             if (!from.Equals(that.from)) return false;
             if (!provider.Equals(that.provider)) return false;
+            if (multiplier != that.multiplier) return false;
 
             return true;
         }

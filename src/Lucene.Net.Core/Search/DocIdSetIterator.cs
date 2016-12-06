@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
         ///
         /// @since 2.9
         /// </summary>
-        public abstract int DocID();
+        public abstract int DocID(); // LUCENENET TODO: Change to property getter
 
         /// <summary>
         /// Advances to the next document in the set and returns the doc it is

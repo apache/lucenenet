@@ -34,12 +34,12 @@ namespace Lucene.Net.QueryParsers.Ext
     /// extension key from the field symbol and tries to resolve the associated
     /// <see cref="ParserExtension"/>. If the parser can't resolve the key or the field
     /// token does not contain a separation character, <see cref="ExtendableQueryParser"/>
-    /// yields the same behavior as its super class <see cref="QueryParser"/>. Otherwise,
+    /// yields the same behavior as its super class <see cref="Classic.QueryParser"/>. Otherwise,
     /// if the key is associated with a <see cref="ParserExtension"/> instance, the parser
     /// builds an instance of <see cref="ExtensionQuery"/> to be processed by
     /// <see cref="ParserExtension.Parse(ExtensionQuery)"/>.If a extension field does not
     /// contain a field part the default field for the query will be used.
-    /// <p>
+    /// <para>
     /// To guarantee that an extension field is processed with its associated
     /// extension, the extension query part must escape any special characters like
     /// '*' or '['. If the extension query contains any whitespace characters, the
@@ -53,22 +53,21 @@ namespace Lucene.Net.QueryParsers.Ext
     /// <pre>
     ///   _customExt:"Apache Lucene\?" OR _customExt:prefix\*
     /// </pre>
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// The <see cref="ExtendableQueryParser"/> itself does not implement the logic how
     /// field and extension key are separated or ordered. All logic regarding the
     /// extension key and field symbol parsing is located in <see cref="Extensions"/>.
     /// Customized extension schemes should be implemented by sub-classing
     /// <see cref="Extensions"/>.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// For details about the default encoding scheme see <see cref="Extensions"/>.
-    /// </p>
-    /// 
-    /// <see cref="Extensions"/>
-    /// <see cref="ParserExtension"/>
-    /// <see cref="ExtensionQuery"/>
+    /// </para>
     /// </summary>
+    /// <seealso cref="Extensions"/>
+    /// <seealso cref="ParserExtension"/>
+    /// <seealso cref="ExtensionQuery"/>
     public class ExtendableQueryParser : Classic.QueryParser
     {
         private readonly string defaultField;
