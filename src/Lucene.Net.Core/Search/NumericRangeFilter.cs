@@ -57,14 +57,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public bool IncludesMin()
+        public bool IncludesMin() // LUCENENET TODO: Make into property get
         {
             return Query.IncludesMin();
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public bool IncludesMax()
+        public bool IncludesMax() // LUCENENET TODO: Make into property get
         {
             return Query.IncludesMax();
         }
