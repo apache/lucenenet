@@ -1,0 +1,40 @@
+﻿{
+  "version": "4.8.0-alpha",
+  "dependencies": {
+    "Lucene.Net.Queries": "4.8.0-alpha",
+    "GeoAPI": "1.7.4",
+    "NetTopologySuite": "1.14",
+    "Spatial4n.Core": "0.4.1-beta"
+  },
+  "buildOptions": {
+    "compile": {
+      "exclude": [
+        "BBox/*"
+      ],
+      "excludeFiles": [
+        "Prefix/Tree/Node.cs",
+        "Prefix/RecursivePrefixTreeFilter.cs",
+        "Util/TermsEnumCompatibility.cs"
+      ]
+    }
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": [ "dnxcore50", "portable-net403+sl5+win8+wp8+wpa81" ],
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      },
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      }
+    },
+    "net451": {
+      "dependencies": {
+        "Lucene.Net.Core": "4.8.0-alpha"
+      },
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE" ]
+      }
+    }
+  }
+}
