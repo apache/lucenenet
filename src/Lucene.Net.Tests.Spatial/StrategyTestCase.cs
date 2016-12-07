@@ -9,6 +9,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Spatial
 {
@@ -110,7 +111,7 @@ namespace Lucene.Net.Spatial
         protected virtual IEnumerator<SpatialTestData> getSampleData(String testDataFile)
         {
             String path = DATA_RESOURCE_PATH + testDataFile;
-            Stream stream = GetType().Assembly.GetManifestResourceStream(path);
+            Stream stream = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(path);
             if (stream == null)
                 throw new FileNotFoundException("classpath resource not found: " + path);
             return SpatialTestData.GetTestData(stream, ctx);//closes the InputStream
@@ -118,7 +119,7 @@ namespace Lucene.Net.Spatial
 
         protected virtual IEnumerator<SpatialTestQuery> getTestQueries(String testQueryFile, SpatialContext ctx)
         {
-            Stream @in = GetType().Assembly.GetManifestResourceStream(RESOURCE_PATH + testQueryFile);
+            Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + testQueryFile);
             return SpatialTestQuery.GetTestQueries(
                 argsParser, ctx, testQueryFile, @in);//closes the InputStream
         }

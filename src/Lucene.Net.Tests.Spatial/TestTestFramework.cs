@@ -6,6 +6,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Spatial
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Spatial
         {
             String name = StrategyTestCase.RESOURCE_PATH + StrategyTestCase.QTEST_Cities_Intersects_BBox;
 
-            Stream @in = GetType().Assembly.GetManifestResourceStream(name);
+            Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(name);
             SpatialContext ctx = SpatialContext.GEO;
             IEnumerator<SpatialTestQuery> iter = SpatialTestQuery.GetTestQueries(
                 new SpatialArgsParser(), ctx, name, @in);//closes the InputStream
