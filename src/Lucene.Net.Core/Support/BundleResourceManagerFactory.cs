@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Resources;
 
 namespace Lucene.Net.Support
@@ -55,7 +56,7 @@ namespace Lucene.Net.Support
         /// <returns>The type of resources (the class name + <see cref="ResourceSuffix"/>), as a .NET <see cref="Type"/> instance.</returns>
         protected virtual Type GetResourceType(Type clazz)
         {
-            return Type.GetType(string.Concat(clazz.Namespace, ".", clazz.Name, ResourceSuffix, ", ", clazz.Assembly.FullName));
+            return Type.GetType(string.Concat(clazz.Namespace, ".", clazz.Name, ResourceSuffix, ", ", clazz.GetTypeInfo().Assembly.FullName));
         }
 
         /// <summary>
