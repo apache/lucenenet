@@ -1004,7 +1004,7 @@ namespace Lucene.Net.QueryParsers.Util
         }
 
         // LUCENETODO: convert this from DateField to DateUtil
-        //  public void testLocalDateFormat() throws IOException, ParseException {
+        //  public void TestLocalDateFormat() throws IOException, ParseException {
         //    Directory ramDir = newDirectory();
         //    IndexWriter iw = new IndexWriter(ramDir, newIndexWriterConfig( TEST_VERSION_CURRENT, new MockAnalyzer(random, MockTokenizer.WHITESPACE, false)));
         //    addDateDoc("a", 2005, 12, 2, 10, 15, 33, iw);

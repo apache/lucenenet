@@ -215,8 +215,49 @@
     <Compile Include="Surround\Query\SrndTermQuery.cs" />
     <Compile Include="Surround\Query\SrndTruncQuery.cs" />
     <Compile Include="Surround\Query\TooManyBasicQueries.cs" />
+    <Compile Include="Xml\Builders\BooleanFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\BooleanQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\BoostingQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\BoostingTermBuilder.cs" />
+    <Compile Include="Xml\Builders\CachedFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\ConstantScoreQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\DisjunctionMaxQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\DuplicateFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\FilteredQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\FuzzyLikeThisQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\LikeThisQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\MatchAllDocsQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\NumericRangeFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\NumericRangeQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\RangeFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanBuilderBase.cs" />
+    <Compile Include="Xml\Builders\SpanFirstBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanNearBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanNotBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanOrBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanOrTermsBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanQueryBuilderFactory.cs" />
+    <Compile Include="Xml\Builders\SpanTermBuilder.cs" />
+    <Compile Include="Xml\Builders\TermQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\TermsFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\TermsQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\UserInputQueryBuilder.cs" />
+    <Compile Include="Xml\CoreParser.cs" />
+    <Compile Include="Xml\CorePlusExtensionsParser.cs" />
+    <Compile Include="Xml\DOMUtils.cs" />
+    <Compile Include="Xml\FilterBuilder.cs" />
+    <Compile Include="Xml\FilterBuilderFactory.cs" />
+    <Compile Include="Xml\ParserException.cs" />
+    <Compile Include="Xml\QueryBuilder.cs" />
+    <Compile Include="Xml\QueryBuilderFactory.cs" />
+    <Compile Include="Xml\QueryTemplateManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <Project>{13274BA9-9052-4354-8FFE-E3F32593368F}</Project>
+      <Name>Lucene.Net.Sandbox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
       <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
       <Name>Lucene.Net.Analysis.Common</Name>
@@ -224,6 +265,10 @@
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
