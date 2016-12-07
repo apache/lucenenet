@@ -24,7 +24,9 @@ namespace Lucene.Net.Spatial.Queries
     /// 
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class UnsupportedSpatialOperation : NotSupportedException
     {
         public UnsupportedSpatialOperation(SpatialOperation op)

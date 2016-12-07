@@ -33,7 +33,9 @@ namespace Lucene.Net.Spatial.Queries
     /// </para>
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public abstract class SpatialOperation
     {
         // Private registry

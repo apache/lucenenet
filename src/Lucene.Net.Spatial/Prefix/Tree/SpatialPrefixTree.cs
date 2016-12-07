@@ -109,7 +109,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return Math.Sqrt(width * width + height * height);
         }
 
+#if FEATURE_SERIALIZABLE
         [NonSerialized]
+#endif
         private Cell worldCell;//cached
 
         /// <summary>Returns the level 0 cell which encompasses all spatial data.</summary>
