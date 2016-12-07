@@ -24,7 +24,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Token Manager Error.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class TokenMgrError : Exception
     {
         // Ordinals for various reasons why an Error of this type can be thrown.

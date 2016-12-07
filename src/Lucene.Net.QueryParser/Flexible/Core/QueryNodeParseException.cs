@@ -28,7 +28,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="QueryNodeException"/>
     /// <seealso cref="Parser.ISyntaxParser"/>
     /// <seealso cref="Nodes.IQueryNode"/>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class QueryNodeParseException : QueryNodeException
     {
         private string query;

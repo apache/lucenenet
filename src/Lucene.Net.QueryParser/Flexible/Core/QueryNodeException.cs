@@ -33,7 +33,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="NLS"/>
     /// <seealso cref="INLSException"/>
     /// <seealso cref="Nodes.IQueryNode"/>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class QueryNodeException : Exception, INLSException
     {
         protected IMessage message = new MessageImpl(QueryParserMessages.EMPTY_MESSAGE);
