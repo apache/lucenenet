@@ -86,13 +86,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
 
         public static string GetLocalizedMessage(string key, CultureInfo locale)
         {
-            object message = GetResourceBundleObject(key, locale);
+            string message = GetResourceBundleObject(key, locale);
             if (message == null)
             {
                 return "Message with key:" + key + " and locale: " + locale
                     + " not found.";
             }
-            return message.ToString();
+            return message;
         }
 
         public static string GetLocalizedMessage(string key, CultureInfo locale,
@@ -136,40 +136,36 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             }
         }
 
-        private static object GetResourceBundleObject(string messageKey, CultureInfo locale)
+        private static string GetResourceBundleObject(string messageKey, CultureInfo locale)
         {
-            // Set the UI culture to the passed in locale.
-            using (var culture = new CultureContext(locale, locale))
+            // slow resource checking
+            // need to loop thru all registered resource bundles
+            foreach(var key in bundles.Keys)
             {
-                // slow resource checking
-                // need to loop thru all registered resource bundles
-                for (IEnumerator<string> it = bundles.Keys.GetEnumerator(); it.MoveNext();)
+                Type clazz = bundles[key];
+                ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
+                if (resourceBundle != null)
                 {
-                    Type clazz = bundles[it.Current];
-                    ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
-                    if (resourceBundle != null)
+                    try
                     {
-                        try
-                        {
-                            object obj = resourceBundle.GetObject(messageKey);
-                            if (obj != null)
-                                return obj;
-                        }
+                        string obj = resourceBundle.GetString(messageKey, locale);
+                        if (obj != null)
+                            return obj;
+                    }
 #pragma warning disable 168
-                        catch (MissingManifestResourceException e)
+                    catch (MissingManifestResourceException e)
 #pragma warning restore 168
-                        {
-                            // just continue it might be on the next resource bundle
-                        }
-                        finally
-                        {
-                            resourceManagerFactory.Release(resourceBundle);
-                        }
+                    {
+                        // just continue it might be on the next resource bundle
+                    }
+                    finally
+                    {
+                        resourceManagerFactory.Release(resourceBundle);
                     }
                 }
-                // if resource is not found
-                return null;
             }
+            // if resource is not found
+            return null;
         }
 
         private static void Load(Type clazz)
@@ -207,7 +203,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 {
                     try
                     {
-                        object obj = resourceBundle.GetObject(key);
+                        string obj = resourceBundle.GetString(key);
                         //if (obj == null)
                         //  System.err.println("WARN: Message with key:" + key + " and locale: "
                         //      + Locale.getDefault() + " not found.");
