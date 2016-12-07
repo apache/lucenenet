@@ -30,7 +30,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// A <see cref="QueryNodeImpl"/> is the default implementation of the interface
     /// <see cref="IQueryNode"/>
     /// </summary>
-    public abstract class QueryNodeImpl : IQueryNode, ICloneable
+    public abstract class QueryNodeImpl : IQueryNode
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
         /// <summary>
         /// index default field
