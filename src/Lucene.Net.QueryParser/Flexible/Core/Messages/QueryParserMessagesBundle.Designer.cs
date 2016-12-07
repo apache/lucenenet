@@ -10,8 +10,9 @@
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Messages {
     using System;
-    
-    
+    using System.Reflection;
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -39,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Messages {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Core.Messages.QueryParserMessagesBundle", typeof(QueryParserMessagesBundle).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Core.Messages.QueryParserMessagesBundle", typeof(QueryParserMessagesBundle).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -4,6 +4,7 @@ using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                             }
                         }
                     }
-                } while (builder == null && (clazz = clazz.BaseType) != null);
+                } while (builder == null && (clazz = clazz.GetTypeInfo().BaseType) != null);
             }
 
             return builder;

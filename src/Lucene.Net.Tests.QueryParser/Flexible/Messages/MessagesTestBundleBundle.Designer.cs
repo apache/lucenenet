@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace Lucene.Net.QueryParsers.Flexible.Messages {
-    using System;
+    using System.Reflection;
     
     
     /// <summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Messages.MessagesTestBundleBundle", typeof(MessagesTestBundleBundle).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lucene.Net.QueryParsers.Flexible.Messages.MessagesTestBundleBundle", typeof(MessagesTestBundleBundle).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
