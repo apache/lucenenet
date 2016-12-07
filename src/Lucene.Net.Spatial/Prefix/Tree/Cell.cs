@@ -1,8 +1,8 @@
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
@@ -210,7 +210,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 Cell subCell = GetSubCell((IPoint)shapeFilter);
                 subCell.shapeRel = SpatialRelation.CONTAINS;
 #if !NET35
-                return new ReadOnlyCollectionBuilder<Cell>(new[] { subCell }).ToReadOnlyCollection();
+                return new ReadOnlyCollection<Cell>(new[] { subCell });
 #else
                 return new List<Cell>(new[] { subCell }).AsReadOnly();
 #endif

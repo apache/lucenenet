@@ -2,8 +2,8 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -272,7 +272,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (!inclParents)
             {
 #if !NET35
-                return new ReadOnlyCollectionBuilder<Cell>(new[] { cell }).ToReadOnlyCollection();
+                return new ReadOnlyCollection<Cell>(new[] { cell });
 #else
                 return new List<Cell>(new[] { cell }).AsReadOnly();
 #endif
