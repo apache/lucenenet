@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
     /// </summary>
     public class RangeFilterBuilder : IFilterBuilder
     {
-        public Filter GetFilter(XmlElement e)
+        public virtual Filter GetFilter(XmlElement e)
         {
             string fieldName = DOMUtils.GetAttributeWithInheritance(e, "fieldName");
 

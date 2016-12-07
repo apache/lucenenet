@@ -118,17 +118,35 @@ namespace Lucene.Net.QueryParsers.Xml
             queryFactory.AddBuilder("SpanNot", snot);
         }
 
-        public Query Parse(Stream xmlStream)
+        public virtual Query Parse(Stream xmlStream)
         {
             return GetQuery(ParseXML(xmlStream).DocumentElement);
         }
 
-        public void AddQueryBuilder(string nodeName, IQueryBuilder builder)
+        // LUCENENET specific overload for TextReader
+        public virtual Query Parse(TextReader xmlTextReader)
+        {
+            return GetQuery(ParseXML(xmlTextReader).DocumentElement);
+        }
+
+        // LUCENENET specific overload for XmlReader
+        public virtual Query Parse(XmlReader xmlReader)
+        {
+            return GetQuery(ParseXML(xmlReader).DocumentElement);
+        }
+
+        // LUCENENET specific overload for XmlDocument
+        public virtual Query Parse(XmlDocument xmlDocument)
+        {
+            return GetQuery(xmlDocument.DocumentElement);
+        }
+
+        public virtual void AddQueryBuilder(string nodeName, IQueryBuilder builder)
         {
             queryFactory.AddBuilder(nodeName, builder);
         }
 
-        public void AddFilterBuilder(string nodeName, IFilterBuilder builder)
+        public virtual void AddFilterBuilder(string nodeName, IFilterBuilder builder)
         {
             filterFactory.AddBuilder(nodeName, builder);
         }

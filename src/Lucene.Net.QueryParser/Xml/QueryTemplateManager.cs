@@ -45,34 +45,34 @@ namespace Lucene.Net.QueryParsers.Xml
             AddDefaultQueryTemplate(xslIs);
         }
 
-        public void AddDefaultQueryTemplate(Stream xslIs)
+        public virtual void AddDefaultQueryTemplate(Stream xslIs)
         {
             defaultCompiledTemplates = GetTemplates(xslIs);
         }
 
-        public void AddQueryTemplate(string name, Stream xslIs)
+        public virtual void AddQueryTemplate(string name, Stream xslIs)
         {
             compiledTemplatesCache[name] = GetTemplates(xslIs);
         }
 
-        public string GetQueryAsXmlString(IDictionary<string, string> formProperties, string queryTemplateName)
+        public virtual string GetQueryAsXmlString(IDictionary<string, string> formProperties, string queryTemplateName)
         {
             XslCompiledTransform ts = compiledTemplatesCache[queryTemplateName];
             return GetQueryAsXmlString(formProperties, ts);
         }
 
-        public XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties, string queryTemplateName)
+        public virtual XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties, string queryTemplateName)
         {
             XslCompiledTransform ts = compiledTemplatesCache[queryTemplateName];
             return GetQueryAsDOM(formProperties, ts);
         }
 
-        public string GetQueryAsXmlString(IDictionary<string, string> formProperties)
+        public virtual string GetQueryAsXmlString(IDictionary<string, string> formProperties)
         {
             return GetQueryAsXmlString(formProperties, defaultCompiledTemplates);
         }
 
-        public XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties)
+        public virtual XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties)
         {
             return GetQueryAsDOM(formProperties, defaultCompiledTemplates);
         }

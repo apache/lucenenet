@@ -38,12 +38,12 @@ namespace Lucene.Net.QueryParsers.Xml
             return builder.GetFilter(n);
         }
 
-        public void AddBuilder(string nodeName, IFilterBuilder builder)
+        public virtual void AddBuilder(string nodeName, IFilterBuilder builder)
         {
             builders[nodeName] = builder;
         }
 
-        public IFilterBuilder GetFilterBuilder(string nodeName)
+        public virtual IFilterBuilder GetFilterBuilder(string nodeName)
         {
             IFilterBuilder result;
             builders.TryGetValue(nodeName, out result);

@@ -54,7 +54,6 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             this.cacheSize = cacheSize;
         }
 
-
         public virtual Filter GetFilter(XmlElement e)
         {
             lock (this)

@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             return GetSpanQuery(e);
         }
 
-        public void AddBuilder(string nodeName, ISpanQueryBuilder builder)
+        public virtual void AddBuilder(string nodeName, ISpanQueryBuilder builder)
         {
             builders[nodeName] = builder;
         }
