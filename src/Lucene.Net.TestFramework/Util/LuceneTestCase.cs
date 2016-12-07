@@ -1655,6 +1655,15 @@ namespace Lucene.Net.Util
             return NewSearcher(r, maybeWrap, true, similarity);
         }
 
+        /// <summary>
+        /// Create a new searcher over the reader. This searcher might randomly use
+        /// threads.
+        /// </summary>
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
+        {
+            return NewSearcher(r, maybeWrap, true);
+        }
+
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
             return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.Similarity);
