@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 }
                 catch (Exception e)
                 {
-                    throw new ApplicationException(string.Empty, e);
+                    throw new SpatialPrefixTreeFactoryException(string.Empty, e);
                 }
             }
             instance.Init(args, ctx);
@@ -116,5 +116,17 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected internal abstract int GetLevelForDistance(double degrees);
 
         protected internal abstract SpatialPrefixTree NewSPT();
+    }
+
+    /// <summary>
+    /// LUCENENET: Exception thrown when an operation fails in
+    /// SpatialPrefixTreeFactory. Replaces generic ApplicationException that is
+    /// not supported on .NET Core.
+    /// </summary>
+    public class SpatialPrefixTreeFactoryException : Exception
+    {
+        public SpatialPrefixTreeFactoryException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
     }
 }
