@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System.Diagnostics;
 using System.Globalization;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -246,7 +247,7 @@ namespace Lucene.Net.Util
 
         protected virtual CultureInfo randomLocale(Random random)
         {
-            return RandomInts.RandomFrom(random, CultureInfo.GetCultures(CultureTypes.AllCultures));
+            return RandomInts.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
         }
 
         protected virtual TimeZoneInfo randomTimeZone(Random random)
