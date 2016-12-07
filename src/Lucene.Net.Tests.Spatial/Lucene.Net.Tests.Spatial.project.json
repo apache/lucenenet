@@ -3,7 +3,8 @@
     "win": {}
   },
   "dependencies": {
-    "NUnit": "3.5.0"
+    "NUnit": "3.5.0",
+    "Spatial4n.Core.NTS": "0.4.1-beta"
   },
   "frameworks": {
     "net451": {}

@@ -1,7 +1,12 @@
 {
   "runtimes": {
-    "win":{}
-  },  
+    "win": {}
+  },
+  "dependencies": {
+    "GeoAPI": "1.7.4",
+    "NetTopologySuite": "1.14",
+    "Spatial4n.Core": "0.4.1-beta"
+  },
   "frameworks": {
     "net451": {}
   }
