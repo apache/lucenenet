@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             // regular escapable Char for terms
             for (int i = 0; i < escapableTermChars.Length; i++)
             {
-                buffer = ReplaceIgnoreCase(buffer, escapableTermChars[i].ToLower(locale),
+                buffer = ReplaceIgnoreCase(buffer, locale.TextInfo.ToLower(escapableTermChars[i]),
                     "\\", locale);
             }
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             for (int i = 0; i < escapableQuotedChars.Length; i++)
             {
-                buffer = ReplaceIgnoreCase(buffer, escapableTermChars[i].ToLower(locale),
+                buffer = ReplaceIgnoreCase(buffer, locale.TextInfo.ToLower(escapableTermChars[i]),
                     "\\", locale);
             }
             return buffer;
@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int start = 0, copyStart = 0, firstIndex;
             while (start < count)
             {
-                if ((firstIndex = @string.ToString().ToLower(locale).IndexOf(first,
+                if ((firstIndex = locale.TextInfo.ToLower(@string.ToString()).IndexOf(first,
                     start)) == -1)
                     break;
                 bool found = true;
@@ -153,7 +153,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         break;
                     for (int i = 1; i < sequence1Length; i++)
                     {
-                        if (@string.ToString().ToLower(locale)[firstIndex + i] != sequence1[i])
+                        if (locale.TextInfo.ToLower(@string.ToString())[firstIndex + i] != sequence1[i])
                         {
                             found = false;
                             break;
@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             for (int i = 0; i < escapableWhiteChars.Length; i++)
             {
-                buffer = ReplaceIgnoreCase(buffer, escapableWhiteChars[i].ToLower(locale),
+                buffer = ReplaceIgnoreCase(buffer, locale.TextInfo.ToLower(escapableWhiteChars[i]),
                     "\\", locale);
             }
             return buffer;

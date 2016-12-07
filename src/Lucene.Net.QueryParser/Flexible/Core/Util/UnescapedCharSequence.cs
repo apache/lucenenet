@@ -185,14 +185,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         public static ICharSequence ToLowerCase(ICharSequence text, CultureInfo locale)
         {
+            var lowercaseText = locale.TextInfo.ToLower(text.ToString());
+
             if (text is UnescapedCharSequence)
             {
-                char[] chars = text.ToString().ToLower(locale).ToCharArray();
+                char[] chars = lowercaseText.ToCharArray();
                 bool[] wasEscaped = ((UnescapedCharSequence)text).wasEscaped;
                 return new UnescapedCharSequence(chars, wasEscaped, 0, chars.Length);
             }
             else
-                return new UnescapedCharSequence(text.ToString().ToLower(locale));
+                return new UnescapedCharSequence(lowercaseText);
         }
     }
 }

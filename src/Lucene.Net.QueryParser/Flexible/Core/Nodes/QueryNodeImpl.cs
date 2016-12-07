@@ -173,12 +173,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual void SetTag(string tagName, object value)
         {
-            this.tags[tagName.ToLower(CultureInfo.InvariantCulture)] = value;
+            this.tags[CultureInfo.InvariantCulture.TextInfo.ToLower(tagName)] = value;
         }
 
         public virtual void UnsetTag(string tagName)
         {
-            this.tags.Remove(tagName.ToLower(CultureInfo.InvariantCulture));
+            this.tags.Remove(CultureInfo.InvariantCulture.TextInfo.ToLower(tagName));
         }
 
         /// <summary>
@@ -186,12 +186,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public virtual bool ContainsTag(string tagName)
         {
-            return this.tags.ContainsKey(tagName.ToLower(CultureInfo.InvariantCulture));
+            return this.tags.ContainsKey(CultureInfo.InvariantCulture.TextInfo.ToLower(tagName));
         }
 
         public virtual object GetTag(string tagName)
         {
-            return this.tags[tagName.ToLower(CultureInfo.InvariantCulture)];
+            return this.tags[CultureInfo.InvariantCulture.TextInfo.ToLower(tagName)];
         }
 
         private IQueryNode parent = null;
