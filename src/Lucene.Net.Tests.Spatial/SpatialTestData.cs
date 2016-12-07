@@ -63,7 +63,7 @@ namespace Lucene.Net.Spatial
                     }
                     catch (ParseException e)
                     {
-                        throw new ApplicationException(e.Message, e);
+                        throw new SpatialTestException(e.Message, e);
                     }
                     results.Add(data);
                 }

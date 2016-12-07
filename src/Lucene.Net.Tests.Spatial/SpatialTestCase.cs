@@ -123,7 +123,7 @@ namespace Lucene.Net.Spatial
             }
             catch (IOException ioe)
             {
-                throw new ApplicationException("IOException thrown while executing query", ioe);
+                throw new SpatialTestException("IOException thrown while executing query", ioe);
             }
         }
 
