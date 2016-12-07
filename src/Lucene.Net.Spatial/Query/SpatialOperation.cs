@@ -177,7 +177,7 @@ namespace Lucene.Net.Spatial.Queries
             this.sourceNeedsArea = sourceNeedsArea;
             this.targetNeedsArea = targetNeedsArea;
             registry[name] = this;
-            registry[name.ToUpper(CultureInfo.InvariantCulture)] = this;
+            registry[CultureInfo.InvariantCulture.TextInfo.ToUpper(name)] = this;
             list.Add(this);
         }
 
@@ -186,7 +186,7 @@ namespace Lucene.Net.Spatial.Queries
             SpatialOperation op;
             if (!registry.TryGetValue(v, out op) || op == null)
             {
-                if (!registry.TryGetValue(v.ToUpper(CultureInfo.InvariantCulture), out op) || op == null)
+                if (!registry.TryGetValue(CultureInfo.InvariantCulture.TextInfo.ToUpper(v), out op) || op == null)
                     throw new ArgumentException("Unknown Operation: " + v, "v");
             }
             return op;
