@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         /// Controls how much information is stored in the postings lists.
         /// @lucene.experimental
         /// </summary>
-        public enum IndexOptions
+        public enum IndexOptions // LUCENENET TODO: de-nest from this class
         {
             // NOTE: order is important here; FieldInfo uses this
             // order to merge two conflicting IndexOptions (always
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
         /// Note that DocValues is strongly typed, so a field cannot have different types
         /// across different documents.
         /// </summary>
-        public enum DocValuesType_e
+        public enum DocValuesType_e // LUCENENET TODO: Rename back to DocValuesType and de-nest from this class
         {
             /// <summary>
             /// A per-document Number

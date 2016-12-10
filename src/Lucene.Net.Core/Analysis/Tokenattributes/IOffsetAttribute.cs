@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         /// may not be equal to termText.length(), as the term text may have been altered by a
         /// stemmer or some other filter. </summary>
         /// <seealso cref= #SetOffset(int, int)  </seealso>
-        int StartOffset();
+        int StartOffset(); // LUCENENET TODO: Change to property get
 
         /// <summary>
         /// Set the starting and ending offset. </summary>
@@ -48,6 +48,6 @@ namespace Lucene.Net.Analysis.Tokenattributes
         /// last character corresponding to this token in the source text. The length
         /// of the token in the source text is (<code>EndOffset()</code> - <seealso cref="#StartOffset()"/>). </summary>
         /// <seealso cref= #SetOffset(int, int) </seealso>
-        int EndOffset();
+        int EndOffset(); // LUCENENET TODO: Change to property get
     }
 }

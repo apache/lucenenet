@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Specifies how clauses are to occur in matching documents. </summary>
-        public enum Occur
+        public enum Occur // LUCENENET TODO: Move outside of BooleanClause class
         {
             /// <summary>
             /// Use this operator for clauses that <i>must</i> appear in the matching documents.
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public bool Prohibited
+        public bool Prohibited // LUCENENET TODO: Rename IsProhibited
         {
             get
             {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public bool Required
+        public bool Required // LUCENENET TODO: Rename IsRequired
         {
             get
             {
