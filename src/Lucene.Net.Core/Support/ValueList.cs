@@ -1,40 +1,32 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// Java's HashSet is unlike .NET's in that its equals() and hashcode() methods 
+    /// Java's ArrayList is unlike .NET's <see cref="List{T}"/> in that its equals() and hashcode() methods 
     /// are setup to compare the values of the sets, where in .NET we only check that
-    /// the references are the same. <see cref="ValueHashSet{T}"/> acts more like the
+    /// the references are the same. <see cref="ValueList{T}"/> acts more like the
     /// HashSet type in Java by comparing the sets for value equality.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <seealso cref="ValueList{T}"/>
-    public class ValueHashSet<T> : HashSet<T>
+    /// <seealso cref="ValueHashSet{T}"/>
+    public class ValueList<T> : List<T>
     {
-        public ValueHashSet()
+        public ValueList()
             : base()
         { }
 
-        public ValueHashSet(IEnumerable<T> collection)
+        public ValueList(int capacity)
+            : base(capacity)
+        { }
+
+        public ValueList(IEnumerable<T> collection)
             : base(collection)
         { }
-
-        public ValueHashSet(IEqualityComparer<T> comparer)
-            : base(comparer)
-        { }
-
-#if FEATURE_SERIALIZABLE
-        public ValueHashSet(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        { }
-#endif
-
-        public ValueHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
-            : base(collection, comparer)
-        { }
-
 
         public override bool Equals(object obj)
         {
@@ -43,14 +35,14 @@ namespace Lucene.Net.Support
                 return true;
             }
 
-            if (!(obj is ISet<T>))
+            if (!(obj is List<T>))
                 return false;
             ICollection<T> c = obj as ICollection<T>;
             if (c.Count != Count)
                 return false;
 
             // Check to ensure the sets values are the same
-            return SetEquals(c);
+            return this.SequenceEqual(c);
         }
 
         public override int GetHashCode()

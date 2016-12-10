@@ -51,8 +51,8 @@ namespace Lucene.Net.Search
     public class PhraseQuery : Query
     {
         private string Field;
-        private List<Term> Terms_Renamed = new List<Term>(4);
-        private List<int?> Positions_Renamed = new List<int?>(4);
+        private List<Term> Terms_Renamed = new ValueList<Term>(4);
+        private List<int?> Positions_Renamed = new ValueList<int?>(4);
         private int MaxPosition = 0;
         private int slop = 0;
 

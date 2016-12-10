@@ -693,6 +693,7 @@
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\ValueHashSet.cs" />
+    <Compile Include="Support\ValueList.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Util\Accountable.cs" />
     <Compile Include="Util\ArrayInPlaceMergeSorter.cs" />
