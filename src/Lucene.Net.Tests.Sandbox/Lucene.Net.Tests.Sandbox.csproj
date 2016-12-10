@@ -58,19 +58,19 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
-      <Project>{13274BA9-9052-4354-8FFE-E3F32593368F}</Project>
-      <Name>Lucene.Net.Sandbox</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
       <Project>{3F79B6D4-4359-4F83-B64F-07F4F6262425}</Project>
       <Name>Lucene.Net.Codecs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <Project>{13274ba9-9052-4354-8ffe-e3f32593368f}</Project>
+      <Name>Lucene.Net.Sandbox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>

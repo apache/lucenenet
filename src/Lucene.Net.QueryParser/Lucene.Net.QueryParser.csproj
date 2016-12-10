@@ -254,10 +254,6 @@
     <Compile Include="Xml\QueryTemplateManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
-      <Project>{13274BA9-9052-4354-8FFE-E3F32593368F}</Project>
-      <Name>Lucene.Net.Sandbox</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
       <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
       <Name>Lucene.Net.Analysis.Common</Name>
@@ -269,6 +265,10 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
       <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <Project>{13274ba9-9052-4354-8ffe-e3f32593368f}</Project>
+      <Name>Lucene.Net.Sandbox</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

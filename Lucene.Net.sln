@@ -74,9 +74,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Spatial", "src\L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Spatial", "src\Lucene.Net.Tests.Spatial\Lucene.Net.Tests.Spatial.csproj", "{31F52F5C-A08F-4363-8003-23D6F7D6EB3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Sandbox", "Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj", "{13274BA9-9052-4354-8FFE-E3F32593368F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Sandbox", "src\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj", "{13274BA9-9052-4354-8FFE-E3F32593368F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Sandbox", "Lucene.Net.Tests.Sandbox\Lucene.Net.Tests.Sandbox.csproj", "{7865CBC8-2C6B-462C-ACF5-B2C4D60D93C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Sandbox", "src\Lucene.Net.Tests.Sandbox\Lucene.Net.Tests.Sandbox.csproj", "{7865CBC8-2C6B-462C-ACF5-B2C4D60D93C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

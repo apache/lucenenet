@@ -49,7 +49,7 @@
     <Compile Include="Queries\SortedSetSortField.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
