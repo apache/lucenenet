@@ -201,7 +201,7 @@ namespace Lucene.Net.Support
             // heap[i] have children heap[2*i + 1] and heap[2*i + 2] and parent heap[(i-1)/ 2];
 
             // heapify after insert, from end to beginning
-            HeapifyFromEndToBeginning(baseHeap.Count - 1);
+            HeapifyFromEndToBeginning(baseHeap.Count/* - 1*/); // LUCENENET BUG: We are subtracting 1 from count here and within the HeapifyFromEndToBeginning method
         }
 
         protected virtual int HeapifyFromEndToBeginning(int pos)

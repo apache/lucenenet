@@ -7,6 +7,7 @@ using NUnit.Framework;
 ﻿using System;
 using System.IO;
 using System.Text;
+using BreakIterator = Icu.BreakIterator;
 
 namespace Lucene.Net.Analysis.Util
 {

@@ -1,26 +1,27 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using System.Text;
+﻿using System.Text;
 
 namespace Lucene.Net.Search.Highlight
 {
-    /// <summary> Simple <see cref="IEncoder"/> implementation to escape text for HTML output</summary>
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+    /// <summary>
+    /// Simple <see cref="IEncoder"/> implementation to escape text for HTML output
+    /// </summary>
     public class SimpleHTMLEncoder : IEncoder
     {
         public SimpleHTMLEncoder()
@@ -32,9 +33,9 @@ namespace Lucene.Net.Search.Highlight
             return HtmlEncode(originalText);
         }
 
-        /*
-         * Encode string into HTML
-         */
+        /// <summary>
+        /// Encode string into HTML
+        /// </summary>
         public static string HtmlEncode(string plainText)
         {
             if (string.IsNullOrEmpty(plainText))
@@ -75,6 +76,8 @@ namespace Lucene.Net.Search.Highlight
                         break;
 
                     default:
+                        // LUCENENET TODO: This logic appears to be correct, but need to 
+                        // verify and create/alter unit tests to accommodate this change
                         if (ch < 128)
                         {
                             result.Append(ch);

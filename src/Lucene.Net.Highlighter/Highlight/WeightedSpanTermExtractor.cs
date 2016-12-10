@@ -1,37 +1,33 @@
-﻿/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Memory;
 using Lucene.Net.Queries;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether 
     /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="Analysis.TokenStream"/>.
@@ -60,11 +56,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <c>Map</c> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <c>Query</c>.
+        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <paramref name="query"/>.
         /// </summary>
-        /// <param name="query">Query to extract Terms from</param>
-        /// <param name="terms">Map to place created WeightedSpanTerms in</param>
-        private void Extract(Query query, IDictionary<string, WeightedSpanTerm> terms)
+        /// <param name="query"><see cref="Query"/> to extract Terms from</param>
+        /// <param name="terms">Map to place created <see cref="WeightedSpanTerm"/>s in</param>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        protected virtual void Extract(Query query, IDictionary<string, WeightedSpanTerm> terms)
         {
             if (query is BooleanQuery)
             {
@@ -233,29 +230,30 @@ namespace Lucene.Net.Search.Highlight
             ExtractUnknownQuery(query, terms);
         }
 
-        protected void ExtractUnknownQuery(Query query,
+        protected virtual void ExtractUnknownQuery(Query query,
             IDictionary<string, WeightedSpanTerm> terms)
         {
             // for sub-classing to extract custom queries
         }
 
         /// <summary>
-        /// Fills a <c>Map</c> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <c>SpanQuery</c>.
+        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <see cref="SpanQuery"/>.
         /// </summary>
-        /// <param name="terms">Map to place created WeightedSpanTerms in</param>
-        /// <param name="spanQuery">SpanQuery to extract Terms from</param>
-        private void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
+        /// <param name="terms"><see cref="IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
+        /// <param name="spanQuery"><see cref="SpanQuery"/> to extract Terms from</param>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        protected virtual void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
         {
             HashSet<string> fieldNames;
 
             if (fieldName == null)
             {
-                fieldNames = new HashSet<String>();
+                fieldNames = new HashSet<string>();
                 CollectSpanQueryFields(spanQuery, fieldNames);
             }
             else
             {
-                fieldNames = new HashSet<String>();
+                fieldNames = new HashSet<string>();
                 fieldNames.Add(fieldName);
             }
             // To support the use of the default field name
@@ -264,13 +262,13 @@ namespace Lucene.Net.Search.Highlight
                 fieldNames.Add(defaultField);
             }
 
-            IDictionary<String, SpanQuery> queries = new HashMap<String, SpanQuery>();
+            IDictionary<string, SpanQuery> queries = new HashMap<string, SpanQuery>();
 
             var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
             bool mustRewriteQuery = MustRewriteQuery(spanQuery);
             if (mustRewriteQuery)
             {
-                foreach (String field in fieldNames)
+                foreach (string field in fieldNames)
                 {
                     SpanQuery rewrittenQuery = (SpanQuery)spanQuery.Rewrite(GetLeafContext().Reader);
                     queries[field] = rewrittenQuery;
@@ -284,7 +282,7 @@ namespace Lucene.Net.Search.Highlight
 
             List<PositionSpan> spanPositions = new List<PositionSpan>();
 
-            foreach (String field in fieldNames)
+            foreach (string field in fieldNames)
             {
                 SpanQuery q;
                 q = mustRewriteQuery ? queries[field] : spanQuery;
@@ -297,7 +295,7 @@ namespace Lucene.Net.Search.Highlight
                 {
                     termContexts[term] = TermContext.Build(context, term);
                 }
-                Bits acceptDocs = ((AtomicReader)context.Reader).LiveDocs;
+                Bits acceptDocs = context.AtomicReader.LiveDocs;
                 Spans.Spans spans = q.GetSpans(context, acceptDocs, termContexts);
 
                 // collect span positions
@@ -319,13 +317,12 @@ namespace Lucene.Net.Search.Highlight
 
                 if (FieldNameComparator(queryTerm.Field))
                 {
-                    WeightedSpanTerm weightedSpanTerm = terms[queryTerm.Text()];
-
-                    if (weightedSpanTerm == null)
+                    WeightedSpanTerm weightedSpanTerm;
+                    if (!terms.TryGetValue(queryTerm.Text(), out weightedSpanTerm) || weightedSpanTerm == null)
                     {
                         weightedSpanTerm = new WeightedSpanTerm(spanQuery.Boost, queryTerm.Text());
                         weightedSpanTerm.AddPositionSpans(spanPositions);
-                        weightedSpanTerm.SetPositionSensitive(true);
+                        weightedSpanTerm.IsPositionSensitive = true;
                         terms[queryTerm.Text()] = weightedSpanTerm;
                     }
                     else
@@ -340,11 +337,13 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <c>Map</c> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <c>Query</c>.
+        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from 
+        /// the supplied <see cref="Search.Spans.SpanQuery"/>.
         /// </summary>
-        /// <param name="terms"></param>
-        /// <param name="query"></param>
-        private void ExtractWeightedTerms(IDictionary<String, WeightedSpanTerm> terms, Query query)
+        /// <param name="terms"><see cref="IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
+        /// <param name="query"><see cref="Query"/> to extract Terms from</param>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        protected virtual void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
         {
             var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
             query.ExtractTerms(nonWeightedTerms);
@@ -361,16 +360,16 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Necessary to implement matches for queries against <c>defaultField</c>
+        /// Necessary to implement matches for queries against <see cref="defaultField"/>
         /// </summary>
-        private bool FieldNameComparator(string fieldNameToCheck)
+        protected virtual bool FieldNameComparator(string fieldNameToCheck)
         {
-            bool rv = fieldName == null || fieldNameToCheck == fieldName
-                      || fieldNameToCheck == defaultField;
+            bool rv = fieldName == null || fieldName.Equals(fieldNameToCheck)
+                      || fieldNameToCheck.Equals(defaultField);
             return rv;
         }
 
-        protected AtomicReaderContext GetLeafContext()
+        protected virtual AtomicReaderContext GetLeafContext()
         {
             if (internalReader == null)
             {
@@ -384,17 +383,59 @@ namespace Lucene.Net.Search.Highlight
                 tokenStream.Reset();
                 IndexSearcher searcher = indexer.CreateSearcher();
                 // MEM index has only atomic ctx
-                var reader = ((AtomicReaderContext) searcher.TopReaderContext).Reader;
-                internalReader = new DelegatingAtomicReader((AtomicReader)reader);
+                var reader = ((AtomicReaderContext) searcher.TopReaderContext).AtomicReader;
+                internalReader = new DelegatingAtomicReader(reader);
             }
-            return (AtomicReaderContext)internalReader.Context;
+            return internalReader.AtomicContext;
         }
 
-        private sealed class DelegatingAtomicReader : FilterAtomicReader
+        /// <summary>
+        /// This reader will just delegate every call to a single field in the wrapped
+        /// <see cref="AtomicReader"/>. This way we only need to build this field once rather than
+        /// N-Times
+        /// </summary>
+        internal sealed class DelegatingAtomicReader : FilterAtomicReader
         {
             public static string FIELD_NAME = "shadowed_field";
 
-            public DelegatingAtomicReader(AtomicReader reader) : base(reader) { }
+            internal DelegatingAtomicReader(AtomicReader reader) : base(reader) { }
+
+            public override FieldInfos FieldInfos
+            {
+                get
+                {
+                    throw new NotSupportedException();
+                }
+            }
+
+            public override Fields Fields
+            {
+                get
+                {
+                    return new DelegatingFilterFields(base.Fields);
+                }
+            }
+
+            private class DelegatingFilterFields : FilterFields
+            {
+                public DelegatingFilterFields(Fields fields) : base(fields) { }
+
+                public override Terms Terms(string field)
+                {
+                    return base.Terms(DelegatingAtomicReader.FIELD_NAME);
+                }
+
+                public override IEnumerator<string> GetEnumerator()
+                {
+                    var list = new List<string> { DelegatingAtomicReader.FIELD_NAME };
+                    return list.GetEnumerator();
+                }
+
+                public override int Size
+                {
+                    get { return 1; }
+                }
+            }
 
             public override NumericDocValues GetNumericDocValues(string field)
             {
@@ -420,59 +461,30 @@ namespace Lucene.Net.Search.Highlight
             {
                 return base.GetDocsWithField(FIELD_NAME);
             }
-
-            public override Fields Fields
-            {
-                get
-                {
-                    return new DelegatingFilterFields(base.Fields);
-                }               
-            }
-
-            private class DelegatingFilterFields : FilterFields
-            {
-                public DelegatingFilterFields(Fields fields) : base(fields) { }
-
-                public override Terms Terms(string field)
-                {
-                    return base.Terms(DelegatingAtomicReader.FIELD_NAME);
-                }
-
-                public override IEnumerator<string> GetEnumerator()
-                {
-                    var list = new List<string> {DelegatingAtomicReader.FIELD_NAME};
-                    return list.GetEnumerator();
-                }
-
-                public override int Size
-                {
-                    get { return 1; }
-                }
-            }
         }
 
         /// <summary>
-        /// Creates a Map of <c>WeightedSpanTerms</c> from the given <c>Query</c> and <c>TokenStream</c>.
+        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
         /// </summary>
-        /// <param name="query">query that caused hit</param>
-        /// <param name="tokenStream">TokenStream of text to be highlighted</param>
-        /// <returns>Map containing WeightedSpanTerms</returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
-        public IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream)
+        /// <param name="query"><see cref="Query"/> that caused hit</param>
+        /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
+        /// <returns>Map containing <see cref="WeightedSpanTerm"/>s</returns>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream)
         {
             return GetWeightedSpanTerms(query, tokenStream, null);
         }
 
 
         /// <summary>
-        /// Creates a Map of <c>WeightedSpanTerms</c> from the given <c>Query</c> and <c>TokenStream</c>.
+        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
         /// </summary>
-        /// <param name="query">query that caused hit</param>
-        /// <param name="tokenStream">tokenStream of text to be highlighted</param>
+        /// <param name="query"><see cref="Query"/> that caused hit</param>
+        /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
         /// <param name="fieldName">restricts Term's used based on field name</param>
-        /// <returns>Map containing WeightedSpanTerms</returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
-        public IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream,
+        /// <returns>Map containing <see cref="WeightedSpanTerm"/>s</returns>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream,
                                                                           string fieldName)
         {
             if (fieldName != null)
@@ -499,16 +511,16 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Creates a Map of <c>WeightedSpanTerms</c> from the given <c>Query</c> and <c>TokenStream</c>. Uses a supplied
-        /// <c>IndexReader</c> to properly Weight terms (for gradient highlighting).
+        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>. Uses a supplied
+        /// <see cref="IndexReader"/> to properly Weight terms (for gradient highlighting).
         /// </summary>
-        /// <param name="query">Query that caused hit</param>
-        /// <param name="tokenStream">Tokenstream of text to be highlighted</param>
+        /// <param name="query"><see cref="Query"/> that caused hit</param>
+        /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
         /// <param name="fieldName">restricts Term's used based on field name</param>
         /// <param name="reader">to use for scoring</param>
-        /// <returns>Map of WeightedSpanTerms with quasi tf/idf scores</returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
-        public IDictionary<string, WeightedSpanTerm> GetWeightedSpanTermsWithScores(
+        /// <returns>Map of <see cref="WeightedSpanTerm"/>s with quasi tf/idf scores</returns>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTermsWithScores(
             Query query, TokenStream tokenStream, string fieldName, IndexReader reader)
         {
             this.fieldName = fieldName == null ? null : StringHelper.Intern(fieldName);
@@ -525,7 +537,8 @@ namespace Lucene.Net.Search.Highlight
             {
                 foreach (var wt in weightedTerms)
                 {
-                    WeightedSpanTerm weightedSpanTerm = terms[wt];
+                    WeightedSpanTerm weightedSpanTerm;
+                    terms.TryGetValue(wt, out weightedSpanTerm);
                     int docFreq = reader.DocFreq(new Term(fieldName, weightedSpanTerm.Term));
                     // IDF algorithm taken from DefaultSimilarity class
                     float idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
@@ -540,7 +553,7 @@ namespace Lucene.Net.Search.Highlight
             return terms;
         }
 
-        private void CollectSpanQueryFields(SpanQuery spanQuery, HashSet<string> fieldNames)
+        protected virtual void CollectSpanQueryFields(SpanQuery spanQuery, ISet<string> fieldNames)
         {
             if (spanQuery is FieldMaskingSpanQuery)
             {
@@ -574,7 +587,7 @@ namespace Lucene.Net.Search.Highlight
             }
         }
 
-        private bool MustRewriteQuery(SpanQuery spanQuery)
+        protected virtual bool MustRewriteQuery(SpanQuery spanQuery)
         {
             if (!expandMultiTermQuery)
             {
@@ -631,59 +644,139 @@ namespace Lucene.Net.Search.Highlight
         /// versions of the same term are added, the position insensitive one wins.
         /// </summary>
         /// <typeparam name="K"></typeparam>
-        private class PositionCheckingMap<K> : HashMap<K, WeightedSpanTerm>
+        // LUCENENET NOTE: Unfortunately, members of Dictionary{TKey, TValue} are not virtual,
+        // so we need to implement IDictionary{TKey, TValue} instead.
+        protected class PositionCheckingMap<K> : IDictionary<K, WeightedSpanTerm>
         {
-            public PositionCheckingMap()
-            {
+            private readonly IDictionary<K, WeightedSpanTerm> wrapped = new Dictionary<K, WeightedSpanTerm>();
 
-            }
-
-            public PositionCheckingMap(IEnumerable<KeyValuePair<K, WeightedSpanTerm>> m)
+            public WeightedSpanTerm this[K key]
             {
-                PutAll(m);
-            }
-
-            public void PutAll(IEnumerable<KeyValuePair<K, WeightedSpanTerm>> m)
-            {
-                foreach (var entry in m)
+                get
                 {
-                    Add(entry.Key, entry.Value);
+                    return wrapped[key];
+                }
+
+                set
+                {
+                    WeightedSpanTerm prev = null;
+                    wrapped.TryGetValue(key, out prev);
+                    wrapped[key] = value;
+
+                    if (prev == null) return;
+
+                    WeightedSpanTerm prevTerm = prev;
+                    WeightedSpanTerm newTerm = value;
+                    if (!prevTerm.IsPositionSensitive)
+                    {
+                        newTerm.IsPositionSensitive = false;
+                    }
                 }
             }
 
-            public override void Add(K key, WeightedSpanTerm value)
+            public int Count
             {
-                base.Add(key, value);
-                WeightedSpanTerm prev = this[key];
-
-                if (prev == null) return;
-
-                WeightedSpanTerm prevTerm = prev;
-                WeightedSpanTerm newTerm = value;
-                if (!prevTerm.IsPositionSensitive())
+                get
                 {
-                    newTerm.SetPositionSensitive(false);
+                    return wrapped.Count;
                 }
             }
 
+            public bool IsReadOnly
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            public ICollection<K> Keys
+            {
+                get
+                {
+                    return wrapped.Keys;
+                }
+            }
+
+            public ICollection<WeightedSpanTerm> Values
+            {
+                get
+                {
+                    return wrapped.Values;
+                }
+            }
+
+            public void Add(KeyValuePair<K, WeightedSpanTerm> item)
+            {
+                this[item.Key] = item.Value;
+            }
+
+            public void Add(K key, WeightedSpanTerm value)
+            {
+                this[key] = value;
+            }
+
+            public void Clear()
+            {
+                wrapped.Clear();
+            }
+
+            public bool Contains(KeyValuePair<K, WeightedSpanTerm> item)
+            {
+                return wrapped.Contains(item);
+            }
+
+            public bool ContainsKey(K key)
+            {
+                return wrapped.ContainsKey(key);
+            }
+
+            public void CopyTo(KeyValuePair<K, WeightedSpanTerm>[] array, int arrayIndex)
+            {
+                wrapped.CopyTo(array, arrayIndex);
+            }
+
+            public IEnumerator<KeyValuePair<K, WeightedSpanTerm>> GetEnumerator()
+            {
+                return wrapped.GetEnumerator();
+            }
+
+            public bool Remove(KeyValuePair<K, WeightedSpanTerm> item)
+            {
+                return wrapped.Remove(item);
+            }
+
+            public bool Remove(K key)
+            {
+                return wrapped.Remove(key);
+            }
+
+            public bool TryGetValue(K key, out WeightedSpanTerm value)
+            {
+                return wrapped.TryGetValue(key, out value);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
 
-        public bool ExpandMultiTermQuery
+        public virtual bool ExpandMultiTermQuery
         {
             set { expandMultiTermQuery = value; }
             get { return expandMultiTermQuery; }
         }
 
-        public bool IsCachedTokenStream
+        public virtual bool IsCachedTokenStream
         {
             get { return cachedTokenStream; }
         }
 
-        public TokenStream TokenStream
+        public virtual TokenStream TokenStream
         {
             get { return tokenStream; }
         }
-
 
         /// <summary>
         /// By default, <see cref="Analysis.TokenStream"/>s that are not of the type
@@ -691,12 +784,12 @@ namespace Lucene.Net.Search.Highlight
         /// <see cref="Analysis.TokenStream"/> impl and you don't want it to be wrapped, set this to
         /// false.
         /// </summary>
-        public void SetWrapIfNotCachingTokenFilter(bool wrap)
+        public virtual void SetWrapIfNotCachingTokenFilter(bool wrap)
         {
             this.wrapToCaching = wrap;
         }
 
-        protected void SetMaxDocCharsToAnalyze(int maxDocCharsToAnalyze)
+        protected internal void SetMaxDocCharsToAnalyze(int maxDocCharsToAnalyze)
         {
             this.maxDocCharsToAnalyze = maxDocCharsToAnalyze;
         }

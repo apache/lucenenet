@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Specifies the open mode for <seealso cref="IndexWriter"/>.
         /// </summary>
-        public enum OpenMode_e
+        public enum OpenMode_e // LUCENENET TODO: Move outside of IndexWriterConfig and rename to OpenMode
         {
             /// <summary>
             /// Creates a new index or overwrites an existing one.

@@ -1,31 +1,30 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Search.Highlight
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Class used to markup highlighted terms found in the best sections of a
     /// text, using configurable <see cref="IFragmenter"/>, <see cref="Scorer"/>, <see cref="IFormatter"/>,
@@ -64,14 +63,14 @@ namespace Lucene.Net.Search.Highlight
         /// Highlights chosen terms in a text, extracting the most relevant section.
         /// This is a convenience method that calls <see cref="GetBestFragment(TokenStream, string)"/>
         /// </summary>
-        /// <param name="analyzer">the analyzer that will be used to split <c>text</c> into chunks</param>
+        /// <param name="analyzer">the analyzer that will be used to split <paramref name="text"/> into chunks</param>
         /// <param name="fieldName">Name of field used to influence analyzer's tokenization policy</param>
         /// <param name="text">text to highlight terms in</param>
         /// <returns>highlighted text fragment or null if no terms found</returns>
-        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's endOffset exceeds the provided text's length</exception>
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public string GetBestFragment(Analyzer analyzer, string fieldName, string text)
         {
-            TokenStream tokenStream = analyzer.TokenStream(fieldName, new StringReader(text));
+            TokenStream tokenStream = analyzer.TokenStream(fieldName, text);
             return GetBestFragment(tokenStream, text);
         }
 
@@ -82,7 +81,7 @@ namespace Lucene.Net.Search.Highlight
         /// is returned
         /// </summary>
         /// <param name="tokenStream">
-        /// a stream of tokens identified in the text parameter, including offset information.
+        /// A stream of tokens identified in the text parameter, including offset information.
         /// This is typically produced by an analyzer re-parsing a document's
         /// text. Some work may be done on retrieving TokenStreams more efficiently
         /// by adding support for storing original text position data in the Lucene
@@ -90,7 +89,7 @@ namespace Lucene.Net.Search.Highlight
         /// </param>
         /// <param name="text">text to highlight terms in</param>
         /// <returns>highlighted text fragment or null if no terms found</returns>
-        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's endOffset exceeds the provided text's length</exception>
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public string GetBestFragment(TokenStream tokenStream, string text)
         {
             string[] results = GetBestFragments(tokenStream, text, 1);
@@ -105,19 +104,19 @@ namespace Lucene.Net.Search.Highlight
         /// Highlights chosen terms in a text, extracting the most relevant sections.
         /// This is a convenience method that calls <see cref="GetBestFragments(TokenStream, string, int)"/>
         /// </summary>
-        /// <param name="analyzer">the analyzer that will be used to split <c>text</c> into chunks</param>
+        /// <param name="analyzer">the analyzer that will be used to split <paramref name="text"/> into chunks</param>
         /// <param name="fieldName">the name of the field being highlighted (used by analyzer)</param>
         /// <param name="text">text to highlight terms in</param>
         /// <param name="maxNumFragments">the maximum number of fragments.</param>
-        /// <returns>highlighted text fragments (between 0 and maxNumFragments number of fragments)</returns>
-        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's endOffset exceeds the provided text's length</exception>
+        /// <returns>highlighted text fragments (between 0 and <paramref name="maxNumFragments"/> number of fragments)</returns>
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public string[] GetBestFragments(
             Analyzer analyzer,
             string fieldName,
             string text,
             int maxNumFragments)
         {
-            TokenStream tokenStream = analyzer.TokenStream(fieldName, new StringReader(text));
+            TokenStream tokenStream = analyzer.TokenStream(fieldName, text);
             return GetBestFragments(tokenStream, text, maxNumFragments);
         }
 
@@ -131,16 +130,16 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="tokenStream"></param>
         /// <param name="text">text to highlight terms in</param>
         /// <param name="maxNumFragments">the maximum number of fragments.</param>
-        /// <returns>highlighted text fragments (between 0 and maxNumFragments number of fragments)</returns>
-        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's endOffset exceeds the provided text's length</exception>
-        public String[] GetBestFragments(TokenStream tokenStream, String text, int maxNumFragments)
+        /// <returns>highlighted text fragments (between 0 and <paramref name="maxNumFragments"/> number of fragments)</returns>
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
+        public string[] GetBestFragments(TokenStream tokenStream, string text, int maxNumFragments)
         {
             maxNumFragments = Math.Max(1, maxNumFragments); //sanity check
 
             TextFragment[] frag = GetBestTextFragments(tokenStream, text, true, maxNumFragments);
 
             //Get text
-            var fragTexts = new List<String>();
+            var fragTexts = new List<string>();
             for (int i = 0; i < frag.Length; i++)
             {
                 if ((frag[i] != null) && (frag[i].Score > 0))
@@ -153,12 +152,14 @@ namespace Lucene.Net.Search.Highlight
 
         /// <summary>
         /// Low level api to get the most relevant (formatted) sections of the document.
-        /// This method has been made public to allow visibility of score information held in TextFragment objects.
+        /// This method has been made public to allow visibility of score information held in <see cref="TextFragment"/> objects.
         /// Thanks to Jason Calabrese for help in redefining the interface.
         /// </summary>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public TextFragment[] GetBestTextFragments(
             TokenStream tokenStream,
-            String text,
+            string text,
             bool mergeContiguousFragments,
             int maxNumFragments)
         {
@@ -318,6 +319,7 @@ namespace Lucene.Net.Search.Highlight
                 {
                     try
                     {
+                        tokenStream.End();
                         tokenStream.Dispose();
                     }
                     catch (Exception)
@@ -403,7 +405,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Highlights terms in the  text , extracting the most relevant sections
+        /// Highlights terms in the <paramref name="text"/>, extracting the most relevant sections
         /// and concatenating the chosen fragments with a separator (typically "...").
         /// The document text is analysed in chunks to record hit statistics
         /// across the document. After accumulating stats, the fragments with the highest scores
@@ -414,7 +416,8 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="maxNumFragments">the maximum number of fragments.</param>
         /// <param name="separator">the separator used to intersperse the document fragments (typically "...")</param>
         /// <returns>highlighted text</returns>
-        public string GetBestFragments(
+        /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
+        public virtual string GetBestFragments(
             TokenStream tokenStream,
             string text,
             int maxNumFragments,
@@ -433,26 +436,25 @@ namespace Lucene.Net.Search.Highlight
             return result.ToString();
         }
 
-        public int MaxDocCharsToAnalyze
+        public virtual int MaxDocCharsToAnalyze
         {
             get { return _maxDocCharsToAnalyze; }
             set { this._maxDocCharsToAnalyze = value; }
         }
 
-
-        public IFragmenter TextFragmenter
+        public virtual IFragmenter TextFragmenter
         {
             get { return _textFragmenter; }
             set { _textFragmenter = value; }
         }
 
-        public IScorer FragmentScorer
+        public virtual IScorer FragmentScorer
         {
             get { return _fragmentScorer; }
             set { _fragmentScorer = value; }
         }
 
-        public IEncoder Encoder
+        public virtual IEncoder Encoder
         {
             get { return _encoder; }
             set { this._encoder = value; }

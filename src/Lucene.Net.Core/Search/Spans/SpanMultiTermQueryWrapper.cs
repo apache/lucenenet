@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Spans
     /// }
     /// </pre></blockquote>
     /// </summary>
-    public class SpanMultiTermQueryWrapper<Q> : SpanQuery where Q : Lucene.Net.Search.MultiTermQuery
+    public class SpanMultiTermQueryWrapper<Q> : SpanQuery, ISpanMultiTermQueryWrapper where Q : Lucene.Net.Search.MultiTermQuery
     {
         protected internal readonly Q query;
 
@@ -173,12 +173,7 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        /// <summary>
-        /// Abstract class that defines how the query is rewritten. </summary>
-        public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
-        {
-            public override abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
-        }
+        // LUCENENET NOTE: Moved SpanRewriteMethod outside of this class
 
         /// <summary>
         /// A rewrite method that first translates each term into a SpanTermQuery in a
@@ -327,5 +322,26 @@ namespace Lucene.Net.Search.Spans
                 return @delegate.Equals(other.@delegate);
             }
         }
+    }
+
+    /// <summary>
+    /// Abstract class that defines how the query is rewritten. </summary>
+    // LUCENENET specific - moved this class outside of SpanMultiTermQueryWrapper<Q>
+    public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
+    {
+        public override abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface for referring to/identifying a SpanMultipTermQueryWrapper without
+    /// referring to its generic closing type.
+    /// </summary>
+    public interface ISpanMultiTermQueryWrapper
+    {
+        SpanRewriteMethod RewriteMethod { get; }
+        Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
+        string Field { get; }
+        Query WrappedQuery { get; }
+        Query Rewrite(IndexReader reader);
     }
 }

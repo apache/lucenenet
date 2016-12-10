@@ -1,20 +1,34 @@
 ﻿using Lucene.Net.Analysis;
-using Lucene.Net.Index;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Highlight
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     ///<summary>
-    /// Convenience methods for obtaining a {@link TokenStream} for use with the {@link Highlighter} - can obtain from
+    /// Hides implementation issues associated with obtaining a <see cref="TokenStream"/> for use with 
+    /// the <see cref="Highlighter"/> - can obtain from
     /// term vectors with offsets and positions or from an Analyzer re-parsing the stored content.
     /// see TokenStreamFromTermVector
     ///</summary>
@@ -35,16 +49,16 @@ namespace Lucene.Net.Search.Highlight
             }
         }
 
-        public class StoredTokenStream : TokenStream
+        internal sealed class StoredTokenStream : TokenStream
         {
-            protected internal Token[] tokens;
-            protected internal int currentToken = 0;
-            protected internal ICharTermAttribute termAtt;
-            protected internal IOffsetAttribute offsetAtt;
-            protected internal IPositionIncrementAttribute posincAtt;
-            protected internal IPayloadAttribute payloadAtt; 
+            internal Token[] tokens;
+            internal int currentToken = 0;
+            internal ICharTermAttribute termAtt;
+            internal IOffsetAttribute offsetAtt;
+            internal IPositionIncrementAttribute posincAtt;
+            internal IPayloadAttribute payloadAtt; 
 
-            protected internal StoredTokenStream(Token[] tokens)
+            internal StoredTokenStream(Token[] tokens)
             {
                 this.tokens = tokens;
                 termAtt = AddAttribute<ICharTermAttribute>();
@@ -78,7 +92,7 @@ namespace Lucene.Net.Search.Highlight
 
         /// <summary>
         /// A convenience method that tries to first get a TermPositionVector for the specified docId, then, falls back to
-        /// using the passed in <see cref="Document"/> to retrieve the TokenStream.  This is useful when
+        /// using the passed in <see cref="Document"/> to retrieve the <see cref="TokenStream"/>.  This is useful when
         /// you already have the document, but would prefer to use the vector first.
         /// </summary>
         /// <param name="reader">The <see cref="IndexReader"/> to use to try and get the vector from</param>
@@ -128,35 +142,51 @@ namespace Lucene.Net.Search.Highlight
             return ts;
         }
 
-        public static TokenStream GetTokenStream(Terms tpv)
+        public static TokenStream GetTokenStream(Terms vector)
         {
             //assumes the worst and makes no assumptions about token position sequences.
-            return GetTokenStream(tpv, false);
+            return GetTokenStream(vector, false);
         }
 
         /// <summary>
-        /// Low level api.
-        /// Returns a token stream or null if no offset info available in index.
-        /// This can be used to feed the highlighter with a pre-parsed token stream 
-        /// 
+        /// Low level api. Returns a token stream generated from a <see cref="Terms"/>. This
+        /// can be used to feed the highlighter with a pre-parsed token
+        /// stream.  The <see cref="Terms"/> must have offsets available.
+        /// <para/>
         /// In my tests the speeds to recreate 1000 token streams using this method are:
-        /// - with TermVector offset only data stored - 420  milliseconds 
-        /// - with TermVector offset AND position data stored - 271 milliseconds
-        ///  (nb timings for TermVector with position data are based on a tokenizer with contiguous
-        ///  positions - no overlaps or gaps)
-        /// The cost of not using TermPositionVector to store
-        /// pre-parsed content and using an analyzer to re-parse the original content: 
-        /// - reanalyzing the original content - 980 milliseconds
+        /// <list type="bullet">
+        ///     <item>
+        ///     with TermVector offset only data stored - 420  milliseconds 
+        ///     </item>
+        ///     <item>
+        ///     with TermVector offset AND position data stored - 271 milliseconds
+        ///     (nb timings for TermVector with position data are based on a tokenizer with contiguous
+        ///     positions - no overlaps or gaps)
+        ///     </item>
+        ///     <item>
+        ///     The cost of not using TermPositionVector to store
+        ///     pre-parsed content and using an analyzer to re-parse the original content:
+        ///     - reanalyzing the original content - 980 milliseconds
+        ///     </item>
+        /// </list>
         /// 
         /// The re-analyze timings will typically vary depending on -
-        ///     1) The complexity of the analyzer code (timings above were using a 
-        ///        stemmer/lowercaser/stopword combo)
-        ///  2) The  number of other fields (Lucene reads ALL fields off the disk 
+        /// <list type="number">
+        ///     <item>
+        ///     The complexity of the analyzer code (timings above were using a
+        ///     stemmer/lowercaser/stopword combo)
+        ///     </item>
+        ///     <item>
+        ///     The  number of other fields (Lucene reads ALL fields off the disk 
         ///     when accessing just one document field - can cost dear!)
-        ///  3) Use of compression on field storage - could be faster due to compression (less disk IO)
+        ///     </item>
+        ///     <item>
+        ///     Use of compression on field storage - could be faster due to compression (less disk IO)
         ///     or slower (more CPU burn) depending on the content.
+        ///     </item>
+        /// </list>
         /// </summary>
-        /// <param name="tpv"/>
+        /// <param name="tpv"></param>
         /// <param name="tokenPositionsGuaranteedContiguous">true if the token position numbers have no overlaps or gaps. If looking
         /// to eek out the last drops of performance, set to true. If in doubt, set to false.</param>
         /// <exception cref="ArgumentException">if no offsets are available</exception>
@@ -245,18 +275,19 @@ namespace Lucene.Net.Search.Highlight
             if (unsortedTokens != null)
             {
                 tokensInOriginalOrder = unsortedTokens.ToArray();
-                tokensInOriginalOrder = tokensInOriginalOrder
-                    .OrderBy(t => t, new TokenComparer() )
-                    .ToArray();
+                ArrayUtil.TimSort(tokensInOriginalOrder, new TokenComparer());
+                //tokensInOriginalOrder = tokensInOriginalOrder
+                //    .OrderBy(t => t, new TokenComparer() )
+                //    .ToArray();
             }
             return new StoredTokenStream(tokensInOriginalOrder);
         }
 
         ///<summary>
         /// Returns a <see cref="TokenStream"/> with positions and offsets constructed from
-        /// field termvectors.If the field has no termvectors or offsets
-        /// are not included in the termvector, return null.  See {
-        /// @link #getTokenStream(org.apache.lucene.index.Terms)}
+        /// field termvectors. If the field has no termvectors or offsets
+        /// are not included in the termvector, return null.  See 
+        /// <see cref="GetTokenStream(Terms)"/>
         /// for an explanation of what happens when positions aren't present.
         /// </summary>
         /// <param name="reader">the <see cref="IndexReader"/> to retrieve term vectors from</param>
@@ -276,13 +307,14 @@ namespace Lucene.Net.Search.Highlight
                 return null;
             }
 
-            if (!vector.HasOffsets()) {
+            if (!vector.HasPositions() || !vector.HasOffsets()) {
                 return null;
             }
     
             return GetTokenStream(vector);
         }
 
+        // convenience method
         public static TokenStream GetTokenStream(IndexReader reader, int docId,
               string field, Analyzer analyzer)
         {
@@ -302,10 +334,18 @@ namespace Lucene.Net.Search.Highlight
             return GetTokenStream(field, contents, analyzer);
         }
 
+        // convenience method
         public static TokenStream GetTokenStream(string field, string contents,
             Analyzer analyzer)
         {
-            return analyzer.TokenStream(field, contents);
+            try
+            {
+                return analyzer.TokenStream(field, contents);
+            }
+            catch (IOException ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
         }
     }
 }

@@ -1,21 +1,4 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,30 +7,46 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Highlight
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-    /// <summary> Utility class used to extract the terms used in a query, plus any weights.
-    /// This class will not find terms for MultiTermQuery, RangeQuery and PrefixQuery classes
-    /// so the caller must pass a rewritten query (see Query.rewrite) to obtain a list of 
-    /// expanded terms.</summary>
+    /// <summary> 
+    /// Utility class used to extract the terms used in a query, plus any weights.
+    /// This class will not find terms for <see cref="MultiTermQuery"/>, RangeQuery and <see cref="PrefixQuery"/> classes
+    /// so the caller must pass a rewritten query (see <see cref="Query.Rewrite(IndexReader)"/>) to obtain a list of 
+    /// expanded terms.
+    /// </summary>
     public static class QueryTermExtractor
     {
 
-        /// <summary> Extracts all terms texts of a given Query into an array of WeightedTerms
-        /// 
+        /// <summary> 
+        /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
-        /// <param name="query">     Query to extract term texts from
-        /// </param>
-        /// <returns> an array of the terms used in a query, plus their weights.
-        /// </returns>
+        /// <param name="query"><see cref="Query"/> to extract term texts from</param>
+        /// <returns> an array of the terms used in a query, plus their weights.</returns>
         public static WeightedTerm[] GetTerms(Query query)
         {
             return GetTerms(query, false);
         }
 
-        /// <summary> Extracts all terms texts of a given Query into an array of WeightedTerms
-        /// 
+        /// <summary> 
+        /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
-        /// <param name="query">Query to extract term texts from</param>
+        /// <param name="query"><see cref="Query"/> to extract term texts from</param>
         /// <param name="reader">used to compute IDF which can be used to a) score selected fragments better 
         /// b) use graded highlights eg chaning intensity of font color</param>
         /// <param name="fieldName">the field on which Inverse Document Frequency (IDF) calculations are based</param>
@@ -73,8 +72,8 @@ namespace Lucene.Net.Search.Highlight
             return terms;
         }
 
-        /// <summary>Extracts all terms texts of a given Query into an array of WeightedTerms</summary>
-        /// <param name="query">Query to extract term texts from</param>
+        /// <summary>Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms</summary>
+        /// <param name="query"><see cref="Query"/> to extract term texts from</param>
         /// <param name="prohibited"><c>true</c> to extract "prohibited" terms, too </param>
         /// <param name="fieldName"> The fieldName used to filter query terms</param>
         /// <returns>an array of the terms used in a query, plus their weights.</returns>
@@ -89,15 +88,12 @@ namespace Lucene.Net.Search.Highlight
             return terms.ToArray();
         }
 
-        /// <summary> Extracts all terms texts of a given Query into an array of WeightedTerms
-        /// 
+        /// <summary> 
+        /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
-        /// <param name="query">     Query to extract term texts from
-        /// </param>
-        /// <param name="prohibited"><c>true</c> to extract "prohibited" terms, too
-        /// </param>
-        /// <returns> an array of the terms used in a query, plus their weights.
-        /// </returns>
+        /// <param name="query"><see cref="Query"/> to extract term texts from</param>
+        /// <param name="prohibited"><c>true</c> to extract "prohibited" terms, too</param>
+        /// <returns> an array of the terms used in a query, plus their weights.</returns>
         public static WeightedTerm[] GetTerms(Query query, bool prohibited)
         {
             return GetTerms(query, prohibited, null);
@@ -118,7 +114,7 @@ namespace Lucene.Net.Search.Highlight
                     query.ExtractTerms(nonWeightedTerms);
                     foreach (var term in nonWeightedTerms)
                     {
-                        if ((fieldName == null) || (term.Field == fieldName))
+                        if ((fieldName == null) || (term.Field.Equals(fieldName)))
                         {
                             terms.Add(new WeightedTerm(query.Boost, term.Text()));
                         }
@@ -137,7 +133,7 @@ namespace Lucene.Net.Search.Highlight
         /// in each child element. 
         /// Some discussion around this topic here:
         /// http://www.gossamer-threads.com/lists/lucene/java-dev/34208?search_string=introspection;#34208
-        /// Unfortunately there seemed to be limited interest in requiring all Query objects to implement
+        /// Unfortunately there seemed to be limited interest in requiring all <see cref="Query"/> objects to implement
         /// something common which would allow access to child queries so what follows here are query-specific
         /// implementations for accessing embedded query elements. 
         /// </summary>
