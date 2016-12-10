@@ -85,11 +85,20 @@ namespace Lucene.Net.Support
         {
             if (((float)(int)f) == f)
             {
-                return ((int)f).ToString() + ".0";
+                // Special case: When we have an integer value,
+                // the standard .NET formatting removes the decimal point
+                // and everything to the right. But we need to always
+                // have at least decimal place to match Lucene.
+                return f.ToString("0.0", CultureInfo.InvariantCulture);
             }
             else
             {
-                return f.ToString(NumberFormatInfo.InvariantInfo);
+                // LUCENENET NOTE: Although the MSDN documentation says that 
+                // round-trip on float will be limited to 7 decimals, it appears
+                // not to be the case. Also, when specifying "0.0######", we only
+                // get a result to 6 decimal places maximum. So, we must round before
+                // doing a round-trip format to guarantee 7 decimal places.
+                return Math.Round(f, 7).ToString("R", CultureInfo.InvariantCulture);
             }
         }
 
