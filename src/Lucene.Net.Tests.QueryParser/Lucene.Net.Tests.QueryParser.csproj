@@ -83,6 +83,10 @@
     <Compile Include="Surround\Query\Test02Boolean.cs" />
     <Compile Include="Surround\Query\Test03Distance.cs" />
     <Compile Include="Util\QueryParserTestBase.cs" />
+    <Compile Include="Xml\Builders\TestNumericRangeFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\TestNumericRangeQueryBuilder.cs" />
+    <Compile Include="Xml\TestParser.cs" />
+    <Compile Include="Xml\TestQueryTemplateManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
@@ -112,6 +116,33 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MessagesTestBundleBundle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\albumBooleanQuery.xsl" />
+    <EmbeddedResource Include="Xml\albumFilteredQuery.xsl" />
+    <EmbeddedResource Include="Xml\albumLuceneClassicQuery.xsl" />
+    <EmbeddedResource Include="Xml\BooleanFilter.xml" />
+    <EmbeddedResource Include="Xml\BooleanQuery.xml" />
+    <EmbeddedResource Include="Xml\BoostingQuery.xml" />
+    <EmbeddedResource Include="Xml\BoostingTermQuery.xml" />
+    <EmbeddedResource Include="Xml\CachedFilter.xml" />
+    <EmbeddedResource Include="Xml\ConstantScoreQuery.xml" />
+    <EmbeddedResource Include="Xml\DisjunctionMaxQuery.xml" />
+    <EmbeddedResource Include="Xml\DuplicateFilterQuery.xml" />
+    <EmbeddedResource Include="Xml\FuzzyLikeThisQuery.xml" />
+    <EmbeddedResource Include="Xml\LikeThisQuery.xml" />
+    <EmbeddedResource Include="Xml\MatchAllDocsQuery.xml" />
+    <EmbeddedResource Include="Xml\NestedBooleanQuery.xml" />
+    <EmbeddedResource Include="Xml\NumericRangeFilterQuery.xml" />
+    <EmbeddedResource Include="Xml\NumericRangeQueryQuery.xml" />
+    <EmbeddedResource Include="Xml\RangeFilterQuery.xml" />
+    <EmbeddedResource Include="Xml\reuters21578.txt" />
+    <EmbeddedResource Include="Xml\SpanQuery.xml" />
+    <EmbeddedResource Include="Xml\TermQuery.xml" />
+    <EmbeddedResource Include="Xml\TermsFilterQuery.xml" />
+    <EmbeddedResource Include="Xml\TermsQuery.xml" />
+    <EmbeddedResource Include="Xml\UserInputQuery.xml" />
+    <EmbeddedResource Include="Xml\UserInputQueryCustomField.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

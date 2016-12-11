@@ -99,7 +99,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number)).ToString(GetDateFormat(), this.locale);
         }
 
-        internal string GetDateFormat()
+        /// <summary>
+        /// Returns the .NET date format that will be used to Format the date.
+        /// Note that parsing the date uses <see cref="DateTime.Parse(string, IFormatProvider)"/>, which
+        /// does not require a format.
+        /// </summary>
+        // LUCENENET specific
+        public string GetDateFormat()
         {
             if (dateFormat != null) return dateFormat;
 

@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override bool Match(int docid)
+            protected override bool Match(int docid)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

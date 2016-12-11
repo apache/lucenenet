@@ -394,21 +394,8 @@ namespace Lucene.Net.Support
 
         public static string ToBinaryString(int value)
         {
-            var sb = new System.Text.StringBuilder();
-
-            var uval = (uint)value;
-
-            for (int i = 0; i < 32; i++)
-            {
-                if ((uval & 0x80000000) == 0x80000000)
-                    sb.Append('1');
-                else
-                    sb.Append('0');
-
-                uval <<= 1;
-            }
-
-            return sb.ToString();
+            // Convert to base 2 string with no leading 0's
+            return Convert.ToString(value, 2);
         }
 
         public static float IntBitsToFloat(int value)

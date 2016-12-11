@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual object MissingValue
+        public virtual object MissingValue // LUCENENET TODO: Change back to SetMissingValue() method - properties should always have a getter
         {
             set
             {

@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool Match(int docid)
+            protected override bool Match(int docid)
             {
                 return docid % 2 == 0; //validate only even docids
             }
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
                     this.OuterInstance = outerInstance;
                 }
 
-                protected internal override bool Match(int docid)
+                protected override bool Match(int docid)
                 {
                     return true;
                 }
