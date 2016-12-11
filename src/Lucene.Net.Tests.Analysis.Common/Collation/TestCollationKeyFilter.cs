@@ -1,11 +1,13 @@
-﻿using Icu.Collation;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using Icu;
+using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
-using System.Globalization;
-using System.IO;
 
 namespace Lucene.Net.Collation
 {
@@ -26,7 +28,7 @@ namespace Lucene.Net.Collation
      * limitations under the License.
      */
 
-	[TestFixture]
+    [TestFixture]
 	[Obsolete("remove when CollationKeyFilter is removed.")]
 	public class TestCollationKeyFilter : CollationTestBase
 	{
@@ -106,18 +108,37 @@ namespace Lucene.Net.Collation
 		[Test]
 		public virtual void TestCollationKeySort()
 		{
-            Analyzer usAnalyzer = new TestAnalyzer(this, Collator.Create(CultureInfo.InvariantCulture));
-            Collator franceCollator = Collator.Create(/*new CultureInfo("fr")*/);
+            Analyzer usAnalyzer = new TestAnalyzer(this, GetCollator("en-US"));
+            Collator franceCollator = GetCollator("fr");
             franceCollator.FrenchCollation = FrenchCollation.On;
             Analyzer franceAnalyzer = new TestAnalyzer(this, franceCollator);
-            Analyzer swedenAnalyzer = new TestAnalyzer(this, Collator.Create(new CultureInfo("sv-SE")));
-            Analyzer denmarkAnalyzer = new TestAnalyzer(this, Collator.Create(new CultureInfo("da-DK")));
+
+            // `useFallback: true` on both Swedish and Danish collators in
+            // case the region specific collator is not found.
+            Analyzer swedenAnalyzer = new TestAnalyzer(this, GetCollator("sv-SE", "sv"));
+            Analyzer denmarkAnalyzer = new TestAnalyzer(this, GetCollator("da-DK", "da"));
 
 			// The ICU Collator and Sun java.text.Collator implementations differ in their
 			// orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
 			this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
                 this.oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
 		}
+
+        private Collator GetCollator(params string[] localeNames)
+        {
+            var firstMatchingLocale = localeNames
+                .Select(x => new Locale(x))
+                .FirstOrDefault(x => availableCollationLocales.Contains(x.Id));
+
+            if (firstMatchingLocale == default(Locale))
+            {
+                throw new ArgumentException($"Could not find a collator locale matching any of the following: {string.Join(", ", localeNames)}");
+            }
+
+            Collator collator = RuleBasedCollator.Create(firstMatchingLocale.Id);
+
+            return collator;
+        }
 
         // Original Java Code:
         //public void testCollationKeySort() throws Exception {
@@ -128,12 +149,12 @@ namespace Lucene.Net.Collation
         //    = new TestAnalyzer(Collator.getInstance(new Locale("sv", "se")));
         //  Analyzer denmarkAnalyzer 
         //    = new TestAnalyzer(Collator.getInstance(new Locale("da", "dk")));
-    
+
         //  // The ICU Collator and Sun java.text.Collator implementations differ in their
         //  // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
         //  testCollationKeySort
         //  (usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
         //   oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
         //}
-	}
+    }
 }

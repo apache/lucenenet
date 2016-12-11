@@ -1,10 +1,12 @@
-﻿using Icu.Collation;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Icu;
+using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Collation
 {
@@ -25,7 +27,7 @@ namespace Lucene.Net.Collation
      * limitations under the License.
      */
 
-	[TestFixture]
+    [TestFixture]
 	public class TestCollationKeyFilterFactory : BaseTokenStreamFactoryTestCase
 	{
 		/// <summary>
@@ -97,16 +99,22 @@ namespace Lucene.Net.Collation
 		[Test]
 		public virtual void TestCustomRules()
 		{
-            //RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.Create(new CultureInfo("de-DE"));
+            // It is possible not to have the collator rules for a specific
+            // country, fallback to the language if that is the case.
+            var possiblelocales = new[] { new Locale("de-DE"), new Locale("de") };
+            var allRules = RuleBasedCollator.GetAvailableCollationLocales();
+            var localeToUse = possiblelocales.FirstOrDefault(locl => allRules.Contains(locl.Id));
 
-            string DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
+            Assert.True(localeToUse != default(Locale), "Should have found a matching collation locale given the two locales to use.");
 
+            const string DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
+            var collationRules = Collator.GetCollationRules(localeToUse.Id);
 
-            // LUCENENET TODO: Cannot read rules from the RuleBasedCollator. Determine whether this is the correct approach.
-            string tailoredRules = Collator.GetCollationRules("de-DE") + DIN5007_2_tailorings;
+            Assert.IsNotNull(collationRules, $"Rules should have been fetched for {localeToUse.Id}");
 
-            //RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.Rules + DIN5007_2_tailorings);
-            //string tailoredRules = tailoredCollator.Rules;
+            string tailoredRules = collationRules + DIN5007_2_tailorings;
+
+            RuleBasedCollator tailoredCollator = new RuleBasedCollator(tailoredRules);
 
             // at this point, you would save these tailoredRules to a file, 
             // and use the custom parameter.
