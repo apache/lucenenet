@@ -450,7 +450,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
 
             var calendar = CultureInfo.CurrentCulture.Calendar;
-            DateTime lastDate = new DateTime(year, month, day, calendar);
+            DateTime lastDate = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
 
             if (extendLastDate)
             {
@@ -460,7 +460,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 lastDate = calendar.AddMilliseconds(lastDate, 999);
             }
 
-            return lastDate.ToShortDateString();
+            return lastDate.ToString("d"); //.ToShortDateString();
         }
 
         [Test]
@@ -472,7 +472,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             //Calendar endDateExpected = new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault());
             //endDateExpected.set(2002, 1, 4, 23, 59, 59);
             //endDateExpected.set(Calendar.MILLISECOND, 999);
-            DateTime endDateExpected = new DateTime(2002, 1, 4, 23, 59, 59, 999, new GregorianCalendar());
+            DateTime endDateExpected = new GregorianCalendar().ToDateTime(2002, 1, 4, 23, 59, 59, 999);
 
 
             String defaultField = "default";
