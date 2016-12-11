@@ -3,7 +3,7 @@
     "win": {}
   },
   "dependencies": {
-    "icu.net": "54.0.8-alpha"
+    "icu.net": "54.1.1-alpha"
   },
   "frameworks": {
     "net451": {}
