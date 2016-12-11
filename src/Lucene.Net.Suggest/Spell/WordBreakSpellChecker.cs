@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Spell
             SuggestWord[][] suggestionArray = new SuggestWord[suggestions.Count][];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                suggestionArray[i] = suggestions.Dequeue().SuggestWords;
+                suggestionArray[i] = suggestions.Remove().SuggestWords;
             }
 
             return suggestionArray;
@@ -233,10 +233,10 @@ namespace Lucene.Net.Search.Spell
                                 word.Score = origIndexes.Length - 1;
                                 word.String = combinedTerm.Text();
                                 CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(this, new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
-                                suggestions.Enqueue(suggestion);
+                                suggestions.Offer(suggestion);
                                 if (suggestions.Count > maxSuggestions)
                                 {
-                                    suggestions.Dequeue();
+                                    suggestions.Poll();
                                 }
                             }
                         }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Spell
             CombineSuggestion[] combineSuggestions = new CombineSuggestion[suggestions.Count];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                combineSuggestions[i] = suggestions.Dequeue().CombineSuggestion;
+                combineSuggestions[i] = suggestions.Remove().CombineSuggestion;
             }
             return combineSuggestions;
         }
@@ -287,10 +287,10 @@ namespace Lucene.Net.Search.Spell
                     if (rightWord.Freq >= useMinSuggestionFrequency)
                     {
                         SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(this, NewSuggestion(prefix, leftWord, rightWord));
-                        suggestions.Enqueue(suggestion);
+                        suggestions.Offer(suggestion);
                         if (suggestions.Count > maxSuggestions)
                         {
-                            suggestions.Dequeue();
+                            suggestions.Poll();
                         }
                     }
                     int newNumberBreaks = numberBreaks + 1;
