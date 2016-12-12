@@ -36,6 +36,9 @@ namespace Lucene.Net.QueryParsers.Xml
     /// <summary>
     /// This class illustrates how form input (such as from a web page or Swing gui) can be
     /// turned into Lucene queries using a choice of XSL templates for different styles of queries.
+    /// 
+    /// LUCENENET (.NET Core):  This is not compiled this because .NET Standard
+    /// does not currently support XSL Transform.
     /// </summary>
     public class TestQueryTemplateManager : LuceneTestCase
     {
