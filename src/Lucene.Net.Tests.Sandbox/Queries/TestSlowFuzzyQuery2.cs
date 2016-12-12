@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Sandbox.Queries
@@ -84,7 +85,7 @@ namespace Lucene.Net.Sandbox.Queries
                 Console.WriteLine("TEST: codePointTable=" + codePointTable);
             }
             //Stream stream = GetType().getResourceAsStream("fuzzyTestData.txt");
-            Stream stream = GetType().Assembly.GetManifestResourceStream("Lucene.Net.Sandbox.Queries.fuzzyTestData.txt");
+            Stream stream = GetType().GetTypeInfo().Assembly.GetManifestResourceStream("Lucene.Net.Sandbox.Queries.fuzzyTestData.txt");
             TextReader reader = new StreamReader(stream, Encoding.UTF8);
 
             int bits = int.Parse(reader.ReadLine(), CultureInfo.InvariantCulture);

@@ -1,0 +1,35 @@
+﻿{
+  "version": "4.8.0-alpha",
+  "dependencies": {
+    "dotnet-test-nunit": "3.4.0-beta-3",
+    "Lucene.Net.Codecs": "4.8.0-alpha",
+    "Lucene.Net.Sandbox": "4.8.0-alpha",
+    "Lucene.Net.TestFramework": "4.8.0-alpha",
+    "NUnit": "3.5.0"
+  },
+  "buildOptions": {
+    "embed": {
+      "includeFiles": [ 
+        "Queries/fuzzyTestData.txt"
+      ]
+    }
+  },
+  "testRunner": "nunit",
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      },
+      "imports": "dnxcore50"
+    }
+  },
+
+  "runtimes": {
+    "win7-x86": {},
+    "win7-x64": {}
+  }
+}
