@@ -42,11 +42,15 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this tokenizer will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE;
+        
+        //LUCENENET: Specifying to use Thai locale.
+        private static readonly Locale LocaleThai = new Locale("th");
+
         private static readonly IEnumerable<Boundary> proto;
         static ThaiTokenizer()
         {
             // check that we have a working dictionary-based break iterator for thai
-            proto = BreakIterator.GetWordBoundaries(LocaleUS, "ภาษาไทย", includeSpacesAndPunctuation: false).ToArray();
+            proto = BreakIterator.GetWordBoundaries(LocaleThai, "ภาษาไทย", includeSpacesAndPunctuation: false).ToArray();
             var first = proto.FirstOrDefault();
             DBBI_AVAILABLE = first != default(Boundary) && first.End == 4;
         }
@@ -70,7 +74,7 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-              : base(factory, reader, LocaleUS, BreakIterator.UBreakIteratorType.SENTENCE)
+              : base(factory, reader, LocaleThai, BreakIterator.UBreakIteratorType.SENTENCE)
         {
             if (!DBBI_AVAILABLE)
             {
