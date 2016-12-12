@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.QueryParsers.Xml
@@ -37,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Xml
         private static IndexReader reader;
         private static IndexSearcher searcher;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             // TODO: rewrite test (this needs to set QueryParser.enablePositionIncrements, too, for work with CURRENT):
@@ -47,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
             TextReader d = new StreamReader(
             //    typeof(TestParser).getResourceAsStream("reuters21578.txt"), Encoding.ASCII);
-                typeof(TestParser).Assembly.GetManifestResourceStream(RESOURCE_PATH + "reuters21578.txt"), Encoding.ASCII);
+                typeof(TestParser).GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + "reuters21578.txt"), Encoding.ASCII);
             dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             String line = d.ReadLine();
@@ -70,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             reader.Dispose();
@@ -248,7 +249,7 @@ namespace Lucene.Net.QueryParsers.Xml
         private Query Parse(String xmlFileName)
         {
             //Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName);
-            using (Stream xmlStream = typeof(TestParser).Assembly.GetManifestResourceStream(RESOURCE_PATH + xmlFileName))
+            using (Stream xmlStream = typeof(TestParser).GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + xmlFileName))
             { 
                 Query result = builder.Parse(xmlStream);
                 return result;

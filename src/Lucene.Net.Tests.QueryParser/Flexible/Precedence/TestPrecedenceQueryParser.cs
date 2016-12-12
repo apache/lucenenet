@@ -46,13 +46,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
     {
         public static Analyzer qpAnalyzer;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void beforeClass()
         {
             qpAnalyzer = new QPTestAnalyzer();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void afterClass()
         {
             qpAnalyzer = null;
