@@ -24,7 +24,10 @@
           "version": "1.0.1"
         }
       },
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "FEATURE_EMBEDDED_RESOURCE" ]
+      }
     }
   },
 

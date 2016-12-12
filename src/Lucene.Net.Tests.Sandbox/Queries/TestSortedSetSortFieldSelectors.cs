@@ -36,7 +36,7 @@ namespace Lucene.Net.Sandbox.Queries
     {
         static Codec savedCodec;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void beforeClass()
         {
             savedCodec = Codec.Default;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void afterClass()
         {
             Codec.Default = (savedCodec);
