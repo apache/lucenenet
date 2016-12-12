@@ -23,7 +23,9 @@ namespace Lucene.Net.QueryParsers.Xml
     /// Thrown when the xml queryparser encounters 
     /// invalid syntax/configuration.
     /// </summary>
+#if FEATURE_SERIALIZABLE
     [Serializable]
+#endif
     public class ParserException : Exception
     {
         public ParserException()
