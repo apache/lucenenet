@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Th
 
         private int GetNext()
         {
-            bool isThai = false, isNonThai = false;
+            bool isThaiLetter = false, isNonThaiLetter = false;
             bool prevWasThai = false, prevWasNonThai = false;
 
             int previous = currentIndex;
@@ -232,18 +232,18 @@ namespace Lucene.Net.Analysis.Th
                 for (int i = previous; i < current; i++)
                 {
                     char c = text[i];
-                    isThai = thaiPattern.IsMatch(c.ToString());
-                    isNonThai = char.IsLetterOrDigit(c) && !isThai;
+                    isThaiLetter = char.IsLetter(c) && thaiPattern.IsMatch(c.ToString());
+                    isNonThaiLetter = char.IsLetter(c) && !isThaiLetter;
 
-                    if ((prevWasThai && isNonThai) ||
-                        (prevWasNonThai && isThai))
+                    if ((prevWasThai && isNonThaiLetter) ||
+                        (prevWasNonThai && isThaiLetter))
                     {
                         transitions.Add(i);
                     }
 
                     // record the values for comparison with the next loop
-                    prevWasThai = isThai;
-                    prevWasNonThai = isNonThai;
+                    prevWasThai = isThaiLetter;
+                    prevWasNonThai = isNonThaiLetter;
                 }
 
                 if (transitions.Any())
