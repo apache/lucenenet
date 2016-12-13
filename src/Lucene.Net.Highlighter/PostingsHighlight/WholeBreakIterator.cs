@@ -25,8 +25,8 @@ namespace Lucene.Net.Search.PostingsHighlight
     {
         //private CharacterIterator text;
         private string text;
-        //private int start; // Declared in base class
-        //private int end; // Declared in base class
+        private int start; 
+        private int end; 
         private int current;
 
         public override int Current

@@ -14,16 +14,6 @@ namespace Lucene.Net.Support
 #endif
     {
         /// <summary>
-        /// The start offset for the string, if supplied by a <see cref="CharacterIterator"/>
-        /// </summary>
-        protected int start;
-
-        /// <summary>
-        /// The end offset for the string, if supplied by a <see cref="CharacterIterator"/>
-        /// </summary>
-        protected int end;
-
-        /// <summary>
         /// Constructor. BreakIterator is stateless and has no default behavior.
         /// </summary>
         protected BreakIterator()
@@ -224,18 +214,16 @@ namespace Lucene.Net.Support
         /// position is reset to First().
         /// </summary>
         /// <param name="newText">new text to scan.</param>
-        public abstract void SetText(string newText);
+        public virtual void SetText(string newText)
+        {
+            SetText(new StringCharacterIterator(newText));
+        }
 
         /// <summary>
         /// Set a new text string to be scanned.  The current scan
         /// position is reset to First().
         /// </summary>
         /// <param name="newText">new text to scan.</param>
-        public virtual void SetText(CharacterIterator newText)
-        {
-            SetText(newText.GetTextAsString());
-            start = newText.BeginIndex;
-            end = newText.EndIndex;
-        }
+        public abstract void SetText(CharacterIterator newText);
     }
 }

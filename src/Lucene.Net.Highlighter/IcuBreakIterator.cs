@@ -40,6 +40,16 @@ namespace Lucene.Net.Search
         private int currentBoundaryIndex; // Index (not the value) of the current boundary in boundaries
         private string text;
 
+        /// <summary>
+        /// The start offset for the string, if supplied by a <see cref="CharacterIterator"/>
+        /// </summary>
+        protected int start;
+
+        /// <summary>
+        /// The end offset for the string, if supplied by a <see cref="CharacterIterator"/>
+        /// </summary>
+        protected int end;
+
         public IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType type)
             : this(type, CultureInfo.CurrentCulture)
         {
