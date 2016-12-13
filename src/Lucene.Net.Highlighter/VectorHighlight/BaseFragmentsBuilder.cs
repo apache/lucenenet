@@ -7,9 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
+using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -80,7 +79,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             if (tags is string) return tags;
             else if (tags is string[]) return tags;
-            throw new ArgumentException("type of preTags/postTags must be a String or String[]");
+            throw new ArgumentException("type of preTags/postTags must be a string or string[]");
         }
 
         public abstract IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src);
@@ -93,7 +92,6 @@ namespace Lucene.Net.Search.VectorHighlight
             return CreateFragment(reader, docId, fieldName, fieldFragList,
                 preTags, postTags, NULL_ENCODER);
         }
-
 
         public virtual string[] CreateFragments(IndexReader reader, int docId,
             string fieldName, FieldFragList fieldFragList, int maxNumFragments)
@@ -108,7 +106,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             string[]
             fragments = CreateFragments(reader, docId, fieldName, fieldFragList, 1,
-        preTags, postTags, encoder);
+                preTags, postTags, encoder);
             if (fragments == null || fragments.Length == 0) return null;
             return fragments[0];
         }
@@ -118,13 +116,12 @@ namespace Lucene.Net.Search.VectorHighlight
             string fieldName, FieldFragList fieldFragList, int maxNumFragments,
             string[] preTags, string[] postTags, IEncoder encoder)
         {
-
             if (maxNumFragments < 0)
             {
                 throw new ArgumentException("maxNumFragments(" + maxNumFragments + ") must be positive number.");
             }
 
-            IList<FieldFragList.WeightedFragInfo> fragInfos = fieldFragList.FragInfos;
+            IList<WeightedFragInfo> fragInfos = fieldFragList.FragInfos;
             Field[]
             values = GetFields(reader, docId, fieldName);
             if (values.Length == 0)
@@ -145,7 +142,7 @@ namespace Lucene.Net.Search.VectorHighlight
             int[] nextValueIndex = { 0 };
             for (int n = 0; n < limitFragments; n++)
             {
-                FieldFragList.WeightedFragInfo fragInfo = fragInfos[n];
+                WeightedFragInfo fragInfo = fragInfos[n];
                 fragments.Add(MakeFragment(buffer, nextValueIndex, values, fragInfo, preTags, postTags, encoder));
             }
             return fragments.ToArray(/* new String[fragments.size()] */);
@@ -156,23 +153,7 @@ namespace Lucene.Net.Search.VectorHighlight
             // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
             List<Field> fields = new List<Field>();
             reader.Document(docId, new GetFieldsStoredFieldsVisitorAnonymousHelper(fields, fieldName));
-            //    reader.Document(docId, new StoredFieldVisitor()
-            //{
 
-            //    @Override
-            //        public void stringField(FieldInfo fieldInfo, String value)
-            //{
-            //    FieldType ft = new FieldType(TextField.TYPE_STORED);
-            //    ft.setStoreTermVectors(fieldInfo.hasVectors());
-            //    fields.add(new Field(fieldInfo.name, value, ft));
-            //}
-
-            //@Override
-            //        public Status needsField(FieldInfo fieldInfo)
-            //{
-            //    return fieldInfo.name.equals(fieldName) ? Status.YES : Status.NO;
-            //}
-            //      });
             return fields.ToArray(/*new Field[fields.size()]*/);
         }
 
@@ -366,15 +347,6 @@ namespace Lucene.Net.Search.VectorHighlight
                 result.AddAll(weightedFragInfos);
             }
             CollectionUtil.TimSort(result, new DiscreteMultiValueHighlightingComparerAnonymousHelper());
-            //    Collections.sort(result, new Comparator<WeightedFragInfo>() {
-
-            //      @Override
-            //      public int compare(FieldFragList.WeightedFragInfo info1, FieldFragList.WeightedFragInfo info2)
-            //{
-            //    return info1.getStartOffset() - info2.getStartOffset();
-            //}
-
-            //    });
 
             return result;
         }
@@ -387,14 +359,10 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        public void SetMultiValuedSeparator(char separator)
-        {
-            multiValuedSeparator = separator;
-        }
-
         public virtual char MultiValuedSeparator
         {
             get { return multiValuedSeparator; }
+            set { multiValuedSeparator = value; }
         }
 
         public virtual bool IsDiscreteMultiValueHighlighting
@@ -402,7 +370,6 @@ namespace Lucene.Net.Search.VectorHighlight
             get { return discreteMultiValueHighlighting; }
             set { this.discreteMultiValueHighlighting = value; }
         }
-
 
         protected virtual string GetPreTag(int num)
         {

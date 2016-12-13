@@ -158,16 +158,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             this.start = 0;
             this.end = newText.Length;
             this.current = start;
-
-            //if (begin < 0 || begin > end || end > text.length())
-            //    throw new ArgumentException("Invalid substring range");
-
-            //if (pos < begin || pos > end)
-            //    throw new ArgumentException("Invalid position");
-
-            //this.begin = begin;
-            //this.end = end;
-            //this.pos = pos;
         }
 
         public override void SetText(CharacterIterator newText)

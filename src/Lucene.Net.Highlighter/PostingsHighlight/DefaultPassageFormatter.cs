@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -46,7 +43,6 @@ namespace Lucene.Net.Search.PostingsHighlight
         public DefaultPassageFormatter()
                 : this("<b>", "</b>", "... ", false)
         {
-
         }
 
         /**
@@ -56,7 +52,7 @@ namespace Lucene.Net.Search.PostingsHighlight
          * @param ellipsis text which should be used to connect two unconnected passages.
          * @param escape true if text should be html-escaped
          */
-        public DefaultPassageFormatter(String preTag, String postTag, String ellipsis, bool escape)
+        public DefaultPassageFormatter(string preTag, string postTag, string ellipsis, bool escape)
         {
             if (preTag == null || postTag == null || ellipsis == null)
             {
@@ -88,18 +84,18 @@ namespace Lucene.Net.Search.PostingsHighlight
                     // its possible to have overlapping terms
                     if (start > pos)
                     {
-                        append(sb, content, pos, start);
+                        Append(sb, content, pos, start);
                     }
                     if (end > pos)
                     {
                         sb.Append(preTag);
-                        append(sb, content, Math.Max(pos, start), end);
+                        Append(sb, content, Math.Max(pos, start), end);
                         sb.Append(postTag);
                         pos = end;
                     }
                 }
                 // its possible a "term" from the analyzer could span a sentence boundary.
-                append(sb, content, pos, Math.Max(pos, passage.endOffset));
+                Append(sb, content, pos, Math.Max(pos, passage.endOffset));
                 pos = passage.endOffset;
             }
             return sb.ToString();
@@ -112,7 +108,7 @@ namespace Lucene.Net.Search.PostingsHighlight
          * @param start index of the first character in content
          * @param end index of the character following the last character in content
          */
-        protected void append(StringBuilder dest, String content, int start, int end)
+        protected virtual void Append(StringBuilder dest, String content, int start, int end)
         {
             if (escape)
             {

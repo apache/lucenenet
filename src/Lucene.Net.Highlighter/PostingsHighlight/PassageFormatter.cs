@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.Search.PostingsHighlight
+﻿namespace Lucene.Net.Search.PostingsHighlight
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

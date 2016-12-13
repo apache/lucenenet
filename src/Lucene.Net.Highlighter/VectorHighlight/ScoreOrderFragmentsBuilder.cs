@@ -1,9 +1,5 @@
 ﻿using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -65,7 +61,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         public override IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src)
         {
-            CollectionUtil.TimSort(src, new ScoreComparator());
+            CollectionUtil.TimSort(src, new ScoreComparer());
             return src;
         }
 
@@ -73,10 +69,8 @@ namespace Lucene.Net.Search.VectorHighlight
          * Comparator for {@link WeightedFragInfo} by boost, breaking ties
          * by offset.
          */
-        public class ScoreComparator : IComparer<WeightedFragInfo>
+        public class ScoreComparer : IComparer<WeightedFragInfo>
         {
-
-
             public virtual int Compare(WeightedFragInfo o1, WeightedFragInfo o2)
             {
                 if (o1.TotalBoost > o2.TotalBoost) return -1;

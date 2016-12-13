@@ -34,10 +34,9 @@ namespace Lucene.Net.Search.VectorHighlight
     public class FieldTermStack
     {
         private readonly string fieldName;
-        //LinkedList<TermInfo> termList = new LinkedList<TermInfo>();
         internal List<TermInfo> termList = new List<TermInfo>();
 
-        //public static void main( String[] args ) throws Exception {
+        //public static void main( string[] args ) throws Exception {
         //  Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_CURRENT);
         //  QueryParser parser = new QueryParser(Version.LUCENE_CURRENT,  "f", analyzer );
         //  Query query = parser.parse( "a x:b" );
@@ -133,7 +132,6 @@ namespace Lucene.Net.Search.VectorHighlight
 
             // sort by position
             CollectionUtil.TimSort(termList);
-            //Collections.Sort();
 
             // now look for dups at the same position, linking them together
             int currentPos = -1;
@@ -166,28 +164,6 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
             }
 
-            //IEnumerator<TermInfo> iterator = termList.GetEnumerator();
-
-            //while (iterator.MoveNext())
-            //{
-            //    TermInfo current = iterator.Current;
-            //    if (current.Position == currentPos)
-            //    {
-            //        Debug.Assert(previous != null);
-            //        previous.SetNext(current);
-            //        previous = current;
-            //        //iterator.Remove();
-            //    }
-            //    else
-            //    {
-            //        if (previous != null)
-            //        {
-            //            previous.SetNext(first);
-            //        }
-            //        previous = first = current;
-            //        currentPos = current.Position;
-            //    }
-            //}
             if (previous != null)
             {
                 previous.SetNext(first);
@@ -197,7 +173,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /**
          * @return field name
          */
-        public string FieldName
+        public virtual string FieldName
         {
             get { return fieldName; }
         }
@@ -205,9 +181,8 @@ namespace Lucene.Net.Search.VectorHighlight
         /**
          * @return the top TermInfo object of the stack
          */
-        public TermInfo Pop()
+        public virtual TermInfo Pop()
         {
-            //return termList.Poll();
             if (termList.Count == 0)
             {
                 return null;
@@ -220,10 +195,8 @@ namespace Lucene.Net.Search.VectorHighlight
         /**
          * @param termInfo the TermInfo object to be put on the top of the stack
          */
-        public void Push(TermInfo termInfo)
+        public virtual void Push(TermInfo termInfo)
         {
-            //termList.Push(termInfo);
-            //termList.Add(termInfo);
             termList.Insert(0, termInfo);
         }
 
@@ -243,8 +216,7 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         public class TermInfo : IComparable<TermInfo>
         {
-
-            private readonly String text;
+            private readonly string text;
             private readonly int startOffset;
             private readonly int endOffset;
             private readonly int position;
@@ -278,14 +250,12 @@ namespace Lucene.Net.Search.VectorHighlight
             public virtual int Position { get { return position; } }
             public virtual float Weight { get { return weight; } }
 
-
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(text).Append('(').Append(startOffset).Append(',').Append(endOffset).Append(',').Append(position).Append(')');
                 return sb.ToString();
             }
-
 
             public virtual int CompareTo(TermInfo o)
             {

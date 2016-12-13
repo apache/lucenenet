@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
+using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 namespace Lucene.Net.Search.VectorHighlight

@@ -303,7 +303,6 @@ namespace Lucene.Net.Search.Highlight
                 {
                     spanPositions.Add(new PositionSpan(spans.Start(), spans.End() - 1));
                 }
-
             }
 
             if (spanPositions.Count == 0)
@@ -314,7 +313,6 @@ namespace Lucene.Net.Search.Highlight
 
             foreach (Term queryTerm in nonWeightedTerms)
             {
-
                 if (FieldNameComparator(queryTerm.Field))
                 {
                     WeightedSpanTerm weightedSpanTerm;

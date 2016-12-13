@@ -45,12 +45,10 @@ namespace Lucene.Net.Search.Highlight
         {
         }
 
-
         public Highlighter(IFormatter formatter, IScorer fragmentScorer)
             : this(formatter, new DefaultEncoder(), fragmentScorer)
         {
         }
-
 
         public Highlighter(IFormatter formatter, IEncoder encoder, IScorer fragmentScorer)
         {

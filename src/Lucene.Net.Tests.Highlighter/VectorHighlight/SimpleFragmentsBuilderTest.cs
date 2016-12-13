@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
             SimpleFragmentsBuilder sfb = new SimpleFragmentsBuilder();
-            sfb.SetMultiValuedSeparator('/');
+            sfb.MultiValuedSeparator = ('/');
             assertEquals("abc/<b>defg</b>/hijkl", sfb.CreateFragment(reader, 0, F, ffl));
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
             SimpleFragmentsBuilder sfb = new SimpleFragmentsBuilder();
-            sfb.SetMultiValuedSeparator('/');
+            sfb.MultiValuedSeparator = ('/');
             assertEquals("//a b c//<b>d</b> e", sfb.CreateFragment(reader, 0, F, ffl));
         }
 

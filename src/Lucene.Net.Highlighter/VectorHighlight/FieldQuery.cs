@@ -3,8 +3,6 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -50,7 +48,6 @@ namespace Lucene.Net.Search.VectorHighlight
         internal FieldQuery(Query query, IndexReader reader, bool phraseHighlight, bool fieldMatch)
         {
             this.fieldMatch = fieldMatch;
-            //ISet<Query> flatQueries = new HashSet<Query>(); //new LinkedHashSet<>();
             // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
             List<Query> flatQueries = new List<Query>();
             Flatten(query, reader, flatQueries);
@@ -163,7 +160,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /**
          * Push parent's boost into a clone of query if parent has a non 1 boost.
          */
-        protected Query ApplyParentBoost(Query query, Query parent)
+        protected virtual Query ApplyParentBoost(Query query, Query parent)
         {
             if (parent.Boost == 1)
             {
@@ -186,7 +183,6 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         internal ICollection<Query> Expand(ICollection<Query> flatQueries)
         {
-            //ISet<Query> expandQueries = new HashSet<Query>(); //LinkedHashSet<Query>();
             // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
             List<Query> expandQueries = new List<Query>();
 
@@ -396,15 +392,13 @@ namespace Lucene.Net.Search.VectorHighlight
          * 
          * @return QueryPhraseMap
          */
-        public QueryPhraseMap GetFieldTermMap(string fieldName, string term)
+        public virtual QueryPhraseMap GetFieldTermMap(string fieldName, string term)
         {
             QueryPhraseMap rootMap = GetRootMap(fieldName);
             if (rootMap == null) return null;
             QueryPhraseMap result;
             rootMap.subMap.TryGetValue(term, out result);
             return result;
-
-            //return rootMap == null ? null : rootMap.subMap.Get(term);
         }
 
         /**
@@ -437,7 +431,6 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         public class QueryPhraseMap
         {
-
             internal bool terminal;
             internal int slop;   // valid if terminal == true and phraseHighlight == true
             internal float boost;  // valid if terminal == true
@@ -458,8 +451,6 @@ namespace Lucene.Net.Search.VectorHighlight
 
             private QueryPhraseMap GetOrNewMap(IDictionary<string, QueryPhraseMap> subMap, string term)
             {
-                //QueryPhraseMap map = subMap.get(term);
-                //if (map == null)
                 QueryPhraseMap map;
                 if (!subMap.TryGetValue(term, out map) || map == null)
                 {
@@ -492,12 +483,11 @@ namespace Lucene.Net.Search.VectorHighlight
                     throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
             }
 
-            public QueryPhraseMap GetTermMap(string term)
+            public virtual QueryPhraseMap GetTermMap(string term)
             {
                 QueryPhraseMap result;
                 subMap.TryGetValue(term, out result);
                 return result;
-                //return subMap.get(term);
             }
 
             private void MarkTerminal(float boost)
@@ -513,32 +503,31 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.termOrPhraseNumber = fieldQuery.NextTermOrPhraseNumber();
             }
 
-            public bool IsTerminal
+            public virtual bool IsTerminal
             {
                 get { return terminal; }
             }
 
-            public int Slop
+            public virtual int Slop
             {
                 get { return slop; }
             }
 
-            public float Boost
+            public virtual float Boost
             {
                 get { return boost; }
             }
 
-            public int TermOrPhraseNumber
+            public virtual int TermOrPhraseNumber
             {
                 get { return termOrPhraseNumber; }
             }
 
-            public QueryPhraseMap SearchPhrase(IList<TermInfo> phraseCandidate)
+            public virtual QueryPhraseMap SearchPhrase(IList<TermInfo> phraseCandidate)
             {
                 QueryPhraseMap currMap = this;
                 foreach (TermInfo ti in phraseCandidate)
                 {
-                    //currMap = currMap.subMap.get(ti.getText());
                     currMap.subMap.TryGetValue(ti.Text, out currMap);
 
                     if (currMap == null) return null;
@@ -546,7 +535,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 return currMap.IsValidTermOrPhrase(phraseCandidate) ? currMap : null;
             }
 
-            public bool IsValidTermOrPhrase(IList<TermInfo> phraseCandidate)
+            public virtual bool IsValidTermOrPhrase(IList<TermInfo> phraseCandidate)
             {
                 // check terminal
                 if (!terminal) return false;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.Search.VectorHighlight
+﻿namespace Lucene.Net.Search.VectorHighlight
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -41,8 +35,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /* (non-Javadoc)
          * @see org.apache.lucene.search.vectorhighlight.FragListBuilder#createFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
          */
-        
-  public override FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
+        public override FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
         {
             return CreateFieldFragList(fieldPhraseList, new WeightedFieldFragList(fragCharSize), fragCharSize);
         }

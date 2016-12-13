@@ -2,9 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 
@@ -36,7 +34,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /**
    * List of non-overlapping WeightedPhraseInfo objects.
    */
-        List<WeightedPhraseInfo> phraseList = new List<WeightedPhraseInfo>();
+        internal List<WeightedPhraseInfo> phraseList = new List<WeightedPhraseInfo>();
 
         /**
          * create a FieldPhraseList that has no limit on the number of phrases to analyze
@@ -54,7 +52,7 @@ namespace Lucene.Net.Search.VectorHighlight
          * 
          * @return phraseList.
          */
-        public IList<WeightedPhraseInfo> PhraseList
+        public virtual IList<WeightedPhraseInfo> PhraseList
         {
             get { return phraseList; }
         }
@@ -70,7 +68,6 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             string field = fieldTermStack.FieldName;
 
-            //LinkedList<TermInfo> phraseCandidate = new LinkedList<TermInfo>();
             List<TermInfo> phraseCandidate = new List<TermInfo>();
             QueryPhraseMap currMap = null;
             QueryPhraseMap nextMap = null;
@@ -208,7 +205,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        public void AddIfNoOverlap(WeightedPhraseInfo wpi)
+        public virtual void AddIfNoOverlap(WeightedPhraseInfo wpi)
         {
             foreach (WeightedPhraseInfo existWpi in PhraseList)
             {
@@ -239,7 +236,7 @@ namespace Lucene.Net.Search.VectorHighlight
              * Text of the match, calculated on the fly.  Use for debugging only.
              * @return the text
              */
-            public string GetText()
+            public virtual string GetText()
             {
                 StringBuilder text = new StringBuilder();
                 foreach (TermInfo ti in termsInfos)
@@ -252,7 +249,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /**
              * @return the termsOffsets
              */
-            public IList<Toffs> TermsOffsets
+            public virtual IList<Toffs> TermsOffsets
             {
                 get { return termsOffsets; }
             }
@@ -260,7 +257,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /**
              * @return the boost
              */
-            public float Boost
+            public virtual float Boost
             {
                 get { return boost; }
             }
@@ -268,7 +265,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /**
              * @return the termInfos 
              */
-            public IList<TermInfo> TermsInfos
+            public virtual IList<TermInfo> TermsInfos
             {
                 get { return termsInfos; }
             }
@@ -276,7 +273,6 @@ namespace Lucene.Net.Search.VectorHighlight
             public WeightedPhraseInfo(IList<TermInfo> terms, float boost)
                     : this(terms, boost, 0)
             {
-
             }
 
             public WeightedPhraseInfo(IList<TermInfo> terms, float boost, int seqnum)
@@ -362,17 +358,17 @@ namespace Lucene.Net.Search.VectorHighlight
                 termsOffsets.Add(work);
             }
 
-            public int StartOffset
+            public virtual int StartOffset
             {
                 get { return termsOffsets[0].StartOffset; }
             }
 
-            public int EndOffset
+            public virtual int EndOffset
             {
                 get { return termsOffsets[termsOffsets.Count - 1].EndOffset; }
             }
 
-            public bool IsOffsetOverlap(WeightedPhraseInfo other)
+            public virtual bool IsOffsetOverlap(WeightedPhraseInfo other)
             {
                 int so = StartOffset;
                 int eo = EndOffset;
@@ -400,7 +396,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /**
              * @return the seqnum
              */
-            public int Seqnum
+            public virtual int Seqnum
             {
                 get { return seqnum; }
             }
@@ -433,7 +429,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             // LUCENENET NOTE: For some reason the standard way of correcting the >>>
-            // operator (uint)b >> 32) didn't work here. Got this solution from http://stackoverflow.com/a/6625912
+            // operator (int)((uint)b >> 32) didn't work here. Got this solution from http://stackoverflow.com/a/6625912
             // and it works just like in Java.
             private static long TripleShift(long n, int s)
             {
@@ -489,6 +485,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     get { return startOffset; }
                 }
+
                 public virtual int EndOffset
                 {
                     get { return endOffset; }

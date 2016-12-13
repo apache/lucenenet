@@ -1,9 +1,7 @@
 ﻿using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -55,7 +53,7 @@ namespace Lucene.Net.Search.VectorHighlight
          * 
          * @return fragInfos.
          */
-        public IList<WeightedFragInfo> FragInfos
+        public virtual IList<WeightedFragInfo> FragInfos
         {
             get { return fragInfos; }
         }
@@ -65,7 +63,6 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         public class WeightedFragInfo
         {
-
             private List<SubInfo> subInfos;
             private float totalBoost;
             private int startOffset;
@@ -115,12 +112,12 @@ namespace Lucene.Net.Search.VectorHighlight
             public class SubInfo
             {
                 private readonly string text;  // unnecessary member, just exists for debugging purpose
-                private readonly IList<FieldPhraseList.WeightedPhraseInfo.Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
+                private readonly IList<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
                                                              // but if position-gap > 1 and slop > 0 then size() could be greater than 1
                 private readonly int seqnum;
                 private readonly float boost; // used for scoring split WeightedPhraseInfos.
 
-                public SubInfo(string text, IList<FieldPhraseList.WeightedPhraseInfo.Toffs> termsOffsets, int seqnum, float boost)
+                public SubInfo(string text, IList<Toffs> termsOffsets, int seqnum, float boost)
                 {
                     this.text = text;
                     this.termsOffsets = termsOffsets;
@@ -128,32 +125,31 @@ namespace Lucene.Net.Search.VectorHighlight
                     this.boost = boost;
                 }
 
-                public IList<FieldPhraseList.WeightedPhraseInfo.Toffs> TermsOffsets
+                public virtual IList<Toffs> TermsOffsets
                 {
                     get { return termsOffsets; }
                 }
 
-                public int Seqnum
+                public virtual int Seqnum
                 {
                     get { return seqnum; }
                 }
 
-                public string Text
+                public virtual string Text
                 {
                     get { return text; }
                 }
 
-                public float Boost
+                public virtual float Boost
                 {
                     get { return boost; }
                 }
-
 
                 public override string ToString()
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append(text).Append('(');
-                    foreach (FieldPhraseList.WeightedPhraseInfo.Toffs to in termsOffsets)
+                    foreach (Toffs to in termsOffsets)
                         sb.Append(to.ToString());
                     sb.Append(')');
                     return sb.ToString();

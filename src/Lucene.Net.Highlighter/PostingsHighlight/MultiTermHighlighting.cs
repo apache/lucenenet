@@ -8,9 +8,6 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -40,7 +37,7 @@ namespace Lucene.Net.Search.PostingsHighlight
    * Extracts all MultiTermQueries for {@code field}, and returns equivalent 
    * automata that will match terms.
    */
-        internal static CharacterRunAutomaton[] ExtractAutomata(Query query, String field)
+        internal static CharacterRunAutomaton[] ExtractAutomata(Query query, string field)
         {
             List<CharacterRunAutomaton> list = new List<CharacterRunAutomaton>();
             if (query is BooleanQuery)
@@ -84,7 +81,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                 list.AddAll(Arrays.AsList(ExtractAutomata(((SpanPositionCheckQuery)query).Match, field)));
             }
             else if (query is ISpanMultiTermQueryWrapper)
-            //else if (query.GetType().IsAssignableFrom(typeof(SpanMultiTermQueryWrapper<>)))
             {
                 list.AddAll(Arrays.AsList(ExtractAutomata(((ISpanMultiTermQueryWrapper)query).WrappedQuery, field)));
             }
@@ -94,14 +90,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                 if (aq.Field.Equals(field))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(aq.Automaton, () => aq.ToString()));
-
-                    //                list.Add(new CharacterRunAutomaton(aq.Automaton) {
-                    //      @Override
-                    //      public String toString()
-                    //    {
-                    //        return aq.toString();
-                    //    }
-                    //});
                 }
             }
             else if (query is PrefixQuery)
@@ -113,15 +101,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(
                         BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()), 
                         () => pq.ToString()));
-
-                    //        list.Add(new CharacterRunAutomaton(BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), 
-                    //                                                                       BasicAutomata.MakeAnyString())) {
-                    //          @Override
-                    //          public String toString()
-                    //{
-                    //    return pq.toString();
-                    //}
-                    //        });
                 }
             }
             else if (query is FuzzyQuery)
@@ -129,7 +108,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 FuzzyQuery fq = (FuzzyQuery)query;
                 if (fq.Field.Equals(field))
                 {
-                    String utf16 = fq.Term.Text();
+                    string utf16 = fq.Term.Text();
                     int[] termText = new int[utf16.CodePointCount(0, utf16.Length)];
                     for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
                     {
@@ -137,7 +116,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     }
                     int termLength = termText.Length;
                     int prefixLength = Math.Min(fq.PrefixLength, termLength);
-                    String suffix = UnicodeUtil.NewString(termText, prefixLength, termText.Length - prefixLength);
+                    string suffix = UnicodeUtil.NewString(termText, prefixLength, termText.Length - prefixLength);
                     LevenshteinAutomata builder = new LevenshteinAutomata(suffix, fq.Transpositions);
                     Automaton automaton = builder.ToAutomaton(fq.MaxEdits);
                     if (prefixLength > 0)
@@ -146,15 +125,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                         automaton = BasicOperations.Concatenate(prefix, automaton);
                     }
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(automaton, () => fq.ToString()));
-
-                    //        list.Add(new CharacterRunAutomaton(automaton)
-                    //{
-                    //    @Override
-                    //          public String toString()
-                    //{
-                    //    return fq.toString();
-                    //}
-                    //        });
                 }
             }
             else if (query is TermRangeQuery)
@@ -164,70 +134,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     // this is *not* an automaton, but its very simple
                     list.Add(new SimpleCharacterRunAutomatonAnonymousHelper(BasicAutomata.MakeEmpty(), tq));
-
-                    //CharsRef lowerBound;
-                    //if (tq.LowerTerm == null)
-                    //{
-                    //    lowerBound = null;
-                    //}
-                    //else
-                    //{
-                    //    lowerBound = new CharsRef(tq.LowerTerm.Utf8ToString());
-                    //}
-
-                    //CharsRef upperBound;
-                    //if (tq.UpperTerm == null)
-                    //{
-                    //    upperBound = null;
-                    //}
-                    //else
-                    //{
-                    //    upperBound = new CharsRef(tq.UpperTerm.Utf8ToString());
-                    //}
-
-
-
-                    //bool includeLower = tq.IncludesLower();
-                    //bool includeUpper = tq.IncludesUpper();
-                    //CharsRef scratch = new CharsRef();
-                    //IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
-
-
-
-                    //list.Add(new CharacterRunAutomaton(BasicAutomata.MakeEmpty()) {
-                    //          @Override
-                    //          public boolean run(char[] s, int offset, int length)
-                    //{
-                    //    scratch.chars = s;
-                    //    scratch.offset = offset;
-                    //    scratch.length = length;
-
-                    //    if (lowerBound != null)
-                    //    {
-                    //        int cmp = comparator.compare(scratch, lowerBound);
-                    //        if (cmp < 0 || (!includeLower && cmp == 0))
-                    //        {
-                    //            return false;
-                    //        }
-                    //    }
-
-                    //    if (upperBound != null)
-                    //    {
-                    //        int cmp = comparator.compare(scratch, upperBound);
-                    //        if (cmp > 0 || (!includeUpper && cmp == 0))
-                    //        {
-                    //            return false;
-                    //        }
-                    //    }
-                    //    return true;
-                    //}
-
-                    //@Override
-                    //          public String toString()
-                    //{
-                    //    return tq.toString();
-                    //}
-                    //        });
                 }
             }
             return list.ToArray(/*new CharacterRunAutomaton[list.size()]*/);
@@ -256,7 +162,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             private bool includeLower;
             private bool includeUpper;
-            //private CharsRef scratch = new CharsRef();
             private IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
 
             public SimpleCharacterRunAutomatonAnonymousHelper(Automaton a, TermRangeQuery tq)
@@ -287,10 +192,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             public override bool Run(char[] s, int offset, int length)
             {
                 CharsRef scratch = new CharsRef(s, offset, length);
-
-                //scratch.Chars = s;
-                //scratch.Offset = offset;
-                //scratch.Length = length;
 
                 if (lowerBound != null)
                 {
@@ -332,96 +233,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             // instead, we always return freq() = Integer.MAX_VALUE and let PH terminate based on offset...
 
             return new DocsAndPositionsEnumAnonymousHelper(ts, matchers, charTermAtt, offsetAtt);
-
-            //    return new DocsAndPositionsEnum()
-            //{
-            //    int currentDoc = -1;
-            //    int currentMatch = -1;
-            //    int currentStartOffset = -1;
-            //    int currentEndOffset = -1;
-            //    TokenStream stream = ts;
-
-            //    final BytesRef matchDescriptions[] = new BytesRef[matchers.length];
-
-            //    @Override
-            //      public int nextPosition() throws IOException
-            //{
-            //        if (stream != null) {
-            //        while (stream.incrementToken())
-            //        {
-            //            for (int i = 0; i < matchers.length; i++)
-            //            {
-            //                if (matchers[i].run(charTermAtt.buffer(), 0, charTermAtt.length()))
-            //                {
-            //                    currentStartOffset = offsetAtt.startOffset();
-            //                    currentEndOffset = offsetAtt.endOffset();
-            //                    currentMatch = i;
-            //                    return 0;
-            //                }
-            //            }
-            //        }
-            //        stream.end();
-            //        stream.close();
-            //        stream = null;
-            //    }
-            //    // exhausted
-            //    currentStartOffset = currentEndOffset = Integer.MAX_VALUE;
-            //        return Integer.MAX_VALUE;
-            //}
-
-            //@Override
-            //      public int freq() throws IOException
-            //{
-            //        return Integer.MAX_VALUE; // lie
-            //}
-
-            //@Override
-            //      public int startOffset() throws IOException
-            //{
-            //    assert currentStartOffset >= 0;
-            //        return currentStartOffset;
-            //}
-
-            //@Override
-            //      public int endOffset() throws IOException
-            //{
-            //    assert currentEndOffset >= 0;
-            //        return currentEndOffset;
-            //}
-
-            //@Override
-            //      public BytesRef getPayload() throws IOException
-            //{
-            //        if (matchDescriptions [currentMatch] == null) {
-            //        matchDescriptions[currentMatch] = new BytesRef(matchers[currentMatch].toString());
-            //    }
-            //        return matchDescriptions [currentMatch];
-            //}
-
-            //@Override
-            //      public int docID()
-            //{
-            //    return currentDoc;
-            //}
-
-            //@Override
-            //      public int nextDoc() throws IOException
-            //{
-            //        throw new UnsupportedOperationException();
-            //      }
-
-            //      @Override
-            //      public int advance(int target) throws IOException
-            //{
-            //        return currentDoc = target;
-            //}
-
-            //@Override
-            //      public long cost()
-            //{
-            //    return 0;
-            //}
-            //    };
         }
 
         internal class DocsAndPositionsEnumAnonymousHelper : DocsAndPositionsEnum

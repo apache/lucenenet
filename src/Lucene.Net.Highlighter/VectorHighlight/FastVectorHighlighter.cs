@@ -1,12 +1,9 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search.Highlight;
-using Lucene.Net.Search.VectorHighlight;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -82,7 +79,7 @@ namespace Lucene.Net.Search.VectorHighlight
          * @param query a query
          * @return the created {@link FieldQuery} object
          */
-        public FieldQuery GetFieldQuery(Query query)
+        public virtual FieldQuery GetFieldQuery(Query query)
         {
             // TODO: should we deprecate this? 
             // because if there is no reader, then we cannot rewrite MTQ.
@@ -103,7 +100,7 @@ namespace Lucene.Net.Search.VectorHighlight
          * @param query a query
          * @return the created {@link FieldQuery} object
          */
-        public FieldQuery GetFieldQuery(Query query, IndexReader reader)
+        public virtual FieldQuery GetFieldQuery(Query query, IndexReader reader)
         {
             return new FieldQuery(query, reader, phraseHighlight, fieldMatch);
         }
@@ -241,7 +238,7 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         private FieldFragList GetFieldFragList(IFragListBuilder fragListBuilder,
             FieldQuery fieldQuery, IndexReader reader, int docId,
-            String matchedField, int fragCharSize)
+            string matchedField, int fragCharSize)
         {
             FieldTermStack fieldTermStack = new FieldTermStack(reader, docId, matchedField, fieldQuery);
             FieldPhraseList fieldPhraseList = new FieldPhraseList(fieldTermStack, fieldQuery, phraseLimit);
@@ -276,24 +273,23 @@ namespace Lucene.Net.Search.VectorHighlight
          * 
          * @return whether phraseHighlight or not
          */
-        public bool IsPhraseHighlight { get { return phraseHighlight; } }
+        public virtual bool IsPhraseHighlight { get { return phraseHighlight; } }
 
         /**
          * return whether fieldMatch or not.
          * 
          * @return whether fieldMatch or not
          */
-        public bool IsFieldMatch { get { return fieldMatch; } }
+        public virtual bool IsFieldMatch { get { return fieldMatch; } }
 
-        /**
-         * @return the maximum number of phrases to analyze when searching for the highest-scoring phrase.
-         */
-        public int PhraseLimit { get { return phraseLimit; } }
-
-        /**
-         * set the maximum number of phrases to analyze when searching for the highest-scoring phrase.
-         * The default is unlimited (int.MaxValue).
-         */
-        public void SetPhraseLimit(int phraseLimit) { this.phraseLimit = phraseLimit; }
+        /// <summary>
+        /// Gets or Sets the maximum number of phrases to analyze when searching for the highest-scoring phrase.
+        /// The default is unlimited (int.MaxValue).
+        /// </summary>
+        public virtual int PhraseLimit
+        {
+            get { return phraseLimit; }
+            set { phraseLimit = value; }
+        }
     }
 }

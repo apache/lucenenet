@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -129,7 +127,7 @@ namespace Lucene.Net.Search.VectorHighlight
          * @param fragCharSize the configured fragment character size
          * @return <code>true</code> if this phrase info should be accepted as a highligh phrase
          */
-        protected bool AcceptPhrase(WeightedPhraseInfo info, int matchLength, int fragCharSize)
+        protected virtual bool AcceptPhrase(WeightedPhraseInfo info, int matchLength, int fragCharSize)
         {
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;
         }
@@ -164,7 +162,6 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 return currentTop;
             }
-
         }
     }
 }
