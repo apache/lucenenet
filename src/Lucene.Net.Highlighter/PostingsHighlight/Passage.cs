@@ -1,10 +1,5 @@
 ﻿using Lucene.Net.Util;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -32,7 +27,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// and the offsets and query terms that correspond with each match.
     /// @lucene.experimental
     /// </summary>
-    public sealed class Passage : IComparable<Passage> // LUCENENET specific: must implement IComarable to satisfy contract of PriorityQueue (even though it is not used)
+    public sealed class Passage
     {
         internal int startOffset = -1;
         internal int endOffset = -1;
@@ -107,22 +102,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             BytesRef[] terms = matchTerms;
             new InPlaceMergeSorterAnonymousHelper(starts, ends, terms)
                 .Sort(0, numMatches);
-
-
-            //        new InPlaceMergeSorter() {
-            //  @Override
-            //  protected void swap(int i, int j)
-            //    {
-
-            //    }
-
-            //    @Override
-            //  protected int compare(int i, int j)
-            //    {
-            //        return Integer.compare(starts[i], starts[j]);
-            //    }
-
-            //}.sort(0, numMatches);
         }
 
         internal void Reset()
@@ -201,12 +180,6 @@ namespace Lucene.Net.Search.PostingsHighlight
         public BytesRef[] GetMatchTerms()
         {
             return matchTerms;
-        }
-
-        // LUCENENET specific - this is just to satisfy the generic constraint of PriorityQueue, but it is not used.
-        public int CompareTo(Passage other)
-        {
-            throw new NotImplementedException();
         }
     }
 }
