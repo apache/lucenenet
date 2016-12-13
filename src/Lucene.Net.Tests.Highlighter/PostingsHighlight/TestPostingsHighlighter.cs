@@ -11,9 +11,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Directory = Lucene.Net.Store.Directory;
+using FieldInfo = Lucene.Net.Index.FieldInfo;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -37,8 +39,6 @@ namespace Lucene.Net.Search.PostingsHighlight
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]
     public class TestPostingsHighlighter : LuceneTestCase
     {
-        private static string RESOURCE_PATH = "Lucene.Net.Search.PostingsHighlight.";
-
         [Test]
         public void TestBasics()
         {
@@ -516,14 +516,12 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestCambridgeMA()
         {
-            //TextReader r = new InputStreamReader(
-            //                 this.getClass().getResourceAsStream("CambridgeMA.utf8"), StandardCharsets.UTF_8);
-
             String text;
-            using (TextReader r = new StreamReader(this.GetType().Assembly.GetManifestResourceStream(RESOURCE_PATH + "CambridgeMA.utf8"), Encoding.UTF8))
+            using (TextReader r = new StreamReader(getResourceAsStream(this.GetType(), "CambridgeMA.utf8"), Encoding.UTF8))
             {
                 text = r.ReadLine();
             }
+
             Store.Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
@@ -549,6 +547,27 @@ namespace Lucene.Net.Search.PostingsHighlight
             assertTrue(snippets[0].Contains("<b>Porter</b>"));
             ir.Dispose();
             dir.Dispose();
+        }
+
+        private Stream getResourceAsStream(Type type, string filename)
+        {
+            var assembly = type.GetTypeInfo().Assembly;
+
+#if FEATURE_EMBEDDED_RESOURCE
+            string namespaceSegment = type.Namespace.Replace("Lucene.Net.Search", string.Empty);
+            string assemblyName = assembly.GetName().Name;
+            var name = string.Concat(assemblyName, namespaceSegment, ".", filename);
+#else
+            var name = string.Join(".", type.Namespace, filename);
+#endif
+            var stream = assembly.GetManifestResourceStream(name);
+
+            if (stream == default(Stream))
+            {
+                throw new ArgumentException($"Could not find a resource with the name: {name}");
+            }
+
+            return stream;
         }
 
         [Test]

@@ -1,8 +1,9 @@
 {
   "version": "4.8.0-alpha",
   "dependencies": {
-    "Lucene.Net.Analysis.Common": "4.8.0-alpha",
+    "icu.net": "54.1.1-alpha",
     "Lucene.Net.Memory": "4.8.0-alpha",
+    "Lucene.Net.Analysis.Common": "4.8.0-alpha",
     "Lucene.Net.Queries": "4.8.0-alpha"
   },
   "frameworks": {
@@ -10,10 +11,12 @@
       "imports": "dnxcore50",
       "dependencies": {
         "NETStandard.Library": "1.6.0"
+      },
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {
-
     }
   }
 }
