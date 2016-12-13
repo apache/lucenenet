@@ -21,9 +21,9 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// An implementation class of {@link FragListBuilder} that generates one {@link WeightedFragInfo} object.
+    /// An implementation class of <see cref="IFragListBuilder"/> that generates one <see cref="FieldFragList.WeightedFragInfo"/> object.
     /// Typical use case of this class is that you can get an entire field contents
-    /// by using both of this class and {@link SimpleFragmentsBuilder}.
+    /// by using both of this class and <see cref="SimpleFragmentsBuilder"/>.
     /// <para/>
     /// <code>
     /// FastVectorHighlighter h = new FastVectorHighlighter( true, true,

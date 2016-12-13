@@ -32,9 +32,9 @@
         {
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.lucene.search.vectorhighlight.FragListBuilder#createFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
-         */
+        /// <summary>
+        /// <seealso cref="BaseFragListBuilder.CreateFieldFragList(FieldPhraseList, int)"/>
+        /// </summary>
         public override FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
         {
             return CreateFieldFragList(fieldPhraseList, new SimpleFieldFragList(fragCharSize), fragCharSize);

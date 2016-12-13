@@ -28,30 +28,30 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// </summary>
     public class DefaultPassageFormatter : PassageFormatter
     {
-        /** text that will appear before highlighted terms */
+        /// <summary>text that will appear before highlighted terms</summary>
         protected readonly string preTag;
-        /** text that will appear after highlighted terms */
+        /// <summary>text that will appear after highlighted terms</summary>
         protected readonly string postTag;
-        /** text that will appear between two unconnected passages */
+        /// <summary>text that will appear between two unconnected passages</summary>
         protected readonly string ellipsis;
-        /** true if we should escape for html */
+        /// <summary>true if we should escape for html</summary>
         protected readonly bool escape;
 
-        /**
-         * Creates a new DefaultPassageFormatter with the default tags.
-         */
+        /// <summary>
+        /// Creates a new DefaultPassageFormatter with the default tags.
+        /// </summary>
         public DefaultPassageFormatter()
                 : this("<b>", "</b>", "... ", false)
         {
         }
 
-        /**
-         * Creates a new DefaultPassageFormatter with custom tags.
-         * @param preTag text which should appear before a highlighted term.
-         * @param postTag text which should appear after a highlighted term.
-         * @param ellipsis text which should be used to connect two unconnected passages.
-         * @param escape true if text should be html-escaped
-         */
+        /// <summary>
+        /// Creates a new <see cref="DefaultPassageFormatter"/> with custom tags.
+        /// </summary>
+        /// <param name="preTag">text which should appear before a highlighted term.</param>
+        /// <param name="postTag">text which should appear after a highlighted term.</param>
+        /// <param name="ellipsis">text which should be used to connect two unconnected passages.</param>
+        /// <param name="escape">true if text should be html-escaped</param>
         public DefaultPassageFormatter(string preTag, string postTag, string ellipsis, bool escape)
         {
             if (preTag == null || postTag == null || ellipsis == null)
@@ -63,7 +63,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             this.ellipsis = ellipsis;
             this.escape = escape;
         }
-
 
         public override object Format(Passage[] passages, string content)
         {
@@ -101,13 +100,13 @@ namespace Lucene.Net.Search.PostingsHighlight
             return sb.ToString();
         }
 
-        /** 
-         * Appends original text to the response.
-         * @param dest resulting text, possibly transformed or encoded
-         * @param content original text content
-         * @param start index of the first character in content
-         * @param end index of the character following the last character in content
-         */
+        /// <summary>
+        /// Appends original text to the response.
+        /// </summary>
+        /// <param name="dest">resulting text, possibly transformed or encoded</param>
+        /// <param name="content">original text content</param>
+        /// <param name="start">index of the first character in content</param>
+        /// <param name="end">index of the character following the last character in content</param>
         protected virtual void Append(StringBuilder dest, String content, int start, int end)
         {
             if (escape)

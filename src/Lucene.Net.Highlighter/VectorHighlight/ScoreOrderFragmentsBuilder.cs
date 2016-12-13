@@ -26,20 +26,19 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class ScoreOrderFragmentsBuilder : BaseFragmentsBuilder
     {
-        /**
-   * a constructor.
-   */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
         public ScoreOrderFragmentsBuilder()
             : base()
         {
         }
 
-        /**
-         * a constructor.
-         * 
-         * @param preTags array of pre-tags for markup terms.
-         * @param postTags array of post-tags for markup terms.
-         */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="preTags">array of pre-tags for markup terms.</param>
+        /// <param name="postTags">array of post-tags for markup terms.</param>
         public ScoreOrderFragmentsBuilder(string[] preTags, string[] postTags)
             : base(preTags, postTags)
         {
@@ -55,20 +54,19 @@ namespace Lucene.Net.Search.VectorHighlight
         {
         }
 
-        /**
-         * Sort by score the list of WeightedFragInfo
-         */
-
+        /// <summary>
+        /// Sort by score the list of <see cref="WeightedFragInfo"/>
+        /// </summary>
         public override IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src)
         {
             CollectionUtil.TimSort(src, new ScoreComparer());
             return src;
         }
 
-        /**
-         * Comparator for {@link WeightedFragInfo} by boost, breaking ties
-         * by offset.
-         */
+        /// <summary>
+        /// <see cref="IComparer{T}"/> for <see cref="WeightedFragInfo"/> by boost, breaking ties 
+        /// by offset.
+        /// </summary>
         public class ScoreComparer : IComparer<WeightedFragInfo>
         {
             public virtual int Compare(WeightedFragInfo o1, WeightedFragInfo o2)

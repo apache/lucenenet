@@ -115,18 +115,17 @@ namespace Lucene.Net.Search.VectorHighlight
             return fieldFragList;
         }
 
-        /**
-         * A predicate to decide if the given {@link WeightedPhraseInfo} should be
-         * accepted as a highlighted phrase or if it should be discarded.
-         * <p>
-         * The default implementation discards phrases that are composed of more than one term
-         * and where the matchLength exceeds the fragment character size.
-         * 
-         * @param info the phrase info to accept
-         * @param matchLength the match length of the current phrase
-         * @param fragCharSize the configured fragment character size
-         * @return <code>true</code> if this phrase info should be accepted as a highligh phrase
-         */
+        /// <summary>
+        /// A predicate to decide if the given <see cref="WeightedPhraseInfo"/> should be
+        /// accepted as a highlighted phrase or if it should be discarded.
+        /// <para/>
+        /// The default implementation discards phrases that are composed of more than one term
+        /// and where the matchLength exceeds the fragment character size.
+        /// </summary>
+        /// <param name="info">the phrase info to accept</param>
+        /// <param name="matchLength">the match length of the current phrase</param>
+        /// <param name="fragCharSize">the configured fragment character size</param>
+        /// <returns><c>true</c> if this phrase info should be accepted as a highligh phrase</returns>
         protected virtual bool AcceptPhrase(WeightedPhraseInfo info, int matchLength, int fragCharSize)
         {
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;

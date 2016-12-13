@@ -21,72 +21,72 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// {@link org.apache.lucene.search.vectorhighlight.FragmentsBuilder} is an interface for fragments (snippets) builder classes.
-    /// A {@link org.apache.lucene.search.vectorhighlight.FragmentsBuilder} class can be plugged in to
-    /// {@link org.apache.lucene.search.vectorhighlight.FastVectorHighlighter}.
+    /// <see cref="IFragmentsBuilder"/> is an interface for fragments (snippets) builder classes.
+    /// A <see cref="IFragmentsBuilder"/> class can be plugged in to
+    /// <see cref="FastVectorHighlighter"/>.
     /// </summary>
     public interface IFragmentsBuilder
     {
-        /**
-   * create a fragment.
-   * 
-   * @param reader IndexReader of the index
-   * @param docId document id to be highlighted
-   * @param fieldName field of the document to be highlighted
-   * @param fieldFragList FieldFragList object
-   * @return a created fragment or null when no fragment created
-   * @throws IOException If there is a low-level I/O error
-   */
+        /// <summary>
+        /// create a fragment.
+        /// </summary>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fieldFragList"><see cref="FieldFragList"/> object</param>
+        /// <returns>a created fragment or null when no fragment created</returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         string CreateFragment(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList);
 
-        /**
-         * create multiple fragments.
-         * 
-         * @param reader IndexReader of the index
-         * @param docId document id to be highlighter
-         * @param fieldName field of the document to be highlighted
-         * @param fieldFragList FieldFragList object
-         * @param maxNumFragments maximum number of fragments
-         * @return created fragments or null when no fragments created.
-         *         size of the array can be less than maxNumFragments
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// create multiple fragments.
+        /// </summary>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighter</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fieldFragList"><see cref="FieldFragList"/> object</param>
+        /// <param name="maxNumFragments">maximum number of fragments</param>
+        /// <returns>
+        /// created fragments or null when no fragments created.
+        /// size of the array can be less than <paramref name="maxNumFragments"/>
+        /// </returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         string[] CreateFragments(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, int maxNumFragments);
 
-        /**
-         * create a fragment.
-         * 
-         * @param reader IndexReader of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fieldFragList FieldFragList object
-         * @param preTags pre-tags to be used to highlight terms
-         * @param postTags post-tags to be used to highlight terms
-         * @param encoder an encoder that generates encoded text
-         * @return a created fragment or null when no fragment created
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// create a fragment.
+        /// </summary>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fieldFragList"><see cref="FieldFragList"/> object</param>
+        /// <param name="preTags">pre-tags to be used to highlight terms</param>
+        /// <param name="postTags">post-tags to be used to highlight terms</param>
+        /// <param name="encoder">an encoder that generates encoded text</param>
+        /// <returns>a created fragment or null when no fragment created</returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         string CreateFragment(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, string[] preTags, string[] postTags,
             IEncoder encoder);
 
-        /**
-         * create multiple fragments.
-         * 
-         * @param reader IndexReader of the index
-         * @param docId document id to be highlighter
-         * @param fieldName field of the document to be highlighted
-         * @param fieldFragList FieldFragList object
-         * @param maxNumFragments maximum number of fragments
-         * @param preTags pre-tags to be used to highlight terms
-         * @param postTags post-tags to be used to highlight terms
-         * @param encoder an encoder that generates encoded text
-         * @return created fragments or null when no fragments created.
-         *         size of the array can be less than maxNumFragments
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// create multiple fragments.
+        /// </summary>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighter</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fieldFragList"><see cref="FieldFragList"/> object</param>
+        /// <param name="maxNumFragments">maximum number of fragments</param>
+        /// <param name="preTags">pre-tags to be used to highlight terms</param>
+        /// <param name="postTags">post-tags to be used to highlight terms</param>
+        /// <param name="encoder">an encoder that generates encoded text</param>
+        /// <returns>
+        /// created fragments or null when no fragments created.
+        /// size of the array can be less than <paramref name="maxNumFragments"/>
+        /// </returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         string[] CreateFragments(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, int maxNumFragments, string[] preTags, string[] postTags,
             IEncoder encoder);

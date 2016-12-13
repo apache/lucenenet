@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <summary>
     /// Represents a passage (typically a sentence of the document).
     /// <para/>
-    /// A passage contains {@link #getNumMatches} highlights from the query,
+    /// A passage contains <see cref="NumMatches"/> highlights from the query,
     /// and the offsets and query terms that correspond with each match.
     /// @lucene.experimental
     /// </summary>
@@ -111,72 +111,71 @@ namespace Lucene.Net.Search.PostingsHighlight
             numMatches = 0;
         }
 
-        /**
-         * Start offset of this passage.
-         * @return start index (inclusive) of the passage in the 
-         *         original content: always &gt;= 0.
-         */
+        /// <summary>
+        /// Gets the start index (inclusive) of the passage in the
+        /// original content: always &gt;= 0.
+        /// </summary>
         public int StartOffset
         {
             get { return startOffset; }
         }
 
-        /**
-         * End offset of this passage.
-         * @return end index (exclusive) of the passage in the 
-         *         original content: always &gt;= {@link #getStartOffset()}
-         */
+        /// <summary>
+        /// Gets the end index (exclusive) of the passage in the 
+        ///  original content: always &gt;= <see cref="StartOffset"/>
+        /// </summary>
         public int EndOffset
         {
             get { return endOffset; }
         }
 
-        /**
-         * Passage's score.
-         */
+        /// <summary>
+        /// Passage's score.
+        /// </summary>
         public float Score
         {
             get { return score; }
         }
 
-        /**
-         * Number of term matches available in 
-         * {@link #getMatchStarts}, {@link #getMatchEnds}, 
-         * {@link #getMatchTerms}
-         */
+        /// <summary>
+        /// Number of term matches available in 
+        /// <see cref="GetMatchStarts()"/>, <see cref="GetMatchEnds()"/>,
+        /// <see cref="GetMatchTerms()"/>
+        /// </summary>
         public int NumMatches
         {
             get { return numMatches; }
         }
 
-        /**
-         * Start offsets of the term matches, in increasing order.
-         * <p>
-         * Only {@link #getNumMatches} are valid. Note that these
-         * offsets are absolute (not relative to {@link #getStartOffset()}).
-         */
+        /// <summary>
+        /// Start offsets of the term matches, in increasing order.
+        /// <para/>
+        /// Only <see cref="NumMatches"/> are valid. Note that these
+        /// offsets are absolute (not relative to <see cref="StartOffset"/>).
+        /// </summary>
+        /// <returns></returns>
         public int[] GetMatchStarts()
         {
             return matchStarts;
         }
 
-        /**
-         * End offsets of the term matches, corresponding with {@link #getMatchStarts}. 
-         * <p>
-         * Only {@link #getNumMatches} are valid. Note that its possible that an end offset 
-         * could exceed beyond the bounds of the passage ({@link #getEndOffset()}), if the 
-         * Analyzer produced a term which spans a passage boundary.
-         */
+        /// <summary>
+        /// End offsets of the term matches, corresponding with <see cref="GetMatchStarts()"/>. 
+        /// <para/>
+        /// Only <see cref="NumMatches"/> are valid. Note that its possible that an end offset 
+        /// could exceed beyond the bounds of the passage <see cref="EndOffset"/>, if the 
+        /// <see cref="Analysis.Analyzer"/> produced a term which spans a passage boundary.
+        /// </summary>
         public int[] GetMatchEnds()
         {
             return matchEnds;
         }
 
-        /**
-         * BytesRef (term text) of the matches, corresponding with {@link #getMatchStarts()}.
-         * <p>
-         * Only {@link #getNumMatches()} are valid.
-         */
+        /// <summary>
+        /// BytesRef (term text) of the matches, corresponding with <see cref="GetMatchStarts()"/>.
+        /// <para/>
+        /// Only <see cref="NumMatches"/> are valid.
+        /// </summary>
         public BytesRef[] GetMatchTerms()
         {
             return matchTerms;

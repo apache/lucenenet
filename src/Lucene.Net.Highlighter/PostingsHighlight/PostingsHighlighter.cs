@@ -420,7 +420,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                 object[] result = new object[docids.Length];
                 for (int j = 0; j < docidsIn.Length; j++)
                 {
-                    //result[j] = fieldHighlights.get(docidsIn[j]);
                     fieldHighlights.TryGetValue(docidsIn[j], out result[j]);
                 }
                 highlights[field] = result;

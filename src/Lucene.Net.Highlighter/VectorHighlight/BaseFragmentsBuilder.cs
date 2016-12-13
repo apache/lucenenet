@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.VectorHighlight
     /// Base <see cref="IFragmentsBuilder"/> implementation that supports colored pre/post
     /// tags and multivalued fields.
     /// <para/>
-    /// Uses <see cref="BoundaryScanner"/> to determine fragments.
+    /// Uses <see cref="IBoundaryScanner"/> to determine fragments.
     /// </summary>
     public abstract class BaseFragmentsBuilder : IFragmentsBuilder
     {

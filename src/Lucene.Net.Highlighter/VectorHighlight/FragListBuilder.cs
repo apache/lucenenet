@@ -18,18 +18,17 @@
 	 */
 
     /// <summary>
-    /// FragListBuilder is an interface for FieldFragList builder classes.
-    /// A FragListBuilder class can be plugged in to Highlighter.
+    /// <see cref="IFragListBuilder"/> is an interface for <see cref="FieldFragList"/> builder classes.
+    /// A <see cref="IFragListBuilder"/> class can be plugged in to <see cref="Highlight.Highlighter"/>.
     /// </summary>
     public interface IFragListBuilder
     {
-        /**
-   * create a FieldFragList.
-   * 
-   * @param fieldPhraseList FieldPhraseList object
-   * @param fragCharSize the length (number of chars) of a fragment
-   * @return the created FieldFragList object
-   */
+        /// <summary>
+        /// create a <see cref="FieldFragList"/>.
+        /// </summary>
+        /// <param name="fieldPhraseList"><see cref="FieldPhraseList"/> object</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <returns>the created <see cref="FieldFragList"/> object</returns>
         FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize);
     }
 }

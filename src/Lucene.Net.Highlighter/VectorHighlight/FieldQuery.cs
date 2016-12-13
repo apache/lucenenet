@@ -25,8 +25,8 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// FieldQuery breaks down query object into terms/phrases and keeps
-    /// them in a QueryPhraseMap structure.
+    /// <see cref="FieldQuery"/> breaks down query object into terms/phrases and keeps
+    /// them in a <see cref="QueryPhraseMap"/> structure.
     /// </summary>
     public class FieldQuery
     {
@@ -70,9 +70,13 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        /** For backwards compatibility you can initialize FieldQuery without
-         * an IndexReader, which is only required to support MultiTermQuery
-         */
+        /// <summary>
+        /// For backwards compatibility you can initialize <see cref="FieldQuery"/> without
+        /// an <see cref="IndexReader"/>, which is only required to support <see cref="MultiTermQuery"/>
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="phraseHighlight"></param>
+        /// <param name="fieldMatch"></param>
         internal FieldQuery(Query query, bool phraseHighlight, bool fieldMatch)
                   : this(query, null, phraseHighlight, fieldMatch)
         {
@@ -157,9 +161,9 @@ namespace Lucene.Net.Search.VectorHighlight
             // else discard queries
         }
 
-        /**
-         * Push parent's boost into a clone of query if parent has a non 1 boost.
-         */
+        /// <summary>
+        /// Push parent's boost into a clone of query if parent has a non 1 boost.
+        /// </summary>
         protected virtual Query ApplyParentBoost(Query query, Query parent)
         {
             if (parent.Boost == 1)
@@ -171,16 +175,20 @@ namespace Lucene.Net.Search.VectorHighlight
             return cloned;
         }
 
-        /*
-         * Create expandQueries from flatQueries.
-         * 
-         * expandQueries := flatQueries + overlapped phrase queries
-         * 
-         * ex1) flatQueries={a,b,c}
-         *      => expandQueries={a,b,c}
-         * ex2) flatQueries={a,"b c","c d"}
-         *      => expandQueries={a,"b c","c d","b c d"}
-         */
+        /// <summary>
+        /// Create expandQueries from <paramref name="flatQueries"/>.
+        /// 
+        /// <code>
+        /// expandQueries := flatQueries + overlapped phrase queries
+        /// 
+        /// ex1) flatQueries={a,b,c}
+        ///     => expandQueries={a,b,c}
+        /// ex2) flatQueries={a,"b c","c d"}
+        ///     => expandQueries={a,"b c","c d","b c d"}
+        /// </code>
+        /// </summary>
+        /// <param name="flatQueries"></param>
+        /// <returns></returns>
         internal ICollection<Query> Expand(ICollection<Query> flatQueries)
         {
             // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
@@ -220,13 +228,15 @@ namespace Lucene.Net.Search.VectorHighlight
             return expandQueries;
         }
 
-        /*
-         * Check if PhraseQuery A and B have overlapped part.
-         * 
-         * ex1) A="a b", B="b c" => overlap; expandQueries={"a b c"}
-         * ex2) A="b c", B="a b" => overlap; expandQueries={"a b c"}
-         * ex3) A="a b", B="c d" => no overlap; expandQueries={}
-         */
+        /// <summary>
+        /// Check if <see cref="PhraseQuery"/> A and B have overlapped part.
+        /// 
+        /// <code>
+        /// ex1) A="a b", B="b c" => overlap; expandQueries={"a b c"}
+        /// ex2) A="b c", B="a b" => overlap; expandQueries={"a b c"}
+        /// ex3) A="a b", B="c d" => no overlap; expandQueries={}
+        /// </code>
+        /// </summary>
         private void CheckOverlap(ICollection<Query> expandQueries, PhraseQuery a, PhraseQuery b)
         {
             if (a.Slop != b.Slop) return;
@@ -237,19 +247,21 @@ namespace Lucene.Net.Search.VectorHighlight
             CheckOverlap(expandQueries, bts, ats, b.Slop, b.Boost);
         }
 
-        /*
-         * Check if src and dest have overlapped part and if it is, create PhraseQueries and add expandQueries.
-         * 
-         * ex1) src="a b", dest="c d"       => no overlap
-         * ex2) src="a b", dest="a b c"     => no overlap
-         * ex3) src="a b", dest="b c"       => overlap; expandQueries={"a b c"}
-         * ex4) src="a b c", dest="b c d"   => overlap; expandQueries={"a b c d"}
-         * ex5) src="a b c", dest="b c"     => no overlap
-         * ex6) src="a b c", dest="b"       => no overlap
-         * ex7) src="a a a a", dest="a a a" => overlap;
-         *                                     expandQueries={"a a a a a","a a a a a a"}
-         * ex8) src="a b c d", dest="b c"   => no overlap
-         */
+        /// <summary>
+        /// Check if src and dest have overlapped part and if it is, create <see cref="PhraseQuery"/>s and add <paramref name="expandQueries"/>.
+        /// 
+        /// <code>
+        /// ex1) src="a b", dest="c d"       => no overlap
+        /// ex2) src="a b", dest="a b c"     => no overlap
+        /// ex3) src="a b", dest="b c"       => overlap; expandQueries={"a b c"}
+        /// ex4) src="a b c", dest="b c d"   => overlap; expandQueries={"a b c d"}
+        /// ex5) src="a b c", dest="b c"     => no overlap
+        /// ex6) src="a b c", dest="b"       => no overlap
+        /// ex7) src="a a a a", dest="a a a" => overlap;
+        ///                                     expandQueries={"a a a a a","a a a a a a"}
+        /// ex8) src="a b c d", dest="b c"   => no overlap
+        /// </code>
+        /// </summary>
         private void CheckOverlap(ICollection<Query> expandQueries, Term[] src, Term[] dest, int slop, float boost)
         {
             // beginning from 1 (not 0) is safe because that the PhraseQuery has multiple terms
@@ -286,8 +298,6 @@ namespace Lucene.Net.Search.VectorHighlight
         internal QueryPhraseMap GetRootMap(Query query)
         {
             string key = GetKey(query);
-            //QueryPhraseMap map = rootMaps.get(key);
-            //if (map == null)
             QueryPhraseMap map;
             if (!rootMaps.TryGetValue(key, out map) || map == null)
             {
@@ -297,10 +307,10 @@ namespace Lucene.Net.Search.VectorHighlight
             return map;
         }
 
-        /*
-         * Return 'key' string. 'key' is the field name of the Query.
-         * If not fieldMatch, 'key' will be null.
-         */
+        /// <summary>
+        /// Return 'key' string. 'key' is the field name of the <see cref="Query"/>.
+        /// If not fieldMatch, 'key' will be null.
+        /// </summary>
         private string GetKey(Query query)
         {
             if (!fieldMatch) return null;
@@ -320,28 +330,28 @@ namespace Lucene.Net.Search.VectorHighlight
                 throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
         }
 
-        /*
-         * Save the set of terms in the queries to termSetMap.
-         * 
-         * ex1) q=name:john
-         *      - fieldMatch==true
-         *          termSetMap=Map<"name",Set<"john">>
-         *      - fieldMatch==false
-         *          termSetMap=Map<null,Set<"john">>
-         *          
-         * ex2) q=name:john title:manager
-         *      - fieldMatch==true
-         *          termSetMap=Map<"name",Set<"john">,
-         *                         "title",Set<"manager">>
-         *      - fieldMatch==false
-         *          termSetMap=Map<null,Set<"john","manager">>
-         *          
-         * ex3) q=name:"john lennon"
-         *      - fieldMatch==true
-         *          termSetMap=Map<"name",Set<"john","lennon">>
-         *      - fieldMatch==false
-         *          termSetMap=Map<null,Set<"john","lennon">>
-         */
+        /// <summary>
+        /// Save the set of terms in the queries to <see cref="termSetMap"/>.
+        /// 
+        /// <code>
+        /// ex1) q=name:john
+        ///      - fieldMatch==true
+        ///          termSetMap=IDictionary&lt;"name",ISet&lt;"john"&gt;&gt;
+        ///      - fieldMatch==false
+        ///          termSetMap=IDictionary&lt;null,ISet&lt;"john"&gt;&gt;
+        /// ex2) q=name:john title:manager
+        ///      - fieldMatch==true
+        ///          termSetMap=IDictionary&lt;"name",ISet&lt;"john"&gt;,
+        ///                         "title",ISet&lt;"manager"&gt;&gt;
+        ///      - fieldMatch==false
+        ///          termSetMap=IDictionary&lt;null,ISet&lt;"john","manager"&gt;&gt;
+        /// ex3) q=name:"john lennon"
+        ///      - fieldMatch==true
+        ///          termSetMap=IDictionary&lt;"name",ISet&lt;"john","lennon"&gt;&gt;
+        ///      - fieldMatch==false
+        ///          termSetMap=IDictionary&lt;null,ISet&lt;"john","lennon"&gt;&gt;
+        /// </code>
+        /// </summary>
         internal void SaveTerms(ICollection<Query> flatQueries, IndexReader reader)
         {
             foreach (Query query in flatQueries)
@@ -370,8 +380,6 @@ namespace Lucene.Net.Search.VectorHighlight
         private ISet<string> GetTermSet(Query query)
         {
             string key = GetKey(query);
-            //ISet<string> set = termSetMap.get(key);
-            //if (set == null)
             ISet<string> set;
             if (!termSetMap.TryGetValue(key, out set) || set == null)
             {
@@ -388,10 +396,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return result;
         }
 
-        /**
-         * 
-         * @return QueryPhraseMap
-         */
+        /// <returns>QueryPhraseMap</returns>
         public virtual QueryPhraseMap GetFieldTermMap(string fieldName, string term)
         {
             QueryPhraseMap rootMap = GetRootMap(fieldName);
@@ -401,10 +406,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return result;
         }
 
-        /**
-         * 
-         * @return QueryPhraseMap
-         */
+        /// <returns>QueryPhraseMap</returns>
         public virtual QueryPhraseMap SearchPhrase(string fieldName, IList<TermInfo> phraseCandidate)
         {
             QueryPhraseMap root = GetRootMap(fieldName);
@@ -417,7 +419,6 @@ namespace Lucene.Net.Search.VectorHighlight
             QueryPhraseMap result;
             rootMaps.TryGetValue(fieldMatch ? fieldName : null, out result);
             return result;
-            //return rootMaps.get(fieldMatch ? fieldName : null);
         }
 
         internal int NextTermOrPhraseNumber()
@@ -425,10 +426,10 @@ namespace Lucene.Net.Search.VectorHighlight
             return termOrPhraseNumber++;
         }
 
-        /**
-         * Internal structure of a query for highlighting: represents
-         * a nested query structure
-         */
+        /// <summary>
+        /// Internal structure of a query for highlighting: represents
+        /// a nested query structure
+        /// </summary>
         public class QueryPhraseMap
         {
             internal bool terminal;

@@ -20,11 +20,11 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// Ranks passages found by {@link PostingsHighlighter}.
+    /// Ranks passages found by <see cref="PostingsHighlighter"/>.
     /// <para/>
     /// Each passage is scored as a miniature document within the document.
-    /// The final score is computed as {@link #norm} * &sum; ({@link #weight} * {@link #tf}).
-    /// The default implementation is {@link #norm} * BM25.
+    /// The final score is computed as <c>norm</c> * &sum; (<c>weight</c> * <c>tf</c>).
+    /// The default implementation is <c>norm</c> * BM25.
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -32,21 +32,21 @@ namespace Lucene.Net.Search.PostingsHighlight
     {
         // TODO: this formula is completely made up. It might not provide relevant snippets!
 
-        /** BM25 k1 parameter, controls term frequency normalization */
+        /// <summary>BM25 k1 parameter, controls term frequency normalization</summary>
         internal readonly float k1;
-        /** BM25 b parameter, controls length normalization. */
+        /// <summary>BM25 b parameter, controls length normalization.</summary>
         internal readonly float b;
-        /** A pivot used for length normalization. */
+        /// <summary>A pivot used for length normalization.</summary>
         internal readonly float pivot;
 
-        /**
-         * Creates PassageScorer with these default values:
-         * <ul>
-         *   <li>{@code k1 = 1.2},
-         *   <li>{@code b = 0.75}.
-         *   <li>{@code pivot = 87}
-         * </ul>
-         */
+        /// <summary>
+        /// Creates <see cref="PassageScorer"/> with these default values:
+        /// <list type="bullet">
+        ///     <item><paramref name="k1"/> = 1.2</item>
+        ///     <item><paramref name="b"/> = 0.75</item>
+        ///     <item><paramref name="pivot"/> = 87</item>
+        /// </list>
+        /// </summary>
         public PassageScorer()
             // 1.2 and 0.75 are well-known bm25 defaults (but maybe not the best here) ?
             // 87 is typical average english sentence length.
@@ -54,12 +54,12 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
         }
 
-        /**
-         * Creates PassageScorer with specified scoring parameters
-         * @param k1 Controls non-linear term frequency normalization (saturation).
-         * @param b Controls to what degree passage length normalizes tf values.
-         * @param pivot Pivot value for length normalization (some rough idea of average sentence length in characters).
-         */
+        /// <summary>
+        /// Creates <see cref="PassageScorer"/> with specified scoring parameters
+        /// </summary>
+        /// <param name="k1">Controls non-linear term frequency normalization (saturation).</param>
+        /// <param name="b">Controls to what degree passage length normalizes tf values.</param>
+        /// <param name="pivot">Pivot value for length normalization (some rough idea of average sentence length in characters).</param>
         public PassageScorer(float k1, float b, float pivot)
         {
             this.k1 = k1;
@@ -67,13 +67,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             this.pivot = pivot;
         }
 
-        /**
-         * Computes term importance, given its in-document statistics.
-         * 
-         * @param contentLength length of document in characters
-         * @param totalTermFreq number of time term occurs in document
-         * @return term importance
-         */
+        /// <summary>
+        /// Computes term importance, given its in-document statistics.
+        /// </summary>
+        /// <param name="contentLength">length of document in characters</param>
+        /// <param name="totalTermFreq">number of time term occurs in document</param>
+        /// <returns>term importance</returns>
         public virtual float Weight(int contentLength, int totalTermFreq)
         {
             // approximate #docs from content length
@@ -82,30 +81,29 @@ namespace Lucene.Net.Search.PostingsHighlight
             return (k1 + 1) * (float)Math.Log(1 + (numDocs + 0.5D) / (totalTermFreq + 0.5D));
         }
 
-        /**
-         * Computes term weight, given the frequency within the passage
-         * and the passage's length.
-         * 
-         * @param freq number of occurrences of within this passage
-         * @param passageLen length of the passage in characters.
-         * @return term weight
-         */
+        /// <summary>
+        /// Computes term weight, given the frequency within the passage
+        /// and the passage's length.
+        /// </summary>
+        /// <param name="freq">number of occurrences of within this passage</param>
+        /// <param name="passageLen">length of the passage in characters.</param>
+        /// <returns>term weight</returns>
         public virtual float Tf(int freq, int passageLen)
         {
             float norm = k1 * ((1 - b) + b * (passageLen / pivot));
             return freq / (freq + norm);
         }
 
-        /**
-         * Normalize a passage according to its position in the document.
-         * <p>
-         * Typically passages towards the beginning of the document are 
-         * more useful for summarizing the contents.
-         * <p>
-         * The default implementation is <code>1 + 1/log(pivot + passageStart)</code>
-         * @param passageStart start offset of the passage
-         * @return a boost value multiplied into the passage's core.
-         */
+        /// <summary>
+        /// Normalize a passage according to its position in the document.
+        /// <para/>
+        /// Typically passages towards the beginning of the document are 
+        /// more useful for summarizing the contents.
+        /// <para/>
+        /// The default implementation is <c>1 + 1/log(pivot + passageStart)</c>
+        /// </summary>
+        /// <param name="passageStart">start offset of the passage</param>
+        /// <returns>a boost value multiplied into the passage's core.</returns>
         public virtual float Norm(int passageStart)
         {
             return 1 + 1 / (float)Math.Log(pivot + passageStart);

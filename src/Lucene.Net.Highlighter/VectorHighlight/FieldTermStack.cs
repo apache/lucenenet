@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
@@ -28,7 +27,7 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// <code>FieldTermStack</code> is a stack that keeps query terms in the specified field
+    /// <see cref="FieldTermStack"/> is a stack that keeps query terms in the specified field
     /// of the document to be highlighted.
     /// </summary>
     public class FieldTermStack
@@ -59,15 +58,14 @@ namespace Lucene.Net.Search.VectorHighlight
         //  reader.close();
         //}
 
-        /**
-         * a constructor.
-         * 
-         * @param reader IndexReader of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fieldQuery FieldQuery object
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public FieldTermStack(IndexReader reader, int docId, string fieldName, FieldQuery fieldQuery)
         {
             this.fieldName = fieldName;
@@ -170,17 +168,18 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        /**
-         * @return field name
-         */
+        /// <summary>
+        /// field name
+        /// </summary>
         public virtual string FieldName
         {
             get { return fieldName; }
         }
 
-        /**
-         * @return the top TermInfo object of the stack
-         */
+        /// <summary>
+        /// Returns the top <see cref="TermInfo"/> object of the stack
+        /// </summary>
+        /// <returns>the top <see cref="TermInfo"/> object of the stack</returns>
         public virtual TermInfo Pop()
         {
             if (termList.Count == 0)
@@ -192,28 +191,27 @@ namespace Lucene.Net.Search.VectorHighlight
             return first;
         }
 
-        /**
-         * @param termInfo the TermInfo object to be put on the top of the stack
-         */
+        /// <summary>
+        /// Puts a <see cref="TermInfo"/> onto the top of the stack
+        /// </summary>
+        /// <param name="termInfo">the <see cref="TermInfo"/> object to be put on the top of the stack</param>
         public virtual void Push(TermInfo termInfo)
         {
             termList.Insert(0, termInfo);
         }
 
-        /**
-         * to know whether the stack is empty
-         * 
-         * @return true if the stack is empty, false if not
-         */
+        /// <summary>
+        /// to know whether the stack is empty. Returns true if the stack is empty, false if not
+        /// </summary>
         public virtual bool IsEmpty
         {
             get { return termList == null || termList.Count == 0; }
         }
 
-        /**
-         * Single term with its position/offsets in the document and IDF weight.
-         * It is Comparable but considers only position.
-         */
+        /// <summary>
+        /// Single term with its position/offsets in the document and IDF weight.
+        /// It is <see cref="IComparable{TermInfo}"/> but considers only position.
+        /// </summary>
         public class TermInfo : IComparable<TermInfo>
         {
             private readonly string text;
@@ -239,10 +237,9 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             internal void SetNext(TermInfo next) { this.next = next; }
-            /** 
-             * Returns the next TermInfo at this same position.
-             * This is a circular list!
-             */
+            /// <summary>
+            /// Returns the next TermInfo at this same position. This is a circular list!
+            /// </summary>
             public virtual TermInfo Next { get { return next; } }
             public virtual string Text { get { return text; } }
             public virtual int StartOffset { get { return startOffset; } }

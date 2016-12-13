@@ -25,20 +25,19 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class SimpleFragmentsBuilder : BaseFragmentsBuilder
     {
-        /**
-   * a constructor.
-   */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
         public SimpleFragmentsBuilder()
             : base()
         {
         }
 
-        /**
-         * a constructor.
-         * 
-         * @param preTags array of pre-tags for markup terms.
-         * @param postTags array of post-tags for markup terms.
-         */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="preTags">array of pre-tags for markup terms.</param>
+        /// <param name="postTags">array of post-tags for markup terms.</param>
         public SimpleFragmentsBuilder(string[] preTags, string[] postTags)
             : base(preTags, postTags)
         {
@@ -54,9 +53,9 @@ namespace Lucene.Net.Search.VectorHighlight
         {
         }
 
-        /**
-         * do nothing. return the source list.
-         */
+        /// <summary>
+        /// do nothing. return the source list.
+        /// </summary>
         public override IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src)
         {
             return src;

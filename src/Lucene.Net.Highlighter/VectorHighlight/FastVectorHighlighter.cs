@@ -37,33 +37,31 @@ namespace Lucene.Net.Search.VectorHighlight
         private readonly IFragmentsBuilder fragmentsBuilder;
         private int phraseLimit = int.MaxValue;
 
-        /**
-         * the default constructor.
-         */
+        /// <summary>
+        /// the default constructor.
+        /// </summary>
         public FastVectorHighlighter()
             : this(DEFAULT_PHRASE_HIGHLIGHT, DEFAULT_FIELD_MATCH)
         {
         }
 
-        /**
-         * a constructor. Using {@link SimpleFragListBuilder} and {@link ScoreOrderFragmentsBuilder}.
-         * 
-         * @param phraseHighlight true or false for phrase highlighting
-         * @param fieldMatch true of false for field matching
-         */
+        /// <summary>
+        /// a constructor. Using <see cref="SimpleFragListBuilder"/> and <see cref="ScoreOrderFragmentsBuilder"/>.
+        /// </summary>
+        /// <param name="phraseHighlight">true or false for phrase highlighting</param>
+        /// <param name="fieldMatch">true of false for field matching</param>
         public FastVectorHighlighter(bool phraseHighlight, bool fieldMatch)
             : this(phraseHighlight, fieldMatch, new SimpleFragListBuilder(), new ScoreOrderFragmentsBuilder())
         {
         }
 
-        /**
-         * a constructor. A {@link FragListBuilder} and a {@link FragmentsBuilder} can be specified (plugins).
-         * 
-         * @param phraseHighlight true of false for phrase highlighting
-         * @param fieldMatch true of false for field matching
-         * @param fragListBuilder an instance of {@link FragListBuilder}
-         * @param fragmentsBuilder an instance of {@link FragmentsBuilder}
-         */
+        /// <summary>
+        /// a constructor. A <see cref="IFragListBuilder"/> and a <see cref="IFragmentsBuilder"/> can be specified (plugins).
+        /// </summary>
+        /// <param name="phraseHighlight">true of false for phrase highlighting</param>
+        /// <param name="fieldMatch">true of false for field matching</param>
+        /// <param name="fragListBuilder">an instance of <see cref="IFragmentsBuilder"/></param>
+        /// <param name="fragmentsBuilder">an instance of <see cref="IFragmentsBuilder"/></param>
         public FastVectorHighlighter(bool phraseHighlight, bool fieldMatch,
             IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder)
         {
@@ -73,12 +71,11 @@ namespace Lucene.Net.Search.VectorHighlight
             this.fragmentsBuilder = fragmentsBuilder;
         }
 
-        /**
-         * create a {@link FieldQuery} object.
-         * 
-         * @param query a query
-         * @return the created {@link FieldQuery} object
-         */
+        /// <summary>
+        /// create a <see cref="FieldQuery"/> object.
+        /// </summary>
+        /// <param name="query">a query</param>
+        /// <returns>the created <see cref="FieldQuery"/> object</returns>
         public virtual FieldQuery GetFieldQuery(Query query)
         {
             // TODO: should we deprecate this? 
@@ -94,28 +91,27 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        /**
-         * create a {@link FieldQuery} object.
-         * 
-         * @param query a query
-         * @return the created {@link FieldQuery} object
-         */
+        /// <summary>
+        /// create a <see cref="FieldQuery"/> object.
+        /// </summary>
+        /// <param name="query">a query</param>
+        /// <param name="reader"></param>
+        /// <returns>the created <see cref="FieldQuery"/> object</returns>
         public virtual FieldQuery GetFieldQuery(Query query, IndexReader reader)
         {
             return new FieldQuery(query, reader, phraseHighlight, fieldMatch);
         }
 
-        /**
-         * return the best fragment.
-         * 
-         * @param fieldQuery {@link FieldQuery} object
-         * @param reader {@link IndexReader} of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fragCharSize the length (number of chars) of a fragment
-         * @return the best fragment (snippet) string
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// return the best fragment.
+        /// </summary>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <returns>the best fragment (snippet) string</returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public string GetBestFragment(FieldQuery fieldQuery, IndexReader reader, int docId,
             string fieldName, int fragCharSize)
         {
@@ -124,19 +120,20 @@ namespace Lucene.Net.Search.VectorHighlight
             return fragmentsBuilder.CreateFragment(reader, docId, fieldName, fieldFragList);
         }
 
-        /**
-         * return the best fragments.
-         * 
-         * @param fieldQuery {@link FieldQuery} object
-         * @param reader {@link IndexReader} of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fragCharSize the length (number of chars) of a fragment
-         * @param maxNumFragments maximum number of fragments
-         * @return created fragments or null when no fragments created.
-         *         size of the array can be less than maxNumFragments
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// return the best fragments.
+        /// </summary>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <param name="maxNumFragments">maximum number of fragments</param>
+        /// <returns>
+        /// created fragments or null when no fragments created.
+        /// size of the array can be less than maxNumFragments
+        /// </returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public string[] GetBestFragments(FieldQuery fieldQuery, IndexReader reader, int docId,
             string fieldName, int fragCharSize, int maxNumFragments)
         {
@@ -145,22 +142,21 @@ namespace Lucene.Net.Search.VectorHighlight
             return fragmentsBuilder.CreateFragments(reader, docId, fieldName, fieldFragList, maxNumFragments);
         }
 
-        /**
-         * return the best fragment.
-         * 
-         * @param fieldQuery {@link FieldQuery} object
-         * @param reader {@link IndexReader} of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fragCharSize the length (number of chars) of a fragment
-         * @param fragListBuilder {@link FragListBuilder} object
-         * @param fragmentsBuilder {@link FragmentsBuilder} object
-         * @param preTags pre-tags to be used to highlight terms
-         * @param postTags post-tags to be used to highlight terms
-         * @param encoder an encoder that generates encoded text
-         * @return the best fragment (snippet) string
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// return the best fragment.
+        /// </summary>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <param name="fragListBuilder"><see cref="IFragListBuilder"/> object</param>
+        /// <param name="fragmentsBuilder"><see cref="IFragmentsBuilder"/> object</param>
+        /// <param name="preTags">pre-tags to be used to highlight terms</param>
+        /// <param name="postTags">post-tags to be used to highlight terms</param>
+        /// <param name="encoder">an encoder that generates encoded text</param>
+        /// <returns>the best fragment (snippet) string</returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public string GetBestFragment(FieldQuery fieldQuery, IndexReader reader, int docId,
             string fieldName, int fragCharSize,
             IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder,
@@ -170,24 +166,25 @@ namespace Lucene.Net.Search.VectorHighlight
             return fragmentsBuilder.CreateFragment(reader, docId, fieldName, fieldFragList, preTags, postTags, encoder);
         }
 
-        /**
-         * return the best fragments.
-         * 
-         * @param fieldQuery {@link FieldQuery} object
-         * @param reader {@link IndexReader} of the index
-         * @param docId document id to be highlighted
-         * @param fieldName field of the document to be highlighted
-         * @param fragCharSize the length (number of chars) of a fragment
-         * @param maxNumFragments maximum number of fragments
-         * @param fragListBuilder {@link FragListBuilder} object
-         * @param fragmentsBuilder {@link FragmentsBuilder} object
-         * @param preTags pre-tags to be used to highlight terms
-         * @param postTags post-tags to be used to highlight terms
-         * @param encoder an encoder that generates encoded text
-         * @return created fragments or null when no fragments created.
-         *         size of the array can be less than maxNumFragments
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// return the best fragments.
+        /// </summary>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="fieldName">field of the document to be highlighted</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <param name="maxNumFragments">maximum number of fragments</param>
+        /// <param name="fragListBuilder"><see cref="IFragListBuilder"/> object</param>
+        /// <param name="fragmentsBuilder"><see cref="IFragmentsBuilder"/> object</param>
+        /// <param name="preTags">pre-tags to be used to highlight terms</param>
+        /// <param name="postTags">post-tags to be used to highlight terms</param>
+        /// <param name="encoder">an encoder that generates encoded text</param>
+        /// <returns>
+        /// created fragments or null when no fragments created.
+        /// size of the array can be less than maxNumFragments
+        /// </returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public string[] GetBestFragments(FieldQuery fieldQuery, IndexReader reader, int docId,
             string fieldName, int fragCharSize, int maxNumFragments,
             IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder,
@@ -199,29 +196,30 @@ namespace Lucene.Net.Search.VectorHighlight
                 preTags, postTags, encoder);
         }
 
-        /**
-         * Return the best fragments.  Matches are scanned from matchedFields and turned into fragments against
-         * storedField.  The highlighting may not make sense if matchedFields has matches with offsets that don't
-         * correspond features in storedField.  It will outright throw a {@code StringIndexOutOfBoundsException}
-         * if matchedFields produces offsets outside of storedField.  As such it is advisable that all
-         * matchedFields share the same source as storedField or are at least a prefix of it.
-         * 
-         * @param fieldQuery {@link FieldQuery} object
-         * @param reader {@link IndexReader} of the index
-         * @param docId document id to be highlighted
-         * @param storedField field of the document that stores the text
-         * @param matchedFields fields of the document to scan for matches
-         * @param fragCharSize the length (number of chars) of a fragment
-         * @param maxNumFragments maximum number of fragments
-         * @param fragListBuilder {@link FragListBuilder} object
-         * @param fragmentsBuilder {@link FragmentsBuilder} object
-         * @param preTags pre-tags to be used to highlight terms
-         * @param postTags post-tags to be used to highlight terms
-         * @param encoder an encoder that generates encoded text
-         * @return created fragments or null when no fragments created.
-         *         size of the array can be less than maxNumFragments
-         * @throws IOException If there is a low-level I/O error
-         */
+        /// <summary>
+        /// Return the best fragments.  Matches are scanned from <paramref name="matchedFields"/> and turned into fragments against
+        /// <paramref name="storedField"/>.  The highlighting may not make sense if <paramref name="matchedFields"/> has matches with offsets that don't
+        /// correspond features in <paramref name="storedField"/>.  It will outright throw a <see cref="IndexOutOfRangeException"/>
+        /// if <paramref name="matchedFields"/> produces offsets outside of <paramref name="storedField"/>.  As such it is advisable that all
+        /// <paramref name="matchedFields"/> share the same source as <paramref name="storedField"/> or are at least a prefix of it.
+        /// </summary>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="reader"><see cref="IndexReader"/> of the index</param>
+        /// <param name="docId">document id to be highlighted</param>
+        /// <param name="storedField">field of the document that stores the text</param>
+        /// <param name="matchedFields">fields of the document to scan for matches</param>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        /// <param name="maxNumFragments">maximum number of fragments</param>
+        /// <param name="fragListBuilder"><see cref="IFragListBuilder"/> object</param>
+        /// <param name="fragmentsBuilder"><see cref="IFragmentsBuilder"/> object</param>
+        /// <param name="preTags">pre-tags to be used to highlight terms</param>
+        /// <param name="postTags">post-tags to be used to highlight terms</param>
+        /// <param name="encoder">an encoder that generates encoded text</param>
+        /// <returns>
+        /// created fragments or null when no fragments created.
+        /// size of the array can be less than <paramref name="maxNumFragments"/>
+        /// </returns>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public string[] GetBestFragments(FieldQuery fieldQuery, IndexReader reader, int docId,
             string storedField, ISet<string> matchedFields, int fragCharSize, int maxNumFragments,
             IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder,
@@ -233,9 +231,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 preTags, postTags, encoder);
         }
 
-        /**
-         * Build a FieldFragList for one field.
-         */
+        /// <summary>
+        /// Build a <see cref="FieldFragList"/> for one field.
+        /// </summary>
         private FieldFragList GetFieldFragList(IFragListBuilder fragListBuilder,
             FieldQuery fieldQuery, IndexReader reader, int docId,
             string matchedField, int fragCharSize)
@@ -245,9 +243,9 @@ namespace Lucene.Net.Search.VectorHighlight
             return fragListBuilder.CreateFieldFragList(fieldPhraseList, fragCharSize);
         }
 
-        /**
-         * Build a FieldFragList for more than one field.
-         */
+        /// <summary>
+        /// Build a <see cref="FieldFragList"/> for more than one field.
+        /// </summary>
         private FieldFragList GetFieldFragList(IFragListBuilder fragListBuilder,
             FieldQuery fieldQuery, IndexReader reader, int docId,
             ISet<string> matchedFields, int fragCharSize)
@@ -268,18 +266,14 @@ namespace Lucene.Net.Search.VectorHighlight
             return fragListBuilder.CreateFieldFragList(new FieldPhraseList(toMerge), fragCharSize);
         }
 
-        /**
-         * return whether phraseHighlight or not.
-         * 
-         * @return whether phraseHighlight or not
-         */
+        /// <summary>
+        /// return whether phraseHighlight or not.
+        /// </summary>
         public virtual bool IsPhraseHighlight { get { return phraseHighlight; } }
 
-        /**
-         * return whether fieldMatch or not.
-         * 
-         * @return whether fieldMatch or not
-         */
+        /// <summary>
+        /// return whether fieldMatch or not.
+        /// </summary>
         public virtual bool IsFieldMatch { get { return fieldMatch; } }
 
         /// <summary>

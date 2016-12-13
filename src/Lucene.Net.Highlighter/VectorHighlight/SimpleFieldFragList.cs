@@ -26,19 +26,18 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class SimpleFieldFragList : FieldFragList
     {
-        /**
-   * a constructor.
-   * 
-   * @param fragCharSize the length (number of chars) of a fragment
-   */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
         public SimpleFieldFragList(int fragCharSize)
             : base(fragCharSize)
         {
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.lucene.search.vectorhighlight.FieldFragList#add( int startOffset, int endOffset, List<WeightedPhraseInfo> phraseInfoList )
-         */
+        /// <summary>
+        /// <seealso cref="FieldFragList.Add(int, int, IList{WeightedPhraseInfo})"/>
+        /// </summary>
         public override void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList)
         {
             float totalBoost = 0;

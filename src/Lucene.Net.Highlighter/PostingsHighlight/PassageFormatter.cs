@@ -25,7 +25,7 @@
     public abstract class PassageFormatter
     {
         /// <summary>
-        /// Formats the top <code>passages</code> from <code>content</code>
+        /// Formats the top <paramref name="passages"/> from <paramref name="content"/>
         /// into a human-readable text snippet.
         /// </summary>
         /// <param name="passages">
@@ -35,8 +35,8 @@
         /// <param name="content">content for the field.</param>
         /// <returns>
         /// formatted highlight.  Note that for the
-        /// non-expert APIs in {@link PostingsHighlighter} that
-        /// return String, the toString method on the Object
+        /// non-expert APIs in <see cref="PostingsHighlighter"/> that
+        /// return <see cref="string"/>, the <see cref="object.ToString()"/> method on the <see cref="object"/>
         /// returned by this method is used to compute the string.
         /// </returns>
         public abstract object Format(Passage[] passages, string content); // LUCENENET TODO: Make return type generic?

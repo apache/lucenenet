@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
+using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -23,44 +24,40 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// FieldFragList has a list of "frag info" that is used by FragmentsBuilder class
+    /// FieldFragList has a list of "frag info" that is used by <see cref="IFragmentsBuilder"/> class
     /// to create fragments (snippets).
     /// </summary>
     public abstract class FieldFragList
     {
         private List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
 
-        /**
-         * a constructor.
-         * 
-         * @param fragCharSize the length (number of chars) of a fragment
-         */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
         public FieldFragList(int fragCharSize)
         {
         }
 
-        /**
-         * convert the list of WeightedPhraseInfo to WeightedFragInfo, then add it to the fragInfos
-         * 
-         * @param startOffset start offset of the fragment
-         * @param endOffset end offset of the fragment
-         * @param phraseInfoList list of WeightedPhraseInfo objects
-         */
-        public abstract void Add(int startOffset, int endOffset, IList<FieldPhraseList.WeightedPhraseInfo> phraseInfoList);
+        /// <summary>
+        /// convert the list of <see cref="WeightedPhraseInfo"/> to <see cref="WeightedFragInfo"/>, then add it to the fragInfos
+        /// </summary>
+        /// <param name="startOffset">start offset of the fragment</param>
+        /// <param name="endOffset">end offset of the fragment</param>
+        /// <param name="phraseInfoList">list of <see cref="WeightedPhraseInfo"/> objects</param>
+        public abstract void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList);
 
-        /**
-         * return the list of WeightedFragInfos.
-         * 
-         * @return fragInfos.
-         */
+        /// <summary>
+        /// return the list of <see cref="WeightedFragInfo"/>s.
+        /// </summary>
         public virtual IList<WeightedFragInfo> FragInfos
         {
             get { return fragInfos; }
         }
 
-        /**
-         * List of term offsets + weight for a frag info
-         */
+        /// <summary>
+        /// List of term offsets + weight for a frag info
+        /// </summary>
         public class WeightedFragInfo
         {
             private List<SubInfo> subInfos;
@@ -106,9 +103,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 return sb.ToString();
             }
 
-            /**
-             * Represents the list of term offsets for some text
-             */
+            /// <summary>
+            /// Represents the list of term offsets for some text
+            /// </summary>
             public class SubInfo
             {
                 private readonly string text;  // unnecessary member, just exists for debugging purpose

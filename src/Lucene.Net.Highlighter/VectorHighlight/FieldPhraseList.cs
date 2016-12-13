@@ -31,39 +31,35 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class FieldPhraseList
     {
-        /**
-   * List of non-overlapping WeightedPhraseInfo objects.
-   */
+        /// <summary>
+        /// List of non-overlapping <see cref="WeightedPhraseInfo"/> objects.
+        /// </summary>
         internal List<WeightedPhraseInfo> phraseList = new List<WeightedPhraseInfo>();
 
-        /**
-         * create a FieldPhraseList that has no limit on the number of phrases to analyze
-         * 
-         * @param fieldTermStack FieldTermStack object
-         * @param fieldQuery FieldQuery object
-         */
+        /// <summary>
+        /// create a <see cref="FieldPhraseList"/> that has no limit on the number of phrases to analyze
+        /// </summary>
+        /// <param name="fieldTermStack"><see cref="FieldTermStack"/> object</param>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
         public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery)
             : this(fieldTermStack, fieldQuery, int.MaxValue)
         {
         }
 
-        /**
-         * return the list of WeightedPhraseInfo.
-         * 
-         * @return phraseList.
-         */
+        /// <summary>
+        /// return the list of <see cref="WeightedPhraseInfo"/>.
+        /// </summary>
         public virtual IList<WeightedPhraseInfo> PhraseList
         {
             get { return phraseList; }
         }
 
-        /**
-         * a constructor.
-         * 
-         * @param fieldTermStack FieldTermStack object
-         * @param fieldQuery FieldQuery object
-         * @param phraseLimit maximum size of phraseList
-         */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="fieldTermStack"><see cref="FieldTermStack"/> object</param>
+        /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
+        /// <param name="phraseLimit">maximum size of phraseList</param>
         public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery, int phraseLimit)
         {
             string field = fieldTermStack.FieldName;
@@ -143,11 +139,10 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        /**
-         * Merging constructor.
-         *
-         * @param toMerge FieldPhraseLists to merge to build this one
-         */
+        /// <summary>
+        /// Merging constructor.
+        /// </summary>
+        /// <param name="toMerge"><see cref="FieldPhraseList"/>s to merge to build this one</param>
         public FieldPhraseList(FieldPhraseList[] toMerge)
         {
             // Merge all overlapping WeightedPhraseInfos
@@ -220,9 +215,9 @@ namespace Lucene.Net.Search.VectorHighlight
             PhraseList.Add(wpi);
         }
 
-        /**
-         * Represents the list of term offsets and boost for some text
-         */
+        /// <summary>
+        /// Represents the list of term offsets and boost for some text
+        /// </summary>
         public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>
         {
             private List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
@@ -232,10 +227,10 @@ namespace Lucene.Net.Search.VectorHighlight
 
             private List<TermInfo> termsInfos;
 
-            /**
-             * Text of the match, calculated on the fly.  Use for debugging only.
-             * @return the text
-             */
+            /// <summary>
+            /// Text of the match, calculated on the fly.  Use for debugging only.
+            /// </summary>
+            /// <returns>the text</returns>
             public virtual string GetText()
             {
                 StringBuilder text = new StringBuilder();
@@ -246,25 +241,25 @@ namespace Lucene.Net.Search.VectorHighlight
                 return text.ToString();
             }
 
-            /**
-             * @return the termsOffsets
-             */
+            /// <summary>
+            /// the termsOffsets
+            /// </summary>
             public virtual IList<Toffs> TermsOffsets
             {
                 get { return termsOffsets; }
             }
 
-            /**
-             * @return the boost
-             */
+            /// <summary>
+            /// the boost
+            /// </summary>
             public virtual float Boost
             {
                 get { return boost; }
             }
 
-            /**
-             * @return the termInfos 
-             */
+            /// <summary>
+            /// the termInfos 
+            /// </summary>
             public virtual IList<TermInfo> TermsInfos
             {
                 get { return termsInfos; }
@@ -307,9 +302,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
             }
 
-            /**
-             * Merging constructor.  Note that this just grabs seqnum from the first info.
-             */
+            /// <summary>
+            /// Merging constructor.  Note that this just grabs seqnum from the first info.
+            /// </summary>
             public WeightedPhraseInfo(ICollection<WeightedPhraseInfo> toMerge)
             {
                 // Pretty much the same idea as merging FieldPhraseLists:
@@ -393,9 +388,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 return sb.ToString();
             }
 
-            /**
-             * @return the seqnum
-             */
+            /// <summary>
+            /// the seqnum
+            /// </summary>
             public virtual int Seqnum
             {
                 get { return seqnum; }
@@ -468,9 +463,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 return true;
             }
 
-            /**
-             * Term offsets (start + end)
-             */
+            /// <summary>
+            /// Term offsets (start + end)
+            /// </summary>
             public class Toffs : IComparable<Toffs>
             {
                 private int startOffset;

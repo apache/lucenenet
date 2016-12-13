@@ -295,12 +295,6 @@ namespace Lucene.Net.Search
                 icuBoundaries = Icu.BreakIterator.GetBoundaries(type, locale, offsetText);
             }
 
-            //foreach (var boundary in icuBoundaries)
-            //{
-            //    if (!boundaries.Contains(boundary.Start + offset)) boundaries.Add(boundary.Start + offset);
-            //    if (!boundaries.Contains(boundary.End + offset)) boundaries.Add(boundary.End + offset);
-            //}
-
             boundaries = icuBoundaries
                 .Select(t => new[] { t.Start + start, t.End + start })
                 .SelectMany(b => b)

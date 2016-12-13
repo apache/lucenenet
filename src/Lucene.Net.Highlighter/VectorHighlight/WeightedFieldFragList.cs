@@ -24,23 +24,22 @@ namespace Lucene.Net.Search.VectorHighlight
 	 */
 
     /// <summary>
-    /// A weighted implementation of {@link FieldFragList}.
+    /// A weighted implementation of <see cref="FieldFragList"/>.
     /// </summary>
     public class WeightedFieldFragList : FieldFragList
     {
-        /**
-   * a constructor.
-   * 
-   * @param fragCharSize the length (number of chars) of a fragment
-   */
+        /// <summary>
+        /// a constructor.
+        /// </summary>
+        /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
         public WeightedFieldFragList(int fragCharSize)
             : base(fragCharSize)
         {
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.lucene.search.vectorhighlight.FieldFragList#add( int startOffset, int endOffset, List<WeightedPhraseInfo> phraseInfoList )
-         */
+        /// <summary>
+        /// <seealso cref="FieldFragList.Add(int, int, IList{WeightedPhraseInfo})"/>.
+        /// </summary>
         public override void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList)
         {
             List<SubInfo> tempSubInfos = new List<SubInfo>();

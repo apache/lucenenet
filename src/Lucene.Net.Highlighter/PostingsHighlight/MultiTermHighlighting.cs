@@ -33,10 +33,10 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// </summary>
     internal class MultiTermHighlighting
     {
-        /** 
-   * Extracts all MultiTermQueries for {@code field}, and returns equivalent 
-   * automata that will match terms.
-   */
+        /// <summary>
+        /// Extracts all <see cref="MultiTermQuery"/>s for <paramref name="field"/>, and returns equivalent 
+        /// automata that will match terms.
+        /// </summary>
         internal static CharacterRunAutomaton[] ExtractAutomata(Query query, string field)
         {
             List<CharacterRunAutomaton> list = new List<CharacterRunAutomaton>();
@@ -214,13 +214,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-
-        /** 
-         * Returns a "fake" DocsAndPositionsEnum over the tokenstream, returning offsets where {@code matchers}
-         * matches tokens.
-         * <p>
-         * This is solely used internally by PostingsHighlighter: <b>DO NOT USE THIS METHOD!</b>
-         */
+        /// <summary>
+        /// Returns a "fake" <see cref="DocsAndPositionsEnum"/> over the tokenstream, returning offsets where <paramref name="matchers"/>
+        /// matches tokens.
+        /// <para/>
+        /// This is solely used internally by <see cref="PostingsHighlighter"/>: <b>DO NOT USE THIS METHOD!</b>
+        /// </summary>
         internal static DocsAndPositionsEnum GetDocsEnum(TokenStream ts, CharacterRunAutomaton[] matchers)
         {
             ICharTermAttribute charTermAtt = ts.AddAttribute<ICharTermAttribute>();
