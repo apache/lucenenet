@@ -176,11 +176,11 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// LUCENENET: Tests scenario outlined in <see cref="ThaiWordBreaker"/>
         /// </summary>
-        [Test]
-        public virtual void TestNumeralBreakages()
+        [Test][LuceneNetSpecific]
+        public void TestNumeralBreaking()
         {
             ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
-            AssertAnalyzesTo(analyzer, "๑๒๓456", new string[] { "๑๒๓", "456" });
+            AssertAnalyzesTo(analyzer, "๑๒๓456", new String[] { "๑๒๓456" });
         }
     }
 }
