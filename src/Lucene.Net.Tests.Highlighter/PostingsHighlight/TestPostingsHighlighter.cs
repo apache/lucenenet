@@ -421,7 +421,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 highlighter.Highlight("body", query, searcher, topDocs, 2);
                 fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -431,7 +433,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 highlighter.Highlight("title", new TermQuery(new Term("title", "test")), searcher, topDocs, 2);
                 fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }

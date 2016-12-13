@@ -40,7 +40,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "b c d"), sflb.minFragCharSize - 1);
                 fail("IllegalArgumentException must be thrown");
             }
+#pragma warning disable 168
             catch (ArgumentException expected)
+#pragma warning restore 168
             {
             }
         }

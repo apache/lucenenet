@@ -121,7 +121,9 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
+#pragma warning disable 168
             catch (NotSupportedException ignore)
+#pragma warning restore 168
             {
                 //this is non-fatal for our purposes
             }

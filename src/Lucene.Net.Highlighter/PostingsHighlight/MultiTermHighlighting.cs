@@ -162,7 +162,9 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             private bool includeLower;
             private bool includeUpper;
+#pragma warning disable 612, 618
             private IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
+#pragma warning restore 612, 618
 
             public SimpleCharacterRunAutomatonAnonymousHelper(Automaton a, TermRangeQuery tq)
                 : base(a)
