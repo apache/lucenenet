@@ -25,8 +25,8 @@ namespace Lucene.Net.Search.PostingsHighlight
     {
         //private CharacterIterator text;
         private string text;
-        private int start;
-        private int end;
+        //private int start; // Declared in base class
+        //private int end; // Declared in base class
         private int current;
 
         public override int Current
@@ -58,9 +58,14 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        public override CharacterIterator GetText()
+        //public override CharacterIterator GetText()
+        //{
+        //    return new StringCharacterIterator( text);
+        //}
+
+        public override string Text
         {
-            return new StringCharacterIterator( text);
+            get { return text; }
         }
 
         public override int Last()
@@ -130,9 +135,23 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
+        public override bool IsBoundary(int offset)
+        {
+            if (offset == 0)
+            {
+                return true;
+            }
+            int boundary = Following(offset - 1);
+            if (boundary == DONE)
+            {
+                throw new ArgumentException();
+            }
+            return boundary == offset;
+        }
+
         public override void SetText(string newText)
         {
-            if (text == null)
+            if (newText == null)
                 throw new ArgumentNullException("newText");
             this.text = newText;
 
@@ -151,12 +170,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             //this.pos = pos;
         }
 
-        //public override void SetText(CharacterIterator newText)
-        //{
-        //    start = newText.BeginIndex;
-        //    end = newText.EndIndex;
-        //    text = newText;
-        //    current = start;
-        //}
+        public override void SetText(CharacterIterator newText)
+        {
+            start = newText.BeginIndex;
+            end = newText.EndIndex;
+            text = newText.GetTextAsString();
+            current = start;
+        }
     }
 }

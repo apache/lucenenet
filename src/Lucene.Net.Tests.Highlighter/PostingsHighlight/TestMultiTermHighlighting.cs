@@ -773,12 +773,13 @@ namespace Lucene.Net.Search.PostingsHighlight
                         // its possible to have overlapping terms
                         if (start > pos)
                         {
-                            sb.Append(content, pos, start);
+                            sb.Append(content, pos, start - pos);
                         }
                         if (end > pos)
                         {
                             sb.Append("<b>");
-                            sb.Append(content, Math.Max(pos, start), end);
+                            int startPos = Math.Max(pos, start);
+                            sb.Append(content, startPos, end - startPos);
                             sb.Append('(');
                             sb.Append(passage.GetMatchTerms()[i].Utf8ToString());
                             sb.Append(')');
@@ -787,7 +788,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         }
                     }
                     // its possible a "term" from the analyzer could span a sentence boundary.
-                    sb.Append(content, pos, Math.Max(pos, passage.EndOffset));
+                    sb.Append(content, pos, Math.Max(pos, passage.EndOffset) - pos);
                     pos = passage.EndOffset;
                 }
                 return sb.toString();

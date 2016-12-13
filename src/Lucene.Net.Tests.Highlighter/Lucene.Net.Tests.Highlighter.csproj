@@ -51,6 +51,7 @@
     <Compile Include="PostingsHighlight\TestPostingsHighlighterRanking.cs" />
     <Compile Include="PostingsHighlight\TestWholeBreakIterator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBreakIterator.cs" />
     <Compile Include="VectorHighlight\AbstractTestCase.cs" />
     <Compile Include="VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
     <Compile Include="VectorHighlight\FastVectorHighlighterTest.cs" />

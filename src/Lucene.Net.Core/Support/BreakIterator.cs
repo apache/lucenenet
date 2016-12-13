@@ -7,14 +7,19 @@ namespace Lucene.Net.Support
     /// the location of boundaries in text. Instances of <code>BreakIterator</code>
     /// maintain a current position and scan over text
     /// returning the index of characters where boundaries occur.
-    /// Internally, <code>BreakIterator</code> scans text using a
-    /// <code>CharacterIterator</code>, and is thus able to scan text held
-    /// by any object implementing that protocol. A <code>StringCharacterIterator</code>
-    /// is used to scan <code>String</code> objects passed to <code>SetText</code>.
     /// </summary>
-    // LUCENENET TODO: Continue documentation...
     public abstract class BreakIterator : ICloneable
     {
+        /// <summary>
+        /// The start offset for the string, if supplied by a <see cref="CharacterIterator"/>
+        /// </summary>
+        protected int start;
+
+        /// <summary>
+        /// The end offset for the string, if supplied by a <see cref="CharacterIterator"/>
+        /// </summary>
+        protected int end;
+
         /// <summary>
         /// Constructor. BreakIterator is stateless and has no default behavior.
         /// </summary>
@@ -139,18 +144,18 @@ namespace Lucene.Net.Support
         /// <see cref="BreakIterator.DONE"/> if the first text boundary is passed in
         /// as the offset.
         /// </returns>
-        public virtual int Preceding(int offset)
-        {
-            // NOTE:  This implementation is here solely because we can't add new
-            // abstract methods to an existing class.  There is almost ALWAYS a
-            // better, faster way to do this.
-            int pos = Following(offset);
-            while (pos >= offset && pos != DONE)
-            {
-                pos = Previous();
-            }
-            return pos;
-        }
+        public abstract int Preceding(int offset);
+        //{
+        //    // NOTE:  This implementation is here solely because we can't add new
+        //    // abstract methods to an existing class.  There is almost ALWAYS a
+        //    // better, faster way to do this.
+        //    int pos = Following(offset);
+        //    while (pos >= offset && pos != DONE)
+        //    {
+        //        pos = Previous();
+        //    }
+        //    return pos;
+        //}
 
         /// <summary>
         /// Returns true if the specified character offset is a text boundary.
@@ -161,27 +166,27 @@ namespace Lucene.Net.Support
         /// if the specified offset is less than
         /// the first text boundary or greater than the last text boundary.
         /// </exception>
-        public bool IsBoundary(int offset)
-        {
-            // NOTE: This implementation probably is wrong for most situations
-            // because it fails to take into account the possibility that a
-            // CharacterIterator passed to setText() may not have a begin offset
-            // of 0.  But since the abstract BreakIterator doesn't have that
-            // knowledge, it assumes the begin offset is 0.  If you subclass
-            // BreakIterator, copy the SimpleTextBoundary implementation of this
-            // function into your subclass.  [This should have been abstract at
-            // this level, but it's too late to fix that now.]
-            if (offset == 0)
-            {
-                return true;
-            }
-            int boundary = Following(offset - 1);
-            if (boundary == DONE)
-            {
-                throw new ArgumentException();
-            }
-            return boundary == offset;
-        }
+        public abstract bool IsBoundary(int offset);
+        //{
+        //    // NOTE: This implementation probably is wrong for most situations
+        //    // because it fails to take into account the possibility that a
+        //    // CharacterIterator passed to setText() may not have a begin offset
+        //    // of 0.  But since the abstract BreakIterator doesn't have that
+        //    // knowledge, it assumes the begin offset is 0.  If you subclass
+        //    // BreakIterator, copy the SimpleTextBoundary implementation of this
+        //    // function into your subclass.  [This should have been abstract at
+        //    // this level, but it's too late to fix that now.]
+        //    if (offset == 0)
+        //    {
+        //        return true;
+        //    }
+        //    int boundary = Following(offset - 1);
+        //    if (boundary == DONE)
+        //    {
+        //        throw new ArgumentException();
+        //    }
+        //    return boundary == offset;
+        //}
 
         /// <summary>
         /// Returns character index of the text boundary that was most
@@ -208,7 +213,8 @@ namespace Lucene.Net.Support
         /// Get the text being scanned
         /// </summary>
         /// <returns>the text being scanned</returns>
-        public abstract CharacterIterator GetText();
+        //public abstract CharacterIterator GetText();
+        public abstract string Text { get; }
 
         /// <summary>
         /// Set a new text string to be scanned.  The current scan
@@ -217,46 +223,16 @@ namespace Lucene.Net.Support
         /// <param name="newText">new text to scan.</param>
         public abstract void SetText(string newText);
 
-
-        ///// <summary>
-        ///// Set a new text string to be scanned.  The current scan
-        ///// position is reset to First().
-        ///// </summary>
-        ///// <param name="newText">new text to scan.</param>
-        //public virtual void SetText(string newText)
-        //{
-        //    SetText(new StringCharacterIterator(newText));
-        //    //throw new NotImplementedException();
-        //}
-
-        ///// <summary>
-        ///// Set a new text for scanning.  The current scan
-        ///// position is reset to First().
-        ///// </summary>
-        ///// <param name="newText">new text to scan.</param>
-        //public abstract void SetText(CharacterIterator newText);
-
-
-        // LUCENENET TODO:
-        //private static readonly int CHARACTER_INDEX = 0;
-        //private static readonly int WORD_INDEX = 1;
-        //private static readonly int LINE_INDEX = 2;
-        //private static readonly int SENTENCE_INDEX = 3;
-
-
-        //private static readonly SoftReference<BreakIteratorCache>[] iterCache = (SoftReference<BreakIteratorCache>[])new SoftReference<?>[4];
-
-        ///// <summary>
-        ///// Returns a new <see cref="BreakIterator"/> instance
-        ///// for word breaks
-        ///// for the current culture.
-        ///// </summary>
-        ///// <returns>A break iterator for word breaks</returns>
-        //public static BreakIterator GetWordInstance()
-        //{
-        //    return GetWordInstance(CultureInfo.CurrentCulture);
-        //}
-
-
+        /// <summary>
+        /// Set a new text string to be scanned.  The current scan
+        /// position is reset to First().
+        /// </summary>
+        /// <param name="newText">new text to scan.</param>
+        public virtual void SetText(CharacterIterator newText)
+        {
+            SetText(newText.GetTextAsString());
+            start = newText.BeginIndex;
+            end = newText.EndIndex;
+        }
     }
 }

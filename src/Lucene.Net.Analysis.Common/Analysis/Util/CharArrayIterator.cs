@@ -155,6 +155,11 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        public override string GetTextAsString()
+        {
+            return new string(array);
+        }
+
         public override object Clone()
         {
             return this.MemberwiseClone();

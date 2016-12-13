@@ -42,5 +42,7 @@ namespace Lucene.Net.Support
         public abstract int Index { get; }
 
         public abstract object Clone();
+
+        public abstract string GetTextAsString();
     }
 }

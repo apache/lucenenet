@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
             else
             {
-                dest.Append(content, start, end);
+                dest.Append(content, start, end - start);
             }
         }
     }

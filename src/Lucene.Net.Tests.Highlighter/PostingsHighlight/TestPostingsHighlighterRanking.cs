@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Search.PostingsHighlight
@@ -31,10 +32,10 @@ namespace Lucene.Net.Search.PostingsHighlight
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]
     public class TestPostingsHighlighterRanking : LuceneTestCase
     {
-        /** 
-   * indexes a bunch of gibberish, and then highlights top(n).
-   * asserts that top(n) highlights is a subset of top(n+1) up to some max N
-   */
+        /// <summary>
+        /// indexes a bunch of gibberish, and then highlights top(n).
+        /// asserts that top(n) highlights is a subset of top(n+1) up to some max N
+        /// </summary>
         // TODO: this only tests single-valued fields. we should also index multiple values per field!
         [Test]
         public void TestRanking()
@@ -66,8 +67,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     bodyText.Append(newSentence(Random(), maxSentenceLength));
                 }
-                body.StringValue = (bodyText.toString());
-                id.StringValue = (Number.ToString(i));
+                body.StringValue = bodyText.ToString();
+                id.StringValue = i.ToString(CultureInfo.InvariantCulture);
                 iw.AddDocument(document);
             }
 

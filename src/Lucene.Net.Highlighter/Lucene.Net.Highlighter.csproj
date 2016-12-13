@@ -76,7 +76,7 @@
     <Compile Include="PostingsHighlight\WholeBreakIterator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangularArrays.cs" />
-    <Compile Include="SentenceBreakIterator.cs" />
+    <Compile Include="IcuBreakIterator.cs" />
     <Compile Include="VectorHighlight\BaseFragListBuilder.cs" />
     <Compile Include="VectorHighlight\BaseFragmentsBuilder.cs" />
     <Compile Include="VectorHighlight\BoundaryScanner.cs" />

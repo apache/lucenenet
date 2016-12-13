@@ -10,7 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -34,22 +34,22 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <summary>
     /// Simple highlighter that does not analyze fields nor use
     /// term vectors. Instead it requires 
-    /// {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}.
+    /// <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/>.
     /// <para/>
     /// PostingsHighlighter treats the single original document as the whole corpus, and then scores individual
-    /// passages as if they were documents in this corpus. It uses a {@link BreakIterator} to find 
-    /// passages in the text; by default it breaks using {@link BreakIterator#getSentenceInstance(Locale) 
-    /// getSentenceInstance(Locale.ROOT)}. It then iterates in parallel (merge sorting by offset) through
+    /// passages as if they were documents in this corpus. It uses a <see cref="BreakIterator"/> to find 
+    /// passages in the text; by default it breaks using <see cref="IcuBreakIterator"/> (for sentence breaking). 
+    /// It then iterates in parallel (merge sorting by offset) through
     /// the positions of all terms from the query, coalescing those hits that occur in a single passage
-    /// into a {@link Passage}, and then scores each Passage using a separate {@link PassageScorer}.
-    /// Passages are finally formatted into highlighted snippets with a {@link PassageFormatter}.
+    /// into a <see cref="Passage"/>, and then scores each Passage using a separate <see cref="PassageScorer"/>.
+    /// Passages are finally formatted into highlighted snippets with a <see cref="PassageFormatter"/>.
     /// <para/>
     /// You can customize the behavior by subclassing this highlighter, some important hooks:
     /// <list type="bullet">
-    ///     <item>{@link #getBreakIterator(String)}: Customize how the text is divided into passages.</item>
-    ///     <item>{@link #getScorer(String)}: Customize how passages are ranked.</item>
-    ///     <item>{@link #getFormatter(String)}: Customize how snippets are formatted.</item>
-    ///     <item>{@link #getIndexAnalyzer(String)}: Enable highlighting of MultiTermQuerys such as {@code WildcardQuery}.</item>
+    ///     <item><see cref="GetBreakIterator(string)"/>: Customize how the text is divided into passages.</item>
+    ///     <item><see cref="GetScorer(string)"/>: Customize how passages are ranked.</item>
+    ///     <item><see cref="GetFormatter(string)"/>: Customize how snippets are formatted.</item>
+    ///     <item><see cref="GetIndexAnalyzer(string)"/>: Enable highlighting of MultiTermQuerys such as <see cref="WildcardQuery"/>.</item>
     /// </list>
     /// <para/>
     /// <b>WARNING</b>: The code is very new and probably still has some exciting bugs!
@@ -58,14 +58,14 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <code>
     ///     // configure field with offsets at index time
     ///     FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-    ///     offsetsType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+    ///     offsetsType.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
     ///     Field body = new Field("body", "foobar", offsetsType);
     ///     
     ///     // retrieve highlights at query time 
     ///     PostingsHighlighter highlighter = new PostingsHighlighter();
     ///     Query query = new TermQuery(new Term("body", "highlighting"));
-    ///     TopDocs topDocs = searcher.search(query, n);
-    ///     String highlights[] = highlighter.highlight("body", query, searcher, topDocs);
+    ///     TopDocs topDocs = searcher.Search(query, n);
+    ///     string highlights[] = highlighter.Highlight("body", query, searcher, topDocs);
     /// </code>
     /// <para/>
     /// This is thread-safe, and can be used across different readers.
@@ -77,36 +77,40 @@ namespace Lucene.Net.Search.PostingsHighlight
         // but if the analyzer is really fast and the field is tiny, this might really be
         // unnecessary.
 
-        /** for rewriting: we don't want slow processing from MTQs */
+        /// <summary>for rewriting: we don't want slow processing from MTQs</summary>
         private static readonly IndexReader EMPTY_INDEXREADER = new MultiReader();
 
-        /** Default maximum content size to process. Typically snippets
-         *  closer to the beginning of the document better summarize its content */
+        /// <summary>
+        /// Default maximum content size to process. Typically snippets
+        /// closer to the beginning of the document better summarize its content
+        /// </summary>
         public static readonly int DEFAULT_MAX_LENGTH = 10000;
 
         private readonly int maxLength;
 
-        /** Set the first time {@link #getFormatter} is called,
-         *  and then reused. */
+        /// <summary>
+        /// Set the first time <see cref="GetFormatter(string)"/> is called,
+        /// and then reused.
+        /// </summary>
         private PassageFormatter defaultFormatter;
 
         /** Set the first time {@link #getScorer} is called,
          *  and then reused. */
         private PassageScorer defaultScorer;
 
-        /**
-         * Creates a new highlighter with {@link #DEFAULT_MAX_LENGTH}.
-         */
+        /// <summary>
+        /// Creates a new highlighter with <see cref="DEFAULT_MAX_LENGTH"/>.
+        /// </summary>
         public PostingsHighlighter()
             : this(DEFAULT_MAX_LENGTH)
         {
         }
 
-        /**
-         * Creates a new highlighter, specifying maximum content length.
-         * @param maxLength maximum content size to process.
-         * @throws IllegalArgumentException if <code>maxLength</code> is negative or <code>Integer.MAX_VALUE</code>
-         */
+        /// <summary>
+        /// Creates a new highlighter, specifying maximum content length.
+        /// </summary>
+        /// <param name="maxLength">maximum content size to process.</param>
+        /// <exception cref="ArgumentException">if <paramref name="maxLength"/> is negative or <c>int.MaxValue</c></exception>
         public PostingsHighlighter(int maxLength)
         {
             if (maxLength < 0 || maxLength == int.MaxValue)
@@ -118,22 +122,23 @@ namespace Lucene.Net.Search.PostingsHighlight
             this.maxLength = maxLength;
         }
 
-        /** Returns the {@link BreakIterator} to use for
-         *  dividing text into passages.  This returns 
-         *  {@link BreakIterator#getSentenceInstance(Locale)} by default;
-         *  subclasses can override to customize. */
+        /// <summary>
+        /// Returns the <see cref="BreakIterator"/> to use for
+        /// dividing text into passages.  This instantiates an
+        /// <see cref="IcuBreakIterator"/> by default;
+        /// subclasses can override to customize.
+        /// </summary>
         protected virtual BreakIterator GetBreakIterator(string field)
         {
-            // LUCENENET TODO: Create wrapper class for ICU functionality
-            //return BreakIterator.GetSentenceInstance(Locale.ROOT);
-            //throw new NotImplementedException();
-            return new SentenceBreakIterator(new Icu.Locale(CultureInfo.CurrentCulture.LCID.ToString()));
+            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
         }
 
-        /** Returns the {@link PassageFormatter} to use for
-         *  formatting passages into highlighted snippets.  This
-         *  returns a new {@code PassageFormatter} by default;
-         *  subclasses can override to customize. */
+        /// <summary>
+        /// Returns the <see cref="PassageFormatter"/> to use for
+        /// formatting passages into highlighted snippets.  This
+        /// returns a new <see cref="PassageFormatter"/> by default;
+        /// subclasses can override to customize.
+        /// </summary>
         protected virtual PassageFormatter GetFormatter(string field)
         {
             if (defaultFormatter == null)
@@ -143,10 +148,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             return defaultFormatter;
         }
 
-        /** Returns the {@link PassageScorer} to use for
-         *  ranking passages.  This
-         *  returns a new {@code PassageScorer} by default;
-         *  subclasses can override to customize. */
+        /// <summary>
+        /// Returns the <see cref="PassageScorer"/> to use for
+        /// ranking passages.  This
+        /// returns a new <see cref="PassageScorer"/> by default;
+        /// subclasses can override to customize.
+        /// </summary>
         protected virtual PassageScorer GetScorer(string field)
         {
             if (defaultScorer == null)
@@ -156,79 +163,77 @@ namespace Lucene.Net.Search.PostingsHighlight
             return defaultScorer;
         }
 
-        /**
-         * Highlights the top passages from a single field.
-         * 
-         * @param field field name to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param topDocs TopDocs containing the summary result documents to highlight.
-         * @return Array of formatted snippets corresponding to the documents in <code>topDocs</code>. 
-         *         If no highlights were found for a document, the
-         *         first sentence for the field will be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Highlights the top passages from a single field.
+        /// </summary>
+        /// <param name="field">field name to highlight. Must have a stored string value and also be indexed with offsets.</param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
+        /// <returns>
+        /// Array of formatted snippets corresponding to the documents in <paramref name="topDocs"/>.
+        /// If no highlights were found for a document, the
+        /// first sentence for the field will be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual string[] Highlight(string field, Query query, IndexSearcher searcher, TopDocs topDocs)
         {
             return Highlight(field, query, searcher, topDocs, 1);
         }
 
-        /**
-         * Highlights the top-N passages from a single field.
-         * 
-         * @param field field name to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param topDocs TopDocs containing the summary result documents to highlight.
-         * @param maxPassages The maximum number of top-N ranked passages used to 
-         *        form the highlighted snippets.
-         * @return Array of formatted snippets corresponding to the documents in <code>topDocs</code>. 
-         *         If no highlights were found for a document, the
-         *         first {@code maxPassages} sentences from the
-         *         field will be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Highlights the top-N passages from a single field.
+        /// </summary>
+        /// <param name="field">
+        /// field name to highlight.
+        /// Must have a stored string value and also be indexed with offsets.
+        /// </param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
+        /// <param name="maxPassages">The maximum number of top-N ranked passages used to form the highlighted snippets.</param>
+        /// <returns>
+        /// Array of formatted snippets corresponding to the documents in <paramref name="topDocs"/>.
+        /// If no highlights were found for a document, the
+        /// first <paramref name="maxPassages"/> sentences from the
+        /// field will be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">Illegal if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual string[] Highlight(string field, Query query, IndexSearcher searcher, TopDocs topDocs, int maxPassages)
         {
-            IDictionary<string, string[]> res = HighlightFields(new string[] { field
-                }, query, searcher, topDocs, new int[] { maxPassages
-            });
+            IDictionary<string, string[]> res = HighlightFields(new string[] { field }, query, searcher, topDocs, new int[] { maxPassages });
             string[] result;
             res.TryGetValue(field, out result);
             return result;
         }
 
-        /**
-         * Highlights the top passages from multiple fields.
-         * <p>
-         * Conceptually, this behaves as a more efficient form of:
-         * <pre class="prettyprint">
-         * Map m = new HashMap();
-         * for (String field : fields) {
-         *   m.put(field, highlight(field, query, searcher, topDocs));
-         * }
-         * return m;
-         * </pre>
-         * 
-         * @param fields field names to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param topDocs TopDocs containing the summary result documents to highlight.
-         * @return Map keyed on field name, containing the array of formatted snippets 
-         *         corresponding to the documents in <code>topDocs</code>. 
-         *         If no highlights were found for a document, the
-         *         first sentence from the field will be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Highlights the top passages from multiple fields.
+        /// <para/>
+        /// Conceptually, this behaves as a more efficient form of:
+        /// <code>
+        /// IDictionary&lt;string, string[]&gt; m = new Dictionary&lt;string, string[]&gt;();
+        /// foreach (string field in fields)
+        /// {
+        ///     m[field] = Highlight(field, query, searcher, topDocs);
+        /// }
+        /// return m;
+        /// </code>
+        /// </summary>
+        /// <param name="fields">field names to highlight. Must have a stored string value and also be indexed with offsets.</param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
+        /// <returns>
+        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// corresponding to the documents in <paramref name="topDocs"/>.
+        /// If no highlights were found for a document, the
+        /// first sentence from the field will be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fields, Query query, IndexSearcher searcher, TopDocs topDocs)
         {
             int[] maxPassages = new int[fields.Length];
@@ -236,34 +241,33 @@ namespace Lucene.Net.Search.PostingsHighlight
             return HighlightFields(fields, query, searcher, topDocs, maxPassages);
         }
 
-        /**
-         * Highlights the top-N passages from multiple fields.
-         * <p>
-         * Conceptually, this behaves as a more efficient form of:
-         * <pre class="prettyprint">
-         * Map m = new HashMap();
-         * for (String field : fields) {
-         *   m.put(field, highlight(field, query, searcher, topDocs, maxPassages));
-         * }
-         * return m;
-         * </pre>
-         * 
-         * @param fields field names to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param topDocs TopDocs containing the summary result documents to highlight.
-         * @param maxPassages The maximum number of top-N ranked passages per-field used to 
-         *        form the highlighted snippets.
-         * @return Map keyed on field name, containing the array of formatted snippets 
-         *         corresponding to the documents in <code>topDocs</code>. 
-         *         If no highlights were found for a document, the
-         *         first {@code maxPassages} sentences from the
-         *         field will be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Highlights the top-N passages from multiple fields.
+        /// <para/>
+        /// Conceptually, this behaves as a more efficient form of:
+        /// <code>
+        /// IDictionary&lt;string, string[]&gt; m = new Dictionary&lt;string, string[]&gt;();
+        /// foreach (string field in fields)
+        /// {
+        ///     m[field] = Highlight(field, query, searcher, topDocs, maxPassages);
+        /// }
+        /// return m;
+        /// </code>
+        /// </summary>
+        /// <param name="fields">field names to highlight. Must have a stored string value and also be indexed with offsets.</param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
+        /// <param name="maxPassages">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
+        /// <returns>
+        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
+        /// corresponding to the documents in <paramref name="topDocs"/>.
+        /// If no highlights were found for a document, the
+        /// first <paramref name="maxPassages"/> sentences from the
+        /// field will be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fields, Query query, IndexSearcher searcher, TopDocs topDocs, int[] maxPassages)
         {
             ScoreDoc[] scoreDocs = topDocs.ScoreDocs;
@@ -276,26 +280,24 @@ namespace Lucene.Net.Search.PostingsHighlight
             return HighlightFields(fields, query, searcher, docids, maxPassages);
         }
 
-        /**
-         * Highlights the top-N passages from multiple fields,
-         * for the provided int[] docids.
-         * 
-         * @param fieldsIn field names to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param docidsIn containing the document IDs to highlight.
-         * @param maxPassagesIn The maximum number of top-N ranked passages per-field used to 
-         *        form the highlighted snippets.
-         * @return Map keyed on field name, containing the array of formatted snippets 
-         *         corresponding to the documents in <code>docidsIn</code>. 
-         *         If no highlights were found for a document, the
-         *         first {@code maxPassages} from the field will
-         *         be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Highlights the top-N passages from multiple fields,
+        /// for the provided int[] docids.
+        /// </summary>
+        /// <param name="fieldsIn">field names to highlight. Must have a stored string value and also be indexed with offsets.</param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="docidsIn">containing the document IDs to highlight.</param>
+        /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
+        /// <returns>
+        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// corresponding to the documents in <paramref name="docidsIn"/>.
+        /// If no highlights were found for a document, the
+        /// first <paramref name="maxPassages"/> from the field will
+        /// be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fieldsIn, Query query, IndexSearcher searcher, int[] docidsIn, int[] maxPassagesIn)
         {
             IDictionary<string, string[]> snippets = new Dictionary<string, string[]>();
@@ -343,28 +345,26 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        /**
-         * Expert: highlights the top-N passages from multiple fields,
-         * for the provided int[] docids, to custom Object as
-         * returned by the {@link PassageFormatter}.  Use
-         * this API to render to something other than String.
-         * 
-         * @param fieldsIn field names to highlight. 
-         *        Must have a stored string value and also be indexed with offsets.
-         * @param query query to highlight.
-         * @param searcher searcher that was previously used to execute the query.
-         * @param docidsIn containing the document IDs to highlight.
-         * @param maxPassagesIn The maximum number of top-N ranked passages per-field used to 
-         *        form the highlighted snippets.
-         * @return Map keyed on field name, containing the array of formatted snippets 
-         *         corresponding to the documents in <code>docidsIn</code>. 
-         *         If no highlights were found for a document, the
-         *         first {@code maxPassages} from the field will
-         *         be returned.
-         * @throws IOException if an I/O error occurred during processing
-         * @throws IllegalArgumentException if <code>field</code> was indexed without 
-         *         {@link IndexOptions#DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS}
-         */
+        /// <summary>
+        /// Expert: highlights the top-N passages from multiple fields,
+        /// for the provided int[] docids, to custom object as
+        /// returned by the <see cref="PassageFormatter"/>.  Use
+        /// this API to render to something other than <see cref="string"/>.
+        /// </summary>
+        /// <param name="fieldsIn">field names to highlight. Must have a stored string value and also be indexed with offsets.</param>
+        /// <param name="query">query to highlight.</param>
+        /// <param name="searcher">searcher that was previously used to execute the query.</param>
+        /// <param name="docidsIn">containing the document IDs to highlight.</param>
+        /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
+        /// <returns>
+        /// <see cref="IDictionary{string, object[]}"/> keyed on field name, containing the array of formatted snippets
+        /// corresponding to the documents in <paramref name="docidsIn"/>.
+        /// If no highlights were found for a document, the
+        /// first <paramref name="maxPassagesIn"/> from the field will
+        /// be returned.
+        /// </returns>
+        /// <exception cref="IOException">if an I/O error occurred during processing</exception>
+        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         protected internal virtual IDictionary<string, object[]> HighlightFieldsAsObjects(string[] fieldsIn, Query query, IndexSearcher searcher, int[] docidsIn, int[] maxPassagesIn)
         {
             if (fieldsIn.Length < 1)
@@ -394,27 +394,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             // sort for sequential io
             ArrayUtil.TimSort(docids);
             new InPlaceMergeSorterAnonymousHelper(fields, maxPassages).Sort(0, fields.Length);
-            //    new InPlaceMergeSorter()
-            //{
-
-            //    @Override
-            //      protected void swap(int i, int j)
-            //{
-            //    String tmp = fields[i];
-            //    fields[i] = fields[j];
-            //    fields[j] = tmp;
-            //    int tmp2 = maxPassages[i];
-            //    maxPassages[i] = maxPassages[j];
-            //    maxPassages[j] = tmp2;
-            //}
-
-            //@Override
-            //      protected int compare(int i, int j)
-            //{
-            //    return fields[i].compareTo(fields[j]);
-            //}
-
-            //    }.sort(0, fields.length);
 
             // pull stored data:
             string[][] contents = LoadFieldValues(searcher, fields, docids, maxLength);
@@ -449,15 +428,16 @@ namespace Lucene.Net.Search.PostingsHighlight
             return highlights;
         }
 
-        /** Loads the String values for each field X docID to be
-         *  highlighted.  By default this loads from stored
-         *  fields, but a subclass can change the source.  This
-         *  method should allocate the String[fields.length][docids.length]
-         *  and fill all values.  The returned Strings must be
-         *  identical to what was indexed. */
+        /// <summary>
+        /// Loads the string values for each field X docID to be
+        /// highlighted.  By default this loads from stored
+        /// fields, but a subclass can change the source.  This
+        /// method should allocate the string[fields.length][docids.length]
+        /// and fill all values.  The returned strings must be
+        /// identical to what was indexed.
+        /// </summary>
         protected virtual string[][] LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
         {
-            //string[][] contents = new string[fields.Length][docids.Length];
             string[][] contents = RectangularArrays.ReturnRectangularStringArray(fields.Length, docids.Length);
             char[] valueSeparators = new char[fields.Length];
             for (int i = 0; i < fields.Length; i++)
@@ -477,23 +457,24 @@ namespace Lucene.Net.Search.PostingsHighlight
             return contents;
         }
 
-        /** 
-         * Returns the logical separator between values for multi-valued fields.
-         * The default value is a space character, which means passages can span across values,
-         * but a subclass can override, for example with {@code U+2029 PARAGRAPH SEPARATOR (PS)}
-         * if each value holds a discrete passage for highlighting.
-         */
+        /// <summary>
+        /// Returns the logical separator between values for multi-valued fields.
+        /// The default value is a space character, which means passages can span across values,
+        /// but a subclass can override, for example with <c>U+2029 PARAGRAPH SEPARATOR (PS)</c>
+        /// if each value holds a discrete passage for highlighting.
+        /// </summary>
         protected virtual char GetMultiValuedSeparator(string field)
         {
             return ' ';
         }
 
-        /** 
-         * Returns the analyzer originally used to index the content for {@code field}.
-         * <p>
-         * This is used to highlight some MultiTermQueries.
-         * @return Analyzer or null (the default, meaning no special multi-term processing)
-         */
+        /// <summary>
+        /// Returns the analyzer originally used to index the content for <paramref name="field"/>.
+        /// <para/>
+        /// This is used to highlight some <see cref="MultiTermQuery"/>s.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns><see cref="Analyzer"/> or null (the default, meaning no special multi-term processing)</returns>
         protected virtual Analyzer GetIndexAnalyzer(string field)
         {
             return null;
@@ -672,24 +653,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             pq.Add(new OffsetsEnum(EMPTY, int.MaxValue)); // a sentinel for termination
 
             Support.PriorityQueue<Passage> passageQueue = new Support.PriorityQueue<Passage>(n, new HighlightDocComparerAnonymousHelper1());
-            //    Support.PriorityQueue<Passage> passageQueue = new Support.PriorityQueue<>(n, new Comparator<Passage>() {
-            //      @Override
-            //      public int compare(Passage left, Passage right)
-            //{
-            //    if (left.score < right.score)
-            //    {
-            //        return -1;
-            //    }
-            //    else if (left.score > right.score)
-            //    {
-            //        return 1;
-            //    }
-            //    else
-            //    {
-            //        return left.startOffset - right.startOffset;
-            //    }
-            //}
-            //    });
             Passage current = new Passage();
 
             OffsetsEnum off;
@@ -738,8 +701,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                     // if we exceed limit, we are done
                     if (start >= contentLength)
                     {
-                        //Passage[] passages = new Passage[passageQueue.Size()];
-                        //passageQueue.ToArray(passages);
                         Passage[] passages = passageQueue.ToArray();
                         foreach (Passage p in passages)
                         {
@@ -747,13 +708,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                         }
                         // sort in ascending order
                         ArrayUtil.TimSort(passages, new HighlightDocComparerAnonymousHelper2());
-                        //          Array.Sort(passages, new Comparator<Passage>() {
-                        //            @Override
-                        //            public int compare(Passage left, Passage right)
-                        //{
-                        //    return left.startOffset - right.startOffset;
-                        //}
-                        //          });
                         return passages;
                     }
                     // advance breakiterator
@@ -798,10 +752,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             return null;
         }
 
-        /** Called to summarize a document when no hits were
-         *  found.  By default this just returns the first
-         *  {@code maxPassages} sentences; subclasses can override
-         *  to customize. */
+        /// <summary>
+        /// Called to summarize a document when no hits were
+        /// found.  By default this just returns the first
+        /// <paramref name="maxPassages"/> sentences; subclasses can override
+        /// to customize.
+        /// </summary>
         protected virtual Passage[] GetEmptyHighlight(string fieldName, BreakIterator bi, int maxPassages)
         {
             // BreakIterator should be un-next'd:
@@ -839,7 +795,6 @@ namespace Lucene.Net.Search.PostingsHighlight
                 this.pos = 1;
             }
 
-
             public virtual int CompareTo(OffsetsEnum other)
             {
                 try
@@ -864,42 +819,10 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         private static readonly DocsAndPositionsEnum EMPTY = new DocsAndPositionsEnumAnonymousHelper();
 
-        //  private static readonly DocsAndPositionsEnum EMPTY = new DocsAndPositionsEnum()
-        //{
-
-        //    @Override
-        //    public int nextPosition() throws IOException { return 0; }
-
-        //@Override
-        //    public int startOffset() throws IOException { return Integer.MAX_VALUE; }
-
-        //@Override
-        //    public int endOffset() throws IOException { return Integer.MAX_VALUE; }
-
-        //@Override
-        //    public BytesRef getPayload() throws IOException { return null; }
-
-        //@Override
-        //    public int freq() throws IOException { return 0; }
-
-        //@Override
-        //    public int docID() { return NO_MORE_DOCS; }
-
-        //@Override
-        //    public int nextDoc() throws IOException { return NO_MORE_DOCS; }
-
-        //@Override
-        //    public int advance(int target) throws IOException { return NO_MORE_DOCS; }
-
-        //@Override
-        //    public long cost() { return 0; }
-        //  };
-
-        /** 
-         * we rewrite against an empty indexreader: as we don't want things like
-         * rangeQueries that don't summarize the document
-         */
-
+        /// <summary>
+        /// we rewrite against an empty indexreader: as we don't want things like
+        /// rangeQueries that don't summarize the document
+        /// </summary>
         private class DocsAndPositionsEnumAnonymousHelper : DocsAndPositionsEnum
         {
             public override int NextPosition()
