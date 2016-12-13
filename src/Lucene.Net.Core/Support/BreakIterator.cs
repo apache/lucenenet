@@ -8,7 +8,10 @@ namespace Lucene.Net.Support
     /// maintain a current position and scan over text
     /// returning the index of characters where boundaries occur.
     /// </summary>
-    public abstract class BreakIterator : ICloneable
+    public abstract class BreakIterator
+#if FEATURE_CLONEABLE
+        : ICloneable
+#endif
     {
         /// <summary>
         /// The start offset for the string, if supplied by a <see cref="CharacterIterator"/>
