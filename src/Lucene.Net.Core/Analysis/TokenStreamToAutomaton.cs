@@ -54,8 +54,12 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Whether to generate holes in the automaton for missing positions, <code>true</code> by default. </summary>
-        public virtual bool PreservePositionIncrements // LUCENENET TODO: Change to method
+        public virtual bool PreservePositionIncrements
         {
+            get
+            {
+                return this.preservePositionIncrements; // LUCENENET specific - properties should always have a getter
+            }
             set
             {
                 this.preservePositionIncrements = value;
@@ -66,8 +70,12 @@ namespace Lucene.Net.Analysis
         /// Whether to make transition labels Unicode code points instead of UTF8 bytes,
         ///  <code>false</code> by default
         /// </summary>
-        public virtual bool UnicodeArcs // LUCENENET TODO: Change to method
+        public virtual bool UnicodeArcs
         {
+            get
+            {
+                return this.unicodeArcs; // LUCENENET specific - properties should always have a getter
+            }
             set
             {
                 this.unicodeArcs = value;
