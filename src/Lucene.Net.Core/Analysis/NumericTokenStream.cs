@@ -83,8 +83,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class NumericTokenStream : TokenStream
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             NumericAtt = AddAttribute<INumericTermAttribute>();
@@ -245,11 +243,7 @@ namespace Lucene.Net.Analysis
         public NumericTokenStream()
             : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, NumericUtils.PRECISION_STEP_DEFAULT)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
         }
 
         /// <summary>
@@ -260,11 +254,7 @@ namespace Lucene.Net.Analysis
         public NumericTokenStream(int precisionStep)
             : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, precisionStep)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
         }
 
         /// <summary>
@@ -277,11 +267,7 @@ namespace Lucene.Net.Analysis
         public NumericTokenStream(AttributeSource.AttributeFactory factory, int precisionStep)
             : base(new NumericAttributeFactory(factory))
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             if (precisionStep < 1)
             {
                 throw new System.ArgumentException("precisionStep must be >=1");
