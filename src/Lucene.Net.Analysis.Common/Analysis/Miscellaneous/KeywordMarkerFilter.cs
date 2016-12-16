@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (Keyword)
                 {
-                    keywordAttr.Keyword = true;
+                    keywordAttr.IsKeyword = true;
                 }
                 return true;
             }

@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Fr
                 string term = termAtt.ToString();
 
                 // Check the exclusion table
-                if (!keywordAttr.Keyword)
+                if (!keywordAttr.IsKeyword)
                 {
                     string s = stemmer.Stem(term);
                     // If not stemmed, don't waste the time  adjusting the token.

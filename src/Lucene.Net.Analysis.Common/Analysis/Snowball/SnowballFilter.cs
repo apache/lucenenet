@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Snowball
         {
             if (input.IncrementToken())
             {
-                if (!keywordAttr.Keyword)
+                if (!keywordAttr.IsKeyword)
                 {
                     char[] termBuffer = termAtt.Buffer();
                     int length = termAtt.Length;

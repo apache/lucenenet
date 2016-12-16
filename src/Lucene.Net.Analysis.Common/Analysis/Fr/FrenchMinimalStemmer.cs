@@ -62,7 +62,7 @@
     /// </summary>
     public class FrenchMinimalStemmer
     {
-        public virtual int stem(char[] s, int len)
+        public virtual int Stem(char[] s, int len)
         {
             if (len < 6)
             {

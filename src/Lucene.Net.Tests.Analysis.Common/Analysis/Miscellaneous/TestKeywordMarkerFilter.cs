@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (input.IncrementToken())
                 {
-                    if (!keywordAttr.Keyword)
+                    if (!keywordAttr.IsKeyword)
                     {
                         string term = CultureInfo.InvariantCulture.TextInfo.ToLower(termAtt.ToString());
                         termAtt.SetEmpty().Append(term);

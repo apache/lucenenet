@@ -40,9 +40,9 @@ namespace Lucene.Net.Analysis.Hi
         {
             if (input.IncrementToken())
             {
-                if (!keywordAtt.Keyword)
+                if (!keywordAtt.IsKeyword)
                 {
-                    termAtt.Length = stemmer.stem(termAtt.Buffer(), termAtt.Length);
+                    termAtt.Length = stemmer.Stem(termAtt.Buffer(), termAtt.Length);
                 }
                 return true;
             }

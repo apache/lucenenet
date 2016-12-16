@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.De
             {
                 string term = termAtt.ToString();
 
-                if (!keywordAttr.Keyword)
+                if (!keywordAttr.IsKeyword)
                 {
                     string s = stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.

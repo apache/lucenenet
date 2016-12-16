@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.En
                 return false;
             }
 
-            if ((!keywordAttr.Keyword) && stemmer.Stem(termAtt.Buffer(), 0, termAtt.Length))
+            if ((!keywordAttr.IsKeyword) && stemmer.Stem(termAtt.Buffer(), 0, termAtt.Length))
             {
                 termAtt.CopyBuffer(stemmer.ResultBuffer, 0, stemmer.ResultLength);
             }

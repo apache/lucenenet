@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     // No overrides
                     return true;
                 }
-                if (!keywordAtt.Keyword) // don't muck with already-keyworded terms
+                if (!keywordAtt.IsKeyword) // don't muck with already-keyworded terms
                 {
                     BytesRef stem = stemmerOverrideMap.Get(termAtt.Buffer(), termAtt.Length, scratchArc, fstReader);
                     if (stem != null)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                             termAtt.CopyBuffer(spare.Chars, spare.Offset, spare.Length);
                         }
                         termAtt.Length = spare.Length;
-                        keywordAtt.Keyword = true;
+                        keywordAtt.IsKeyword = true;
                     }
                 }
                 return true;

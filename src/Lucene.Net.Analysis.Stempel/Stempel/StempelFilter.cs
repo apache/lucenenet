@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Stempel
         {
             if (input.IncrementToken())
             {
-                if (!keywordAtt.Keyword && termAtt.Length > minLength)
+                if (!keywordAtt.IsKeyword && termAtt.Length > minLength)
                 {
                     StringBuilder sb = stemmer.Stem(termAtt.ToString());
                     if (sb != null) // if we can't stem it, return unchanged

@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Hi
     /// </summary>
     public class HindiStemmer
     {
-        public virtual int stem(char[] buffer, int len)
+        public virtual int Stem(char[] buffer, int len)
         {
             // 5
             if ((len > 6) && (StemmerUtil.EndsWith(buffer, len, "ाएंगी") || StemmerUtil.EndsWith(buffer, len, "ाएंगे") || StemmerUtil.EndsWith(buffer, len, "ाऊंगी") || StemmerUtil.EndsWith(buffer, len, "ाऊंगा") || StemmerUtil.EndsWith(buffer, len, "ाइयाँ") || StemmerUtil.EndsWith(buffer, len, "ाइयों") || StemmerUtil.EndsWith(buffer, len, "ाइयां")))

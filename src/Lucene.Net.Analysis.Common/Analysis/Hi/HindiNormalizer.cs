@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Hi
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <returns> length of input buffer after normalization </returns>
-        public virtual int normalize(char[] s, int len)
+        public virtual int Normalize(char[] s, int len)
         {
 
             for (int i = 0; i < len; i++)

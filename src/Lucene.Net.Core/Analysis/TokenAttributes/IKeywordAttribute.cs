@@ -35,6 +35,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <returns> <code>true</code> if the current token is a keyword, otherwise
         ///         <code>false</code> </returns>
         /// <seealso cref= #setKeyword(boolean) </seealso>
-        bool Keyword { get; set; }
+        bool IsKeyword { get; set; }
     }
 }

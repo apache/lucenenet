@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.En
 
             char[] term = termAttribute.Buffer();
             int len = termAttribute.Length;
-            if ((!keywordAtt.Keyword) && stemmer.Stem(term, len))
+            if ((!keywordAtt.IsKeyword) && stemmer.Stem(term, len))
             {
                 termAttribute.SetEmpty().Append(stemmer.AsCharSequence());
             }

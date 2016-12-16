@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 return false;
             }
 
-            if (keywordAtt.Keyword)
+            if (keywordAtt.IsKeyword)
             {
                 return true;
             }

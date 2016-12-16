@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             // looked like a stop-word; don't filter it:
                             RestoreState(sav);
                             posIncAtt.PositionIncrement = skippedPositions + posIncAtt.PositionIncrement;
-                            keywordAtt.Keyword = true;
+                            keywordAtt.IsKeyword = true;
                             return true;
                         }
                     }

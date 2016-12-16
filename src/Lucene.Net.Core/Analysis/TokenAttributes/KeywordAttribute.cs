@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public override void CopyTo(Attribute target)
         {
             KeywordAttribute attr = (KeywordAttribute)target;
-            attr.Keyword = keyword;
+            attr.IsKeyword = keyword;
         }
 
         public override int GetHashCode()
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return keyword == other.keyword;
         }
 
-        public bool Keyword
+        public bool IsKeyword
         {
             get
             {

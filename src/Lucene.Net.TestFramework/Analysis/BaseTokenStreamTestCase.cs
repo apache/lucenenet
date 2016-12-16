@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis
                     }
                     if (keywordAtt != null)
                     {
-                        keywordAtt.Keyword = (i & 1) == 0;
+                        keywordAtt.IsKeyword = (i & 1) == 0;
                     }
 
                     bool reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis
                     }
                     if (keywordAtts != null)
                     {
-                        Assert.AreEqual(keywordAtts[i], keywordAtt.Keyword, "keywordAtt " + i);
+                        Assert.AreEqual(keywordAtts[i], keywordAtt.IsKeyword, "keywordAtt " + i);
                     }
 
                     // we can enforce some basic things about a few attributes even if the caller doesn't check:

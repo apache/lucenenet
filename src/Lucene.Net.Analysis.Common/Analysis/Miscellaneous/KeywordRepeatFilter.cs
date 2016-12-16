@@ -48,14 +48,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 RestoreState(state);
                 posIncAttr.PositionIncrement = 0;
-                keywordAttribute.Keyword = false;
+                keywordAttribute.IsKeyword = false;
                 state = null;
                 return true;
             }
             if (input.IncrementToken())
             {
                 state = CaptureState();
-                keywordAttribute.Keyword = true;
+                keywordAttribute.IsKeyword = true;
                 return true;
             }
             return false;

@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Ckb
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <returns> length of input buffer after normalization </returns>
-        public virtual int stem(char[] s, int len)
+        public virtual int Stem(char[] s, int len)
         {
             // postposition
             if (len > 5 && StemmerUtil.EndsWith(s, len, "دا"))

@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (input.IncrementToken())
             {
-                if (!keywordAttr.Keyword && termAttribute.Length > length)
+                if (!keywordAttr.IsKeyword && termAttribute.Length > length)
                 {
                     termAttribute.Length = length;
                 }

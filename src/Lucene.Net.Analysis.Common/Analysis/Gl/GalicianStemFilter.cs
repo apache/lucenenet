@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Gl
         {
             if (input.IncrementToken())
             {
-                if (!keywordAttr.Keyword)
+                if (!keywordAttr.IsKeyword)
                 {
                     // this stemmer increases word length by 1: worst case '*çom' -> '*ción'
                     int len = termAtt.Length;

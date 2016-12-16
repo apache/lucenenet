@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Gl
         {
             if (input.IncrementToken())
             {
-                if (!keywordAttr.Keyword)
+                if (!keywordAttr.IsKeyword)
                 {
                     int newlen = stemmer.stem(termAtt.Buffer(), termAtt.Length);
                     termAtt.Length = newlen;
