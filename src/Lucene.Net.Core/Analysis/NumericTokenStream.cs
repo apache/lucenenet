@@ -85,9 +85,9 @@ namespace Lucene.Net.Analysis
     {
         private void InitializeInstanceFields()
         {
-            NumericAtt = AddAttribute<INumericTermAttribute>();
-            TypeAtt = AddAttribute<ITypeAttribute>();
-            PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            numericAtt = AddAttribute<INumericTermAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -272,8 +272,8 @@ namespace Lucene.Net.Analysis
             {
                 throw new System.ArgumentException("precisionStep must be >=1");
             }
-            this.PrecisionStep_Renamed = precisionStep;
-            NumericAtt.Shift = -precisionStep;
+            this.precisionStep = precisionStep;
+            numericAtt.Shift = -precisionStep;
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setLongValue(value))</code> </returns>
         public NumericTokenStream SetLongValue(long value)
         {
-            NumericAtt.Init(value, ValSize = 64, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+            numericAtt.Init(value, valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
@@ -294,7 +294,7 @@ namespace Lucene.Net.Analysis
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setIntValue(value))</code> </returns>
         public NumericTokenStream SetIntValue(int value)
         {
-            NumericAtt.Init(value, ValSize = 32, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+            numericAtt.Init(value, valSize = 32, precisionStep, -precisionStep);
             return this;
         }
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setDoubleValue(value))</code> </returns>
         public NumericTokenStream SetDoubleValue(double value)
         {
-            NumericAtt.Init(NumericUtils.DoubleToSortableLong(value), ValSize = 64, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+            numericAtt.Init(NumericUtils.DoubleToSortableLong(value), valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
@@ -316,22 +316,22 @@ namespace Lucene.Net.Analysis
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setFloatValue(value))</code> </returns>
         public NumericTokenStream SetFloatValue(float value)
         {
-            NumericAtt.Init(NumericUtils.FloatToSortableInt(value), ValSize = 32, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+            numericAtt.Init(NumericUtils.FloatToSortableInt(value), valSize = 32, precisionStep, -precisionStep);
             return this;
         }
 
         public override void Reset()
         {
-            if (ValSize == 0)
+            if (valSize == 0)
             {
                 throw new Exception("call Set???Value() before usage");
             }
-            NumericAtt.Shift = -PrecisionStep_Renamed;
+            numericAtt.Shift = -precisionStep;
         }
 
         public override bool IncrementToken()
         {
-            if (ValSize == 0)
+            if (valSize == 0)
             {
                 throw new Exception("call Set???Value() before usage");
             }
@@ -339,10 +339,10 @@ namespace Lucene.Net.Analysis
             // this will only clear all other attributes in this TokenStream
             ClearAttributes();
 
-            int shift = NumericAtt.IncShift();
-            TypeAtt.Type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
-            PosIncrAtt.PositionIncrement = (shift == 0) ? 1 : 0;
-            return (shift < ValSize);
+            int shift = numericAtt.IncShift();
+            typeAtt.Type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
+            posIncrAtt.PositionIncrement = (shift == 0) ? 1 : 0;
+            return (shift < valSize);
         }
 
         /// <summary>
@@ -351,17 +351,17 @@ namespace Lucene.Net.Analysis
         {
             get
             {
-                return PrecisionStep_Renamed;
+                return precisionStep;
             }
         }
 
         // members
-        private INumericTermAttribute NumericAtt;
+        private INumericTermAttribute numericAtt;
 
-        private ITypeAttribute TypeAtt;
-        private IPositionIncrementAttribute PosIncrAtt;
+        private ITypeAttribute typeAtt;
+        private IPositionIncrementAttribute posIncrAtt;
 
-        private int ValSize = 0; // valSize==0 means not initialized
-        private readonly int PrecisionStep_Renamed;
+        private int valSize = 0; // valSize==0 means not initialized
+        private readonly int precisionStep;
     }
 }
