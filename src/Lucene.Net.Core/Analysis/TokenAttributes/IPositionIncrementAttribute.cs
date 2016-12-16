@@ -1,4 +1,4 @@
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     using Lucene.Net.Util;
 

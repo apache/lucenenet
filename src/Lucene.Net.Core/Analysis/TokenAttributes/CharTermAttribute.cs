@@ -3,8 +3,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-// LUCENENET TODO: Rename this namespace to TokenAttributes (.NETify)
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more

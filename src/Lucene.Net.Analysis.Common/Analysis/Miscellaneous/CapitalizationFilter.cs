@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous

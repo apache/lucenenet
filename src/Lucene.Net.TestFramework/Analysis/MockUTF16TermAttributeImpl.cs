@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
 
     /// <summary>
     /// Extension of <seealso cref="CharTermAttributeImpl"/> that encodes the term

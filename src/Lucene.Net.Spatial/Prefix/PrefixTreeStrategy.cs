@@ -5,7 +5,7 @@ using Lucene.Net.Support.Compatibility;
 #endif
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;

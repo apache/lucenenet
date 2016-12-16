@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Fr;
 using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Synonym

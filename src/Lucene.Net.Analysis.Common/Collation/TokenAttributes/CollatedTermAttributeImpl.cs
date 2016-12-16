@@ -1,5 +1,5 @@
 ﻿using Icu.Collation;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Collation.TokenAttributes
 {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     using Lucene.Net.Support;
     using NUnit.Framework;

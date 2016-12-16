@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,51 +22,47 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
-    
-    public class TypeAttribute : Attribute, ITypeAttribute
+    /// Default implementation of <seealso cref="FlagsAttribute"/>. </summary>
+    public class FlagsAttribute : Attribute, IFlagsAttribute
 #if FEATURE_CLONEABLE
         , ICloneable
 #endif
     {
-        private string type;
+        private int flags = 0;
 
         /// <summary>
-        /// Initialize this attribute with <seealso cref="TypeAttribute#DEFAULT_TYPE"/> </summary>
-        public TypeAttribute()
-            : this(TypeAttribute_Fields.DEFAULT_TYPE)
+        /// Initialize this attribute with no bits set </summary>
+        public FlagsAttribute()
         {
         }
 
-        /// <summary>
-        /// Initialize this attribute with <code>type</code> </summary>
-        public TypeAttribute(string type)
+        public virtual int Flags
         {
-            this.type = type;
-        }
-
-        public virtual string Type
-        {
-            get { return type; }
-            set { type = value; }
+            get
+            {
+                return flags;
+            }
+            set
+            {
+                this.flags = value;
+            }
         }
 
         public override void Clear()
         {
-            type = TypeAttribute_Fields.DEFAULT_TYPE;
+            flags = 0;
         }
 
         public override bool Equals(object other)
         {
-            if (other == this)
+            if (this == other)
             {
                 return true;
             }
 
-            if (other is TypeAttribute)
+            if (other is FlagsAttribute)
             {
-                TypeAttribute o = (TypeAttribute)other;
-                return (this.type == null ? o.type == null : this.type.Equals(o.type));
+                return ((FlagsAttribute)other).flags == flags;
             }
 
             return false;
@@ -74,13 +70,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return (type == null) ? 0 : type.GetHashCode();
+            return flags;
         }
 
         public override void CopyTo(Attribute target)
         {
-            TypeAttribute t = (TypeAttribute)target;
-            t.type = type;
+            FlagsAttribute t = (FlagsAttribute)target;
+            t.Flags = flags;
         }
     }
 }

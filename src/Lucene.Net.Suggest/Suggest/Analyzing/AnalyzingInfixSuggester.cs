@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Ngram;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

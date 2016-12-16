@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;

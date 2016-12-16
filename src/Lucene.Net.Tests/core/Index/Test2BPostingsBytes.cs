@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
@@ -6,7 +6,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;

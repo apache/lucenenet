@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Analysis.TokenAttributes;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

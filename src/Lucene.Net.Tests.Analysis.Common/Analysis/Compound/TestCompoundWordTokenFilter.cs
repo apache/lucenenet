@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Core;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;

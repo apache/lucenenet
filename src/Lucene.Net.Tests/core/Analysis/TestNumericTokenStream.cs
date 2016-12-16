@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -23,8 +23,8 @@ namespace Lucene.Net.Analysis
          */
 
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using ICharTermAttribute = Lucene.Net.Analysis.Tokenattributes.ICharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
+    using ICharTermAttribute = Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
 
     [TestFixture]

@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,8 +25,8 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
+    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
     using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;

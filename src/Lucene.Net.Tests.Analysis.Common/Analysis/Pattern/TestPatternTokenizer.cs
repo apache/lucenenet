@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis.CharFilters;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;

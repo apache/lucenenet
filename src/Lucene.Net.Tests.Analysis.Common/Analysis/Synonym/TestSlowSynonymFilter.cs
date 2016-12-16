@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using Lucene.Net.Support;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using System.Linq;
 
 namespace Lucene.Net.Analysis.Synonym

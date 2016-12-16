@@ -2,7 +2,7 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Analysis
 {
-    using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Analysis.TokenAttributes;
     using System.Reflection;
     using Attribute = Lucene.Net.Util.Attribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
 
     /// <summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
     public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
     {
         private int startOffset, endOffset;
-        private string type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+        private string type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
         private int flags;
         private BytesRef payload;
         private int positionIncrement = 1;
@@ -349,7 +349,7 @@ namespace Lucene.Net.Analysis
             positionIncrement = 1;
             flags = 0;
             startOffset = endOffset = 0;
-            type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
         }
 
         public override object Clone()
@@ -428,7 +428,7 @@ namespace Lucene.Net.Analysis
             positionIncrement = 1;
             flags = 0;
             startOffset = endOffset = 0;
-            type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
         }
 
         /// <summary>
@@ -463,7 +463,7 @@ namespace Lucene.Net.Analysis
             CopyBuffer(newTermBuffer, newTermOffset, newTermLength);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
             return this;
         }
 
@@ -514,7 +514,7 @@ namespace Lucene.Net.Analysis
             Append(newTerm);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
             return this;
         }
 
@@ -531,7 +531,7 @@ namespace Lucene.Net.Analysis
             Append(newTerm, newTermOffset, newTermOffset + newTermLength);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
             return this;
         }
 

@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs
          * limitations under the License.
          */
 
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute; // javadocs
+    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute; // javadocs
 
     /// <summary>
     /// Codec API for reading term vectors:

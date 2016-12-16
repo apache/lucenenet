@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Tartarus.Snowball;
 using System;
 using System.Reflection;

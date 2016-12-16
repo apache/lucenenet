@@ -20,10 +20,10 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
+    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
+    using PositionIncrementAttribute = Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute;
+    using PositionLengthAttribute = Lucene.Net.Analysis.TokenAttributes.PositionLengthAttribute;
 
     // TODO: rename to OffsetsXXXTF?  ie we only validate
     // offsets (now anyway...)

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using Icu;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 

@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using Reader = System.IO.TextReader;
 

@@ -8,7 +8,7 @@ using Lucene.Net.Analysis.Synonym;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Core;
 
 namespace Lucene.Net.Analysis.Miscellaneous

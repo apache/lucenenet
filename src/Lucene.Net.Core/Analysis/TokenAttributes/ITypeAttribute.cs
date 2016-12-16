@@ -1,4 +1,4 @@
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     using Lucene.Net.Util;
 
@@ -20,28 +20,21 @@ namespace Lucene.Net.Analysis.Tokenattributes
          */
 
     /// <summary>
-    /// Determines how many positions this
-    ///  token spans.  Very few analyzer components actually
-    ///  produce this attribute, and indexing ignores it, but
-    ///  it's useful to express the graph structure naturally
-    ///  produced by decompounding, word splitting/joining,
-    ///  synonym filtering, etc.
-    ///
-    /// <p>NOTE: this is optional, and most analyzers
-    ///  don't change the default value (1).
+    /// A Token's lexical type. The Default value is "word".
     /// </summary>
-
-    public interface IPositionLengthAttribute : IAttribute
+    public interface ITypeAttribute : IAttribute
     {
         /// <summary>
-        /// Set the position length of this Token.
-        /// <p>
-        /// The default value is one. </summary>
-        /// <param name="positionLength"> how many positions this token
-        ///  spans. </param>
-        /// <exception cref="IllegalArgumentException"> if <code>positionLength</code>
-        ///         is zero or negative. </exception>
-        /// <seealso cref= #getPositionLength() </seealso>
-        int PositionLength { set; get; }
+        /// the default type </summary>
+
+        /// <summary>
+        /// Set the lexical type. </summary>
+        /// <seealso cref= #type()  </seealso>
+        string Type { get; set; }
+    }
+
+    public static class TypeAttribute_Fields
+    {
+        public const string DEFAULT_TYPE = "word";
     }
 }

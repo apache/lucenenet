@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.Util;
 using NUnit.Framework;

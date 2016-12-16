@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,36 +22,38 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
-    public class PositionLengthAttribute : Attribute, IPositionLengthAttribute
+    /// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
+    
+    public class TypeAttribute : Attribute, ITypeAttribute
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
-        private int positionLength = 1;
+        private string type;
 
         /// <summary>
-        /// Initializes this attribute with position length of 1. </summary>
-        public PositionLengthAttribute()
+        /// Initialize this attribute with <seealso cref="TypeAttribute#DEFAULT_TYPE"/> </summary>
+        public TypeAttribute()
+            : this(TypeAttribute_Fields.DEFAULT_TYPE)
         {
         }
 
-        public virtual int PositionLength
+        /// <summary>
+        /// Initialize this attribute with <code>type</code> </summary>
+        public TypeAttribute(string type)
         {
-            set
-            {
-                if (value < 1)
-                {
-                    throw new System.ArgumentException("Position length must be 1 or greater: got " + value);
-                }
-                this.positionLength = value;
-            }
-            get
-            {
-                return positionLength;
-            }
+            this.type = type;
+        }
+
+        public virtual string Type
+        {
+            get { return type; }
+            set { type = value; }
         }
 
         public override void Clear()
         {
-            this.positionLength = 1;
+            type = TypeAttribute_Fields.DEFAULT_TYPE;
         }
 
         public override bool Equals(object other)
@@ -61,10 +63,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 return true;
             }
 
-            if (other is PositionLengthAttribute)
+            if (other is TypeAttribute)
             {
-                PositionLengthAttribute _other = (PositionLengthAttribute)other;
-                return positionLength == _other.positionLength;
+                TypeAttribute o = (TypeAttribute)other;
+                return (this.type == null ? o.type == null : this.type.Equals(o.type));
             }
 
             return false;
@@ -72,13 +74,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return positionLength;
+            return (type == null) ? 0 : type.GetHashCode();
         }
 
         public override void CopyTo(Attribute target)
         {
-            PositionLengthAttribute t = (PositionLengthAttribute)target;
-            t.PositionLength = positionLength;
+            TypeAttribute t = (TypeAttribute)target;
+            t.type = type;
         }
     }
 }

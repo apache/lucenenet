@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Pattern

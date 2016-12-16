@@ -18,7 +18,7 @@
 namespace Lucene.Net.Classification
 {
     using Lucene.Net.Analysis;
-    using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Analysis.TokenAttributes;
     using Lucene.Net.Index;
     using Lucene.Net.Search;
     using Lucene.Net.Util;

@@ -17,7 +17,7 @@
 
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /// <summary> This attribute can be used to pass different flags down the <see cref="Tokenizer" /> chain,
     /// eg from one TokenFilter to another one.

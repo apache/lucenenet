@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
 

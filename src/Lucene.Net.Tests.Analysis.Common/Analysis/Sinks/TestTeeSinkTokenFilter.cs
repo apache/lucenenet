@@ -2,7 +2,7 @@
 using System.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Store;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;

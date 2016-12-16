@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Util;

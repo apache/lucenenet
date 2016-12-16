@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Standard;
 using Lucene.Net.QueryParsers.Util;

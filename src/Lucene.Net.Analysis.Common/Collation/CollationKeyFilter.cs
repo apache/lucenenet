@@ -1,6 +1,6 @@
 ﻿using Icu.Collation;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 

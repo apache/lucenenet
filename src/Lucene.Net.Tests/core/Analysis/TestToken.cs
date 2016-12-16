@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Analysis.TokenAttributes;
     using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;

@@ -5,7 +5,7 @@ using Lucene.Net.Analysis.Core;
 using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Cjk
 {

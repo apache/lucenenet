@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,36 +22,36 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="PositionIncrementAttribute"/>. </summary>
-    public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute
+    /// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
+    public class PositionLengthAttribute : Attribute, IPositionLengthAttribute
     {
-        private int positionIncrement = 1;
+        private int positionLength = 1;
 
         /// <summary>
-        /// Initialize this attribute with position increment of 1 </summary>
-        public PositionIncrementAttribute()
+        /// Initializes this attribute with position length of 1. </summary>
+        public PositionLengthAttribute()
         {
         }
 
-        public virtual int PositionIncrement
+        public virtual int PositionLength
         {
             set
             {
-                if (value < 0)
+                if (value < 1)
                 {
-                    throw new System.ArgumentException("Increment must be zero or greater: got " + value);
+                    throw new System.ArgumentException("Position length must be 1 or greater: got " + value);
                 }
-                this.positionIncrement = value;
+                this.positionLength = value;
             }
             get
             {
-                return positionIncrement;
+                return positionLength;
             }
         }
 
         public override void Clear()
         {
-            this.positionIncrement = 1;
+            this.positionLength = 1;
         }
 
         public override bool Equals(object other)
@@ -61,10 +61,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 return true;
             }
 
-            if (other is PositionIncrementAttribute)
+            if (other is PositionLengthAttribute)
             {
-                PositionIncrementAttribute _other = (PositionIncrementAttribute)other;
-                return positionIncrement == _other.positionIncrement;
+                PositionLengthAttribute _other = (PositionLengthAttribute)other;
+                return positionLength == _other.positionLength;
             }
 
             return false;
@@ -72,13 +72,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return positionIncrement;
+            return positionLength;
         }
 
         public override void CopyTo(Attribute target)
         {
-            PositionIncrementAttribute t = (PositionIncrementAttribute)target;
-            t.PositionIncrement = positionIncrement;
+            PositionLengthAttribute t = (PositionLengthAttribute)target;
+            t.PositionLength = positionLength;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Analysis.TokenAttributes;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using System.Globalization;

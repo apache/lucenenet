@@ -1,4 +1,4 @@
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     using Lucene.Net.Util;
 
@@ -20,21 +20,28 @@ namespace Lucene.Net.Analysis.Tokenattributes
          */
 
     /// <summary>
-    /// this attribute can be used to mark a token as a keyword. Keyword aware
-    /// <seealso cref="TokenStream"/>s can decide to modify a token based on the return value
-    /// of <seealso cref="#isKeyword()"/> if the token is modified. Stemming filters for
-    /// instance can use this attribute to conditionally skip a term if
-    /// <seealso cref="#isKeyword()"/> returns <code>true</code>.
+    /// Determines how many positions this
+    ///  token spans.  Very few analyzer components actually
+    ///  produce this attribute, and indexing ignores it, but
+    ///  it's useful to express the graph structure naturally
+    ///  produced by decompounding, word splitting/joining,
+    ///  synonym filtering, etc.
+    ///
+    /// <p>NOTE: this is optional, and most analyzers
+    ///  don't change the default value (1).
     /// </summary>
-    public interface IKeywordAttribute : IAttribute
+
+    public interface IPositionLengthAttribute : IAttribute
     {
         /// <summary>
-        /// Returns <code>true</code> if the current token is a keyword, otherwise
-        /// <code>false</code>
-        /// </summary>
-        /// <returns> <code>true</code> if the current token is a keyword, otherwise
-        ///         <code>false</code> </returns>
-        /// <seealso cref= #setKeyword(boolean) </seealso>
-        bool Keyword { get; set; }
+        /// Set the position length of this Token.
+        /// <p>
+        /// The default value is one. </summary>
+        /// <param name="positionLength"> how many positions this token
+        ///  spans. </param>
+        /// <exception cref="IllegalArgumentException"> if <code>positionLength</code>
+        ///         is zero or negative. </exception>
+        /// <seealso cref= #getPositionLength() </seealso>
+        int PositionLength { set; get; }
     }
 }

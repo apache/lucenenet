@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;

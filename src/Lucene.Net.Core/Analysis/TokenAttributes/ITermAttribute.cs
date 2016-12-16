@@ -18,7 +18,7 @@
 using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /// <summary> The term text of a Token.</summary>
     public interface ITermAttribute : IAttribute

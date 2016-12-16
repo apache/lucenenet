@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.IO;
 using Lucene.Net.Analysis.Standard.Std31;

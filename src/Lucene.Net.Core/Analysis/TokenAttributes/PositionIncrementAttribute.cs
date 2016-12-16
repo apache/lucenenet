@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.Analysis.Tokenattributes
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,47 +22,49 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="FlagsAttribute"/>. </summary>
-    public class FlagsAttribute : Attribute, IFlagsAttribute
-#if FEATURE_CLONEABLE
-        , ICloneable
-#endif
+    /// Default implementation of <seealso cref="PositionIncrementAttribute"/>. </summary>
+    public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute
     {
-        private int flags = 0;
+        private int positionIncrement = 1;
 
         /// <summary>
-        /// Initialize this attribute with no bits set </summary>
-        public FlagsAttribute()
+        /// Initialize this attribute with position increment of 1 </summary>
+        public PositionIncrementAttribute()
         {
         }
 
-        public virtual int Flags
+        public virtual int PositionIncrement
         {
-            get
-            {
-                return flags;
-            }
             set
             {
-                this.flags = value;
+                if (value < 0)
+                {
+                    throw new System.ArgumentException("Increment must be zero or greater: got " + value);
+                }
+                this.positionIncrement = value;
+            }
+            get
+            {
+                return positionIncrement;
             }
         }
 
         public override void Clear()
         {
-            flags = 0;
+            this.positionIncrement = 1;
         }
 
         public override bool Equals(object other)
         {
-            if (this == other)
+            if (other == this)
             {
                 return true;
             }
 
-            if (other is FlagsAttribute)
+            if (other is PositionIncrementAttribute)
             {
-                return ((FlagsAttribute)other).flags == flags;
+                PositionIncrementAttribute _other = (PositionIncrementAttribute)other;
+                return positionIncrement == _other.positionIncrement;
             }
 
             return false;
@@ -70,13 +72,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return flags;
+            return positionIncrement;
         }
 
         public override void CopyTo(Attribute target)
         {
-            FlagsAttribute t = (FlagsAttribute)target;
-            t.Flags = flags;
+            PositionIncrementAttribute t = (PositionIncrementAttribute)target;
+            t.PositionIncrement = positionIncrement;
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 
 using Lucene.Net.Index;
 using Lucene.Net.Support;

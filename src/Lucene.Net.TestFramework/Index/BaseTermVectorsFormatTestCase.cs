@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -22,9 +22,9 @@ namespace Lucene.Net.Index
     using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
+    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
+    using PositionIncrementAttribute = Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
     using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;

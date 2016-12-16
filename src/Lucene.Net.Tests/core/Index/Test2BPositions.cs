@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -6,7 +6,7 @@ using System;
 namespace Lucene.Net.Index
 {
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+    using PositionIncrementAttribute = Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute;
     using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 

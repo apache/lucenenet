@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis.Shingle;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Position

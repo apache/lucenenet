@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using Lucene.Net.Documents;
 
