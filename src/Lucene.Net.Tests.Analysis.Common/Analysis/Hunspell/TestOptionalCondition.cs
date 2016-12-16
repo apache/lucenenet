@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestOptionalCondition : StemmerTestBase
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             Init("optional-condition.aff", "condition.dic");

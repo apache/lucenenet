@@ -39,13 +39,13 @@ namespace Lucene.Net.Index
 
         private static LineFileDocs LineDocFile;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             LineDocFile.Dispose();

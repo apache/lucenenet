@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestEscaped : StemmerTestBase
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             Init("escaped.aff", "escaped.dic");

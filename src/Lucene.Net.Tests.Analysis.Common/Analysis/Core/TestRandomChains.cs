@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             tokenizers = null;

@@ -43,7 +43,7 @@ namespace Lucene.Net.Support
                 dictionary.Add(key, "value");
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestSetup()
         {
             keys = new SmallObject[100000];

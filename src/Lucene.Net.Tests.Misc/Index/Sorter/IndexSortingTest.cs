@@ -33,7 +33,7 @@ namespace Lucene.Net.Index.Sorter
             new Sort(new SortField(null, SortField.Type_e.DOC, true))
         };
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassSorterUtilTest()
         {
             // only read the values of the undeleted documents, since after addIndexes,

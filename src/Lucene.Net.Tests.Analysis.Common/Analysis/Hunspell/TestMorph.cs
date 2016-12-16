@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestMorph : StemmerTestBase
     {
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             Init("morph.aff", "morph.dic");

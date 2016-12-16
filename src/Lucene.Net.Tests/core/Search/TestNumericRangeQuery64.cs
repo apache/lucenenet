@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             NoDocs = AtLeast(4096);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Searcher = null;

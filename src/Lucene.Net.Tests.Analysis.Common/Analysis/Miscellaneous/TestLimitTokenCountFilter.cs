@@ -37,10 +37,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments()
         {
-            new LimitTokenCountFilter(new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false), -1);
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new LimitTokenCountFilter(new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false), -1));
         }
     }
 }

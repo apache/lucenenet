@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             Dir = NewDirectory();
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             atomicReader.Dispose();

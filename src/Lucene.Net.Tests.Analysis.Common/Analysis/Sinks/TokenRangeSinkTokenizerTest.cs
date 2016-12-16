@@ -51,10 +51,9 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments()
         {
-            new TokenRangeSinkFilter(4, 2);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new TokenRangeSinkFilter(4, 2));
         }
     }
 }

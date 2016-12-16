@@ -92,10 +92,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentException))]
         public virtual void TestIllegalArguments()
         {
-            new LimitTokenPositionFilter(new MockTokenizer(new StringReader("one two three four five")), 0);
+            Assert.Throws<ArgumentException>(() => new LimitTokenPositionFilter(new MockTokenizer(new StringReader("one two three four five")), 0));
         }
     }
 }
