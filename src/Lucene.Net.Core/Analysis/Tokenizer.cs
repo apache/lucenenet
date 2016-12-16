@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {

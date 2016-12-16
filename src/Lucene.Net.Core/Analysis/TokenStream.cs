@@ -1,12 +1,8 @@
-using System.Diagnostics;
+using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Lucene.Net.Analysis.TokenAttributes;
-using System;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -27,7 +23,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>

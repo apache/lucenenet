@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             {
                 if (value < 1)
                 {
-                    throw new System.ArgumentException("Position length must be 1 or greater: got " + value);
+                    throw new ArgumentException("Position length must be 1 or greater: got " + value);
                 }
                 this.positionLength = value;
             }

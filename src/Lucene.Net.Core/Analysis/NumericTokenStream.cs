@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Documents;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Lucene.Net.Analysis
