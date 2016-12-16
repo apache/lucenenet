@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Core
         /// Builds an analyzer with the stop words from the given reader. </summary>
         /// <seealso cref= WordlistLoader#getWordSet(Reader, Version) </seealso>
         /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="stopwords"> Reader to load stop words from  </param>
+        /// <param name="stopwords"> TextReader to load stop words from  </param>
         public StopAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
             : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {

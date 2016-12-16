@@ -260,11 +260,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override TextReader Reader
+            protected override void SetReader(TextReader reader)
             {
-                set
-                {
-                }
             }
         }
 
@@ -354,11 +351,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override TextReader Reader
+            protected override void SetReader(TextReader reader)
             {
-                set
-                {
-                }
             }
         }
 
@@ -462,11 +456,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override TextReader Reader
+            protected override void SetReader(TextReader reader)
             {
-                set
-                {
-                }
             }
         }
         internal class UsualAnalyzer : Analyzer

@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Wraps the given Reader with a CharFilter. </summary>
+        /// Wraps the given TextReader with a CharFilter. </summary>
         public abstract TextReader Create(TextReader input);
     }
 }

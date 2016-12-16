@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// Creates a new instance of the <seealso cref="WikipediaTokenizer"/>. Attaches the
         /// <code>input</code> to a newly created JFlex scanner.
         /// </summary>
-        /// <param name="input"> The Input Reader </param>
+        /// <param name="input"> The Input TextReader </param>
         public WikipediaTokenizer(TextReader input)
               : this(input, TOKENS_ONLY, Enumerable.Empty<string>())
         {

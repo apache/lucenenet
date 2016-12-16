@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.CharFilters
 	 */
 
     /// <summary>
-    /// A CharFilter that wraps another Reader and attempts to strip out HTML constructs.
+    /// A CharFilter that wraps another TextReader and attempts to strip out HTML constructs.
     /// </summary>
     public class HTMLStripCharFilter : BaseCharFilter
     {
@@ -30799,8 +30799,8 @@ namespace Lucene.Net.Analysis.CharFilters
         private TextSegment entitySegment = new TextSegment(2);
 
         /**
-         * Creates a new HTMLStripCharFilter over the provided Reader.
-         * @param source Reader to strip html tags from.
+         * Creates a new HTMLStripCharFilter over the provided TextReader.
+         * @param source SetReader to strip html tags from.
          */
         public HTMLStripCharFilter(TextReader source)
                     : base(source)
@@ -30810,9 +30810,9 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
         /**
-         * Creates a new HTMLStripCharFilter over the provided Reader
+         * Creates a new HTMLStripCharFilter over the provided TextReader
          * with the specified start and end tags.
-         * @param source Reader to strip html tags from.
+         * @param source SetReader to strip html tags from.
          * @param escapedTags Tags in this set (both start and end tags)
          *  will not be filtered out.
          */

@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
         string StringValue { get; }
 
         /// <summary>
-        /// Non-null if this field has a Reader value </summary>
+        /// Non-null if this field has a TextReader value </summary>
         TextReader ReaderValue { get; }
 
         /// <summary>

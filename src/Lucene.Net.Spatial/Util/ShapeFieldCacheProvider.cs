@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Util
     /// for a given
     /// <see cref="Lucene.Net.Index.AtomicReader">Lucene.Net.Index.AtomicReader</see>.
     /// 
-    /// If a Cache does not exist for the Reader, then it is built by iterating over
+    /// If a Cache does not exist for the TextReader, then it is built by iterating over
     /// the all terms for a given field, reconstructing the Shape from them, and adding
     /// them to the Cache.
     /// </summary>

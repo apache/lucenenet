@@ -51,7 +51,7 @@ namespace Lucene.Net.Documents
         // TODO: add sugar for term vectors...?
 
         /// <summary>
-        /// Creates a new un-stored TextField with Reader value. </summary>
+        /// Creates a new un-stored TextField with TextReader value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="reader"> reader value </param>
         /// <exception cref="IllegalArgumentException"> if the field name is null </exception>

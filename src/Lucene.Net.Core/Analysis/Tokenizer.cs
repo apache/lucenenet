@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// A Tokenizer is a TokenStream whose input is a Reader.
+    /// A Tokenizer is a TokenStream whose input is a TextReader.
     ///  <p>
     ///  this is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>
     ///  <p>
@@ -68,13 +68,13 @@ namespace Lucene.Net.Analysis
         /// {@inheritDoc}
         /// <p>
         /// <b>NOTE:</b>
-        /// The default implementation closes the input Reader, so
+        /// The default implementation closes the input TextReader, so
         /// be sure to call <code>super.Dispose()</code> when overriding this method.
         /// </summary>
         public override void Dispose()
         {
             input.Dispose();
-            // LUCENE-2387: don't hold onto Reader after close, so
+            // LUCENE-2387: don't hold onto TextReader after close, so
             // GC can reclaim
             inputPending = ILLEGAL_STATE_READER;
             input = ILLEGAL_STATE_READER;

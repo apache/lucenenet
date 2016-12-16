@@ -130,8 +130,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Calls {@link #MockTokenizer(Lucene.Net.Util.AttributeSource.AttributeFactory,Reader,CharacterRunAutomaton,boolean)
-        ///                MockTokenizer(AttributeFactory, Reader, WHITESPACE, true)}
+        /// Calls {@link #MockTokenizer(Lucene.Net.Util.AttributeSource.AttributeFactory,SetReader,CharacterRunAutomaton,boolean)
+        ///                MockTokenizer(AttributeFactory, TextReader, WHITESPACE, true)}
         /// </summary>
         public MockTokenizer(AttributeFactory factory, TextReader input)
             : this(input, WHITESPACE, true)

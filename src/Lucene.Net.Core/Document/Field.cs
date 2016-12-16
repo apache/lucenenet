@@ -40,7 +40,7 @@ namespace Lucene.Net.Documents
     ///
     /// <p/> A field is a section of a Document. Each field has three
     /// parts: name, type and value. Values may be text
-    /// (String, Reader or pre-analyzed TokenStream), binary
+    /// (String, TextReader or pre-analyzed TokenStream), binary
     /// (byte[]), or numeric (a Number).  Fields are optionally stored in the
     /// index, so that they may be returned with hits on the document.
     ///
@@ -103,7 +103,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create field with Reader value. </summary>
+        /// Create field with TextReader value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="reader"> reader value </param>
         /// <param name="type"> field type </param>
@@ -270,7 +270,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// The TokenStream for this field to be used when indexing, or null. If null,
-        /// the Reader value or String value is analyzed to produce the indexed tokens.
+        /// the TextReader value or String value is analyzed to produce the indexed tokens.
         /// </summary>
         public virtual TokenStream TokenStreamValue()
         {

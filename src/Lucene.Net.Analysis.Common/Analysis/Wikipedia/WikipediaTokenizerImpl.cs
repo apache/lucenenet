@@ -528,7 +528,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /**
          * Creates a new scanner
          *
-         * @param   in  the java.io.Reader to read input from.
+         * @param   in  the TextReader to read input from.
          */
         internal WikipediaTokenizerImpl(TextReader @in)
         {

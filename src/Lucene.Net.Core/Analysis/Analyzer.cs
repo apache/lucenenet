@@ -35,8 +35,7 @@ namespace Lucene.Net.Analysis
     /// Simple example:
     /// <pre class="prettyprint">
     /// Analyzer analyzer = new Analyzer() {
-    ///  {@literal @Override}
-    ///   protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
+    ///   protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader) {
     ///     Tokenizer source = new FooTokenizer(reader);
     ///     TokenStream filter = new FooFilter(source);
     ///     filter = new BarFilter(filter);
@@ -138,7 +137,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                components.Reader = r;// LUCENENET TODO new TextReaderWrapper(r);
+                components.SetReader(r);// LUCENENET TODO new TextReaderWrapper(r);
             }
             return components.TokenStream;
         }
@@ -159,7 +158,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                components.Reader = r;
+                components.SetReader(r);
             }
             components.ReusableStringReader = strReader;
             return components.TokenStream;
@@ -172,7 +171,7 @@ namespace Lucene.Net.Analysis
         /// unchanged.
         /// </summary>
         /// <param name="fieldName"> IndexableField name being indexed </param>
-        /// <param name="reader"> original Reader </param>
+        /// <param name="reader"> original TextReader </param>
         /// <returns> reader, optionally decorated with CharFilter(s) </returns>
         protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
         {
@@ -245,13 +244,13 @@ namespace Lucene.Net.Analysis
             /// <summary>
             /// Original source of the tokens.
             /// </summary>
-            protected internal readonly Tokenizer Source;
+            protected internal readonly Tokenizer source;
 
             /// <summary>
             /// Sink tokenstream, such as the outer tokenfilter decorating
             /// the chain. this can be the source if there are no filters.
             /// </summary>
-            protected internal readonly TokenStream Sink;
+            protected internal readonly TokenStream sink;
 
             /// <summary>
             /// Internal cache only used by <seealso cref="Analyzer#tokenStream(String, String)"/>. </summary>
@@ -266,8 +265,8 @@ namespace Lucene.Net.Analysis
             ///          the analyzer's resulting token stream </param>
             public TokenStreamComponents(Tokenizer source, TokenStream result)
             {
-                this.Source = source;
-                this.Sink = result;
+                this.source = source;
+                this.sink = result;
             }
 
             /// <summary>
@@ -277,8 +276,8 @@ namespace Lucene.Net.Analysis
             ///          the analyzer's tokenizer </param>
             public TokenStreamComponents(Tokenizer source)
             {
-                this.Source = source;
-                this.Sink = source;
+                this.source = source;
+                this.sink = source;
             }
 
             /// <summary>
@@ -289,12 +288,9 @@ namespace Lucene.Net.Analysis
             ///          a reader to reset the source component </param>
             /// <exception cref="IOException">
             ///           if the component's reset method throws an <seealso cref="IOException"/> </exception>
-            protected internal virtual TextReader Reader
+            protected internal virtual void SetReader(TextReader reader)
             {
-                set
-                {
-                    Source.Reader = value;
-                }
+                source.Reader = reader;
             }
 
             /// <summary>
@@ -305,7 +301,7 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    return Sink;
+                    return sink;
                 }
             }
 
@@ -317,7 +313,7 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    return Source;
+                    return source;
                 }
             }
         }

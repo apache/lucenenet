@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis
     /// <p>
     /// this is an abstract class; concrete subclasses are:
     /// <ul>
-    /// <li><seealso cref="Tokenizer"/>, a <code>TokenStream</code> whose input is a Reader; and
+    /// <li><seealso cref="Tokenizer"/>, a <code>TokenStream</code> whose input is a TextReader; and
     /// <li><seealso cref="TokenFilter"/>, a <code>TokenStream</code> whose input is another
     /// <code>TokenStream</code>.
     /// </ul>

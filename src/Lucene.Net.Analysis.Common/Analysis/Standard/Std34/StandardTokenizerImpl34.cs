@@ -756,7 +756,7 @@ namespace Lucene.Net.Analysis.Standard.Std34
         /**
          * Creates a new scanner
          *
-         * @param   in  the java.io.Reader to read input from.
+         * @param   in  the TextReader to read input from.
          */
         public StandardTokenizerImpl34(TextReader @in)
         {

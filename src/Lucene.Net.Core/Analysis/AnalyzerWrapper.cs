@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Wraps / alters the given Reader. Through this method AnalyzerWrappers can
+        /// Wraps / alters the given TextReader. Through this method AnalyzerWrappers can
         /// implement <seealso cref="#initReader(String, Reader)"/>. By default, the given reader
         /// is returned.
         /// </summary>

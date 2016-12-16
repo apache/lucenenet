@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Fa
         }
 
         /// <summary>
-        /// Wraps the Reader with <seealso cref="PersianCharFilter"/>
+        /// Wraps the TextReader with <seealso cref="PersianCharFilter"/>
         /// </summary>
         protected override TextReader InitReader(string fieldName, TextReader reader)
         {

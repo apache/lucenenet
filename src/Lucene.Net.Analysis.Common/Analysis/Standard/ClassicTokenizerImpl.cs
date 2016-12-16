@@ -413,7 +413,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Creates a new scanner
         /// </summary>
-        /// <param name="in">  the java.io.Reader to read input from. </param>
+        /// <param name="in">  the TextReader to read input from. </param>
         internal ClassicTokenizerImpl(TextReader @in)
         {
             this.zzReader = @in;

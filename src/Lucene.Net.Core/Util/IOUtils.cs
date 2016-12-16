@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Opens a Reader for the given <seealso cref="File"/> using a <seealso cref="CharsetDecoder"/>.
+        /// Opens a TextReader for the given <seealso cref="File"/> using a <seealso cref="CharsetDecoder"/>.
         /// Unlike Java's defaults this reader will throw an exception if your it detects
         /// the read charset doesn't match the expected <seealso cref="Charset"/>.
         /// <p>
@@ -324,7 +324,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Opens a Reader for the given resource using a <seealso cref="CharsetDecoder"/>.
+        /// Opens a TextReader for the given resource using a <seealso cref="CharsetDecoder"/>.
         /// Unlike Java's defaults this reader will throw an exception if your it detects
         /// the read charset doesn't match the expected <seealso cref="Charset"/>.
         /// <p>

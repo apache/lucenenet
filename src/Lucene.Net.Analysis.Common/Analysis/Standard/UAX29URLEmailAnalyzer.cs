@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <seealso cref= org.apache.lucene.analysis.util.WordlistLoader#getWordSet(java.io.Reader, org.apache.lucene.util.Version) </seealso>
         /// <param name="matchVersion"> Lucene version to match See {@link
         /// <a href="#version">above</a>} </param>
-        /// <param name="stopwords"> Reader to read stop words from  </param>
+        /// <param name="stopwords"> TextReader to read stop words from  </param>
         public UAX29URLEmailAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
             : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
@@ -119,13 +119,10 @@ namespace Lucene.Net.Analysis.Standard
                 this.src = src;
             }
 
-            protected override TextReader Reader
+            protected override void SetReader(TextReader reader)
             {
-                set
-                {
-                    src.MaxTokenLength = outerInstance.maxTokenLength;
-                    base.Reader = value;
-                }
+                src.MaxTokenLength = outerInstance.maxTokenLength;
+                base.SetReader(reader);
             }
         }
     }

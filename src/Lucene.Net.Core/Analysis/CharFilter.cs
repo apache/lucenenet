@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// Subclasses of CharFilter can be chained to filter a Reader
-    /// They can be used as <seealso cref="java.io.Reader"/> with additional offset
+    /// Subclasses of CharFilter can be chained to filter a TextReader
+    /// They can be used as <seealso cref="TextReader"/> with additional offset
     /// correction. <seealso cref="Tokenizer"/>s will automatically use <seealso cref="#correctOffset"/>
     /// if a CharFilter subclass is used.
     /// <p>
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Create a new CharFilter wrapping the provided reader. </summary>
-        /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
+        /// <param name="input"> a TextReader, can also be a CharFilter for chaining. </param>
         public CharFilter(TextReader input)
         {
             this.input = input;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
         /// Closes the underlying input stream.
         /// <p>
         /// <b>NOTE:</b>
-        /// The default implementation closes the input Reader, so
+        /// The default implementation closes the input TextReader, so
         /// be sure to call <code>super.Dispose()</code> when overriding this method.
         /// </summary>
         protected override void Dispose(bool disposing)

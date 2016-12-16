@@ -988,11 +988,11 @@ namespace Lucene.Net.Analysis
                         try
                         {
                             // NOTE: some Tokenizers go and read characters
-                            // when you call .setReader(Reader), eg
+                            // when you call .SetReader(TextReader), eg
                             // PatternTokenizer.  this is a bit
                             // iffy... (really, they should only
-                            // pull from the Reader when you call
-                            // .incremenToken(), I think?), but we
+                            // pull from the TextReader when you call
+                            // .IncremenToken(), I think?), but we
                             // currently allow it, so, we must call
                             // a.TokenStream inside the try since we may
                             // hit the exc on init:

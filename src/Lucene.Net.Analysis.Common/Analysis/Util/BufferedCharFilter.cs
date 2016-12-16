@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Creates a buffering character-input stream that uses an input buffer of the specified size.
         /// </summary>
-        /// <param name="in">A Reader</param>
+        /// <param name="in">A TextReader</param>
         /// <param name="sz">Input-buffer size</param>
         public BufferedCharFilter(TextReader @in, int sz)
             : base(@in)
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Creates a buffering character-input stream that uses a default-sized input buffer.
         /// </summary>
-        /// <param name="in">A Reader</param>
+        /// <param name="in">A TextReader</param>
         public BufferedCharFilter(TextReader @in)
             : this(@in, defaultCharBufferSize)
         {
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Reads characters into a portion of an array.
-        /// This method implements the general contract of the corresponding read method of the Reader class. 
+        /// This method implements the general contract of the corresponding read method of the TextReader class. 
         /// As an additional convenience, it attempts to read as many characters as possible by repeatedly 
         /// invoking the read method of the underlying stream.This iterated read continues until one of the 
         /// following conditions becomes true:
