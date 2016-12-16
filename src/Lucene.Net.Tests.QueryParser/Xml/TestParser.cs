@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Xml
         private static IndexReader reader;
         private static IndexSearcher searcher;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             // TODO: rewrite test (this needs to set QueryParser.enablePositionIncrements, too, for work with CURRENT):
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             reader.Dispose();
