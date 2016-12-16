@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>Copies the contents of buffer into the termBuffer array.</summary>
         /// <param name="buffer">the buffer to copy
         /// </param>
-        void SetTermBuffer(System.String buffer);
+        void SetTermBuffer(string buffer);
 
         /// <summary>Copies the contents of buffer, starting at offset and continuing
         /// for length characters, into the termBuffer array.
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </param>
         /// <param name="length">the number of characters to copy
         /// </param>
-        void SetTermBuffer(System.String buffer, int offset, int length);
+        void SetTermBuffer(string buffer, int offset, int length);
 
         /// <summary>Returns the internal termBuffer character array which
         /// you can then directly alter.  If the array is too
@@ -85,19 +85,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </returns>
         char[] ResizeTermBuffer(int newSize);
 
-        /// <summary>Return number of valid characters (length of the term)
+        /// <summary>
+        /// Gets or sets the number of valid characters (length of the term)
         /// in the termBuffer array.
-        /// </summary>
-        int TermLength();
-
-        /// <summary>Set number of valid characters (length of the term) in
-        /// the termBuffer array. Use this to truncate the termBuffer
+        /// <para/>
+        /// Use this to truncate the termBuffer
         /// or to synchronize with external manipulation of the termBuffer.
         /// Note: to grow the size of the array,
         /// use <see cref="ResizeTermBuffer(int)" /> first.
         /// </summary>
-        /// <param name="length">the truncated length
-        /// </param>
-        void SetTermLength(int length);
+        int TermLength { get; set; }
     }
 }
