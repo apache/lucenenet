@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         internal class TestOperatorVsWhiteSpaceAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader,
                     MockTokenizer.WHITESPACE, false));

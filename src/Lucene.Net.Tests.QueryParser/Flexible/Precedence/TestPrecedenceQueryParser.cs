@@ -121,7 +121,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
             /** Filters MockTokenizer with StopFilter. */
 
-            public override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new QPTestFilter(tokenizer));

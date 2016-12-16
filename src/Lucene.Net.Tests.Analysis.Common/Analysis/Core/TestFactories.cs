@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Core
                 this.tokenfilter = tokenfilter;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tf = tokenizer.Create(reader);
                 if (tokenfilter != null)
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Core
             }
 
 
-            public override TextReader InitReader(string fieldName, TextReader reader)
+            protected override TextReader InitReader(string fieldName, TextReader reader)
             {
                 if (charFilter != null)
                 {

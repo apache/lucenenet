@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Fa
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PersianNormalizationFilter(tokenizer));

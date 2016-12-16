@@ -344,7 +344,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public class MockSynonymAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockSynonymFilter(tokenizer));
@@ -431,7 +431,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected class MockCJKSynonymAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer tokenizer = new SimpleCJKTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockCJKSynonymFilter(tokenizer));

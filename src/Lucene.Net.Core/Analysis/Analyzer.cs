@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis
         /// Create a new Analyzer, reusing the same set of components per-thread
         /// across calls to <seealso cref="#tokenStream(String, Reader)"/>.
         /// </summary>
-        protected Analyzer()
+        public Analyzer()
             : this(GLOBAL_REUSE_STRATEGY)
         {
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis
         /// <a href="{@docRoot}/../analyzers-common/Lucene.Net.Analysis/miscellaneous/PerFieldAnalyzerWrapper.html">
         /// PerFieldAnalyerWrapper</a> instead.
         /// </summary>
-        protected Analyzer(ReuseStrategy reuseStrategy)
+        public Analyzer(ReuseStrategy reuseStrategy)
         {
             this._reuseStrategy = reuseStrategy;
         }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis
         /// <param name="reader">
         ///          the reader passed to the <seealso cref="Tokenizer"/> constructor </param>
         /// <returns> the <seealso cref="TokenStreamComponents"/> for this analyzer. </returns>
-        public abstract TokenStreamComponents CreateComponents(string fieldName, TextReader reader);
+        protected internal abstract TokenStreamComponents CreateComponents(string fieldName, TextReader reader);
 
         /// <summary>
         /// Returns a TokenStream suitable for <code>fieldName</code>, tokenizing
@@ -174,7 +174,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName"> IndexableField name being indexed </param>
         /// <param name="reader"> original Reader </param>
         /// <returns> reader, optionally decorated with CharFilter(s) </returns>
-        public virtual TextReader InitReader(string fieldName, TextReader reader)
+        protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
         {
             return reader;
         }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Frees persistent resources used by this Analyzer </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (StoredValue != null)
             {
@@ -422,6 +422,7 @@ namespace Lucene.Net.Analysis
         /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
         /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/>
         {
+            [Obsolete]
             public PerFieldReuseStrategy()
             {
             }

@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             this.payload = payload;
         }
 
-        public BytesRef Payload
+        public virtual BytesRef Payload
         {
             get
             {

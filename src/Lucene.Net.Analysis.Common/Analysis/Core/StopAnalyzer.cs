@@ -103,10 +103,10 @@ namespace Lucene.Net.Analysis.Core
         /// <returns> <seealso cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <seealso cref="LowerCaseTokenizer"/> filtered with
         ///         <seealso cref="StopFilter"/> </returns>
-        public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new LowerCaseTokenizer(matchVersion, reader);
-            return new Analyzer.TokenStreamComponents(source, new StopFilter(matchVersion, source, stopwords));
+            return new TokenStreamComponents(source, new StopFilter(matchVersion, source, stopwords));
         }
     }
 }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Collation
 				this._collator = collator;
 			}
 
-			public override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+			protected override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
 			{
 				Tokenizer result = new KeywordTokenizer(reader);
 				return new TokenStreamComponents(result, new CollationKeyFilter(result, this._collator));

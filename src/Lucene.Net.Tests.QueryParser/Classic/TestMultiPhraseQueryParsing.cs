@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 this.tokens = tokens;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 return new TokenStreamComponents(new CannedTokenizer(reader, tokens));
             }

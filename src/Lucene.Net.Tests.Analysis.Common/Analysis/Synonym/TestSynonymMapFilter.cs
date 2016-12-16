@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
@@ -604,7 +604,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.ignoreCase = ignoreCase;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
@@ -679,7 +679,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.ignoreCase = ignoreCase;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 TokenStream syns = new SynonymFilter(tokenizer, map, ignoreCase);
@@ -724,7 +724,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.ignoreCase = ignoreCase;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
@@ -774,7 +774,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.ignoreCase = ignoreCase;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
@@ -813,7 +813,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -895,7 +895,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -928,7 +928,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -961,7 +961,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -992,7 +992,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -1125,7 +1125,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -1157,7 +1157,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
@@ -1188,7 +1188,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));

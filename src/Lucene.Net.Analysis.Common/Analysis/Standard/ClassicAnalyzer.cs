@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
 
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             var src = new ClassicTokenizer(matchVersion, reader);
             src.MaxTokenLength = maxTokenLength;

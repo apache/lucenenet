@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.El
         ///         built from a <seealso cref="StandardTokenizer"/> filtered with
         ///         <seealso cref="GreekLowerCaseFilter"/>, <seealso cref="StandardFilter"/>,
         ///         <seealso cref="StopFilter"/>, and <seealso cref="GreekStemFilter"/> </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new GreekLowerCaseFilter(matchVersion, source);

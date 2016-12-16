@@ -125,7 +125,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             /** Filters MockTokenizer with StopFilter. */
 
-            public override sealed TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override sealed TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new QPTestFilter(tokenizer));
@@ -367,7 +367,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private class SimpleCJKAnalyzer : Analyzer
         {
 
-            public override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
             }
@@ -1422,7 +1422,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private class CannedAnalyzer : Analyzer
         {
 
-            public override TokenStreamComponents CreateComponents(String ignored, TextReader alsoIgnored)
+            protected internal override TokenStreamComponents CreateComponents(String ignored, TextReader alsoIgnored)
             {
                 return new TokenStreamComponents(new CannedTokenizer(alsoIgnored));
             }

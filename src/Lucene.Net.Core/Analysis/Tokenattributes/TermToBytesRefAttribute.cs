@@ -4,6 +4,7 @@ using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
+    // LUCENENET TODO: This class does not exist in Java - Remove?
     public class TermToBytesRefAttribute : Attribute, ITermToBytesRefAttribute
     {
         private BytesRef Bytes;

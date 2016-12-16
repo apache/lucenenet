@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         private class MultiAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(result, new TestFilter(result));
@@ -193,7 +193,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         private class PosIncrementAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(result, new TestPosIncrementFilter(result));

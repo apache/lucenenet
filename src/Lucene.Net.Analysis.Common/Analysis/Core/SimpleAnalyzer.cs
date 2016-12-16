@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Core
             this.matchVersion = matchVersion;
         }
 
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             return new TokenStreamComponents(new LowerCaseTokenizer(matchVersion, reader));
         }

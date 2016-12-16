@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Random random = Random();
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, random.NextBoolean());
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random().NextBoolean());
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TrivialLookaheadFilter filter = new TrivialLookaheadFilter(source);

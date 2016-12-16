@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Create a new CharFilter wrapping the provided reader. </summary>
         /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
-        protected CharFilter(TextReader input)
+        public CharFilter(TextReader input)
         {
             this.input = input;
         }
@@ -84,6 +84,7 @@ namespace Lucene.Net.Analysis
         }
 
 
+        // LUCENENET specific
         #region From Reader Class
 
         /// <summary>

@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestGraphDupsTokenStreamComponents(outerInstance, tokenizer);
@@ -413,7 +413,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestInputPathRequiredTokenStreamComponents(outerInstance, tokenizer);
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new UsualTokenStreamComponents(outerInstance, tokenizer);
@@ -743,7 +743,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.numStopChars = numStopChars;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(factory, reader, MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
                 tokenizer.EnableChecks = (true);
@@ -1215,7 +1215,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 this.outerInstance = outerInstance;
             }
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestDupSurfaceFormsMissingResultsTokenStreamComponents(outerInstance, tokenizer);
@@ -1301,7 +1301,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         internal class TestDupSurfaceFormsMissingResults2Analyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestDupSurfaceFormsMissingResults2TokenStreamComponents(tokenizer);
@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         internal class Test0ByteKeysAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new Test0ByteKeysTokenStreamComponents(tokenizer);
@@ -1466,7 +1466,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
         internal class TestTooManyExpressionsAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestTooManyExpressionsTokenStreamComponents(tokenizer);

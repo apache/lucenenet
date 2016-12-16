@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Pl
         /// filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, 
         /// <see cref="SetKeywordMarkerFilter"/> if a stem excusion set is provided and <see cref="StempelFilter"/>.
         /// </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName,
+        protected override TokenStreamComponents CreateComponents(string fieldName,
             TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);

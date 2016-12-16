@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Core
             {
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer);
@@ -336,7 +336,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_36, reader);
@@ -365,7 +365,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_40, reader);
@@ -408,7 +408,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 TokenStream tokenStream = new MockGraphTokenFilter(Random(), tokenizer);

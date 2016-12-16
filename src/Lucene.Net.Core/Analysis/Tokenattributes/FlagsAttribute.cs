@@ -24,6 +24,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// <summary>
     /// Default implementation of <seealso cref="FlagsAttribute"/>. </summary>
     public class FlagsAttribute : Attribute, IFlagsAttribute
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
         private int flags = 0;
 
@@ -33,7 +36,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
         }
 
-        public int Flags
+        public virtual int Flags
         {
             get
             {

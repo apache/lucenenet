@@ -150,7 +150,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
 
 
-            public override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(result, new TestFilter(result));
@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
 
 
-            public override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(result, new TestPosIncrementFilter(result));

@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Hi
         ///         <seealso cref="HindiNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
         ///         if a stem exclusion set is provided, <seealso cref="HindiStemFilter"/>, and
         ///         Hindi Stop words </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source;
 #pragma warning disable 612, 618

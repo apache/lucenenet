@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Whether to generate holes in the automaton for missing positions, <code>true</code> by default. </summary>
-        public virtual bool PreservePositionIncrements
+        public virtual bool PreservePositionIncrements // LUCENENET TODO: Change to method
         {
             set
             {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis
         /// Whether to make transition labels Unicode code points instead of UTF8 bytes,
         ///  <code>false</code> by default
         /// </summary>
-        public virtual bool UnicodeArcs
+        public virtual bool UnicodeArcs // LUCENENET TODO: Change to method
         {
             set
             {
@@ -77,15 +77,15 @@ namespace Lucene.Net.Analysis
         private class Position : RollingBuffer.Resettable
         {
             // Any tokens that ended at our position arrive to this state:
-            internal State Arriving;
+            internal State arriving;
 
             // Any tokens that start at our position leave from this state:
-            internal State Leaving;
+            internal State leaving;
 
             public void Reset()
             {
-                Arriving = null;
-                Leaving = null;
+                arriving = null;
+                leaving = null;
             }
         }
 
@@ -167,28 +167,28 @@ namespace Lucene.Net.Analysis
                     pos += posInc;
 
                     posData = positions.Get(pos);
-                    Debug.Assert(posData.Leaving == null);
+                    Debug.Assert(posData.leaving == null);
 
-                    if (posData.Arriving == null)
+                    if (posData.arriving == null)
                     {
                         // No token ever arrived to this position
                         if (pos == 0)
                         {
                             // OK: this is the first token
-                            posData.Leaving = a.InitialState;
+                            posData.leaving = a.InitialState;
                         }
                         else
                         {
                             // this means there's a hole (eg, StopFilter
                             // does this):
-                            posData.Leaving = new State();
+                            posData.leaving = new State();
                             AddHoles(a.InitialState, positions, pos);
                         }
                     }
                     else
                     {
-                        posData.Leaving = new State();
-                        posData.Arriving.AddTransition(new Transition(POS_SEP, posData.Leaving));
+                        posData.leaving = new State();
+                        posData.arriving.AddTransition(new Transition(POS_SEP, posData.leaving));
                         if (posInc > 1)
                         {
                             // A token spanned over a hole; add holes
@@ -212,12 +212,12 @@ namespace Lucene.Net.Analysis
                 BytesRef termUTF8 = ChangeToken(term);
                 int[] termUnicode = null;
                 Position endPosData = positions.Get(endPos);
-                if (endPosData.Arriving == null)
+                if (endPosData.arriving == null)
                 {
-                    endPosData.Arriving = new State();
+                    endPosData.arriving = new State();
                 }
 
-                State state = posData.Leaving;
+                State state = posData.leaving;
                 int termLen = termUTF8.Length;
                 if (unicodeArcs)
                 {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Analysis
 
                 for (int byteIDX = 0; byteIDX < termLen; byteIDX++)
                 {
-                    State nextState = byteIDX == termLen - 1 ? endPosData.Arriving : new State();
+                    State nextState = byteIDX == termLen - 1 ? endPosData.arriving : new State();
                     int c;
                     if (unicodeArcs)
                     {
@@ -265,15 +265,15 @@ namespace Lucene.Net.Analysis
             while (pos <= positions.MaxPos)
             {
                 posData = positions.Get(pos);
-                if (posData.Arriving != null)
+                if (posData.arriving != null)
                 {
                     if (endState != null)
                     {
-                        posData.Arriving.AddTransition(new Transition(POS_SEP, endState));
+                        posData.arriving.AddTransition(new Transition(POS_SEP, endState));
                     }
                     else
                     {
-                        posData.Arriving.Accept = true;
+                        posData.arriving.Accept = true;
                     }
                 }
                 pos++;
@@ -300,29 +300,29 @@ namespace Lucene.Net.Analysis
             Position posData = positions.Get(pos);
             Position prevPosData = positions.Get(pos - 1);
 
-            while (posData.Arriving == null || prevPosData.Leaving == null)
+            while (posData.arriving == null || prevPosData.leaving == null)
             {
-                if (posData.Arriving == null)
+                if (posData.arriving == null)
                 {
-                    posData.Arriving = new State();
-                    posData.Arriving.AddTransition(new Transition(POS_SEP, posData.Leaving));
+                    posData.arriving = new State();
+                    posData.arriving.AddTransition(new Transition(POS_SEP, posData.leaving));
                 }
-                if (prevPosData.Leaving == null)
+                if (prevPosData.leaving == null)
                 {
                     if (pos == 1)
                     {
-                        prevPosData.Leaving = startState;
+                        prevPosData.leaving = startState;
                     }
                     else
                     {
-                        prevPosData.Leaving = new State();
+                        prevPosData.leaving = new State();
                     }
-                    if (prevPosData.Arriving != null)
+                    if (prevPosData.arriving != null)
                     {
-                        prevPosData.Arriving.AddTransition(new Transition(POS_SEP, prevPosData.Leaving));
+                        prevPosData.arriving.AddTransition(new Transition(POS_SEP, prevPosData.leaving));
                     }
                 }
-                prevPosData.Leaving.AddTransition(new Transition(HOLE, posData.Arriving));
+                prevPosData.leaving.AddTransition(new Transition(HOLE, posData.arriving));
                 pos--;
                 if (pos <= 0)
                 {

@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Pattern
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream filter = new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", false);
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.Pattern
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream filter = new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", true);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Pattern
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", true));

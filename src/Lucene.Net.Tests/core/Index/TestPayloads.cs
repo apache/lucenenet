@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
                 FieldToData[field] = new PayloadData(data, offset, length);
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 PayloadData payload;
                 FieldToData.TryGetValue(fieldName, out payload);

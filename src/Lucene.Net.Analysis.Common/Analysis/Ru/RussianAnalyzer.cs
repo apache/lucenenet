@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Ru
         ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
         ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided, and <seealso cref="SnowballFilter"/> </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))

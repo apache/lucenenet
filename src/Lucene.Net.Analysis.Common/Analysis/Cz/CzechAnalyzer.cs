@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Cz
         ///         <seealso cref="SetKeywordMarkerFilter"/> is added before
         ///         <seealso cref="CzechStemFilter"/>. </returns>
 
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);

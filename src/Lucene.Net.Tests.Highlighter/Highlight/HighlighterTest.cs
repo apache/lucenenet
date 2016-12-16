@@ -2064,7 +2064,7 @@ namespace Lucene.Net.Search.Highlight
          *      java.io.Reader)
          */
 
-        public override TokenStreamComponents CreateComponents(String arg0, TextReader arg1)
+        protected override TokenStreamComponents CreateComponents(String arg0, TextReader arg1)
         {
             Tokenizer stream = new MockTokenizer(arg1, MockTokenizer.SIMPLE, true);
             stream.AddAttribute<ICharTermAttribute>();

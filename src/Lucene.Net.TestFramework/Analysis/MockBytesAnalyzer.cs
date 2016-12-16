@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
     {
         private readonly MockBytesAttributeFactory Factory = new MockBytesAttributeFactory();
 
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer t = new MockTokenizer(Factory, reader, MockTokenizer.KEYWORD, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
             return new TokenStreamComponents(t);

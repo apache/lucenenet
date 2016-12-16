@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
         private int _pos = 0, _size = 0;
         private string _s = null;
 
-        public string Value
+        internal string Value
         {
             set
             {

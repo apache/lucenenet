@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SingleCharTokenizer(reader));
             }

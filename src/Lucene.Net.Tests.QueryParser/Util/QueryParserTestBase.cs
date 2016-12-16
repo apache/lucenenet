@@ -90,7 +90,7 @@ namespace Lucene.Net.QueryParsers.Util
             /// <summary>
             /// Filters MockTokenizer with StopFilter.
             /// </summary>
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new QPTestFilter(tokenizer));
@@ -245,7 +245,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         private class SimpleCJKAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
             }
@@ -393,7 +393,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         private class OperatorVsWhitespaceAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
             }
@@ -1231,7 +1231,7 @@ namespace Lucene.Net.QueryParsers.Util
             public Analyzer1()
             { }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(tokenizer, new MockSynonymFilter(tokenizer));
@@ -1246,7 +1246,7 @@ namespace Lucene.Net.QueryParsers.Util
             public Analyzer2()
             { }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
             }
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         private class MockCollationAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(tokenizer, new MockCollationFilter(tokenizer));

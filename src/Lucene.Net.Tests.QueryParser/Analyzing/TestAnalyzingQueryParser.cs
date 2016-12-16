@@ -287,7 +287,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         internal sealed class ASCIIAnalyzer : Analyzer
         {
 
-            public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(result, new FoldingFilter(result));

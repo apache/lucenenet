@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         internal class TestEndingHoleAnalyzer : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "of");

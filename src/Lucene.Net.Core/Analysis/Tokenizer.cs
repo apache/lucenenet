@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Pending reader: not actually assigned to input until reset() </summary>
-        private TextReader InputPending = ILLEGAL_STATE_READER;
+        private TextReader inputPending = ILLEGAL_STATE_READER;
 
         /// <summary>
         /// Construct a token stream processing the given input. </summary>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new System.ArgumentNullException("input", "input must not be null");
             }
-            this.InputPending = input;
+            this.inputPending = input;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new System.ArgumentNullException("input", "input must not be null");
             }
-            this.InputPending = input;
+            this.inputPending = input;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis
             input.Dispose();
             // LUCENE-2387: don't hold onto Reader after close, so
             // GC can reclaim
-            InputPending = ILLEGAL_STATE_READER;
+            inputPending = ILLEGAL_STATE_READER;
             input = ILLEGAL_STATE_READER;
         }
 
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis
         ///  analyzer (in its tokenStream method) will use
         ///  this to re-use a previously created tokenizer.
         /// </summary>
-        public TextReader Reader
+        public TextReader Reader // LUCENENET TODO: Change to SetReader()
         {
             set
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis
                 {
                     throw new InvalidOperationException("TokenStream contract violation: close() call missing");
                 }
-                this.InputPending = value;
+                this.inputPending = value;
                 Debug.Assert(SetReaderTestPoint());
             }
         }
@@ -116,8 +116,8 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            input = InputPending;
-            InputPending = ILLEGAL_STATE_READER;
+            input = inputPending;
+            inputPending = ILLEGAL_STATE_READER;
         }
 
         // only used by assert, for testing

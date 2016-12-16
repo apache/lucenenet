@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Fa
         ///         built from a <seealso cref="StandardTokenizer"/> filtered with
         ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="ArabicNormalizationFilter"/>,
         ///         <seealso cref="PersianNormalizationFilter"/> and Persian Stop words </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source;
 #pragma warning disable 612, 618
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Fa
         /// <summary>
         /// Wraps the Reader with <seealso cref="PersianCharFilter"/>
         /// </summary>
-        public override TextReader InitReader(string fieldName, TextReader reader)
+        protected override TextReader InitReader(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
             return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?

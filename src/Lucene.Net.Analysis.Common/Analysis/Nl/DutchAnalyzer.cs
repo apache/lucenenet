@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Nl
         ///   filtered with <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, 
         ///   <seealso cref="StopFilter"/>, <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is provided,
         ///   <seealso cref="StemmerOverrideFilter"/>, and <seealso cref="SnowballFilter"/> </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
 #pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))

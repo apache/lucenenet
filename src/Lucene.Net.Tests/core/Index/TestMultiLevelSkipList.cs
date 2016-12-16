@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         {
             internal readonly AtomicInteger PayloadCount = new AtomicInteger(-1);
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(tokenizer, new PayloadFilter(PayloadCount, tokenizer));

@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Gl
             {
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Gl
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new GalicianStemFilter(tokenizer));

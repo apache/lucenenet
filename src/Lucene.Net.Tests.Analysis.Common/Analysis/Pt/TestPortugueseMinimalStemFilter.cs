@@ -37,11 +37,11 @@ namespace Lucene.Net.Analysis.Pt
             {
             }
 
-            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
-                return new Analyzer.TokenStreamComponents(source, new PortugueseMinimalStemFilter(result));
+                return new TokenStreamComponents(source, new PortugueseMinimalStemFilter(result));
             }
         }
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Pt
                 this.exclusionSet = exclusionSet;
             }
 
-            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Pt
                 this.outerInstance = outerInstance;
             }
 
-            public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new Analyzer.TokenStreamComponents(tokenizer, new PortugueseMinimalStemFilter(tokenizer));

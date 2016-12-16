@@ -407,7 +407,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.stopWords = stopWords;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokens = new MockTokenizer(reader);
                 return new TokenStreamComponents(tokens,
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.stopWords = stopWords;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokens = new MockTokenizer(reader);
                 return new TokenStreamComponents(tokens,

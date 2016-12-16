@@ -30,6 +30,9 @@ namespace Lucene.Net.Util
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
     public abstract class Attribute : IAttribute
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
         /// <summary> Clears the values in this Attribute and resets it to its
         /// default value. If this implementation implements more than one Attribute interface

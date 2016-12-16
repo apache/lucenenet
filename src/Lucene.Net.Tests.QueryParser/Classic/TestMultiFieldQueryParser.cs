@@ -340,7 +340,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 : base(PER_FIELD_REUSE_STRATEGY)
             { }
 
-            public override System.IO.TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override System.IO.TextReader InitReader(string fieldName, TextReader reader)
             {
                 if ("f1".equals(fieldName))
                 {
@@ -355,7 +355,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return stdAnalyzer.CreateComponents(fieldName, reader);
             }

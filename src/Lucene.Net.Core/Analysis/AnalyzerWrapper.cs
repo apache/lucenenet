@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -38,6 +39,7 @@ namespace Lucene.Net.Analysis
         /// @deprecated Use <seealso cref="#AnalyzerWrapper(Analyzer.ReuseStrategy)"/>
         /// and specify a valid <seealso cref="Analyzer.ReuseStrategy"/>, probably retrieved from the
         /// wrapped analyzer using <seealso cref="#getReuseStrategy()"/>.
+        [Obsolete]
         protected internal AnalyzerWrapper()
             : this(PER_FIELD_REUSE_STRATEGY)
         {
@@ -95,7 +97,7 @@ namespace Lucene.Net.Analysis
             return reader;
         }
 
-        public override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
+        protected internal override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
             var wrappedAnalyzer = GetWrappedAnalyzer(fieldName);
             var component = wrappedAnalyzer.CreateComponents(fieldName, aReader);
@@ -112,7 +114,7 @@ namespace Lucene.Net.Analysis
             return GetWrappedAnalyzer(fieldName).GetOffsetGap(fieldName);
         }
 
-        public override TextReader InitReader(string fieldName, TextReader reader)
+        protected internal override TextReader InitReader(string fieldName, TextReader reader)
         {
             return GetWrappedAnalyzer(fieldName).InitReader(fieldName, WrapReader(fieldName, reader));
         }

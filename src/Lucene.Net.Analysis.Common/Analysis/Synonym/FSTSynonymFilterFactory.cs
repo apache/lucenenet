@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.factory = factory;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);

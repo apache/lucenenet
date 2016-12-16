@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= PositionIncrementAttribute </seealso>
-        public int PositionIncrement
+        public virtual int PositionIncrement
         {
             set
             {
@@ -263,7 +263,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= PositionLengthAttribute </seealso>
-        public int PositionLength
+        public virtual int PositionLength
         {
             set
             {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= OffsetAttribute </seealso>
-        public void SetOffset(int startOffset, int endOffset)
+        public virtual void SetOffset(int startOffset, int endOffset)
         {
             CheckOffsets(startOffset, endOffset);
             this.startOffset = startOffset;
@@ -311,7 +311,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= FlagsAttribute </seealso>
-        public int Flags
+        public virtual int Flags
         {
             get
             {
@@ -326,7 +326,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= PayloadAttribute </seealso>
-        public BytesRef Payload
+        public virtual BytesRef Payload
         {
             get
             {

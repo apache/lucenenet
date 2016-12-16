@@ -34,12 +34,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
         }
 
-        public int StartOffset()
+        public virtual int StartOffset()
         {
             return startOffset;
         }
 
-        public void SetOffset(int startOffset, int endOffset)
+        public virtual void SetOffset(int startOffset, int endOffset)
         {
             // TODO: we could assert that this is set-once, ie,
             // current values are -1?  Very few token filters should
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             this.endOffset = endOffset;
         }
 
-        public int EndOffset()
+        public virtual int EndOffset()
         {
             return endOffset;
         }

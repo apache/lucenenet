@@ -407,7 +407,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
 
-            public override TextReader InitReader(String fieldName, TextReader reader) // LUCENENET TODO: Change accessiblity of InitReader to protected
+            protected internal override TextReader InitReader(String fieldName, TextReader reader)
             {
                 if ("f1".equals(fieldName))
                 {
@@ -423,7 +423,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
 
-            public override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 return stdAnalyzer.CreateComponents(fieldName, reader);
             }

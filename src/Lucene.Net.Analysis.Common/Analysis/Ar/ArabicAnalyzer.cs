@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Ar
         ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>,
         ///         <seealso cref="ArabicNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
         ///         if a stem exclusion set is provided and <seealso cref="ArabicStemFilter"/>. </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
             Tokenizer source = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 

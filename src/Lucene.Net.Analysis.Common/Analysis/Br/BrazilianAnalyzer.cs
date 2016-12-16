@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Br
         ///         built from a <seealso cref="StandardTokenizer"/> filtered with
         ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StandardFilter"/>, <seealso cref="StopFilter"/>
         ///         , and <seealso cref="BrazilianStemFilter"/>. </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new LowerCaseFilter(matchVersion, source);

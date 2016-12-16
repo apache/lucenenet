@@ -104,7 +104,7 @@ namespace Lucene.Net.Collation
 		{
 		}
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 #pragma warning disable 612, 618
             if (this.matchVersion.OnOrAfter(LuceneVersion.LUCENE_40))

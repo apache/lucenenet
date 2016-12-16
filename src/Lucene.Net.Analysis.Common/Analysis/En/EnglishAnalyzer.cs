@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.En
         ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
         ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <seealso cref="PorterStemFilter"/>. </returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);

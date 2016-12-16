@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);

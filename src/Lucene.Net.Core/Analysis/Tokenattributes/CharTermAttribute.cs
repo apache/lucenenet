@@ -33,6 +33,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// <summary>
     /// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
     public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
+#if FEATURE_CLONEABLE
+        , ICloneable
+#endif
     {
         private static int MIN_BUFFER_SIZE = 10;
 
@@ -110,7 +113,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             UnicodeUtil.UTF16toUTF8(TermBuffer, 0, TermLength, Bytes);
         }
 
-        public BytesRef BytesRef
+        public virtual BytesRef BytesRef
         {
             get
             {
@@ -120,6 +123,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         // *** CharSequence interface ***
 
+        // LUCENENET TODO: Remove
         public char CharAt(int index)
         {
             if (index >= TermLength)

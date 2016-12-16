@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Highlight
 
         internal class AnalyzerAnonymousHelper : Analyzer
         {
-            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = (false);
