@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis
                 (components == null || components.ReusableStringReader == null)
                     ? new ReusableStringReader()
                     : components.ReusableStringReader;
-            strReader.Value = text;
+            strReader.SetValue(text);
             var r = InitReader(fieldName, strReader);
             if (components == null)
             {

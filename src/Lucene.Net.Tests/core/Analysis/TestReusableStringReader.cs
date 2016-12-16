@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
                 Assert.AreEqual(-1, reader.Read(new char[2], 1, 1));
                 //Assert.AreEqual(-1, reader.Read(CharBuffer.wrap(new char[2])));
 
-                reader.Value = "foobar";
+                reader.SetValue("foobar");
                 Assert.AreEqual(4, reader.Read(buf, 0, 4));
                 Assert.AreEqual("foob", new string(buf));
                 Assert.AreEqual(2, reader.Read(buf, 0, 2));
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
 
             using (ReusableStringReader reader = new ReusableStringReader())
             {
-                reader.Value = "foobar";
+                reader.SetValue("foobar");
                 Assert.AreEqual(0, reader.Read(buf, 1, 0));
                 Assert.AreEqual(3, reader.Read(buf, 1, 3));
                 Assert.AreEqual("foo", new string(buf, 1, 3));
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
                 Assert.AreEqual(-1, reader.Read(buf, 2, 0));
                 reader.Dispose();
 
-                reader.Value = "foobar";
+                reader.SetValue("foobar");
                 StringBuilder sb = new StringBuilder();
                 int ch;
                 while ((ch = reader.Read()) != -1)

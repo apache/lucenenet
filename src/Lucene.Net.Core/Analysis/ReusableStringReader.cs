@@ -26,14 +26,11 @@ namespace Lucene.Net.Analysis
         private int _pos = 0, _size = 0;
         private string _s = null;
 
-        internal string Value
+        internal void SetValue(string s)
         {
-            set
-            {
-                this._s = value;
-                this._size = value.Length;
-                this._pos = 0;
-            }
+            this._s = s;
+            this._size = s.Length;
+            this._pos = 0;
         }
 
         public override int Read()
