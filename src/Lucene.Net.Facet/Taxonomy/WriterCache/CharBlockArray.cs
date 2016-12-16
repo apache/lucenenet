@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             int end = start + length;
             for (int i = start; i < end; i++)
             {
-                Append(chars.CharAt(i));
+                Append(chars[i]);
             }
             return this;
         }

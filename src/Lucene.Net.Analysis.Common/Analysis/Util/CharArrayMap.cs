@@ -700,7 +700,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if (text1.CharAt(i) != text2[i])
+                    if (text1[i] != text2[i])
                     {
                         return false;
                     }
@@ -836,7 +836,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length; i++)
                 {
-                    code = code * 31 + text.CharAt(i);
+                    code = code * 31 + text[i];
                 }
             }
             return code;

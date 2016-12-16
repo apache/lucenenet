@@ -339,7 +339,7 @@ namespace Lucene.Net.Analysis.Util
             }
             public override int CodePointAt(ICharSequence seq, int offset)
             {
-                return seq.CharAt(offset);
+                return seq[offset];
             }
 
             public override int CodePointAt(char[] chars, int offset, int limit)

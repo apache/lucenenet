@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             for (int i = 0; i < s.Length; i++)
             {
-                Assert.IsTrue(t.CharAt(i) == s[i]);
+                Assert.IsTrue(t[i] == s[i]);
             }
 
             // LUCENENET specific to test indexer
@@ -397,7 +397,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.CharAt(-1);
+                var _ = t[-1];
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
             catch (System.IndexOutOfRangeException)
@@ -406,7 +406,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.CharAt(4);
+                var _ = t[4];
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
             catch (System.IndexOutOfRangeException)

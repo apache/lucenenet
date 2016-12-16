@@ -202,12 +202,12 @@ namespace Lucene.Net.Support
 
         public static int CodePointAt(ICharSequence seq, int index)
         {
-            char c1 = seq.CharAt(index++);
+            char c1 = seq[index++];
             if (char.IsHighSurrogate(c1))
             {
                 if (index < seq.Length)
                 {
-                    char c2 = seq.CharAt(index);
+                    char c2 = seq[index];
                     if (char.IsLowSurrogate(c2))
                     {
                         return ToCodePoint(c1, c2);

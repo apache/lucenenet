@@ -4,9 +4,8 @@
     {
         int Length { get; }
 
-        // LUCENENET TODO: Remove CharAt and change all references to use the .NETified indexer this[index].
-        // Make sure to update all code and all tests to reflect this change.
-        char CharAt(int index);
+        // LUCENENET specific - removed CharAt() and replaced with this[int] to .NETify
+        //char CharAt(int index);
 
         char this[int index] { get; }
 

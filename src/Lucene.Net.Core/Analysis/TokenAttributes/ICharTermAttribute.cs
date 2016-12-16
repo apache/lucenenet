@@ -75,7 +75,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// the termBuffer array. Use this to truncate the termBuffer
         /// or to synchronize with external manipulation of the termBuffer.
         /// Note: to grow the size of the array,
-        /// use <see cref="ResizeBuffer(int)"/> first. </summary>
+        /// use <see cref="ResizeBuffer(int)"/> first. 
+        /// NOTE: This is exactly the same operation as calling the <see cref="Length"/> setter, the primary 
+        /// difference is that this method returns a reference to the current object so it can be chained.
+        /// <code>
+        /// obj.SetLength(30).Append("hey you");
+        /// </code>
+        /// </summary>
         /// <param name="length"> the truncated length </param>
         ICharTermAttribute SetLength(int length); 
 

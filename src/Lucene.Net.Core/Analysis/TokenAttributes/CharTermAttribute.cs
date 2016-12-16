@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
     {
         private static int MIN_BUFFER_SIZE = 10;
 
-        private char[] TermBuffer = CreateBuffer(MIN_BUFFER_SIZE);
-        private int TermLength = 0;
+        private char[] termBuffer = CreateBuffer(MIN_BUFFER_SIZE);
+        private int termLength = 0;
 
         /// <summary>
         /// Initialize this attribute with empty term text </summary>
@@ -50,57 +50,57 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void CopyBuffer(char[] buffer, int offset, int length)
         {
             GrowTermBuffer(length);
-            Array.Copy(buffer, offset, TermBuffer, 0, length);
-            TermLength = length;
+            Array.Copy(buffer, offset, termBuffer, 0, length);
+            termLength = length;
         }
 
         public char[] Buffer()
         {
-            return TermBuffer;
+            return termBuffer;
         }
 
         public char[] ResizeBuffer(int newSize)
         {
-            if (TermBuffer.Length < newSize)
+            if (termBuffer.Length < newSize)
             {
                 // Not big enough; create a new array with slight
                 // over allocation and preserve content
                 char[] newCharBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-                Array.Copy(TermBuffer, 0, newCharBuffer, 0, TermBuffer.Length);
-                TermBuffer = newCharBuffer;
+                Array.Copy(termBuffer, 0, newCharBuffer, 0, termBuffer.Length);
+                termBuffer = newCharBuffer;
             }
-            return TermBuffer;
+            return termBuffer;
         }
 
         private void GrowTermBuffer(int newSize)
         {
-            if (TermBuffer.Length < newSize)
+            if (termBuffer.Length < newSize)
             {
                 // Not big enough; create a new array with slight
                 // over allocation:
-                TermBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
+                termBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
             }
         }
 
         public int Length
         {
-            get { return this.TermLength; }
+            get { return this.termLength; }
             set { this.SetLength(value); }
         }
 
         public ICharTermAttribute SetLength(int length)
         {
-            if (length > TermBuffer.Length)
+            if (length > termBuffer.Length)
             {
-                throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + TermBuffer.Length + ")");
+                throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
             }
-            TermLength = length;
+            termLength = length;
             return this;
         }
 
         public ICharTermAttribute SetEmpty()
         {
-            TermLength = 0;
+            termLength = 0;
             return this;
         }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual void FillBytesRef()
         {
-            UnicodeUtil.UTF16toUTF8(TermBuffer, 0, TermLength, Bytes);
+            UnicodeUtil.UTF16toUTF8(termBuffer, 0, termLength, Bytes);
         }
 
         public virtual BytesRef BytesRef
@@ -122,46 +122,46 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         // *** CharSequence interface ***
 
-        // LUCENENET TODO: Remove
-        public char CharAt(int index)
-        {
-            if (index >= TermLength)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            return TermBuffer[index];
-        }
+        // LUCENENET specific: Replaced with this[int] to .NETify
+        //public char CharAt(int index)
+        //{
+        //    if (index >= TermLength)
+        //    {
+        //        throw new IndexOutOfRangeException();
+        //    }
+        //    return TermBuffer[index];
+        //}
 
         // LUCENENET specific indexer to make CharTermAttribute act more like a .NET type
         public char this[int index]
         {
             get
             {
-                if (index >= TermLength)
+                if (index >= termLength)
                 {
                     throw new IndexOutOfRangeException("index");
                 }
 
-                return TermBuffer[index];
+                return termBuffer[index];
             }
             set
             {
-                if (index >= TermLength)
+                if (index >= termLength)
                 {
                     throw new IndexOutOfRangeException("index");
                 }
 
-                TermBuffer[index] = value;
+                termBuffer[index] = value;
             }
         }
 
         public ICharSequence SubSequence(int start, int end)
         {
-            if (start > TermLength || end > TermLength)
+            if (start > termLength || end > termLength)
             {
                 throw new IndexOutOfRangeException();
             }
-            return new StringCharSequenceWrapper(new string(TermBuffer, start, end - start));
+            return new StringCharSequenceWrapper(new string(termBuffer, start, end - start));
         }
 
         // *** Appendable interface ***
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (len == 0)
                 return this;
 
-            csq.CopyTo(start, InternalResizeBuffer(TermLength + len), TermLength, len);
+            csq.CopyTo(start, InternalResizeBuffer(termLength + len), termLength, len);
             Length += len;
 
             return this;
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public ICharTermAttribute Append(char c)
         {
-            ResizeBuffer(TermLength + 1)[TermLength++] = c;
+            ResizeBuffer(termLength + 1)[termLength++] = c;
             return this;
         }
 
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return AppendNull();
 
             int len = chars.Length;
-            chars.CopyTo(InternalResizeBuffer(TermLength + len), TermLength);
+            chars.CopyTo(InternalResizeBuffer(termLength + len), termLength);
             Length += len;
 
             return this;
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (len == 0)
                 return this;
 
-            chars.Skip(start).Take(len).ToArray().CopyTo(InternalResizeBuffer(TermLength + len), TermLength);
+            chars.Skip(start).Take(len).ToArray().CopyTo(InternalResizeBuffer(termLength + len), termLength);
             Length += len;
 
             return this;
@@ -256,8 +256,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return AppendNull();
             }
             int len = ta.Length;
-            Array.Copy(ta.Buffer(), 0, ResizeBuffer(TermLength + len), TermLength, len);
-            TermLength += len;
+            Array.Copy(ta.Buffer(), 0, ResizeBuffer(termLength + len), termLength, len);
+            termLength += len;
             return this;
         }
 
@@ -282,24 +282,24 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (len == 0)
                 return this;
 
-            ResizeBuffer(TermLength + len);
+            ResizeBuffer(termLength + len);
 
             while (start < end)
-                TermBuffer[TermLength++] = csq.CharAt(start++);
+                termBuffer[termLength++] = csq[start++];
 
             return this;
         }
 
         private char[] InternalResizeBuffer(int length)
         {
-            if (TermBuffer.Length < length)
+            if (termBuffer.Length < length)
             {
                 char[] newBuffer = CreateBuffer(length);
-                Array.Copy(TermBuffer, 0, newBuffer, 0, TermBuffer.Length);
-                this.TermBuffer = newBuffer;
+                Array.Copy(termBuffer, 0, newBuffer, 0, termBuffer.Length);
+                this.termBuffer = newBuffer;
             }
 
-            return TermBuffer;
+            return termBuffer;
         }
 
         private static char[] CreateBuffer(int length)
@@ -309,11 +309,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         private CharTermAttribute AppendNull()
         {
-            ResizeBuffer(TermLength + 4);
-            TermBuffer[TermLength++] = 'n';
-            TermBuffer[TermLength++] = 'u';
-            TermBuffer[TermLength++] = 'l';
-            TermBuffer[TermLength++] = 'l';
+            ResizeBuffer(termLength + 4);
+            termBuffer[termLength++] = 'n';
+            termBuffer[termLength++] = 'u';
+            termBuffer[termLength++] = 'l';
+            termBuffer[termLength++] = 'l';
             return this;
         }
 
@@ -321,22 +321,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override int GetHashCode()
         {
-            int code = TermLength;
-            code = code * 31 + ArrayUtil.GetHashCode(TermBuffer, 0, TermLength);
+            int code = termLength;
+            code = code * 31 + ArrayUtil.GetHashCode(termBuffer, 0, termLength);
             return code;
         }
 
         public override void Clear()
         {
-            TermLength = 0;
+            termLength = 0;
         }
 
         public override object Clone()
         {
             CharTermAttribute t = (CharTermAttribute)base.Clone();
             // Do a deep clone
-            t.TermBuffer = new char[this.TermLength];
-            Array.Copy(this.TermBuffer, 0, t.TermBuffer, 0, this.TermLength);
+            t.termBuffer = new char[this.termLength];
+            Array.Copy(this.termBuffer, 0, t.termBuffer, 0, this.termLength);
             t.Bytes = BytesRef.DeepCopyOf(Bytes);
             return t;
         }
@@ -351,13 +351,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (other is CharTermAttribute)
             {
                 CharTermAttribute o = ((CharTermAttribute)other);
-                if (TermLength != o.TermLength)
+                if (termLength != o.termLength)
                 {
                     return false;
                 }
-                for (int i = 0; i < TermLength; i++)
+                for (int i = 0; i < termLength; i++)
                 {
-                    if (TermBuffer[i] != o.TermBuffer[i])
+                    if (termBuffer[i] != o.termBuffer[i])
                     {
                         return false;
                     }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         public override string ToString()
         {
-            return new string(TermBuffer, 0, TermLength);
+            return new string(termBuffer, 0, termLength);
         }
 
         public override void ReflectWith(IAttributeReflector reflector)
@@ -392,7 +392,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public override void CopyTo(Attribute target)
         {
             CharTermAttribute t = (CharTermAttribute)target;
-            t.CopyBuffer(TermBuffer, 0, TermLength);
+            t.CopyBuffer(termBuffer, 0, termLength);
         }
     }
 }
