@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Ngram
             WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("abcde"));
             NGramTokenFilter filter = new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 1, 1);
             AssertTokenStreamContents(filter, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0, 0 });
-            tokenizer.Reader = new StringReader("abcde");
+            tokenizer.SetReader(new StringReader("abcde"));
             AssertTokenStreamContents(filter, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 0, 0, 0, 0 }, new int[] { 5, 5, 5, 5, 5 }, new int[] { 1, 0, 0, 0, 0 });
         }
 

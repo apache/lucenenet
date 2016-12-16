@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Ngram
         {
             EdgeNGramTokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, input, 1, 3);
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 }, 5); // abcde
-            tokenizer.Reader = new StringReader("abcde");
+            tokenizer.SetReader(new StringReader("abcde"));
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 }, 5); // abcde
         }
 

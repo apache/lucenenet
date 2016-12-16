@@ -1902,7 +1902,7 @@ namespace Lucene.Net.Index
                 TermAtt = AddAttribute<ICharTermAttribute>();
                 try
                 {
-                    Reader = r;
+                    SetReader(r);
                 }
                 catch (IOException e)
                 {

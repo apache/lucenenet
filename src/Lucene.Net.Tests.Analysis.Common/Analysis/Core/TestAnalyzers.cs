@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.Core
             filter.Reset();
             string highSurEndingUpper = "BogustermBoguster\ud801";
             string highSurEndingLower = "bogustermboguster\ud801";
-            tokenizer.Reader = new StringReader(highSurEndingUpper);
+            tokenizer.SetReader(new StringReader(highSurEndingUpper));
             AssertTokenStreamContents(filter, new string[] { highSurEndingLower });
             assertTrue(filter.HasAttribute<ICharTermAttribute>());
             char[] termBuffer = filter.GetAttribute<ICharTermAttribute>().Buffer();

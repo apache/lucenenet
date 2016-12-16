@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis
             ///           if the component's reset method throws an <seealso cref="IOException"/> </exception>
             protected internal virtual void SetReader(TextReader reader)
             {
-                source.Reader = reader;
+                source.SetReader(reader);
             }
 
             /// <summary>

@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.Ngram
             EdgeNGramTokenFilter filter = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
 #pragma warning restore 612, 618
             AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 5, 5, 5 });
-            tokenizer.Reader = new StringReader("abcde");
+            tokenizer.SetReader(new StringReader("abcde"));
             AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 5, 5, 5 });
         }
 

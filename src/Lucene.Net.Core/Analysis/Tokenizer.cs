@@ -96,21 +96,18 @@ namespace Lucene.Net.Analysis
         ///  analyzer (in its tokenStream method) will use
         ///  this to re-use a previously created tokenizer.
         /// </summary>
-        public TextReader Reader // LUCENENET TODO: Change to SetReader()
+        public void SetReader(TextReader input)
         {
-            set
+            if (input == null)
             {
-                if (value == null)
-                {
-                    throw new System.ArgumentNullException("value", "input must not be null");
-                }
-                else if (this.input != ILLEGAL_STATE_READER)
-                {
-                    throw new InvalidOperationException("TokenStream contract violation: close() call missing");
-                }
-                this.inputPending = value;
-                Debug.Assert(SetReaderTestPoint());
+                throw new System.ArgumentNullException("value", "input must not be null");
             }
+            else if (this.input != ILLEGAL_STATE_READER)
+            {
+                throw new InvalidOperationException("TokenStream contract violation: Close() call missing");
+            }
+            this.inputPending = input;
+            Debug.Assert(SetReaderTestPoint());
         }
 
         public override void Reset()
@@ -132,8 +129,8 @@ namespace Lucene.Net.Analysis
         {
             public override int Read(char[] cbuf, int off, int len)
             {
-                throw new InvalidOperationException("TokenStream contract violation: reset()/close() call missing, " 
-                    + "reset() called multiple times, or subclass does not call super.reset(). "
+                throw new InvalidOperationException("TokenStream contract violation: Reset()/Dispose() call missing, " 
+                    + "Reset() called multiple times, or subclass does not call base.Reset(). "
                     + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
             }
 

@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Ngram
         {
             NGramTokenizer tokenizer = new NGramTokenizer(TEST_VERSION_CURRENT, input, 1, 1);
             AssertTokenStreamContents(tokenizer, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 }, 5); // abcde
-            tokenizer.Reader = new StringReader("abcde");
+            tokenizer.SetReader(new StringReader("abcde"));
             AssertTokenStreamContents(tokenizer, new string[] { "a", "b", "c", "d", "e" }, new int[] { 0, 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 }, 5); // abcde
         }
 

@@ -413,7 +413,7 @@ namespace Lucene.Net.Analysis.Shingle
             Tokenizer wsTokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("please divide this sentence"));
             TokenStream filter = new ShingleFilter(wsTokenizer, 2);
             AssertTokenStreamContents(filter, new string[] { "please", "please divide", "divide", "divide this", "this", "this sentence", "sentence" }, new int[] { 0, 0, 7, 7, 14, 14, 19 }, new int[] { 6, 13, 13, 18, 18, 27, 27 }, new string[] { TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE }, new int[] { 1, 0, 1, 0, 1, 0, 1 });
-            wsTokenizer.Reader = new StringReader("please divide this sentence");
+            wsTokenizer.SetReader(new StringReader("please divide this sentence"));
             AssertTokenStreamContents(filter, new string[] { "please", "please divide", "divide", "divide this", "this", "this sentence", "sentence" }, new int[] { 0, 0, 7, 7, 14, 14, 19 }, new int[] { 6, 13, 13, 18, 18, 27, 27 }, new string[] { TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE, "shingle", TypeAttribute_Fields.DEFAULT_TYPE }, new int[] { 1, 0, 1, 0, 1, 0, 1 });
         }
 

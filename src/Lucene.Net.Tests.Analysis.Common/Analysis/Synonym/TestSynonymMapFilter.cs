@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.Synonym
                 Console.WriteLine("TEST: verify input=" + input + " expectedOutput=" + output);
             }
 
-            tokensIn.Reader = new StringReader(input);
+            tokensIn.SetReader(new StringReader(input));
             tokensOut.Reset();
             string[] expected = output.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             int expectedUpto = 0;

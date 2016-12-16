@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             assertEquals("the_s", term.ToString());
             cgf.Dispose();
 
-            wt.Reader = new StringReader(input);
+            wt.SetReader(new StringReader(input));
             cgf.Reset();
             assertTrue(cgf.IncrementToken());
             assertEquals("How", term.ToString());
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             assertEquals("the_s", term.ToString());
             nsf.Dispose();
 
-            wt.Reader = new StringReader(input);
+            wt.SetReader(new StringReader(input));
             nsf.Reset();
             assertTrue(nsf.IncrementToken());
             assertEquals("How_the", term.ToString());
