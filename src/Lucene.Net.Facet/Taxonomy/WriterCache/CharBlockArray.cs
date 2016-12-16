@@ -239,14 +239,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream @out)
         {
-            byte[] bytes = null;
 #if NETSTANDARD
+            byte[] bytes = null;
             var json = JsonConvert.SerializeObject(this, new CharBlockArrayConverter());
             bytes = Encoding.UTF8.GetBytes(json);
+            @out.Write(bytes, 0, bytes.Length);
 #else
             StreamUtils.SerializeToStream(this, @out);
 #endif
-            @out.Write(bytes, 0, bytes.Length);
         }
 
         public static CharBlockArray Open(Stream @in)

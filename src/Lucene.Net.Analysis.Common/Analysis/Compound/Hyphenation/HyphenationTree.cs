@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 #else
                 new XmlReaderSettings();
 #endif
-            using (var reader = XmlReader.Create(new StreamReader(source, encoding)))
+            using (var reader = XmlReader.Create(new StreamReader(source, encoding), xmlReaderSettings))
             {
                 LoadPatterns(reader);
             }
