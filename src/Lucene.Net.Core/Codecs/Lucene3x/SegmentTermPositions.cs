@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public bool PayloadAvailable // LUCENENET TODO: Rename IsPayloadAvailable
+        public bool IsPayloadAvailable
         {
             get
             {
