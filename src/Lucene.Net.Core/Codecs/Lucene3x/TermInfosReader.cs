@@ -192,19 +192,16 @@ namespace Lucene.Net.Codecs.Lucene3x
             return Size_Renamed;
         }
 
-        private ThreadResources GetThreadResources // LUCENENET TODO: Rename ThreadResources
+        private ThreadResources GetThreadResources()
         {
-            get
+            ThreadResources resources = threadResources.Get();
+            if (resources == null)
             {
-                ThreadResources resources = threadResources.Get();
-                if (resources == null)
-                {
-                    resources = new ThreadResources();
-                    resources.TermEnum = Terms();
-                    threadResources.Set(resources);
-                }
-                return resources;
+                resources = new ThreadResources();
+                resources.TermEnum = Terms();
+                threadResources.Set(resources);
             }
+            return resources;
         }
 
         private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
@@ -239,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             EnsureIndexIsRead();
             TermInfoAndOrd tiOrd = TermsCache.Get(new CloneableTerm(term));
-            ThreadResources resources = GetThreadResources;
+            ThreadResources resources = GetThreadResources();
 
             if (!mustSeekEnum && tiOrd != null)
             {
@@ -403,7 +400,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             EnsureIndexIsRead();
             int indexOffset = Index.GetIndexOffset(term);
 
-            SegmentTermEnum enumerator = GetThreadResources.TermEnum;
+            SegmentTermEnum enumerator = GetThreadResources().TermEnum;
             Index.SeekEnum(enumerator, indexOffset);
 
             while (CompareAsUTF16(term, enumerator.Term()) > 0 && enumerator.Next())
@@ -432,7 +429,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public SegmentTermEnum Terms(Term term)
         {
             Get(term, true);
-            return (SegmentTermEnum)GetThreadResources.TermEnum.Clone();
+            return (SegmentTermEnum)GetThreadResources().TermEnum.Clone();
         }
 
         internal long RamBytesUsed()
