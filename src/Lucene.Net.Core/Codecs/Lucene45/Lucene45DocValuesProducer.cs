@@ -671,7 +671,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (Binary is CompressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)Binary).TermsEnum;
+                    return ((CompressedBinaryDocValues)Binary).GetTermsEnum();
                 }
                 else
                 {
@@ -800,7 +800,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (Binary is CompressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)Binary).TermsEnum;
+                    return ((CompressedBinaryDocValues)Binary).GetTermsEnum();
                 }
                 else
                 {
@@ -1056,18 +1056,15 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            internal virtual TermsEnum TermsEnum // LUCENENET TODO: Make into method
+            internal virtual TermsEnum GetTermsEnum()
             {
-                get
+                try
                 {
-                    try
-                    {
-                        return GetTermsEnum((IndexInput)Data.Clone());
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    return GetTermsEnum((IndexInput)Data.Clone());
+                }
+                catch (Exception)
+                {
+                    throw;
                 }
             }
 
