@@ -29,7 +29,6 @@ namespace Lucene.Net.Codecs
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class MappingMultiDocsEnum : DocsEnum
     {
         private MultiDocsEnum.EnumWithSlice[] Subs_Renamed;
@@ -85,12 +84,9 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
-        public MultiDocsEnum.EnumWithSlice[] Subs // LUCENENET TODO: Change to GetSubs()
+        public MultiDocsEnum.EnumWithSlice[] GetSubs()
         {
-            get
-            {
-                return Subs_Renamed;
-            }
+            return Subs_Renamed;
         }
 
         public override int Freq()
