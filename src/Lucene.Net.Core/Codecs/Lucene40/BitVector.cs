@@ -176,15 +176,21 @@ namespace Lucene.Net.Codecs.Lucene40
             return (Bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
+        // LUCENENET specific - removing this because 1) size is not .NETified and 2) it is identical to Length anyway
+        ///// <summary>
+        ///// Returns the number of bits in this vector.  this is also one greater than
+        /////  the number of the largest valid bit number.
+        ///// </summary>
+        //public int Size()
+        //{
+        //    return Size_Renamed;
+        //}
+
         /// <summary>
         /// Returns the number of bits in this vector.  this is also one greater than
-        ///  the number of the largest valid bit number.
+        /// the number of the largest valid bit number.
+        /// This is the equivalent of either size() or length() in Lucene.
         /// </summary>
-        public int Size() // LUCENENET TODO: Rename Count ?? See count() below. Or perhaps just use Length, since it returns the same result
-        {
-            return Size_Renamed;
-        }
-
         public int Length()
         {
             return Size_Renamed;
@@ -195,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene40
         ///  computed and cached, so that, if the vector is not changed, no
         ///  recomputation is done for repeated calls.
         /// </summary>
-        public int Count() // LUCENENET TODO: Property?
+        public int Count()
         {
             // if the vector has been modified
             if (Count_Renamed == -1)
@@ -214,18 +220,15 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// For testing </summary>
-        public int RecomputedCount // LUCENENET TODO: Method
+        public int GetRecomputedCount()
         {
-            get
+            int c = 0;
+            int end = Bits.Length;
+            for (int i = 0; i < end; i++)
             {
-                int c = 0;
-                int end = Bits.Length;
-                for (int i = 0; i < end; i++)
-                {
-                    c += BitUtil.BitCount(Bits[i]); // sum bits per byte
-                }
-                return c;
+                c += BitUtil.BitCount(Bits[i]); // sum bits per byte
             }
+            return c;
         }
 
         private static string CODEC = "BitVector";
@@ -267,7 +270,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 output.WriteInt(-2);
                 CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                if (Sparse)
+                if (IsSparse)
                 {
                     // sparse bit-set more efficiently saved as d-gaps.
                     WriteClearedDgaps(output);
@@ -331,7 +334,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Write as a bit set </summary>
         private void WriteBits(IndexOutput output)
         {
-            output.WriteInt(Size()); // write size
+            output.WriteInt(Length()); // write size
             output.WriteInt(Count()); // write count
             output.WriteBytes(Bits, Bits.Length);
         }
@@ -341,10 +344,10 @@ namespace Lucene.Net.Codecs.Lucene40
         private void WriteClearedDgaps(IndexOutput output)
         {
             output.WriteInt(-1); // mark using d-gaps
-            output.WriteInt(Size()); // write size
+            output.WriteInt(Length()); // write size
             output.WriteInt(Count()); // write count
             int last = 0;
-            int numCleared = Size() - Count();
+            int numCleared = Length() - Count();
             for (int i = 0; i < Bits.Length && numCleared > 0; i++)
             {
                 if (Bits[i] != unchecked((byte)0xff))
@@ -360,11 +363,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Indicates if the bit vector is sparse and should be saved as a d-gaps list, or dense, and should be saved as a bit set. </summary>
-        private bool Sparse // LUCENENET TODO: Rename IsSparse
+        private bool IsSparse
         {
             get
             {
-                int clearedCount = Size() - Count();
+                int clearedCount = Length() - Count();
                 if (clearedCount == 0)
                 {
                     return true;
@@ -404,7 +407,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 // note: factor is for read/write of byte-arrays being faster than vints.
                 const long factor = 10;
-                return factor * expectedBits < Size();
+                return factor * expectedBits < Length();
             }
         }
 
@@ -518,7 +521,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             ClearUnusedBits();
             int last = 0;
-            int numCleared = Size() - Count();
+            int numCleared = Length() - Count();
             while (numCleared > 0)
             {
                 last += input.ReadVInt();

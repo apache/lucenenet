@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private void DoTestConstructOfSize(int n)
         {
             BitVector bv = new BitVector(n);
-            Assert.AreEqual(n, bv.Size());
+            Assert.AreEqual(n, bv.Length()); // LUCENENET NOTE: Length is the equivalent of size()
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private void DoTestGetSetVectorOfSize(int n)
         {
             BitVector bv = new BitVector(n);
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 // ensure a set bit can be git'
                 Assert.IsFalse(bv.Get(i));
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private void DoTestClearVectorOfSize(int n)
         {
             BitVector bv = new BitVector(n);
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 // ensure a set bit is cleared
                 Assert.IsFalse(bv.Get(i));
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             BitVector bv = new BitVector(n);
             // test count when incrementally setting bits
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 Assert.IsFalse(bv.Get(i));
                 Assert.AreEqual(i, bv.Count());
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             bv = new BitVector(n);
             // test count when setting then clearing bits
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 Assert.IsFalse(bv.Get(i));
                 Assert.AreEqual(0, bv.Count());
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
             d.PreventDoubleWrite = false;
             BitVector bv = new BitVector(n);
             // test count when incrementally setting bits
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 Assert.IsFalse(bv.Get(i));
                 Assert.AreEqual(i, bv.Count());
@@ -309,7 +309,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private bool DoCompare(BitVector bv, BitVector compare)
         {
             bool equal = true;
-            for (int i = 0; i < bv.Size(); i++)
+            for (int i = 0; i < bv.Length(); i++) // LUCENENET NOTE: Length is the equivalent of size()
             {
                 // bits must be equal
                 if (bv.Get(i) != compare.Get(i))
