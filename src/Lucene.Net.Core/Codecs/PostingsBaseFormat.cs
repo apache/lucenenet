@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs
         /// Unique name that's used to retrieve this codec when
         ///  reading the index
         /// </summary>
-        public readonly string Name; // LUCENENET TODO: Change to property
+        public string Name { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>

@@ -908,21 +908,21 @@ namespace Lucene.Net.Codecs.Lucene45
 
             /// <summary>
             /// offset to the actual numeric values </summary>
-            public long Offset; // LUCENENET TODO: Make into property
+            public long Offset { get; set; }
 
             internal int Format;
 
             /// <summary>
             /// packed ints version used to encode these numerics </summary>
-            public int PackedIntsVersion; // LUCENENET TODO: Make into property
+            public int PackedIntsVersion { get; set; }
 
             /// <summary>
             /// count of values written </summary>
-            public long Count; // LUCENENET TODO: Make into property
+            public long Count { get; set; }
 
             /// <summary>
             /// packed ints blocksize </summary>
-            public int BlockSize; // LUCENENET TODO: Make into property
+            public int BlockSize { get; set; }
 
             internal long MinValue;
             internal long Gcd;
@@ -949,26 +949,26 @@ namespace Lucene.Net.Codecs.Lucene45
 
             /// <summary>
             /// count of values written </summary>
-            public long Count; // LUCENENET TODO: Make into property
+            public long Count { get; set; }
 
             internal int MinLength;
             internal int MaxLength;
 
             /// <summary>
             /// offset to the addressing data that maps a value to its slice of the byte[] </summary>
-            public long AddressesOffset; // LUCENENET TODO: Make into property
+            public long AddressesOffset { get; set; }
 
             /// <summary>
             /// interval of shared prefix chunks (when using prefix-compressed binary) </summary>
-            public long AddressInterval; // LUCENENET TODO: Make into property
+            public long AddressInterval { get; set; }
 
             /// <summary>
             /// packed ints version used to encode addressing information </summary>
-            public int PackedIntsVersion; // LUCENENET TODO: Make into property
+            public int PackedIntsVersion { get; set; }
 
             /// <summary>
             /// packed ints blocksize </summary>
-            public int BlockSize; // LUCENENET TODO: Make into property
+            public int BlockSize { get; set; }
         }
 
         /// <summary>
@@ -979,7 +979,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
             }
 
-            internal int Format; // LUCENENET TODO: Make into property
+            internal int Format { get; set; }
         }
 
         // internally we compose complex dv (sorted/sortedset) from other ones

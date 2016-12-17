@@ -329,91 +329,91 @@ namespace Lucene.Net.Codecs
         {
             /// <summary>
             /// How many nodes in the index FST. </summary>
-            public long IndexNodeCount; // LUCENENET TODO: make property
+            public long IndexNodeCount { get; set; }
 
             /// <summary>
             /// How many arcs in the index FST. </summary>
-            public long IndexArcCount; // LUCENENET TODO: make property
+            public long IndexArcCount { get; set; }
 
             /// <summary>
             /// Byte size of the index. </summary>
-            public long IndexNumBytes; // LUCENENET TODO: make property
+            public long IndexNumBytes { get; set; }
 
             /// <summary>
             /// Total number of terms in the field. </summary>
-            public long TotalTermCount; // LUCENENET TODO: make property
+            public long TotalTermCount { get; set; }
 
             /// <summary>
             /// Total number of bytes (sum of term lengths) across all terms in the field. </summary>
-            public long TotalTermBytes; // LUCENENET TODO: make property
+            public long TotalTermBytes { get; set; }
 
             /// <summary>
             /// The number of normal (non-floor) blocks in the terms file. </summary>
-            public int NonFloorBlockCount; // LUCENENET TODO: make property
+            public int NonFloorBlockCount { get; set; }
 
             /// <summary>
             /// The number of floor blocks (meta-blocks larger than the
             ///  allowed {@code maxItemsPerBlock}) in the terms file.
             /// </summary>
-            public int FloorBlockCount; // LUCENENET TODO: make property
+            public int FloorBlockCount { get; set; }
 
             /// <summary>
             /// The number of sub-blocks within the floor blocks. </summary>
-            public int FloorSubBlockCount; // LUCENENET TODO: make property
+            public int FloorSubBlockCount { get; set; }
 
             /// <summary>
             /// The number of "internal" blocks (that have both
             ///  terms and sub-blocks).
             /// </summary>
-            public int MixedBlockCount; // LUCENENET TODO: make property
+            public int MixedBlockCount { get; set; }
 
             /// <summary>
             /// The number of "leaf" blocks (blocks that have only
             ///  terms).
             /// </summary>
-            public int TermsOnlyBlockCount; // LUCENENET TODO: make property
+            public int TermsOnlyBlockCount { get; set; }
 
             /// <summary>
             /// The number of "internal" blocks that do not contain
             ///  terms (have only sub-blocks).
             /// </summary>
-            public int SubBlocksOnlyBlockCount; // LUCENENET TODO: make property
+            public int SubBlocksOnlyBlockCount { get; set; }
 
             /// <summary>
             /// Total number of blocks. </summary>
-            public int TotalBlockCount; // LUCENENET TODO: make property
+            public int TotalBlockCount { get; set; }
 
             /// <summary>
             /// Number of blocks at each prefix depth. </summary>
-            public int[] BlockCountByPrefixLen = new int[10]; // LUCENENET TODO: make property
+            public int[] BlockCountByPrefixLen = new int[10];
 
             internal int StartBlockCount;
             internal int EndBlockCount;
 
             /// <summary>
             /// Total number of bytes used to store term suffixes. </summary>
-            public long TotalBlockSuffixBytes; // LUCENENET TODO: make property
+            public long TotalBlockSuffixBytes { get; set; }
 
             /// <summary>
             /// Total number of bytes used to store term stats (not
             ///  including what the <seealso cref="PostingsBaseFormat"/>
             ///  stores.
             /// </summary>
-            public long TotalBlockStatsBytes; // LUCENENET TODO: make property
+            public long TotalBlockStatsBytes { get; set; }
 
             /// <summary>
             /// Total bytes stored by the <seealso cref="PostingsBaseFormat"/>,
             ///  plus the other few vInts stored in the frame.
             /// </summary>
-            public long TotalBlockOtherBytes; // LUCENENET TODO: make property
+            public long TotalBlockOtherBytes { get; set; }
 
             /// <summary>
             /// Segment name. </summary>
-            public readonly string Segment; // LUCENENET TODO: make property
+            public string Segment { get; private set; }
 
             /// <summary>
             /// Field name. </summary>
-            public readonly string Field; // LUCENENET TODO: make property
+            public string Field { get; private set; }
 
             internal Stats(string segment, string field)
             {
