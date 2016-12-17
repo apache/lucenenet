@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Sets iteration to the specified docID </summary>
         /// <param name="docID"> document ID  </param>
-        public abstract int Document { set; }
+        public abstract int Document { set; } // LUCENENET TODO: Change to SetDocument(int)
 
         /// <summary>
         /// Retrieves the value for the specified ordinal. </summary>
