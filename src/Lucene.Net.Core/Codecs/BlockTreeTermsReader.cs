@@ -815,31 +815,18 @@ namespace Lucene.Net.Codecs
                         Load(null);
                     }
 
-                    public int State // LUCENENET TODO: Change to SetState()
+                    public void SetState(int state)
                     {
-                        set
+                        this.state = state;
+                        TransitionIndex = 0;
+                        Transitions = OuterInstance.CompiledAutomaton.SortedTransitions[state];
+                        if (Transitions.Length != 0)
                         {
-                            this.state = value;
-                            TransitionIndex = 0;
-                            Transitions = OuterInstance.CompiledAutomaton.SortedTransitions[value];
-                            if (Transitions.Length != 0)
-                            {
-                                CurTransitionMax = Transitions[0].Max;
-                            }
-                            else
-                            {
-                                CurTransitionMax = -1;
-                            }
+                            CurTransitionMax = Transitions[0].Max;
                         }
-                        get // LUCENENET TODO: Change to GetState()
+                        else
                         {
-                            int state = OuterInstance.CurrentFrame.state;
-                            for (int idx = 0; idx < OuterInstance.CurrentFrame.Suffix; idx++)
-                            {
-                                state = OuterInstance.runAutomaton.Step(state, OuterInstance.CurrentFrame.SuffixBytes[OuterInstance.CurrentFrame.StartBytePos + idx] & 0xff);
-                                Debug.Assert(state != -1);
-                            }
-                            return state;
+                            CurTransitionMax = -1;
                         }
                     }
 
@@ -1079,7 +1066,7 @@ namespace Lucene.Net.Codecs
                     Frame f = Stack[0];
                     f.Fp = f.FpOrig = outerInstance.RootBlockFP;
                     f.Prefix = 0;
-                    f.State = runAutomaton.InitialState;
+                    f.SetState(runAutomaton.InitialState);
                     f.Arc = arc;
                     f.OutputPrefix = arc.Output;
                     f.Load(outerInstance.RootCode);
@@ -1145,7 +1132,7 @@ namespace Lucene.Net.Codecs
                     f.Fp = f.FpOrig = CurrentFrame.LastSubFP;
                     f.Prefix = CurrentFrame.Prefix + CurrentFrame.Suffix;
                     // if (DEBUG) System.out.println("    pushFrame state=" + state + " prefix=" + f.prefix);
-                    f.State = state;
+                    f.SetState(state);
 
                     // Walk the arc through the index -- we only
                     // "bother" with this so we can get the floor data
@@ -1211,7 +1198,16 @@ namespace Lucene.Net.Codecs
                     return OuterInstance.OuterInstance.PostingsReader.DocsAndPositions(OuterInstance.fieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
                 }
 
-                // LUCENENET TODO: Move GetState() here
+                private int GetState()
+                {
+                    int state = CurrentFrame.state;
+                    for (int idx = 0; idx < CurrentFrame.Suffix; idx++)
+                    {
+                        state = runAutomaton.Step(state, CurrentFrame.SuffixBytes[CurrentFrame.StartBytePos + idx] & 0xff);
+                        Debug.Assert(state != -1);
+                    }
+                    return state;
+                }
 
                 // NOTE: specialized to only doing the first-time
                 // seek, but we could generalize it to allow
@@ -1251,7 +1247,7 @@ namespace Lucene.Net.Codecs
                             if (isSubBlock && StringHelper.StartsWith(target, Term_Renamed))
                             {
                                 // Recurse
-                                CurrentFrame = PushFrame(CurrentFrame.State);
+                                CurrentFrame = PushFrame(GetState());
                                 break;
                             }
                             else
