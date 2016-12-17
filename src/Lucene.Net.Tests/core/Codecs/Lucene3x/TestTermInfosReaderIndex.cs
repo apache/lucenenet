@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestCompareTo()
         {
             Term term = new Term("field" + Random().Next(NUMBER_OF_FIELDS), Text);
-            for (int i = 0; i < Index.Length(); i++)
+            for (int i = 0; i < Index.Length; i++)
             {
                 Term t = Index.GetTerm(i);
                 int compareTo = term.CompareTo(t);

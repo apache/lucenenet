@@ -213,9 +213,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the number of terms.
         /// </summary>
         /// <returns> int. </returns>
-        internal virtual int Length() // LUCENENET TODO: Make property
+        internal virtual int Length
         {
-            return IndexSize;
+            get { return IndexSize; }
         }
 
         /// <summary>

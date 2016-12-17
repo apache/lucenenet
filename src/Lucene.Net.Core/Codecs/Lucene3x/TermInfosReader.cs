@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     try
                     {
                         Index = new TermInfosReaderIndex(indexEnum, indexDivisor, dir.FileLength(indexFileName), TotalIndexInterval);
-                        IndexLength = Index.Length();
+                        IndexLength = Index.Length;
                     }
                     finally
                     {
