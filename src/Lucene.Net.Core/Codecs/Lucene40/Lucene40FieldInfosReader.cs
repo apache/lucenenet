@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.mapping = mapping;
             }
 
-            public FieldInfo.DocValuesType_e? Mapping
+            public FieldInfo.DocValuesType_e? Mapping // LUCENENET TODO: Can we make this non-nullable?
             {
                 get { return mapping; }
             }
