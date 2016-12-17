@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
 
-        internal virtual FieldInfo.IndexOptions IndexOptions
+        internal virtual FieldInfo.IndexOptions IndexOptions // LUCENENET TODO: Make into SetIndexOptions(FieldInfo.IndexOptions)
         {
             set { _indexOptions = value; }
         }
@@ -129,34 +129,30 @@ namespace Lucene.Net.Codecs.Sep
             _payloadLength[level] = _lastPayloadLength;
         }
 
-        protected override int LastSkipData
+        protected override void SetLastSkipData(int level)
         {
-            set
-            {
-                base.LastSkipData = value;
+            base.SetLastSkipData(level);
 
-                _lastPayloadPointer = _payloadPointer[value];
-                _lastPayloadLength = _payloadLength[value];
+            _lastPayloadPointer = _payloadPointer[level];
+            _lastPayloadLength = _payloadLength[level];
                 
-                if (_freqIndex != null)
-                    _lastFreqIndex.CopyFrom(_freqIndex[value]);
+            if (_freqIndex != null)
+                _lastFreqIndex.CopyFrom(_freqIndex[level]);
                 
-                _lastDocIndex.CopyFrom(_docIndex[value]);
+            _lastDocIndex.CopyFrom(_docIndex[level]);
 
-                if (_lastPosIndex != null)
-                    _lastPosIndex.CopyFrom(_posIndex[value]);
+            if (_lastPosIndex != null)
+                _lastPosIndex.CopyFrom(_posIndex[level]);
 
-                if (value <= 0) return;
+            if (level <= 0) return;
 
-                if (_freqIndex != null)
-                    _freqIndex[value - 1].CopyFrom(_freqIndex[value]);
+            if (_freqIndex != null)
+                _freqIndex[level - 1].CopyFrom(_freqIndex[level]);
                 
-                _docIndex[value - 1].CopyFrom(_docIndex[value]);
+            _docIndex[level - 1].CopyFrom(_docIndex[level]);
             
-                if (_posIndex != null)
-                    _posIndex[value - 1].CopyFrom(_posIndex[value]);
-                
-            }
+            if (_posIndex != null)
+                _posIndex[level - 1].CopyFrom(_posIndex[level]);
         }
 
         internal virtual IntIndexInputIndex FreqIndex

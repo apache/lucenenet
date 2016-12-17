@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs
         {
             // we have to skip, the target document is greater than the current
             // skip list entry
-            LastSkipData = level;
+            SetLastSkipData(level);
 
             NumSkipped[level] += SkipInterval[level];
 
@@ -315,14 +315,11 @@ namespace Lucene.Net.Codecs
         protected abstract int ReadSkipData(int level, IndexInput skipStream);
 
         /// <summary>
-        /// Copies the values of the last read skip entry on this level </summary>
-        protected virtual int LastSkipData // LUCENENET TODO: Change to SetLastSkipData()
+        /// Copies the values of the last read skip entry on this <paramref name="level"/> </summary>
+        protected virtual void SetLastSkipData(int level)
         {
-            set
-            {
-                LastDoc = SkipDoc[value];
-                LastChildPointer = ChildPointer[value];
-            }
+            LastDoc = SkipDoc[level];
+            LastChildPointer = ChildPointer[level];
         }
 
         /// <summary>

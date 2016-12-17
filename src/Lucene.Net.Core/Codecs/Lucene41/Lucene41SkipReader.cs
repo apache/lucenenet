@@ -209,31 +209,28 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        protected override int LastSkipData
+        protected override void SetLastSkipData(int level)
         {
-            set
+            base.SetLastSkipData(level);
+            LastDocPointer = DocPointer_Renamed[level];
+            // if (DEBUG) {
+            //   System.out.println("setLastSkipData level=" + value);
+            //   System.out.println("  lastDocPointer=" + lastDocPointer);
+            // }
+            if (PosPointer_Renamed != null)
             {
-                base.LastSkipData = value;
-                LastDocPointer = DocPointer_Renamed[value];
+                LastPosPointer = PosPointer_Renamed[level];
+                LastPosBufferUpto = PosBufferUpto_Renamed[level];
                 // if (DEBUG) {
-                //   System.out.println("setLastSkipData level=" + value);
-                //   System.out.println("  lastDocPointer=" + lastDocPointer);
+                //   System.out.println("  lastPosPointer=" + lastPosPointer + " lastPosBUfferUpto=" + lastPosBufferUpto);
                 // }
-                if (PosPointer_Renamed != null)
+                if (PayPointer_Renamed != null)
                 {
-                    LastPosPointer = PosPointer_Renamed[value];
-                    LastPosBufferUpto = PosBufferUpto_Renamed[value];
-                    // if (DEBUG) {
-                    //   System.out.println("  lastPosPointer=" + lastPosPointer + " lastPosBUfferUpto=" + lastPosBufferUpto);
-                    // }
-                    if (PayPointer_Renamed != null)
-                    {
-                        LastPayPointer = PayPointer_Renamed[value];
-                    }
-                    if (PayloadByteUpto_Renamed != null)
-                    {
-                        LastPayloadByteUpto = PayloadByteUpto_Renamed[value];
-                    }
+                    LastPayPointer = PayPointer_Renamed[level];
+                }
+                if (PayloadByteUpto_Renamed != null)
+                {
+                    LastPayloadByteUpto = PayloadByteUpto_Renamed[level];
                 }
             }
         }

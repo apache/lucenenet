@@ -130,16 +130,13 @@ namespace Lucene.Net.Codecs.Lucene40
             OffsetLength_Renamed[level] = LastOffsetLength;
         }
 
-        protected override int LastSkipData
+        protected override void SetLastSkipData(int level)
         {
-            set
-            {
-                base.LastSkipData = value;
-                LastFreqPointer = FreqPointer_Renamed[value];
-                LastProxPointer = ProxPointer_Renamed[value];
-                LastPayloadLength = PayloadLength_Renamed[value];
-                LastOffsetLength = OffsetLength_Renamed[value];
-            }
+            base.SetLastSkipData(level);
+            LastFreqPointer = FreqPointer_Renamed[level];
+            LastProxPointer = ProxPointer_Renamed[level];
+            LastPayloadLength = PayloadLength_Renamed[level];
+            LastOffsetLength = OffsetLength_Renamed[level];
         }
 
         protected override int ReadSkipData(int level, IndexInput skipStream)
