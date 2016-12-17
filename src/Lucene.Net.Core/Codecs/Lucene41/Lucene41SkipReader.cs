@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// 2. moving into the vInt block
         ///
         /// </summary>
-        protected internal int Trim(int df)
+        internal int Trim(int df)
         {
             return df % BlockSize == 0 ? df - 1 : df;
         }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        protected internal override void SeekChild(int level)
+        protected override void SeekChild(int level)
         {
             base.SeekChild(level);
             // if (DEBUG) {
@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        protected internal override int LastSkipData
+        protected override int LastSkipData
         {
             set
             {
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        protected internal override int ReadSkipData(int level, IndexInput skipStream)
+        protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             // if (DEBUG) {
             //   System.out.println("readSkipData level=" + level);

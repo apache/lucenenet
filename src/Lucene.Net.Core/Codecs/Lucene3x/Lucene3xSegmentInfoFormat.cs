@@ -35,25 +35,25 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// this format adds optional per-segment String
         ///  diagnostics storage, and switches userData to Map
         /// </summary>
-        public const int FORMAT_DIAGNOSTICS = -9;
+        public static readonly int FORMAT_DIAGNOSTICS = -9;
 
         /// <summary>
         /// Each segment records whether it has term vectors </summary>
-        public const int FORMAT_HAS_VECTORS = -10;
+        public static readonly int FORMAT_HAS_VECTORS = -10;
 
         /// <summary>
         /// Each segment records the Lucene version that created it. </summary>
-        public const int FORMAT_3_1 = -11;
+        public static readonly int FORMAT_3_1 = -11;
 
         /// <summary>
         /// Extension used for saving each SegmentInfo, once a 3.x
         ///  index is first committed to with 4.0.
         /// </summary>
-        public const string UPGRADED_SI_EXTENSION = "si";
+        public static readonly string UPGRADED_SI_EXTENSION = "si";
 
-        public const string UPGRADED_SI_CODEC_NAME = "Lucene3xSegmentInfo";
-        public const int UPGRADED_SI_VERSION_START = 0;
-        public const int UPGRADED_SI_VERSION_CURRENT = UPGRADED_SI_VERSION_START;
+        public static readonly string UPGRADED_SI_CODEC_NAME = "Lucene3xSegmentInfo";
+        public static readonly int UPGRADED_SI_VERSION_START = 0;
+        public static readonly int UPGRADED_SI_VERSION_CURRENT = UPGRADED_SI_VERSION_START;
 
         public override SegmentInfoReader SegmentInfoReader
         {

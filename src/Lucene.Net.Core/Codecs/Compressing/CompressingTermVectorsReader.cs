@@ -777,9 +777,9 @@ namespace Lucene.Net.Codecs.Compressing
         {
             private readonly CompressingTermVectorsReader OuterInstance;
 
-            internal readonly int NumTerms, Flags;
-            internal readonly int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
-            internal readonly BytesRef TermBytes, PayloadBytes;
+            private readonly int NumTerms, Flags;
+            private readonly int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
+            private readonly BytesRef TermBytes, PayloadBytes;
 
             internal TVTerms(CompressingTermVectorsReader outerInstance, int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
             {
@@ -813,7 +813,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return termsEnum;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparator 
             {
                 get
                 {
@@ -873,11 +873,11 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVTermsEnum : TermsEnum
         {
-            internal int NumTerms, StartPos, Ord_Renamed;
-            internal int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
-            internal ByteArrayDataInput @in;
-            internal BytesRef Payloads;
-            internal readonly BytesRef Term_Renamed;
+            private int NumTerms, StartPos, Ord_Renamed;
+            private int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
+            private ByteArrayDataInput @in;
+            private BytesRef Payloads;
+            private readonly BytesRef Term_Renamed;
 
             internal TVTermsEnum()
             {
@@ -1028,17 +1028,17 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVDocsEnum : DocsAndPositionsEnum
         {
-            internal Bits LiveDocs;
-            internal int Doc = -1;
-            internal int TermFreq;
-            internal int PositionIndex;
-            internal int[] Positions;
-            internal int[] StartOffsets;
-            internal int[] Lengths;
-            internal readonly BytesRef Payload_Renamed;
-            internal int[] PayloadIndex;
-            internal int BasePayloadOffset;
-            internal int i;
+            private Bits LiveDocs;
+            private int Doc = -1;
+            private int TermFreq;
+            private int PositionIndex;
+            private int[] Positions;
+            private int[] StartOffsets;
+            private int[] Lengths;
+            private readonly BytesRef Payload_Renamed;
+            private int[] PayloadIndex;
+            private int BasePayloadOffset;
+            private int i;
 
             internal TVDocsEnum()
             {
@@ -1061,7 +1061,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Doc = i = -1;
             }
 
-            internal virtual void CheckDoc()
+            private void CheckDoc()
             {
                 if (Doc == NO_MORE_DOCS)
                 {
@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            internal virtual void CheckPosition()
+            private void CheckPosition()
             {
                 CheckDoc();
                 if (i < 0)

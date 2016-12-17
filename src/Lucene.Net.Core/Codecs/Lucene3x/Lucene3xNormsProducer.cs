@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental </summary>
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
-    public class Lucene3xNormsProducer : DocValuesProducer
+    internal class Lucene3xNormsProducer : DocValuesProducer
     {
         /// <summary>
         /// norms header placeholder </summary>

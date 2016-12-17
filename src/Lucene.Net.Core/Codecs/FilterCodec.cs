@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// The codec to filter. </summary>
-        protected internal readonly Codec @delegate;
+        protected readonly Codec @delegate;
 
         /// <summary>
         /// Sole constructor. When subclassing this codec,

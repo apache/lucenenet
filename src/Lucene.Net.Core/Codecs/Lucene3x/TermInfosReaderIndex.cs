@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// array and pointers to the position of each are stored in a int array. </summary>
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
-    public class TermInfosReaderIndex
+    internal class TermInfosReaderIndex
     {
         private const int MAX_PAGE_BITS = 18; // 256 KB block
         private Term[] Fields;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return Math.Max(Math.Min(64 - Number.NumberOfLeadingZeros(estSize), MAX_PAGE_BITS), 4);
         }
 
-        public virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
+        internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
         {
             PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         ///          the position to read the term from the index. </param>
         /// <returns> the term. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public virtual Term GetTerm(int termIndex)
+        internal virtual Term GetTerm(int termIndex)
         {
             PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
             input.Position = IndexToDataOffset.Get(termIndex);
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the number of terms.
         /// </summary>
         /// <returns> int. </returns>
-        public virtual int Length()
+        internal virtual int Length() // LUCENENET TODO: Make property
         {
             return IndexSize;
         }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         ///          the index of the of term to compare. </param>
         /// <returns> int. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public virtual int CompareTo(Term term, int termIndex)
+        internal virtual int CompareTo(Term term, int termIndex)
         {
             return CompareTo(term, termIndex, (PagedBytesDataInput)DataInput.Clone(), new BytesRef());
         }

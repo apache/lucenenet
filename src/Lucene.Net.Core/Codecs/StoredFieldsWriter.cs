@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// sugar method for startDocument() + writeField() for every stored field in the document </summary>
-        protected internal void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IndexableField
+        protected void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IndexableField
         {
             int storedCount = 0;
             foreach (IndexableField field in doc)

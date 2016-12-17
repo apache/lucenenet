@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Seeks the skip entry on the given level </summary>
-        protected internal virtual void SeekChild(int level)
+        protected virtual void SeekChild(int level)
         {
             SkipStream[level].Seek(LastChildPointer);
             NumSkipped[level] = NumSkipped[level + 1] - SkipInterval[level + 1];
@@ -312,11 +312,11 @@ namespace Lucene.Net.Codecs
         /// </summary>
         /// <param name="level"> the level skip data shall be read from </param>
         /// <param name="skipStream"> the skip stream to read from </param>
-        protected internal abstract int ReadSkipData(int level, IndexInput skipStream);
+        protected abstract int ReadSkipData(int level, IndexInput skipStream);
 
         /// <summary>
         /// Copies the values of the last read skip entry on this level </summary>
-        protected internal virtual int LastSkipData
+        protected virtual int LastSkipData // LUCENENET TODO: Change to SetLastSkipData()
         {
             set
             {
@@ -329,9 +329,9 @@ namespace Lucene.Net.Codecs
         /// used to buffer the top skip levels </summary>
         private sealed class SkipBuffer : IndexInput
         {
-            internal byte[] Data;
-            internal long Pointer;
-            internal int Pos;
+            private byte[] Data;
+            private long Pointer;
+            private int Pos;
 
             internal SkipBuffer(IndexInput input, int length)
                 : base("SkipBuffer on " + input)

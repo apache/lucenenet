@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs
         /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
         /// an Iterable that merges and filters deleted documents on the fly.
         /// </summary>
-        public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+        public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
         {
             AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
         }

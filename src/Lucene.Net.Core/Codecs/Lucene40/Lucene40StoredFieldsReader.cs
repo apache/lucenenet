@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns number of documents. </summary>
-        public int Size()
+        public int Size() // LUCENENET TODO :Rename Count prop
         {
             return Size_Renamed;
         }

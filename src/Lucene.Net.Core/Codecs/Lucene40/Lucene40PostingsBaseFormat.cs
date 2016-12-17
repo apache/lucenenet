@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @deprecated Only for reading old 4.0 segments
 
     // TODO: should these also be named / looked up via SPI?
-    [Obsolete]
+    [Obsolete("Only for reading old 4.0 segments")]
     public sealed class Lucene40PostingsBaseFormat : PostingsBaseFormat
     {
         /// <summary>

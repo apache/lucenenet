@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <seealso cref= SegmentInfos
     /// @lucene.experimental </seealso>
     /// @deprecated Only for reading old 4.0-4.5 segments, and supporting IndexWriter.addIndexes
-    [Obsolete("Only for reading old 4.0-4.5 segments, and supporting IndexWriter.addIndexes")]
+    [Obsolete("Only for reading old 4.0-4.5 segments, and supporting IndexWriter.AddIndexes()")]
     public class Lucene40SegmentInfoFormat : SegmentInfoFormat
     {
         private readonly SegmentInfoReader Reader = new Lucene40SegmentInfoReader();
@@ -99,10 +99,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// File extension used to store <seealso cref="SegmentInfo"/>. </summary>
-        public const string SI_EXTENSION = "si";
+        public readonly static string SI_EXTENSION = "si";
 
-        internal const string CODEC_NAME = "Lucene40SegmentInfo";
-        internal const int VERSION_START = 0;
-        internal const int VERSION_CURRENT = VERSION_START;
+        internal readonly static string CODEC_NAME = "Lucene40SegmentInfo";
+        internal readonly static int VERSION_START = 0;
+        internal readonly static int VERSION_CURRENT = VERSION_START;
     }
 }

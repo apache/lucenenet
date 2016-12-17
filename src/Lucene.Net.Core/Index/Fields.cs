@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// distinct field names is unknown. If &gt;= 0,
         /// <seealso cref="#iterator"/> will return as many field names.
         /// </summary>
-        public abstract int Size { get; }
+        public abstract int Size { get; } // LUCENENET TODO: Rename Count
 
         /// <summary>
         /// Returns the number of terms for all fields, or -1 if this

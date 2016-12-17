@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
         /// <p>
         /// Names must be all ascii alphanumeric, and less than 128 characters in length.
         /// </summary>
-        public interface NamedSPI
+        public interface NamedSPI // LUCENENET TODO: Rename with "I", move into non-generic class named NamedSPILoader (so we don't need to use the generic closing type)
         {
             string Name { get; }
         }

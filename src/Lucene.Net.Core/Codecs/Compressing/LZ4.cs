@@ -39,9 +39,9 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         internal const int MEMORY_USAGE = 14;
-        public const int MIN_MATCH = 4; // minimum length of a match
+        internal const int MIN_MATCH = 4; // minimum length of a match
         internal static readonly int MAX_DISTANCE = 1 << 16; // maximum distance of a reference
-        public const int LAST_LITERALS = 5; // the last 5 bytes must be encoded as literals
+        internal const int LAST_LITERALS = 5; // the last 5 bytes must be encoded as literals
         internal const int HASH_LOG_HC = 15; // log size of the dictionary for compressHC
         internal static readonly int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
         internal static readonly int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
@@ -323,9 +323,9 @@ namespace Lucene.Net.Codecs.Compressing
             internal const int MAX_ATTEMPTS = 256;
             internal static readonly int MASK = MAX_DISTANCE - 1;
             internal int NextToUpdate;
-            internal int @base;
-            internal readonly int[] HashTable;
-            internal readonly short[] ChainTable;
+            private int @base;
+            private readonly int[] HashTable;
+            private readonly short[] ChainTable;
 
             internal HCHashTable()
             {
@@ -341,19 +341,19 @@ namespace Lucene.Net.Codecs.Compressing
                 CollectionsHelper.Fill(ChainTable, (short)0);
             }
 
-            internal int HashPointer(byte[] bytes, int off)
+            private int HashPointer(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
                 return HashTable[h];
             }
 
-            internal int Next(int off)
+            private int Next(int off)
             {
                 return off - (ChainTable[off & MASK] & 0xFFFF);
             }
 
-            internal void AddHash(byte[] bytes, int off)
+            private void AddHash(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public bool InsertAndFindBestMatch(byte[] buf, int off, int matchLimit, Match match)
+            internal bool InsertAndFindBestMatch(byte[] buf, int off, int matchLimit, Match match)
             {
                 match.Start = off;
                 match.Len = 0;
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return match.Len != 0;
             }
 
-            public bool InsertAndFindWiderMatch(byte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
+            internal bool InsertAndFindWiderMatch(byte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
             {
                 match.Len = minLen;
 

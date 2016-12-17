@@ -329,91 +329,91 @@ namespace Lucene.Net.Codecs
         {
             /// <summary>
             /// How many nodes in the index FST. </summary>
-            public long IndexNodeCount;
+            public long IndexNodeCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// How many arcs in the index FST. </summary>
-            public long IndexArcCount;
+            public long IndexArcCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// Byte size of the index. </summary>
-            public long IndexNumBytes;
+            public long IndexNumBytes; // LUCENENET TODO: make property
 
             /// <summary>
             /// Total number of terms in the field. </summary>
-            public long TotalTermCount;
+            public long TotalTermCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// Total number of bytes (sum of term lengths) across all terms in the field. </summary>
-            public long TotalTermBytes;
+            public long TotalTermBytes; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of normal (non-floor) blocks in the terms file. </summary>
-            public int NonFloorBlockCount;
+            public int NonFloorBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of floor blocks (meta-blocks larger than the
             ///  allowed {@code maxItemsPerBlock}) in the terms file.
             /// </summary>
-            public int FloorBlockCount;
+            public int FloorBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of sub-blocks within the floor blocks. </summary>
-            public int FloorSubBlockCount;
+            public int FloorSubBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of "internal" blocks (that have both
             ///  terms and sub-blocks).
             /// </summary>
-            public int MixedBlockCount;
+            public int MixedBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of "leaf" blocks (blocks that have only
             ///  terms).
             /// </summary>
-            public int TermsOnlyBlockCount;
+            public int TermsOnlyBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// The number of "internal" blocks that do not contain
             ///  terms (have only sub-blocks).
             /// </summary>
-            public int SubBlocksOnlyBlockCount;
+            public int SubBlocksOnlyBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// Total number of blocks. </summary>
-            public int TotalBlockCount;
+            public int TotalBlockCount; // LUCENENET TODO: make property
 
             /// <summary>
             /// Number of blocks at each prefix depth. </summary>
-            public int[] BlockCountByPrefixLen = new int[10];
+            public int[] BlockCountByPrefixLen = new int[10]; // LUCENENET TODO: make property
 
             internal int StartBlockCount;
             internal int EndBlockCount;
 
             /// <summary>
             /// Total number of bytes used to store term suffixes. </summary>
-            public long TotalBlockSuffixBytes;
+            public long TotalBlockSuffixBytes; // LUCENENET TODO: make property
 
             /// <summary>
             /// Total number of bytes used to store term stats (not
             ///  including what the <seealso cref="PostingsBaseFormat"/>
             ///  stores.
             /// </summary>
-            public long TotalBlockStatsBytes;
+            public long TotalBlockStatsBytes; // LUCENENET TODO: make property
 
             /// <summary>
             /// Total bytes stored by the <seealso cref="PostingsBaseFormat"/>,
             ///  plus the other few vInts stored in the frame.
             /// </summary>
-            public long TotalBlockOtherBytes;
+            public long TotalBlockOtherBytes; // LUCENENET TODO: make property
 
             /// <summary>
             /// Segment name. </summary>
-            public readonly string Segment;
+            public readonly string Segment; // LUCENENET TODO: make property
 
             /// <summary>
             /// Field name. </summary>
-            public readonly string Field;
+            public readonly string Field; // LUCENENET TODO: make property
 
             internal Stats(string segment, string field)
             {
@@ -701,20 +701,20 @@ namespace Lucene.Net.Codecs
             {
                 private readonly BlockTreeTermsReader.FieldReader OuterInstance;
 
-                internal readonly IndexInput @in;
+                private readonly IndexInput @in;
 
                 private Frame[] Stack;
 
-                internal FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[5];
+                private FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[5];
 
-                internal readonly RunAutomaton runAutomaton;
-                internal readonly CompiledAutomaton CompiledAutomaton;
+                private readonly RunAutomaton runAutomaton;
+                private readonly CompiledAutomaton CompiledAutomaton;
 
                 private Frame CurrentFrame;
 
-                internal readonly BytesRef Term_Renamed = new BytesRef();
+                private readonly BytesRef Term_Renamed = new BytesRef();
 
-                internal readonly FST.BytesReader FstReader;
+                private readonly FST.BytesReader FstReader;
 
                 // TODO: can we share this with the frame in STE?
                 private sealed class Frame
@@ -815,7 +815,7 @@ namespace Lucene.Net.Codecs
                         Load(null);
                     }
 
-                    public int State
+                    public int State // LUCENENET TODO: Change to SetState()
                     {
                         set
                         {
@@ -831,7 +831,7 @@ namespace Lucene.Net.Codecs
                                 CurTransitionMax = -1;
                             }
                         }
-                        get
+                        get // LUCENENET TODO: Change to GetState()
                         {
                             int state = OuterInstance.CurrentFrame.state;
                             for (int idx = 0; idx < OuterInstance.CurrentFrame.Suffix; idx++)
@@ -1123,7 +1123,7 @@ namespace Lucene.Net.Codecs
                     return Stack[ord];
                 }
 
-                internal FST.Arc<BytesRef> GetArc(int ord)
+                private FST.Arc<BytesRef> GetArc(int ord)
                 {
                     if (ord >= Arcs.Length)
                     {
@@ -1211,11 +1211,13 @@ namespace Lucene.Net.Codecs
                     return OuterInstance.OuterInstance.PostingsReader.DocsAndPositions(OuterInstance.fieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
                 }
 
+                // LUCENENET TODO: Move GetState() here
+
                 // NOTE: specialized to only doing the first-time
                 // seek, but we could generalize it to allow
                 // arbitrary seekExact/Ceil.  Note that this is a
                 // seekFloor!
-                internal void SeekToStartTerm(BytesRef target)
+                private void SeekToStartTerm(BytesRef target)
                 {
                     //if (DEBUG) System.out.println("seek to startTerm=" + target.utf8ToString());
                     Debug.Assert(CurrentFrame.Ord == 0);
@@ -1525,27 +1527,27 @@ namespace Lucene.Net.Codecs
             {
                 private readonly BlockTreeTermsReader.FieldReader OuterInstance;
 
-                internal IndexInput @in;
+                private IndexInput @in;
 
-                internal Frame[] Stack;
-                internal readonly Frame StaticFrame;
-                internal Frame CurrentFrame;
-                internal bool TermExists;
+                private Frame[] Stack;
+                private readonly Frame StaticFrame;
+                private Frame CurrentFrame;
+                private bool TermExists;
 
-                internal int TargetBeforeCurrentLength;
+                private int TargetBeforeCurrentLength;
 
-                internal readonly ByteArrayDataInput ScratchReader = new ByteArrayDataInput();
+                private readonly ByteArrayDataInput ScratchReader = new ByteArrayDataInput();
 
                 // What prefix of the current term was present in the index:
-                internal int ValidIndexPrefix;
+                private int ValidIndexPrefix;
 
                 // assert only:
-                internal bool Eof;
+                private bool Eof;
 
                 internal readonly BytesRef Term_Renamed = new BytesRef();
-                internal readonly FST.BytesReader FstReader;
+                private readonly FST.BytesReader FstReader;
 
-                internal FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[1];
+                private FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[1];
 
                 public SegmentTermsEnum(BlockTreeTermsReader.FieldReader outerInstance)
                 {
@@ -1716,7 +1718,7 @@ namespace Lucene.Net.Codecs
                     return stats;
                 }
 
-                internal Frame GetFrame(int ord)
+                private Frame GetFrame(int ord)
                 {
                     if (ord >= Stack.Length)
                     {
@@ -1732,7 +1734,7 @@ namespace Lucene.Net.Codecs
                     return Stack[ord];
                 }
 
-                internal FST.Arc<BytesRef> GetArc(int ord)
+                private FST.Arc<BytesRef> GetArc(int ord)
                 {
                     if (ord >= Arcs.Length)
                     {
@@ -1814,14 +1816,14 @@ namespace Lucene.Net.Codecs
                 }
 
                 // asserts only
-                internal bool ClearEOF()
+                private bool ClearEOF()
                 {
                     Eof = false;
                     return true;
                 }
 
                 // asserts only
-                internal bool SetEOF()
+                private bool SetEOF()
                 {
                     Eof = true;
                     return true;
@@ -2397,7 +2399,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 /*LUCENE TO-DO Not in use
-                internal void PrintSeekState(PrintStream @out)
+                private void PrintSeekState(PrintStream @out)
                 {
                   if (CurrentFrame == StaticFrame)
                   {
@@ -3095,7 +3097,7 @@ namespace Lucene.Net.Codecs
                     }
 
                     // Used only by assert
-                    internal bool PrefixMatches(BytesRef target)
+                    private bool PrefixMatches(BytesRef target)
                     {
                         for (int bytePos = 0; bytePos < Prefix; bytePos++)
                         {
@@ -3155,9 +3157,9 @@ namespace Lucene.Net.Codecs
                         return IsLeafBlock ? ScanToTermLeaf(target, exactOnly) : ScanToTermNonLeaf(target, exactOnly);
                     }
 
-                    internal int StartBytePos;
-                    internal int Suffix;
-                    internal long SubCode;
+                    private int StartBytePos;
+                    private int Suffix;
+                    private long SubCode;
 
                     // Target's prefix matches this block's prefix; we
                     // scan the entries check if the suffix matches.
@@ -3461,7 +3463,7 @@ namespace Lucene.Net.Codecs
                         return SeekStatus.END;
                     }
 
-                    internal void FillTerm()
+                    private void FillTerm()
                     {
                         int termLength = Prefix + Suffix;
                         OuterInstance.Term_Renamed.Length = Prefix + Suffix;

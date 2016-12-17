@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.Lucene40
     // TODO: this class could be created by wrapping
     // BlockTreeTermsDict around Lucene40PostingsBaseFormat; ie
     // we should not duplicate the code from that class here:
-    [Obsolete]
+    [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40PostingsFormat : PostingsFormat
     {
         /// <summary>
@@ -270,11 +270,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Extension of freq postings file </summary>
-        public const string FREQ_EXTENSION = "frq";
+        internal static readonly string FREQ_EXTENSION = "frq";
 
         /// <summary>
         /// Extension of prox postings file </summary>
-        public const string PROX_EXTENSION = "prx";
+        internal static readonly string PROX_EXTENSION = "prx";
 
         public override string ToString()
         {

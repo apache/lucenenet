@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     // pkg-private: if this thing is generally useful then it can go back in .util,
     // but the serialization must be here underneath the codec.
-    public sealed class BitVector : MutableBits
+    internal sealed class BitVector : MutableBits
     {
         private byte[] Bits;
         private int Size_Renamed;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Returns the number of bits in this vector.  this is also one greater than
         ///  the number of the largest valid bit number.
         /// </summary>
-        public int Size()
+        public int Size() // LUCENENET TODO: Rename Count ?? See count() below. Or perhaps just use Length, since it returns the same result
         {
             return Size_Renamed;
         }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene40
         ///  computed and cached, so that, if the vector is not changed, no
         ///  recomputation is done for repeated calls.
         /// </summary>
-        public int Count()
+        public int Count() // LUCENENET TODO: Property?
         {
             // if the vector has been modified
             if (Count_Renamed == -1)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// For testing </summary>
-        public int RecomputedCount
+        public int RecomputedCount // LUCENENET TODO: Method
         {
             get
             {
@@ -231,20 +231,20 @@ namespace Lucene.Net.Codecs.Lucene40
         private static string CODEC = "BitVector";
 
         // Version before version tracking was added:
-        public const int VERSION_PRE = -1;
+        public readonly static int VERSION_PRE = -1;
 
         // First version:
-        public const int VERSION_START = 0;
+        public readonly static int VERSION_START = 0;
 
         // Changed DGaps to encode gaps between cleared bits, not
         // set:
-        public const int VERSION_DGAPS_CLEARED = 1;
+        public readonly static int VERSION_DGAPS_CLEARED = 1;
 
         // added checksum
-        public const int VERSION_CHECKSUM = 2;
+        public readonly static int VERSION_CHECKSUM = 2;
 
         // Increment version to change it:
-        public const int VERSION_CURRENT = VERSION_CHECKSUM;
+        public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
         public int Version
         {
@@ -360,7 +360,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Indicates if the bit vector is sparse and should be saved as a d-gaps list, or dense, and should be saved as a bit set. </summary>
-        private bool Sparse
+        private bool Sparse // LUCENENET TODO: Rename IsSparse
         {
             get
             {

@@ -62,6 +62,10 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public MergeState MergeState
         {
+            get
+            {
+                return this.MergeState_Renamed; // LUCENENET specific - per MSDN properties should always have a getter
+            }
             set
             {
                 this.MergeState_Renamed = value;
@@ -81,7 +85,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
-        public MultiDocsEnum.EnumWithSlice[] Subs
+        public MultiDocsEnum.EnumWithSlice[] Subs // LUCENENET TODO: Change to GetSubs()
         {
             get
             {

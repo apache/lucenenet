@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Constant to identify the start of a codec header.
         /// </summary>
-        public const int CODEC_MAGIC = 0x3fd76c17;
+        public static readonly int CODEC_MAGIC = 0x3fd76c17;
 
         /// <summary>
         /// Constant to identify the start of a codec footer.
@@ -248,6 +248,7 @@ namespace Lucene.Net.Codecs
         /// Checks that the stream is positioned at the end, and throws exception
         /// if it is not. </summary>
         /// @deprecated Use <seealso cref="#checkFooter"/> instead, this should only used for files without checksums
+        [Obsolete("Use CheckFooter() instead")]
         public static void CheckEOF(IndexInput @in)
         {
             if (@in.FilePointer != @in.Length())

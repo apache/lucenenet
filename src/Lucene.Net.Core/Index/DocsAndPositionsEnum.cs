@@ -58,13 +58,13 @@ namespace Lucene.Net.Index
         /// Returns start offset for the current position, or -1
         ///  if offsets were not indexed.
         /// </summary>
-        public abstract int StartOffset();
+        public abstract int StartOffset(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns end offset for the current position, or -1 if
         ///  offsets were not indexed.
         /// </summary>
-        public abstract int EndOffset();
+        public abstract int EndOffset(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns the payload at this position, or null if no

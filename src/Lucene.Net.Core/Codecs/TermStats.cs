@@ -30,13 +30,13 @@ namespace Lucene.Net.Codecs
         /// How many documents have at least one occurrence of
         ///  this term.
         /// </summary>
-        public readonly int DocFreq;
+        public readonly int DocFreq; // LUCENENET TODO: make property
 
         /// <summary>
         /// Total number of times this term occurs across all
         ///  documents in the field.
         /// </summary>
-        public readonly long TotalTermFreq;
+        public readonly long TotalTermFreq; // LUCENENET TODO: make property
 
         /// <summary>
         /// Sole constructor. </summary>

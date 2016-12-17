@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental </summary>
     /// @deprecated (4.0)
     [Obsolete("(4.0)")]
-    public class Lucene3xFields : FieldsProducer
+    internal class Lucene3xFields : FieldsProducer
     {
         private const bool DEBUG_SURROGATES = false;
 
@@ -292,13 +292,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.OuterInstance = outerInstance;
             }
 
-            internal SegmentTermEnum TermEnum;
-            internal FieldInfo fieldInfo;
-            internal string InternedFieldName;
-            internal bool SkipNext;
-            internal BytesRef Current;
+            private SegmentTermEnum TermEnum;
+            private FieldInfo fieldInfo;
+            private string InternedFieldName;
+            private bool SkipNext;
+            private BytesRef Current;
 
-            internal SegmentTermEnum SeekTermEnum;
+            private SegmentTermEnum SeekTermEnum;
 
             private static readonly sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte) 0xf0);
             private static readonly sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte) 0xee);
@@ -324,7 +324,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             private int NewSuffixStart;
 
             // Swap in S, in place of E:
-            internal virtual bool SeekToNonBMP(SegmentTermEnum te, BytesRef term, int pos)
+            private bool SeekToNonBMP(SegmentTermEnum te, BytesRef term, int pos)
             {
                 int savLength = term.Length;
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // prior term, backwards. If there was an E in that
             // part, then we try to seek back to S.  If that
             // seek finds a matching term, we go there.
-            internal virtual bool DoContinue()
+            private bool DoContinue()
             {
                 if (DEBUG_SURROGATES)
                 {
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // we must now seek to beyond that E.  this seek
             // "finishes" the dance at this character
             // position.
-            internal virtual bool DoPop()
+            private bool DoPop()
             {
                 if (DEBUG_SURROGATES)
                 {
@@ -551,7 +551,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // method carefully seeks around surrogates to handle
             // this impedance mismatch
 
-            internal virtual void SurrogateDance()
+            private void SurrogateDance()
             {
                 if (!UnicodeSortOrder)
                 {
@@ -661,7 +661,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // else we keep looking for additional S's in the new
             // suffix.  this "starts" the dance, at this character
             // position:
-            internal virtual void DoPushes()
+            private void DoPushes()
             {
                 int upTo = NewSuffixStart;
                 if (DEBUG_SURROGATES)
@@ -780,7 +780,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            internal bool UnicodeSortOrder;
+            private bool UnicodeSortOrder;
 
             internal virtual void Reset(FieldInfo fieldInfo)
             {
@@ -953,7 +953,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            internal virtual void SetNewSuffixStart(BytesRef br1, BytesRef br2)
+            private void SetNewSuffixStart(BytesRef br1, BytesRef br2)
             {
                 int limit = Math.Min(br1.Length, br2.Length);
                 int lastStart = 0;
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             private readonly Lucene3xFields OuterInstance;
 
             internal readonly SegmentTermDocs Docs;
-            internal int DocID_Renamed = -1;
+            private int DocID_Renamed = -1;
 
             internal PreDocsEnum(Lucene3xFields outerInstance)
             {
@@ -1189,8 +1189,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             private readonly Lucene3xFields OuterInstance;
 
-            internal readonly SegmentTermPositions Pos;
-            internal int DocID_Renamed = -1;
+            private readonly SegmentTermPositions Pos;
+            private int DocID_Renamed = -1;
 
             internal PreDocsAndPositionsEnum(Lucene3xFields outerInstance)
             {

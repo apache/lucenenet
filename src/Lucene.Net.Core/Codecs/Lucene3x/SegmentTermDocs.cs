@@ -73,6 +73,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public virtual Bits LiveDocs
         {
+            get
+            {
+                return this.LiveDocs_Renamed; // LUCENENET specific - per MSDN, a property must always have a getter
+            }
             set
             {
                 this.LiveDocs_Renamed = value;
@@ -121,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public virtual void Close()
+        public virtual void Close() // LUCENENET TODO: Make into Dispose() (maybe protected override)
         {
             FreqStream.Dispose();
             if (SkipListReader != null)
@@ -130,12 +134,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public int Doc()
+        public int Doc() // LUCENENET TODO: make property
         {
             return Doc_Renamed;
         }
 
-        public int Freq()
+        public int Freq() // LUCENENET TODO: make property
         {
             return Freq_Renamed;
         }

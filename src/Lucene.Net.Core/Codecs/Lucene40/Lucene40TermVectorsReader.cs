@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         ///
         /// <returns> The number of documents in the reader </returns>
-        internal virtual int Size()
+        internal virtual int Size() // LUCENENET TODO: Rename Count prop
         {
             return Size_Renamed;
         }
@@ -246,9 +246,9 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly Lucene40TermVectorsReader OuterInstance;
 
-            internal readonly int[] FieldNumbers;
-            internal readonly long[] FieldFPs;
-            internal readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
+            private readonly int[] FieldNumbers;
+            private readonly long[] FieldFPs;
+            private readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
 
             public TVFields(Lucene40TermVectorsReader outerInstance, int docID)
             {
@@ -340,11 +340,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly Lucene40TermVectorsReader OuterInstance;
 
-            internal readonly int NumTerms;
-            internal readonly long TvfFPStart;
-            internal readonly bool StorePositions;
-            internal readonly bool StoreOffsets;
-            internal readonly bool StorePayloads;
+            private readonly int NumTerms;
+            private readonly long TvfFPStart;
+            private readonly bool StorePositions;
+            private readonly bool StoreOffsets;
+            private readonly bool StorePayloads;
 
             public TVTerms(Lucene40TermVectorsReader outerInstance, long tvfFP)
             {
@@ -454,15 +454,15 @@ namespace Lucene.Net.Codecs.Lucene40
             private bool StorePayloads;
             private long TvfFP;
 
-            internal int[] Positions;
-            internal int[] StartOffsets;
-            internal int[] EndOffsets;
+            private int[] Positions;
+            private int[] StartOffsets;
+            private int[] EndOffsets;
 
             // one shared byte[] for any term's payloads
-            internal int[] PayloadOffsets;
+            private int[] PayloadOffsets;
 
-            internal int LastPayloadLength;
-            internal byte[] PayloadData;
+            private int LastPayloadLength;
+            private byte[] PayloadData;
 
             // NOTE: tvf is pre-positioned by caller
             public TVTermsEnum(Lucene40TermVectorsReader outerInstance)
@@ -668,10 +668,10 @@ namespace Lucene.Net.Codecs.Lucene40
         // freq() already by TermsEnum.totalTermFreq
         private class TVDocsEnum : DocsEnum
         {
-            internal bool DidNext;
-            internal int Doc = -1;
-            internal int Freq_Renamed;
-            internal Bits LiveDocs;
+            private bool DidNext;
+            private int Doc = -1;
+            private int Freq_Renamed;
+            private Bits LiveDocs;
 
             public override int Freq()
             {

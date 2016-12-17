@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
-    public sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, IDisposable
+    internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, IDisposable
     {
         private const int FORMAT_SIZE = 4;
 
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             IndexStream.Seek(FORMAT_SIZE + (docID + DocStoreOffset) * 8L);
         }
 
-        public override void VisitDocument(int n, StoredFieldVisitor visitor)
+        public override sealed void VisitDocument(int n, StoredFieldVisitor visitor)
         {
             SeekIndex(n);
             FieldsStream.Seek(IndexStream.ReadLong());

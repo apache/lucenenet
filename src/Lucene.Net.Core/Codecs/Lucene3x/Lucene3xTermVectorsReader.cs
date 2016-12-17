@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
-    public class Lucene3xTermVectorsReader : TermVectorsReader
+    internal class Lucene3xTermVectorsReader : TermVectorsReader
     {
         // NOTE: if you make a new format, it must be larger than
         // the current format
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         ///
         /// <returns> The number of documents in the reader </returns>
-        internal virtual int Size()
+        internal virtual int Size() // LUCENENET TODO: Rename to Count
         {
             return Size_Renamed;
         }
@@ -222,9 +222,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             private readonly Lucene3xTermVectorsReader OuterInstance;
 
-            internal readonly int[] FieldNumbers;
-            internal readonly long[] FieldFPs;
-            internal readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
+            private readonly int[] FieldNumbers;
+            private readonly long[] FieldFPs;
+            private readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
 
             public TVFields(Lucene3xTermVectorsReader outerInstance, int docID)
             {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
 
-                object System.Collections.IEnumerator.Current
+                object IEnumerator.Current
                 {
                     get
                     {
@@ -356,11 +356,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             private readonly Lucene3xTermVectorsReader OuterInstance;
 
-            internal readonly int NumTerms;
-            internal readonly long TvfFPStart;
-            internal readonly bool StorePositions;
-            internal readonly bool StoreOffsets;
-            internal readonly bool UnicodeSortOrder;
+            private readonly int NumTerms;
+            private readonly long TvfFPStart;
+            private readonly bool StorePositions;
+            private readonly bool StoreOffsets;
+            private readonly bool UnicodeSortOrder;
 
             public TVTerms(Lucene3xTermVectorsReader outerInstance, long tvfFP)
             {
@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            internal virtual void ReadVectors()
+            private void ReadVectors()
             {
                 TermAndPostings = new TermAndPostings[NumTerms];
                 BytesRef lastTerm = new BytesRef();
@@ -745,13 +745,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class TVDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            internal bool DidNext;
-            internal int Doc = -1;
-            internal int NextPos;
-            internal Bits LiveDocs;
-            internal int[] Positions;
-            internal int[] StartOffsets;
-            internal int[] EndOffsets;
+            private bool DidNext;
+            private int Doc = -1;
+            private int NextPos;
+            private Bits LiveDocs;
+            private int[] Positions;
+            private int[] StartOffsets;
+            private int[] EndOffsets;
 
             public override int Freq()
             {

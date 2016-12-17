@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs
         /// Return the BytesRef Comparator used to sort terms
         ///  before feeding to this API.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; }
+        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer
 
         private MappingMultiDocsEnum DocsEnum;
         private MappingMultiDocsEnum DocsAndFreqsEnum;

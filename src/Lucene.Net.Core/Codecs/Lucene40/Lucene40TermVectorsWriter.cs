@@ -325,7 +325,10 @@ namespace Lucene.Net.Codecs.Lucene40
             catch (Exception ignored)
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(Directory, 
+                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 
+                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), 
+                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
         }
 
         /// <summary>

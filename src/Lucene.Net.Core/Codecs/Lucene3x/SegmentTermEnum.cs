@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
 
     [Obsolete]
-    public sealed class SegmentTermEnum : IDisposable
+    internal sealed class SegmentTermEnum : IDisposable
     {
         private IndexInput Input;
         internal FieldInfos FieldInfos;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the docFreq from the current TermInfo in the enumeration.
         /// Initially invalid, valid after next() called for the first time.
         /// </summary>
-        public int DocFreq()
+        public int DocFreq() // LUCENENET TODO: Make property
         {
             return TermInfo_Renamed.DocFreq;
         }
@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /* Returns the freqPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
 
-        internal long FreqPointer()
+        internal long FreqPointer() // LUCENENET TODO: Make property
         {
             return TermInfo_Renamed.FreqPointer;
         }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /* Returns the proxPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
 
-        internal long ProxPointer()
+        internal long ProxPointer() // LUCENENET TODO: Make property
         {
             return TermInfo_Renamed.ProxPointer;
         }

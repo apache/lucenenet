@@ -32,20 +32,20 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// how many docs have this term </summary>
-        public int DocFreq;
+        public int DocFreq; // LUCENENET TODO: make property
 
         /// <summary>
         /// total number of occurrences of this term </summary>
-        public long TotalTermFreq;
+        public long TotalTermFreq; // LUCENENET TODO: make property
 
         /// <summary>
         /// the term's ord in the current block </summary>
-        public int TermBlockOrd;
+        public int TermBlockOrd; // LUCENENET TODO: make property
 
         /// <summary>
         /// fp into the terms dict primary file (_X.tim) that holds this term </summary>
         // TODO: update BTR to nuke this
-        public long BlockFilePointer;
+        public long BlockFilePointer; // LUCENENET TODO: make property
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass

@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
         ///  many times; it's best to cache a single instance &
         ///  reuse it.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; }
+        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename to Comparer
 
         /// <summary>
         /// Returns the number of terms for this field, or -1 if this
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
         ///  other term measures, this measure does not take deleted
         ///  documents into account.
         /// </summary>
-        public abstract long Size();
+        public abstract long Size(); // LUCENENET TODO: Rename to Count property
 
         /// <summary>
         /// Returns the sum of <seealso cref="TermsEnum#totalTermFreq"/> for
@@ -150,19 +150,19 @@ namespace Lucene.Net.Index
         /// Returns true if documents in this field store
         ///  per-document term frequency (<seealso cref="DocsEnum#freq"/>).
         /// </summary>
-        public abstract bool HasFreqs();
+        public abstract bool HasFreqs(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns true if documents in this field store offsets. </summary>
-        public abstract bool HasOffsets();
+        public abstract bool HasOffsets(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns true if documents in this field store positions. </summary>
-        public abstract bool HasPositions();
+        public abstract bool HasPositions(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns true if documents in this field store payloads. </summary>
-        public abstract bool HasPayloads();
+        public abstract bool HasPayloads(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Zero-length array of <seealso cref="Terms"/>. </summary>

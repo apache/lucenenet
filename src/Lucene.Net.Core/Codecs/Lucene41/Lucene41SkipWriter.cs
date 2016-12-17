@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene41
             BufferSkip(numDocs);
         }
 
-        protected internal override void WriteSkipData(int level, IndexOutput skipBuffer)
+        protected override void WriteSkipData(int level, IndexOutput skipBuffer)
         {
             int delta = CurDoc - LastSkipDoc[level];
             // if (DEBUG) {

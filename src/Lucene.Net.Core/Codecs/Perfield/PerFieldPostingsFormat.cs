@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Perfield
     {
         /// <summary>
         /// Name of this <seealso cref="PostingsFormat"/>. </summary>
-        public const string PER_FIELD_NAME = "PerField40";
+        public static readonly string PER_FIELD_NAME = "PerField40";
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the

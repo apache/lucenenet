@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs
             public readonly bool HasTerms;
             public readonly bool IsFloor;
             public readonly int FloorLeadByte;
-            internal readonly IntsRef ScratchIntsRef = new IntsRef();
+            private readonly IntsRef ScratchIntsRef = new IntsRef();
 
             public PendingBlock(BytesRef prefix, long fp, bool hasTerms, bool isFloor, int floorLeadByte, IList<FST<BytesRef>> subIndices)
                 : base(false)
@@ -498,7 +498,7 @@ namespace Lucene.Net.Codecs
             // TODO: maybe we could add bulk-add method to
             // Builder?  Takes FST and unions it w/ current
             // FST.
-            internal void Append(Builder<BytesRef> builder, FST<BytesRef> subIndex)
+            private void Append(Builder<BytesRef> builder, FST<BytesRef> subIndex)
             {
                 BytesRefFSTEnum<BytesRef> subIndexEnum = new BytesRefFSTEnum<BytesRef>(subIndex);
                 BytesRefFSTEnum.InputOutput<BytesRef> indexEnt;
@@ -518,9 +518,9 @@ namespace Lucene.Net.Codecs
         {
             private readonly BlockTreeTermsWriter OuterInstance;
 
-            internal readonly FieldInfo fieldInfo;
-            internal readonly int LongsSize;
-            internal long NumTerms;
+            private readonly FieldInfo fieldInfo;
+            private readonly int LongsSize;
+            private long NumTerms;
             internal long SumTotalTermFreq;
             internal long SumDocFreq;
             internal int DocCount;
@@ -528,23 +528,22 @@ namespace Lucene.Net.Codecs
 
             // Used only to partition terms into the block tree; we
             // don't pull an FST from this builder:
-            internal readonly NoOutputs NoOutputs;
+            private readonly NoOutputs NoOutputs;
 
-            internal readonly Builder<object> BlockBuilder;
+            private readonly Builder<object> BlockBuilder;
 
             // PendingTerm or PendingBlock:
             private readonly IList<PendingEntry> Pending = new List<PendingEntry>();
 
             // Index into pending of most recently written block
-            internal int LastBlockIndex = -1;
+            private int LastBlockIndex = -1;
 
             // Re-used when segmenting a too-large block into floor
             // blocks:
-            internal int[] SubBytes = new int[10];
-
-            internal int[] SubTermCounts = new int[10];
-            internal int[] SubTermCountSums = new int[10];
-            internal int[] SubSubCounts = new int[10];
+            private int[] SubBytes = new int[10];
+            private int[] SubTermCounts = new int[10];
+            private int[] SubTermCountSums = new int[10];
+            private int[] SubSubCounts = new int[10];
 
             // this class assigns terms to blocks "naturally", ie,
             // according to the number of terms under a given prefix
@@ -853,7 +852,7 @@ namespace Lucene.Net.Codecs
             }
 
             // for debugging
-            internal virtual string ToString(BytesRef b)
+            private string ToString(BytesRef b)
             {
                 try
                 {
@@ -1127,7 +1126,7 @@ namespace Lucene.Net.Codecs
                 return OuterInstance.PostingsWriter;
             }
 
-            internal readonly IntsRef ScratchIntsRef = new IntsRef();
+            private readonly IntsRef ScratchIntsRef = new IntsRef();
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {

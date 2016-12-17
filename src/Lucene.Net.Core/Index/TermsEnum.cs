@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
         /// Returns current term. Do not call this when the enum
         ///  is unpositioned.
         /// </summary>
-        public abstract BytesRef Term();
+        public abstract BytesRef Term(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns ordinal position for current term.  this is an
@@ -158,14 +158,14 @@ namespace Lucene.Net.Index
         ///  UnsupportedOperationException}).  Do not call this
         ///  when the enum is unpositioned.
         /// </summary>
-        public abstract long Ord();
+        public abstract long Ord(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns the number of documents containing the current
         ///  term.  Do not call this when the enum is unpositioned.
         ///  <seealso cref="SeekStatus#END"/>.
         /// </summary>
-        public abstract int DocFreq();
+        public abstract int DocFreq(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Returns the total number of occurrences of this term
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
         ///  other term measures, this measure does not take
         ///  deleted documents into account.
         /// </summary>
-        public abstract long TotalTermFreq();
+        public abstract long TotalTermFreq(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Get <seealso cref="DocsEnum"/> for the current term.  Do not

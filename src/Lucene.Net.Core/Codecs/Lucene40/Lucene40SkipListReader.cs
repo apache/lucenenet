@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        protected internal override void SeekChild(int level)
+        protected override void SeekChild(int level)
         {
             base.SeekChild(level);
             FreqPointer_Renamed[level] = LastFreqPointer;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene40
             OffsetLength_Renamed[level] = LastOffsetLength;
         }
 
-        protected internal override int LastSkipData
+        protected override int LastSkipData
         {
             set
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        protected internal override int ReadSkipData(int level, IndexInput skipStream)
+        protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             int delta;
             if (CurrentFieldStoresPayloads || CurrentFieldStoresOffsets)

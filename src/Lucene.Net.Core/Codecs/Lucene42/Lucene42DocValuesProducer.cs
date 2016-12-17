@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <summary>
     /// Reader for <seealso cref="Lucene42DocValuesFormat"/>
     /// </summary>
-    public class Lucene42DocValuesProducer : DocValuesProducer
+    internal class Lucene42DocValuesProducer : DocValuesProducer
     {
         // metadata maps (just file pointers and minimal stuff)
         private readonly IDictionary<int, NumericEntry> Numerics;
@@ -74,19 +74,19 @@ namespace Lucene.Net.Codecs.Lucene42
         private readonly int MaxDoc;
         private readonly AtomicLong RamBytesUsed_Renamed;
 
-        public const sbyte NUMBER = 0;
-        public const sbyte BYTES = 1;
-        public const sbyte FST = 2;
+        internal const sbyte NUMBER = 0;
+        internal const sbyte BYTES = 1;
+        internal const sbyte FST = 2;
 
-        public const int BLOCK_SIZE = 4096;
+        internal const int BLOCK_SIZE = 4096;
 
-        public const sbyte DELTA_COMPRESSED = 0;
-        public const sbyte TABLE_COMPRESSED = 1;
-        public const sbyte UNCOMPRESSED = 2;
-        public const sbyte GCD_COMPRESSED = 3;
+        internal const sbyte DELTA_COMPRESSED = 0;
+        internal const sbyte TABLE_COMPRESSED = 1;
+        internal const sbyte UNCOMPRESSED = 2;
+        internal const sbyte GCD_COMPRESSED = 3;
 
         internal const int VERSION_START = 0;
-        public const int VERSION_GCD_COMPRESSION = 1;
+        internal const int VERSION_GCD_COMPRESSION = 1;
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 

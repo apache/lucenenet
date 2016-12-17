@@ -146,7 +146,6 @@ namespace Lucene.Net.Codecs.Lucene42
                 else
                 {
                     Meta.WriteByte((byte)TABLE_COMPRESSED); // table-compressed
-                    //LUCENE TO-DO, ToArray had a parameter to start
                     var decode = uniqueValues.ToArray();
                     var encode = new Dictionary<long, int>();
                     Data.WriteVInt(decode.Length);
@@ -235,17 +234,17 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
     }
 }

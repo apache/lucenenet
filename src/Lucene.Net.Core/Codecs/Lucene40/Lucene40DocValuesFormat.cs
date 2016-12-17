@@ -145,18 +145,18 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         // constants for VAR_INTS
-        public const string VAR_INTS_CODEC_NAME = "PackedInts";
+        internal const string VAR_INTS_CODEC_NAME = "PackedInts";
 
         internal const int VAR_INTS_VERSION_START = 0;
-        public const int VAR_INTS_VERSION_CURRENT = VAR_INTS_VERSION_START;
-        public const sbyte VAR_INTS_PACKED = 0x00;
-        public const sbyte VAR_INTS_FIXED_64 = 0x01;
+        internal const int VAR_INTS_VERSION_CURRENT = VAR_INTS_VERSION_START;
+        internal const sbyte VAR_INTS_PACKED = 0x00;
+        internal const sbyte VAR_INTS_FIXED_64 = 0x01;
 
         // constants for FIXED_INTS_8, FIXED_INTS_16, FIXED_INTS_32, FIXED_INTS_64
-        public const string INTS_CODEC_NAME = "Ints";
+        internal const string INTS_CODEC_NAME = "Ints";
 
         internal const int INTS_VERSION_START = 0;
-        public const int INTS_VERSION_CURRENT = INTS_VERSION_START;
+        internal const int INTS_VERSION_CURRENT = INTS_VERSION_START;
 
         // constants for FLOAT_32, FLOAT_64
         internal const string FLOATS_CODEC_NAME = "Floats";
@@ -165,45 +165,45 @@ namespace Lucene.Net.Codecs.Lucene40
         internal const int FLOATS_VERSION_CURRENT = FLOATS_VERSION_START;
 
         // constants for BYTES_FIXED_STRAIGHT
-        public const string BYTES_FIXED_STRAIGHT_CODEC_NAME = "FixedStraightBytes";
+        internal const string BYTES_FIXED_STRAIGHT_CODEC_NAME = "FixedStraightBytes";
 
         internal const int BYTES_FIXED_STRAIGHT_VERSION_START = 0;
-        public const int BYTES_FIXED_STRAIGHT_VERSION_CURRENT = BYTES_FIXED_STRAIGHT_VERSION_START;
+        internal const int BYTES_FIXED_STRAIGHT_VERSION_CURRENT = BYTES_FIXED_STRAIGHT_VERSION_START;
 
         // constants for BYTES_VAR_STRAIGHT
-        public const string BYTES_VAR_STRAIGHT_CODEC_NAME_IDX = "VarStraightBytesIdx";
+        internal const string BYTES_VAR_STRAIGHT_CODEC_NAME_IDX = "VarStraightBytesIdx";
 
-        public const string BYTES_VAR_STRAIGHT_CODEC_NAME_DAT = "VarStraightBytesDat";
+        internal const string BYTES_VAR_STRAIGHT_CODEC_NAME_DAT = "VarStraightBytesDat";
         internal const int BYTES_VAR_STRAIGHT_VERSION_START = 0;
-        public const int BYTES_VAR_STRAIGHT_VERSION_CURRENT = BYTES_VAR_STRAIGHT_VERSION_START;
+        internal const int BYTES_VAR_STRAIGHT_VERSION_CURRENT = BYTES_VAR_STRAIGHT_VERSION_START;
 
         // constants for BYTES_FIXED_DEREF
-        public const string BYTES_FIXED_DEREF_CODEC_NAME_IDX = "FixedDerefBytesIdx";
+        internal const string BYTES_FIXED_DEREF_CODEC_NAME_IDX = "FixedDerefBytesIdx";
 
-        public const string BYTES_FIXED_DEREF_CODEC_NAME_DAT = "FixedDerefBytesDat";
+        internal const string BYTES_FIXED_DEREF_CODEC_NAME_DAT = "FixedDerefBytesDat";
         internal const int BYTES_FIXED_DEREF_VERSION_START = 0;
-        public const int BYTES_FIXED_DEREF_VERSION_CURRENT = BYTES_FIXED_DEREF_VERSION_START;
+        internal const int BYTES_FIXED_DEREF_VERSION_CURRENT = BYTES_FIXED_DEREF_VERSION_START;
 
         // constants for BYTES_VAR_DEREF
-        public const string BYTES_VAR_DEREF_CODEC_NAME_IDX = "VarDerefBytesIdx";
+        internal const string BYTES_VAR_DEREF_CODEC_NAME_IDX = "VarDerefBytesIdx";
 
-        public const string BYTES_VAR_DEREF_CODEC_NAME_DAT = "VarDerefBytesDat";
+        internal const string BYTES_VAR_DEREF_CODEC_NAME_DAT = "VarDerefBytesDat";
         internal const int BYTES_VAR_DEREF_VERSION_START = 0;
-        public const int BYTES_VAR_DEREF_VERSION_CURRENT = BYTES_VAR_DEREF_VERSION_START;
+        internal const int BYTES_VAR_DEREF_VERSION_CURRENT = BYTES_VAR_DEREF_VERSION_START;
 
         // constants for BYTES_FIXED_SORTED
-        public const string BYTES_FIXED_SORTED_CODEC_NAME_IDX = "FixedSortedBytesIdx";
+        internal const string BYTES_FIXED_SORTED_CODEC_NAME_IDX = "FixedSortedBytesIdx";
 
-        public const string BYTES_FIXED_SORTED_CODEC_NAME_DAT = "FixedSortedBytesDat";
+        internal const string BYTES_FIXED_SORTED_CODEC_NAME_DAT = "FixedSortedBytesDat";
         internal const int BYTES_FIXED_SORTED_VERSION_START = 0;
-        public const int BYTES_FIXED_SORTED_VERSION_CURRENT = BYTES_FIXED_SORTED_VERSION_START;
+        internal const int BYTES_FIXED_SORTED_VERSION_CURRENT = BYTES_FIXED_SORTED_VERSION_START;
 
         // constants for BYTES_VAR_SORTED
         // NOTE this IS NOT A BUG! 4.0 actually screwed this up (VAR_SORTED and VAR_DEREF have same codec header)
-        public const string BYTES_VAR_SORTED_CODEC_NAME_IDX = "VarDerefBytesIdx";
+        internal const string BYTES_VAR_SORTED_CODEC_NAME_IDX = "VarDerefBytesIdx";
 
-        public const string BYTES_VAR_SORTED_CODEC_NAME_DAT = "VarDerefBytesDat";
+        internal const string BYTES_VAR_SORTED_CODEC_NAME_DAT = "VarDerefBytesDat";
         internal const int BYTES_VAR_SORTED_VERSION_START = 0;
-        public const int BYTES_VAR_SORTED_VERSION_CURRENT = BYTES_VAR_SORTED_VERSION_START;
+        internal const int BYTES_VAR_SORTED_VERSION_CURRENT = BYTES_VAR_SORTED_VERSION_START;
     }
 }

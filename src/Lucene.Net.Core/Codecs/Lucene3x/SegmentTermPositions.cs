@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             NeedToLoadPayload = false;
         }
 
-        public override void Close()
+        public override void Close() // LUCENENET TODO: Make dispose
         {
             base.Close();
             if (ProxStream != null)
@@ -125,13 +125,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             return delta;
         }
 
-        protected internal override void SkippingDoc()
+        protected internal sealed override void SkippingDoc()
         {
             // we remember to skip a document lazily
             LazySkipProxCount += Freq_Renamed;
         }
 
-        public override bool Next()
+        public sealed override bool Next()
         {
             // we remember to skip the remaining positions of the current
             // document lazily
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return false;
         }
 
-        public override int Read(int[] docs, int[] freqs)
+        public sealed override int Read(int[] docs, int[] freqs)
         {
             throw new System.NotSupportedException("TermPositions does not support processing multiple documents in one call. Use TermDocs instead.");
         }
@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public bool PayloadAvailable
+        public bool PayloadAvailable // LUCENENET TODO: Rename IsPayloadAvailable
         {
             get
             {

@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             if (Version < Lucene41PostingsWriter.VERSION_META_ARRAY) // backward compatibility
             {
-                _decodeTerm(@in, fieldInfo, termState);
+                DecodeTerm(@in, fieldInfo, termState);
                 return;
             }
             termState.DocStartFP += longs[0];
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private void _decodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.IntBlockTermState termState)
+        private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.IntBlockTermState termState)
         {
             bool fieldHasPositions = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
@@ -294,15 +294,15 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly byte[] Encoded;
+            private readonly byte[] Encoded;
 
-            internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            internal int DocBufferUpto;
+            private int DocBufferUpto;
 
-            internal Lucene41SkipReader Skipper;
-            internal bool Skipped;
+            private Lucene41SkipReader Skipper;
+            private bool Skipped;
 
             internal readonly IndexInput StartDocIn;
 
@@ -312,29 +312,29 @@ namespace Lucene.Net.Codecs.Lucene41
             internal readonly bool IndexHasOffsets;
             internal readonly bool IndexHasPayloads;
 
-            internal int DocFreq; // number of docs in this posting list
-            internal long TotalTermFreq; // sum of freqs in this posting list (or DocFreq when omitted)
-            internal int DocUpto; // how many docs we've read
-            internal int Doc; // doc we last read
-            internal int Accum; // accumulator for doc deltas
-            internal int Freq_Renamed; // freq we last read
+            private int DocFreq; // number of docs in this posting list
+            private long TotalTermFreq; // sum of freqs in this posting list (or DocFreq when omitted)
+            private int DocUpto; // how many docs we've read
+            private int Doc; // doc we last read
+            private int Accum; // accumulator for doc deltas
+            private int Freq_Renamed; // freq we last read
 
             // Where this term's postings start in the .doc file:
-            internal long DocTermStartFP;
+            private long DocTermStartFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            internal long SkipOffset;
+            private long SkipOffset;
 
             // docID for next skip point, we won't use skipper if
             // target docID is not larger than this
-            internal int NextSkipDoc;
+            private int NextSkipDoc;
 
-            internal Bits LiveDocs;
+            private Bits LiveDocs;
 
-            internal bool NeedsFreq; // true if the caller actually needs frequencies
-            internal int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private bool NeedsFreq; // true if the caller actually needs frequencies
+            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public BlockDocsEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
@@ -398,7 +398,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Doc;
             }
 
-            internal void RefillDocs()
+            private void RefillDocs()
             {
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
@@ -598,17 +598,17 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly byte[] Encoded;
+            private readonly byte[] Encoded;
 
-            internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            internal readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            internal int DocBufferUpto;
-            internal int PosBufferUpto;
+            private int DocBufferUpto;
+            private int PosBufferUpto;
 
-            internal Lucene41SkipReader Skipper;
-            internal bool Skipped;
+            private Lucene41SkipReader Skipper;
+            private bool Skipped;
 
             internal readonly IndexInput StartDocIn;
 
@@ -618,46 +618,46 @@ namespace Lucene.Net.Codecs.Lucene41
             internal readonly bool IndexHasOffsets;
             internal readonly bool IndexHasPayloads;
 
-            internal int DocFreq; // number of docs in this posting list
-            internal long TotalTermFreq; // number of positions in this posting list
-            internal int DocUpto; // how many docs we've read
-            internal int Doc; // doc we last read
-            internal int Accum; // accumulator for doc deltas
-            internal int Freq_Renamed; // freq we last read
-            internal int Position; // current position
+            private int DocFreq; // number of docs in this posting list
+            private long TotalTermFreq; // number of positions in this posting list
+            private int DocUpto; // how many docs we've read
+            private int Doc; // doc we last read
+            private int Accum; // accumulator for doc deltas
+            private int Freq_Renamed; // freq we last read
+            private int Position; // current position
 
             // how many positions "behind" we are; nextPosition must
             // skip these to "catch up":
-            internal int PosPendingCount;
+            private int PosPendingCount;
 
             // Lazy pos seek: if != -1 then we must seek to this FP
             // before reading positions:
-            internal long PosPendingFP;
+            private long PosPendingFP;
 
             // Where this term's postings start in the .doc file:
-            internal long DocTermStartFP;
+            private long DocTermStartFP;
 
             // Where this term's postings start in the .pos file:
-            internal long PosTermStartFP;
+            private long PosTermStartFP;
 
             // Where this term's payloads/offsets start in the .pay
             // file:
-            internal long PayTermStartFP;
+            private long PayTermStartFP;
 
             // File pointer where the last (vInt encoded) pos delta
             // block is.  We need this to know whether to bulk
             // decode vs vInt decode the block:
-            internal long LastPosBlockFP;
+            private long LastPosBlockFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            internal long SkipOffset;
+            private long SkipOffset;
 
-            internal int NextSkipDoc;
+            private int NextSkipDoc;
 
-            internal Bits LiveDocs;
-            internal int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private Bits LiveDocs;
+            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public BlockDocsAndPositionsEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
@@ -731,7 +731,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Doc;
             }
 
-            internal void RefillDocs()
+            private void RefillDocs()
             {
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
@@ -763,7 +763,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 DocBufferUpto = 0;
             }
 
-            internal void RefillPositions()
+            private void RefillPositions()
             {
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
@@ -962,7 +962,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // when not needed, ie, use skip data to load how far to
             // seek the pos pointer ... instead of having to load frq
             // blocks only to sum up how many positions to skip
-            internal void SkipPositions()
+            private void SkipPositions()
             {
                 // Skip positions now:
                 int toSkip = PosPendingCount - Freq_Renamed;
@@ -1065,29 +1065,29 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly byte[] Encoded;
+            private readonly byte[] Encoded;
 
-            internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            internal readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            internal readonly int[] PayloadLengthBuffer;
-            internal readonly int[] OffsetStartDeltaBuffer;
-            internal readonly int[] OffsetLengthBuffer;
+            private readonly int[] PayloadLengthBuffer;
+            private readonly int[] OffsetStartDeltaBuffer;
+            private readonly int[] OffsetLengthBuffer;
 
-            internal byte[] PayloadBytes;
-            internal int PayloadByteUpto;
-            internal int PayloadLength;
+            private byte[] PayloadBytes;
+            private int PayloadByteUpto;
+            private int PayloadLength;
 
-            internal int LastStartOffset;
-            internal int StartOffset_Renamed;
-            internal int EndOffset_Renamed;
+            private int LastStartOffset;
+            private int StartOffset_Renamed;
+            private int EndOffset_Renamed;
 
-            internal int DocBufferUpto;
-            internal int PosBufferUpto;
+            private int DocBufferUpto;
+            private int PosBufferUpto;
 
-            internal Lucene41SkipReader Skipper;
-            internal bool Skipped;
+            private Lucene41SkipReader Skipper;
+            private bool Skipped;
 
             internal readonly IndexInput StartDocIn;
 
@@ -1099,53 +1099,53 @@ namespace Lucene.Net.Codecs.Lucene41
             internal readonly bool IndexHasOffsets;
             internal readonly bool IndexHasPayloads;
 
-            internal int DocFreq; // number of docs in this posting list
-            internal long TotalTermFreq; // number of positions in this posting list
-            internal int DocUpto; // how many docs we've read
-            internal int Doc; // doc we last read
-            internal int Accum; // accumulator for doc deltas
-            internal int Freq_Renamed; // freq we last read
-            internal int Position; // current position
+            private int DocFreq; // number of docs in this posting list
+            private long TotalTermFreq; // number of positions in this posting list
+            private int DocUpto; // how many docs we've read
+            private int Doc; // doc we last read
+            private int Accum; // accumulator for doc deltas
+            private int Freq_Renamed; // freq we last read
+            private int Position; // current position
 
             // how many positions "behind" we are; nextPosition must
             // skip these to "catch up":
-            internal int PosPendingCount;
+            private int PosPendingCount;
 
             // Lazy pos seek: if != -1 then we must seek to this FP
             // before reading positions:
-            internal long PosPendingFP;
+            private long PosPendingFP;
 
             // Lazy pay seek: if != -1 then we must seek to this FP
             // before reading payloads/offsets:
-            internal long PayPendingFP;
+            private long PayPendingFP;
 
             // Where this term's postings start in the .doc file:
-            internal long DocTermStartFP;
+            private long DocTermStartFP;
 
             // Where this term's postings start in the .pos file:
-            internal long PosTermStartFP;
+            private long PosTermStartFP;
 
             // Where this term's payloads/offsets start in the .pay
             // file:
-            internal long PayTermStartFP;
+            private long PayTermStartFP;
 
             // File pointer where the last (vInt encoded) pos delta
             // block is.  We need this to know whether to bulk
             // decode vs vInt decode the block:
-            internal long LastPosBlockFP;
+            private long LastPosBlockFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            internal long SkipOffset;
+            private long SkipOffset;
 
-            internal int NextSkipDoc;
+            private int NextSkipDoc;
 
-            internal Bits LiveDocs;
+            private Bits LiveDocs;
 
-            internal bool NeedsOffsets; // true if we actually need offsets
-            internal bool NeedsPayloads; // true if we actually need payloads
-            internal int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private bool NeedsOffsets; // true if we actually need offsets
+            private bool NeedsPayloads; // true if we actually need payloads
+            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public EverythingEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
@@ -1249,7 +1249,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Doc;
             }
 
-            internal void RefillDocs()
+            private void RefillDocs()
             {
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 DocBufferUpto = 0;
             }
 
-            internal void RefillPositions()
+            private void RefillPositions()
             {
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
@@ -1552,7 +1552,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // when not needed, ie, use skip data to load how far to
             // seek the pos pointer ... instead of having to load frq
             // blocks only to sum up how many positions to skip
-            internal void SkipPositions()
+            private void SkipPositions()
             {
                 // Skip positions now:
                 int toSkip = PosPendingCount - Freq_Renamed;

@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs
         /// for the segment to be read this class should be registered with Java's
         /// SPI mechanism (registered in META-INF/ of your jar file, etc). </summary>
         /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
-        protected internal PostingsFormat(string name)
+        protected PostingsFormat(string name)
         {
             NamedSPILoader<PostingsFormat>.CheckServiceName(name);
             this.name = name;

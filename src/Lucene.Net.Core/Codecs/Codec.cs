@@ -54,10 +54,10 @@ namespace Lucene.Net.Codecs
         /// for the segment to be read this class should be registered with Java's
         /// SPI mechanism (registered in META-INF/ of your jar file, etc). </summary>
         /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
-        protected internal Codec(string name_)
+        protected internal Codec(string name)
         {
-            NamedSPILoader<Codec>.CheckServiceName(name_);
-            this.name = name_;
+            NamedSPILoader<Codec>.CheckServiceName(name);
+            this.name = name;
         }
 
         /// <summary>
@@ -72,35 +72,35 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Encodes/decodes postings </summary>
-        public abstract PostingsFormat PostingsFormat();
+        public abstract PostingsFormat PostingsFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes docvalues </summary>
-        public abstract DocValuesFormat DocValuesFormat();
+        public abstract DocValuesFormat DocValuesFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes stored fields </summary>
-        public abstract StoredFieldsFormat StoredFieldsFormat();
+        public abstract StoredFieldsFormat StoredFieldsFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes term vectors </summary>
-        public abstract TermVectorsFormat TermVectorsFormat();
+        public abstract TermVectorsFormat TermVectorsFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes field infos file </summary>
-        public abstract FieldInfosFormat FieldInfosFormat();
+        public abstract FieldInfosFormat FieldInfosFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes segment info file </summary>
-        public abstract SegmentInfoFormat SegmentInfoFormat();
+        public abstract SegmentInfoFormat SegmentInfoFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes document normalization values </summary>
-        public abstract NormsFormat NormsFormat();
+        public abstract NormsFormat NormsFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// Encodes/decodes live docs </summary>
-        public abstract LiveDocsFormat LiveDocsFormat();
+        public abstract LiveDocsFormat LiveDocsFormat(); // LUCENENET TODO: make property
 
         /// <summary>
         /// looks up a codec by name </summary>
@@ -119,7 +119,8 @@ namespace Lucene.Net.Codecs
         {
             if (Loader == null)
             {
-                throw new InvalidOperationException("You called Codec.availableCodecs() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
+                throw new InvalidOperationException("You called Codec.AvailableCodecs() before all Codecs could be initialized. " + 
+                    "this likely happens if you call it from a Codec's ctor.");
             }
             return Loader.AvailableServices();
         }

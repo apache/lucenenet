@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
-    public class Lucene3xStoredFieldsFormat : StoredFieldsFormat
+    internal class Lucene3xStoredFieldsFormat : StoredFieldsFormat
     {
         public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
         {

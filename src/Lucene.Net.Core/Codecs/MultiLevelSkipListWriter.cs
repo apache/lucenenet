@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates a {@code MultiLevelSkipListWriter}. </summary>
-        protected internal MultiLevelSkipListWriter(int skipInterval, int skipMultiplier, int maxSkipLevels, int df)
+        protected MultiLevelSkipListWriter(int skipInterval, int skipMultiplier, int maxSkipLevels, int df)
         {
             this.SkipInterval = skipInterval;
             this.SkipMultiplier = skipMultiplier;
@@ -98,14 +98,14 @@ namespace Lucene.Net.Codecs
         ///  {@code skipInterval} and {@code skipMultiplier} are
         ///  the same.
         /// </summary>
-        protected internal MultiLevelSkipListWriter(int skipInterval, int maxSkipLevels, int df)
+        protected MultiLevelSkipListWriter(int skipInterval, int maxSkipLevels, int df)
             : this(skipInterval, skipInterval, maxSkipLevels, df)
         {
         }
 
         /// <summary>
         /// Allocates internal skip buffers. </summary>
-        protected internal virtual void Init()
+        protected virtual void Init()
         {
             SkipBuffer = new RAMOutputStream[NumberOfSkipLevels];
             for (int i = 0; i < NumberOfSkipLevels; i++)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         /// <param name="level"> the level skip data shall be writing for </param>
         /// <param name="skipBuffer"> the skip buffer to write to </param>
-        protected internal abstract void WriteSkipData(int level, IndexOutput skipBuffer);
+        protected abstract void WriteSkipData(int level, IndexOutput skipBuffer);
 
         /// <summary>
         /// Writes the current skip data to the buffers. The current document frequency determines

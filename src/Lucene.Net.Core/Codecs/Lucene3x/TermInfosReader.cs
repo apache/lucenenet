@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// FormatPostingsTermsDictReader, except for reading old segments.
     /// @lucene.experimental
     [Obsolete("(4.0) this class has been replaced by")]
-    public sealed class TermInfosReader : IDisposable
+    internal sealed class TermInfosReader : IDisposable
     {
         private readonly Directory Directory;
         private readonly string Segment;
@@ -187,12 +187,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the number of term/value pairs in the set. </summary>
-        internal long Size()
+        internal long Size() // LUCENENET TODO: Rename Count
         {
             return Size_Renamed;
         }
 
-        private ThreadResources GetThreadResources
+        private ThreadResources GetThreadResources // LUCENENET TODO: Rename ThreadResources
         {
             get
             {

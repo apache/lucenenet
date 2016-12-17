@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs
         /// Safe (but, slowish) default method to write every
         ///  vector field in the document.
         /// </summary>
-        protected internal void AddAllDocVectors(Fields vectors, MergeState mergeState)
+        protected void AddAllDocVectors(Fields vectors, MergeState mergeState)
         {
             if (vectors == null)
             {
@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs
         /// Return the BytesRef Comparator used to sort terms
         ///  before feeding to this API.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; }
+        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer
 
         public void Dispose()
         {

@@ -38,12 +38,12 @@ namespace Lucene.Net.Codecs.Lucene41
     /// Encode all values in normal area with fixed bit width,
     /// which is determined by the max value in this block.
     /// </summary>
-    public sealed class ForUtil
+    internal sealed class ForUtil
     {
         /// <summary>
         /// Special number of bits per value used whenever all values to encode are equal.
         /// </summary>
-        private const int ALL_VALUES_EQUAL = 0;
+        private static readonly int ALL_VALUES_EQUAL = 0;
 
         /// <summary>
         /// Upper limit of the number of bytes that might be required to stored
@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Create a new <seealso cref="ForUtil"/> instance and save state into <code>out</code>.
         /// </summary>
-        public ForUtil(float acceptableOverheadRatio, DataOutput @out)
+        internal ForUtil(float acceptableOverheadRatio, DataOutput @out)
         {
             @out.WriteVInt(PackedInts.VERSION_CURRENT);
             EncodedSizes = new int[33];
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Restore a <seealso cref="ForUtil"/> from a <seealso cref="DataInput"/>.
         /// </summary>
-        public ForUtil(DataInput @in)
+        internal ForUtil(DataInput @in)
         {
             int packedIntsVersion = @in.ReadVInt();
             PackedInts.CheckVersion(packedIntsVersion);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="encoded">  a buffer to use to encode data </param>
         /// <param name="out">      the destination output </param>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public void WriteBlock(int[] data, byte[] encoded, IndexOutput @out)
+        internal void WriteBlock(int[] data, byte[] encoded, IndexOutput @out)
         {
             if (IsAllEqual(data))
             {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="encoded">   a buffer that can be used to store encoded data </param>
         /// <param name="decoded">   where to write decoded data </param>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
+        internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
             Debug.Assert(numBits <= 32, numBits.ToString());
@@ -222,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         /// <param name="in">      the input where to read data </param>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public void SkipBlock(IndexInput @in)
+        internal void SkipBlock(IndexInput @in)
         {
             int numBits = @in.ReadByte();
             if (numBits == ALL_VALUES_EQUAL)

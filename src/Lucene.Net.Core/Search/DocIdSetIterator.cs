@@ -156,6 +156,6 @@ namespace Lucene.Net.Search
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>
-        public abstract long Cost();
+        public abstract long Cost(); // LUCENENET TODO: make property
     }
 }

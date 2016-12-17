@@ -46,17 +46,17 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40PostingsReader : PostingsReaderBase
     {
-        public const string TERMS_CODEC = "Lucene40PostingsWriterTerms";
-        public const string FRQ_CODEC = "Lucene40PostingsWriterFrq";
-        public const string PRX_CODEC = "Lucene40PostingsWriterPrx";
+        internal static readonly string TERMS_CODEC = "Lucene40PostingsWriterTerms";
+        internal static readonly string FRQ_CODEC = "Lucene40PostingsWriterFrq";
+        internal static readonly string PRX_CODEC = "Lucene40PostingsWriterPrx";
 
         //private static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
         // Increment version to change it:
-        internal const int VERSION_START = 0;
+        internal static readonly int VERSION_START = 0;
 
-        internal const int VERSION_LONG_SKIP = 1;
-        public const int VERSION_CURRENT = VERSION_LONG_SKIP;
+        internal static readonly int VERSION_LONG_SKIP = 1;
+        internal static readonly int VERSION_CURRENT = VERSION_LONG_SKIP;
 
         private readonly IndexInput FreqIn;
         private readonly IndexInput ProxIn;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        internal const int BUFFERSIZE = 64;
+        internal static readonly int BUFFERSIZE = 64;
 
         private abstract class SegmentDocsEnumBase : DocsEnum
         {
@@ -404,7 +404,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return Doc = SkipTo(target);
             }
 
-            internal int BinarySearch(int hi, int low, int target, int[] docs)
+            private int BinarySearch(int hi, int low, int target, int[] docs)
             {
                 while (low <= hi)
                 {
@@ -468,7 +468,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal abstract int NextUnreadDoc();
 
-            internal int FillDocs(int size)
+            private int FillDocs(int size)
             {
                 IndexInput freqIn = this.FreqIn;
                 int[] docs = this.Docs;
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return size;
             }
 
-            internal int FillDocsAndFreqs(int size)
+            private int FillDocsAndFreqs(int size)
             {
                 IndexInput freqIn = this.FreqIn;
                 int[] docs = this.Docs;
@@ -499,7 +499,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return size;
             }
 
-            internal int SkipTo(int target)
+            private int SkipTo(int target)
             {
                 if ((target - OuterInstance.SkipInterval) >= Accum && Limit >= OuterInstance.SkipMinimum)
                 {
@@ -980,8 +980,8 @@ namespace Lucene.Net.Codecs.Lucene40
             private readonly Lucene40PostingsReader OuterInstance;
 
             internal readonly IndexInput StartFreqIn;
-            internal readonly IndexInput FreqIn;
-            internal readonly IndexInput ProxIn;
+            private readonly IndexInput FreqIn;
+            private readonly IndexInput ProxIn;
 
             internal int Limit; // number of docs in this posting
             internal int Ord; // how many docs we've read

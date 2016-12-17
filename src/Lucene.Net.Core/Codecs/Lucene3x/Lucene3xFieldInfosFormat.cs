@@ -24,8 +24,8 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @deprecated (4.0) this is only used to read indexes created
     /// before 4.0.
     /// @lucene.experimental
-    [Obsolete("(4.0) this is only used to read indexes created")]
-    public class Lucene3xFieldInfosFormat : FieldInfosFormat
+    [Obsolete("(4.0) this is only used to read indexes created before 4.0")]
+    internal class Lucene3xFieldInfosFormat : FieldInfosFormat
     {
         private readonly FieldInfosReader Reader = new Lucene3xFieldInfosReader();
 

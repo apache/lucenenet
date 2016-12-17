@@ -109,22 +109,22 @@ namespace Lucene.Net.Codecs.Lucene42
 
         /// <summary>
         /// Extension of field infos </summary>
-        public const string EXTENSION = "fnm";
+        internal const string EXTENSION = "fnm";
 
         // Codec header
-        public const string CODEC_NAME = "Lucene42FieldInfos";
+        internal const string CODEC_NAME = "Lucene42FieldInfos";
 
         internal const int FORMAT_START = 0;
-        public const int FORMAT_CURRENT = FORMAT_START;
+        internal const int FORMAT_CURRENT = FORMAT_START;
 
         // Field flags
-        public const sbyte IS_INDEXED = 0x1;
+        internal const sbyte IS_INDEXED = 0x1;
 
-        public const sbyte STORE_TERMVECTOR = 0x2;
-        public const sbyte STORE_OFFSETS_IN_POSTINGS = 0x4;
-        public const sbyte OMIT_NORMS = 0x10;
-        public const sbyte STORE_PAYLOADS = 0x20;
-        public const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-        public const sbyte OMIT_POSITIONS = -128;
+        internal const sbyte STORE_TERMVECTOR = 0x2;
+        internal const sbyte STORE_OFFSETS_IN_POSTINGS = 0x4;
+        internal const sbyte OMIT_NORMS = 0x10;
+        internal const sbyte STORE_PAYLOADS = 0x20;
+        internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
+        internal const sbyte OMIT_POSITIONS = -128;
     }
 }

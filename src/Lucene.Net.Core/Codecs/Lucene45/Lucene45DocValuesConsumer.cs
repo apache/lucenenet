@@ -41,8 +41,8 @@ namespace Lucene.Net.Codecs.Lucene45
     /// writer for <seealso cref="Lucene45DocValuesFormat"/> </summary>
     public class Lucene45DocValuesConsumer : DocValuesConsumer, IDisposable
     {
-        internal const int BLOCK_SIZE = 16384;
-        internal const int ADDRESS_INTERVAL = 16;
+        internal static readonly int BLOCK_SIZE = 16384;
+        internal static readonly int ADDRESS_INTERVAL = 16;
         internal static readonly long MISSING_ORD = BitConverter.DoubleToInt64Bits(-1);
 
         /// <summary>
@@ -73,13 +73,13 @@ namespace Lucene.Net.Codecs.Lucene45
         /// Standard storage for sorted set values with 1 level of indirection:
         ///  docId -> address -> ord.
         /// </summary>
-        public const int SORTED_SET_WITH_ADDRESSES = 0;
+        public static readonly int SORTED_SET_WITH_ADDRESSES = 0;
 
         /// <summary>
         /// Single-valued sorted set values, encoded as sorted values, so no level
         ///  of indirection: docId -> ord.
         /// </summary>
-        public const int SORTED_SET_SINGLE_VALUED_SORTED = 1;
+        public static readonly int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
         internal IndexOutput Data, Meta;
         internal readonly int MaxDoc;
