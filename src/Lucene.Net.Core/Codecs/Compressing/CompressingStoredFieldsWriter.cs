@@ -6,11 +6,10 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Diagnostics;
+using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Document = Documents.Document;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

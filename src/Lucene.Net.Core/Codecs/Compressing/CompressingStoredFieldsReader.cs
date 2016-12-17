@@ -1,35 +1,32 @@
 using Lucene.Net.Codecs.Lucene40;
-using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Lucene.Net.Support;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BufferedChecksumIndexInput = Lucene.Net.Store.BufferedChecksumIndexInput;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
