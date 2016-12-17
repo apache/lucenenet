@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (Docs.Next())
                 {
-                    return DocID_Renamed = Docs.Doc();
+                    return DocID_Renamed = Docs.Doc;
                 }
                 else
                 {
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (Docs.SkipTo(target))
                 {
-                    return DocID_Renamed = Docs.Doc();
+                    return DocID_Renamed = Docs.Doc;
                 }
                 else
                 {
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int Freq()
             {
-                return Docs.Freq();
+                return Docs.Freq;
             }
 
             public override int DocID()
@@ -1218,7 +1218,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (Pos.Next())
                 {
-                    return DocID_Renamed = Pos.Doc();
+                    return DocID_Renamed = Pos.Doc;
                 }
                 else
                 {
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (Pos.SkipTo(target))
                 {
-                    return DocID_Renamed = Pos.Doc();
+                    return DocID_Renamed = Pos.Doc;
                 }
                 else
                 {
@@ -1240,7 +1240,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int Freq()
             {
-                return Pos.Freq();
+                return Pos.Freq;
             }
 
             public override int DocID()

@@ -134,14 +134,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public int Doc() // LUCENENET TODO: make property
+        public int Doc
         {
-            return Doc_Renamed;
+            get { return Doc_Renamed; }
         }
 
-        public int Freq() // LUCENENET TODO: make property
+        public int Freq
         {
-            return Freq_Renamed;
+            get { return Freq_Renamed; }
         }
 
         protected internal virtual void SkippingDoc()
