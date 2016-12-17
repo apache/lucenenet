@@ -239,25 +239,25 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the docFreq from the current TermInfo in the enumeration.
         /// Initially invalid, valid after next() called for the first time.
         /// </summary>
-        public int DocFreq() // LUCENENET TODO: Make property
+        public int DocFreq
         {
-            return TermInfo_Renamed.DocFreq;
+            get { return TermInfo_Renamed.DocFreq; }
         }
 
         /* Returns the freqPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
 
-        internal long FreqPointer() // LUCENENET TODO: Make property
+        internal long FreqPointer
         {
-            return TermInfo_Renamed.FreqPointer;
+            get { return TermInfo_Renamed.FreqPointer; }
         }
 
         /* Returns the proxPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
 
-        internal long ProxPointer() // LUCENENET TODO: Make property
+        internal long ProxPointer
         {
-            return TermInfo_Renamed.ProxPointer;
+            get { return TermInfo_Renamed.ProxPointer; }
         }
 
         /// <summary>

@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int DocFreq()
             {
-                return TermEnum.DocFreq();
+                return TermEnum.DocFreq;
             }
 
             public override long TotalTermFreq()
