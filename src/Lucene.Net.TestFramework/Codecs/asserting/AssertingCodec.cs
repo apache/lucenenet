@@ -35,29 +35,29 @@ namespace Lucene.Net.Codecs.asserting
         {
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            return Postings;
+            get { return Postings; }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return Vectors;
+            get { return Vectors; }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return StoredFields;
+            get { return StoredFields; }
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return DocValues;
+            get { return DocValues; }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return Norms;
+            get { return Norms; }
         }
     }
 }

@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
             }
 
             // write the merged infos
-            FieldInfosWriter fieldInfosWriter = Codec.FieldInfosFormat().FieldInfosWriter;
+            FieldInfosWriter fieldInfosWriter = Codec.FieldInfosFormat.FieldInfosWriter;
             fieldInfosWriter.Write(Directory, MergeState.SegmentInfo.Name, "", MergeState.FieldInfos, Context);
 
             return MergeState;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 
         private void MergeDocValues(SegmentWriteState segmentWriteState)
         {
-            DocValuesConsumer consumer = Codec.DocValuesFormat().FieldsConsumer(segmentWriteState);
+            DocValuesConsumer consumer = Codec.DocValuesFormat.FieldsConsumer(segmentWriteState);
             bool success = false;
             try
             {
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
 
         private void MergeNorms(SegmentWriteState segmentWriteState)
         {
-            DocValuesConsumer consumer = Codec.NormsFormat().NormsConsumer(segmentWriteState);
+            DocValuesConsumer consumer = Codec.NormsFormat.NormsConsumer(segmentWriteState);
             bool success = false;
             try
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         private int MergeFields()
         {
-            StoredFieldsWriter fieldsWriter = Codec.StoredFieldsFormat().FieldsWriter(Directory, MergeState.SegmentInfo, Context);
+            StoredFieldsWriter fieldsWriter = Codec.StoredFieldsFormat.FieldsWriter(Directory, MergeState.SegmentInfo, Context);
 
             try
             {
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         private int MergeVectors()
         {
-            TermVectorsWriter termVectorsWriter = Codec.TermVectorsFormat().VectorsWriter(Directory, MergeState.SegmentInfo, Context);
+            TermVectorsWriter termVectorsWriter = Codec.TermVectorsFormat.VectorsWriter(Directory, MergeState.SegmentInfo, Context);
 
             try
             {
@@ -458,7 +458,7 @@ namespace Lucene.Net.Index
                 docBase += maxDoc;
             }
 
-            FieldsConsumer consumer = Codec.PostingsFormat().FieldsConsumer(segmentWriteState);
+            FieldsConsumer consumer = Codec.PostingsFormat.FieldsConsumer(segmentWriteState);
             bool success = false;
             try
             {

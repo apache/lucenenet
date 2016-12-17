@@ -62,44 +62,44 @@ namespace Lucene.Net.Codecs
             this.@delegate = @delegate;
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return @delegate.DocValuesFormat();
+            get { return @delegate.DocValuesFormat; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return @delegate.FieldInfosFormat();
+            get { return @delegate.FieldInfosFormat; }
         }
 
-        public override LiveDocsFormat LiveDocsFormat()
+        public override LiveDocsFormat LiveDocsFormat
         {
-            return @delegate.LiveDocsFormat();
+            get { return @delegate.LiveDocsFormat; }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return @delegate.NormsFormat();
+            get { return @delegate.NormsFormat; }
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            return @delegate.PostingsFormat();
+            get { return @delegate.PostingsFormat; }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return @delegate.SegmentInfoFormat();
+            get { return @delegate.SegmentInfoFormat; }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return @delegate.StoredFieldsFormat();
+            get { return @delegate.StoredFieldsFormat; }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return @delegate.TermVectorsFormat();
+            get { return @delegate.TermVectorsFormat; }
         }
     }
 }

@@ -66,48 +66,48 @@ namespace Lucene.Net.Codecs.Lucene40
             postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
         }
 
-        public override sealed StoredFieldsFormat StoredFieldsFormat()
+        public override sealed StoredFieldsFormat StoredFieldsFormat
         {
-            return FieldsFormat;
+            get { return FieldsFormat; }
         }
 
-        public override sealed TermVectorsFormat TermVectorsFormat()
+        public override sealed TermVectorsFormat TermVectorsFormat
         {
-            return VectorsFormat;
+            get { return VectorsFormat; }
         }
 
-        public override sealed PostingsFormat PostingsFormat()
+        public override sealed PostingsFormat PostingsFormat
         {
-            return postingsFormat;
+            get { return postingsFormat; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return FieldInfosFormat_Renamed;
+            get { return FieldInfosFormat_Renamed; }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return InfosFormat;
+            get { return InfosFormat; }
         }
 
         private readonly DocValuesFormat DefaultDVFormat = new Lucene40DocValuesFormat();
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return DefaultDVFormat;
+            get { return DefaultDVFormat; }
         }
 
         private readonly NormsFormat NormsFormat_Renamed = new Lucene40NormsFormat();
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return NormsFormat_Renamed;
+            get { return NormsFormat_Renamed; }
         }
 
-        public override sealed LiveDocsFormat LiveDocsFormat()
+        public override sealed LiveDocsFormat LiveDocsFormat
         {
-            return LiveDocsFormat_Renamed;
+            get { return LiveDocsFormat_Renamed; }
         }
 
         /// <summary>

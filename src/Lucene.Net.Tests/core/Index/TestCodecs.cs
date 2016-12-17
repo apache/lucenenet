@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
 
-            FieldsProducer reader = codec.PostingsFormat().FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
+            FieldsProducer reader = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
 
             IEnumerator<string> fieldsEnum = reader.GetEnumerator();
             fieldsEnum.MoveNext();
@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: now read postings");
             }
-            FieldsProducer terms = codec.PostingsFormat().FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
+            FieldsProducer terms = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
 
             Verify[] threads = new Verify[NUM_TEST_THREADS - 1];
             for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
@@ -842,7 +842,7 @@ namespace Lucene.Net.Index
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
             SegmentWriteState state = new SegmentWriteState(InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random()));
 
-            FieldsConsumer consumer = codec.PostingsFormat().FieldsConsumer(state);
+            FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(state);
             Array.Sort(fields);
             foreach (FieldData field in fields)
             {

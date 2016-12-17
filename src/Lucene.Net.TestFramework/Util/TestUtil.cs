@@ -882,7 +882,7 @@ namespace Lucene.Net.Util
 
         public static string GetPostingsFormat(Codec codec, string field)
         {
-            PostingsFormat p = codec.PostingsFormat();
+            PostingsFormat p = codec.PostingsFormat;
             if (p is PerFieldPostingsFormat)
             {
                 return ((PerFieldPostingsFormat)p).GetPostingsFormatForField(field).Name;
@@ -900,7 +900,7 @@ namespace Lucene.Net.Util
 
         public static string GetDocValuesFormat(Codec codec, string field)
         {
-            DocValuesFormat f = codec.DocValuesFormat();
+            DocValuesFormat f = codec.DocValuesFormat;
             if (f is PerFieldDocValuesFormat)
             {
                 return ((PerFieldDocValuesFormat)f).GetDocValuesFormatForField(field).Name;

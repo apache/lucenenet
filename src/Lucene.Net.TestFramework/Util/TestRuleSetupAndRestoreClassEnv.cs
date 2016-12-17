@@ -491,7 +491,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            PostingsFormat pf = codec.PostingsFormat();
+            PostingsFormat pf = codec.PostingsFormat;
             LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + pf.Name + ".", ShouldAvoidCodec(pf.Name));
 
             LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + LuceneTestCase.TEST_POSTINGSFORMAT + ".", ShouldAvoidCodec(LuceneTestCase.TEST_POSTINGSFORMAT));

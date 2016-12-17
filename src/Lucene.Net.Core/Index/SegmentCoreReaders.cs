@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
                 FieldInfos fieldInfos = owner.FieldInfos_Renamed;
 
                 this.TermsIndexDivisor = termsIndexDivisor;
-                PostingsFormat format = codec.PostingsFormat();
+                PostingsFormat format = codec.PostingsFormat;
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
                 Fields = format.FieldsProducer(segmentReadState);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 
                 if (fieldInfos.HasNorms())
                 {
-                    NormsProducer = codec.NormsFormat().NormsProducer(segmentReadState);
+                    NormsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
                     Debug.Assert(NormsProducer != null);
                 }
                 else
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                     NormsProducer = null;
                 }
 
-                StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat();
+                StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat;
 
 #if !NETSTANDARD
                 try
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
 
                 if (fieldInfos.HasVectors()) // open term vector files only as needed
                 {
-                    TermVectorsReaderOrig = si.Info.Codec.TermVectorsFormat().VectorsReader(cfsDir, si.Info, fieldInfos, context);
+                    TermVectorsReaderOrig = si.Info.Codec.TermVectorsFormat.VectorsReader(cfsDir, si.Info, fieldInfos, context);
                 }
                 else
                 {

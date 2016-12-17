@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
             {
                 if (state.FieldInfos.HasNorms())
                 {
-                    NormsFormat normsFormat = state.SegmentInfo.Codec.NormsFormat();
+                    NormsFormat normsFormat = state.SegmentInfo.Codec.NormsFormat;
                     Debug.Assert(normsFormat != null);
                     normsConsumer = normsFormat.NormsConsumer(state);
 

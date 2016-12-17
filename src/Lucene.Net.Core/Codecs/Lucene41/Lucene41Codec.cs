@@ -91,34 +91,34 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         // TODO: slightly evil
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return fieldsFormat;
+            get { return fieldsFormat; }
         }
 
-        public override sealed TermVectorsFormat TermVectorsFormat()
+        public override sealed TermVectorsFormat TermVectorsFormat
         {
-            return VectorsFormat;
+            get { return VectorsFormat; }
         }
 
-        public override sealed PostingsFormat PostingsFormat()
+        public override sealed PostingsFormat PostingsFormat
         {
-            return postingsFormat;
+            get { return postingsFormat; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return FieldInfosFormat_Renamed;
+            get { return FieldInfosFormat_Renamed; }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return InfosFormat;
+            get { return InfosFormat; }
         }
 
-        public override sealed LiveDocsFormat LiveDocsFormat()
+        public override sealed LiveDocsFormat LiveDocsFormat
         {
-            return LiveDocsFormat_Renamed;
+            get { return LiveDocsFormat_Renamed; }
         }
 
         /// <summary>
@@ -132,18 +132,18 @@ namespace Lucene.Net.Codecs.Lucene41
             return DefaultFormat;
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return DvFormat;
+            get { return DvFormat; }
         }
 
         private readonly PostingsFormat DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
         private readonly DocValuesFormat DvFormat = new Lucene40DocValuesFormat();
         private readonly NormsFormat NormsFormat_Renamed = new Lucene40NormsFormat();
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return NormsFormat_Renamed;
+            get { return NormsFormat_Renamed; }
         }
     }
 }

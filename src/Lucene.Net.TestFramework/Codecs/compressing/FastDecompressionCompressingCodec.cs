@@ -38,9 +38,9 @@ namespace Lucene.Net.Codecs.Compressing
         {
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return new Lucene42NormsFormat(PackedInts.DEFAULT);
+            get { return new Lucene42NormsFormat(PackedInts.DEFAULT); }
         }
     }
 }

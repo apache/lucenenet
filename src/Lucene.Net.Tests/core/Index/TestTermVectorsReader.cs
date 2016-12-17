@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             for (int j = 0; j < 5; j++)
             {
                 Terms vector = reader.Get(j).Terms(TestFields[0]);
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocsEnum()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             for (int j = 0; j < 5; j++)
             {
                 Terms vector = reader.Get(j).Terms(TestFields[0]);
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPositionReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             BytesRef[] terms;
             Terms vector = reader.Get(0).Terms(TestFields[0]);
             Assert.IsNotNull(vector);
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOffsetReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             Terms vector = reader.Get(0).Terms(TestFields[0]);
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.Iterator(null);

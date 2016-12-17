@@ -94,14 +94,14 @@ namespace Lucene.Net.Codecs.Compressing
         {
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return StoredFieldsFormat_Renamed;
+            get { return StoredFieldsFormat_Renamed; }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return TermVectorsFormat_Renamed;
+            get { return TermVectorsFormat_Renamed; }
         }
 
         public override string ToString()

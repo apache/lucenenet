@@ -40,44 +40,44 @@ namespace Lucene.Net.Codecs.SimpleText
         {
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            return _postings;
+            get { return _postings; }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return _storedFields;
+            get { return _storedFields; }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return _vectorsFormat;
+            get { return _vectorsFormat; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return _fieldInfosFormatRenamed;
+            get { return _fieldInfosFormatRenamed; }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return _segmentInfos;
+            get { return _segmentInfos; }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return _normsFormatRenamed;
+            get { return _normsFormatRenamed; }
         }
 
-        public override LiveDocsFormat LiveDocsFormat()
+        public override LiveDocsFormat LiveDocsFormat
         {
-            return _liveDocs;
+            get { return _liveDocs; }
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return _dvFormat;
+            get { return _dvFormat; }
         }
     }
 

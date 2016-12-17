@@ -3319,7 +3319,7 @@ namespace Lucene.Net.Index
                 success = false;
                 try
                 {
-                    Codec.SegmentInfoFormat().SegmentInfoWriter.Write(trackingDir, info, mergeState.FieldInfos, context);
+                    Codec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, info, mergeState.FieldInfos, context);
                     success = true;
                 }
                 finally
@@ -3431,7 +3431,7 @@ namespace Lucene.Net.Index
             Codec currentCodec = newInfo.Codec;
             try
             {
-                currentCodec.SegmentInfoFormat().SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
+                currentCodec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
             }
             catch (System.NotSupportedException uoe)
             {
@@ -5206,7 +5206,7 @@ namespace Lucene.Net.Index
                 bool success2 = false;
                 try
                 {
-                    Codec.SegmentInfoFormat().SegmentInfoWriter.Write(directory, merge.info.Info, mergeState.FieldInfos, context);
+                    Codec.SegmentInfoFormat.SegmentInfoWriter.Write(directory, merge.info.Info, mergeState.FieldInfos, context);
                     success2 = true;
                 }
                 finally

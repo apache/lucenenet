@@ -78,9 +78,9 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return fieldInfosFormat;
+            get { return fieldInfosFormat; }
         }
     }
 }

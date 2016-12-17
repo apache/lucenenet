@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
                 if (si.HasDeletions())
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
-                    LiveDocs_Renamed = codec.LiveDocsFormat().ReadLiveDocs(Directory(), si, IOContext.READONCE);
+                    LiveDocs_Renamed = codec.LiveDocsFormat.ReadLiveDocs(Directory(), si, IOContext.READONCE);
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
         ///  deletes file.  Used by openIfChanged.
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr)
-            : this(si, sr, si.Info.Codec.LiveDocsFormat().ReadLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
+            : this(si, sr, si.Info.Codec.LiveDocsFormat.ReadLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
         {
         }
 
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
         private void InitDocValuesProducers(Codec codec)
         {
             Directory dir = Core.CfsReader != null ? Core.CfsReader : Si.Info.Dir;
-            DocValuesFormat dvFormat = codec.DocValuesFormat();
+            DocValuesFormat dvFormat = codec.DocValuesFormat;
             IDictionary<long?, IList<FieldInfo>> genInfos = GenInfos;
 
             //      System.out.println("[" + Thread.currentThread().getName() + "] SR.initDocValuesProducers: segInfo=" + si + "; gens=" + genInfos.keySet());
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             try
             {
                 string segmentSuffix = info.FieldInfosGen == -1 ? "" : info.FieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX));
-                return info.Info.Codec.FieldInfosFormat().FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
+                return info.Info.Codec.FieldInfosFormat.FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
             }
             finally
             {

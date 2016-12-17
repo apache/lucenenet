@@ -84,14 +84,14 @@ namespace Lucene.Net.Codecs.Lucene42
             return Dv;
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return Norms;
+            get { return Norms; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return fieldInfosFormat;
+            get { return fieldInfosFormat; }
         }
     }
 }

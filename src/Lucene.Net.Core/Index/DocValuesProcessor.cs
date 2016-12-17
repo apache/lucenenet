@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
         {
             if (Writers.Count > 0)
             {
-                DocValuesFormat fmt = state.SegmentInfo.Codec.DocValuesFormat();
+                DocValuesFormat fmt = state.SegmentInfo.Codec.DocValuesFormat;
                 DocValuesConsumer dvConsumer = fmt.FieldsConsumer(state);
                 bool success = false;
                 try

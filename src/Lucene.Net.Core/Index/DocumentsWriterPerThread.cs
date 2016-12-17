@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
             // doc, eg if analyzer has some problem w/ the text):
             if (PendingUpdates.DocIDs.Count > 0)
             {
-                flushState.LiveDocs = Codec.LiveDocsFormat().NewLiveDocs(numDocsInRAM);
+                flushState.LiveDocs = Codec.LiveDocsFormat.NewLiveDocs(numDocsInRAM);
                 foreach (int delDocID in PendingUpdates.DocIDs)
                 {
                     flushState.LiveDocs.Clear(delDocID);
@@ -628,7 +628,7 @@ namespace Lucene.Net.Index
                 // creating CFS so that 1) .si isn't slurped into CFS,
                 // and 2) .si reflects useCompoundFile=true change
                 // above:
-                Codec.SegmentInfoFormat().SegmentInfoWriter.Write(Directory, newSegment.Info, flushedSegment.FieldInfos, context);
+                Codec.SegmentInfoFormat.SegmentInfoWriter.Write(Directory, newSegment.Info, flushedSegment.FieldInfos, context);
 
                 // TODO: ideally we would freeze newSegment here!!
                 // because any changes after writing the .si will be
@@ -656,7 +656,7 @@ namespace Lucene.Net.Index
 
                     SegmentCommitInfo info = flushedSegment.SegmentInfo;
                     Codec codec = info.Info.Codec;
-                    codec.LiveDocsFormat().WriteLiveDocs(flushedSegment.LiveDocs, Directory, info, delCount, context);
+                    codec.LiveDocsFormat.WriteLiveDocs(flushedSegment.LiveDocs, Directory, info, delCount, context);
                     newSegment.DelCount = delCount;
                     newSegment.AdvanceDelGen();
                 }

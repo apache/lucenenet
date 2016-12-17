@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
                     // SegmentReader sharing the current liveDocs
                     // instance; must now make a private clone so we can
                     // change it:
-                    LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat();
+                    LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat;
                     if (LiveDocs_Renamed == null)
                     {
                         //System.out.println("create BV seg=" + info);
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Codec codec = Info.Info.Codec;
-                    codec.LiveDocsFormat().WriteLiveDocs((MutableBits)LiveDocs_Renamed, trackingDir, Info, PendingDeleteCount_Renamed, IOContext.DEFAULT);
+                    codec.LiveDocsFormat.WriteLiveDocs((MutableBits)LiveDocs_Renamed, trackingDir, Info, PendingDeleteCount_Renamed, IOContext.DEFAULT);
                     success = true;
                 }
                 finally
@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
                         long nextFieldInfosGen = Info.NextFieldInfosGen;
                         string segmentSuffix = nextFieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX));
                         SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, Writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
-                        DocValuesFormat docValuesFormat = codec.DocValuesFormat();
+                        DocValuesFormat docValuesFormat = codec.DocValuesFormat;
                         DocValuesConsumer fieldsConsumer = docValuesFormat.FieldsConsumer(state);
                         bool fieldsConsumerSuccess = false;
                         try
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
                                 fieldsConsumer.AddBinaryField(fieldInfo, GetBytesRefEnumerable(reader, field, dvFieldUpdates));
                             }
 
-                            codec.FieldInfosFormat().FieldInfosWriter.Write(trackingDir, Info.Info.Name, segmentSuffix, fieldInfos, IOContext.DEFAULT);
+                            codec.FieldInfosFormat.FieldInfosWriter.Write(trackingDir, Info.Info.Name, segmentSuffix, fieldInfos, IOContext.DEFAULT);
                             fieldsConsumerSuccess = true;
                         }
                         finally

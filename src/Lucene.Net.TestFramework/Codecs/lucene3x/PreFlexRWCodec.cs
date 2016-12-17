@@ -56,75 +56,93 @@ namespace Lucene.Net.Codecs.Lucene3x
             _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return Postings;
-            }
-            else
-            {
-                return base.PostingsFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return Postings;
+                }
+                else
+                {
+                    return base.PostingsFormat;
+                }
             }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return Norms;
-            }
-            else
-            {
-                return base.NormsFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return Norms;
+                }
+                else
+                {
+                    return base.NormsFormat;
+                }
             }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return SegmentInfos;
-            }
-            else
-            {
-                return base.SegmentInfoFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return SegmentInfos;
+                }
+                else
+                {
+                    return base.SegmentInfoFormat;
+                }
             }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return FieldInfos;
-            }
-            else
-            {
-                return base.FieldInfosFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return FieldInfos;
+                }
+                else
+                {
+                    return base.FieldInfosFormat;
+                }
             }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return TermVectors;
-            }
-            else
-            {
-                return base.TermVectorsFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return TermVectors;
+                }
+                else
+                {
+                    return base.TermVectorsFormat;
+                }
             }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            if (_oldFormatImpersonationIsActive)
+            get
             {
-                return StoredFields;
-            }
-            else
-            {
-                return base.StoredFieldsFormat();
+                if (_oldFormatImpersonationIsActive)
+                {
+                    return StoredFields;
+                }
+                else
+                {
+                    return base.StoredFieldsFormat;
+                }
             }
         }
     }

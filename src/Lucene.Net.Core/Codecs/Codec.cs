@@ -72,35 +72,35 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Encodes/decodes postings </summary>
-        public abstract PostingsFormat PostingsFormat(); // LUCENENET TODO: make property
+        public abstract PostingsFormat PostingsFormat { get; }
 
         /// <summary>
         /// Encodes/decodes docvalues </summary>
-        public abstract DocValuesFormat DocValuesFormat(); // LUCENENET TODO: make property
+        public abstract DocValuesFormat DocValuesFormat { get; }
 
         /// <summary>
         /// Encodes/decodes stored fields </summary>
-        public abstract StoredFieldsFormat StoredFieldsFormat(); // LUCENENET TODO: make property
+        public abstract StoredFieldsFormat StoredFieldsFormat { get; }
 
         /// <summary>
         /// Encodes/decodes term vectors </summary>
-        public abstract TermVectorsFormat TermVectorsFormat(); // LUCENENET TODO: make property
+        public abstract TermVectorsFormat TermVectorsFormat { get; }
 
         /// <summary>
         /// Encodes/decodes field infos file </summary>
-        public abstract FieldInfosFormat FieldInfosFormat(); // LUCENENET TODO: make property
+        public abstract FieldInfosFormat FieldInfosFormat { get; }
 
         /// <summary>
         /// Encodes/decodes segment info file </summary>
-        public abstract SegmentInfoFormat SegmentInfoFormat(); // LUCENENET TODO: make property
+        public abstract SegmentInfoFormat SegmentInfoFormat { get; }
 
         /// <summary>
         /// Encodes/decodes document normalization values </summary>
-        public abstract NormsFormat NormsFormat(); // LUCENENET TODO: make property
+        public abstract NormsFormat NormsFormat { get; }
 
         /// <summary>
         /// Encodes/decodes live docs </summary>
-        public abstract LiveDocsFormat LiveDocsFormat(); // LUCENENET TODO: make property
+        public abstract LiveDocsFormat LiveDocsFormat { get; }
 
         /// <summary>
         /// looks up a codec by name </summary>

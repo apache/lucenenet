@@ -549,7 +549,7 @@ namespace Lucene.Net.Index
             long bytes = TotalPostings * 8 + TotalPayloadBytes;
 
             SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(MaxDoc, bytes)));
-            FieldsConsumer fieldsConsumer = codec.PostingsFormat().FieldsConsumer(writeState);
+            FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState);
 
             foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
             {
@@ -650,7 +650,7 @@ namespace Lucene.Net.Index
 
             SegmentReadState readState = new SegmentReadState(dir, segmentInfo, newFieldInfos, IOContext.READ, 1);
 
-            return codec.PostingsFormat().FieldsProducer(readState);
+            return codec.PostingsFormat.FieldsProducer(readState);
         }
 
         private class ThreadState

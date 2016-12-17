@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
                         var segName = input.ReadString();
                         var codec = Codec.ForName(input.ReadString());
                         //System.out.println("SIS.read seg=" + seg + " codec=" + codec);
-                        var info = codec.SegmentInfoFormat().SegmentInfoReader.Read(directory, segName, IOContext.READ);
+                        var info = codec.SegmentInfoFormat.SegmentInfoReader.Read(directory, segName, IOContext.READ);
                         info.Codec = codec;
                         long delGen = input.ReadLong();
                         int delCount = input.ReadInt();

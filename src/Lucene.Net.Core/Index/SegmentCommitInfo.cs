@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
             // updates) and then maybe even be able to remove LiveDocsFormat.files().
 
             // Must separately add any live docs files:
-            Info.Codec.LiveDocsFormat().Files(this, files);
+            Info.Codec.LiveDocsFormat.Files(this, files);
 
             // Must separately add any field updates files
             foreach (ISet<string> updateFiles in GenUpdatesFiles_Renamed.Values)

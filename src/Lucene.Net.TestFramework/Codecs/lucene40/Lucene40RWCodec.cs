@@ -80,19 +80,19 @@ namespace Lucene.Net.Codecs.Lucene40
         private readonly DocValuesFormat DocValues;
         private readonly NormsFormat Norms;
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return fieldInfos;
+            get { return fieldInfos; }
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return DocValues;
+            get { return DocValues; }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return Norms;
+            get { return Norms; }
         }
     }
 }

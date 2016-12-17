@@ -78,44 +78,44 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            return PostingsFormat_Renamed;
+            get { return PostingsFormat_Renamed; }
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return docValuesFormat;
+            get { return docValuesFormat; }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return FieldsFormat;
+            get { return FieldsFormat; }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return VectorsFormat;
+            get { return VectorsFormat; }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return FieldInfosFormat_Renamed;
+            get { return FieldInfosFormat_Renamed; }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return InfosFormat;
+            get { return InfosFormat; }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return NormsFormat_Renamed;
+            get { return NormsFormat_Renamed; }
         }
 
-        public override LiveDocsFormat LiveDocsFormat()
+        public override LiveDocsFormat LiveDocsFormat
         {
-            return LiveDocsFormat_Renamed;
+            get { return LiveDocsFormat_Renamed; }
         }
 
         /// <summary>

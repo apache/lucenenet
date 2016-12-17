@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(output != null);
             //Use a RAMOutputStream
 
-            FieldInfosWriter writer = Codec.Default.FieldInfosFormat().FieldInfosWriter;
+            FieldInfosWriter writer = Codec.Default.FieldInfosFormat.FieldInfosWriter;
             writer.Write(dir, filename, "", fieldInfos, IOContext.DEFAULT);
             output.Dispose();
             return fieldInfos;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 
         public virtual FieldInfos ReadFieldInfos(Directory dir, string filename)
         {
-            FieldInfosReader reader = Codec.Default.FieldInfosFormat().FieldInfosReader;
+            FieldInfosReader reader = Codec.Default.FieldInfosFormat.FieldInfosReader;
             return reader.Read(dir, filename, "", IOContext.DEFAULT);
         }
 
