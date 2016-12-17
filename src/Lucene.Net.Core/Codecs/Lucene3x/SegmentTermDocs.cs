@@ -125,12 +125,21 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public virtual void Close() // LUCENENET TODO: Make into Dispose() (maybe protected override)
+        public void Dispose()
         {
-            FreqStream.Dispose();
-            if (SkipListReader != null)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                SkipListReader.Dispose();
+                FreqStream.Dispose();
+                if (SkipListReader != null)
+                {
+                    SkipListReader.Dispose();
+                }
             }
         }
 

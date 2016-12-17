@@ -80,12 +80,16 @@ namespace Lucene.Net.Codecs.Lucene3x
             NeedToLoadPayload = false;
         }
 
-        public override void Close() // LUCENENET TODO: Make dispose
+        protected override void Dispose(bool disposing)
         {
-            base.Close();
-            if (ProxStream != null)
+            base.Dispose(disposing);
+
+            if (disposing)
             {
-                ProxStream.Dispose();
+                if (ProxStream != null)
+                {
+                    ProxStream.Dispose();
+                }
             }
         }
 
