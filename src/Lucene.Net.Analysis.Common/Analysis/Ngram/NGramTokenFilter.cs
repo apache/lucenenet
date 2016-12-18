@@ -185,8 +185,8 @@ namespace Lucene.Net.Analysis.Ngram
                         curPos = 0;
                         curPosInc = posIncAtt.PositionIncrement;
                         curPosLen = posLenAtt.PositionLength;
-                        tokStart = offsetAtt.StartOffset();
-                        tokEnd = offsetAtt.EndOffset();
+                        tokStart = offsetAtt.StartOffset;
+                        tokEnd = offsetAtt.EndOffset;
                         // if length by start + end offsets doesn't match the term text then assume
                         // this is a synonym and don't adjust the offsets.
                         hasIllegalOffsets = (tokStart + curTermLength) != tokEnd;

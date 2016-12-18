@@ -184,8 +184,8 @@ namespace Lucene.Net.Index
         internal void WriteOffsets(int termID, int offsetAccum)
         {
             Debug.Assert(HasOffsets);
-            int startOffset = offsetAccum + OffsetAttribute.StartOffset();
-            int endOffset = offsetAccum + OffsetAttribute.EndOffset();
+            int startOffset = offsetAccum + OffsetAttribute.StartOffset;
+            int endOffset = offsetAccum + OffsetAttribute.EndOffset;
             FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
             Debug.Assert(startOffset - postings.LastOffsets[termID] >= 0);
             TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);

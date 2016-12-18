@@ -66,13 +66,13 @@
 
         public virtual Token UpdateInputToken(Token inputToken, Token lastPrefixToken)
         {
-            inputToken.SetOffset(lastPrefixToken.EndOffset() + inputToken.StartOffset(), lastPrefixToken.EndOffset() + inputToken.EndOffset());
+            inputToken.SetOffset(lastPrefixToken.EndOffset + inputToken.StartOffset, lastPrefixToken.EndOffset + inputToken.EndOffset);
             return inputToken;
         }
 
         public virtual Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
         {
-            suffixToken.SetOffset(lastInputToken.EndOffset() + suffixToken.StartOffset(), lastInputToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.SetOffset(lastInputToken.EndOffset + suffixToken.StartOffset, lastInputToken.EndOffset + suffixToken.EndOffset);
             return suffixToken;
         }
 

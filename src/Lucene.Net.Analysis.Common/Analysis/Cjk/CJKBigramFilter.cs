@@ -198,7 +198,7 @@ namespace Lucene.Net.Analysis.Cjk
                         // as long as the offsets are aligned, we just add these to our current buffer.
                         // otherwise, we clear the buffer and start over.
 
-                        if (offsetAtt.StartOffset() != lastEndOffset) // unaligned, clear queue
+                        if (offsetAtt.StartOffset != lastEndOffset) // unaligned, clear queue
                         {
                             if (HasBufferedUnigram)
                             {
@@ -303,8 +303,8 @@ namespace Lucene.Net.Analysis.Cjk
 
             char[] termBuffer = termAtt.Buffer();
             int len = termAtt.Length;
-            int start = offsetAtt.StartOffset();
-            int end = offsetAtt.EndOffset();
+            int start = offsetAtt.StartOffset;
+            int end = offsetAtt.EndOffset;
 
             int newSize = bufferLen + len;
             buffer = ArrayUtil.Grow(buffer, newSize);

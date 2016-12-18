@@ -258,13 +258,13 @@ namespace Lucene.Net.Analysis.Core
                 assertTrue("wrong number of tokens for input: " + s, right.IncrementToken());
                 assertEquals("wrong term text for input: " + s, leftTerm.ToString(), rightTerm.ToString());
                 assertEquals("wrong position for input: " + s, leftPos.PositionIncrement, rightPos.PositionIncrement);
-                assertEquals("wrong start offset for input: " + s, leftOffset.StartOffset(), rightOffset.StartOffset());
-                assertEquals("wrong end offset for input: " + s, leftOffset.EndOffset(), rightOffset.EndOffset());
+                assertEquals("wrong start offset for input: " + s, leftOffset.StartOffset, rightOffset.StartOffset);
+                assertEquals("wrong end offset for input: " + s, leftOffset.EndOffset, rightOffset.EndOffset);
             };
             assertFalse("wrong number of tokens for input: " + s, right.IncrementToken());
             left.End();
             right.End();
-            assertEquals("wrong final offset for input: " + s, leftOffset.EndOffset(), rightOffset.EndOffset());
+            assertEquals("wrong final offset for input: " + s, leftOffset.EndOffset, rightOffset.EndOffset);
             left.Dispose();
             right.Dispose();
         }

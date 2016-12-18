@@ -179,8 +179,8 @@ namespace Lucene.Net.Analysis.Ngram
                         curTermLength = termAtt.Length;
                         curCodePointCount = charUtils.CodePointCount(termAtt.ToString());
                         curGramSize = minGram;
-                        tokStart = offsetAtt.StartOffset();
-                        tokEnd = offsetAtt.EndOffset();
+                        tokStart = offsetAtt.StartOffset;
+                        tokEnd = offsetAtt.EndOffset;
 #pragma warning disable 612, 618
                         if (version.OnOrAfter(LuceneVersion.LUCENE_44))
 #pragma warning restore 612, 618

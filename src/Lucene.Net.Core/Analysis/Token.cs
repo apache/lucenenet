@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
     ///  </li>
     ///  <li> Copying from one one Token to another (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
     ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(source.buffer(), 0, source.length(), source.StartOffset(), source.EndOffset()[, source.type()]);
+    ///    return reusableToken.reinit(source.buffer(), 0, source.length(), source.StartOffset, source.EndOffset[, source.type()]);
     ///  </pre>
     ///  </li>
     ///  </ul>
@@ -278,17 +278,17 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= OffsetAttribute </seealso>
-        public int StartOffset()
+        public int StartOffset
         {
-            return startOffset;
+            get { return startOffset; }
         }
 
         /// <summary>
         /// {@inheritDoc} </summary>
         /// <seealso cref= OffsetAttribute </seealso>
-        public int EndOffset()
+        public int EndOffset
         {
-            return endOffset;
+            get { return endOffset; }
         }
 
         /// <summary>

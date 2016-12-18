@@ -45,8 +45,8 @@ namespace Lucene.Net.Analysis.Payloads
             if (input.IncrementToken())
             {
                 byte[] data = new byte[8];
-                PayloadHelper.EncodeInt(offsetAtt.StartOffset(), data, 0);
-                PayloadHelper.EncodeInt(offsetAtt.EndOffset(), data, 4);
+                PayloadHelper.EncodeInt(offsetAtt.StartOffset, data, 0);
+                PayloadHelper.EncodeInt(offsetAtt.EndOffset, data, 4);
                 BytesRef payload = new BytesRef(data);
                 payAtt.Payload = payload;
                 return true;

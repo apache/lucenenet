@@ -348,8 +348,8 @@ namespace Lucene.Net.Search.Highlight
                 }
                 ClearAttributes();
                 termAttribute.SetEmpty().Append(this.tokens[i]);
-                offsetAttribute.SetOffset(this.tokens[i].StartOffset(), this.tokens[i]
-                    .EndOffset());
+                offsetAttribute.SetOffset(this.tokens[i].StartOffset, this.tokens[i]
+                    .EndOffset);
                 positionIncrementAttribute.PositionIncrement = (this.tokens[i]
                     .PositionIncrement);
                 return true;
@@ -396,8 +396,8 @@ namespace Lucene.Net.Search.Highlight
                 }
                 ClearAttributes();
                 termAttribute.SetEmpty().Append(this.tokens[i]);
-                offsetAttribute.SetOffset(this.tokens[i].StartOffset(), this.tokens[i]
-                    .EndOffset());
+                offsetAttribute.SetOffset(this.tokens[i].StartOffset, this.tokens[i]
+                    .EndOffset);
                 positionIncrementAttribute.PositionIncrement = (this.tokens[i]
                     .PositionIncrement);
                 return true;

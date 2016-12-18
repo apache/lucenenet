@@ -259,8 +259,8 @@ namespace Lucene.Net.Index
         {
             if (DoVectorOffsets)
             {
-                int startOffset = FieldState.Offset_Renamed + OffsetAttribute.StartOffset();
-                int endOffset = FieldState.Offset_Renamed + OffsetAttribute.EndOffset();
+                int startOffset = FieldState.Offset_Renamed + OffsetAttribute.StartOffset;
+                int endOffset = FieldState.Offset_Renamed + OffsetAttribute.EndOffset;
 
                 TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);
                 TermsHashPerField.WriteVInt(1, endOffset - startOffset);

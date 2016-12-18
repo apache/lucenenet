@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             buffer.Length = 0;
             buffer.Append(termAttribute.Buffer(), 0, termAttribute.Length);
             buffer.Append(SEPARATOR);
-            lastStartOffset = offsetAttribute.StartOffset();
+            lastStartOffset = offsetAttribute.StartOffset;
             lastWasCommon = Common;
         }
 
@@ -173,7 +173,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         private void GramToken()
         {
             buffer.Append(termAttribute.Buffer(), 0, termAttribute.Length);
-            int endOffset = offsetAttribute.EndOffset();
+            int endOffset = offsetAttribute.EndOffset;
 
             ClearAttributes();
 

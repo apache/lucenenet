@@ -95,8 +95,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                         if (termAtt.toString().equals("phrase"))
                         {
                             inPhrase = true;
-                            savedStart = offsetAtt.StartOffset();
-                            savedEnd = offsetAtt.EndOffset();
+                            savedStart = offsetAtt.StartOffset;
+                            savedEnd = offsetAtt.EndOffset;
                             termAtt.SetEmpty().Append("phrase1");
                             offsetAtt.SetOffset(savedStart, savedEnd);
                             return true;

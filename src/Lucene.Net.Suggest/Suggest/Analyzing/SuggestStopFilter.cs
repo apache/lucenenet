@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 if (stopWords.Contains(termAtt.Buffer(), 0, termAtt.Length))
                 {
                     int posInc = posIncAtt.PositionIncrement;
-                    int endOffset = offsetAtt.EndOffset();
+                    int endOffset = offsetAtt.EndOffset;
                     // This token may be a stopword, if it's not end:
                     State sav = CaptureState();
                     if (input.IncrementToken())
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         ClearAttributes();
                         input.End();
                         endState = CaptureState();
-                        int finalEndOffset = offsetAtt.EndOffset();
+                        int finalEndOffset = offsetAtt.EndOffset;
                         Debug.Assert(finalEndOffset >= endOffset);
                         if (finalEndOffset > endOffset)
                         {

@@ -211,16 +211,16 @@ namespace Lucene.Net.Analysis.Ngram
                     assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt.ToString()));
                     assertEquals(1, posIncAtt.PositionIncrement);
                     assertEquals(1, posLenAtt.PositionLength);
-                    assertEquals(offsets[start], offsetAtt.StartOffset());
-                    assertEquals(offsets[end], offsetAtt.EndOffset());
+                    assertEquals(offsets[start], offsetAtt.StartOffset);
+                    assertEquals(offsets[end], offsetAtt.EndOffset);
                     nextGramContinue:;
                 }
                 //nextGramBreak:;
             }
             assertFalse(grams.IncrementToken());
             grams.End();
-            assertEquals(s.Length, offsetAtt.StartOffset());
-            assertEquals(s.Length, offsetAtt.EndOffset());
+            assertEquals(s.Length, offsetAtt.StartOffset);
+            assertEquals(s.Length, offsetAtt.EndOffset);
         }
 
         private class NGramTokenizerAnonymousInnerClassHelper : NGramTokenizer

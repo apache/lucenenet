@@ -463,8 +463,8 @@ namespace Lucene.Net.Index.Memory
                     else
                     {
                         postingsWriter.WriteInt(pos);
-                        postingsWriter.WriteInt(offsetAtt.StartOffset() + offset);
-                        postingsWriter.WriteInt(offsetAtt.EndOffset() + offset);
+                        postingsWriter.WriteInt(offsetAtt.StartOffset + offset);
+                        postingsWriter.WriteInt(offsetAtt.EndOffset + offset);
                     }
                     sliceArray.end[ord] = postingsWriter.CurrentOffset;
                 }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index.Memory
                 // ensure infos.numTokens > 0 invariant; needed for correct operation of terms()
                 if (numTokens > 0)
                 {
-                    fields[fieldName] = new Info(terms, sliceArray, numTokens, numOverlapTokens, boost, pos, offsetAtt.EndOffset() + offset, sumTotalTermFreq);
+                    fields[fieldName] = new Info(terms, sliceArray, numTokens, numOverlapTokens, boost, pos, offsetAtt.EndOffset + offset, sumTotalTermFreq);
                     sortedFields = null; // invalidate sorted view, if any
                 }
             } // can never happen

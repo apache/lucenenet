@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis
                 LookaheadTokenFilter.Position startPosData = positions.Get(InputPos);
                 LookaheadTokenFilter.Position endPosData = positions.Get(InputPos + PosLenAtt.PositionLength);
 
-                int startOffset = OffsetAtt.StartOffset();
+                int startOffset = OffsetAtt.StartOffset;
                 if (startPosData.StartOffset == -1)
                 {
                     startPosData.StartOffset = startOffset;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Analysis
                     Debug.Assert(startPosData.StartOffset == startOffset, "prev startOffset=" + startPosData.StartOffset + " vs new startOffset=" + startOffset + " inputPos=" + InputPos);
                 }
 
-                int endOffset = OffsetAtt.EndOffset();
+                int endOffset = OffsetAtt.EndOffset;
                 if (endPosData.EndOffset == -1)
                 {
                     endPosData.EndOffset = endOffset;
@@ -354,7 +354,7 @@ namespace Lucene.Net.Analysis
             int posLen = PosLenAtt.PositionLength;
             LookaheadTokenFilter.Position endPosData = positions.Get(OutputPos + posLen);
             Debug.Assert(endPosData.EndOffset != -1);
-            Debug.Assert(OffsetAtt.EndOffset() == endPosData.EndOffset, "offsetAtt.endOffset=" + OffsetAtt.EndOffset() + " vs expected=" + endPosData.EndOffset);
+            Debug.Assert(OffsetAtt.EndOffset == endPosData.EndOffset, "offsetAtt.endOffset=" + OffsetAtt.EndOffset + " vs expected=" + endPosData.EndOffset);
             return true;
         }
 

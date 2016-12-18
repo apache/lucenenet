@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 termAtt.CopyBuffer(value.Buffer(), 0, value.Length);
                 posIncrAtt.PositionIncrement = value.PositionIncrement;
                 flagsAtt.Flags = value.Flags;
-                offsetAtt.SetOffset(value.StartOffset(), value.EndOffset());
+                offsetAtt.SetOffset(value.StartOffset, value.EndOffset);
                 typeAtt.Type = value.Type;
                 payloadAtt.Payload = value.Payload;
             }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             token.CopyBuffer(p_termAtt.Buffer(), 0, p_termAtt.Length);
             token.PositionIncrement = p_posIncrAtt.PositionIncrement;
             token.Flags = p_flagsAtt.Flags;
-            token.SetOffset(p_offsetAtt.StartOffset(), p_offsetAtt.EndOffset());
+            token.SetOffset(p_offsetAtt.StartOffset, p_offsetAtt.EndOffset);
             token.Type = p_typeAtt.Type;
             token.Payload = p_payloadAtt.Payload;
             return token;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             token.CopyBuffer(termAtt.Buffer(), 0, termAtt.Length);
             token.PositionIncrement = posIncrAtt.PositionIncrement;
             token.Flags = flagsAtt.Flags;
-            token.SetOffset(offsetAtt.StartOffset(), offsetAtt.EndOffset());
+            token.SetOffset(offsetAtt.StartOffset, offsetAtt.EndOffset);
             token.Type = typeAtt.Type;
             token.Payload = payloadAtt.Payload;
             return token;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> consumer token </returns>
         public virtual Token UpdateSuffixToken(Token suffixToken, Token lastPrefixToken)
         {
-            suffixToken.SetOffset(lastPrefixToken.EndOffset() + suffixToken.StartOffset(), lastPrefixToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.SetOffset(lastPrefixToken.EndOffset + suffixToken.StartOffset, lastPrefixToken.EndOffset + suffixToken.EndOffset);
             return suffixToken;
         }
 

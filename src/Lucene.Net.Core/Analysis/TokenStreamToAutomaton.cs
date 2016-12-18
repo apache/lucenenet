@@ -250,12 +250,12 @@ namespace Lucene.Net.Analysis
                     state = nextState;
                 }
 
-                maxOffset = Math.Max(maxOffset, offsetAtt.EndOffset());
+                maxOffset = Math.Max(maxOffset, offsetAtt.EndOffset);
             }
 
             @in.End();
             State endState = null;
-            if (offsetAtt.EndOffset() > maxOffset)
+            if (offsetAtt.EndOffset > maxOffset)
             {
                 endState = new State();
                 endState.Accept = true;

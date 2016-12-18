@@ -38,13 +38,13 @@ namespace Lucene.Net.Search.Highlight
         {
             public int Compare(Token t1, Token t2)
             {
-                if (t1.StartOffset() == t2.StartOffset())
+                if (t1.StartOffset == t2.StartOffset)
                 {
-                    return t1.EndOffset() - t2.EndOffset();
+                    return t1.EndOffset - t2.EndOffset;
                 }
                 else
                 {
-                    return t1.StartOffset() - t2.StartOffset();
+                    return t1.StartOffset - t2.StartOffset;
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Highlight
                 Token token = tokens[currentToken++];
                 ClearAttributes();
                 termAtt.SetEmpty().Append(token);
-                offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 BytesRef payload = token.Payload;
                 if (payload != null)
                 {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Highlight
                 }
                 posincAtt.PositionIncrement = 
                     (currentToken <= 1 || 
-                    tokens[currentToken - 1].StartOffset() > tokens[currentToken - 2].StartOffset() 
+                    tokens[currentToken - 1].StartOffset > tokens[currentToken - 2].StartOffset 
                     ? 1 : 0);
                 return true;
             }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         throw new ArgumentException("Required TermVector Offset information was not found");
                     }
-                    Token token = new Token(term,dpEnum.StartOffset(),dpEnum.EndOffset());
+                    Token token = new Token(term,dpEnum.StartOffset(), dpEnum.EndOffset());
                     if (hasPayloads)
                     {
                         // Must make a deep copy of the returned payload,

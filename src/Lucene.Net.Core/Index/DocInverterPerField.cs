@@ -160,8 +160,8 @@ namespace Lucene.Net.Index
 
                                 if (checkOffsets)
                                 {
-                                    int startOffset = FieldState.Offset_Renamed + offsetAttribute.StartOffset();
-                                    int endOffset = FieldState.Offset_Renamed + offsetAttribute.EndOffset();
+                                    int startOffset = FieldState.Offset_Renamed + offsetAttribute.StartOffset;
+                                    int endOffset = FieldState.Offset_Renamed + offsetAttribute.EndOffset;
                                     if (startOffset < 0 || endOffset < startOffset)
                                     {
                                         throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                         // TODO: maybe add some safety? then again, its already checked
                         // when we come back around to the field...
                         FieldState.Position_Renamed += posIncrAttribute.PositionIncrement;
-                        FieldState.Offset_Renamed += offsetAttribute.EndOffset();
+                        FieldState.Offset_Renamed += offsetAttribute.EndOffset;
 
                         if (DocState.MaxTermPrefix != null)
                         {

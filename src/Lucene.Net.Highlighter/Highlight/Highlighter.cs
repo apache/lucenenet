@@ -194,12 +194,12 @@ namespace Lucene.Net.Search.Highlight
                 var tokenGroup = new TokenGroup(tokenStream);
 
                 for (bool next = tokenStream.IncrementToken();
-                     next && (offsetAtt.StartOffset() < _maxDocCharsToAnalyze);
+                     next && (offsetAtt.StartOffset < _maxDocCharsToAnalyze);
                      next = tokenStream.IncrementToken())
                 {
-                    if ((offsetAtt.EndOffset() > text.Length)
+                    if ((offsetAtt.EndOffset > text.Length)
                         ||
-                        (offsetAtt.StartOffset() > text.Length)
+                        (offsetAtt.StartOffset > text.Length)
                         )
                     {
                         throw new InvalidTokenOffsetsException("Token " + termAtt.ToString()

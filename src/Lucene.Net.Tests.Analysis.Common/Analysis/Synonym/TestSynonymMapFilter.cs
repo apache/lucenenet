@@ -91,12 +91,12 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (VERBOSE)
                 {
-                    Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset() + " endOff=" + offsetAtt.EndOffset());
+                    Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset + " endOff=" + offsetAtt.EndOffset);
                 }
 
                 assertTrue(expectedUpto < expected.Length);
-                int startOffset = offsetAtt.StartOffset();
-                int endOffset = offsetAtt.EndOffset();
+                int startOffset = offsetAtt.StartOffset;
+                int endOffset = offsetAtt.EndOffset;
 
                 string[] expectedAtPos = expected[expectedUpto++].Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
                 for (int atPos = 0; atPos < expectedAtPos.Length; atPos++)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Synonym
                         assertTrue(tokensOut.IncrementToken());
                         if (VERBOSE)
                         {
-                            Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset() + " endOff=" + offsetAtt.EndOffset());
+                            Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset + " endOff=" + offsetAtt.EndOffset);
                         }
                     }
                     int colonIndex = expectedAtPos[atPos].IndexOf(':');
@@ -138,8 +138,8 @@ namespace Lucene.Net.Analysis.Synonym
                     assertEquals(atPos == 0 ? 1 : 0, posIncrAtt.PositionIncrement);
                     // start/end offset of all tokens at same pos should
                     // be the same:
-                    assertEquals(startOffset, offsetAtt.StartOffset());
-                    assertEquals(expectedEndOffset, offsetAtt.EndOffset());
+                    assertEquals(startOffset, offsetAtt.StartOffset);
+                    assertEquals(expectedEndOffset, offsetAtt.EndOffset);
                     assertEquals(expectedPosLen, posLenAtt.PositionLength);
                 }
             }

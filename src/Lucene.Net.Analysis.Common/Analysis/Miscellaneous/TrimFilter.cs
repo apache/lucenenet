@@ -99,10 +99,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     termAtt.SetEmpty();
                 }
-                if (updateOffsets && len == offsetAtt.EndOffset() - offsetAtt.StartOffset())
+                if (updateOffsets && len == offsetAtt.EndOffset - offsetAtt.StartOffset)
                 {
-                    int newStart = offsetAtt.StartOffset() + start;
-                    int newEnd = offsetAtt.EndOffset() - (start < end ? endOff : 0);
+                    int newStart = offsetAtt.StartOffset + start;
+                    int newEnd = offsetAtt.EndOffset - (start < end ? endOff : 0);
                     offsetAtt.SetOffset(newStart, newEnd);
                 }
             }

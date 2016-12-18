@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
                     // stuff abs position into type:
                     token.Type = "" + pos;
                     offset += offIncr + tokenOffset;
-                    //System.out.println("  " + token + " posIncr=" + token.getPositionIncrement() + " pos=" + pos + " off=" + token.StartOffset() + "/" + token.EndOffset() + " (freq=" + postingsByDoc.Get(docCount).Size() + ")");
+                    //System.out.println("  " + token + " posIncr=" + token.getPositionIncrement() + " pos=" + pos + " off=" + token.StartOffset + "/" + token.EndOffset + " (freq=" + postingsByDoc.Get(docCount).Size() + ")");
                 }
                 doc.Add(new Field("content", new CannedTokenStream(tokens.ToArray()), ft));
                 w.AddDocument(doc);
@@ -381,8 +381,8 @@ namespace Lucene.Net.Index
                                 int pos = Convert.ToInt32(token.Type);
                                 //System.out.println("        pos=" + pos);
                                 Assert.AreEqual(pos, docsAndPositionsAndOffsets.NextPosition());
-                                Assert.AreEqual(token.StartOffset(), docsAndPositionsAndOffsets.StartOffset());
-                                Assert.AreEqual(token.EndOffset(), docsAndPositionsAndOffsets.EndOffset());
+                                Assert.AreEqual(token.StartOffset, docsAndPositionsAndOffsets.StartOffset());
+                                Assert.AreEqual(token.EndOffset, docsAndPositionsAndOffsets.EndOffset());
                             }
                         }
                     }

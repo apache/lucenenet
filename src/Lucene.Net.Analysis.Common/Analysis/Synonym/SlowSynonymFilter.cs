@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                     IOffsetAttribute lastOffsetAtt = lastTok.AddAttribute<IOffsetAttribute>();
 
-                    newOffsetAtt.SetOffset(newOffsetAtt.StartOffset(), lastOffsetAtt.EndOffset());
+                    newOffsetAtt.SetOffset(newOffsetAtt.StartOffset, lastOffsetAtt.EndOffset);
                     newTermAtt.CopyBuffer(repTok.Buffer(), 0, repTok.Length);
                     repPos += repTok.PositionIncrement;
                     if (i == 0) // make position of first token equal to original

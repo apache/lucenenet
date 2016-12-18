@@ -68,8 +68,8 @@ namespace Lucene.Net.Search.Highlight
         {
             if (NumTokens < MAX_NUM_TOKENS_PER_GROUP)
             {
-                int termStartOffset = offsetAtt.StartOffset();
-                int termEndOffset = offsetAtt.EndOffset();
+                int termStartOffset = offsetAtt.StartOffset;
+                int termEndOffset = offsetAtt.EndOffset;
                 if (NumTokens == 0)
                 {
                     StartOffset = MatchStartOffset = termStartOffset;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Highlight
 
         internal bool IsDistinct()
         {
-            return offsetAtt.StartOffset() >= EndOffset;
+            return offsetAtt.StartOffset >= EndOffset;
         }
 
         internal void Clear()

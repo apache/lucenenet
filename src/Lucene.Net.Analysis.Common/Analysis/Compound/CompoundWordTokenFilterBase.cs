@@ -171,8 +171,8 @@ namespace Lucene.Net.Analysis.Compound
                 this.txt = outerInstance.termAtt.SubSequence(offset, offset + length);
 
                 // offsets of the original word
-                int startOff = outerInstance.offsetAtt.StartOffset();
-                int endOff = outerInstance.offsetAtt.EndOffset();
+                int startOff = outerInstance.offsetAtt.StartOffset;
+                int endOff = outerInstance.offsetAtt.EndOffset;
 
 #pragma warning disable 612, 618
                 if (outerInstance.matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.termAtt.Length)

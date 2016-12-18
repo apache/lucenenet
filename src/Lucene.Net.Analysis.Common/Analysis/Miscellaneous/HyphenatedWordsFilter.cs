@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 char[] term = termAttribute.Buffer();
                 int termLength = termAttribute.Length;
-                lastEndOffset = offsetAttribute.EndOffset();
+                lastEndOffset = offsetAttribute.EndOffset;
 
                 if (termLength > 0 && term[termLength - 1] == '-')
                 {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             hyphenated.CopyTo(0, term, 0, length);
             termAttribute.Length = length;
-            offsetAttribute.SetOffset(offsetAttribute.StartOffset(), lastEndOffset);
+            offsetAttribute.SetOffset(offsetAttribute.StartOffset, lastEndOffset);
             hyphenated.Length = 0;
         }
     }

@@ -196,14 +196,14 @@ namespace Lucene.Net.Index
         {
             internal int Start, End;
 
-            public int StartOffset()
+            public int StartOffset
             {
-                return Start;
+                get { return Start; }
             }
 
-            public int EndOffset()
+            public int EndOffset
             {
-                return End;
+                get { return End; }
             }
 
             public void SetOffset(int startOffset, int endOffset)

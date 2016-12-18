@@ -368,7 +368,7 @@ namespace Lucene.Net.Analysis.Synonym
                     ClearAttributes();
                     Token token = tokens[index++];
                     termAtt.SetEmpty().Append(token);
-                    offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                    offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                     posIncAtt.PositionIncrement = token.PositionIncrement;
                     flagsAtt.Flags = token.Flags;
                     typeAtt.Type = token.Type;

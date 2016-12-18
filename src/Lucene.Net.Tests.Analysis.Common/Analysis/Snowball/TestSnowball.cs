@@ -108,8 +108,8 @@ namespace Lucene.Net.Analysis.Snowball
             filter.IncrementToken();
 
             assertEquals("accent", termAtt.ToString());
-            assertEquals(2, offsetAtt.StartOffset());
-            assertEquals(7, offsetAtt.EndOffset());
+            assertEquals(2, offsetAtt.StartOffset);
+            assertEquals(7, offsetAtt.EndOffset);
             assertEquals("wrd", typeAtt.Type);
             assertEquals(3, posIncAtt.PositionIncrement);
             assertEquals(77, flagsAtt.Flags);

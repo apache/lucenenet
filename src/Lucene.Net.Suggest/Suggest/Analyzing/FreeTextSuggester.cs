@@ -565,7 +565,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         throw new System.ArgumentException("tokens must not contain separator byte; got token=" + tokenBytes + " but gramCount=" + gramCount + " does not match recalculated count=" + CountGrams(tokenBytes));
                     }
-                    maxEndOffset = Math.Max(maxEndOffset, offsetAtt.EndOffset());
+                    maxEndOffset = Math.Max(maxEndOffset, offsetAtt.EndOffset);
                     lastTokens[gramCount - 1] = BytesRef.DeepCopyOf(tokenBytes);
                 }
                 ts.End();
@@ -585,8 +585,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // maxEndOffset is still -1), which in fact works out OK
                 // because we fill the unigram with an empty BytesRef
                 // below:
-                bool lastTokenEnded = offsetAtt.EndOffset() > maxEndOffset || endPosInc > 0;
-                //System.out.println("maxEndOffset=" + maxEndOffset + " vs " + offsetAtt.endOffset());
+                bool lastTokenEnded = offsetAtt.EndOffset > maxEndOffset || endPosInc > 0;
+                //System.out.println("maxEndOffset=" + maxEndOffset + " vs " + offsetAtt.EndOffset);
 
                 if (lastTokenEnded)
                 {

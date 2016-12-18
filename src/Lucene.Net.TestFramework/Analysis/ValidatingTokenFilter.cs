@@ -121,14 +121,14 @@ namespace Lucene.Net.Analysis
 
             if (OffsetAtt != null)
             {
-                startOffset = OffsetAtt.StartOffset();
-                endOffset = OffsetAtt.EndOffset();
+                startOffset = OffsetAtt.StartOffset;
+                endOffset = OffsetAtt.EndOffset;
 
-                if (OffsetsAreCorrect && OffsetAtt.StartOffset() < LastStartOffset)
+                if (OffsetsAreCorrect && OffsetAtt.StartOffset < LastStartOffset)
                 {
                     throw new Exception(Name + ": offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + LastStartOffset);
                 }
-                LastStartOffset = OffsetAtt.StartOffset();
+                LastStartOffset = OffsetAtt.StartOffset;
             }
 
             posLen = PosLenAtt == null ? 1 : PosLenAtt.PositionLength;

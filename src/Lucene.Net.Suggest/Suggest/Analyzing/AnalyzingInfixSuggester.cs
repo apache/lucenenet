@@ -445,7 +445,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     lastToken = termAtt.ToString();
                     if (lastToken != null)
                     {
-                        maxEndOffset = Math.Max(maxEndOffset, offsetAtt.EndOffset());
+                        maxEndOffset = Math.Max(maxEndOffset, offsetAtt.EndOffset);
                     }
                 }
                 ts.End();
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 if (lastToken != null)
                 {
                     Query lastQuery;
-                    if (maxEndOffset == offsetAtt.EndOffset())
+                    if (maxEndOffset == offsetAtt.EndOffset)
                     {
                         // Use PrefixQuery (or the ngram equivalent) when
                         // there was no trailing discarded chars in the
@@ -641,8 +641,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (ts.IncrementToken())
                 {
                     string token = termAtt.ToString();
-                    int startOffset = offsetAtt.StartOffset();
-                    int endOffset = offsetAtt.EndOffset();
+                    int startOffset = offsetAtt.StartOffset;
+                    int endOffset = offsetAtt.EndOffset;
                     if (upto < startOffset)
                     {
                         AddNonMatch(sb, text.Substring(upto, startOffset - upto));
@@ -666,7 +666,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
                 ts.End();
-                int endOffset2 = offsetAtt.EndOffset();
+                int endOffset2 = offsetAtt.EndOffset;
                 if (upto < endOffset2)
                 {
                     AddNonMatch(sb, text.Substring(upto));

@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Highlight
         {
             if (offsetCount < offsetLimit && input.IncrementToken())
             {
-                int offsetLength = offsetAttrib.EndOffset() - offsetAttrib.StartOffset();
+                int offsetLength = offsetAttrib.EndOffset - offsetAttrib.StartOffset;
                 offsetCount += offsetLength;
                 return true;
             }

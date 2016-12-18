@@ -205,11 +205,11 @@ namespace Lucene.Net.Analysis
                     Assert.AreEqual(output[i], termAtt.ToString(), "term " + i + ", output[i] = " + output[i] + ", termAtt = " + termAtt.ToString());
                     if (startOffsets != null)
                     {
-                        Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
+                        Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset, "startOffset " + i);
                     }
                     if (endOffsets != null)
                     {
-                        Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
+                        Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset, "endOffset " + i);
                     }
                     if (types != null)
                     {
@@ -231,8 +231,8 @@ namespace Lucene.Net.Analysis
                     // we can enforce some basic things about a few attributes even if the caller doesn't check:
                     if (offsetAtt != null)
                     {
-                        int startOffset = offsetAtt.StartOffset();
-                        int endOffset = offsetAtt.EndOffset();
+                        int startOffset = offsetAtt.StartOffset;
+                        int endOffset = offsetAtt.EndOffset;
                         if (finalOffset != null)
                         {
                             Assert.IsTrue(startOffset <= (int)finalOffset, "startOffset must be <= finalOffset");
@@ -241,8 +241,8 @@ namespace Lucene.Net.Analysis
 
                         if (offsetsAreCorrect)
                         {
-                            Assert.IsTrue(offsetAtt.StartOffset() >= lastStartOffset, "offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
-                            lastStartOffset = offsetAtt.StartOffset();
+                            Assert.IsTrue(offsetAtt.StartOffset >= lastStartOffset, "offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
+                            lastStartOffset = offsetAtt.StartOffset;
                         }
 
                         if (offsetsAreCorrect && posLengthAtt != null && posIncrAtt != null)
@@ -339,11 +339,11 @@ namespace Lucene.Net.Analysis
 
                 if (finalOffset != null)
                 {
-                    Assert.AreEqual((int)finalOffset, offsetAtt.EndOffset(), "finalOffset");
+                    Assert.AreEqual((int)finalOffset, offsetAtt.EndOffset, "finalOffset");
                 }
                 if (offsetAtt != null)
                 {
-                    Assert.IsTrue(offsetAtt.EndOffset() >= 0, "finalOffset must be >= 0");
+                    Assert.IsTrue(offsetAtt.EndOffset >= 0, "finalOffset must be >= 0");
                 }
                 if (finalPosInc != null)
                 {
@@ -957,8 +957,8 @@ namespace Lucene.Net.Analysis
                     }
                     if (offsetAtt != null)
                     {
-                        startOffsets.Add(offsetAtt.StartOffset());
-                        endOffsets.Add(offsetAtt.EndOffset());
+                        startOffsets.Add(offsetAtt.StartOffset);
+                        endOffsets.Add(offsetAtt.EndOffset);
                     }
                 }
                 ts.End();

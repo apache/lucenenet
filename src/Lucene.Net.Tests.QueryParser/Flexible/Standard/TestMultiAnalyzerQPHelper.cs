@@ -198,8 +198,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                         return false;
                     }
                     prevType = typeAtt.Type;
-                    prevStartOffset = offsetAtt.StartOffset();
-                    prevEndOffset = offsetAtt.EndOffset();
+                    prevStartOffset = offsetAtt.StartOffset;
+                    prevEndOffset = offsetAtt.EndOffset;
                     String text = termAtt.toString();
                     if (text.equals("triplemulti"))
                     {

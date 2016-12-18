@@ -236,8 +236,8 @@ namespace Lucene.Net.Analysis.Ngram
                 for (int end = start + minGram; end <= Math.Min(codePointCount, start + maxGram); ++end)
                 {
                     assertTrue(tk.IncrementToken());
-                    assertEquals(0, offsetAtt.StartOffset());
-                    assertEquals(s.Length, offsetAtt.EndOffset());
+                    assertEquals(0, offsetAtt.StartOffset);
+                    assertEquals(s.Length, offsetAtt.EndOffset);
                     int startIndex = Character.OffsetByCodePoints(s, 0, start);
                     int endIndex = Character.OffsetByCodePoints(s, 0, end);
                     assertEquals(s.Substring(startIndex, endIndex - startIndex), termAtt.ToString());

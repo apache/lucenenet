@@ -384,8 +384,8 @@ namespace Lucene.Net.Analysis.Synonym
                             buffer = termAtt.Buffer();
                             bufferLen = termAtt.Length;
                             PendingInput pendingInput = futureInputs[nextWrite];
-                            lastStartOffset = pendingInput.startOffset = offsetAtt.StartOffset();
-                            lastEndOffset = pendingInput.endOffset = offsetAtt.EndOffset();
+                            lastStartOffset = pendingInput.startOffset = offsetAtt.StartOffset;
+                            lastEndOffset = pendingInput.endOffset = offsetAtt.EndOffset;
                             inputEndOffset = pendingInput.endOffset;
                             //System.out.println("  new token=" + new String(buffer, 0, bufferLen));
                             if (nextRead != nextWrite)

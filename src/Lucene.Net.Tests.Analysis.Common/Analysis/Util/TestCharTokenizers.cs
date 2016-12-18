@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Util
                     var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
                     while (ts.IncrementToken())
                     {
-                        var highlightedText = s.Substring(offsetAtt.StartOffset(), offsetAtt.EndOffset() - offsetAtt.StartOffset());
+                        var highlightedText = s.Substring(offsetAtt.StartOffset, offsetAtt.EndOffset - offsetAtt.StartOffset);
                         for (int j = 0, cp = 0; j < highlightedText.Length; j += Character.CharCount(cp))
                         {
                             cp = char.ConvertToUtf32(highlightedText, j);
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Util
                     var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
                     while (ts.IncrementToken())
                     {
-                        string highlightedText = s.Substring(offsetAtt.StartOffset(), offsetAtt.EndOffset() - offsetAtt.StartOffset());
+                        string highlightedText = s.Substring(offsetAtt.StartOffset, offsetAtt.EndOffset - offsetAtt.StartOffset);
                         for (int j = 0, cp = 0; j < highlightedText.Length; j += Character.CharCount(cp))
                         {
                             cp = char.ConvertToUtf32(highlightedText, j);

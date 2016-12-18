@@ -485,8 +485,8 @@ namespace Lucene.Net.Analysis.Shingle
             for (int i = 0; i < tokensToCompare.Length; i++)
             {
                 text[i] = new string(tokensToCompare[i].Buffer(), 0, tokensToCompare[i].Length);
-                startOffsets[i] = tokensToCompare[i].StartOffset();
-                endOffsets[i] = tokensToCompare[i].EndOffset();
+                startOffsets[i] = tokensToCompare[i].StartOffset;
+                endOffsets[i] = tokensToCompare[i].EndOffset;
             }
 
             AssertTokenStreamContents(filter, text, startOffsets, endOffsets, types, positionIncrements);

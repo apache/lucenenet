@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                     Token tok = toks.Current;
                     termAtt.SetEmpty().Append(tok);
-                    offsetAtt.SetOffset(tok.StartOffset(), tok.EndOffset());
+                    offsetAtt.SetOffset(tok.StartOffset, tok.EndOffset);
                     posIncAtt.PositionIncrement = tok.PositionIncrement;
                     return true;
                 }

@@ -770,8 +770,8 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(pos1, pos2);
                             if (offsetAtt1 != null)
                             {
-                                Assert.AreEqual(offsetAtt1.StartOffset(), offsetAtt2.StartOffset());
-                                Assert.AreEqual(offsetAtt1.EndOffset(), offsetAtt2.EndOffset());
+                                Assert.AreEqual(offsetAtt1.StartOffset, offsetAtt2.StartOffset);
+                                Assert.AreEqual(offsetAtt1.EndOffset, offsetAtt2.EndOffset);
                             }
                         }
                         Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum1.NextDoc());

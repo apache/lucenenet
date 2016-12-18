@@ -59,8 +59,8 @@ namespace Lucene.Net.Search.Highlight
                 }
                 ClearAttributes();
                 termAttribute.SetEmpty().Append(this.tokens[i]);
-                offsetAttribute.SetOffset(this.tokens[i].StartOffset(),
-                    this.tokens[i].EndOffset());
+                offsetAttribute.SetOffset(this.tokens[i].StartOffset,
+                    this.tokens[i].EndOffset);
                 positionIncrementAttribute.PositionIncrement = (this.tokens[i]
                     .PositionIncrement);
                 return true;
@@ -387,8 +387,8 @@ namespace Lucene.Net.Search.Highlight
                     assertEquals(token.toString(), termAtt.toString());
                     assertEquals(token.PositionIncrement, posIncAtt.PositionIncrement);
                     assertEquals(token.Payload, payloadAtt.Payload);
-                    assertEquals(token.StartOffset(), offsetAtt.StartOffset());
-                    assertEquals(token.EndOffset(), offsetAtt.EndOffset());
+                    assertEquals(token.StartOffset, offsetAtt.StartOffset);
+                    assertEquals(token.EndOffset, offsetAtt.EndOffset);
                 }
 
                 assertFalse(ts.IncrementToken());

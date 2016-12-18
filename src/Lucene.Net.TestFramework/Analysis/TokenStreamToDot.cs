@@ -101,8 +101,8 @@ namespace Lucene.Net.Analysis
                 string arcLabel = TermAtt.ToString();
                 if (OffsetAtt != null)
                 {
-                    int startOffset = OffsetAtt.StartOffset();
-                    int endOffset = OffsetAtt.EndOffset();
+                    int startOffset = OffsetAtt.StartOffset;
+                    int endOffset = OffsetAtt.EndOffset;
                     //System.out.println("start=" + startOffset + " end=" + endOffset + " len=" + inputText.length());
                     if (InputText != null)
                     {

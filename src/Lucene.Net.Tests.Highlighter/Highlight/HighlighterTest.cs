@@ -1676,7 +1676,7 @@ namespace Lucene.Net.Search.Highlight
                     ClearAttributes();
                     termAtt.SetEmpty().Append(token);
                     posIncrAtt.PositionIncrement = (token.PositionIncrement);
-                    offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                    offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                     return true;
                 }
                 return false;
@@ -1738,7 +1738,7 @@ namespace Lucene.Net.Search.Highlight
                     ClearAttributes();
                     termAtt.SetEmpty().Append(token);
                     posIncrAtt.PositionIncrement = (token.PositionIncrement);
-                    offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                    offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                     return true;
                 }
                 return false;
@@ -2115,10 +2115,10 @@ namespace Lucene.Net.Search.Highlight
                 {
                     return false;
                 }
-                //Token nextRealToken = new Token(, offsetAtt.startOffset(), offsetAtt.endOffset());
+                //Token nextRealToken = new Token(, offsetAtt.StartOffset, offsetAtt.EndOffset);
                 ClearAttributes();
                 termAtt.CopyBuffer(realTermAtt.Buffer(), 0, realTermAtt.Length);
-                offsetAtt.SetOffset(realOffsetAtt.StartOffset(), realOffsetAtt.EndOffset());
+                offsetAtt.SetOffset(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
                 posIncrAtt.PositionIncrement = (realPosIncrAtt.PositionIncrement);
 
                 //String expansions = synonyms.Get(realTermAtt.toString());
@@ -2131,7 +2131,7 @@ namespace Lucene.Net.Search.Highlight
                 st = new StringTokenizer(expansions, ",");
                 if (st.HasMoreTokens())
                 {
-                    currentRealToken = new Token(realOffsetAtt.StartOffset(), realOffsetAtt.EndOffset());
+                    currentRealToken = new Token(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
                     currentRealToken.CopyBuffer(realTermAtt.Buffer(), 0, realTermAtt.Length);
                 }
 
@@ -2142,7 +2142,7 @@ namespace Lucene.Net.Search.Highlight
                 String tok = st.NextToken();
                 ClearAttributes();
                 termAtt.SetEmpty().Append(tok);
-                offsetAtt.SetOffset(currentRealToken.StartOffset(), currentRealToken.EndOffset());
+                offsetAtt.SetOffset(currentRealToken.StartOffset, currentRealToken.EndOffset);
                 posIncrAtt.PositionIncrement = (0);
                 if (!st.HasMoreTokens())
                 {

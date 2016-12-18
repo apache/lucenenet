@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Highlight
                 ClearAttributes();
                 termAttribute.SetEmpty().Append(next);
                 positionIncrementAttribute.PositionIncrement = next.PositionIncrement;
-                offsetAttribute.SetOffset(next.StartOffset(), next.EndOffset());
+                offsetAttribute.SetOffset(next.StartOffset, next.EndOffset);
                 payloadAttribute.Payload = next.Payload;
                 return true;
             }

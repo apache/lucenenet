@@ -151,8 +151,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     while (ts.IncrementToken())
                     {
                         string token = termAtt.toString();
-                        int startOffset = offsetAtt.StartOffset();
-                        int endOffset = offsetAtt.EndOffset();
+                        int startOffset = offsetAtt.StartOffset;
+                        int endOffset = offsetAtt.EndOffset;
                         if (upto < startOffset)
                         {
                             fragments.Add(new LookupHighlightFragment(text.Substring(upto, startOffset - upto), false));
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                     }
                     ts.End();
-                    int endOffset2 = offsetAtt.EndOffset();
+                    int endOffset2 = offsetAtt.EndOffset;
                     if (upto < endOffset2)
                     {
                         fragments.Add(new LookupHighlightFragment(text.Substring(upto), false));

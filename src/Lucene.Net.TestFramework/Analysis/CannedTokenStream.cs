@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
                 TermAtt.Append(token.ToString());
                 PosIncrAtt.PositionIncrement = token.PositionIncrement;
                 PosLengthAtt.PositionLength = token.PositionLength;
-                OffsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                OffsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 PayloadAtt.Payload = token.Payload;
                 return true;
             }

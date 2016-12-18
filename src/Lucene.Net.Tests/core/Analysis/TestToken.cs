@@ -37,8 +37,8 @@ namespace Lucene.Net.Analysis
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, content.Length);
             Assert.AreNotSame(t.Buffer(), content);
-            Assert.AreEqual(0, t.StartOffset());
-            Assert.AreEqual(0, t.EndOffset());
+            Assert.AreEqual(0, t.StartOffset);
+            Assert.AreEqual(0, t.EndOffset);
             Assert.AreEqual("hello", t.ToString());
             Assert.AreEqual("word", t.Type);
             Assert.AreEqual(0, t.Flags);
@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis
             t.CopyBuffer(content, 0, content.Length);
             Assert.AreEqual("hello", t.ToString());
             Assert.AreEqual("hello", t.ToString());
-            Assert.AreEqual(6, t.StartOffset());
-            Assert.AreEqual(22, t.EndOffset());
+            Assert.AreEqual(6, t.StartOffset);
+            Assert.AreEqual(22, t.EndOffset);
             Assert.AreEqual("word", t.Type);
             Assert.AreEqual(0, t.Flags);
 
@@ -56,8 +56,8 @@ namespace Lucene.Net.Analysis
             t.CopyBuffer(content, 0, content.Length);
             Assert.AreEqual("hello", t.ToString());
             Assert.AreEqual("hello", t.ToString());
-            Assert.AreEqual(6, t.StartOffset());
-            Assert.AreEqual(22, t.EndOffset());
+            Assert.AreEqual(6, t.StartOffset);
+            Assert.AreEqual(22, t.EndOffset);
             Assert.AreEqual("word", t.Type);
             Assert.AreEqual(7, t.Flags);
 
@@ -65,8 +65,8 @@ namespace Lucene.Net.Analysis
             t.CopyBuffer(content, 0, content.Length);
             Assert.AreEqual("hello", t.ToString());
             Assert.AreEqual("hello", t.ToString());
-            Assert.AreEqual(6, t.StartOffset());
-            Assert.AreEqual(22, t.EndOffset());
+            Assert.AreEqual(6, t.StartOffset);
+            Assert.AreEqual(22, t.EndOffset);
             Assert.AreEqual("junk", t.Type);
             Assert.AreEqual(0, t.Flags);
         }

@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
         }
 
-        public virtual int StartOffset()
+        public virtual int StartOffset
         {
-            return startOffset;
+            get { return startOffset; }
         }
 
         public virtual void SetOffset(int startOffset, int endOffset)
@@ -56,9 +56,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             this.endOffset = endOffset;
         }
 
-        public virtual int EndOffset()
+        public virtual int EndOffset
         {
-            return endOffset;
+            get { return endOffset; }
         }
 
         public override void Clear()

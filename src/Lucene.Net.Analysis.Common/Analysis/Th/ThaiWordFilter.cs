@@ -90,11 +90,11 @@ namespace Lucene.Net.Analysis.Th
                     termAtt.CopyBuffer(clonedTermAtt.Buffer(), start, end - start);
                     if (hasIllegalOffsets)
                     {
-                        offsetAtt.SetOffset(clonedOffsetAtt.StartOffset(), clonedOffsetAtt.EndOffset());
+                        offsetAtt.SetOffset(clonedOffsetAtt.StartOffset, clonedOffsetAtt.EndOffset);
                     }
                     else
                     {
-                        offsetAtt.SetOffset(clonedOffsetAtt.StartOffset() + start, clonedOffsetAtt.StartOffset() + end);
+                        offsetAtt.SetOffset(clonedOffsetAtt.StartOffset + start, clonedOffsetAtt.StartOffset + end);
                     }
                     if (handlePosIncr)
                     {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Th
 
             // if length by start + end offsets doesn't match the term text then assume
             // this is a synonym and don't adjust the offsets.
-            hasIllegalOffsets = offsetAtt.EndOffset() - offsetAtt.StartOffset() != termAtt.Length;
+            hasIllegalOffsets = offsetAtt.EndOffset - offsetAtt.StartOffset != termAtt.Length;
 
             // we lazy init the cloned token, as in ctor not all attributes may be added
             if (clonedToken == null)
@@ -142,11 +142,11 @@ namespace Lucene.Net.Analysis.Th
                 termAtt.Length = end2;
                 if (hasIllegalOffsets)
                 {
-                    offsetAtt.SetOffset(clonedOffsetAtt.StartOffset(), clonedOffsetAtt.EndOffset());
+                    offsetAtt.SetOffset(clonedOffsetAtt.StartOffset, clonedOffsetAtt.EndOffset);
                 }
                 else
                 {
-                    offsetAtt.SetOffset(clonedOffsetAtt.StartOffset(), clonedOffsetAtt.StartOffset() + end2);
+                    offsetAtt.SetOffset(clonedOffsetAtt.StartOffset, clonedOffsetAtt.StartOffset + end2);
                 }
                 // position increment keeps as it is for first token
                 return true;

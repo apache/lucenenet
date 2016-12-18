@@ -341,8 +341,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private void SaveState()
         {
             // otherwise, we have delimiters, save state
-            savedStartOffset = offsetAttribute.StartOffset();
-            savedEndOffset = offsetAttribute.EndOffset();
+            savedStartOffset = offsetAttribute.StartOffset;
+            savedEndOffset = offsetAttribute.EndOffset;
             // if length by start + end offsets doesn't match the term text then assume this is a synonym and don't adjust the offsets.
             hasIllegalOffsets = (savedEndOffset - savedStartOffset != termAttribute.Length);
             savedType = typeAttribute.Type;

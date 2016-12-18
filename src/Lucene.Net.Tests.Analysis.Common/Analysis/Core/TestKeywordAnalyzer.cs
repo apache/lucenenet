@@ -102,8 +102,8 @@ namespace Lucene.Net.Analysis.Core
                 IOffsetAttribute offsetAtt = stream.AddAttribute<IOffsetAttribute>();
                 stream.Reset();
                 assertTrue(stream.IncrementToken());
-                assertEquals(0, offsetAtt.StartOffset());
-                assertEquals(4, offsetAtt.EndOffset());
+                assertEquals(0, offsetAtt.StartOffset);
+                assertEquals(4, offsetAtt.EndOffset);
                 assertFalse(stream.IncrementToken());
                 stream.End();
             }

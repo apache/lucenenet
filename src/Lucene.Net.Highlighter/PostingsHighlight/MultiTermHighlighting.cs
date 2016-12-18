@@ -273,8 +273,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                         {
                             if (matchers[i].Run(charTermAtt.Buffer(), 0, charTermAtt.Length))
                             {
-                                currentStartOffset = offsetAtt.StartOffset();
-                                currentEndOffset = offsetAtt.EndOffset();
+                                currentStartOffset = offsetAtt.StartOffset;
+                                currentEndOffset = offsetAtt.EndOffset;
                                 currentMatch = i;
                                 return 0;
                             }

@@ -40,8 +40,8 @@ namespace Lucene.Net.Analysis.Cn
             tokenizer.Reset();
             while (tokenizer.IncrementToken())
             {
-                assertEquals(correctStartOffset, offsetAtt.StartOffset());
-                assertEquals(correctEndOffset, offsetAtt.EndOffset());
+                assertEquals(correctStartOffset, offsetAtt.StartOffset);
+                assertEquals(correctEndOffset, offsetAtt.EndOffset);
                 correctStartOffset++;
                 correctEndOffset++;
             }

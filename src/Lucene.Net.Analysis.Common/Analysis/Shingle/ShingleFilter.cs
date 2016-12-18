@@ -384,7 +384,7 @@ namespace Lucene.Net.Analysis.Shingle
                         typeAtt.Type = tokenType;
                         noShingleOutput = false;
                     }
-                    offsetAtt.SetOffset(offsetAtt.StartOffset(), nextToken.offsetAtt.EndOffset());
+                    offsetAtt.SetOffset(offsetAtt.StartOffset, nextToken.offsetAtt.EndOffset);
                     posLenAtt.PositionLength = builtGramSize;
                     isOutputHere = true;
                     gramSize.advance();
@@ -421,7 +421,7 @@ namespace Lucene.Net.Analysis.Shingle
                     nextInputStreamToken.CopyTo(target.attSource);
                 }
                 // A filler token occupies no space
-                newTarget.offsetAtt.SetOffset(newTarget.offsetAtt.StartOffset(), newTarget.offsetAtt.StartOffset());
+                newTarget.offsetAtt.SetOffset(newTarget.offsetAtt.StartOffset, newTarget.offsetAtt.StartOffset);
                 newTarget.termAtt.CopyBuffer(fillerToken, 0, fillerToken.Length);
                 newTarget.isFiller = true;
                 --numFillerTokensToInsert;
@@ -467,7 +467,7 @@ namespace Lucene.Net.Analysis.Shingle
                         }
                         isNextInputStreamToken = true;
                         // A filler token occupies no space
-                        newTarget.offsetAtt.SetOffset(offsetAtt.StartOffset(), offsetAtt.StartOffset());
+                        newTarget.offsetAtt.SetOffset(offsetAtt.StartOffset, offsetAtt.StartOffset);
                         newTarget.termAtt.CopyBuffer(fillerToken, 0, fillerToken.Length);
                         newTarget.isFiller = true;
                         --numFillerTokensToInsert;
@@ -489,7 +489,7 @@ namespace Lucene.Net.Analysis.Shingle
                         nextInputStreamToken = new AttributeSource(this.attributeFactory);
                         nextInputStreamToken.AddAttribute<ICharTermAttribute>();
                         IOffsetAttribute newOffsetAtt = nextInputStreamToken.AddAttribute<IOffsetAttribute>();
-                        newOffsetAtt.SetOffset(offsetAtt.EndOffset(), offsetAtt.EndOffset());
+                        newOffsetAtt.SetOffset(offsetAtt.EndOffset, offsetAtt.EndOffset);
                         // Recurse/loop just once:
                         return GetNextToken(target);
                     }

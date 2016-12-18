@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis
                 //System.out.println("  return token=" + t);
                 ClearAttributes();
                 TermAtt.Append(t.ToString());
-                OffsetAtt.SetOffset(t.StartOffset(), t.EndOffset());
+                OffsetAtt.SetOffset(t.StartOffset, t.EndOffset);
                 PosIncrAtt.PositionIncrement = t.PositionIncrement;
                 PosLengthAtt.PositionLength = t.PositionLength;
                 return true;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
                 int lastOffset;
                 if (Tokens != null && Tokens.Count > 0)
                 {
-                    lastOffset = Tokens[Tokens.Count - 1].EndOffset();
+                    lastOffset = Tokens[Tokens.Count - 1].EndOffset;
                 }
                 else
                 {
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis
                         t.PositionLength = posLength;
                         t.PositionIncrement = firstAtPos ? 1 : 0;
                         firstAtPos = false;
-                        //System.out.println("  add token=" + t + " startOff=" + t.StartOffset() + " endOff=" + t.EndOffset());
+                        //System.out.println("  add token=" + t + " startOff=" + t.StartOffset + " endOff=" + t.EndOffset);
                         Tokens.Add(t);
                     }
                     pos += minPosLength;

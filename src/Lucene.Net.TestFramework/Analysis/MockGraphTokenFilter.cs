@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis
                     OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, posEndData.EndOffset);
                     if (DEBUG)
                     {
-                        Console.WriteLine("  inject: outputPos=" + OutputPos + " startOffset=" + OffsetAtt.StartOffset() + " endOffset=" + OffsetAtt.EndOffset() + " posLength=" + PosLenAtt.PositionLength);
+                        Console.WriteLine("  inject: outputPos=" + OutputPos + " startOffset=" + OffsetAtt.StartOffset + " endOffset=" + OffsetAtt.EndOffset + " posLength=" + PosLenAtt.PositionLength);
                     }
                     // TODO: set TypeAtt too?
                 }
