@@ -901,7 +901,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
                 List<TermFreq2> sorted = new List<TermFreq2>(slowCompletor);
-                sorted.Sort();
+                // LUCENENET NOTE: Must use TimSort because comparer is not expecting ties
+                CollectionUtil.TimSort(sorted);
                 foreach (TermFreq2 ent in sorted)
                 {
                     Console.WriteLine("  surface='" + ent.surfaceForm + "' analyzed='" + ent.analyzedForm + "' weight=" + ent.weight);
