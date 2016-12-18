@@ -1,7 +1,4 @@
 using System;
-using System.Globalization;
-using Lucene.Net.Search;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Documents
 {
@@ -45,13 +42,13 @@ namespace Lucene.Net.Documents
     /// </summary>
     public static class DateTools
     {
-        private static readonly String YEAR_FORMAT = "yyyy";
-        private static readonly String MONTH_FORMAT = "yyyyMM";
-        private static readonly String DAY_FORMAT = "yyyyMMdd";
-        private static readonly String HOUR_FORMAT = "yyyyMMddHH";
-        private static readonly String MINUTE_FORMAT = "yyyyMMddHHmm";
-        private static readonly String SECOND_FORMAT = "yyyyMMddHHmmss";
-        private static readonly String MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
+        private static readonly string YEAR_FORMAT = "yyyy";
+        private static readonly string MONTH_FORMAT = "yyyyMM";
+        private static readonly string DAY_FORMAT = "yyyyMMdd";
+        private static readonly string HOUR_FORMAT = "yyyyMMddHH";
+        private static readonly string MINUTE_FORMAT = "yyyyMMddHHmm";
+        private static readonly string SECOND_FORMAT = "yyyyMMddHHmmss";
+        private static readonly string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
 
         private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
 
