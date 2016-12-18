@@ -272,7 +272,7 @@ namespace Lucene.Net.Documents
         /// The TokenStream for this field to be used when indexing, or null. If null,
         /// the TextReader value or String value is analyzed to produce the indexed tokens.
         /// </summary>
-        public virtual TokenStream TokenStreamValue()
+        public virtual TokenStream TokenStreamValue() // LUCENENET TODO: Change to GetTokenStreamValue (for consistency with GetStringValue() and GetNumericValue())
         {
             return TokenStream_Renamed;
         }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Documents
         /// >ImproveIndexingSpeed</a> for details.
         /// </p>
         /// </summary>
-        public string StringValue
+        public string StringValue // LUCENENET TODO: Change to SetValue(string value) ?, GetStringValue() (there is a conversion)
         {
             get
             {
@@ -322,7 +322,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public TextReader ReaderValue
+        public TextReader ReaderValue // LUCENENET TODO: Change to SetValue(TextReader value) ?
         {
             get
             {
@@ -346,7 +346,7 @@ namespace Lucene.Net.Documents
         /// <p>NOTE: the provided BytesRef is not copied so be sure
         /// not to change it until you're done with this field.
         /// </summary>
-        public virtual BytesRef BytesValue
+        public virtual BytesRef BytesValue // LUCENENET TODO: Change to SetValue(BytesRef value) ?
         {
             set
             {
@@ -366,7 +366,8 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual sbyte ByteValue
+        // LUCENENET TODO: See if this can be made to work with byte instead of sbyte so the API is simpler and CLS compliant
+        public virtual sbyte ByteValue // LUCENENET TODO: Change to SetValue(sbyte value) and SetValue(byte value) ?
         {
             set
             {
@@ -382,7 +383,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual short ShortValue
+        public virtual short ShortValue // LUCENENET TODO: Change to SetValue(short value) ?
         {
             set
             {
@@ -398,7 +399,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual int IntValue
+        public virtual int IntValue // LUCENENET TODO: Change to SetValue(int value) ?
         {
             set
             {
@@ -414,7 +415,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual long LongValue
+        public virtual long LongValue // LUCENENET TODO: Change to SetValue(long value) ?
         {
             set
             {
@@ -430,7 +431,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual float FloatValue
+        public virtual float FloatValue // LUCENENET TODO: Change to SetValue(float value) ?
         {
             set
             {
@@ -446,7 +447,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public virtual double DoubleValue
+        public virtual double DoubleValue // LUCENENET TODO: Change to SetValue(double value) ?
         {
             set
             {
@@ -463,7 +464,7 @@ namespace Lucene.Net.Documents
         /// isIndexed() and isTokenized() to return true. May be combined with stored
         /// values from stringValue() or getBinaryValue()
         /// </summary>
-        public virtual TokenStream TokenStream
+        public virtual TokenStream TokenStream // LUCENENET TODO: Change to SetTokenStream(TokenStream tokenStream)
         {
             set
             {
@@ -509,10 +510,11 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public object NumericValue
+        public object NumericValue // LUCENENET TODO: Change to GetNumericValue() (there is a conversion)
         {
             get
             {
+                // LUCENENET TODO: There was no expensive conversion from string in the original
                 string str = FieldsData as string;
                 if (str != null)
                 {
@@ -532,7 +534,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public BytesRef BinaryValue
+        public BytesRef BinaryValue // LUCENENET TODO: Change to GetBinaryValue() (consistent with GetNumericValue())
         {
             get
             {
