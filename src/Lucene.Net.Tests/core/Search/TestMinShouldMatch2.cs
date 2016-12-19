@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             atomicReader.Dispose();

@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Payloads
             Searcher.Similarity = Similarity;
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Searcher = null;

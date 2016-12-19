@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
         }
 
         ///
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public virtual void TestAfter()
         {
             // create an index

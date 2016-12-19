@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             INTS = null;

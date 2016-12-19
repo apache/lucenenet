@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
             w.Dispose();
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void Finish()
         {
             s.IndexReader.Dispose();

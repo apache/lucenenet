@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void afterClass()
         {
             dictionary = null;

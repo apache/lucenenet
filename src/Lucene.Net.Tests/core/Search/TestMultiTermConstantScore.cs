@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

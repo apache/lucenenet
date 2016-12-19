@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
             //System.out.println("Set up " + getName());
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             s = null;
