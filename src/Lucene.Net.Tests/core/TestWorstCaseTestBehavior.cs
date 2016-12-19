@@ -25,7 +25,7 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
-        [Ignore("Ignored test: TestThreadLeak")]
+        [Ignore]
         [Test]
         public virtual void TestThreadLeak()
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net
             }
         }
 
-        [Ignore("Ignored: TestLaaaaaargeOutput")]
+        [Ignore]
         [Test]
         public virtual void TestLaaaaaargeOutput()
         {
@@ -81,7 +81,7 @@ namespace Lucene.Net
         }
 
 
-        [Ignore("TestProgressiveOutput")]
+        [Ignore]
         [Test]
         public virtual void TestProgressiveOutput()
         {
@@ -95,7 +95,7 @@ namespace Lucene.Net
             }
         }
 
-        [Ignore("Ignored: TestUncaughtException")]
+        [Ignore]
         [Test]
         public virtual void TestUncaughtException()
         {
@@ -119,7 +119,7 @@ namespace Lucene.Net
             }
         }
 
-        [Ignore("Ignored: TestTimeout")]
+        [Ignore]
         [Test, Timeout(500)]
         public virtual void TestTimeout()
         {
@@ -127,7 +127,7 @@ namespace Lucene.Net
         }
 
 
-        [Ignore("Ignored: TestZombie")]
+        [Ignore]
         [Test, Timeout(1000)]
         public virtual void TestZombie()
         {
