@@ -125,7 +125,7 @@ namespace Lucene.Net.Tests.Queries.Function
             int scoreAndID = i + 1;
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             customType.OmitNorms = true;
 
             f = NewField(ID_FIELD, Id2String(scoreAndID), customType); // for debug purposes

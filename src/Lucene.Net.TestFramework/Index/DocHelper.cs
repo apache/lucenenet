@@ -219,13 +219,13 @@ namespace Lucene.Net.Index
             KeyField = new StringField(KEYWORD_FIELD_KEY, KEYWORD_TEXT, Field.Store.YES);
             CustomType5 = new FieldType(TextField.TYPE_STORED);
             CustomType5.OmitNorms = true;
-            CustomType5.Tokenized = false;
+            CustomType5.IsTokenized = false;
             NoNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, CustomType5);
             CustomType6 = new FieldType(TextField.TYPE_STORED);
             CustomType6.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             NoTFField = new Field(NO_TF_KEY, NO_TF_TEXT, CustomType6);
             CustomType7 = new FieldType();
-            CustomType7.Stored = true;
+            CustomType7.IsStored = true;
             UnIndField = new Field(UNINDEXED_FIELD_KEY, UNINDEXED_FIELD_TEXT, CustomType7);
             CustomType8 = new FieldType(TextField.TYPE_NOT_STORED);
             CustomType8.StoreTermVectors = true;
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             {
                 IndexableField f = Fields[i];
                 Add(All, f);
-                if (f.FieldType.Indexed)
+                if (f.FieldType.IsIndexed)
                 {
                     Add(Indexed, f);
                 }
@@ -273,11 +273,11 @@ namespace Lucene.Net.Index
                 {
                     Add(Termvector, f);
                 }
-                if (f.FieldType.Indexed && !f.FieldType.StoreTermVectors)
+                if (f.FieldType.IsIndexed && !f.FieldType.StoreTermVectors)
                 {
                     Add(Notermvector, f);
                 }
-                if (f.FieldType.Stored)
+                if (f.FieldType.IsStored)
                 {
                     Add(Stored, f);
                 }

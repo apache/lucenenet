@@ -28,42 +28,20 @@ namespace Lucene.Net.Documents
     /// </summary>
     public class FieldType : IndexableFieldType
     {
-        /// <summary>
-        /// Data type of the numeric value
-        /// @since 3.2
-        /// </summary>
-        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
-        public enum NumericType // LUCENENET TODO: Move outside of FieldType class
-        {
-            /// <summary>
-            /// 32-bit integer numeric type </summary>
-            INT,
+        // LUCENENET specific: Moved the NumericType enum outside of this class
 
-            /// <summary>
-            /// 64-bit long numeric type </summary>
-            LONG,
-
-            /// <summary>
-            /// 32-bit float numeric type </summary>
-            FLOAT,
-
-            /// <summary>
-            /// 64-bit double numeric type </summary>
-            DOUBLE
-        }
-
-        private bool Indexed_Renamed;
-        private bool Stored_Renamed;
-        private bool Tokenized_Renamed = true;
-        private bool StoreTermVectors_Renamed;
-        private bool StoreTermVectorOffsets_Renamed;
-        private bool StoreTermVectorPositions_Renamed;
-        private bool StoreTermVectorPayloads_Renamed;
-        private bool OmitNorms_Renamed;
-        private FieldInfo.IndexOptions? _indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+        private bool indexed;
+        private bool stored;
+        private bool tokenized = true;
+        private bool storeTermVectors;
+        private bool storeTermVectorOffsets;
+        private bool storeTermVectorPositions;
+        private bool storeTermVectorPayloads;
+        private bool omitNorms;
+        private FieldInfo.IndexOptions? indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
         private NumericType? numericType;
         private bool Frozen;
-        private int NumericPrecisionStep_Renamed = NumericUtils.PRECISION_STEP_DEFAULT;
+        private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
         private FieldInfo.DocValuesType_e? docValueType;
 
         /// <summary>
@@ -71,17 +49,17 @@ namespace Lucene.Net.Documents
         /// </summary>
         public FieldType(FieldType @ref)
         {
-            this.Indexed_Renamed = @ref.Indexed;
-            this.Stored_Renamed = @ref.Stored;
-            this.Tokenized_Renamed = @ref.Tokenized;
-            this.StoreTermVectors_Renamed = @ref.StoreTermVectors;
-            this.StoreTermVectorOffsets_Renamed = @ref.StoreTermVectorOffsets;
-            this.StoreTermVectorPositions_Renamed = @ref.StoreTermVectorPositions;
-            this.StoreTermVectorPayloads_Renamed = @ref.StoreTermVectorPayloads;
-            this.OmitNorms_Renamed = @ref.OmitNorms;
-            this._indexOptions = @ref.IndexOptions;
+            this.indexed = @ref.IsIndexed;
+            this.stored = @ref.IsStored;
+            this.tokenized = @ref.IsTokenized;
+            this.storeTermVectors = @ref.StoreTermVectors;
+            this.storeTermVectorOffsets = @ref.StoreTermVectorOffsets;
+            this.storeTermVectorPositions = @ref.StoreTermVectorPositions;
+            this.storeTermVectorPayloads = @ref.StoreTermVectorPayloads;
+            this.omitNorms = @ref.OmitNorms;
+            this.indexOptions = @ref.IndexOptions;
             this.docValueType = @ref.DocValueType;
-            this.numericType = @ref.NumericTypeValue;
+            this.numericType = @ref.NumericType;
             // Do not copy frozen!
         }
 
@@ -116,13 +94,13 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #indexed() </seealso>
-        public virtual bool Indexed
+        public virtual bool IsIndexed
         {
-            get { return this.Indexed_Renamed; }
+            get { return this.indexed; }
             set
             {
                 CheckIfFrozen();
-                this.Indexed_Renamed = value;
+                this.indexed = value;
             }
         }
 
@@ -132,16 +110,16 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #stored() </seealso>
-        public virtual bool Stored
+        public virtual bool IsStored
         {
             get
             {
-                return this.Stored_Renamed;
+                return this.stored;
             }
             set
             {
                 CheckIfFrozen();
-                this.Stored_Renamed = value;
+                this.stored = value;
             }
         }
 
@@ -152,16 +130,16 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #tokenized() </seealso>
-        public virtual bool Tokenized
+        public virtual bool IsTokenized
         {
             get
             {
-                return this.Tokenized_Renamed;
+                return this.tokenized;
             }
             set
             {
                 CheckIfFrozen();
-                this.Tokenized_Renamed = value;
+                this.tokenized = value;
             }
         }
 
@@ -174,12 +152,12 @@ namespace Lucene.Net.Documents
         /// <seealso cref= #storeTermVectors() </seealso>
         public virtual bool StoreTermVectors
         {
-            get { return this.StoreTermVectors_Renamed; }
+            get { return this.storeTermVectors; }
 
             set
             {
                 CheckIfFrozen();
-                this.StoreTermVectors_Renamed = value;
+                this.storeTermVectors = value;
             }
         }
 
@@ -194,12 +172,12 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return this.StoreTermVectorOffsets_Renamed;
+                return this.storeTermVectorOffsets;
             }
             set
             {
                 CheckIfFrozen();
-                this.StoreTermVectorOffsets_Renamed = value;
+                this.storeTermVectorOffsets = value;
             }
         }
 
@@ -214,12 +192,12 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return this.StoreTermVectorPositions_Renamed;
+                return this.storeTermVectorPositions;
             }
             set
             {
                 CheckIfFrozen();
-                this.StoreTermVectorPositions_Renamed = value;
+                this.storeTermVectorPositions = value;
             }
         }
 
@@ -234,12 +212,12 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return this.StoreTermVectorPayloads_Renamed;
+                return this.storeTermVectorPayloads;
             }
             set
             {
                 CheckIfFrozen();
-                this.StoreTermVectorPayloads_Renamed = value;
+                this.storeTermVectorPayloads = value;
             }
         }
 
@@ -251,11 +229,11 @@ namespace Lucene.Net.Documents
         /// <seealso cref= #omitNorms() </seealso>
         public virtual bool OmitNorms
         {
-            get { return this.OmitNorms_Renamed; }
+            get { return this.omitNorms; }
             set
             {
                 CheckIfFrozen();
-                this.OmitNorms_Renamed = value;
+                this.omitNorms = value;
             }
         }
 
@@ -265,16 +243,17 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #indexOptions() </seealso>
+        // LUCENENET TODO: Can we remove the nullable here?
         public virtual FieldInfo.IndexOptions? IndexOptions
         {
             get
             {
-                return this._indexOptions;
+                return this.indexOptions;
             }
             set
             {
                 CheckIfFrozen();
-                this._indexOptions = value;
+                this.indexOptions = value;
             }
         }
 
@@ -284,7 +263,8 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #numericType() </seealso>
-        public virtual NumericType? NumericTypeValue // LUCENENET TODO: Rename back to NumericType (de-nest enum)
+        // LUCENENET TODO: Can we remove the nullable here?
+        public virtual NumericType? NumericType
         {
             get
             {
@@ -313,11 +293,11 @@ namespace Lucene.Net.Documents
                 {
                     throw new System.ArgumentException("precisionStep must be >= 1 (got " + value + ")");
                 }
-                this.NumericPrecisionStep_Renamed = value;
+                this.numericPrecisionStep = value;
             }
             get
             {
-                return NumericPrecisionStep_Renamed;
+                return numericPrecisionStep;
             }
         }
 
@@ -326,18 +306,18 @@ namespace Lucene.Net.Documents
         public override sealed string ToString()
         {
             var result = new StringBuilder();
-            if (Stored)
+            if (IsStored)
             {
                 result.Append("stored");
             }
-            if (Indexed)
+            if (IsIndexed)
             {
                 if (result.Length > 0)
                 {
                     result.Append(",");
                 }
                 result.Append("indexed");
-                if (Tokenized)
+                if (IsTokenized)
                 {
                     result.Append(",tokenized");
                 }
@@ -361,17 +341,17 @@ namespace Lucene.Net.Documents
                 {
                     result.Append(",omitNorms");
                 }
-                if (_indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     result.Append(",indexOptions=");
-                    result.Append(_indexOptions);
+                    result.Append(indexOptions);
                 }
                 if (numericType != null)
                 {
                     result.Append(",numericType=");
                     result.Append(numericType);
                     result.Append(",numericPrecisionStep=");
-                    result.Append(NumericPrecisionStep_Renamed);
+                    result.Append(numericPrecisionStep);
                 }
             }
             if (docValueType != null)
@@ -417,5 +397,29 @@ namespace Lucene.Net.Documents
                 docValueType = value;
             }
         }
+    }
+
+    /// <summary>
+    /// Data type of the numeric value
+    /// @since 3.2
+    /// </summary>
+    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
+    public enum NumericType
+    {
+        /// <summary>
+        /// 32-bit integer numeric type </summary>
+        INT,
+
+        /// <summary>
+        /// 64-bit long numeric type </summary>
+        LONG,
+
+        /// <summary>
+        /// 32-bit float numeric type </summary>
+        FLOAT,
+
+        /// <summary>
+        /// 64-bit double numeric type </summary>
+        DOUBLE
     }
 }

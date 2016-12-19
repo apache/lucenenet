@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 Document d = new Document();
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
-                ft.Indexed = false;
+                ft.IsIndexed = false;
                 d.Add(NewField(FIELD_ID, Convert.ToString(i), ft));
                 d.Add(NewTextField(FIELD_BODY, Docs[i], Field.Store.YES));
                 writer.AddDocument(d);

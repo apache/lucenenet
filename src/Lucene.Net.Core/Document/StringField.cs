@@ -44,17 +44,17 @@ namespace Lucene.Net.Documents
 
         static StringField()
         {
-            TYPE_NOT_STORED.Indexed = true;
+            TYPE_NOT_STORED.IsIndexed = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.Tokenized = false;
+            TYPE_NOT_STORED.IsTokenized = false;
             TYPE_NOT_STORED.Freeze();
 
-            TYPE_STORED.Indexed = true;
+            TYPE_STORED.IsIndexed = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_STORED.Stored = true;
-            TYPE_STORED.Tokenized = false;
+            TYPE_STORED.IsStored = true;
+            TYPE_STORED.IsTokenized = false;
             TYPE_STORED.Freeze();
         }
 

@@ -595,7 +595,7 @@ namespace Lucene.Net.Index
 
             Document doc2 = new Document();
             FieldType customType2 = new FieldType();
-            customType2.Stored = true;
+            customType2.IsStored = true;
             doc2.Add(NewField("content", "aaa bbb ccc ddd eee fff ggg hhh iii", customType2));
             doc2.Add(NewField("content", "aaa bbb ccc ddd eee fff ggg hhh iii", customType2));
             doc2.Add(NewField("content", "aaa bbb ccc ddd eee fff ggg hhh iii", customType2));
@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     FieldType customType = new FieldType();
-                    customType.Indexed = true;
+                    customType.IsIndexed = true;
                     doc.Add(NewField("foo", "bar", customType));
                     w.AddDocument(doc);
                 }

@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public static readonly FieldType TYPE = new FieldType();
         static AssociationFacetField()
         {
-            TYPE.Indexed = true;
+            TYPE.IsIndexed = true;
             TYPE.Freeze();
         }
 

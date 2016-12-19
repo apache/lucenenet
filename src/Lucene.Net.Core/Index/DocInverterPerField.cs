@@ -74,9 +74,9 @@ namespace Lucene.Net.Index
                 // TODO FI: this should be "genericized" to querying
                 // consumer if it wants to see this particular field
                 // tokenized.
-                if (fieldType.Indexed && doInvert)
+                if (fieldType.IsIndexed && doInvert)
                 {
-                    bool analyzed = fieldType.Tokenized && DocState.Analyzer != null;
+                    bool analyzed = fieldType.IsTokenized && DocState.Analyzer != null;
 
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)

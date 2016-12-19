@@ -32,7 +32,6 @@ namespace Lucene.Net.Search
     // for javadocs
     // for javadocs
     // for javadocs
-    using NumericType = FieldType.NumericType;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;

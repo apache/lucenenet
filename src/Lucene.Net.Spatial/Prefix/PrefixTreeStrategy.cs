@@ -148,8 +148,8 @@ namespace Lucene.Net.Spatial.Prefix
 
         static PrefixTreeStrategy()
         {
-            FIELD_TYPE.Indexed = true;
-            FIELD_TYPE.Tokenized = true;
+            FIELD_TYPE.IsIndexed = true;
+            FIELD_TYPE.IsTokenized = true;
             FIELD_TYPE.OmitNorms = true;
             FIELD_TYPE.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             FIELD_TYPE.Freeze();

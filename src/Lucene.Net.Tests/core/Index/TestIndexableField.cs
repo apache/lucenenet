@@ -68,19 +68,19 @@ namespace Lucene.Net.Index
                     OuterInstance = outerInstance;
                 }
 
-                public bool Indexed
+                public bool IsIndexed
                 {
                     get { return (OuterInstance.Counter % 10) != 3; }
                     set { }
                 }
 
-                public bool Stored
+                public bool IsStored
                 {
                     get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter % 10) == 3; }
                     set { }
                 }
 
-                public bool Tokenized
+                public bool IsTokenized
                 {
                     get { return true; }
                     set { }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 
                 public bool StoreTermVectors
                 {
-                    get { return Indexed && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9; }
+                    get { return IsIndexed && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9; }
                     set { }
                 }
 
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldType.NumericType? NumericTypeValue
+                public NumericType? NumericType
                 {
                     get { throw new NotImplementedException(); }
                     set { }

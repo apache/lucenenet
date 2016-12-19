@@ -65,7 +65,6 @@ namespace Lucene.Net.Util
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
     using MultiFields = Lucene.Net.Index.MultiFields;
     using NumericDocValuesField = NumericDocValuesField;
-    using NumericType = FieldType.NumericType;
     using PerFieldDocValuesFormat = Lucene.Net.Codecs.Perfield.PerFieldDocValuesFormat;
     using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
@@ -1034,7 +1033,7 @@ namespace Lucene.Net.Util
                 Field field1 = (Field)f;
                 Field field2;
                 DocValuesType_e? dvType = field1.FieldType.DocValueType;
-                NumericType? numType = field1.FieldType.NumericTypeValue;
+                Documents.NumericType? numType = field1.FieldType.NumericType;
                 if (dvType != null)
                 {
                     switch (dvType)

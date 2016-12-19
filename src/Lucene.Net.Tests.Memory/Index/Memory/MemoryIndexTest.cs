@@ -460,7 +460,7 @@ namespace Lucene.Net.Index.Memory
                 Document doc = new Document();
                 foreach (IndexableField field in nextDoc.Fields)
                 {
-                    if (field.FieldType.Indexed)
+                    if (field.FieldType.IsIndexed)
                     {
                         doc.Add(field);
                         if (Random().nextInt(3) == 0)

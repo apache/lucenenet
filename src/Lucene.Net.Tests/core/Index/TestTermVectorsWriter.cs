@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
 
                 Document document = new Document();
                 FieldType customType = new FieldType();
-                customType.Stored = true;
+                customType.IsStored = true;
 
                 Field storedField = NewField("stored", "stored", customType);
                 document.Add(storedField);
@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
                 Document document = new Document();
 
                 FieldType customType = new FieldType();
-                customType.Stored = true;
+                customType.IsStored = true;
 
                 Field storedField = NewField("stored", "stored", customType);
                 document.Add(storedField);
@@ -499,7 +499,7 @@ namespace Lucene.Net.Index
 
             Document document = new Document();
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
 
             Field storedField = NewField("stored", "stored", customType);
             document.Add(storedField);

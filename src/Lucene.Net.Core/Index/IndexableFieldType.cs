@@ -31,11 +31,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// True if this field should be indexed (inverted) </summary>
-        bool Indexed { get; set; }
+        bool IsIndexed { get; set; }
 
         /// <summary>
         /// True if the field's value should be stored </summary>
-        bool Stored { get; set; }
+        bool IsStored { get; set; }
 
         /// <summary>
         /// True if this field's value should be analyzed by the
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         /// <p>
         /// this has no effect if <seealso cref="#indexed()"/> returns false.
         /// </summary>
-        bool Tokenized { get; set; }
+        bool IsTokenized { get; set; }
 
         /// <summary>
         /// True if this field's indexed form should be also stored
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
         /// </summary>
         FieldInfo.IndexOptions? IndexOptions { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
-        FieldType.NumericType? NumericTypeValue { get; set; } // LUCENENET TODO: Can we remove the nullable?
+        NumericType? NumericType { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
         /// <summary>
         /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value

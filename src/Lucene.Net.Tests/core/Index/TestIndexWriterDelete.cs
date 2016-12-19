@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
 
             FieldType custom1 = new FieldType();
-            custom1.Stored = true;
+            custom1.IsStored = true;
             for (int i = 0; i < keywords.Length; i++)
             {
                 Document doc = new Document();
@@ -835,7 +835,7 @@ namespace Lucene.Net.Index
             dir.FailOn(failure.Reset());
 
             FieldType custom1 = new FieldType();
-            custom1.Stored = true;
+            custom1.IsStored = true;
             for (int i = 0; i < keywords.Length; i++)
             {
                 Document doc = new Document();
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Index
             dir.FailOn(failure.Reset());
 
             FieldType custom1 = new FieldType();
-            custom1.Stored = true;
+            custom1.IsStored = true;
             for (int i = 0; i < keywords.Length; i++)
             {
                 Document doc = new Document();

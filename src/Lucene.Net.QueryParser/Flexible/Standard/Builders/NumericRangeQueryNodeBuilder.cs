@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             object upperNumber = upperNumericNode.Value;
 
             NumericConfig numericConfig = numericRangeNode.NumericConfig;
-            FieldType.NumericType numberType = numericConfig.Type;
+            NumericType numberType = numericConfig.Type;
             string field = StringUtils.ToString(numericRangeNode.Field);
             bool minInclusive = numericRangeNode.IsLowerInclusive;
             bool maxInclusive = numericRangeNode.IsUpperInclusive;
@@ -63,21 +63,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             switch (numberType)
             {
-                case FieldType.NumericType.LONG:
+                case NumericType.LONG:
                     return NumericRangeQuery.NewLongRange(field, precisionStep,
                         (long?)lowerNumber, (long?)upperNumber, minInclusive, maxInclusive);
 
-                case FieldType.NumericType.INT:
+                case NumericType.INT:
                     return NumericRangeQuery.NewIntRange(field, precisionStep,
                         (int?)lowerNumber, (int?)upperNumber, minInclusive,
                         maxInclusive);
 
-                case FieldType.NumericType.FLOAT:
+                case NumericType.FLOAT:
                     return NumericRangeQuery.NewFloatRange(field, precisionStep,
                         (float?)lowerNumber, (float?)upperNumber, minInclusive,
                         maxInclusive);
 
-                case FieldType.NumericType.DOUBLE:
+                case NumericType.DOUBLE:
                     return NumericRangeQuery.NewDoubleRange(field, precisionStep,
                         (double?)lowerNumber, (double?)upperNumber, minInclusive,
                         maxInclusive);

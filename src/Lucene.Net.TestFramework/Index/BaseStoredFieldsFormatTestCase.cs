@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             IList<int?> fieldIDs = new List<int?>();
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             Field idField = NewField("id", "", customType);
 
             for (int i = 0; i < fieldCount; i++)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             }
 
             FieldType customType2 = new FieldType();
-            customType2.Stored = true;
+            customType2.IsStored = true;
             for (int i = 0; i < docCount; i++)
             {
                 Document doc = new Document();
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
             doc.Add(NewField("zzz", "a b c", customType));
             doc.Add(NewField("aaa", "a b c", customType));
             doc.Add(NewField("zzz", "1 2 3", customType));
@@ -268,14 +268,14 @@ namespace Lucene.Net.Index
             var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             var numDocs = AtLeast(500);
             var answers = new object[numDocs];
-            FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
+            NumericType[] typeAnswers = new NumericType[numDocs];
             for (int id = 0; id < numDocs; id++)
             {
                 Document doc = new Document();
                 Field nf;
                 Field sf;
                 object answer;
-                FieldType.NumericType typeAnswer;
+                NumericType typeAnswer;
                 if (Random().NextBoolean())
                 {
                     // float/double
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToSingle(f);
                         nf = new FloatField("nf", f, Field.Store.NO);
                         sf = new StoredField("nf", f);
-                        typeAnswer = FieldType.NumericType.FLOAT;
+                        typeAnswer = NumericType.FLOAT;
                     }
                     else
                     {
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToDouble(d);
                         nf = new DoubleField("nf", d, Field.Store.NO);
                         sf = new StoredField("nf", d);
-                        typeAnswer = FieldType.NumericType.DOUBLE;
+                        typeAnswer = NumericType.DOUBLE;
                     }
                 }
                 else
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToInt32(i);
                         nf = new IntField("nf", i, Field.Store.NO);
                         sf = new StoredField("nf", i);
-                        typeAnswer = FieldType.NumericType.INT;
+                        typeAnswer = NumericType.INT;
                     }
                     else
                     {
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToInt64(l);
                         nf = new LongField("nf", l, Field.Store.NO);
                         sf = new StoredField("nf", l);
-                        typeAnswer = FieldType.NumericType.LONG;
+                        typeAnswer = NumericType.LONG;
                     }
                 }
                 doc.Add(nf);
@@ -353,14 +353,14 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             FieldType onlyStored = new FieldType();
-            onlyStored.Stored = true;
+            onlyStored.IsStored = true;
             doc.Add(new Field("field", "value", onlyStored));
             doc.Add(new StringField("field2", "value", Field.Store.YES));
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();
-            Assert.IsFalse(r.Document(0).GetField("field").FieldType.Indexed);
-            Assert.IsTrue(r.Document(0).GetField("field2").FieldType.Indexed);
+            Assert.IsFalse(r.Document(0).GetField("field").FieldType.IsIndexed);
+            Assert.IsTrue(r.Document(0).GetField("field2").FieldType.IsIndexed);
             r.Dispose();
             dir.Dispose();
         }
@@ -374,7 +374,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             FieldType ft = new FieldType();
-            ft.Stored = true;
+            ft.IsStored = true;
             ft.Freeze();
 
             string @string = TestUtil.RandomSimpleString(Random(), 50);
@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
             }
 
             FieldType type = new FieldType(StringField.TYPE_STORED);
-            type.Indexed = false;
+            type.IsIndexed = false;
             type.Freeze();
             IntField id = new IntField("id", 0, Field.Store.YES);
             for (int i = 0; i < data.Length; ++i)
@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
             bigDoc2.Add(idField);
 
             FieldType onlyStored = new FieldType(StringField.TYPE_STORED);
-            onlyStored.Indexed = false;
+            onlyStored.IsIndexed = false;
 
             Field smallField = new Field("fld", RandomByteArray(Random().Next(10), 256), onlyStored);
             int numFields = RandomInts.NextIntBetween(Random(), 500000, 1000000);

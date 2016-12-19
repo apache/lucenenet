@@ -136,19 +136,19 @@ namespace Lucene.Net.Index
                     this.OmitTF = omitTF;
                 }
 
-                public bool Indexed
+                public bool IsIndexed
                 {
                     get { return true; }
                     set { }
                 }
 
-                public bool Stored
+                public bool IsStored
                 {
                     get { return false; }
                     set { }
                 }
 
-                public bool Tokenized
+                public bool IsTokenized
                 {
                     get { return false; }
                     set { }
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldType.NumericType? NumericTypeValue
+                public NumericType? NumericType
                 {
                     get { throw new NotImplementedException(); }
                     set { }

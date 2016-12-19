@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
 
         static StoredField()
         {
-            TYPE = new FieldType {Stored = true};
+            TYPE = new FieldType {IsStored = true};
             TYPE.Freeze();
         }
 

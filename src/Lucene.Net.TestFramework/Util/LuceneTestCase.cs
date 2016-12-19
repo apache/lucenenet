@@ -1356,7 +1356,7 @@ namespace Lucene.Net.Util
         public Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
-            if (Usually(random) || !type.Indexed)
+            if (Usually(random) || !type.IsIndexed)
             {
                 // most of the time, don't modify the params
                 return new Field(name, value, type);
@@ -1367,9 +1367,9 @@ namespace Lucene.Net.Util
             // already indexing positions...
 
             FieldType newType = new FieldType(type);
-            if (!newType.Stored && random.NextBoolean())
+            if (!newType.IsStored && random.NextBoolean())
             {
-                newType.Stored = true; // randomly store it
+                newType.IsStored = true; // randomly store it
             }
 
             if (!newType.StoreTermVectors && random.NextBoolean())

@@ -63,8 +63,8 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             FieldType ft = new FieldType();
-            ft.Indexed = false;
-            ft.Stored = true;
+            ft.IsIndexed = false;
+            ft.IsStored = true;
             ft.Freeze();
             int valueLength = RandomInts.NextIntBetween(Random(), 1 << 13, 1 << 20);
             var value = new byte[valueLength];

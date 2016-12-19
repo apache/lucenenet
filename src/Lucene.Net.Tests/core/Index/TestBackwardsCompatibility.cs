@@ -762,7 +762,7 @@ namespace Lucene.Net.Index
             Field f = new Field("content3", "aaa", customType);
             doc.Add(f);
             FieldType customType2 = new FieldType();
-            customType2.Stored = true;
+            customType2.IsStored = true;
             customType2.IndexOptions = IndexOptions.DOCS_ONLY;
             f = new Field("content4", "aaa", customType2);
             doc.Add(f);

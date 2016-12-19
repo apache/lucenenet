@@ -406,8 +406,8 @@ namespace Lucene.Net.Index
                 {
                     // stored only
                     FieldType ft = new FieldType();
-                    ft.Indexed = false;
-                    ft.Stored = true;
+                    ft.IsIndexed = false;
+                    ft.IsStored = true;
                     doc.Add(new Field("foo", "boo!", ft));
                 }
                 else

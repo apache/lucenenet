@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType customType3 = new FieldType();
-            customType3.Stored = true;
+            customType3.IsStored = true;
 
             doc.Add(new StringField("keyword", "test1", Field.Store.YES));
             doc.Add(new TextField("text", "test1", Field.Store.YES));
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType customType3 = new FieldType();
-            customType3.Stored = true;
+            customType3.IsStored = true;
             doc.Add(NewStringField("keyword", "test1", Field.Store.YES));
             doc.Add(NewTextField("text", "test1", Field.Store.YES));
             doc.Add(NewField("unindexed", "test1", customType3));
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType customType3 = new FieldType();
-            customType3.Stored = true;
+            customType3.IsStored = true;
             doc.Add(NewStringField("keyword2", "test1", Field.Store.YES));
             doc.Add(NewTextField("text2", "test1", Field.Store.YES));
             doc.Add(NewField("unindexed2", "test1", customType3));
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
         {
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             customType.OmitNorms = true;
 
             doc.Add(NewField("id", id, customType));

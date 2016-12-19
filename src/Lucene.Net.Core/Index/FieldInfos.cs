@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
                 // rather, each component in the chain should update
                 // what it "owns".  EG fieldType.indexOptions() should
                 // be updated by maybe FreqProxTermsWriterPerField:
-                return AddOrUpdateInternal(name, -1, fieldType.Indexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
+                return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
             }
 
             internal FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, FieldInfo.IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)

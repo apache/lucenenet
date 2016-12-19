@@ -134,12 +134,12 @@ namespace Lucene.Net.Index
             {
                 int M = 3;
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
-                customType.Tokenized = false;
+                customType.IsTokenized = false;
                 FieldType customType2 = new FieldType(TextField.TYPE_STORED);
-                customType2.Tokenized = false;
+                customType2.IsTokenized = false;
                 customType2.OmitNorms = true;
                 FieldType customType3 = new FieldType();
-                customType3.Stored = true;
+                customType3.IsStored = true;
                 for (int i = 0; i < 4; i++)
                 {
                     for (int j = 0; j < M; j++)
@@ -603,10 +603,10 @@ namespace Lucene.Net.Index
             sb.Append("a");
             sb.Append(n);
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
-            customType2.Tokenized = false;
+            customType2.IsTokenized = false;
             customType2.OmitNorms = true;
             FieldType customType3 = new FieldType();
-            customType3.Stored = true;
+            customType3.IsStored = true;
             doc.Add(new TextField("field1", sb.ToString(), Field.Store.YES));
             doc.Add(new Field("fielda", sb.ToString(), customType2));
             doc.Add(new Field("fieldb", sb.ToString(), customType3));

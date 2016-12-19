@@ -166,10 +166,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random().nextInt())))) == 0)
                 ;
 
-            randomNumberMap.Put(FieldType.NumericType.LONG.ToString(), randomLong);
-            randomNumberMap.Put(FieldType.NumericType.INT.ToString(), randomInt);
-            randomNumberMap.Put(FieldType.NumericType.FLOAT.ToString(), randomFloat);
-            randomNumberMap.Put(FieldType.NumericType.DOUBLE.ToString(), randomDouble);
+            randomNumberMap.Put(NumericType.LONG.ToString(), randomLong);
+            randomNumberMap.Put(NumericType.INT.ToString(), randomInt);
+            randomNumberMap.Put(NumericType.FLOAT.ToString(), randomFloat);
+            randomNumberMap.Put(NumericType.DOUBLE.ToString(), randomDouble);
             randomNumberMap.Put(DATE_FIELD_NAME, randomDate);
 
             RANDOM_NUMBER_MAP = Collections.UnmodifiableMap(randomNumberMap);
@@ -185,30 +185,30 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             HashMap<String, Field> numericFieldMap = new HashMap<String, Field>();
             qp.NumericConfigMap = (numericConfigMap);
 
-            foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
+            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
                 numericConfigMap.Put(type.ToString(), new NumericConfig(PRECISION_STEP,
                     NUMBER_FORMAT, type)); 
 
                 FieldType ft2 = new FieldType(IntField.TYPE_NOT_STORED);
-                ft2.NumericTypeValue = (type);
-                ft2.Stored = (true);
+                ft2.NumericType = (type);
+                ft2.IsStored = (true);
                 ft2.NumericPrecisionStep = (PRECISION_STEP);
                 ft2.Freeze();
                 Field field;
 
                 switch (type)
                 {
-                    case FieldType.NumericType.INT:
+                    case NumericType.INT:
                         field = new IntField(type.ToString(), 0, ft2);
                         break;
-                    case FieldType.NumericType.FLOAT:
+                    case NumericType.FLOAT:
                         field = new FloatField(type.ToString(), 0.0f, ft2);
                         break;
-                    case FieldType.NumericType.LONG:
+                    case NumericType.LONG:
                         field = new LongField(type.ToString(), 0L, ft2);
                         break;
-                    case FieldType.NumericType.DOUBLE:
+                    case NumericType.DOUBLE:
                         field = new DoubleField(type.ToString(), 0.0, ft2);
                         break;
                     default:
@@ -221,9 +221,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
             numericConfigMap.Put(DATE_FIELD_NAME, new NumericConfig(PRECISION_STEP,
-                DATE_FORMAT, FieldType.NumericType.LONG));
+                DATE_FORMAT, NumericType.LONG));
             FieldType ft = new FieldType(LongField.TYPE_NOT_STORED);
-            ft.Stored = (true);
+            ft.IsStored = (true);
             ft.NumericPrecisionStep = (PRECISION_STEP);
             LongField dateField = new LongField(DATE_FIELD_NAME, 0L, ft);
             numericFieldMap.Put(DATE_FIELD_NAME, dateField);
@@ -260,23 +260,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     /*Number*/
                     object number = RANDOM_NUMBER_MAP[fieldName];
 
-                    if (FieldType.NumericType.LONG.ToString().equals(fieldName)
+                    if (NumericType.LONG.ToString().equals(fieldName)
                         || DATE_FIELD_NAME.equals(fieldName))
                     {
                         number = -Convert.ToInt64(number);
 
                     }
-                    else if (FieldType.NumericType.DOUBLE.ToString().equals(fieldName))
+                    else if (NumericType.DOUBLE.ToString().equals(fieldName))
                     {
                         number = -Convert.ToDouble(number);
 
                     }
-                    else if (FieldType.NumericType.FLOAT.ToString().equals(fieldName))
+                    else if (NumericType.FLOAT.ToString().equals(fieldName))
                     {
                         number = -Convert.ToSingle(number);
 
                     }
-                    else if (FieldType.NumericType.INT.ToString().equals(fieldName))
+                    else if (NumericType.INT.ToString().equals(fieldName))
                     {
                         number = -Convert.ToInt32(number);
 
@@ -301,21 +301,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
 
             /*Number*/
-            object number = GetNumberType(numberType, FieldType.NumericType.DOUBLE
+            object number = GetNumberType(numberType, NumericType.DOUBLE
                 .ToString());
-            numericFieldMap[FieldType.NumericType.DOUBLE.ToString()].SetDoubleValue(Convert.ToDouble(
+            numericFieldMap[NumericType.DOUBLE.ToString()].SetDoubleValue(Convert.ToDouble(
                 number));
 
-            number = GetNumberType(numberType, FieldType.NumericType.INT.ToString());
-            numericFieldMap[FieldType.NumericType.INT.ToString()].SetInt32Value(Convert.ToInt32(
+            number = GetNumberType(numberType, NumericType.INT.ToString());
+            numericFieldMap[NumericType.INT.ToString()].SetInt32Value(Convert.ToInt32(
                 number));
 
-            number = GetNumberType(numberType, FieldType.NumericType.LONG.ToString());
-            numericFieldMap[FieldType.NumericType.LONG.ToString()].SetInt64Value(Convert.ToInt64(
+            number = GetNumberType(numberType, NumericType.LONG.ToString());
+            numericFieldMap[NumericType.LONG.ToString()].SetInt64Value(Convert.ToInt64(
                 number));
 
-            number = GetNumberType(numberType, FieldType.NumericType.FLOAT.ToString());
-            numericFieldMap[FieldType.NumericType.FLOAT.ToString()].SetSingleValue(Convert.ToSingle(
+            number = GetNumberType(numberType, NumericType.FLOAT.ToString());
+            numericFieldMap[NumericType.FLOAT.ToString()].SetSingleValue(Convert.ToSingle(
                 number));
 
             number = GetNumberType(numberType, DATE_FIELD_NAME);
@@ -425,7 +425,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String lowerInclusiveStr = (lowerInclusive ? "[" : "{");
             String upperInclusiveStr = (upperInclusive ? "]" : "}");
 
-            foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
+            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
                 String lowerStr = NumberToString(GetNumberType(lowerType, type.ToString()));
                 String upperStr = NumberToString(GetNumberType(upperType, type.ToString()));
@@ -489,7 +489,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
+            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
                 String boundStr = NumberToString(GetNumberType(boundType, type.ToString()));
 
@@ -515,7 +515,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (FieldType.NumericType type in Enum.GetValues(typeof(FieldType.NumericType)))
+            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
                 String numberStr = NumberToString(GetNumberType(numberType, type.ToString()));
                 sb.append('+').append(type.ToString()).append(":\"").append(numberStr)

@@ -42,7 +42,7 @@ namespace Lucene.Net.Documents
         public virtual void TestBinaryFieldInIndex()
         {
             FieldType ft = new FieldType();
-            ft.Stored = true;
+            ft.IsStored = true;
             IndexableField binaryFldStored = new StoredField("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
             IndexableField stringFldStored = new Field("stringStored", BinaryValStored, ft);
 

@@ -245,11 +245,11 @@ namespace Lucene.Net.Index
             Field noNorms = new Field("foo", "a", customType1);
             // not indexed, but stored
             FieldType customType2 = new FieldType();
-            customType2.Stored = true;
+            customType2.IsStored = true;
             Field noIndex = new Field("foo", "a", customType2);
             // not indexed but stored, omitNorms is set
             FieldType customType3 = new FieldType();
-            customType3.Stored = true;
+            customType3.IsStored = true;
             customType3.OmitNorms = true;
             Field noNormsNoIndex = new Field("foo", "a", customType3);
             // not indexed nor stored (doesnt exist at all, we index a different field instead)

@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 
         internal void Update(IndexableFieldType ft)
         {
-            Update(ft.Indexed, false, ft.OmitNorms, false, ft.IndexOptions);
+            Update(ft.IsIndexed, false, ft.OmitNorms, false, ft.IndexOptions);
         }
 
         // should only be called by FieldInfos#addOrUpdate

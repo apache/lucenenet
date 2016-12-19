@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
             InitModel(ndocs);
 
             FieldType storedOnlyType = new FieldType();
-            storedOnlyType.Stored = true;
+            storedOnlyType.IsStored = true;
 
             if (VERBOSE)
             {

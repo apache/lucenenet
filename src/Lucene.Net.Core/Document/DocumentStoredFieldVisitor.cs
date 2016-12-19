@@ -71,7 +71,7 @@ namespace Lucene.Net.Documents
         {
             FieldType ft = new FieldType(TextField.TYPE_STORED);
             ft.StoreTermVectors = fieldInfo.HasVectors();
-            ft.Indexed = fieldInfo.Indexed;
+            ft.IsIndexed = fieldInfo.Indexed;
             ft.OmitNorms = fieldInfo.OmitsNorms();
             ft.IndexOptions = fieldInfo.FieldIndexOptions;
             Doc.Add(new Field(fieldInfo.Name, value, ft));

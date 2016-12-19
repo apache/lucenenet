@@ -125,10 +125,10 @@ namespace Lucene.Net.Index
             Document document = new Document();
 
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
 
             FieldType customType1 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType1.Tokenized = false;
+            customType1.IsTokenized = false;
             customType1.StoreTermVectors = true;
             customType1.StoreTermVectorPositions = true;
             customType1.StoreTermVectorOffsets = true;
@@ -184,10 +184,10 @@ namespace Lucene.Net.Index
             Document document = new Document();
 
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
 
             FieldType customType1 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType1.Tokenized = false;
+            customType1.IsTokenized = false;
             customType1.StoreTermVectors = true;
             customType1.StoreTermVectorPositions = true;
             customType1.StoreTermVectorOffsets = true;
@@ -242,10 +242,10 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
 
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
 
             FieldType customType1 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType1.Tokenized = false;
+            customType1.IsTokenized = false;
             customType1.StoreTermVectors = true;
             customType1.StoreTermVectorPositions = true;
             customType1.StoreTermVectorOffsets = true;
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
 
             Field idField = NewField("id", "", customType);
             doc.Add(idField);

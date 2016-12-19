@@ -56,7 +56,7 @@ namespace Lucene.Net.Documents
             Documents.Document doc = new Documents.Document();
 
             FieldType ft = new FieldType();
-            ft.Stored = true;
+            ft.IsStored = true;
             IndexableField stringFld = new Field("string", BinaryVal, ft);
             IndexableField binaryFld = new StoredField("binary", BinaryVal.GetBytes(Encoding.UTF8));
             IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.GetBytes(Encoding.UTF8));
@@ -67,8 +67,8 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(2, doc.Fields.Count);
 
             Assert.IsTrue(binaryFld.GetBinaryValue() != null);
-            Assert.IsTrue(binaryFld.FieldType.Stored);
-            Assert.IsFalse(binaryFld.FieldType.Indexed);
+            Assert.IsTrue(binaryFld.FieldType.IsStored);
+            Assert.IsFalse(binaryFld.FieldType.IsIndexed);
 
             string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
             Assert.IsTrue(binaryTest.Equals(BinaryVal));
@@ -141,7 +141,7 @@ namespace Lucene.Net.Documents
         public virtual void TestConstructorExceptions()
         {
             FieldType ft = new FieldType();
-            ft.Stored = true;
+            ft.IsStored = true;
             new Field("name", "value", ft); // okay
             new StringField("name", "value", Field.Store.NO); // okay
             try
@@ -157,7 +157,7 @@ namespace Lucene.Net.Documents
             try
             {
                 FieldType ft2 = new FieldType();
-                ft2.Stored = true;
+                ft2.IsStored = true;
                 ft2.StoreTermVectors = true;
                 new Field("name", "value", ft2);
                 Assert.Fail();
@@ -243,10 +243,10 @@ namespace Lucene.Net.Documents
         {
             Documents.Document doc = new Documents.Document();
             FieldType stored = new FieldType();
-            stored.Stored = true;
+            stored.IsStored = true;
             FieldType indexedNotTokenized = new FieldType();
-            indexedNotTokenized.Indexed = true;
-            indexedNotTokenized.Tokenized = false;
+            indexedNotTokenized.IsIndexed = true;
+            indexedNotTokenized.IsTokenized = false;
             doc.Add(new StringField("keyword", "test1", Field.Store.YES));
             doc.Add(new StringField("keyword", "test2", Field.Store.YES));
             doc.Add(new TextField("text", "test1", Field.Store.YES));

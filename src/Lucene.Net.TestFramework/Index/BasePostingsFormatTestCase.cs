@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                var ft = new FieldType {IndexOptions = opts, Indexed = true, OmitNorms = true};
+                var ft = new FieldType {IndexOptions = opts, IsIndexed = true, OmitNorms = true};
                 ft.Freeze();
                 int numFields = Random().Next(5);
                 for (int j = 0; j < numFields; ++j)

@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         private NumberFormat format;
 
-        private FieldType.NumericType type;
+        private NumericType type;
 
         /// <summary>
         /// Constructs a <see cref="NumericConfig"/> object.
@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <seealso cref="NumericConfig.NumberFormat"/>
         /// <seealso cref="Type"/>
         public NumericConfig(int precisionStep, NumberFormat format,
-            FieldType.NumericType type)
+            NumericType type)
         {
             PrecisionStep = precisionStep;
             NumberFormat = format;
@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <summary>
         /// Gets or Sets the numeric type used to index the numeric values
         /// </summary>
-        public virtual FieldType.NumericType Type
+        public virtual NumericType Type
         {
             get { return type; }
             set { type = value; }

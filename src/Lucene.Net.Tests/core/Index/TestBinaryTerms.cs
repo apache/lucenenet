@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
                 bytes.Length = 2;
                 Document doc = new Document();
                 FieldType customType = new FieldType();
-                customType.Stored = true;
+                customType.IsStored = true;
                 doc.Add(new Field("id", "" + i, customType));
                 doc.Add(new TextField("bytes", tokenStream));
                 iw.AddDocument(doc);

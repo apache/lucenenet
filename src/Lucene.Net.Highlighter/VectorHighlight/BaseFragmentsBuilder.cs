@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
             int bufferLength = buffer.Length;
             // we added the multi value char to the last buffer, ignore it
-            if (values[index[0] - 1].FieldType.Tokenized)
+            if (values[index[0] - 1].FieldType.IsTokenized)
             {
                 bufferLength--;
             }

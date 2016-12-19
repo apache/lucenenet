@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Perfield
                     for (int k = 0; k < num; k++)
                     {
                         FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-                        customType.Tokenized = Random().NextBoolean();
+                        customType.IsTokenized = Random().NextBoolean();
                         customType.OmitNorms = Random().NextBoolean();
                         Field field = NewField("" + k, TestUtil.RandomRealisticUnicodeString(Random(), 128), customType);
                         doc.Add(field);

@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
                 foreach (FieldInfo fi in fis)
                 {
                     Field expected = GetField(Convert.ToInt32(fi.Name));
-                    Assert.AreEqual(expected.FieldType.Indexed, fi.Indexed);
+                    Assert.AreEqual(expected.FieldType.IsIndexed, fi.Indexed);
                     Assert.AreEqual(expected.FieldType.StoreTermVectors, fi.HasVectors());
                 }
             }
@@ -298,13 +298,13 @@ namespace Lucene.Net.Index
             FieldType customType = new FieldType(TextField.TYPE_STORED);
 
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
-            customType2.Tokenized = false;
+            customType2.IsTokenized = false;
 
             FieldType customType3 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType3.Tokenized = false;
+            customType3.IsTokenized = false;
 
             FieldType customType4 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType4.Tokenized = false;
+            customType4.IsTokenized = false;
             customType4.StoreTermVectors = true;
             customType4.StoreTermVectorOffsets = true;
 
@@ -313,17 +313,17 @@ namespace Lucene.Net.Index
             customType5.StoreTermVectorOffsets = true;
 
             FieldType customType6 = new FieldType(TextField.TYPE_STORED);
-            customType6.Tokenized = false;
+            customType6.IsTokenized = false;
             customType6.StoreTermVectors = true;
             customType6.StoreTermVectorOffsets = true;
 
             FieldType customType7 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType7.Tokenized = false;
+            customType7.IsTokenized = false;
             customType7.StoreTermVectors = true;
             customType7.StoreTermVectorOffsets = true;
 
             FieldType customType8 = new FieldType(TextField.TYPE_STORED);
-            customType8.Tokenized = false;
+            customType8.IsTokenized = false;
             customType8.StoreTermVectors = true;
             customType8.StoreTermVectorPositions = true;
 
@@ -332,12 +332,12 @@ namespace Lucene.Net.Index
             customType9.StoreTermVectorPositions = true;
 
             FieldType customType10 = new FieldType(TextField.TYPE_STORED);
-            customType10.Tokenized = false;
+            customType10.IsTokenized = false;
             customType10.StoreTermVectors = true;
             customType10.StoreTermVectorPositions = true;
 
             FieldType customType11 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType11.Tokenized = false;
+            customType11.IsTokenized = false;
             customType11.StoreTermVectors = true;
             customType11.StoreTermVectorPositions = true;
 
@@ -352,13 +352,13 @@ namespace Lucene.Net.Index
             customType13.StoreTermVectorPositions = true;
 
             FieldType customType14 = new FieldType(TextField.TYPE_STORED);
-            customType14.Tokenized = false;
+            customType14.IsTokenized = false;
             customType14.StoreTermVectors = true;
             customType14.StoreTermVectorOffsets = true;
             customType14.StoreTermVectorPositions = true;
 
             FieldType customType15 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType15.Tokenized = false;
+            customType15.IsTokenized = false;
             customType15.StoreTermVectors = true;
             customType15.StoreTermVectorOffsets = true;
             customType15.StoreTermVectorPositions = true;

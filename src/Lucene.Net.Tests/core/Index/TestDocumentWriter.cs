@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.OmitNorms = true;
             FieldType customType2 = new FieldType();
-            customType2.Stored = true;
+            customType2.IsStored = true;
             doc.Add(NewField("f1", "v1", customType));
             doc.Add(NewField("f1", "v2", customType2));
             // f2 has no TF

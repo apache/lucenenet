@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet
         internal static readonly FieldType TYPE = new FieldType();
         static FacetField()
         {
-            TYPE.Indexed = true;
+            TYPE.IsIndexed = true;
             TYPE.Freeze();
         }
 

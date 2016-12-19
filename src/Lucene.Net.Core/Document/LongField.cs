@@ -129,19 +129,19 @@ namespace Lucene.Net.Documents
 
         static LongField()
         {
-            TYPE_NOT_STORED.Indexed = true;
-            TYPE_NOT_STORED.Tokenized = true;
+            TYPE_NOT_STORED.IsIndexed = true;
+            TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericTypeValue = Documents.FieldType.NumericType.LONG;
+            TYPE_NOT_STORED.NumericType = NumericType.LONG;
             TYPE_NOT_STORED.Freeze();
 
-            TYPE_STORED.Indexed = true;
-            TYPE_STORED.Tokenized = true;
+            TYPE_STORED.IsIndexed = true;
+            TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericTypeValue = Documents.FieldType.NumericType.LONG;
-            TYPE_STORED.Stored = true;
+            TYPE_STORED.NumericType = NumericType.LONG;
+            TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
 
@@ -171,15 +171,15 @@ namespace Lucene.Net.Documents
         ///  <param name="name"> field name </param>
         ///  <param name="value"> 64-bit long value </param>
         ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="FieldType.NumericType#LONG"/>. </param>
+        ///         of <seealso cref="NumericType#LONG"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a LONG numericType() </exception>
         public LongField(string name, long value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericTypeValue != Documents.FieldType.NumericType.LONG)
+            if (type.NumericType != NumericType.LONG)
             {
-                throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericTypeValue);
+                throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericType);
             }
             fieldsData = Convert.ToInt64(value);
         }

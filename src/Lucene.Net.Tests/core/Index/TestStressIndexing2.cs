@@ -917,7 +917,7 @@ namespace Lucene.Net.Index
                 Document d = new Document();
 
                 FieldType customType1 = new FieldType(TextField.TYPE_STORED);
-                customType1.Tokenized = false;
+                customType1.IsTokenized = false;
                 customType1.OmitNorms = true;
 
                 List<Field> fields = new List<Field>();
@@ -952,20 +952,20 @@ namespace Lucene.Net.Index
                     switch (NextInt(4))
                     {
                         case 0:
-                            customType.Stored = true;
+                            customType.IsStored = true;
                             customType.OmitNorms = true;
-                            customType.Indexed = true;
+                            customType.IsIndexed = true;
                             fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(1), customType));
                             break;
 
                         case 1:
-                            customType.Indexed = true;
-                            customType.Tokenized = true;
+                            customType.IsIndexed = true;
+                            customType.IsTokenized = true;
                             fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 2:
-                            customType.Stored = true;
+                            customType.IsStored = true;
                             customType.StoreTermVectors = false;
                             customType.StoreTermVectorOffsets = false;
                             customType.StoreTermVectorPositions = false;
@@ -973,9 +973,9 @@ namespace Lucene.Net.Index
                             break;
 
                         case 3:
-                            customType.Stored = true;
-                            customType.Indexed = true;
-                            customType.Tokenized = true;
+                            customType.IsStored = true;
+                            customType.IsIndexed = true;
+                            customType.IsTokenized = true;
                             fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
                             break;
                     }

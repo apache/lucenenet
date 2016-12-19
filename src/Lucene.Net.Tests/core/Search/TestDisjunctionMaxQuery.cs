@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 
         static TestDisjunctionMaxQuery()
         {
-            NonAnalyzedType.Tokenized = false;
+            NonAnalyzedType.IsTokenized = false;
         }
 
         [SetUp]

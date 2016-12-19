@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
             //writer.setNoCFSRatio(0.0);
             //writer.infoStream = System.out;
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             customType.StoreTermVectors = true;
             for (int i = 0; i < NumDocs; i++)
             {

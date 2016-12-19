@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 IndexableField field = fields[i];
-                if (field.FieldType.Indexed)
+                if (field.FieldType.IsIndexed)
                 {
                     if (field.FieldType.StoreTermVectors)
                     {

@@ -314,9 +314,9 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 {
                     Document doc = new Document();
                     FieldType fieldType = new FieldType();
-                    fieldType.Indexed = (true);
-                    fieldType.Tokenized = (true);
-                    fieldType.Stored = (true);
+                    fieldType.IsIndexed = (true);
+                    fieldType.IsTokenized = (true);
+                    fieldType.IsStored = (true);
                     Field field = new Field(FIELD, content, fieldType);
                     doc.Add(field);
                     writer.AddDocument(doc);

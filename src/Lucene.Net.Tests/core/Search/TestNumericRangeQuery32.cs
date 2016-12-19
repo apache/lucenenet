@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
             FieldType storedInt = new FieldType(IntField.TYPE_NOT_STORED);
-            storedInt.Stored = true;
+            storedInt.IsStored = true;
             storedInt.Freeze();
 
             FieldType storedInt8 = new FieldType(storedInt);

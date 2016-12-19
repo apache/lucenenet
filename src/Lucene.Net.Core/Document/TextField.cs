@@ -38,13 +38,13 @@ namespace Lucene.Net.Documents
 
         static TextField()
         {
-            TYPE_NOT_STORED.Indexed = true;
-            TYPE_NOT_STORED.Tokenized = true;
+            TYPE_NOT_STORED.IsIndexed = true;
+            TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.Freeze();
 
-            TYPE_STORED.Indexed = true;
-            TYPE_STORED.Tokenized = true;
-            TYPE_STORED.Stored = true;
+            TYPE_STORED.IsIndexed = true;
+            TYPE_STORED.IsTokenized = true;
+            TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
 

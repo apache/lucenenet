@@ -84,10 +84,10 @@ namespace Lucene.Net.Index
                 Custom1.StoreTermVectorPositions = true;
                 Custom1.StoreTermVectorOffsets = true;
 
-                Custom2.Stored = true;
-                Custom2.Indexed = true;
+                Custom2.IsStored = true;
+                Custom2.IsIndexed = true;
 
-                Custom3.Stored = true;
+                Custom3.IsStored = true;
 
                 Custom4.StoreTermVectors = true;
                 Custom4.StoreTermVectorPositions = true;

@@ -130,19 +130,19 @@ namespace Lucene.Net.Documents
 
         static DoubleField()
         {
-            TYPE_NOT_STORED.Indexed = true;
-            TYPE_NOT_STORED.Tokenized = true;
+            TYPE_NOT_STORED.IsIndexed = true;
+            TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericTypeValue = Documents.FieldType.NumericType.DOUBLE;
+            TYPE_NOT_STORED.NumericType = NumericType.DOUBLE;
             TYPE_NOT_STORED.Freeze();
 
-            TYPE_STORED.Indexed = true;
-            TYPE_STORED.Tokenized = true;
+            TYPE_STORED.IsIndexed = true;
+            TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericTypeValue = Documents.FieldType.NumericType.DOUBLE;
-            TYPE_STORED.Stored = true;
+            TYPE_STORED.NumericType = NumericType.DOUBLE;
+            TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
 
@@ -166,15 +166,15 @@ namespace Lucene.Net.Documents
         ///  <param name="name"> field name </param>
         ///  <param name="value"> 64-bit double value </param>
         ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="FieldType.NumericType#DOUBLE"/>. </param>
+        ///         of <seealso cref="NumericType#DOUBLE"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a DOUBLE numericType() </exception>
         public DoubleField(string name, double value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericTypeValue != Documents.FieldType.NumericType.DOUBLE)
+            if (type.NumericType != NumericType.DOUBLE)
             {
-                throw new System.ArgumentException("type.numericType() must be DOUBLE but got " + type.NumericTypeValue);
+                throw new System.ArgumentException("type.numericType() must be DOUBLE but got " + type.NumericType);
             }
             fieldsData = Convert.ToDouble(value);
         }

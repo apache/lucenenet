@@ -1491,10 +1491,10 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType customType = new FieldType(StoredField.TYPE);
-            customType.Tokenized = true;
+            customType.IsTokenized = true;
 
             Field f = new Field("binary", b, 10, 17, customType);
-            customType.Indexed = true;
+            customType.IsIndexed = true;
             f.SetTokenStream(new MockTokenizer(new StringReader("doc1field1"), MockTokenizer.WHITESPACE, false));
 
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
@@ -1851,9 +1851,9 @@ namespace Lucene.Net.Index
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.OmitNorms = true;
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
-            customType2.Tokenized = false;
+            customType2.IsTokenized = false;
             FieldType customType3 = new FieldType(TextField.TYPE_STORED);
-            customType3.Tokenized = false;
+            customType3.IsTokenized = false;
             customType3.OmitNorms = true;
 
             for (int i = 0; i < 2; i++)
@@ -1997,7 +1997,7 @@ namespace Lucene.Net.Index
             // maximum length term, and search on that term:
             doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 

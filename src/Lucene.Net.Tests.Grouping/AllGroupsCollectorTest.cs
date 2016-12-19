@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Grouping
 
             string groupField = "author";
             FieldType customType = new FieldType();
-            customType.Stored = true;
+            customType.IsStored = true;
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(

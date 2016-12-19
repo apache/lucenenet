@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy()));
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.Tokenized = false;
+            customType.IsTokenized = false;
             for (int i = 0; i < data.Length; i++)
             {
                 Document doc = new Document();

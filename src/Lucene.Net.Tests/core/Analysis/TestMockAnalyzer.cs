@@ -356,9 +356,9 @@ namespace Lucene.Net.Analysis
             RandomIndexWriter writer = new RandomIndexWriter(Random(), NewDirectory(), Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType();
-            ft.Indexed = true;
+            ft.IsIndexed = true;
             ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
-            ft.Tokenized = true;
+            ft.IsTokenized = true;
             ft.StoreTermVectors = true;
             ft.StoreTermVectorPositions = true;
             ft.StoreTermVectorOffsets = true;

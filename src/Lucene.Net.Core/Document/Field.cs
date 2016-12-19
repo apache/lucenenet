@@ -125,11 +125,11 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("reader", "reader cannot be null");
             }
-            if (type.Stored)
+            if (type.IsStored)
             {
                 throw new System.ArgumentException("fields with a Reader value cannot be stored");
             }
-            if (type.Indexed && !type.Tokenized)
+            if (type.IsIndexed && !type.IsTokenized)
             {
                 throw new System.ArgumentException("non-tokenized fields must use String values");
             }
@@ -158,11 +158,11 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("tokenStream","tokenStream cannot be null");
             }
-            if (!type.Indexed || !type.Tokenized)
+            if (!type.IsIndexed || !type.IsTokenized)
             {
                 throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (type.Stored)
+            if (type.IsStored)
             {
                 throw new System.ArgumentException("TokenStream fields cannot be stored");
             }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("name", "name cannot be null");
             }
-            if (type.Indexed)
+            if (type.IsIndexed)
             {
                 throw new System.ArgumentException("Fields with BytesRef values cannot be indexed");
             }
@@ -254,11 +254,11 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("value", "value cannot be null");
             }
-            if (!type.Stored && !type.Indexed)
+            if (!type.IsStored && !type.IsIndexed)
             {
                 throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
             }
-            if (!type.Indexed && (type.StoreTermVectors))
+            if (!type.IsIndexed && (type.StoreTermVectors))
             {
                 throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
             }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to BytesRef");
             }
-            if (mType.Indexed)
+            if (mType.IsIndexed)
             {
                 throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
             }
@@ -462,11 +462,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetTokenStream(TokenStream tokenStream)
         {
-            if (!mType.Indexed || !mType.Tokenized)
+            if (!mType.IsIndexed || !mType.IsTokenized)
             {
                 throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (mType.NumericTypeValue != null)
+            if (mType.NumericType != null)
             {
                 throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
             }
@@ -493,7 +493,7 @@ namespace Lucene.Net.Documents
             {
                 if (value != 1.0f)
                 {
-                    if (mType.Indexed == false || mType.OmitNorms)
+                    if (mType.IsIndexed == false || mType.OmitNorms)
                     {
                         throw new System.ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
                     }
@@ -563,11 +563,11 @@ namespace Lucene.Net.Documents
 
         public virtual TokenStream GetTokenStream(Analyzer analyzer)
         {
-            if (!((FieldType)FieldType).Indexed)
+            if (!((FieldType)FieldType).IsIndexed)
             {
                 return null;
             }
-            FieldType.NumericType? numericType = ((FieldType)FieldType).NumericTypeValue;
+            NumericType? numericType = ((FieldType)FieldType).NumericType;
             if (numericType != null)
             {
                 if (!(internalTokenStream is NumericTokenStream))
@@ -581,19 +581,19 @@ namespace Lucene.Net.Documents
                 object val = fieldsData;
                 switch (numericType)
                 {
-                    case Documents.FieldType.NumericType.INT:
+                    case NumericType.INT:
                         nts.SetIntValue(Convert.ToInt32(val));
                         break;
 
-                    case Documents.FieldType.NumericType.LONG:
+                    case NumericType.LONG:
                         nts.SetLongValue(Convert.ToInt64(val));
                         break;
 
-                    case Documents.FieldType.NumericType.FLOAT:
+                    case NumericType.FLOAT:
                         nts.SetFloatValue(Convert.ToSingle(val));
                         break;
 
-                    case Documents.FieldType.NumericType.DOUBLE:
+                    case NumericType.DOUBLE:
                         nts.SetDoubleValue(Convert.ToDouble(val));
                         break;
 
@@ -603,7 +603,7 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
-            if (!((FieldType)FieldType).Tokenized)
+            if (!((FieldType)FieldType).IsTokenized)
             {
                 if (GetStringValue() == null)
                 {
@@ -823,29 +823,29 @@ namespace Lucene.Net.Documents
         {
             FieldType ft = new FieldType();
 
-            ft.Stored = store == Store.YES;
+            ft.IsStored = store == Store.YES;
 
             switch (index)
             {
                 case Index.ANALYZED:
-                    ft.Indexed = true;
-                    ft.Tokenized = true;
+                    ft.IsIndexed = true;
+                    ft.IsTokenized = true;
                     break;
 
                 case Index.ANALYZED_NO_NORMS:
-                    ft.Indexed = true;
-                    ft.Tokenized = true;
+                    ft.IsIndexed = true;
+                    ft.IsTokenized = true;
                     ft.OmitNorms = true;
                     break;
 
                 case Index.NOT_ANALYZED:
-                    ft.Indexed = true;
-                    ft.Tokenized = false;
+                    ft.IsIndexed = true;
+                    ft.IsTokenized = false;
                     break;
 
                 case Index.NOT_ANALYZED_NO_NORMS:
-                    ft.Indexed = true;
-                    ft.Tokenized = false;
+                    ft.IsIndexed = true;
+                    ft.IsTokenized = false;
                     ft.OmitNorms = true;
                     break;
 

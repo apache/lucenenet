@@ -4,7 +4,7 @@ using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using System;
 using System.Text;
-using NumericType = Lucene.Net.Documents.FieldType.NumericType;
+using NumericType = Lucene.Net.Documents.NumericType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
