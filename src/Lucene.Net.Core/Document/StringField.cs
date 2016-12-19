@@ -19,6 +19,7 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A field that is indexed but not tokenized: the entire
     ///  String value is indexed as a single token.  For example

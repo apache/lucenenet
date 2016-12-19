@@ -55,7 +55,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Field's type
         /// </summary>
-        protected internal readonly FieldType Type;
+        protected internal readonly FieldType Type; // LUCENENET TODO: Rename (collision with constants)
 
         /// <summary>
         /// Field's name
@@ -269,15 +269,6 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// The TokenStream for this field to be used when indexing, or null. If null,
-        /// the TextReader value or String value is analyzed to produce the indexed tokens.
-        /// </summary>
-        public virtual TokenStream TokenStreamValue() // LUCENENET TODO: Change to GetTokenStreamValue (for consistency with GetStringValue() and GetNumericValue())
-        {
-            return TokenStream_Renamed;
-        }
-
-        /// <summary>
         /// <p>
         /// Expert: change the value of this field. this can be used during indexing to
         /// re-use a single Field instance to improve indexing speed by avoiding GC
@@ -293,7 +284,7 @@ namespace Lucene.Net.Documents
         /// >ImproveIndexingSpeed</a> for details.
         /// </p>
         /// </summary>
-        public string StringValue // LUCENENET TODO: Change to SetValue(string value) ?, GetStringValue() (there is a conversion)
+        public virtual string StringValue // LUCENENET TODO: Change to SetValue(string value) ?, GetStringValue() (there is a conversion)
         {
             get
             {
@@ -322,7 +313,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
-        public TextReader ReaderValue // LUCENENET TODO: Change to SetValue(TextReader value) ?
+        public virtual TextReader ReaderValue // LUCENENET TODO: Change to SetValue(TextReader value) ?
         {
             get
             {
@@ -337,6 +328,15 @@ namespace Lucene.Net.Documents
                 }
                 FieldsData = value;
             }
+        }
+
+        /// <summary>
+        /// The TokenStream for this field to be used when indexing, or null. If null,
+        /// the TextReader value or String value is analyzed to produce the indexed tokens.
+        /// </summary>
+        public virtual TokenStream TokenStreamValue() // LUCENENET TODO: Change to GetTokenStreamValue (for consistency with GetStringValue() and GetNumericValue())
+        {
+            return TokenStream_Renamed;
         }
 
         /// <summary>
@@ -360,6 +360,18 @@ namespace Lucene.Net.Documents
                 }
                 FieldsData = value;
             }
+        }
+
+        // LUCENENET TODO: Change to SetValue(byte[]) ?
+        /// <summary>
+        /// Expert: change the value of this field. See
+        /// <see cref="setStringValue(string)"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void SetBytesValue(byte[] value)
+        {
+            //SetBytesValue(new BytesRef(value));
+            BytesValue = (new BytesRef(value));
         }
 
         /// <summary>
@@ -480,7 +492,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public string Name
+        public virtual string Name
         {
             get { return Name_Renamed; }
         }
@@ -510,7 +522,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public object NumericValue // LUCENENET TODO: Change to GetNumericValue() (there is a conversion)
+        public virtual object NumericValue // LUCENENET TODO: Change to GetNumericValue() (there is a conversion)
         {
             get
             {
@@ -534,7 +546,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public BytesRef BinaryValue // LUCENENET TODO: Change to GetBinaryValue() (consistent with GetNumericValue())
+        public virtual BytesRef BinaryValue // LUCENENET TODO: Change to GetBinaryValue() (consistent with GetNumericValue())
         {
             get
             {
@@ -570,12 +582,12 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns the <seealso cref="FieldType"/> for this field. </summary>
-        public IndexableFieldType FieldType
+        public virtual IndexableFieldType FieldType
         {
             get { return Type; }
         }
 
-        public TokenStream GetTokenStream(Analyzer analyzer)
+        public virtual TokenStream GetTokenStream(Analyzer analyzer)
         {
             if (!((FieldType)FieldType).Indexed)
             {
@@ -681,7 +693,7 @@ namespace Lucene.Net.Documents
 
             /// <summary>
             /// Sets the string value. </summary>
-            internal string Value
+            internal string Value // LUCENENET TODO: Add getter
             {
                 set
                 {
@@ -830,6 +842,12 @@ namespace Lucene.Net.Documents
             WITH_POSITIONS_OFFSETS,
         }
 
+        /// <summary>
+        /// Translates the pre-4.0 enums for specifying how a
+        /// field should be indexed into the 4.0 {@link FieldType}
+        /// approach.
+        /// </summary>
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static FieldType TranslateFieldType(Store store, Index index, TermVector termVector)
         {
             FieldType ft = new FieldType();
@@ -893,50 +911,58 @@ namespace Lucene.Net.Documents
             return ft;
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use StringField, TextField instead.")]
-        public Field(String name, String value, Store store, Index index)
+        public Field(string name, string value, Store store, Index index)
             : this(name, value, TranslateFieldType(store, index, TermVector.NO))
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use StringField, TextField instead.")]
-        public Field(String name, String value, Store store, Index index, TermVector termVector)
+        public Field(string name, string value, Store store, Index index, TermVector termVector)
             : this(name, value, TranslateFieldType(store, index, termVector))
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use TextField instead.")]
-        public Field(String name, TextReader reader)
+        public Field(string name, TextReader reader)
             : this(name, reader, TermVector.NO)
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use TextField instead.")]
-        public Field(String name, TextReader reader, TermVector termVector)
+        public Field(string name, TextReader reader, TermVector termVector)
             : this(name, reader, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use TextField instead.")]
-        public Field(String name, TokenStream tokenStream)
+        public Field(string name, TokenStream tokenStream)
             : this(name, tokenStream, TermVector.NO)
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use TextField instead.")]
-        public Field(String name, TokenStream tokenStream, TermVector termVector)
+        public Field(string name, TokenStream tokenStream, TermVector termVector)
             : this(name, tokenStream, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use StoredField instead.")]
-        public Field(String name, byte[] value)
+        public Field(string name, byte[] value)
             : this(name, value, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
         {
         }
 
+        // LUCENENET TODO: Documentation
         [Obsolete("Use StoredField instead.")]
-        public Field(String name, byte[] value, int offset, int length)
+        public Field(string name, byte[] value, int offset, int length)
             : this(name, value, offset, length, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
         {
         }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref= NumericDocValues </seealso>
     /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
-    ///
+    [Obsolete("Use NumericDocValuesField instead.")]
     public class ShortDocValuesField : NumericDocValuesField
     {
         /// <summary>

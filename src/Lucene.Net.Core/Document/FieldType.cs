@@ -32,6 +32,7 @@ namespace Lucene.Net.Documents
         /// Data type of the numeric value
         /// @since 3.2
         /// </summary>
+        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
         public enum NumericType // LUCENENET TODO: Move outside of FieldType class
         {
             /// <summary>
@@ -115,7 +116,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #indexed() </seealso>
-        public bool Indexed
+        public virtual bool Indexed
         {
             get { return this.Indexed_Renamed; }
             set
@@ -131,7 +132,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #stored() </seealso>
-        public bool Stored
+        public virtual bool Stored
         {
             get
             {
@@ -171,7 +172,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #storeTermVectors() </seealso>
-        public bool StoreTermVectors
+        public virtual bool StoreTermVectors
         {
             get { return this.StoreTermVectors_Renamed; }
 
@@ -248,7 +249,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #omitNorms() </seealso>
-        public bool OmitNorms
+        public virtual bool OmitNorms
         {
             get { return this.OmitNorms_Renamed; }
             set
@@ -283,7 +284,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #numericType() </seealso>
-        public virtual NumericType? NumericTypeValue
+        public virtual NumericType? NumericTypeValue // LUCENENET TODO: Rename back to NumericType (de-nest enum)
         {
             get
             {
@@ -386,6 +387,7 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
+        // LUCENENET TODO: Cleanup
         /// <summary>
         /// {@inheritDoc}
         /// <p>
@@ -402,7 +404,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #docValueType() </seealso>
-        public FieldInfo.DocValuesType_e? DocValueType
+        public virtual FieldInfo.DocValuesType_e? DocValueType
         {
             get
             {

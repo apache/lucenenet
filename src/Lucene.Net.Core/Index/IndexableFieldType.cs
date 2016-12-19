@@ -96,14 +96,14 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexOptions"/>, describing what should be
         /// recorded into the inverted index
         /// </summary>
-        FieldInfo.IndexOptions? IndexOptions { get; set; }
+        FieldInfo.IndexOptions? IndexOptions { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
-        FieldType.NumericType? NumericTypeValue { get; set; }
+        FieldType.NumericType? NumericTypeValue { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
         /// <summary>
         /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
         /// will be indexed into docValues.
         /// </summary>
-        DocValuesType_e? DocValueType { get; set; }
+        DocValuesType_e? DocValueType { get; set; } // LUCENENET TODO: Can we remove the nullable?
     }
 }

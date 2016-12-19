@@ -58,6 +58,7 @@ namespace Lucene.Net.Index
         /// Controls how much information is stored in the postings lists.
         /// @lucene.experimental
         /// </summary>
+        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
         public enum IndexOptions // LUCENENET TODO: de-nest from this class
         {
             // NOTE: order is important here; FieldInfo uses this
@@ -97,6 +98,7 @@ namespace Lucene.Net.Index
         /// Note that DocValues is strongly typed, so a field cannot have different types
         /// across different documents.
         /// </summary>
+        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
         public enum DocValuesType_e // LUCENENET TODO: Rename back to DocValuesType and de-nest from this class
         {
             /// <summary>

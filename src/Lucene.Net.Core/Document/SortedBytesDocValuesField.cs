@@ -1,5 +1,6 @@
 
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref= SortedDocValues </seealso>
     /// @deprecated Use <seealso cref="SortedDocValuesField"/> instead.
-    ///
+    [Obsolete("Use SortedDocValuesField instead.")]
     public class SortedBytesDocValuesField : SortedDocValuesField
     {
         /// <summary>

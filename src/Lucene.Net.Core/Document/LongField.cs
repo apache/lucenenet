@@ -135,6 +135,7 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             TYPE_NOT_STORED.NumericTypeValue = Documents.FieldType.NumericType.LONG;
             TYPE_NOT_STORED.Freeze();
+
             TYPE_STORED.Indexed = true;
             TYPE_STORED.Tokenized = true;
             TYPE_STORED.OmitNorms = true;
