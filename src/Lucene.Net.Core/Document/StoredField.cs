@@ -99,7 +99,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, int value)
             : base(name, TYPE)
         {
-            FieldsData = value;
+            fieldsData = value;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, float value)
             : base(name, TYPE)
         {
-            FieldsData = value;
+            fieldsData = value;
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, long value)
             : base(name, TYPE)
         {
-            FieldsData = value;
+            fieldsData = value;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, double value)
             : base(name, TYPE)
         {
-            FieldsData = value;
+            fieldsData = value;
         }
     }
 }
