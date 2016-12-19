@@ -23,13 +23,13 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Contrib.Spatial")]
-[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
+[assembly: AssemblyTitle("Lucene.Net.Spatial")]
+[assembly: AssemblyDescription("The Apache Software Foundation Spatial component of the Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net.Contrib.Spatial")]
-[assembly: AssemblyCopyright("Copyright 2009 - 2012 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2009 - 2012 The Apache Software Foundation")]
+[assembly: AssemblyProduct("Lucene.Net.Spatial")]
+[assembly: AssemblyCopyright("Copyright 2009 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2009 - 2017 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Spatial")]
 [assembly: AssemblyCulture("")]
 

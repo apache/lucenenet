@@ -5,13 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Analysis.Common")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Apache Lucene.Net.Analysis.Common")]
+[assembly: AssemblyDescription("The Apache Software Foundation Analysis.Common Component of the Lucene.Net full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Lucene.Net.Analysis.Common")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("Lucene.Net")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Analysis.Common")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
