@@ -200,19 +200,19 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.IntField(fieldInfo, Convert.ToInt32(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
+                visitor.Int32Field(fieldInfo, Convert.ToInt32(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_LONG))
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.LongField(fieldInfo, Convert.ToInt64(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
+                visitor.Int64Field(fieldInfo, Convert.ToInt64(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_FLOAT))
             {
                 UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, _scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length,
                     _scratchUtf16);
-                visitor.FloatField(fieldInfo, Convert.ToSingle(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
+                visitor.SingleField(fieldInfo, Convert.ToSingle(_scratchUtf16.ToString(), CultureInfo.InvariantCulture));
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_DOUBLE))
             {

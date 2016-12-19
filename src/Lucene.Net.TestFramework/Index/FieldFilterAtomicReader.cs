@@ -104,19 +104,19 @@ namespace Lucene.Net.Index
                 Visitor.StringField(fieldInfo, value);
             }
 
-            public override void IntField(FieldInfo fieldInfo, int value)
+            public override void Int32Field(FieldInfo fieldInfo, int value)
             {
-                Visitor.IntField(fieldInfo, value);
+                Visitor.Int32Field(fieldInfo, value);
             }
 
-            public override void LongField(FieldInfo fieldInfo, long value)
+            public override void Int64Field(FieldInfo fieldInfo, long value)
             {
-                Visitor.LongField(fieldInfo, value);
+                Visitor.Int64Field(fieldInfo, value);
             }
 
-            public override void FloatField(FieldInfo fieldInfo, float value)
+            public override void SingleField(FieldInfo fieldInfo, float value)
             {
-                Visitor.FloatField(fieldInfo, value);
+                Visitor.SingleField(fieldInfo, value);
             }
 
             public override void DoubleField(FieldInfo fieldInfo, double value)

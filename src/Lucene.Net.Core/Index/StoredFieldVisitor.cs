@@ -61,19 +61,19 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Process a int numeric field. </summary>
-        public virtual void IntField(FieldInfo fieldInfo, int value)
+        public virtual void Int32Field(FieldInfo fieldInfo, int value)
         {
         }
 
         /// <summary>
         /// Process a long numeric field. </summary>
-        public virtual void LongField(FieldInfo fieldInfo, long value)
+        public virtual void Int64Field(FieldInfo fieldInfo, long value)
         {
         }
 
         /// <summary>
         /// Process a float numeric field. </summary>
-        public virtual void FloatField(FieldInfo fieldInfo, float value)
+        public virtual void SingleField(FieldInfo fieldInfo, float value)
         {
         }
 

@@ -20,6 +20,7 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A <seealso cref="StoredFieldVisitor"/> that creates a {@link
     ///  Document} containing all stored fields, or only specific
@@ -77,17 +78,17 @@ namespace Lucene.Net.Documents
             Doc.Add(new Field(fieldInfo.Name, value, ft));
         }
 
-        public override void IntField(FieldInfo fieldInfo, int value)
+        public override void Int32Field(FieldInfo fieldInfo, int value) // LUCENENET specific: renamed from IntField to follow .NET conventions
         {
             Doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
-        public override void LongField(FieldInfo fieldInfo, long value)
+        public override void Int64Field(FieldInfo fieldInfo, long value) // LUCENENET specific: renamed from LongField to follow  .NET conventions
         {
             Doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
-        public override void FloatField(FieldInfo fieldInfo, float value)
+        public override void SingleField(FieldInfo fieldInfo, float value) // LUCENENET specific: renamed from FloatField to follow  .NET conventions
         {
             Doc.Add(new StoredField(fieldInfo.Name, value));
         }

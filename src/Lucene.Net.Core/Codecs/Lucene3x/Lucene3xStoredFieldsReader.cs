@@ -295,15 +295,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                 switch (numeric)
                 {
                     case FIELD_IS_NUMERIC_INT:
-                        visitor.IntField(info, FieldsStream.ReadInt());
+                        visitor.Int32Field(info, FieldsStream.ReadInt());
                         return;
 
                     case FIELD_IS_NUMERIC_LONG:
-                        visitor.LongField(info, FieldsStream.ReadLong());
+                        visitor.Int64Field(info, FieldsStream.ReadLong());
                         return;
 
                     case FIELD_IS_NUMERIC_FLOAT:
-                        visitor.FloatField(info, Number.IntBitsToFloat(FieldsStream.ReadInt()));
+                        visitor.SingleField(info, Number.IntBitsToFloat(FieldsStream.ReadInt()));
                         return;
 
                     case FIELD_IS_NUMERIC_DOUBLE:

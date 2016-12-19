@@ -200,15 +200,15 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_INT:
-                    visitor.IntField(info, @in.ReadInt());
+                    visitor.Int32Field(info, @in.ReadInt());
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
-                    visitor.FloatField(info, Number.IntBitsToFloat(@in.ReadInt()));
+                    visitor.SingleField(info, Number.IntBitsToFloat(@in.ReadInt()));
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_LONG:
-                    visitor.LongField(info, @in.ReadLong());
+                    visitor.Int64Field(info, @in.ReadLong());
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
