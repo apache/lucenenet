@@ -1,7 +1,5 @@
 using System;
 
-using Lucene.Net.Search;
-
 namespace Lucene.Net.Documents
 {
     /*
@@ -23,7 +21,7 @@ namespace Lucene.Net.Documents
 
     // javadocs
     // javadocs
-    
+
     /// <summary>
     /// Syntactic sugar for encoding doubles as NumericDocValues
     /// via <seealso cref="Double#doubleToRawLongBits(double)"/>.

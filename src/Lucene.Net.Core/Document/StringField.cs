@@ -1,4 +1,3 @@
-using System;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Documents
@@ -27,7 +26,6 @@ namespace Lucene.Net.Documents
     ///  field, or any field that you intend to use for sorting
     ///  or access through the field cache.
     /// </summary>
-
     public sealed class StringField : Field
     {
         /// <summary>

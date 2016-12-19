@@ -1,5 +1,3 @@
-
-
 using System;
 
 namespace Lucene.Net.Documents

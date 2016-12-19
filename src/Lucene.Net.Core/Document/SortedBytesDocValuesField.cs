@@ -1,4 +1,3 @@
-
 using Lucene.Net.Util;
 using System;
 
@@ -20,6 +19,7 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <p>
     /// Field that stores

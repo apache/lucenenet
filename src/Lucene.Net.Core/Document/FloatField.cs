@@ -1,8 +1,5 @@
-using System;
-
 using Lucene.Net.Index;
-using Lucene.Net.Search;
-using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -23,10 +20,6 @@ namespace Lucene.Net.Documents
      * limitations under the License.
      */
 
-    // javadocs
-    // javadocs
-    // javadocs
-    
     /// <summary>
     /// <p>
     /// Field that indexes <code>float</code> values
@@ -130,6 +123,7 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             TYPE_NOT_STORED.NumericType = NumericType.FLOAT;
             TYPE_NOT_STORED.Freeze();
+
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;

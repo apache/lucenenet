@@ -1,7 +1,3 @@
-using System;
-
-using Lucene.Net.Search;
-
 namespace Lucene.Net.Documents
 {
     /*
@@ -20,9 +16,6 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    // javadocs
-    // javadocs
 
     /// <summary>
     /// Syntactic sugar for encoding floats as NumericDocValues

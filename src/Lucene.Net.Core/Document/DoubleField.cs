@@ -1,8 +1,5 @@
-using System;
-
 using Lucene.Net.Index;
-using Lucene.Net.Search;
-using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -23,10 +20,6 @@ namespace Lucene.Net.Documents
      * limitations under the License.
      */
 
-    // javadocs
-    // javadocs
-    // javadocs
-    
     /// <summary>
     /// <p>
     /// Field that indexes <code>double</code> values

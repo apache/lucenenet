@@ -18,8 +18,6 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    // for javadocs
-    // for javadocs
 
     /// <summary>
     /// Provides support for converting dates to strings and vice-versa.

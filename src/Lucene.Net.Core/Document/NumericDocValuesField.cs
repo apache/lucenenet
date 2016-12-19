@@ -1,6 +1,5 @@
-using System;
-
 using Lucene.Net.Index;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -20,6 +19,7 @@ namespace Lucene.Net.Documents
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Field that stores a per-document <code>long</code> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
