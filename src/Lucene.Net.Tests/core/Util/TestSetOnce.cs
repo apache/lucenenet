@@ -65,26 +65,22 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [ExpectedException(typeof(SetOnce<int?>.AlreadySetException))]
         public virtual void TestSettingCtor()
         {
             SetOnce<int?> set = new SetOnce<int?>(new int?(5));
             Assert.AreEqual(5, (int)set.Get());
-            Assert.Throws<SetOnce<int?>.AlreadySetException>(() =>
-            {
-                set.Set(new int?(7));
-            });
+            set.Set(new int?(7));
         }
 
         [Test]
+        [ExpectedException(typeof(SetOnce<int?>.AlreadySetException))]
         public virtual void TestSetOnce_mem()
         {
             SetOnce<int?> set = new SetOnce<int?>();
             set.Set(new int?(5));
             Assert.AreEqual(5, (int)set.Get());
-            Assert.Throws<SetOnce<int?>.AlreadySetException>(() =>
-            {
-                set.Set(new int?(7));
-            });
+            set.Set(new int?(7));
         }
 
         [Test]

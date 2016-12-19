@@ -139,24 +139,24 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// checking the validity of constructor arguments
         /// </summary>
         [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, -1, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH));
+            new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, -1, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
         }
 
         [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments1()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, 0, -10, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH));
+            new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, 0, -10, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
         }
 
         [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestIllegalArguments2()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, 0, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, -50));
+            new CapitalizationFilter(new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), true, null, true, null, 0, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, -50);
         }
     }
 }

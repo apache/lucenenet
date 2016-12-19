@@ -504,7 +504,7 @@ namespace Lucene.Net.Support
             VerifyCollection(EqualityComparer<string>.Default, values.AsReadOnly(), dict.Values);
         }
 
-        [Test]
+        [Test, ExpectedException(typeof(ObjectDisposedException))]
         public void TestDisposed()
         {
             IDictionary<int, string> test = new LurchTableTest<int, string>();
@@ -513,7 +513,7 @@ namespace Lucene.Net.Support
             {
                 disposable.Dispose();
             }
-            Assert.Throws<ObjectDisposedException>(() => test.Add(1, ""));
+            test.Add(1, "");
         }
 
         class KeyValueEquality<TKey, TValue> : IEqualityComparer<KeyValuePair<TKey, TValue>>
