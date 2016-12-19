@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
             return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? GlobalLiveDocs : null, options);
         }
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void CreatePostings()
         {
             TotalPostings = 0;

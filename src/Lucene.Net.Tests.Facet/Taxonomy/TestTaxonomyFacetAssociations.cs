@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// LUCENENET specific
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             dir = NewDirectory();

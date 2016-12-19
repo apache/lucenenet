@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
         /// Is non-static because <see cref="Build(Random, TestIndex)"/> is no
         /// longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClassBaseTestRangeFilter()
         {
             MaxId = AtLeast(500);

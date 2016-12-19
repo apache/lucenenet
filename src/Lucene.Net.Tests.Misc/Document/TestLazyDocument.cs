@@ -34,7 +34,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void CreateIndex()
         {
 

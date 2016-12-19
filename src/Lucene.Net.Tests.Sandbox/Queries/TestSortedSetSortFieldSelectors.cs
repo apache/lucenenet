@@ -36,7 +36,7 @@ namespace Lucene.Net.Sandbox.Queries
     {
         static Codec savedCodec;
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void beforeClass()
         {
             savedCodec = Codec.Default;
