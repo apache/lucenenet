@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 
                 for (int d = MinId; d <= MaxId; d++)
                 {
-                    idField.StringValue = Pad(d);
+                    idField.SetStringValue(Pad(d));
                     int r = index.AllowNegativeRandomInts ? random.Next() : random.Next(int.MaxValue);
                     if (index.MaxR < r)
                     {
@@ -171,8 +171,8 @@ namespace Lucene.Net.Search
                     {
                         minCount++;
                     }
-                    randField.StringValue = Pad(r);
-                    bodyField.StringValue = "body";
+                    randField.SetStringValue(Pad(r));
+                    bodyField.SetStringValue("body");
                     writer.AddDocument(doc);
                 }
 

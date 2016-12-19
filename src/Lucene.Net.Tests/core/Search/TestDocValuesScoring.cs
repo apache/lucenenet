@@ -61,13 +61,13 @@ namespace Lucene.Net.Search
             Field field2 = NewTextField("bar", "", Field.Store.NO);
             doc.Add(field2);
 
-            field.StringValue = "quick brown fox";
-            field2.StringValue = "quick brown fox";
-            dvField.FloatValue = 2f; // boost x2
+            field.SetStringValue("quick brown fox");
+            field2.SetStringValue("quick brown fox");
+            dvField.SetSingleValue(2f); // boost x2
             iw.AddDocument(doc);
-            field.StringValue = "jumps over lazy brown dog";
-            field2.StringValue = "jumps over lazy brown dog";
-            dvField.FloatValue = 4f; // boost x4
+            field.SetStringValue("jumps over lazy brown dog");
+            field2.SetStringValue("jumps over lazy brown dog");
+            dvField.SetSingleValue(4f); // boost x4
             iw.AddDocument(doc);
             IndexReader ir = iw.Reader;
             iw.Dispose();

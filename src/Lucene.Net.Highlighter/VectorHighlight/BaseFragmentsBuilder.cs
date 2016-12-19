@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                buffer.Append(values[index[0]++].StringValue);
+                buffer.Append(values[index[0]++].GetStringValue());
                 buffer.Append(MultiValuedSeparator);
             }
             int bufferLength = buffer.Length;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                buffer.Append(values[index[0]].StringValue);
+                buffer.Append(values[index[0]].GetStringValue());
                 buffer.Append(multiValuedSeparator);
                 index[0]++;
             }
@@ -250,13 +250,13 @@ namespace Lucene.Net.Search.VectorHighlight
                 int fieldEnd = 0;
                 foreach (Field field in fields)
                 {
-                    if (field.StringValue.Length == 0)
+                    if (field.GetStringValue().Length == 0)
                     {
                         fieldEnd++;
                         continue;
                     }
                     fieldStart = fieldEnd;
-                    fieldEnd += field.StringValue.Length + 1; // + 1 for going to next field with same name.
+                    fieldEnd += field.GetStringValue().Length + 1; // + 1 for going to next field with same name.
 
                     if (fragInfo.StartOffset >= fieldStart && fragInfo.EndOffset >= fieldStart &&
                         fragInfo.StartOffset <= fieldEnd && fragInfo.EndOffset <= fieldEnd)

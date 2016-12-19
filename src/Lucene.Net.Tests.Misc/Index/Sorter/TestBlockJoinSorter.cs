@@ -56,7 +56,7 @@ namespace Lucene.Net.Index.Sorter
                         childDoc.Add(new NumericDocValuesField("child_val", Random().nextInt(5)));
                         documents.Add(childDoc);
                     }
-                    parentVal.LongValue = (Random().nextInt(50));
+                    parentVal.SetInt64Value(Random().nextInt(50));
                     documents.Add(parentDoc);
                     writer.AddDocuments(documents);
                 }

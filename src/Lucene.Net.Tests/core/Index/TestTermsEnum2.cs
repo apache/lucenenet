@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < num; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
-                field.StringValue = s;
+                field.SetStringValue(s);
                 Terms.Add(new BytesRef(s));
                 writer.AddDocument(doc);
             }

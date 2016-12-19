@@ -162,60 +162,51 @@ namespace Lucene.Net.Index
                 get { return 1.0f + (float)Random().NextDouble(); }
             }
 
-            public BytesRef BinaryValue
+            public BytesRef GetBinaryValue()
             {
-                get
+                if ((Counter % 10) == 3)
                 {
-                    if ((Counter % 10) == 3)
+                    var bytes = new byte[10];
+                    for (int idx = 0; idx < bytes.Length; idx++)
                     {
-                        var bytes = new byte[10];
-                        for (int idx = 0; idx < bytes.Length; idx++)
-                        {
-                            bytes[idx] = (byte)(Counter + idx);
-                        }
-                        return new BytesRef(bytes, 0, bytes.Length);
+                        bytes[idx] = (byte)(Counter + idx);
                     }
-                    else
-                    {
-                        return null;
-                    }
+                    return new BytesRef(bytes, 0, bytes.Length);
+                }
+                else
+                {
+                    return null;
                 }
             }
 
-            public string StringValue
+            public string GetStringValue()
             {
-                get
+                int fieldID = Counter % 10;
+                if (fieldID != 3 && fieldID != 7)
                 {
-                    int fieldID = Counter % 10;
-                    if (fieldID != 3 && fieldID != 7)
-                    {
-                        return "text " + Counter;
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return "text " + Counter;
+                }
+                else
+                {
+                    return null;
                 }
             }
 
-            public TextReader ReaderValue
+            public TextReader GetReaderValue()
             {
-                get
+                if (Counter % 10 == 7)
                 {
-                    if (Counter % 10 == 7)
-                    {
-                        return new StringReader("text " + Counter);
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return new StringReader("text " + Counter);
+                }
+                else
+                {
+                    return null;
                 }
             }
 
-            public object NumericValue
+            public object GetNumericValue()
             {
-                get { return null; }
+                return null;
             }
 
             public IndexableFieldType FieldType
@@ -225,7 +216,7 @@ namespace Lucene.Net.Index
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return ReaderValue != null ? analyzer.TokenStream(Name, ReaderValue) : analyzer.TokenStream(Name, new StringReader(StringValue));
+                return GetReaderValue() != null ? analyzer.TokenStream(Name, GetReaderValue()) : analyzer.TokenStream(Name, new StringReader(GetStringValue()));
             }
         }
 
@@ -305,7 +296,7 @@ namespace Lucene.Net.Index
                         if (binary)
                         {
                             Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
-                            BytesRef b = f.BinaryValue;
+                            BytesRef b = f.GetBinaryValue();
                             Assert.IsNotNull(b);
                             Assert.AreEqual(10, b.Length);
                             for (int idx = 0; idx < 10; idx++)
@@ -316,7 +307,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             Debug.Assert(stringValue != null);
-                            Assert.AreEqual(stringValue, f.StringValue);
+                            Assert.AreEqual(stringValue, f.GetStringValue());
                         }
                     }
 

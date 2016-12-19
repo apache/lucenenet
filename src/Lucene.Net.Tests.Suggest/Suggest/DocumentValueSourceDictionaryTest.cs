@@ -60,10 +60,10 @@ namespace Lucene.Net.Search.Suggest
                 doc.Add(contexts);
                 for (int j = 1; j < AtLeast(3); j++)
                 {
-                    contexts.BytesValue = new BytesRef("ctx_" + i + "_" + j);
+                    contexts.SetBytesValue(new BytesRef("ctx_" + i + "_" + j));
                     doc.Add(contexts);
                 }
-                docs.Put(field.StringValue, doc);
+                docs.Put(field.GetStringValue(), doc);
             }
             return docs;
         }
@@ -116,12 +116,12 @@ namespace Lucene.Net.Search.Suggest
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
                 //Document doc = docs.remove(f.utf8ToString());
-                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
-                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
-                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).NumericValue);
+                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).GetNumericValue());
+                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).GetNumericValue());
+                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).GetNumericValue());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
-                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
             assertTrue(!docs.Any());
             ir.Dispose();
@@ -153,16 +153,16 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
-                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
-                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).NumericValue);
+                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).GetNumericValue());
+                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).GetNumericValue());
+                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).GetNumericValue());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
-                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
                 ISet<BytesRef> originalCtxs = new HashSet<BytesRef>();
                 foreach (IndexableField ctxf in doc.GetFields(CONTEXTS_FIELD_NAME))
                 {
-                    originalCtxs.add(ctxf.BinaryValue);
+                    originalCtxs.add(ctxf.GetBinaryValue());
                 }
                 assertEquals(originalCtxs, inputIterator.Contexts);
             }
@@ -196,9 +196,9 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
-                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
-                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).NumericValue);
+                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).GetNumericValue());
+                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).GetNumericValue());
+                long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).GetNumericValue());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
                 assertEquals(inputIterator.Payload, null);
@@ -261,11 +261,11 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
-                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
+                long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).GetNumericValue());
+                long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).GetNumericValue());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, w2 + w1);
-                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
             assertTrue(!docs.Any());
             ir.Dispose();
@@ -299,7 +299,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, 10);
-                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
             assertTrue(!docs.Any());
             ir.Dispose();

@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             DirectoryReader r1 = writer.Reader;
             Assert.IsTrue(r1.Current);
 
-            string id10 = r1.Document(10).GetField("id").StringValue;
+            string id10 = r1.Document(10).GetField("id").GetStringValue();
 
             Document newDoc = r1.Document(10);
             newDoc.RemoveField("id");
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             // get a reader
             IndexReader r1 = writer.Reader;
 
-            string id10 = r1.Document(10).GetField("id").StringValue;
+            string id10 = r1.Document(10).GetField("id").GetStringValue();
 
             // deleted IW docs should not show up in the next getReader
             writer.DeleteDocuments(new Term("id", id10));
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, Count(new Term("id", id10), r1));
             Assert.AreEqual(0, Count(new Term("id", id10), r2));
 
-            string id50 = r1.Document(50).GetField("id").StringValue;
+            string id50 = r1.Document(50).GetField("id").GetStringValue();
             Assert.AreEqual(1, Count(new Term("id", id50), r1));
 
             writer.DeleteDocuments(new Term("id", id50));
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, Count(new Term("id", id10), r3));
             Assert.AreEqual(0, Count(new Term("id", id50), r3));
 
-            string id75 = r1.Document(75).GetField("id").StringValue;
+            string id75 = r1.Document(75).GetField("id").GetStringValue();
             writer.DeleteDocuments(new TermQuery(new Term("id", id75)));
             IndexReader r4 = writer.Reader;
             Assert.AreEqual(1, Count(new Term("id", id75), r3));
@@ -1097,9 +1097,9 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("field", "a b c", Field.Store.NO));
             Field id = NewStringField("id", "", Field.Store.NO);
             doc.Add(id);
-            id.StringValue = "0";
+            id.SetStringValue("0");
             w.AddDocument(doc);
-            id.StringValue = "1";
+            id.SetStringValue("1");
             w.AddDocument(doc);
             w.DeleteDocuments(new Term("id", "0"));
 
@@ -1123,9 +1123,9 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("field", "a b c", Field.Store.NO));
             Field id = NewStringField("id", "", Field.Store.NO);
             doc.Add(id);
-            id.StringValue = "0";
+            id.SetStringValue("0");
             w.AddDocument(doc);
-            id.StringValue = "1";
+            id.SetStringValue("1");
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             Assert.AreEqual(2, r.NumDocs);

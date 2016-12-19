@@ -96,12 +96,12 @@ namespace Lucene.Net.Search.Suggest
                 string term = null;
                 if (invalidDoc)
                 {
-                    term = (field != null) ? field.StringValue : "invalid_" + i;
+                    term = (field != null) ? field.GetStringValue() : "invalid_" + i;
                     invalidDocTerms.Add(term);
                 }
                 else
                 {
-                    term = field.StringValue;
+                    term = field.GetStringValue();
                 }
 
                 docs.Put(term, doc);
@@ -159,8 +159,8 @@ namespace Lucene.Net.Search.Suggest
                 //Document doc = docs.Remove(f.Utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
-                assertTrue(inputIterator.Payload.Equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertTrue(inputIterator.Payload.Equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
 
             foreach (string invalidTerm in invalidDocTerms)
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
                 assertEquals(inputIterator.Payload, null);
             }
 
@@ -248,13 +248,13 @@ namespace Lucene.Net.Search.Suggest
                 //Document doc = docs.remove(f.utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
-                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));
+                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
                 ISet<BytesRef> oriCtxs = new HashSet<BytesRef>();
                 IEnumerable<BytesRef> contextSet = inputIterator.Contexts;
                 foreach (IndexableField ctxf in doc.GetFields(CONTEXT_FIELD_NAME))
                 {
-                    oriCtxs.add(ctxf.BinaryValue);
+                    oriCtxs.add(ctxf.GetBinaryValue());
                 }
                 assertEquals(oriCtxs.size(), contextSet.Count());
             }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Suggest
             foreach (Document doc in docs.Values)
             {
                 IndexableField f2 = doc.GetField(FIELD_NAME);
-                if (rand.nextBoolean() && f2 != null && !invalidDocTerms.Contains(f2.StringValue))
+                if (rand.nextBoolean() && f2 != null && !invalidDocTerms.Contains(f2.GetStringValue()))
                 {
                     termsToDel.Add(doc.Get(FIELD_NAME));
                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
                 assertEquals(inputIterator.Payload, null);
             }
 

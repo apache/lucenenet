@@ -74,19 +74,19 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Non-null if this field has a binary value </summary>
-        BytesRef BinaryValue { get; }
+        BytesRef GetBinaryValue();
 
         /// <summary>
         /// Non-null if this field has a string value </summary>
-        string StringValue { get; }
+        string GetStringValue();
 
         /// <summary>
         /// Non-null if this field has a TextReader value </summary>
-        TextReader ReaderValue { get; }
+        TextReader GetReaderValue();
 
         /// <summary>
         /// Non-null if this field has a numeric value </summary>
-        object NumericValue { get; }
+        object GetNumericValue(); // LUCENENET TODO: Can we eliminate object?
 
         /// <summary>
         /// Creates the TokenStream used for indexing this field.  If appropriate,

@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
             // add 500 docs with id 0..499
             for (int i = 0; i < 500; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 Iw.AddDocument(doc);
             }
             // delete 20 of them

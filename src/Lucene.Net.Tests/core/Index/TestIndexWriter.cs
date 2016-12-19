@@ -1239,14 +1239,14 @@ namespace Lucene.Net.Index
                             }
                             for (int i = 0; i < 100; i++)
                             {
-                                idField.StringValue = Convert.ToString(i);
+                                idField.SetStringValue(Convert.ToString(i));
                                 if (DefaultCodecSupportsDocValues())
                                 {
-                                    binaryDVField.BytesValue = new BytesRef(idField.StringValue);
-                                    numericDVField.LongValue = i;
-                                    sortedDVField.BytesValue = new BytesRef(idField.StringValue);
+                                    binaryDVField.SetBytesValue(new BytesRef(idField.GetStringValue()));
+                                    numericDVField.SetInt64Value(i);
+                                    sortedDVField.SetBytesValue(new BytesRef(idField.GetStringValue()));
                                 }
-                                sortedSetDVField.BytesValue = new BytesRef(idField.StringValue);
+                                sortedSetDVField.SetBytesValue(new BytesRef(idField.GetStringValue()));
                                 int action = Random.Next(100);
                                 if (action == 17)
                                 {
@@ -1258,7 +1258,7 @@ namespace Lucene.Net.Index
                                 }
                                 else if (action % 2 == 0)
                                 {
-                                    w.UpdateDocument(new Term("id", idField.StringValue), doc);
+                                    w.UpdateDocument(new Term("id", idField.GetStringValue()), doc);
                                 }
                                 else
                                 {
@@ -1495,26 +1495,26 @@ namespace Lucene.Net.Index
 
             Field f = new Field("binary", b, 10, 17, customType);
             customType.Indexed = true;
-            f.TokenStream = new MockTokenizer(new StringReader("doc1field1"), MockTokenizer.WHITESPACE, false);
+            f.SetTokenStream(new MockTokenizer(new StringReader("doc1field1"), MockTokenizer.WHITESPACE, false));
 
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
 
             Field f2 = NewField("string", "value", customType2);
-            f2.TokenStream = new MockTokenizer(new StringReader("doc1field2"), MockTokenizer.WHITESPACE, false);
+            f2.SetTokenStream(new MockTokenizer(new StringReader("doc1field2"), MockTokenizer.WHITESPACE, false));
             doc.Add(f);
             doc.Add(f2);
             w.AddDocument(doc);
 
             // add 2 docs to test in-memory merging
-            f.TokenStream = new MockTokenizer(new StringReader("doc2field1"), MockTokenizer.WHITESPACE, false);
-            f2.TokenStream = new MockTokenizer(new StringReader("doc2field2"), MockTokenizer.WHITESPACE, false);
+            f.SetTokenStream(new MockTokenizer(new StringReader("doc2field1"), MockTokenizer.WHITESPACE, false));
+            f2.SetTokenStream(new MockTokenizer(new StringReader("doc2field2"), MockTokenizer.WHITESPACE, false));
             w.AddDocument(doc);
 
             // force segment flush so we can force a segment merge with doc3 later.
             w.Commit();
 
-            f.TokenStream = new MockTokenizer(new StringReader("doc3field1"), MockTokenizer.WHITESPACE, false);
-            f2.TokenStream = new MockTokenizer(new StringReader("doc3field2"), MockTokenizer.WHITESPACE, false);
+            f.SetTokenStream(new MockTokenizer(new StringReader("doc3field1"), MockTokenizer.WHITESPACE, false));
+            f2.SetTokenStream(new MockTokenizer(new StringReader("doc3field2"), MockTokenizer.WHITESPACE, false));
 
             w.AddDocument(doc);
             w.Commit();
@@ -1524,14 +1524,14 @@ namespace Lucene.Net.Index
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
             IndexableField f3 = doc2.GetField("binary");
-            b = f3.BinaryValue.Bytes;
+            b = f3.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
             Assert.AreEqual(87, b[0]);
 
-            Assert.IsTrue(ir.Document(0).GetField("binary").BinaryValue != null);
-            Assert.IsTrue(ir.Document(1).GetField("binary").BinaryValue != null);
-            Assert.IsTrue(ir.Document(2).GetField("binary").BinaryValue != null);
+            Assert.IsTrue(ir.Document(0).GetField("binary").GetBinaryValue() != null);
+            Assert.IsTrue(ir.Document(1).GetField("binary").GetBinaryValue() != null);
+            Assert.IsTrue(ir.Document(2).GetField("binary").GetBinaryValue() != null);
 
             Assert.AreEqual("value", ir.Document(0).Get("string"));
             Assert.AreEqual("value", ir.Document(1).Get("string"));
@@ -2003,16 +2003,16 @@ namespace Lucene.Net.Index
 
             w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
-            contentField.StringValue = "other";
+            contentField.SetStringValue("other");
             w.AddDocument(doc);
 
-            contentField.StringValue = "term";
+            contentField.SetStringValue("term");
             w.AddDocument(doc);
 
-            contentField.StringValue = bigTerm;
+            contentField.SetStringValue(bigTerm);
             w.AddDocument(doc);
 
-            contentField.StringValue = "zzz";
+            contentField.SetStringValue("zzz");
             w.AddDocument(doc);
 
             reader = w.Reader;

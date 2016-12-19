@@ -124,14 +124,14 @@ namespace Lucene.Net.Codecs.Lucene41
             for (int i = 0; i < MAXDOC; i++)
             {
                 string stringValue = Convert.ToString(i) + " verycommon " + English.IntToEnglish(i).Replace('-', ' ') + " " + TestUtil.RandomSimpleString(Random());
-                field1.StringValue = stringValue;
-                field2.StringValue = stringValue;
-                field3.StringValue = stringValue;
-                field4.StringValue = stringValue;
-                field5.StringValue = stringValue;
-                field6.StringValue = stringValue;
-                field7.StringValue = stringValue;
-                field8.StringValue = stringValue;
+                field1.SetStringValue(stringValue);
+                field2.SetStringValue(stringValue);
+                field3.SetStringValue(stringValue);
+                field4.SetStringValue(stringValue);
+                field5.SetStringValue(stringValue);
+                field6.SetStringValue(stringValue);
+                field7.SetStringValue(stringValue);
+                field8.SetStringValue(stringValue);
                 iw.AddDocument(doc);
             }
             iw.Dispose();

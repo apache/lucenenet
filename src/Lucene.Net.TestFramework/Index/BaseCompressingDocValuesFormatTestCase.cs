@@ -70,14 +70,14 @@ namespace Lucene.Net.Index
                 {
                     value = RandomInts.RandomFrom(Random(), values);
                 }
-                dvf.LongValue = value;
+                dvf.SetInt64Value(value);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
             long size1 = DirSize(dir);
             for (int i = 0; i < 20; ++i)
             {
-                dvf.LongValue = RandomInts.RandomFrom(Random(), values);
+                dvf.SetInt64Value(RandomInts.RandomFrom(Random(), values));
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
@@ -101,14 +101,14 @@ namespace Lucene.Net.Index
             doc.Add(dvf);
             for (int i = 0; i < 300; ++i)
             {
-                dvf.LongValue = @base + Random().Next(1000) * day;
+                dvf.SetInt64Value(@base + Random().Next(1000) * day);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
             long size1 = DirSize(dir);
             for (int i = 0; i < 50; ++i)
             {
-                dvf.LongValue = @base + Random().Next(1000) * day;
+                dvf.SetInt64Value(@base + Random().Next(1000) * day);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
@@ -129,12 +129,12 @@ namespace Lucene.Net.Index
             doc.Add(dvf);
             for (int i = 0; i < 20000; ++i)
             {
-                dvf.LongValue = i & 1023;
+                dvf.SetInt64Value(i & 1023);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
             long size1 = DirSize(dir);
-            dvf.LongValue = long.MaxValue;
+            dvf.SetInt64Value(long.MaxValue);
             iwriter.AddDocument(doc);
             iwriter.ForceMerge(1);
             long size2 = DirSize(dir);

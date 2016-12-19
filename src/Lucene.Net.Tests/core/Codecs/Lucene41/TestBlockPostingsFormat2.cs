@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 foreach (IndexableField f in doc.Fields)
                 {
-                    ((Field)f).StringValue = f.Name + " " + f.Name + "_2";
+                    ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
                 Iw.AddDocument(doc);
             }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 foreach (IndexableField f in doc.Fields)
                 {
-                    ((Field)f).StringValue = f.Name + " " + f.Name + "_2";
+                    ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
                 Iw.AddDocument(doc);
             }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 foreach (IndexableField f in doc.Fields)
                 {
-                    ((Field)f).StringValue = f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2";
+                    ((Field)f).SetStringValue(f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2");
                 }
                 Iw.AddDocument(doc);
             }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         val.Append(proto);
                         val.Append(" ");
                     }
-                    ((Field)f).StringValue = val.ToString();
+                    ((Field)f).SetStringValue(val.ToString());
                 }
                 Iw.AddDocument(doc);
             }

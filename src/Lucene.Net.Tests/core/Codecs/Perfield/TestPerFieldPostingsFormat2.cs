@@ -361,8 +361,8 @@ namespace Lucene.Net.Codecs.Perfield
             doc.Add(dateField);
             for (int i = 0; i < 100; i++)
             {
-                idField.StringValue = Convert.ToString(Random().Next(50));
-                dateField.StringValue = Convert.ToString(Random().Next(100));
+                idField.SetStringValue(Convert.ToString(Random().Next(50)));
+                dateField.SetStringValue(Convert.ToString(Random().Next(100)));
                 iw.AddDocument(doc);
             }
             iw.Dispose();

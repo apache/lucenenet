@@ -101,10 +101,10 @@ namespace Lucene.Net.Index
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
                 customType.StoreTermVectors = true;
                 doc.Add(NewField("test", "", customType));
-                idField.StringValue = "1";
+                idField.SetStringValue("1");
                 iw.AddDocument(doc);
                 doc.Add(NewTextField("test", "", Field.Store.NO));
-                idField.StringValue = "2";
+                idField.SetStringValue("2");
                 iw.AddDocument(doc);
                 iw.Dispose();
 

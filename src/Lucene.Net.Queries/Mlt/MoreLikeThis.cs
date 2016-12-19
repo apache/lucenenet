@@ -543,7 +543,7 @@ namespace Lucene.Net.Queries.Mlt
                     IndexableField[] fields = d.GetFields(fieldName);
                     foreach (IndexableField field in fields)
                     {
-                        string stringValue = field.StringValue;
+                        string stringValue = field.GetStringValue();
                         if (stringValue != null)
                         {
                             AddTermFrequencies(new StringReader(stringValue), termFreqMap, fieldName);

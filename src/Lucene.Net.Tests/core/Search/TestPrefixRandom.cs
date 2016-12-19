@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
             int num = codec.Equals("Lucene3x") ? 200 * RANDOM_MULTIPLIER : AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
-                field.StringValue = TestUtil.RandomUnicodeString(Random(), 10);
+                field.SetStringValue(TestUtil.RandomUnicodeString(Random(), 10));
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;

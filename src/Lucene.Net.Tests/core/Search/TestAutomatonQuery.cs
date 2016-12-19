@@ -65,9 +65,9 @@ namespace Lucene.Net.Search
             doc.Add(field);
             doc.Add(footerField);
             writer.AddDocument(doc);
-            field.StringValue = "some text from doc two a short piece 5678.91";
+            field.SetStringValue("some text from doc two a short piece 5678.91");
             writer.AddDocument(doc);
-            field.StringValue = "doc three has some different stuff" + " with numbers 1234 5678.9 and letter b";
+            field.SetStringValue("doc three has some different stuff" + " with numbers 1234 5678.9 and letter b");
             writer.AddDocument(doc);
             Reader = writer.Reader;
             Searcher = NewSearcher(Reader);

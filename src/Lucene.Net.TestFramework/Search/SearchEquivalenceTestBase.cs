@@ -80,8 +80,8 @@ namespace Lucene.Net.Search
             int numDocs = AtLeast(1000);
             for (int i = 0; i < numDocs; i++)
             {
-                id.StringValue = Convert.ToString(i);
-                field.StringValue = RandomFieldContents();
+                id.SetStringValue(Convert.ToString(i));
+                field.SetStringValue(RandomFieldContents());
                 iw.AddDocument(doc);
             }
 

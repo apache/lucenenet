@@ -207,7 +207,7 @@ namespace Lucene.Net.Tests.Join
             childDoc = s.Doc(hits.ScoreDocs[0].Doc);
             //System.out.println("CHILD = " + childDoc + " docID=" + hits.ScoreDocs[0].Doc);
             assertEquals("java", childDoc.Get("skill"));
-            assertEquals(2007, childDoc.GetField("year").NumericValue);
+            assertEquals(2007, childDoc.GetField("year").GetNumericValue());
             assertEquals("Lisa", GetParentDoc(r, parentsFilter, hits.ScoreDocs[0].Doc).Get("name"));
 
             // Test with filter on child docs:

@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < int.MaxValue; i++)
             {
-                dvField.LongValue = i;
+                dvField.SetInt64Value(i);
                 w.AddDocument(doc);
                 if (i % 100000 == 0)
                 {

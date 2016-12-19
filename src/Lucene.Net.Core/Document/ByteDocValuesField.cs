@@ -41,17 +41,14 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> 8-bit byte value </param>
         /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-        public ByteDocValuesField(string name, sbyte value)
+        public ByteDocValuesField(string name, byte value)
             : base(name, value)
         {
         }
 
-        public override sbyte ByteValue
+        public override void SetByteValue(byte value)
         {
-            set
-            {
-                LongValue = value;
-            }
+            SetInt64Value(value);
         }
     }
 }

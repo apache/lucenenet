@@ -59,23 +59,23 @@ namespace Lucene.Net.Index
                 fieldInfo.DocValuesType = dvType;
                 if (dvType == DocValuesType_e.BINARY)
                 {
-                    AddBinaryField(fieldInfo, docID, field.BinaryValue);
+                    AddBinaryField(fieldInfo, docID, field.GetBinaryValue());
                 }
                 else if (dvType == DocValuesType_e.SORTED)
                 {
-                    AddSortedField(fieldInfo, docID, field.BinaryValue);
+                    AddSortedField(fieldInfo, docID, field.GetBinaryValue());
                 }
                 else if (dvType == DocValuesType_e.SORTED_SET)
                 {
-                    AddSortedSetField(fieldInfo, docID, field.BinaryValue);
+                    AddSortedSetField(fieldInfo, docID, field.GetBinaryValue());
                 }
                 else if (dvType == DocValuesType_e.NUMERIC)
                 {
-                    if (!(field.NumericValue is long?))
+                    if (!(field.GetNumericValue() is long?))
                     {
-                        throw new System.ArgumentException("illegal type " + field.NumericValue.GetType() + ": DocValues types must be Long");
+                        throw new System.ArgumentException("illegal type " + field.GetNumericValue().GetType() + ": DocValues types must be Long");
                     }
-                    AddNumericField(fieldInfo, docID, (long)field.NumericValue);
+                    AddNumericField(fieldInfo, docID, (long)field.GetNumericValue());
                 }
                 else
                 {

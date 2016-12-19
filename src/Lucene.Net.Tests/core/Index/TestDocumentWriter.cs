@@ -79,25 +79,25 @@ namespace Lucene.Net.Index
             //System.out.println("Document: " + doc);
             IndexableField[] fields = doc.GetFields("textField2");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_2_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_2_TEXT));
             Assert.IsTrue(fields[0].FieldType.StoreTermVectors);
 
             fields = doc.GetFields("textField1");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_1_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_1_TEXT));
             Assert.IsFalse(fields[0].FieldType.StoreTermVectors);
 
             fields = doc.GetFields("keyField");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.KEYWORD_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.KEYWORD_TEXT));
 
             fields = doc.GetFields(DocHelper.NO_NORMS_KEY);
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.NO_NORMS_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.NO_NORMS_TEXT));
 
             fields = doc.GetFields(DocHelper.TEXT_FIELD_3_KEY);
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_3_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_3_TEXT));
 
             // test that the norms are not present in the segment if
             // omitNorms is true

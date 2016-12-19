@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                     }
                     OuterInstance.DoFail.Value = (this.Instance);
                     string id = "" + r.Next(50);
-                    idField.StringValue = id;
+                    idField.SetStringValue(id);
                     Term idTerm = new Term("id", id);
                     try
                     {
@@ -1691,7 +1691,7 @@ namespace Lucene.Net.Index
                     doc.Add(f);
                     MockTokenizer tokenizer = new MockTokenizer(new StringReader("crash me on the 4th token"), MockTokenizer.WHITESPACE, false);
                     tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                    f.TokenStream = new CrashingFilter(this, "crash", tokenizer);
+                    f.SetTokenStream(new CrashingFilter(this, "crash", tokenizer));
                 }
             }
             try
@@ -1780,7 +1780,7 @@ namespace Lucene.Net.Index
                     doc.Add(f);
                     MockTokenizer tokenizer = new MockTokenizer(new StringReader("crash me on the 4th token"), MockTokenizer.WHITESPACE, false);
                     tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                    f.TokenStream = new CrashingFilter(this, "crash", tokenizer);
+                    f.SetTokenStream(new CrashingFilter(this, "crash", tokenizer));
                 }
             }
 
@@ -1963,33 +1963,24 @@ namespace Lucene.Net.Index
                 get { return 5f; }
             }
 
-            public BytesRef BinaryValue
+            public BytesRef GetBinaryValue()
             {
-                get { return null; }
+                return null;
             }
 
-            public string StringValue
+            public string GetStringValue()
             {
-                get
-                {
-                    return "baz";
-                }
+                return "baz";
             }
 
-            public TextReader ReaderValue
+            public TextReader GetReaderValue()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
-            public object NumericValue
+            public object GetNumericValue()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
             public TokenStream GetTokenStream(Analyzer analyzer)

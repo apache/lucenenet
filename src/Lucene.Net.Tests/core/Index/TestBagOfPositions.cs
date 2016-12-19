@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
                             text.Append(' ');
                             text.Append(token);
                         }
-                        Field.StringValue = text.ToString();
+                        Field.SetStringValue(text.ToString());
                         Iw.AddDocument(Document);
                     }
                 }

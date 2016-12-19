@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Pulsing
             for (int i = 0; i < 10050; i++)
             {
                 //field.StringValue = df.format(i);
-                field.StringValue = i.ToString("00000", CultureInfo.InvariantCulture);
+                field.SetStringValue(i.ToString("00000", CultureInfo.InvariantCulture));
                 iw.AddDocument(document);
             }
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     sb.Append(i.ToString("00000", CultureInfo.InvariantCulture));
                     sb.Append(' '); // whitespace
                 }
-                field.StringValue = sb.ToString();
+                field.SetStringValue(sb.ToString());
                 iw.AddDocument(document);
             }
 

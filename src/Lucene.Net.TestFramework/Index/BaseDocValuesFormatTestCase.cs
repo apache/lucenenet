@@ -1359,10 +1359,10 @@ namespace Lucene.Net.Index
             Debug.Assert(numDocs > 256);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 long value = longs.Next();
-                storedField.StringValue = Convert.ToString(value);
-                dvField.LongValue = value;
+                storedField.SetStringValue(Convert.ToString(value));
+                dvField.SetInt64Value(value);
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
                 {
@@ -1442,10 +1442,10 @@ namespace Lucene.Net.Index
             Debug.Assert(numDocs > 256);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 long value = longs.Next();
-                indexedField.StringValue = Convert.ToString(value);
-                dvField.LongValue = value;
+                indexedField.SetStringValue(Convert.ToString(value));
+                dvField.SetInt64Value(value);
                 Document doc = new Document();
                 doc.Add(idField);
                 // 1/4 of the time we neglect to add the fields
@@ -1595,7 +1595,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1607,8 +1607,8 @@ namespace Lucene.Net.Index
                 }
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
-                storedField.BytesValue = new BytesRef(buffer);
-                dvField.BytesValue = new BytesRef(buffer);
+                storedField.SetBytesValue(new BytesRef(buffer));
+                dvField.SetBytesValue(new BytesRef(buffer));
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
                 {
@@ -1681,7 +1681,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1693,8 +1693,8 @@ namespace Lucene.Net.Index
                 }
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
-                storedField.BytesValue = new BytesRef(buffer);
-                dvField.BytesValue = new BytesRef(buffer);
+                storedField.SetBytesValue(new BytesRef(buffer));
+                dvField.SetBytesValue(new BytesRef(buffer));
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
                 {
@@ -1746,7 +1746,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1757,8 +1757,8 @@ namespace Lucene.Net.Index
                     length = TestUtil.NextInt(Random(), minLength, maxLength);
                 }
                 string value = TestUtil.RandomSimpleString(Random(), length);
-                indexedField.StringValue = value;
-                dvField.BytesValue = new BytesRef(value);
+                indexedField.SetStringValue(value);
+                dvField.SetBytesValue(new BytesRef(value));
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
                 {
@@ -3181,16 +3181,16 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 int length = TestUtil.NextInt(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
-                storedBinField.BytesValue = new BytesRef(buffer);
-                dvBinField.BytesValue = new BytesRef(buffer);
-                dvSortedField.BytesValue = new BytesRef(buffer);
+                storedBinField.SetBytesValue(buffer);
+                dvBinField.SetBytesValue(buffer);
+                dvSortedField.SetBytesValue(buffer);
                 long numericValue = Random().NextLong();
-                storedNumericField.StringValue = Convert.ToString(numericValue);
-                dvNumericField.LongValue = numericValue;
+                storedNumericField.SetStringValue(Convert.ToString(numericValue));
+                dvNumericField.SetInt64Value(numericValue);
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
                 {
@@ -3295,16 +3295,16 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
+                idField.SetStringValue(Convert.ToString(i));
                 int length = TestUtil.NextInt(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
-                storedBinField.BytesValue = new BytesRef(buffer);
-                dvBinField.BytesValue = new BytesRef(buffer);
-                dvSortedField.BytesValue = new BytesRef(buffer);
+                storedBinField.SetBytesValue(buffer);
+                dvBinField.SetBytesValue(buffer);
+                dvSortedField.SetBytesValue(buffer);
                 long numericValue = Random().NextLong();
-                storedNumericField.StringValue = Convert.ToString(numericValue);
-                dvNumericField.LongValue = numericValue;
+                storedNumericField.SetStringValue(Convert.ToString(numericValue));
+                dvNumericField.SetInt64Value(numericValue);
                 Document doc = new Document();
                 doc.Add(idField);
                 if (Random().Next(4) > 0)

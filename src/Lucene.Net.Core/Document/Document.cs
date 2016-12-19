@@ -134,7 +134,7 @@ namespace Lucene.Net.Documents
             {
                 if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue;
+                    BytesRef bytes = field.GetBinaryValue();
 
                     if (bytes != null)
                     {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Documents
             {
                 if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue;
+                    BytesRef bytes = field.GetBinaryValue();
                     if (bytes != null)
                     {
                         return bytes;
@@ -239,9 +239,9 @@ namespace Lucene.Net.Documents
             var result = new List<string>();
             foreach (IndexableField field in fields)
             {
-                if (field.Name.Equals(name) && field.StringValue != null)
+                if (field.Name.Equals(name) && field.GetStringValue() != null)
                 {
-                    result.Add(field.StringValue);
+                    result.Add(field.GetStringValue());
                 }
             }
 
@@ -266,9 +266,9 @@ namespace Lucene.Net.Documents
         {
             foreach (IndexableField field in fields)
             {
-                if (field.Name.Equals(name, System.StringComparison.Ordinal) && field.StringValue != null)
+                if (field.Name.Equals(name, System.StringComparison.Ordinal) && field.GetStringValue() != null)
                 {
-                    return field.StringValue;
+                    return field.GetStringValue();
                 }
             }
             return null;

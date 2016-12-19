@@ -58,30 +58,30 @@ namespace Lucene.Net.Search
             doc.Add(titleField);
             doc.Add(field);
             doc.Add(footerField);
-            field.StringValue = "\uD866\uDF05abcdef";
+            field.SetStringValue("\uD866\uDF05abcdef");
             writer.AddDocument(doc);
-            field.StringValue = "\uD866\uDF06ghijkl";
+            field.SetStringValue("\uD866\uDF06ghijkl");
             writer.AddDocument(doc);
             // this sorts before the previous two in UTF-8/UTF-32, but after in UTF-16!!!
-            field.StringValue = "\uFB94mnopqr";
+            field.SetStringValue("\uFB94mnopqr");
             writer.AddDocument(doc);
-            field.StringValue = "\uFB95stuvwx"; // this one too.
+            field.SetStringValue("\uFB95stuvwx"); // this one too.
             writer.AddDocument(doc);
-            field.StringValue = "a\uFFFCbc";
+            field.SetStringValue("a\uFFFCbc");
             writer.AddDocument(doc);
-            field.StringValue = "a\uFFFDbc";
+            field.SetStringValue("a\uFFFDbc");
             writer.AddDocument(doc);
-            field.StringValue = "a\uFFFEbc";
+            field.SetStringValue("a\uFFFEbc");
             writer.AddDocument(doc);
-            field.StringValue = "a\uFB94bc";
+            field.SetStringValue("a\uFB94bc");
             writer.AddDocument(doc);
-            field.StringValue = "bacadaba";
+            field.SetStringValue("bacadaba");
             writer.AddDocument(doc);
-            field.StringValue = "\uFFFD";
+            field.SetStringValue("\uFFFD");
             writer.AddDocument(doc);
-            field.StringValue = "\uFFFD\uD866\uDF05";
+            field.SetStringValue("\uFFFD\uD866\uDF05");
             writer.AddDocument(doc);
-            field.StringValue = "\uFFFD\uFFFD";
+            field.SetStringValue("\uFFFD\uFFFD");
             writer.AddDocument(doc);
             Reader = writer.Reader;
             Searcher = NewSearcher(Reader);

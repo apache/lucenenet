@@ -287,17 +287,17 @@ namespace Lucene.Net.Search.Grouping
                     groupDocs[i] = groupDoc;
                     if (groupDoc.group != null)
                     {
-                        group.StringValue = (groupDoc.group.Utf8ToString());
+                        group.SetStringValue(groupDoc.group.Utf8ToString());
                         if (canUseIDV)
                         {
-                            valuesField.BytesValue = (new BytesRef(groupDoc.group.Utf8ToString()));
+                            valuesField.SetBytesValue(new BytesRef(groupDoc.group.Utf8ToString()));
                         }
                     }
-                    sort1.StringValue = (groupDoc.sort1.Utf8ToString());
-                    sort2.StringValue = (groupDoc.sort2.Utf8ToString());
-                    sort3.StringValue = (groupDoc.sort3.Utf8ToString());
-                    content.StringValue = (groupDoc.content);
-                    id.IntValue = (groupDoc.id);
+                    sort1.SetStringValue(groupDoc.sort1.Utf8ToString());
+                    sort2.SetStringValue(groupDoc.sort2.Utf8ToString());
+                    sort3.SetStringValue(groupDoc.sort3.Utf8ToString());
+                    content.SetStringValue(groupDoc.content);
+                    id.SetInt32Value(groupDoc.id);
                     if (groupDoc.group == null)
                     {
                         w.AddDocument(docNoGroup);

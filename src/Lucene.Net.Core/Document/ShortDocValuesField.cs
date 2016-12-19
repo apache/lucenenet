@@ -48,12 +48,9 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public override short ShortValue
+        public override void SetInt16Value(short value)
         {
-            set
-            {
-                LongValue = value;
-            }
+            SetInt64Value(value);
         }
     }
 }

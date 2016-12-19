@@ -400,8 +400,8 @@ namespace Lucene.Net.Store
             int numDocs = 100;
             for (int i = 0; i < numDocs; i++)
             {
-                docid.StringValue = "" + i;
-                junk.StringValue = TestUtil.RandomUnicodeString(random);
+                docid.SetStringValue("" + i);
+                junk.SetStringValue(TestUtil.RandomUnicodeString(random));
                 writer.AddDocument(doc);
             }
             IndexReader reader = writer.Reader;

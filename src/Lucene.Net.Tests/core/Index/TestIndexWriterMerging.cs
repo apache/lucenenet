@@ -91,10 +91,10 @@ namespace Lucene.Net.Index
                 Document temp = reader.Document(i);
                 //System.out.println("doc "+i+"="+temp.GetField("count").StringValue);
                 //compare the index doc number to the value that it should be
-                if (!temp.GetField("count").StringValue.Equals((i + startAt) + ""))
+                if (!temp.GetField("count").GetStringValue().Equals((i + startAt) + ""))
                 {
                     fail = true;
-                    Console.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue);
+                    Console.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").GetStringValue());
                 }
             }
             reader.Dispose();
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
             document.Add(termVectorField);
             for (int i = 0; i < 10; i++)
             {
-                idField.StringValue = "" + i;
+                idField.SetStringValue("" + i);
                 writer.AddDocument(document);
             }
             writer.Dispose();
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
             document.Add(idField);
             for (int i = 0; i < 98; i++)
             {
-                idField.StringValue = "" + i;
+                idField.SetStringValue("" + i);
                 writer.AddDocument(document);
             }
             writer.Dispose();
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
             document.Add(idField);
             for (int i = 0; i < 98; i++)
             {
-                idField.StringValue = "" + i;
+                idField.SetStringValue("" + i);
                 writer.AddDocument(document);
             }
             writer.Dispose();
@@ -390,7 +390,7 @@ namespace Lucene.Net.Index
                     }
                     for (int j = 0; j < 199; j++)
                     {
-                        idField.StringValue = Convert.ToString(iter * 201 + j);
+                        idField.SetStringValue(Convert.ToString(iter * 201 + j));
                         writer.AddDocument(doc);
                     }
 

@@ -269,6 +269,44 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
+        /// The value of the field as a string, or null. If null, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        {
+            return fieldsData == null ? null : fieldsData.ToString();
+
+            /*if (FieldsData is string || FieldsData is Number)
+            {
+            return FieldsData.ToString();
+            }
+            else
+            {
+                return null;
+            }*/
+        }
+
+        /// <summary>
+        /// The value of the field as a <see cref="TextReader"/>, or null. If null, the string value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        {
+            return fieldsData is TextReader ? (TextReader)fieldsData : null;
+        }
+
+        /// <summary>
+        /// The TokenStream for this field to be used when indexing, or null. If null,
+        /// the TextReader value or String value is analyzed to produce the indexed tokens.
+        /// </summary>
+        public virtual TokenStream GetTokenStreamValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        {
+            return tokenStream;
+        }
+
+        /// <summary>
         /// <p>
         /// Expert: change the value of this field. this can be used during indexing to
         /// re-use a single Field instance to improve indexing speed by avoiding GC
@@ -284,212 +322,155 @@ namespace Lucene.Net.Documents
         /// >ImproveIndexingSpeed</a> for details.
         /// </p>
         /// </summary>
-        public virtual string StringValue // LUCENENET TODO: Change to SetValue(string value) ?, GetStringValue() (there is a conversion)
+        public virtual void SetStringValue(string value)
         {
-            get
+            if (!(fieldsData is string))
             {
-                return fieldsData == null ? null : fieldsData.ToString();
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to string");
+            }
+            fieldsData = value;
+        }
 
-                /*if (FieldsData is string || FieldsData is Number)
-                {
-                return FieldsData.ToString();
-                }
-                else
-                {
-                    return null;
-                }*/
-            }
-            set
+        /// <summary>
+        /// Expert: change the value of this field. See 
+        /// <see cref="SetStringValue(string)"/>.
+        /// </summary>
+        public virtual void SetReaderValue(TextReader value)
+        {
+            if (!(fieldsData is TextReader))
             {
-                if (!(fieldsData is String))
-                {
-                    throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to String");
-                }
-                fieldsData = value;
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to TextReader");
             }
+            fieldsData = value;
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
-        /// </summary>
-        public virtual TextReader ReaderValue // LUCENENET TODO: Change to SetValue(TextReader value) ?
-        {
-            get
-            {
-                return fieldsData is TextReader ? (TextReader)fieldsData : null;
-            }
-
-            set
-            {
-                if (!(fieldsData is TextReader))
-                {
-                    throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Reader");
-                }
-                fieldsData = value;
-            }
-        }
-
-        /// <summary>
-        /// The TokenStream for this field to be used when indexing, or null. If null,
-        /// the TextReader value or String value is analyzed to produce the indexed tokens.
-        /// </summary>
-        public virtual TokenStream TokenStreamValue() // LUCENENET TODO: Change to GetTokenStreamValue (for consistency with GetStringValue() and GetNumericValue())
-        {
-            return tokenStream;
-        }
-
-        /// <summary>
-        /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         ///
         /// <p>NOTE: the provided BytesRef is not copied so be sure
         /// not to change it until you're done with this field.
         /// </summary>
-        public virtual BytesRef BytesValue // LUCENENET TODO: Change to SetValue(BytesRef value) ?
+        public virtual void SetBytesValue(BytesRef value)
         {
-            set
+            if (!(fieldsData is BytesRef))
             {
-                if (!(fieldsData is BytesRef))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to BytesRef");
-                }
-                if (mType.Indexed)
-                {
-                    throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
-                }
-                fieldsData = value;
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to BytesRef");
             }
+            if (mType.Indexed)
+            {
+                throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
+            }
+            fieldsData = value;
         }
 
-        // LUCENENET TODO: Change to SetValue(byte[]) ?
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <see cref="setStringValue(string)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        /// <param name="value"></param>
         public virtual void SetBytesValue(byte[] value)
         {
-            //SetBytesValue(new BytesRef(value));
-            BytesValue = (new BytesRef(value));
+            SetBytesValue(new BytesRef(value));
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        // LUCENENET TODO: See if this can be made to work with byte instead of sbyte so the API is simpler and CLS compliant
-        public virtual sbyte ByteValue // LUCENENET TODO: Change to SetValue(sbyte value) and SetValue(byte value) ?
+        public virtual void SetByteValue(byte value)
         {
-            set
+            if (!(fieldsData is byte?))
             {
-                if (!(fieldsData is sbyte?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Byte");
-                }
-                fieldsData = Convert.ToByte(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Byte");
             }
+            fieldsData = Convert.ToByte(value);
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        public virtual short ShortValue // LUCENENET TODO: Change to SetValue(short value) ?
+        public virtual void SetInt16Value(short value) // LUCENENET specific: Renamed from SetShortValue to follow .NET conventions
         {
-            set
+            if (!(fieldsData is short?))
             {
-                if (!(fieldsData is short?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Short");
-                }
-                fieldsData = Convert.ToInt16(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Short");
             }
+            fieldsData = Convert.ToInt16(value);
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        public virtual int IntValue // LUCENENET TODO: Change to SetValue(int value) ?
+        public virtual void SetInt32Value(int value) // LUCENENET specific: Renamed from SetIntValue to follow .NET conventions
         {
-            set
+            if (!(fieldsData is int?))
             {
-                if (!(fieldsData is int?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Integer");
-                }
-                fieldsData = Convert.ToInt32(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Integer");
             }
+            fieldsData = Convert.ToInt32(value);
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        public virtual long LongValue // LUCENENET TODO: Change to SetValue(long value) ?
+        public virtual void SetInt64Value(long value) // LUCENENET specific: Renamed from SetLongValue to follow .NET conventions
         {
-            set
+            if (!(fieldsData is long?))
             {
-                if (!(fieldsData is long?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Long");
-                }
-                fieldsData = Convert.ToInt64(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Long");
             }
+            fieldsData = Convert.ToInt64(value);
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        public virtual float FloatValue // LUCENENET TODO: Change to SetValue(float value) ?
+        public virtual void SetSingleValue(float value) // LUCENENET specific: Renamed from SetFloatValue to follow .NET conventions
         {
-            set
+            if (!(fieldsData is float?))
             {
-                if (!(fieldsData is float?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Float");
-                }
-                fieldsData = Convert.ToSingle(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Float");
             }
+            fieldsData = Convert.ToSingle(value);
         }
 
         /// <summary>
         /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
+        /// <see cref="SetStringValue(string)"/>.
         /// </summary>
-        public virtual double DoubleValue // LUCENENET TODO: Change to SetValue(double value) ?
+        public virtual void SetDoubleValue(double value)
         {
-            set
+            if (!(fieldsData is double?))
             {
-                if (!(fieldsData is double?))
-                {
-                    throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Double");
-                }
-                fieldsData = Convert.ToDouble(value);
+                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Double");
             }
+            fieldsData = Convert.ToDouble(value);
         }
+
+        // LUCENENET TODO: Add SetValue() overloads for each type?
+        // Upside: Simpler API.
+        // Downside: Must be vigilant about what type is passed or the wrong overload will be called and will get a runtime exception. 
 
         /// <summary>
         /// Expert: sets the token stream to be used for indexing and causes
         /// isIndexed() and isTokenized() to return true. May be combined with stored
         /// values from stringValue() or getBinaryValue()
         /// </summary>
-        public virtual TokenStream TokenStream // LUCENENET TODO: Change to SetTokenStream(TokenStream tokenStream)
+        public virtual void SetTokenStream(TokenStream tokenStream)
         {
-            set
+            if (!mType.Indexed || !mType.Tokenized)
             {
-                if (!mType.Indexed || !mType.Tokenized)
-                {
-                    throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
-                }
-                if (mType.NumericTypeValue != null)
-                {
-                    throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
-                }
-                this.tokenStream = value;
+                throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
+            if (mType.NumericTypeValue != null)
+            {
+                throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
+            }
+            this.tokenStream = tokenStream;
         }
 
         public virtual string Name
@@ -499,10 +480,9 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Gets or sets the boost factor on this field. </summary>
-        /// <remarks>The default value is <code>1.0f</code> (no boost).</remarks>
-        /// <exception cref="IllegalArgumentException"> if this field is not indexed,
+        /// <remarks>The default value is <c>1.0f</c> (no boost).</remarks>
+        /// <exception cref="ArgumentException"> if this field is not indexed,
         ///         or if it omits norms. </exception>
-        /// <seealso> cref= #boost() </seealso>
         public virtual float Boost
         {
             get
@@ -522,42 +502,36 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public virtual object NumericValue // LUCENENET TODO: Change to GetNumericValue() (there is a conversion)
+        public virtual object GetNumericValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            get
+            // LUCENENET TODO: There was no expensive conversion from string in the original
+            string str = fieldsData as string;
+            if (str != null)
             {
-                // LUCENENET TODO: There was no expensive conversion from string in the original
-                string str = fieldsData as string;
-                if (str != null)
+                long ret;
+                if (long.TryParse(str, out ret))
                 {
-                    long ret;
-                    if (long.TryParse(str, out ret))
-                    {
-                        return ret;
-                    }
+                    return ret;
                 }
-
-                if (fieldsData is int || fieldsData is float || fieldsData is double || fieldsData is long)
-                {
-                    return fieldsData;
-                }
-
-                return null;
             }
+
+            if (fieldsData is int || fieldsData is float || fieldsData is double || fieldsData is long)
+            {
+                return fieldsData;
+            }
+
+            return null;
         }
 
-        public virtual BytesRef BinaryValue // LUCENENET TODO: Change to GetBinaryValue() (consistent with GetNumericValue())
+        public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            get
+            if (fieldsData is BytesRef)
             {
-                if (fieldsData is BytesRef)
-                {
-                    return (BytesRef)fieldsData;
-                }
-                else
-                {
-                    return null;
-                }
+                return (BytesRef)fieldsData;
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -631,7 +605,7 @@ namespace Lucene.Net.Documents
 
             if (!((FieldType)FieldType).Tokenized)
             {
-                if (StringValue == null)
+                if (GetStringValue() == null)
                 {
                     throw new System.ArgumentException("Non-Tokenized Fields must have a String value");
                 }
@@ -641,7 +615,7 @@ namespace Lucene.Net.Documents
                     // (attributes,...) if not needed (stored field loading)
                     internalTokenStream = new StringTokenStream();
                 }
-                ((StringTokenStream)internalTokenStream).Value = StringValue;
+                ((StringTokenStream)internalTokenStream).SetValue(GetStringValue());
                 return internalTokenStream;
             }
 
@@ -649,13 +623,13 @@ namespace Lucene.Net.Documents
             {
                 return tokenStream;
             }
-            else if (ReaderValue != null)
+            else if (GetReaderValue() != null)
             {
-                return analyzer.TokenStream(Name, ReaderValue);
+                return analyzer.TokenStream(Name, GetReaderValue());
             }
-            else if (StringValue != null)
+            else if (GetStringValue() != null)
             {
-                TextReader sr = new StringReader(StringValue);
+                TextReader sr = new StringReader(GetStringValue());
                 return analyzer.TokenStream(Name, sr);
             }
 
@@ -693,12 +667,9 @@ namespace Lucene.Net.Documents
 
             /// <summary>
             /// Sets the string value. </summary>
-            internal string Value // LUCENENET TODO: Add getter
+            internal void SetValue(string value)
             {
-                set
-                {
-                    this.value = value;
-                }
+                this.value = value;
             }
 
             public override bool IncrementToken()

@@ -65,16 +65,16 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            field.StringValue = "tangfulin";
+            field.SetStringValue("tangfulin");
             writer.AddDocument(doc);
 
-            field.StringValue = "meaninglessnames";
+            field.SetStringValue("meaninglessnames");
             for (int i = 5138; i < 11377; ++i)
             {
                 writer.AddDocument(doc);
             }
 
-            field.StringValue = "tangfulin";
+            field.SetStringValue("tangfulin");
             writer.AddDocument(doc);
 
             Reader = writer.Reader;

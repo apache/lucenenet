@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             break;
                         }
-                        field.StringValue = surfaceForm.Utf8ToString();
+                        field.SetStringValue(surfaceForm.Utf8ToString());
                         writer.AddDocument(doc);
                         count++;
                     }

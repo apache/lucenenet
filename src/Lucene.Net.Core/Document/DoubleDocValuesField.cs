@@ -47,20 +47,14 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public override double DoubleValue
+        public override void SetDoubleValue(double value)
         {
-            set
-            {
-                base.LongValue = BitConverter.DoubleToInt64Bits(value);
-            }
+            base.SetInt64Value(BitConverter.DoubleToInt64Bits(value));
         }
 
-        public override long LongValue
+        public override void SetInt64Value(long value)
         {
-            set
-            {
-                throw new System.ArgumentException("cannot change value type from Double to Long");
-            }
+            throw new System.ArgumentException("cannot change value type from Double to Long");
         }
     }
 }

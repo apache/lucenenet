@@ -104,9 +104,9 @@ namespace Lucene.Net.Codecs.Lucene40
             int numDocs = AtLeast(1000);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.StringValue = Convert.ToString(i);
-                titleField.StringValue = FieldValue(1);
-                bodyField.StringValue = FieldValue(3);
+                idField.SetStringValue(Convert.ToString(i));
+                titleField.SetStringValue(FieldValue(1));
+                bodyField.SetStringValue(FieldValue(3));
                 iw.AddDocument(doc);
                 if (Random().Next(20) == 0)
                 {

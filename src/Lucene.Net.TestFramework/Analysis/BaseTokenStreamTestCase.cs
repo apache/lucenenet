@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Analysis
                     reader = new MockReaderWrapper(random, text);
                 }
 
-                field.ReaderValue = useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader;
+                field.SetReaderValue(useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
             }
         }
 

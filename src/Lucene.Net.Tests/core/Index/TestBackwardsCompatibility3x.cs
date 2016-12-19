@@ -427,19 +427,19 @@ namespace Lucene.Net.Index
                         int numFields = is40Index ? 7 : 5;
                         Assert.AreEqual(numFields, fields.Count);
                         IndexableField f = d.GetField("id");
-                        Assert.AreEqual("" + i, f.StringValue);
+                        Assert.AreEqual("" + i, f.GetStringValue());
 
                         f = d.GetField("utf8");
-                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue);
+                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.GetStringValue());
 
                         f = d.GetField("autf8");
-                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue);
+                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.GetStringValue());
 
                         f = d.GetField("content2");
-                        Assert.AreEqual("here is more content with aaa aaa aaa", f.StringValue);
+                        Assert.AreEqual("here is more content with aaa aaa aaa", f.GetStringValue());
 
                         f = d.GetField("fie\u2C77ld");
-                        Assert.AreEqual("field with non-ascii name", f.StringValue);
+                        Assert.AreEqual("field with non-ascii name", f.GetStringValue());
                     }
 
                     Fields tfvFields = reader.GetTermVectors(i);

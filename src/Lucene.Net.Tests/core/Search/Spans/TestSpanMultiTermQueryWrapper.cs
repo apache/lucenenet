@@ -49,11 +49,11 @@ namespace Lucene.Net.Search.Spans
             Field field = NewTextField("field", "", Field.Store.NO);
             doc.Add(field);
 
-            field.StringValue = "quick brown fox";
+            field.SetStringValue("quick brown fox");
             iw.AddDocument(doc);
-            field.StringValue = "jumps over lazy broun dog";
+            field.SetStringValue("jumps over lazy broun dog");
             iw.AddDocument(doc);
-            field.StringValue = "jumps over extremely very lazy broxn dog";
+            field.SetStringValue("jumps over extremely very lazy broxn dog");
             iw.AddDocument(doc);
             Reader = iw.Reader;
             iw.Dispose();

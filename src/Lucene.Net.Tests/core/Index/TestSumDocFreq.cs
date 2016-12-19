@@ -52,13 +52,13 @@ namespace Lucene.Net.Index
             doc.Add(field2);
             for (int i = 0; i < numDocs; i++)
             {
-                id.StringValue = "" + i;
+                id.SetStringValue("" + i);
                 char ch1 = (char)TestUtil.NextInt(Random(), 'a', 'z');
                 char ch2 = (char)TestUtil.NextInt(Random(), 'a', 'z');
-                field1.StringValue = "" + ch1 + " " + ch2;
+                field1.SetStringValue("" + ch1 + " " + ch2);
                 ch1 = (char)TestUtil.NextInt(Random(), 'a', 'z');
                 ch2 = (char)TestUtil.NextInt(Random(), 'a', 'z');
-                field2.StringValue = "" + ch1 + " " + ch2;
+                field2.SetStringValue("" + ch1 + " " + ch2);
                 writer.AddDocument(doc);
             }
 

@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < 1000; i++)
             {
-                field.StringValue = i.ToString("D3");
+                field.SetStringValue(i.ToString("D3"));
                 writer.AddDocument(doc);
             }
 

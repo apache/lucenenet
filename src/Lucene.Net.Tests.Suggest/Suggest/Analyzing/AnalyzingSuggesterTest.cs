@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int i = 0; i < howMany; i++)
             {
                 Document nextDoc = lineFile.NextDoc();
-                string title = nextDoc.GetField("title").StringValue;
+                string title = nextDoc.GetField("title").GetStringValue();
                 int randomWeight = Random().nextInt(100);
                 keys.Add(new Input(title, randomWeight));
                 if (!mapping.ContainsKey(title) || mapping[title] < randomWeight)

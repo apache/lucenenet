@@ -70,9 +70,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -126,9 +126,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -182,9 +182,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -238,9 +238,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -303,9 +303,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -417,9 +417,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -474,9 +474,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -520,9 +520,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -565,9 +565,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -611,9 +611,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -657,9 +657,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -704,9 +704,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -813,7 +813,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;

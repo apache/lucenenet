@@ -78,12 +78,12 @@ namespace Lucene.Net.Facet.Range
             doc.Add(field);
             for (long l = 0; l < 100; l++)
             {
-                field.LongValue = l;
+                field.SetInt64Value(l);
                 w.AddDocument(doc);
             }
 
             // Also add Long.MAX_VALUE
-            field.LongValue = long.MaxValue;
+            field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
             IndexReader r = w.Reader;
@@ -153,11 +153,11 @@ namespace Lucene.Net.Facet.Range
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
-            field.LongValue = long.MinValue;
+            field.SetInt64Value(long.MinValue);
             w.AddDocument(doc);
-            field.LongValue = 0;
+            field.SetInt64Value(0);
             w.AddDocument(doc);
-            field.LongValue = long.MaxValue;
+            field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
             IndexReader r = w.Reader;
@@ -186,10 +186,10 @@ namespace Lucene.Net.Facet.Range
             doc.Add(field);
             for (long l = 0; l < 100; l++)
             {
-                field.LongValue = l;
+                field.SetInt64Value(l);
                 w.AddDocument(doc);
             }
-            field.LongValue = long.MaxValue;
+            field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
             IndexReader r = w.Reader;
@@ -337,7 +337,7 @@ namespace Lucene.Net.Facet.Range
             doc.Add(field);
             for (long l = 0; l < 100; l++)
             {
-                field.DoubleValue = l;
+                field.SetDoubleValue(l);
                 w.AddDocument(doc);
             }
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Facet.Range
             doc.Add(field);
             for (long l = 0; l < 100; l++)
             {
-                field.FloatValue = l;
+                field.SetSingleValue(l);
                 w.AddDocument(doc);
             }
 
@@ -985,7 +985,7 @@ namespace Lucene.Net.Facet.Range
                     w.AddDocument(new Document());
                     continue;
                 }
-                field.LongValue = l;
+                field.SetInt64Value(l);
                 w.AddDocument(doc);
             }
 

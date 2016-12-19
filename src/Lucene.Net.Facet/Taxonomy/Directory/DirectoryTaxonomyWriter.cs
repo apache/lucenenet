@@ -559,7 +559,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Document d = new Document();
             d.Add(parentStreamField);
 
-            fullPathField.StringValue = FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length);
+            fullPathField.SetStringValue(FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length));
             d.Add(fullPathField);
 
             // Note that we do no pass an Analyzer here because the fields that are

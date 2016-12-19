@@ -125,17 +125,17 @@ namespace Lucene.Net.Search
             for (int l = 0; l < NoDocs; l++)
             {
                 long val = Distance * l + StartOffset;
-                field8.LongValue = val;
-                field6.LongValue = val;
-                field4.LongValue = val;
-                field2.LongValue = val;
-                fieldNoTrie.LongValue = val;
+                field8.SetInt64Value(val);
+                field6.SetInt64Value(val);
+                field4.SetInt64Value(val);
+                field2.SetInt64Value(val);
+                fieldNoTrie.SetInt64Value(val);
 
                 val = l - (NoDocs / 2);
-                ascfield8.LongValue = val;
-                ascfield6.LongValue = val;
-                ascfield4.LongValue = val;
-                ascfield2.LongValue = val;
+                ascfield8.SetInt64Value(val);
+                ascfield6.SetInt64Value(val);
+                ascfield4.SetInt64Value(val);
+                ascfield2.SetInt64Value(val);
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;
@@ -201,9 +201,9 @@ namespace Lucene.Net.Search
                 Assert.IsNotNull(sd);
                 Assert.AreEqual(count, sd.Length, "Score doc count" + type);
                 Document doc = Searcher.Doc(sd[0].Doc);
-                Assert.AreEqual(2 * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "First doc" + type);
+                Assert.AreEqual(2 * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "First doc" + type);
                 doc = Searcher.Doc(sd[sd.Length - 1].Doc);
-                Assert.AreEqual((1 + count) * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "Last doc" + type);
+                Assert.AreEqual((1 + count) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc" + type);
             }
         }
 
@@ -264,9 +264,9 @@ namespace Lucene.Net.Search
             Assert.IsNotNull(sd);
             Assert.AreEqual(count, sd.Length, "Score doc count");
             Document doc = Searcher.Doc(sd[0].Doc);
-            Assert.AreEqual(StartOffset, (long)doc.GetField(field).NumericValue, "First doc");
+            Assert.AreEqual(StartOffset, (long)doc.GetField(field).GetNumericValue(), "First doc");
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
-            Assert.AreEqual((count - 1) * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "Last doc");
+            Assert.AreEqual((count - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
 
             q = NumericRangeQuery.NewLongRange(field, precisionStep, null, upper, false, true);
             topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
@@ -274,9 +274,9 @@ namespace Lucene.Net.Search
             Assert.IsNotNull(sd);
             Assert.AreEqual(count, sd.Length, "Score doc count");
             doc = Searcher.Doc(sd[0].Doc);
-            Assert.AreEqual(StartOffset, (long)doc.GetField(field).NumericValue, "First doc");
+            Assert.AreEqual(StartOffset, (long)doc.GetField(field).GetNumericValue(), "First doc");
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
-            Assert.AreEqual((count - 1) * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "Last doc");
+            Assert.AreEqual((count - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
         }
 
         [Test]
@@ -314,9 +314,9 @@ namespace Lucene.Net.Search
             Assert.IsNotNull(sd);
             Assert.AreEqual(NoDocs - count, sd.Length, "Score doc count");
             Document doc = Searcher.Doc(sd[0].Doc);
-            Assert.AreEqual(count * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "First doc");
+            Assert.AreEqual(count * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "First doc");
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
-            Assert.AreEqual((NoDocs - 1) * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "Last doc");
+            Assert.AreEqual((NoDocs - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
 
             q = NumericRangeQuery.NewLongRange(field, precisionStep, lower, null, true, false);
             topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
@@ -324,9 +324,9 @@ namespace Lucene.Net.Search
             Assert.IsNotNull(sd);
             Assert.AreEqual(NoDocs - count, sd.Length, "Score doc count");
             doc = Searcher.Doc(sd[0].Doc);
-            Assert.AreEqual(count * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "First doc");
+            Assert.AreEqual(count * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "First doc");
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
-            Assert.AreEqual((NoDocs - 1) * Distance + StartOffset, (long)doc.GetField(field).NumericValue, "Last doc");
+            Assert.AreEqual((NoDocs - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
         }
 
         [Test]
@@ -696,10 +696,10 @@ namespace Lucene.Net.Search
                 }
                 ScoreDoc[] sd = topDocs.ScoreDocs;
                 Assert.IsNotNull(sd);
-                long last = (long)Searcher.Doc(sd[0].Doc).GetField(field).NumericValue;
+                long last = (long)Searcher.Doc(sd[0].Doc).GetField(field).GetNumericValue();
                 for (int j = 1; j < sd.Length; j++)
                 {
-                    long act = (long)Searcher.Doc(sd[j].Doc).GetField(field).NumericValue;
+                    long act = (long)Searcher.Doc(sd[j].Doc).GetField(field).GetNumericValue();
                     Assert.IsTrue(last > act, "Docs should be sorted backwards");
                     last = act;
                 }

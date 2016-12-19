@@ -185,24 +185,24 @@ namespace Lucene.Net.Documents
                 get { return 1.0f; }
             }
 
-            public virtual BytesRef BinaryValue
+            public virtual BytesRef GetBinaryValue()
             {
-                get { return RealValue.BinaryValue; }
+                return RealValue.GetBinaryValue();
             }
 
-            public virtual string StringValue
+            public virtual string GetStringValue()
             {
-                get { return RealValue.StringValue; }
+                return RealValue.GetStringValue();
             }
 
-            public virtual TextReader ReaderValue
+            public virtual TextReader GetReaderValue()
             {
-                get { return RealValue.ReaderValue; }
+                return RealValue.GetReaderValue();
             }
 
-            public virtual object NumericValue
+            public virtual object GetNumericValue()
             {
-                get { return RealValue.NumericValue; }
+                return RealValue.GetNumericValue();
             }
 
             public virtual IndexableFieldType FieldType

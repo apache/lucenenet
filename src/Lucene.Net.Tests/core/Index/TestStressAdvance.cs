@@ -57,14 +57,14 @@ namespace Lucene.Net.Index
                 {
                     if (Random().Next(4) == 3)
                     {
-                        f.StringValue = "a";
+                        f.SetStringValue("a");
                         aDocs.Add(id);
                     }
                     else
                     {
-                        f.StringValue = "b";
+                        f.SetStringValue("b");
                     }
-                    idField.StringValue = "" + id;
+                    idField.SetStringValue("" + id);
                     w.AddDocument(doc);
                     if (VERBOSE)
                     {

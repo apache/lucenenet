@@ -870,10 +870,10 @@ namespace Lucene.Net.Search.Grouping
                     groupDocs[i] = groupDoc;
                     if (groupDoc.group != null)
                     {
-                        group.StringValue = (groupDoc.group.Utf8ToString());
+                        group.SetStringValue(groupDoc.group.Utf8ToString());
                         if (canUseIDV)
                         {
-                            idvGroupField.BytesValue = (BytesRef.DeepCopyOf(groupDoc.group));
+                            idvGroupField.SetBytesValue(BytesRef.DeepCopyOf(groupDoc.group));
                         }
                     }
                     else if (canUseIDV)
@@ -881,12 +881,12 @@ namespace Lucene.Net.Search.Grouping
                         // Must explicitly set empty string, else eg if
                         // the segment has all docs missing the field then
                         // we get null back instead of empty BytesRef:
-                        idvGroupField.BytesValue = (new BytesRef());
+                        idvGroupField.SetBytesValue(new BytesRef());
                     }
-                    sort1.StringValue = (groupDoc.sort1.Utf8ToString());
-                    sort2.StringValue = (groupDoc.sort2.Utf8ToString());
-                    content.StringValue = (groupDoc.content);
-                    id.IntValue = (groupDoc.id);
+                    sort1.SetStringValue(groupDoc.sort1.Utf8ToString());
+                    sort2.SetStringValue(groupDoc.sort2.Utf8ToString());
+                    content.SetStringValue(groupDoc.content);
+                    id.SetInt32Value(groupDoc.id);
                     if (groupDoc.group == null)
                     {
                         w.AddDocument(docNoGroup);

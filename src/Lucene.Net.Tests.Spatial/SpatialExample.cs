@@ -147,7 +147,7 @@ namespace Lucene.Net.Spatial
                 //Now, lets get the distance for the 1st doc via computing from stored point value:
                 // (this computation is usually not redundant)
                 Document doc1 = indexSearcher.Doc(docs.ScoreDocs[0].Doc);
-                String doc1Str = doc1.GetField(strategy.FieldName).StringValue;
+                String doc1Str = doc1.GetField(strategy.FieldName).GetStringValue();
                 //assume doc1Str is "x y" as written in newSampleDocument()
                 int spaceIdx = doc1Str.IndexOf(' ');
                 double x = double.Parse(doc1Str.Substring(0, spaceIdx - 0), CultureInfo.InvariantCulture);
@@ -188,7 +188,7 @@ namespace Lucene.Net.Spatial
             gotIds = new int[docs.TotalHits];
             for (int i = 0; i < gotIds.Length; i++)
             {
-                gotIds[i] = Convert.ToInt32(indexSearcher.Doc(docs.ScoreDocs[i].Doc).GetField("id").NumericValue, CultureInfo.InvariantCulture);
+                gotIds[i] = Convert.ToInt32(indexSearcher.Doc(docs.ScoreDocs[i].Doc).GetField("id").GetNumericValue(), CultureInfo.InvariantCulture);
             }
             assertArrayEquals(ids, gotIds);
         }

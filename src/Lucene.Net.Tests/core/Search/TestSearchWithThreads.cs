@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
                     sb.Append(Random().NextBoolean() ? "aaa" : "bbb");
                     sb.Append(' ');
                 }
-                body.StringValue = sb.ToString();
+                body.SetStringValue(sb.ToString());
                 w.AddDocument(doc);
                 sb.Remove(0, sb.Length);
             }

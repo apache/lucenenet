@@ -95,7 +95,7 @@ namespace Lucene.Net
                     doc.Add(idField);
                     for (int i = 0; i < NUM_DOCS; i++)
                     {
-                        idField.StringValue = "" + i;
+                        idField.SetStringValue("" + i);
                         w.AddDocument(doc);
                         if ((i + 1) % 10 == 0)
                         {

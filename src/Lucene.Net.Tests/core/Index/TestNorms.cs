@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 100; i++)
             {
-                bar.StringValue = "singleton";
+                bar.SetStringValue("singleton");
                 writer.AddDocument(doc);
             }
 

@@ -95,21 +95,21 @@ namespace Lucene.Net.Classification.Utils
                     {
                         foreach (IndexableField storableField in originalIndex.Document(scoreDoc.Doc).Fields)
                         {
-                            if (storableField.ReaderValue != null)
+                            if (storableField.GetReaderValue() != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.ReaderValue, ft));
+                                doc.Add(new Field(storableField.Name, storableField.GetReaderValue(), ft));
                             }
-                            else if (storableField.BinaryValue != null)
+                            else if (storableField.GetBinaryValue() != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.BinaryValue, ft));
+                                doc.Add(new Field(storableField.Name, storableField.GetBinaryValue(), ft));
                             }
-                            else if (storableField.StringValue != null)
+                            else if (storableField.GetStringValue() != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.StringValue, ft));
+                                doc.Add(new Field(storableField.Name, storableField.GetStringValue(), ft));
                             }
-                            else if (storableField.NumericValue != null)
+                            else if (storableField.GetNumericValue() != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.NumericValue.ToString(), ft));
+                                doc.Add(new Field(storableField.Name, storableField.GetNumericValue().ToString(), ft));
                             }
                         }
                     }

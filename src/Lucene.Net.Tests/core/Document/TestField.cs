@@ -43,7 +43,7 @@ namespace Lucene.Net.Documents
                 TrySetByteValue(field);
                 TrySetBytesValue(field);
                 TrySetBytesRefValue(field);
-                field.DoubleValue = 6d; // ok
+                field.SetDoubleValue(6d); // ok
                 TrySetIntValue(field);
                 TrySetFloatValue(field);
                 TrySetLongValue(field);
@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6d, (double)field.NumericValue, 0.0d);
+                Assert.AreEqual(6d, (double)field.GetNumericValue(), 0.0d);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Documents
             TrySetByteValue(field);
             TrySetBytesValue(field);
             TrySetBytesRefValue(field);
-            field.DoubleValue = 6d; // ok
+            field.SetDoubleValue(6d); // ok
             TrySetIntValue(field);
             TrySetFloatValue(field);
             TrySetLongValue(field);
@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6d, BitConverter.Int64BitsToDouble((long)field.NumericValue), 0.0d);
+            Assert.AreEqual(6d, BitConverter.Int64BitsToDouble((long)field.GetNumericValue()), 0.0d);
         }
 
         [Test]
@@ -88,14 +88,14 @@ namespace Lucene.Net.Documents
             TrySetBytesRefValue(field);
             TrySetDoubleValue(field);
             TrySetIntValue(field);
-            field.FloatValue = 6f; // ok
+            field.SetSingleValue(6f); // ok
             TrySetLongValue(field);
             TrySetReaderValue(field);
             TrySetShortValue(field);
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6f, Number.IntBitsToFloat(Convert.ToInt32(field.NumericValue)), 0.0f);
+            Assert.AreEqual(6f, Number.IntBitsToFloat(Convert.ToInt32(field.GetNumericValue())), 0.0f);
         }
 
         [Test]
@@ -111,14 +111,14 @@ namespace Lucene.Net.Documents
                 TrySetBytesRefValue(field);
                 TrySetDoubleValue(field);
                 TrySetIntValue(field);
-                field.FloatValue = 6f; // ok
+                field.SetSingleValue(6f); // ok
                 TrySetLongValue(field);
                 TrySetReaderValue(field);
                 TrySetShortValue(field);
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6f, (float)field.NumericValue, 0.0f);
+                Assert.AreEqual(6f, (float)field.GetNumericValue(), 0.0f);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Documents
                 TrySetBytesValue(field);
                 TrySetBytesRefValue(field);
                 TrySetDoubleValue(field);
-                field.IntValue = 6; // ok
+                field.SetInt32Value(6); // ok
                 TrySetFloatValue(field);
                 TrySetLongValue(field);
                 TrySetReaderValue(field);
@@ -142,7 +142,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6, (int)field.NumericValue);
+                Assert.AreEqual(6, (int)field.GetNumericValue());
             }
         }
 
@@ -158,13 +158,13 @@ namespace Lucene.Net.Documents
             TrySetDoubleValue(field);
             TrySetIntValue(field);
             TrySetFloatValue(field);
-            field.LongValue = 6; // ok
+            field.SetInt64Value(6); // ok
             TrySetReaderValue(field);
             TrySetShortValue(field);
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6L, (long)field.NumericValue);
+            Assert.AreEqual(6L, (long)field.GetNumericValue());
         }
 
         [Test]
@@ -181,13 +181,13 @@ namespace Lucene.Net.Documents
                 TrySetDoubleValue(field);
                 TrySetIntValue(field);
                 TrySetFloatValue(field);
-                field.LongValue = 6; // ok
+                field.SetInt64Value(6); // ok
                 TrySetReaderValue(field);
                 TrySetShortValue(field);
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6L, (long)field.NumericValue);
+                Assert.AreEqual(6L, (long)field.GetNumericValue());
             }
         }
 
@@ -198,8 +198,8 @@ namespace Lucene.Net.Documents
 
             TrySetBoost(field);
             TrySetByteValue(field);
-            field.BytesValue = "fubar".ToBytesRefArray(Encoding.UTF8);
-            field.BytesValue = new BytesRef("baz");
+            field.SetBytesValue("fubar".ToBytesRefArray(Encoding.UTF8));
+            field.SetBytesValue(new BytesRef("baz"));
             TrySetDoubleValue(field);
             TrySetIntValue(field);
             TrySetFloatValue(field);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
+            Assert.AreEqual(new BytesRef("baz"), field.GetBinaryValue());
         }
 
         [Test]
@@ -219,8 +219,8 @@ namespace Lucene.Net.Documents
 
             TrySetBoost(field);
             TrySetByteValue(field);
-            field.BytesValue = "fubar".ToBytesRefArray(Encoding.UTF8);
-            field.BytesValue = new BytesRef("baz");
+            field.SetBytesValue("fubar".ToBytesRefArray(Encoding.UTF8));
+            field.SetBytesValue(new BytesRef("baz"));
             TrySetDoubleValue(field);
             TrySetIntValue(field);
             TrySetFloatValue(field);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
+            Assert.AreEqual(new BytesRef("baz"), field.GetBinaryValue());
         }
 
         [Test]
@@ -250,10 +250,10 @@ namespace Lucene.Net.Documents
                 TrySetLongValue(field);
                 TrySetReaderValue(field);
                 TrySetShortValue(field);
-                field.StringValue = "baz";
+                field.SetStringValue("baz");
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual("baz", field.StringValue);
+                Assert.AreEqual("baz", field.GetStringValue());
             }
         }
 
@@ -274,10 +274,10 @@ namespace Lucene.Net.Documents
                 TrySetLongValue(field);
                 TrySetReaderValue(field);
                 TrySetShortValue(field);
-                field.StringValue = "baz";
-                field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
+                field.SetStringValue("baz");
+                field.SetTokenStream(new CannedTokenStream(new Token("foo", 0, 3)));
 
-                Assert.AreEqual("baz", field.StringValue);
+                Assert.AreEqual("baz", field.GetStringValue());
                 Assert.AreEqual(5f, field.Boost, 0f);
             }
         }
@@ -295,12 +295,12 @@ namespace Lucene.Net.Documents
             TrySetIntValue(field);
             TrySetFloatValue(field);
             TrySetLongValue(field);
-            field.ReaderValue = new StringReader("foobar");
+            field.SetReaderValue(new StringReader("foobar"));
             TrySetShortValue(field);
             TrySetStringValue(field);
-            field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
+            field.SetTokenStream(new CannedTokenStream(new Token("foo", 0, 3)));
 
-            Assert.IsNotNull(field.ReaderValue);
+            Assert.IsNotNull(field.GetReaderValue());
             Assert.AreEqual(5f, field.Boost, 0f);
         }
 
@@ -319,8 +319,8 @@ namespace Lucene.Net.Documents
             {
                 TrySetBoost(field);
                 TrySetByteValue(field);
-                field.BytesValue = "baz".ToBytesRefArray(Encoding.UTF8);
-                field.BytesValue = new BytesRef("baz");
+                field.SetBytesValue("baz".ToBytesRefArray(Encoding.UTF8));
+                field.SetBytesValue(new BytesRef("baz"));
                 TrySetDoubleValue(field);
                 TrySetIntValue(field);
                 TrySetFloatValue(field);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
+                Assert.AreEqual(new BytesRef("baz"), field.GetBinaryValue());
             }
         }
 
@@ -348,10 +348,10 @@ namespace Lucene.Net.Documents
             TrySetLongValue(field);
             TrySetReaderValue(field);
             TrySetShortValue(field);
-            field.StringValue = "baz";
+            field.SetStringValue("baz");
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual("baz", field.StringValue);
+            Assert.AreEqual("baz", field.GetStringValue());
         }
 
         [Test]
@@ -363,7 +363,7 @@ namespace Lucene.Net.Documents
             TrySetBytesValue(field);
             TrySetBytesRefValue(field);
             TrySetDoubleValue(field);
-            field.IntValue = 5;
+            field.SetInt32Value(5);
             TrySetFloatValue(field);
             TrySetLongValue(field);
             TrySetReaderValue(field);
@@ -371,7 +371,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5, (int)field.NumericValue);
+            Assert.AreEqual(5, (int)field.GetNumericValue());
         }
 
         [Test]
@@ -382,7 +382,7 @@ namespace Lucene.Net.Documents
             TrySetByteValue(field);
             TrySetBytesValue(field);
             TrySetBytesRefValue(field);
-            field.DoubleValue = 5D;
+            field.SetDoubleValue(5D);
             TrySetIntValue(field);
             TrySetFloatValue(field);
             TrySetLongValue(field);
@@ -391,7 +391,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5D, (double)field.NumericValue, 0.0D);
+            Assert.AreEqual(5D, (double)field.GetNumericValue(), 0.0D);
         }
 
         [Test]
@@ -404,14 +404,14 @@ namespace Lucene.Net.Documents
             TrySetBytesRefValue(field);
             TrySetDoubleValue(field);
             TrySetIntValue(field);
-            field.FloatValue = 5f;
+            field.SetSingleValue(5f);
             TrySetLongValue(field);
             TrySetReaderValue(field);
             TrySetShortValue(field);
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5f, (float)field.NumericValue, 0.0f);
+            Assert.AreEqual(5f, (float)field.GetNumericValue(), 0.0f);
         }
 
         [Test]
@@ -425,20 +425,20 @@ namespace Lucene.Net.Documents
             TrySetDoubleValue(field);
             TrySetIntValue(field);
             TrySetFloatValue(field);
-            field.LongValue = 5;
+            field.SetInt64Value(5);
             TrySetReaderValue(field);
             TrySetShortValue(field);
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5L, (long)field.NumericValue);
+            Assert.AreEqual(5L, (long)field.GetNumericValue());
         }
 
         private void TrySetByteValue(Field f)
         {
             try
             {
-                f.ByteValue = (sbyte)10;
+                f.SetByteValue((byte)10);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -451,7 +451,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.BytesValue = new BytesRef(new byte[] { 5, 5 });
+                f.SetBytesValue(new byte[] { 5, 5 });
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -464,7 +464,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.BytesValue = new BytesRef("bogus");
+                f.SetBytesValue(new BytesRef("bogus"));
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -477,7 +477,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.DoubleValue = double.MaxValue;
+                f.SetDoubleValue(double.MaxValue);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -490,7 +490,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.IntValue = int.MaxValue;
+                f.SetInt32Value(int.MaxValue);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -503,7 +503,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.LongValue = long.MaxValue;
+                f.SetInt64Value(long.MaxValue);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -516,7 +516,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.FloatValue = float.MaxValue;
+                f.SetSingleValue(float.MaxValue);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -529,7 +529,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.ReaderValue = new StringReader("BOO!");
+                f.SetReaderValue(new StringReader("BOO!"));
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -542,7 +542,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.ShortValue = short.MaxValue;
+                f.SetInt16Value(short.MaxValue);
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -555,7 +555,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.StringValue = "BOO!";
+                f.SetStringValue("BOO!");
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)
@@ -568,7 +568,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                f.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
+                f.SetTokenStream(new CannedTokenStream(new Token("foo", 0, 3)));
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)

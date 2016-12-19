@@ -130,7 +130,7 @@ namespace Lucene.Net.Documents
                              NUM_VALUES, fieldValues.Length);
                 int valNum = Random().nextInt(fieldValues.Length);
                 assertEquals(id + "_" + fieldName + "_" + valNum,
-                             fieldValues[valNum].StringValue);
+                             fieldValues[valNum].GetStringValue());
 
                 // now every value of fieldName should be loaded
                 foreach (IndexableField f in d)

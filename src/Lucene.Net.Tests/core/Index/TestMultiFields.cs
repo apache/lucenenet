@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
                         // re-use existing term
                         BytesRef term = terms[Random().Next(terms.Count)];
                         docs[term].Add(i);
-                        f.StringValue = term.Utf8ToString();
+                        f.SetStringValue(term.Utf8ToString());
                     }
                     else
                     {
@@ -87,9 +87,9 @@ namespace Lucene.Net.Index
                         docs[term].Add(i);
                         terms.Add(term);
                         uniqueTerms.Add(term);
-                        f.StringValue = s;
+                        f.SetStringValue(s);
                     }
-                    id.StringValue = "" + i;
+                    id.SetStringValue("" + i);
                     w.AddDocument(doc);
                     if (Random().Next(4) == 1)
                     {

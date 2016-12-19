@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < num; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
-                field.StringValue = s;
+                field.SetStringValue(s);
                 terms.Add(s);
                 writer.AddDocument(doc);
             }

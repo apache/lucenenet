@@ -60,11 +60,11 @@ namespace Lucene.Net.Search
             Field field2 = NewTextField("bar", "", Field.Store.NO);
             doc.Add(field2);
 
-            field.StringValue = "quick brown fox";
-            field2.StringValue = "quick brown fox";
+            field.SetStringValue("quick brown fox");
+            field2.SetStringValue("quick brown fox");
             iw.AddDocument(doc);
-            field.StringValue = "jumps over lazy brown dog";
-            field2.StringValue = "jumps over lazy brown dog";
+            field.SetStringValue("jumps over lazy brown dog");
+            field2.SetStringValue("jumps over lazy brown dog");
             iw.AddDocument(doc);
             Reader = iw.Reader;
             iw.Dispose();

@@ -474,7 +474,7 @@ namespace Lucene.Net.Index.Memory
                 writer.Dispose();
                 foreach (IndexableField field in doc.Fields)
                 {
-                    memory.AddField(field.Name, ((Field)field).StringValue, mockAnalyzer);
+                    memory.AddField(field.Name, ((Field)field).GetStringValue(), mockAnalyzer);
                 }
                 DirectoryReader competitor = DirectoryReader.Open(dir);
                 AtomicReader memIndexReader = (AtomicReader)memory.CreateSearcher().IndexReader;

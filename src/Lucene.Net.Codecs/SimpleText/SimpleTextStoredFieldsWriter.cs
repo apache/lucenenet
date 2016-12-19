@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             Write(TYPE);
 
-            var n = field.NumericValue;
+            var n = field.GetNumericValue();
 
             if (n != null)
             {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             else
             {
-                BytesRef bytes = field.BinaryValue;
+                BytesRef bytes = field.GetBinaryValue();
                 if (bytes != null)
                 {
                     Write(TYPE_BINARY);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(bytes);
                     NewLine();
                 }
-                else if (field.StringValue == null)
+                else if (field.GetStringValue() == null)
                 {
                     throw new ArgumentException("field " + field.Name +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(field.StringValue);
+                    Write(field.GetStringValue());
                     NewLine();
                 }
             }

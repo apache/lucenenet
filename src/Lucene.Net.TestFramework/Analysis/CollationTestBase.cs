@@ -228,7 +228,7 @@ namespace Lucene.Net.Analysis
 				IndexableField[] v = doc.GetFields("tracer");
 				for (var j = 0; j < v.Length; ++j)
 				{
-					buff.Append(v[j].StringValue);
+					buff.Append(v[j].GetStringValue());
 				}
 			}
 			Assert.AreEqual(expectedResult, buff.ToString());

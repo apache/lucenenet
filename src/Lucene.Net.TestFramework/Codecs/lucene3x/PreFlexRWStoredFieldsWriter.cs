@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // specific encodings for different fields?  and apps
             // can customize...
 
-            object number = field.NumericValue;
+            object number = field.GetNumericValue();
             if (number != null)
             {
                 if (number is sbyte? || number is short? || number is int?)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                bytes = field.BinaryValue;
+                bytes = field.GetBinaryValue();
                 if (bytes != null)
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_BINARY;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    @string = field.StringValue;
+                    @string = field.GetStringValue();
                     if (@string == null)
                     {
                         throw new System.ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else if (@string != null)
             {
-                FieldsStream.WriteString(field.StringValue);
+                FieldsStream.WriteString(field.GetStringValue());
             }
             else
             {

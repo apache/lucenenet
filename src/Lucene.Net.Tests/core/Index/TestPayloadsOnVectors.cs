@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             Field field = new Field("field", "", customType);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
-            field.TokenStream = ts;
+            field.SetTokenStream(ts);
             doc.Add(field);
             writer.AddDocument(doc);
 
@@ -68,12 +68,12 @@ namespace Lucene.Net.Index
             withPayload.Payload = new BytesRef("test");
             ts = new CannedTokenStream(withPayload);
             Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
-            field.TokenStream = ts;
+            field.SetTokenStream(ts);
             writer.AddDocument(doc);
 
             ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
-            field.TokenStream = ts;
+            field.SetTokenStream(ts);
             writer.AddDocument(doc);
 
             DirectoryReader reader = writer.Reader;
@@ -106,19 +106,19 @@ namespace Lucene.Net.Index
             Field field = new Field("field", "", customType);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
-            field.TokenStream = ts;
+            field.SetTokenStream(ts);
             doc.Add(field);
             Field field2 = new Field("field", "", customType);
             Token withPayload = new Token("withPayload", 0, 11);
             withPayload.Payload = new BytesRef("test");
             ts = new CannedTokenStream(withPayload);
             Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
-            field2.TokenStream = ts;
+            field2.SetTokenStream(ts);
             doc.Add(field2);
             Field field3 = new Field("field", "", customType);
             ts = new MockTokenizer(new StringReader("nopayload"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
-            field3.TokenStream = ts;
+            field3.SetTokenStream(ts);
             doc.Add(field3);
             writer.AddDocument(doc);
             DirectoryReader reader = writer.Reader;

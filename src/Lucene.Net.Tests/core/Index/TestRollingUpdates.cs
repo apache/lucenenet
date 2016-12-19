@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("  docIter=" + docIter + " id=" + id);
                 }
-                ((Field)doc.GetField("docid")).StringValue = myID;
+                ((Field)doc.GetField("docid")).SetStringValue(myID);
 
                 Term idTerm = new Term("docid", myID);
 

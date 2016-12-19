@@ -285,16 +285,16 @@ namespace Lucene.Net.Util
                 throw new Exception("line: [" + line + "] is in an invalid format !");
             }
 
-            docState.Body.StringValue = line.Substring(1 + spot2, line.Length - (1 + spot2));
+            docState.Body.SetStringValue(line.Substring(1 + spot2, line.Length - (1 + spot2)));
             string title = line.Substring(0, spot);
-            docState.Title.StringValue = title;
+            docState.Title.SetStringValue(title);
             if (docState.TitleDV != null)
             {
-                docState.TitleDV.BytesValue = new BytesRef(title);
+                docState.TitleDV.SetBytesValue(new BytesRef(title));
             }
-            docState.TitleTokenized.StringValue = title;
-            docState.Date.StringValue = line.Substring(1 + spot, spot2 - (1 + spot));
-            docState.Id.StringValue = Convert.ToString(Id.GetAndIncrement());
+            docState.TitleTokenized.SetStringValue(title);
+            docState.Date.SetStringValue(line.Substring(1 + spot, spot2 - (1 + spot)));
+            docState.Id.SetStringValue(Convert.ToString(Id.GetAndIncrement()));
             return docState.Doc;
         }
     }

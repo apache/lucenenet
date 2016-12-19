@@ -66,7 +66,7 @@ namespace Lucene.Net.Documents
 
             Assert.AreEqual(2, doc.Fields.Count);
 
-            Assert.IsTrue(binaryFld.BinaryValue != null);
+            Assert.IsTrue(binaryFld.GetBinaryValue() != null);
             Assert.IsTrue(binaryFld.FieldType.Stored);
             Assert.IsFalse(binaryFld.FieldType.Indexed);
 
@@ -277,18 +277,18 @@ namespace Lucene.Net.Documents
                 Assert.IsTrue(unstoredFieldValues.Length == 2);
             }
 
-            Assert.IsTrue(keywordFieldValues[0].StringValue.Equals("test1"));
-            Assert.IsTrue(keywordFieldValues[1].StringValue.Equals("test2"));
-            Assert.IsTrue(textFieldValues[0].StringValue.Equals("test1"));
-            Assert.IsTrue(textFieldValues[1].StringValue.Equals("test2"));
-            Assert.IsTrue(unindexedFieldValues[0].StringValue.Equals("test1"));
-            Assert.IsTrue(unindexedFieldValues[1].StringValue.Equals("test2"));
+            Assert.IsTrue(keywordFieldValues[0].GetStringValue().Equals("test1"));
+            Assert.IsTrue(keywordFieldValues[1].GetStringValue().Equals("test2"));
+            Assert.IsTrue(textFieldValues[0].GetStringValue().Equals("test1"));
+            Assert.IsTrue(textFieldValues[1].GetStringValue().Equals("test2"));
+            Assert.IsTrue(unindexedFieldValues[0].GetStringValue().Equals("test1"));
+            Assert.IsTrue(unindexedFieldValues[1].GetStringValue().Equals("test2"));
             // this test cannot work for documents retrieved from the index
             // since unstored fields will obviously not be returned
             if (!fromIndex)
             {
-                Assert.IsTrue(unstoredFieldValues[0].StringValue.Equals("test1"));
-                Assert.IsTrue(unstoredFieldValues[1].StringValue.Equals("test2"));
+                Assert.IsTrue(unstoredFieldValues[0].GetStringValue().Equals("test1"));
+                Assert.IsTrue(unstoredFieldValues[1].GetStringValue().Equals("test2"));
             }
         }
 
@@ -303,9 +303,9 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(doc);
-            field.StringValue = "id2";
+            field.SetStringValue("id2");
             writer.AddDocument(doc);
-            field.StringValue = "id3";
+            field.SetStringValue("id3");
             writer.AddDocument(doc);
 
             IndexReader reader = writer.Reader;
@@ -321,15 +321,15 @@ namespace Lucene.Net.Documents
             {
                 Documents.Document doc2 = searcher.Doc(hits[i].Doc);
                 Field f = (Field)doc2.GetField("id");
-                if (f.StringValue.Equals("id1"))
+                if (f.GetStringValue().Equals("id1"))
                 {
                     result |= 1;
                 }
-                else if (f.StringValue.Equals("id2"))
+                else if (f.GetStringValue().Equals("id2"))
                 {
                     result |= 2;
                 }
-                else if (f.StringValue.Equals("id3"))
+                else if (f.GetStringValue().Equals("id3"))
                 {
                     result |= 4;
                 }

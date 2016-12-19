@@ -859,8 +859,8 @@ namespace Lucene.Net.Index
             doc.Add(bodyField);
             for (int i = 0; i < 100; i++)
             {
-                idField.StringValue = Convert.ToString(i);
-                bodyField.StringValue = TestUtil.RandomUnicodeString(Random());
+                idField.SetStringValue(Convert.ToString(i));
+                bodyField.SetStringValue(TestUtil.RandomUnicodeString(Random()));
                 riw.AddDocument(doc);
                 if (Random().Next(7) == 0)
                 {

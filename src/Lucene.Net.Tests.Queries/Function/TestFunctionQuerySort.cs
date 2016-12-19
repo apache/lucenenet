@@ -30,7 +30,7 @@ namespace Lucene.Net.Tests.Queries.Function
             const int NUM_VALS = 5;
             for (int val = NUM_VALS; val > 0; val--)
             {
-                field.StringValue = Convert.ToString(val);
+                field.SetStringValue(Convert.ToString(val));
                 writer.AddDocument(doc);
             }
 

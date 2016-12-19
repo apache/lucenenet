@@ -67,8 +67,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     bodyText.Append(newSentence(Random(), maxSentenceLength));
                 }
-                body.StringValue = bodyText.ToString();
-                id.StringValue = i.ToString(CultureInfo.InvariantCulture);
+                body.SetStringValue(bodyText.ToString());
+                id.SetStringValue(i.ToString(CultureInfo.InvariantCulture));
                 iw.AddDocument(document);
             }
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.  This test is a better test but the sentence is excruiatingly long, " +
+            body.SetStringValue("This is a test.  This test is a better test but the sentence is excruiatingly long, " +
                                 "you have no idea how painful it was for me to type this long sentence into my IDE.");
             iw.AddDocument(doc);
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This has only foo foo. " +
+            body.SetStringValue("This has only foo foo. " +
                                 "On the other hand this sentence contains both foo and bar. " +
                                 "This has only bar bar bar bar bar bar bar bar bar bar bar bar.");
             iw.AddDocument(doc);

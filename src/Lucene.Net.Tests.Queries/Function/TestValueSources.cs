@@ -62,15 +62,15 @@ namespace Lucene.Net.Tests.Queries.Function
 
             foreach (string[] doc in documents)
             {
-                idField.StringValue = doc[0];
-                byteField.StringValue = doc[1];
-                doubleField.StringValue = doc[2];
-                floatField.StringValue = doc[3];
-                intField.StringValue = doc[4];
-                longField.StringValue = doc[5];
-                shortField.StringValue = doc[6];
-                stringField.StringValue = doc[7];
-                textField.StringValue = doc[8];
+                idField.SetStringValue(doc[0]);
+                byteField.SetStringValue(doc[1]);
+                doubleField.SetStringValue(doc[2]);
+                floatField.SetStringValue(doc[3]);
+                intField.SetStringValue(doc[4]);
+                longField.SetStringValue(doc[5]);
+                shortField.SetStringValue(doc[6]);
+                stringField.SetStringValue(doc[7]);
+                textField.SetStringValue(doc[8]);
                 iw.AddDocument(document);
             }
 

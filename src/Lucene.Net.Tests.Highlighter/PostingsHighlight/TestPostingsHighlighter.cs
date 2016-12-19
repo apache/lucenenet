@@ -53,9 +53,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
-            body.StringValue = ("Highlighting the first term. Hope it works.");
+            body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test");
+            body.SetStringValue("This is a test");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -205,9 +205,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.");
+            body.SetStringValue("This is a test.");
             iw.AddDocument(doc);
-            body.StringValue = ("Test a one sentence document.");
+            body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             for (int i = 0; i < 3; i++)
             {
                 Field body = new Field("body", "", offsetsType);
-                body.StringValue = ("This is a multivalued field");
+                body.SetStringValue("This is a multivalued field");
                 doc.Add(body);
             }
 
@@ -283,11 +283,11 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             doc.Add(title);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
-            title.StringValue = ("I am hoping for the best.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            title.SetStringValue("I am hoping for the best.");
             iw.AddDocument(doc);
-            body.StringValue = ("Highlighting the first term. Hope it works.");
-            title.StringValue = ("But best may not be good enough.");
+            body.SetStringValue("Highlighting the first term. Hope it works.");
+            title.SetStringValue("But best may not be good enough.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -324,9 +324,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
-            body.StringValue = ("Highlighting the first term. Hope it works.");
+            body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -363,9 +363,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
-            body.StringValue = ("This test is another test. Not a good sentence. Test test test test.");
+            body.SetStringValue("This test is another test. Not a good sentence. Test test test test.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -401,11 +401,11 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             doc.Add(title);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
-            title.StringValue = ("test");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            title.SetStringValue("test");
             iw.AddDocument(doc);
-            body.StringValue = ("This test is another test. Not a good sentence. Test test test test.");
-            title.StringValue = ("test");
+            body.SetStringValue("This test is another test. Not a good sentence. Test test test test.");
+            title.SetStringValue("test");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -584,7 +584,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
+            body.SetStringValue("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -647,7 +647,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
+            body.SetStringValue("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -705,9 +705,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
-            body.StringValue = ("Highlighting the first term. Hope it works.");
+            body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -1107,8 +1107,8 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             doc.Add(title);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
-            title.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            title.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from <i>postings</i>. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from <i>postings</i>. Feel free to ignore.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;
@@ -1191,11 +1191,11 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
 
             Field body1 = new Field("body", "", offsetsType);
-            body1.StringValue = ("This is a multivalued field");
+            body1.SetStringValue("This is a multivalued field");
             doc.Add(body1);
 
             Field body2 = new Field("body", "", offsetsType);
-            body2.StringValue = ("This is something different");
+            body2.SetStringValue("This is something different");
             doc.Add(body2);
 
             iw.AddDocument(doc);
@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document doc = new Document();
             doc.Add(body);
 
-            body.StringValue = ("This is a test. Just a test highlighting from postings. Feel free to ignore.");
+            body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
 
             IndexReader ir = iw.Reader;

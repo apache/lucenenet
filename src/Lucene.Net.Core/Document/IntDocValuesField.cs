@@ -45,12 +45,9 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public override int IntValue
+        public override void SetInt32Value(int value)
         {
-            set
-            {
-                LongValue = value;
-            }
+            SetInt64Value(value);
         }
     }
 }

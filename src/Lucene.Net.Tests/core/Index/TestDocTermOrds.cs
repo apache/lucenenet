@@ -57,13 +57,13 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = NewTextField("field", "", Field.Store.NO);
             doc.Add(field);
-            field.StringValue = "a b c";
+            field.SetStringValue("a b c");
             w.AddDocument(doc);
 
-            field.StringValue = "d e f";
+            field.SetStringValue("d e f");
             w.AddDocument(doc);
 
-            field.StringValue = "a f";
+            field.SetStringValue("a f");
             w.AddDocument(doc);
 
             IndexReader r = w.Reader;

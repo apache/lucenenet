@@ -303,23 +303,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             /*Number*/
             object number = GetNumberType(numberType, FieldType.NumericType.DOUBLE
                 .ToString());
-            numericFieldMap[FieldType.NumericType.DOUBLE.ToString()].DoubleValue = Convert.ToDouble(
-                number);
+            numericFieldMap[FieldType.NumericType.DOUBLE.ToString()].SetDoubleValue(Convert.ToDouble(
+                number));
 
             number = GetNumberType(numberType, FieldType.NumericType.INT.ToString());
-            numericFieldMap[FieldType.NumericType.INT.ToString()].IntValue = Convert.ToInt32(
-                number);
+            numericFieldMap[FieldType.NumericType.INT.ToString()].SetInt32Value(Convert.ToInt32(
+                number));
 
             number = GetNumberType(numberType, FieldType.NumericType.LONG.ToString());
-            numericFieldMap[FieldType.NumericType.LONG.ToString()].LongValue = Convert.ToInt64(
-                number);
+            numericFieldMap[FieldType.NumericType.LONG.ToString()].SetInt64Value(Convert.ToInt64(
+                number));
 
             number = GetNumberType(numberType, FieldType.NumericType.FLOAT.ToString());
-            numericFieldMap[FieldType.NumericType.FLOAT.ToString()].FloatValue = Convert.ToSingle(
-                number);
+            numericFieldMap[FieldType.NumericType.FLOAT.ToString()].SetSingleValue(Convert.ToSingle(
+                number));
 
             number = GetNumberType(numberType, DATE_FIELD_NAME);
-            numericFieldMap[DATE_FIELD_NAME].LongValue = Convert.ToInt64(number);
+            numericFieldMap[DATE_FIELD_NAME].SetInt64Value(Convert.ToInt64(number));
         }
 
         private static DateFormat randomDateStyle(Random random)

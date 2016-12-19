@@ -296,13 +296,13 @@ namespace Lucene.Net.Search
             Field f = new Field("lyrics", "", customType);
             Document doc = new Document();
             doc.Add(f);
-            f.StringValue = "drug drug";
+            f.SetStringValue("drug drug");
             iw.AddDocument(doc);
-            f.StringValue = "drug druggy drug";
+            f.SetStringValue("drug druggy drug");
             iw.AddDocument(doc);
-            f.StringValue = "drug druggy druggy drug";
+            f.SetStringValue("drug druggy druggy drug");
             iw.AddDocument(doc);
-            f.StringValue = "drug druggy drug druggy drug";
+            f.SetStringValue("drug druggy drug druggy drug");
             iw.AddDocument(doc);
             IndexReader ir = iw.Reader;
             iw.Dispose();

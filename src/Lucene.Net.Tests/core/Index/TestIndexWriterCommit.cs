@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                         for (int j = 0; j < 10; j++)
                         {
                             string s = FinalI + "_" + Convert.ToString(count++);
-                            f.StringValue = s;
+                            f.SetStringValue(s);
                             w.AddDocument(doc);
                             w.Commit();
                             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);

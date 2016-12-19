@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 
                 for (int j = 0; j < 20; j++)
                 {
-                    idField.StringValue = Convert.ToString(i * 20 + j);
+                    idField.SetStringValue(Convert.ToString(i * 20 + j));
                     writer.AddDocument(doc);
                 }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
                 }
                 for (int j = 0; j < 100; j++)
                 {
-                    idField.StringValue = Convert.ToString(i * 100 + j);
+                    idField.SetStringValue(Convert.ToString(i * 100 + j));
                     writer.AddDocument(doc);
                 }
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
             {
                 for (int j = 0; j < 201; j++)
                 {
-                    idField.StringValue = Convert.ToString(iter * 201 + j);
+                    idField.SetStringValue(Convert.ToString(iter * 201 + j));
                     writer.AddDocument(doc);
                 }
 

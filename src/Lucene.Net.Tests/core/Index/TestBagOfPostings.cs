@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
                             text.Append(token);
                             visited.Add(token);
                         }
-                        field.StringValue = text.ToString();
+                        field.SetStringValue(text.ToString());
                         Iw.AddDocument(document);
                     }
                 }

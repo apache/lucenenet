@@ -47,7 +47,7 @@ namespace Lucene.Net.Tests.Queries.Function
             RandomIndexWriter iw = new RandomIndexWriter(Random(), d, iwConfig);
             for (int i = 0; i < nDocs; ++i)
             {
-                id.LongValue = i;
+                id.SetInt64Value(i);
                 switch (type)
                 {
                     case FieldInfo.DocValuesType_e.SORTED:
@@ -56,12 +56,12 @@ namespace Lucene.Net.Tests.Queries.Function
                         {
                             vals[i] = TestUtil.RandomSimpleString(Random(), 20);
                         } while (((string)vals[i]).Length == 0);
-                        f.BytesValue = new BytesRef((string)vals[i]);
+                        f.SetBytesValue(new BytesRef((string)vals[i]));
                         break;
                     case FieldInfo.DocValuesType_e.NUMERIC:
                         int bitsPerValue = Random().NextIntBetween(1, 31); // keep it an int
                         vals[i] = (long)Random().Next((int)PackedInts.MaxValue(bitsPerValue));
-                        f.LongValue = (long) vals[i];
+                        f.SetInt64Value((long) vals[i]);
                         break;
                 }
                 iw.AddDocument(document);

@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(idField);
                 string id = "" + i;
-                idField.StringValue = id;
+                idField.SetStringValue(id);
                 docs[id] = doc;
                 if (VERBOSE)
                 {
@@ -210,17 +210,17 @@ namespace Lucene.Net.Index
             Assert.IsTrue(it.MoveNext());
             Field f = (Field)it.Current;
             Assert.AreEqual(f.Name, "zzz");
-            Assert.AreEqual(f.StringValue, "a b c");
+            Assert.AreEqual(f.GetStringValue(), "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
             Assert.AreEqual(f.Name, "aaa");
-            Assert.AreEqual(f.StringValue, "a b c");
+            Assert.AreEqual(f.GetStringValue(), "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
             Assert.AreEqual(f.Name, "zzz");
-            Assert.AreEqual(f.StringValue, "1 2 3");
+            Assert.AreEqual(f.GetStringValue(), "1 2 3");
             Assert.IsFalse(it.MoveNext());
             r.Dispose();
             w.Dispose();
@@ -241,11 +241,11 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             Field f = new StoredField("binary", b, 10, 17);
-            var bx = f.BinaryValue.Bytes;
+            var bx = f.GetBinaryValue().Bytes;
             Assert.IsTrue(bx != null);
             Assert.AreEqual(50, bx.Length);
-            Assert.AreEqual(10, f.BinaryValue.Offset);
-            Assert.AreEqual(17, f.BinaryValue.Length);
+            Assert.AreEqual(10, f.GetBinaryValue().Offset);
+            Assert.AreEqual(17, f.GetBinaryValue().Length);
             doc.Add(f);
             w.AddDocument(doc);
             w.Dispose();
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
             IndexableField f2 = doc2.GetField("binary");
-            b = f2.BinaryValue.Bytes;
+            b = f2.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
             Assert.AreEqual(87, b[0]);
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
                     Document doc = sub.Document(docID);
                     Field f = (Field)doc.GetField("nf");
                     Assert.IsTrue(f is StoredField, "got f=" + f);
-                    Assert.AreEqual(answers[ids.Get(docID)], f.NumericValue);
+                    Assert.AreEqual(answers[ids.Get(docID)], f.GetNumericValue());
                 }
             }
             r.Dispose();
@@ -407,12 +407,12 @@ namespace Lucene.Net.Index
                 IndexableField sField = sDoc.GetField(fldName);
                 if (typeof(Field) == fld.GetType())
                 {
-                    Assert.AreEqual(fld.BinaryValue, sField.BinaryValue);
-                    Assert.AreEqual(fld.StringValue, sField.StringValue);
+                    Assert.AreEqual(fld.GetBinaryValue(), sField.GetBinaryValue());
+                    Assert.AreEqual(fld.GetStringValue(), sField.GetStringValue());
                 }
                 else
                 {
-                    Assert.AreEqual(fld.NumericValue, sField.NumericValue);
+                    Assert.AreEqual(fld.GetNumericValue(), sField.GetNumericValue());
                 }
             }
             reader.Dispose();
@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(1000);
             for (int i = 0; i < numDocs; ++i)
             {
-                field.StringValue = "" + i;
+                field.SetStringValue("" + i);
                 iw.AddDocument(doc);
             }
             iw.Commit();
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 doc.Add(id);
-                id.IntValue = i;
+                id.SetInt32Value(i);
                 for (int j = 0; j < data[i].Length; ++j)
                 {
                     Field f = new Field("bytes" + j, data[i][j], type);
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 ++numDocs;
-                int docId = (int)doc.GetField("id").NumericValue;
+                int docId = (int)doc.GetField("id").GetNumericValue();
                 Assert.AreEqual(data[docId].Length + 1, doc.Fields.Count);
                 for (int j = 0; j < data[docId].Length; ++j)
                 {
@@ -717,7 +717,7 @@ namespace Lucene.Net.Index
             }
             for (int i = 0; i < numDocs; ++i)
             {
-                idField.StringValue = "" + i;
+                idField.SetStringValue("" + i);
                 iw.AddDocument(docs[i]);
                 if (Random().Next(numDocs) == 0)
                 {
@@ -739,7 +739,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(docs[i].GetFields("fld").Length, fieldValues.Length);
                 if (fieldValues.Length > 0)
                 {
-                    Assert.AreEqual(docs[i].GetFields("fld")[0].BinaryValue, fieldValues[0].BinaryValue);
+                    Assert.AreEqual(docs[i].GetFields("fld")[0].GetBinaryValue(), fieldValues[0].GetBinaryValue());
                 }
             }
             rd.Dispose();

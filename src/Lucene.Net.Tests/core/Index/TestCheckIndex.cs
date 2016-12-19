@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
             ft.StoreTermVectors = true;
             ft.StoreTermVectorOffsets = true;
             Field field = new Field("foo", "", ft);
-            field.TokenStream = new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4));
+            field.SetTokenStream(new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4)));
             doc.Add(field);
             iw.AddDocument(doc);
             iw.Dispose();

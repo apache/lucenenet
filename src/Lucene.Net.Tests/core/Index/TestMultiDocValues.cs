@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                field.LongValue = Random().NextLong();
+                field.SetInt64Value(Random().NextLong());
                 iw.AddDocument(doc);
                 if (Random().Next(17) == 0)
                 {

@@ -394,8 +394,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             IndexableField b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue != null);
-            BytesRef bytesRef = b1.BinaryValue;
+            Assert.IsTrue(b1.GetBinaryValue() != null);
+            BytesRef bytesRef = b1.GetBinaryValue();
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {
@@ -413,8 +413,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue != null);
-            bytesRef = b1.BinaryValue;
+            Assert.IsTrue(b1.GetBinaryValue() != null);
+            bytesRef = b1.GetBinaryValue();
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {
@@ -645,7 +645,7 @@ namespace Lucene.Net.Index
                         itField2.MoveNext();
                         Field curField2 = (Field)itField2.Current;
                         Assert.AreEqual(curField1.Name, curField2.Name, "Different fields names for doc " + i + ".");
-                        Assert.AreEqual(curField1.StringValue, curField2.StringValue, "Different field values for doc " + i + ".");
+                        Assert.AreEqual(curField1.GetStringValue(), curField2.GetStringValue(), "Different field values for doc " + i + ".");
                     }
                 }
             }

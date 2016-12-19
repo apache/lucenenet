@@ -100,7 +100,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             for (int i = 0; i < terms; i++)
             {
-                field.StringValue = (MapInt(codePointTable, i));
+                field.SetStringValue(MapInt(codePointTable, i));
                 writer.AddDocument(doc);
             }
 

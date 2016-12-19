@@ -949,7 +949,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    field.LongValue = v;
+                    field.SetInt64Value(v);
                     iw.AddDocument(doc);
                 }
             }
@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    field.IntValue = v;
+                    field.SetInt32Value(v);
                     iw.AddDocument(doc);
                 }
             }

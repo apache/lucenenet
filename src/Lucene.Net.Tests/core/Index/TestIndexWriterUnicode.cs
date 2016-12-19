@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 Assert.AreEqual(1, ir.DocFreq(new Term("f" + i, Utf8Data[2 * i + 1])), "field " + i + " was not indexed correctly");
-                Assert.AreEqual(Utf8Data[2 * i + 1], doc2.GetField("f" + i).StringValue, "field " + i + " is incorrect");
+                Assert.AreEqual(Utf8Data[2 * i + 1], doc2.GetField("f" + i).GetStringValue(), "field " + i + " is incorrect");
             }
             ir.Dispose();
             dir.Dispose();
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
                     s = new string(chars, 0, 2);
                 }
                 allTerms.Add(s);
-                f.StringValue = s;
+                f.SetStringValue(s);
 
                 writer.AddDocument(d);
 

@@ -512,7 +512,7 @@ namespace Lucene.Net.Search.Highlight
 
             for (int i = 0; i < hits.TotalHits; i++)
             {
-                String text = searcher.Doc(hits.ScoreDocs[i].Doc).GetField(NUMERIC_FIELD_NAME).NumericValue.toString();
+                String text = searcher.Doc(hits.ScoreDocs[i].Doc).GetField(NUMERIC_FIELD_NAME).GetNumericValue().toString();
                 TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));

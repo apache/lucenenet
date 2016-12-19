@@ -686,14 +686,14 @@ namespace Lucene.Net.Index
             {
                 IndexableField f1 = ff1[i];
                 IndexableField f2 = ff2[i];
-                if (f1.BinaryValue != null)
+                if (f1.GetBinaryValue() != null)
                 {
-                    Debug.Assert(f2.BinaryValue != null);
+                    Debug.Assert(f2.GetBinaryValue() != null);
                 }
                 else
                 {
-                    string s1 = f1.StringValue;
-                    string s2 = f2.StringValue;
+                    string s1 = f1.GetStringValue();
+                    string s2 = f2.GetStringValue();
                     Assert.AreEqual(s1, s2, ff1 + " : " + ff2);
                 }
             }

@@ -47,20 +47,14 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public override float FloatValue
+        public override void SetSingleValue(float value)
         {
-            set
-            {
-                base.LongValue = Support.Number.FloatToIntBits(value);
-            }
+            base.SetInt64Value(Support.Number.FloatToIntBits(value));
         }
 
-        public override long LongValue
+        public override void SetInt64Value(long value)
         {
-            set
-            {
-                throw new System.ArgumentException("cannot change value type from Float to Long");
-            }
+            throw new System.ArgumentException("cannot change value type from Float to Long");
         }
     }
 }

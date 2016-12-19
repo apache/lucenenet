@@ -693,7 +693,7 @@ namespace Lucene.Net.Search
                     }
                 }
                 docs.Add(doc);
-                f.StringValue = sb.ToString();
+                f.SetStringValue(sb.ToString());
                 w.AddDocument(d);
             }
 

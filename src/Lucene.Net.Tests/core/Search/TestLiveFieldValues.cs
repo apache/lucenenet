@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     Document doc = s.Doc(hits.ScoreDocs[0].Doc);
-                    return (int)doc.GetField("field").NumericValue;
+                    return (int)doc.GetField("field").GetNumericValue();
                 }
             }
         }

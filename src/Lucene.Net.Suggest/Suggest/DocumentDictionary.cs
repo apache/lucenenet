@@ -173,11 +173,11 @@ namespace Lucene.Net.Search.Suggest
                     if (hasPayloads)
                     {
                         IndexableField payload = doc.GetField(outerInstance.payloadField);
-                        if (payload == null || (payload.BinaryValue == null && payload.StringValue == null))
+                        if (payload == null || (payload.GetBinaryValue() == null && payload.GetStringValue() == null))
                         {
                             continue;
                         }
-                        tempPayload = payload.BinaryValue ?? new BytesRef(payload.StringValue);
+                        tempPayload = payload.GetBinaryValue() ?? new BytesRef(payload.GetStringValue());
                     }
 
                     if (hasContexts)
@@ -185,23 +185,23 @@ namespace Lucene.Net.Search.Suggest
                         IndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
                         foreach (IndexableField contextField in contextFields)
                         {
-                            if (contextField.BinaryValue == null && contextField.StringValue == null)
+                            if (contextField.GetBinaryValue() == null && contextField.GetStringValue() == null)
                             {
                                 continue;
                             }
                             else
                             {
-                                tempContexts.Add(contextField.BinaryValue ?? new BytesRef(contextField.StringValue));
+                                tempContexts.Add(contextField.GetBinaryValue() ?? new BytesRef(contextField.GetStringValue()));
                             }
                         }
                     }
 
                     IndexableField fieldVal = doc.GetField(outerInstance.field);
-                    if (fieldVal == null || (fieldVal.BinaryValue == null && fieldVal.StringValue == null))
+                    if (fieldVal == null || (fieldVal.GetBinaryValue() == null && fieldVal.GetStringValue() == null))
                     {
                         continue;
                     }
-                    tempTerm = (fieldVal.StringValue != null) ? new BytesRef(fieldVal.StringValue) : fieldVal.BinaryValue;
+                    tempTerm = (fieldVal.GetStringValue() != null) ? new BytesRef(fieldVal.GetStringValue()) : fieldVal.GetBinaryValue();
 
                     currentPayload = tempPayload;
                     currentContexts = tempContexts;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Suggest
                 {
                     // LUCENENET TODO: See if we can make NumericValue into Decimal (which can be converted to any other type of number)
                     // rather than using object.
-                    return (weight.NumericValue != null) ? Convert.ToInt64(weight.NumericValue) : 0;
+                    return (weight.GetNumericValue() != null) ? Convert.ToInt64(weight.GetNumericValue()) : 0;
                 } // found weight as NumericDocValue
                 else if (weightValues != null)
                 {

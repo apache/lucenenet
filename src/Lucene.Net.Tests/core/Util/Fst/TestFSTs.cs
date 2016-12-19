@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util.Fst
                         }
                     }
                     allIDs.Add(idString);
-                    idField.StringValue = idString;
+                    idField.SetStringValue(idString);
                     w.AddDocument(doc);
                 }
 
@@ -1204,7 +1204,7 @@ namespace Lucene.Net.Util.Fst
 
             foreach (string term in allTerms)
             {
-                f.StringValue = term;
+                f.SetStringValue(term);
                 w.AddDocument(doc);
             }
 

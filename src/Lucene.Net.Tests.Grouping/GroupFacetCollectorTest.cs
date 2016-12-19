@@ -654,8 +654,8 @@ namespace Lucene.Net.Search.Grouping
                         {
                             facetWithMostGroups = groupsInFacet.size();
                         }
-                        facetFields[0].StringValue = (facetValue);
-                        facetFields[1].BytesValue = (new BytesRef(facetValue));
+                        facetFields[0].SetStringValue(facetValue);
+                        facetFields[1].SetBytesValue(new BytesRef(facetValue));
                         facetVals.Add(facetValue);
                     }
                     else
@@ -674,7 +674,7 @@ namespace Lucene.Net.Search.Grouping
                             {
                                 facetWithMostGroups = groupsInFacet.size();
                             }
-                            facetField.StringValue = (facetValue);
+                            facetField.SetStringValue(facetValue);
                             facetVals.Add(facetValue);
                         }
                     }
@@ -703,16 +703,16 @@ namespace Lucene.Net.Search.Grouping
                 {
                     if (useDv)
                     {
-                        groupDc.BytesValue = (new BytesRef(groupValue));
+                        groupDc.SetBytesValue(new BytesRef(groupValue));
                     }
-                    group.StringValue = (groupValue);
+                    group.SetStringValue(groupValue);
                 }
                 else if (useDv)
                 {
                     // DV cannot have missing values:
-                    groupDc.BytesValue = (new BytesRef());
+                    groupDc.SetBytesValue(new BytesRef());
                 }
-                content.StringValue = (contentStr);
+                content.SetStringValue(contentStr);
                 if (groupValue == null && !facetVals.Any())
                 {
                     writer.AddDocument(docNoGroupNoFacet);
