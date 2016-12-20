@@ -964,15 +964,24 @@ namespace Lucene.Net.Util
 
                 if (Rarely(r))
                 {
-                    // Retrieve the package-private setIndexerThreadPool
-                    // method:
-                    MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
-                    //setIndexerThreadPoolMethod.setAccessible(true);
-                    Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
-                    ConstructorInfo ctor = clazz.GetTypeInfo().GetConstructor(new[] { typeof(int), typeof(Random) });
-                    //ctor.Accessible = true;
-                    // random thread pool
-                    setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });
+                    //// Retrieve the package-private setIndexerThreadPool
+                    //// method:
+                    ////MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
+                    //MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod(
+                    //    "SetIndexerThreadPool", 
+                    //    BindingFlags.NonPublic | BindingFlags.Instance, 
+                    //    null, 
+                    //    new Type[] { typeof(DocumentsWriterPerThreadPool) }, 
+                    //    null);
+                    ////setIndexerThreadPoolMethod.setAccessible(true);
+                    //Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
+                    //ConstructorInfo ctor = clazz.GetTypeInfo().GetConstructor(new[] { typeof(int), typeof(Random) });
+                    ////ctor.Accessible = true;
+                    //// random thread pool
+                    //setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });
+
+                    // LUCENENET specific: Since we are using InternalsVisibleTo, there is no need for Reflection
+                    c.SetIndexerThreadPool(new RandomDocumentsWriterPerThreadPool(maxNumThreadStates, r));
                 }
                 else
                 {
