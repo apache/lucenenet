@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
                     InitialSeekTerm = new BytesRef("");
                 }
 
-                protected internal override AcceptStatus Accept(BytesRef term)
+                protected override AcceptStatus Accept(BytesRef term)
                 {
                     UnicodeUtil.UTF8toUTF16(term.Bytes, term.Offset, term.Length, Utf16);
                     return RunAutomaton.Run(Utf16.Chars, 0, Utf16.Length) ? AcceptStatus.YES : AcceptStatus.NO;

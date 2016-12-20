@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -30,17 +31,17 @@ namespace Lucene.Net.Index
     /// </summary>
     public class FieldInfos : IEnumerable<FieldInfo>
     {
-        private readonly bool HasFreq_Renamed;
-        private readonly bool HasProx_Renamed;
-        private readonly bool HasPayloads_Renamed;
-        private readonly bool HasOffsets_Renamed;
-        private readonly bool HasVectors_Renamed;
-        private readonly bool HasNorms_Renamed;
-        private readonly bool HasDocValues_Renamed;
+        private readonly bool hasFreq;
+        private readonly bool hasProx;
+        private readonly bool hasPayloads;
+        private readonly bool hasOffsets;
+        private readonly bool hasVectors;
+        private readonly bool hasNorms;
+        private readonly bool hasDocValues;
 
-        private readonly SortedDictionary<int, FieldInfo> ByNumber = new SortedDictionary<int, FieldInfo>();
-        private readonly Dictionary<string, FieldInfo> ByName = new Dictionary<string, FieldInfo>();
-        private readonly ICollection<FieldInfo> Values; // for an unmodifiable iterator
+        private readonly SortedDictionary<int, FieldInfo> byNumber = new SortedDictionary<int, FieldInfo>();
+        private readonly Dictionary<string, FieldInfo> byName = new Dictionary<string, FieldInfo>();
+        private readonly ICollection<FieldInfo> values; // for an unmodifiable iterator
 
         /// <summary>
         /// Constructs a new FieldInfos from an array of FieldInfo objects
@@ -64,19 +65,19 @@ namespace Lucene.Net.Index
 
                 FieldInfo previous;
 
-                if (ByNumber.TryGetValue(info.Number, out previous))
+                if (byNumber.TryGetValue(info.Number, out previous))
                 {
                     throw new ArgumentException("duplicate field numbers: " + previous.Name + " and " + info.Name + " have: " + info.Number);
                 }
 
-                ByNumber[info.Number] = info;
+                byNumber[info.Number] = info;
 
-                if (ByName.TryGetValue(info.Name, out previous))
+                if (byName.TryGetValue(info.Name, out previous))
                 {
                     throw new ArgumentException("duplicate field names: " + previous.Number + " and " + info.Number + " have: " + info.Name);
                 }
 
-                ByName[info.Name] = info;
+                byName[info.Name] = info;
 
                 hasVectors |= info.HasVectors();
                 hasProx |= info.Indexed && info.FieldIndexOptions >= Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
@@ -87,71 +88,71 @@ namespace Lucene.Net.Index
                 hasPayloads |= info.HasPayloads();
             }
 
-            this.HasVectors_Renamed = hasVectors;
-            this.HasProx_Renamed = hasProx;
-            this.HasPayloads_Renamed = hasPayloads;
-            this.HasOffsets_Renamed = hasOffsets;
-            this.HasFreq_Renamed = hasFreq;
-            this.HasNorms_Renamed = hasNorms;
-            this.HasDocValues_Renamed = hasDocValues;
-            this.Values = ByNumber.Values;
+            this.hasVectors = hasVectors;
+            this.hasProx = hasProx;
+            this.hasPayloads = hasPayloads;
+            this.hasOffsets = hasOffsets;
+            this.hasFreq = hasFreq;
+            this.hasNorms = hasNorms;
+            this.hasDocValues = hasDocValues;
+            this.values = byNumber.Values;
         }
 
         /// <summary>
         /// Returns true if any fields have freqs </summary>
-        public virtual bool HasFreq()
+        public virtual bool HasFreq() // LUCENENET TODO: Make property
         {
-            return HasFreq_Renamed;
+            return hasFreq;
         }
 
         /// <summary>
         /// Returns true if any fields have positions </summary>
-        public virtual bool HasProx()
+        public virtual bool HasProx() // LUCENENET TODO: Make property
         {
-            return HasProx_Renamed;
+            return hasProx;
         }
 
         /// <summary>
         /// Returns true if any fields have payloads </summary>
-        public virtual bool HasPayloads()
+        public virtual bool HasPayloads() // LUCENENET TODO: Make property
         {
-            return HasPayloads_Renamed;
+            return hasPayloads;
         }
 
         /// <summary>
         /// Returns true if any fields have offsets </summary>
-        public virtual bool HasOffsets()
+        public virtual bool HasOffsets() // LUCENENET TODO: Make property
         {
-            return HasOffsets_Renamed;
+            return hasOffsets;
         }
 
         /// <summary>
         /// Returns true if any fields have vectors </summary>
-        public virtual bool HasVectors()
+        public virtual bool HasVectors() // LUCENENET TODO: Make property
         {
-            return HasVectors_Renamed;
+            return hasVectors;
         }
 
         /// <summary>
         /// Returns true if any fields have norms </summary>
-        public virtual bool HasNorms()
+        public virtual bool HasNorms() // LUCENENET TODO: Make property
         {
-            return HasNorms_Renamed;
+            return hasNorms;
         }
 
         /// <summary>
         /// Returns true if any fields have DocValues </summary>
-        public virtual bool HasDocValues()
+        public virtual bool HasDocValues() // LUCENENET TODO: Make property
         {
-            return HasDocValues_Renamed;
+            return hasDocValues;
         }
 
         /// <summary>
         /// Returns the number of fields </summary>
-        public virtual int Size()
+        public virtual int Size() // LUCENENET TODO: Make property, rename Count
         {
-            Debug.Assert(ByNumber.Count == ByName.Count);
-            return ByNumber.Count;
+            Debug.Assert(byNumber.Count == byName.Count);
+            return byNumber.Count;
         }
 
         /// <summary>
@@ -161,10 +162,10 @@ namespace Lucene.Net.Index
         // TODO: what happens if in fact a different order is used?
         public virtual IEnumerator<FieldInfo> GetEnumerator()
         {
-            return Values.GetEnumerator();
+            return values.GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -176,7 +177,7 @@ namespace Lucene.Net.Index
         public virtual FieldInfo FieldInfo(string fieldName)
         {
             FieldInfo ret;
-            ByName.TryGetValue(fieldName, out ret);
+            byName.TryGetValue(fieldName, out ret);
             return ret;
         }
 
@@ -193,30 +194,30 @@ namespace Lucene.Net.Index
                 throw new System.ArgumentException("Illegal field number: " + fieldNumber);
             }
             Index.FieldInfo ret;
-            ByNumber.TryGetValue(fieldNumber, out ret);
+            byNumber.TryGetValue(fieldNumber, out ret);
             return ret;
         }
 
         public sealed class FieldNumbers
         {
-            internal readonly IDictionary<int?, string> NumberToName;
-            internal readonly IDictionary<string, int?> NameToNumber;
+            private readonly IDictionary<int?, string> numberToName;
+            private readonly IDictionary<string, int?> nameToNumber;
 
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
             // sessions:
-            internal readonly IDictionary<string, DocValuesType_e?> DocValuesType;
+            private readonly IDictionary<string, DocValuesType_e?> docValuesType;
 
             // TODO: we should similarly catch an attempt to turn
             // norms back on after they were already ommitted; today
             // we silently discard the norm but this is badly trappy
-            internal int LowestUnassignedFieldNumber = -1;
+            private int lowestUnassignedFieldNumber = -1;
 
-            public FieldNumbers()
+            internal FieldNumbers()
             {
-                this.NameToNumber = new Dictionary<string, int?>();
-                this.NumberToName = new Dictionary<int?, string>();
-                this.DocValuesType = new Dictionary<string, DocValuesType_e?>();
+                this.nameToNumber = new Dictionary<string, int?>();
+                this.numberToName = new Dictionary<int?, string>();
+                this.docValuesType = new Dictionary<string, DocValuesType_e?>();
             }
 
             /// <summary>
@@ -232,10 +233,10 @@ namespace Lucene.Net.Index
                     if (dvType != null)
                     {
                         DocValuesType_e? currentDVType;
-                        DocValuesType.TryGetValue(fieldName, out currentDVType);
+                        docValuesType.TryGetValue(fieldName, out currentDVType);
                         if (currentDVType == null)
                         {
-                            DocValuesType[fieldName] = dvType;
+                            docValuesType[fieldName] = dvType;
                         }
                         else if (currentDVType != null && currentDVType != dvType)
                         {
@@ -243,12 +244,12 @@ namespace Lucene.Net.Index
                         }
                     }
                     int? fieldNumber;
-                    NameToNumber.TryGetValue(fieldName, out fieldNumber);
+                    nameToNumber.TryGetValue(fieldName, out fieldNumber);
                     if (fieldNumber == null)
                     {
                         int? preferredBoxed = Convert.ToInt32(preferredFieldNumber);
 
-                        if (preferredFieldNumber != -1 && !NumberToName.ContainsKey(preferredBoxed))
+                        if (preferredFieldNumber != -1 && !numberToName.ContainsKey(preferredBoxed))
                         {
                             // cool - we can use this number globally
                             fieldNumber = preferredBoxed;
@@ -256,15 +257,15 @@ namespace Lucene.Net.Index
                         else
                         {
                             // find a new FieldNumber
-                            while (NumberToName.ContainsKey(++LowestUnassignedFieldNumber))
+                            while (numberToName.ContainsKey(++lowestUnassignedFieldNumber))
                             {
                                 // might not be up to date - lets do the work once needed
                             }
-                            fieldNumber = LowestUnassignedFieldNumber;
+                            fieldNumber = lowestUnassignedFieldNumber;
                         }
 
-                        NumberToName[fieldNumber] = fieldName;
-                        NameToNumber[fieldName] = fieldNumber;
+                        numberToName[fieldNumber] = fieldName;
+                        nameToNumber[fieldName] = fieldNumber;
                     }
 
                     return (int)fieldNumber;
@@ -280,11 +281,11 @@ namespace Lucene.Net.Index
                     int? NameToNumberVal;
                     DocValuesType_e? DocValuesType_E;
 
-                    NumberToName.TryGetValue(number, out NumberToNameStr);
-                    NameToNumber.TryGetValue(name, out NameToNumberVal);
-                    DocValuesType.TryGetValue(name, out DocValuesType_E);
+                    numberToName.TryGetValue(number, out NumberToNameStr);
+                    nameToNumber.TryGetValue(name, out NameToNumberVal);
+                    docValuesType.TryGetValue(name, out DocValuesType_E);
 
-                    return name.Equals(NumberToNameStr) && number.Equals(NameToNumber[name]) && (dvType == null || DocValuesType_E == null || dvType == DocValuesType_E);
+                    return name.Equals(NumberToNameStr) && number.Equals(nameToNumber[name]) && (dvType == null || DocValuesType_E == null || dvType == DocValuesType_E);
                 }
             }
 
@@ -297,7 +298,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     // used by IndexWriter.updateNumericDocValue
-                    if (!NameToNumber.ContainsKey(fieldName))
+                    if (!nameToNumber.ContainsKey(fieldName))
                     {
                         return false;
                     }
@@ -305,7 +306,7 @@ namespace Lucene.Net.Index
                     {
                         // only return true if the field has the same dvType as the requested one
                         DocValuesType_e? dvCand;
-                        DocValuesType.TryGetValue(fieldName, out dvCand);
+                        docValuesType.TryGetValue(fieldName, out dvCand);
                         return dvType == dvCand;
                     }
                 }
@@ -315,9 +316,9 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    NumberToName.Clear();
-                    NameToNumber.Clear();
-                    DocValuesType.Clear();
+                    numberToName.Clear();
+                    nameToNumber.Clear();
+                    docValuesType.Clear();
                 }
             }
 
@@ -326,17 +327,17 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     Debug.Assert(ContainsConsistent(number, name, dvType));
-                    DocValuesType[name] = dvType;
+                    docValuesType[name] = dvType;
                 }
             }
         }
 
-        public sealed class Builder
+        internal sealed class Builder
         {
-            internal readonly Dictionary<string, FieldInfo> ByName = new Dictionary<string, FieldInfo>();
-            internal readonly FieldNumbers GlobalFieldNumbers;
+            private readonly Dictionary<string, FieldInfo> byName = new Dictionary<string, FieldInfo>();
+            private readonly FieldNumbers globalFieldNumbers;
 
-            public Builder()
+            internal Builder()
                 : this(new FieldNumbers())
             {
             }
@@ -347,7 +348,7 @@ namespace Lucene.Net.Index
             internal Builder(FieldNumbers globalFieldNumbers)
             {
                 Debug.Assert(globalFieldNumbers != null);
-                this.GlobalFieldNumbers = globalFieldNumbers;
+                this.globalFieldNumbers = globalFieldNumbers;
             }
 
             public void Add(FieldInfos other)
@@ -375,7 +376,7 @@ namespace Lucene.Net.Index
                 return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
             }
 
-            internal FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, FieldInfo.IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)
+            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, FieldInfo.IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)
             {
                 FieldInfo fi = FieldInfo(name);
                 if (fi == null)
@@ -385,11 +386,11 @@ namespace Lucene.Net.Index
                     // number for this field.  If the field was seen
                     // before then we'll get the same name and number,
                     // else we'll allocate a new one:
-                    int fieldNumber = GlobalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
+                    int fieldNumber = globalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
                     fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
-                    Debug.Assert(!ByName.ContainsKey(fi.Name));
-                    Debug.Assert(GlobalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType));
-                    ByName[fi.Name] = fi;
+                    Debug.Assert(!byName.ContainsKey(fi.Name));
+                    Debug.Assert(globalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType));
+                    byName[fi.Name] = fi;
                 }
                 else
                 {
@@ -404,7 +405,7 @@ namespace Lucene.Net.Index
                         {
                             // must also update docValuesType map so it's
                             // aware of this field's DocValueType
-                            GlobalFieldNumbers.SetDocValuesType(fi.Number, name, docValues);
+                            globalFieldNumbers.SetDocValuesType(fi.Number, name, docValues);
                         }
                     }
 
@@ -425,13 +426,13 @@ namespace Lucene.Net.Index
             public FieldInfo FieldInfo(string fieldName)
             {
                 FieldInfo ret;
-                ByName.TryGetValue(fieldName, out ret);
+                byName.TryGetValue(fieldName, out ret);
                 return ret;
             }
 
             public FieldInfos Finish()
             {
-                return new FieldInfos(ByName.Values.ToArray());
+                return new FieldInfos(byName.Values.ToArray());
             }
         }
     }

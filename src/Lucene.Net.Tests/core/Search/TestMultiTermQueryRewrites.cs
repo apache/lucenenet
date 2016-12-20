@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
 
                 internal readonly IBoostAttribute boostAtt;
 
-                protected internal override AcceptStatus Accept(BytesRef term)
+                protected override AcceptStatus Accept(BytesRef term)
                 {
                     boostAtt.Boost = Convert.ToSingle(term.Utf8ToString());
                     return base.Accept(term);

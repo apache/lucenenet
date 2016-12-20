@@ -79,12 +79,12 @@ namespace Lucene.Net.Index
             // flushing without applying deletes means
             // there will still be deletes in the segment infos
             writer.Flush(false, false);
-            Assert.IsTrue(writer.BufferedUpdatesStreamAny);
+            Assert.IsTrue(writer.BufferedUpdatesStream.Any());
 
             // get reader flushes pending deletes
             // so there should not be anymore
             IndexReader r1 = writer.Reader;
-            Assert.IsFalse(writer.BufferedUpdatesStreamAny);
+            Assert.IsFalse(writer.BufferedUpdatesStream.Any());
             r1.Dispose();
 
             // delete id:2 from the first segment

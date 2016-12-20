@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -31,7 +32,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         ///  constructors, typically implicit.)
         /// </summary>
-        protected internal Fields()
+        protected Fields()
         {
         }
 
@@ -41,7 +42,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract IEnumerator<string> GetEnumerator();
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }

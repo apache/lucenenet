@@ -948,7 +948,7 @@ namespace Lucene.Net.Codecs
                 LiveTerms = liveTerms;
             }
 
-            protected internal override AcceptStatus Accept(BytesRef term)
+            protected override AcceptStatus Accept(BytesRef term)
             {
                 return LiveTerms.Get(Ord()) ? AcceptStatus.YES : AcceptStatus.NO;
             }

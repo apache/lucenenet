@@ -51,11 +51,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Name of the index segment file </summary>
-        public const string SEGMENTS = "segments";
+        public static readonly string SEGMENTS = "segments";
 
         /// <summary>
         /// Extension of gen file </summary>
-        public const string GEN_EXTENSION = "gen";
+        public static readonly string GEN_EXTENSION = "gen";
 
         /// <summary>
         /// Name of the generation reference file name </summary>
@@ -63,11 +63,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Extension of compound file </summary>
-        public const string COMPOUND_FILE_EXTENSION = "cfs";
+        public static readonly string COMPOUND_FILE_EXTENSION = "cfs";
 
         /// <summary>
         /// Extension of compound file entries </summary>
-        public const string COMPOUND_FILE_ENTRIES_EXTENSION = "cfe";
+        public static readonly string COMPOUND_FILE_ENTRIES_EXTENSION = "cfe";
 
         /// <summary>
         /// this array contains all filename extensions used by
@@ -76,7 +76,11 @@ namespace Lucene.Net.Index
         /// Also note that Lucene's <code>segments_N</code> files
         /// do not have any filename extension.
         /// </summary>
-        public static readonly string[] INDEX_EXTENSIONS = new string[] { COMPOUND_FILE_EXTENSION, COMPOUND_FILE_ENTRIES_EXTENSION, GEN_EXTENSION };
+        public static readonly string[] INDEX_EXTENSIONS = new string[] {
+            COMPOUND_FILE_EXTENSION,
+            COMPOUND_FILE_ENTRIES_EXTENSION,
+            GEN_EXTENSION
+        };
 
         /// <summary>
         /// Computes the full file name from base, extension and generation. If the

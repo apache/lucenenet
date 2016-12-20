@@ -78,7 +78,7 @@ namespace Lucene.Net.Index.Sorter
             internal readonly FieldInfo.IndexOptions? indexOptions;
 
             // LUCENENET TODO: Make the FieldInfo.IndexOptions non nullable
-            public SortingTerms(Terms @in, FieldInfo.IndexOptions? indexOptions, Sorter.DocMap docMap) : base(@in)
+            public SortingTerms(Terms input, FieldInfo.IndexOptions? indexOptions, Sorter.DocMap docMap) : base(input)
             {
                 this.docMap = docMap;
                 this.indexOptions = indexOptions;
@@ -86,12 +86,12 @@ namespace Lucene.Net.Index.Sorter
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return new SortingTermsEnum(@in.Iterator(reuse), docMap, indexOptions);
+                return new SortingTermsEnum(input.Iterator(reuse), docMap, indexOptions);
             }
 
             public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
             {
-                return new SortingTermsEnum(@in.Intersect(compiled, startTerm), docMap, indexOptions);
+                return new SortingTermsEnum(input.Intersect(compiled, startTerm), docMap, indexOptions);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index.Sorter
                     inReuse = reuse;
                 }
 
-                DocsEnum inDocs = @in.Docs(NewToOld(liveDocs), inReuse, flags);
+                DocsEnum inDocs = input.Docs(NewToOld(liveDocs), inReuse, flags);
                 bool withFreqs = indexOptions.GetValueOrDefault().CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsEnum.FLAG_FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index.Sorter
                     inReuse = reuse;
                 }
 
-                DocsAndPositionsEnum inDocsAndPositions = @in.DocsAndPositions(NewToOld(liveDocs), inReuse, flags);
+                DocsAndPositionsEnum inDocsAndPositions = input.DocsAndPositions(NewToOld(liveDocs), inReuse, flags);
                 if (inDocsAndPositions == null)
                 {
                     return null;
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 get
                 {
-                    return base.DocsEnum;
+                    return base.input;
                 }
             }
         }
@@ -796,7 +796,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 get
                 {
-                    return @in;
+                    return input;
                 }
             }
         }
@@ -838,28 +838,28 @@ namespace Lucene.Net.Index.Sorter
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {
-            @in.Document(docMap.NewToOld(docID), visitor);
+            input.Document(docMap.NewToOld(docID), visitor);
         }
 
         public override Fields Fields
         {
             get
             {
-                Fields fields = @in.Fields;
+                Fields fields = input.Fields;
                 if (fields == null)
                 {
                     return null;
                 }
                 else
                 {
-                    return new SortingFields(fields, @in.FieldInfos, docMap);
+                    return new SortingFields(fields, input.FieldInfos, docMap);
                 }
             }
         }
 
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
-            BinaryDocValues oldDocValues = @in.GetBinaryDocValues(field);
+            BinaryDocValues oldDocValues = input.GetBinaryDocValues(field);
             if (oldDocValues == null)
             {
                 return null;
@@ -874,7 +874,7 @@ namespace Lucene.Net.Index.Sorter
         {
             get
             {
-                Bits inLiveDocs = @in.LiveDocs;
+                Bits inLiveDocs = input.LiveDocs;
                 if (inLiveDocs == null)
                 {
                     return null;
@@ -888,7 +888,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override NumericDocValues GetNormValues(string field)
         {
-            NumericDocValues norm = @in.GetNormValues(field);
+            NumericDocValues norm = input.GetNormValues(field);
             if (norm == null)
             {
                 return null;
@@ -901,7 +901,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override NumericDocValues GetNumericDocValues(string field)
         {
-            NumericDocValues oldDocValues = @in.GetNumericDocValues(field);
+            NumericDocValues oldDocValues = input.GetNumericDocValues(field);
             if (oldDocValues == null)
             {
                 return null;
@@ -911,7 +911,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override SortedDocValues GetSortedDocValues(string field)
         {
-            SortedDocValues sortedDV = @in.GetSortedDocValues(field);
+            SortedDocValues sortedDV = input.GetSortedDocValues(field);
             if (sortedDV == null)
             {
                 return null;
@@ -924,7 +924,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
-            SortedSetDocValues sortedSetDV = @in.GetSortedSetDocValues(field);
+            SortedSetDocValues sortedSetDV = input.GetSortedSetDocValues(field);
             if (sortedSetDV == null)
             {
                 return null;
@@ -937,7 +937,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override Bits GetDocsWithField(string field)
         {
-            Bits bits = @in.GetDocsWithField(field);
+            Bits bits = input.GetDocsWithField(field);
             if (bits == null || bits is Bits_MatchAllBits || bits is Bits_MatchNoBits)
             {
                 return bits;
@@ -950,7 +950,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override Fields GetTermVectors(int docID)
         {
-            return @in.GetTermVectors(docMap.NewToOld(docID));
+            return input.GetTermVectors(docMap.NewToOld(docID));
         }
     }
 }

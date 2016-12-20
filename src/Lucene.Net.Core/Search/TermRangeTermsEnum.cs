@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
             TermComp = Comparator;
         }
 
-        protected internal override AcceptStatus Accept(BytesRef term)
+        protected override AcceptStatus Accept(BytesRef term)
         {
             if (!this.IncludeLower && term.Equals(LowerBytesRef))
             {

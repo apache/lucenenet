@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
         /// Return if term is accepted, not accepted or the iteration should ended
         /// (and possibly seek).
         /// </summary>
-        protected internal abstract AcceptStatus Accept(BytesRef term);
+        protected abstract AcceptStatus Accept(BytesRef term);
 
         /// <summary>
         /// Creates a filtered <seealso cref="TermsEnum"/> on a terms enum. </summary>
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
         /// <P>You can only use this method, if you keep the default
         /// implementation of <seealso cref="#nextSeekTerm"/>.
         /// </summary>
-        protected internal BytesRef InitialSeekTerm
+        protected BytesRef InitialSeekTerm // LUCENENET TODO: Make method SetInitialSeekTerm(BytesRef term)
         {
             set
             {
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
         /// than the last enumerated term, else the behaviour of this enum
         /// violates the contract for TermsEnums.
         /// </summary>
-        protected internal virtual BytesRef NextSeekTerm(BytesRef currentTerm)
+        protected virtual BytesRef NextSeekTerm(BytesRef currentTerm)
         {
             BytesRef t = InitialSeekTerm_Renamed;
             InitialSeekTerm_Renamed = null;

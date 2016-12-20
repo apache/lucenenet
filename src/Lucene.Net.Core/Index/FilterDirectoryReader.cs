@@ -84,25 +84,25 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The filtered DirectoryReader </summary>
-        protected internal readonly DirectoryReader @in;
+        protected internal readonly DirectoryReader input;
 
         /// <summary>
         /// Create a new FilterDirectoryReader that filters a passed in DirectoryReader. </summary>
-        /// <param name="in"> the DirectoryReader to filter </param>
-        public FilterDirectoryReader(DirectoryReader @in)
-            : this(@in, new StandardReaderWrapper())
+        /// <param name="input"> the DirectoryReader to filter </param>
+        public FilterDirectoryReader(DirectoryReader input)
+            : this(input, new StandardReaderWrapper())
         {
         }
 
         /// <summary>
         /// Create a new FilterDirectoryReader that filters a passed in DirectoryReader,
         /// using the supplied SubReaderWrapper to wrap its subreader. </summary>
-        /// <param name="in"> the DirectoryReader to filter </param>
+        /// <param name="input"> the DirectoryReader to filter </param>
         /// <param name="wrapper"> the SubReaderWrapper to use to wrap subreaders </param>
-        public FilterDirectoryReader(DirectoryReader @in, SubReaderWrapper wrapper)
-            : base(@in.Directory(), wrapper.Wrap(@in.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
+        public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
+            : base(input.Directory(), wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
         {
-            this.@in = @in;
+            this.input = input;
         }
 
         /// <summary>
@@ -111,43 +111,43 @@ namespace Lucene.Net.Index
         /// Implementations should just return an instantiation of themselves, wrapping the
         /// passed in DirectoryReader.
         /// </summary>
-        /// <param name="in"> the DirectoryReader to wrap </param>
+        /// <param name="input"> the DirectoryReader to wrap </param>
         /// <returns> the wrapped DirectoryReader </returns>
-        protected internal abstract DirectoryReader DoWrapDirectoryReader(DirectoryReader @in);
+        protected abstract DirectoryReader DoWrapDirectoryReader(DirectoryReader input);
 
-        private DirectoryReader WrapDirectoryReader(DirectoryReader @in)
+        private DirectoryReader WrapDirectoryReader(DirectoryReader input)
         {
-            return @in == null ? null : DoWrapDirectoryReader(@in);
+            return input == null ? null : DoWrapDirectoryReader(input);
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged()
         {
-            return WrapDirectoryReader(@in.DoOpenIfChanged());
+            return WrapDirectoryReader(input.DoOpenIfChanged());
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged(IndexCommit commit)
         {
-            return WrapDirectoryReader(@in.DoOpenIfChanged(commit));
+            return WrapDirectoryReader(input.DoOpenIfChanged(commit));
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
         {
-            return WrapDirectoryReader(@in.DoOpenIfChanged(writer, applyAllDeletes));
+            return WrapDirectoryReader(input.DoOpenIfChanged(writer, applyAllDeletes));
         }
 
         public override long Version
         {
             get
             {
-                return @in.Version;
+                return input.Version;
             }
         }
 
-        public override bool Current
+        public override bool Current // LUCENENET TODO: Rename IsCurrent
         {
             get
             {
-                return @in.Current;
+                return input.Current;
             }
         }
 
@@ -155,13 +155,13 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return @in.IndexCommit;
+                return input.IndexCommit;
             }
         }
 
         protected internal override void DoClose()
         {
-            @in.DoClose();
+            input.DoClose();
         }
     }
 }

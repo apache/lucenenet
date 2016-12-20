@@ -48,12 +48,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Creates an {@code IndexFormatTooOldException}.
         /// </summary>
-        ///  <param name="in"> the open file that's too old </param>
+        ///  <param name="input"> the open file that's too old </param>
         ///  <param name="version"> the version of the file that was too old
         ///
         /// @lucene.internal  </param>
-        public IndexFormatTooOldException(DataInput @in, string version)
-            : this(@in.ToString(), version)
+        public IndexFormatTooOldException(DataInput input, string version)
+            : this(input.ToString(), version)
         {
         }
 
@@ -75,14 +75,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Creates an {@code IndexFormatTooOldException}.
         /// </summary>
-        ///  <param name="in"> the open file that's too old </param>
+        ///  <param name="input"> the open file that's too old </param>
         ///  <param name="version"> the version of the file that was too old </param>
         ///  <param name="minVersion"> the minimum version accepted </param>
         ///  <param name="maxVersion"> the maxium version accepted
         ///
         /// @lucene.internal  </param>
-        public IndexFormatTooOldException(DataInput @in, int version, int minVersion, int maxVersion)
-            : this(@in.ToString(), version, minVersion, maxVersion)
+        public IndexFormatTooOldException(DataInput input, int version, int minVersion, int maxVersion)
+            : this(input.ToString(), version, minVersion, maxVersion)
         {
         }
     }

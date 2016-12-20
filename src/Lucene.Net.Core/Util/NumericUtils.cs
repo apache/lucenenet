@@ -503,7 +503,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected internal override AcceptStatus Accept(BytesRef term)
+            protected override AcceptStatus Accept(BytesRef term)
             {
                 return NumericUtils.GetPrefixCodedLongShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }
@@ -529,7 +529,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected internal override AcceptStatus Accept(BytesRef term)
+            protected override AcceptStatus Accept(BytesRef term)
             {
                 return NumericUtils.GetPrefixCodedIntShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }

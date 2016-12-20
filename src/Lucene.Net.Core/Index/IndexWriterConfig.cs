@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Default value is 32. Change using <seealso cref="#setTermIndexInterval(int)"/>. </summary>
-        public const int DEFAULT_TERM_INDEX_INTERVAL = 32; // TODO: this should be private to the codec, not settable here
+        public static readonly int DEFAULT_TERM_INDEX_INTERVAL = 32; // TODO: this should be private to the codec, not settable here
 
         /// <summary>
         /// Denotes a flush trigger is disabled. </summary>
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 
         // indicates whether this config instance is already attached to a writer.
         // not final so that it can be cloned properly.
-        private SetOnce<IndexWriter> Writer = new SetOnce<IndexWriter>();
+        private SetOnce<IndexWriter> writer = new SetOnce<IndexWriter>();
 
         /// <summary>
         /// Sets the <seealso cref="IndexWriter"/> this config is attached to.
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
         ///           if this config is already attached to a writer. </exception>
         internal IndexWriterConfig SetIndexWriter(IndexWriter writer)
         {
-            this.Writer.Set(writer);
+            this.writer.Set(writer);
             return this;
         }
 
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             {
                 IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
-                clone.Writer = (SetOnce<IndexWriter>)Writer.Clone();
+                clone.writer = (SetOnce<IndexWriter>)writer.Clone();
 
                 // Mostly shallow clone, but do a deepish clone of
                 // certain objects that have state that cannot be shared
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override OpenMode_e? OpenMode
+        public override OpenMode_e? OpenMode // LUCENENET TODO: Make non-nullable if possible
         {
             get
             {
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override IndexDeletionPolicy DelPolicy
+        public override IndexDeletionPolicy DelPolicy // LUCENENET TODO: Rename back to IndexDeletionPolicy
         {
             get
             {
@@ -668,42 +668,42 @@ namespace Lucene.Net.Index
             return SetInfoStream(new PrintStreamInfoStream(printStream));
         }
 
-        public IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
+        new public IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
         {
             return (IndexWriterConfig)base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
         }
 
-        public IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
+        new public IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
         {
             return (IndexWriterConfig)base.SetMaxBufferedDocs(maxBufferedDocs);
         }
 
-        public IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
+        new public IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
         {
             return (IndexWriterConfig)base.SetMergedSegmentWarmer(mergeSegmentWarmer);
         }
 
-        public IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
+        new public IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
         {
             return (IndexWriterConfig)base.SetRAMBufferSizeMB(ramBufferSizeMB);
         }
 
-        public IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
+        new public IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
         {
             return (IndexWriterConfig)base.SetReaderTermsIndexDivisor(divisor);
         }
 
-        public IndexWriterConfig SetTermIndexInterval(int interval)
+        new public IndexWriterConfig SetTermIndexInterval(int interval)
         {
             return (IndexWriterConfig)base.SetTermIndexInterval(interval);
         }
 
-        public IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
+        new public IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
         {
             return (IndexWriterConfig)base.SetUseCompoundFile(useCompoundFile);
         }
 
-        public IndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
+        new public IndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
         {
             return (IndexWriterConfig)base.SetCheckIntegrityAtMerge(checkIntegrityAtMerge);
         }
@@ -711,7 +711,7 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(base.ToString());
-            sb.Append("writer=").Append(Writer).Append("\n");
+            sb.Append("writer=").Append(writer).Append("\n");
             return sb.ToString();
         }
     }

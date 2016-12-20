@@ -75,13 +75,13 @@ namespace Lucene.Net.Index
 
         internal override void Finish()
         {
-            if (HasPayloads)
+            if (hasPayloads)
             {
                 fieldInfo.SetStorePayloads();
             }
         }
 
-        internal bool HasPayloads;
+        internal bool hasPayloads;
 
         internal override void SkippingLongTerm()
         {
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             PayloadAttribute = null;
         }
 
-        private FieldInfo.IndexOptions? IndexOptions
+        private FieldInfo.IndexOptions? IndexOptions // LUCENENET TODO: Change to SetIndexOptions(IndexOptions indexOptions)
         {
             set
             {
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
                 TermsHashPerField.WriteVInt(1, (proxCode << 1) | 1);
                 TermsHashPerField.WriteVInt(1, payload.Length);
                 TermsHashPerField.WriteBytes(1, payload.Bytes, payload.Offset, payload.Length);
-                HasPayloads = true;
+                hasPayloads = true;
             }
             else
             {
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        internal BytesRef Payload;
+        internal BytesRef payload;
 
         /* Walk through all unique text tokens (Posting
          * instances) found in this field and serialize them
@@ -612,19 +612,19 @@ namespace Lucene.Net.Index
                                     // this position has a payload
                                     int payloadLength = prox.ReadVInt();
 
-                                    if (Payload == null)
+                                    if (payload == null)
                                     {
-                                        Payload = new BytesRef();
-                                        Payload.Bytes = new byte[payloadLength];
+                                        payload = new BytesRef();
+                                        payload.Bytes = new byte[payloadLength];
                                     }
-                                    else if (Payload.Bytes.Length < payloadLength)
+                                    else if (payload.Bytes.Length < payloadLength)
                                     {
-                                        Payload.Grow(payloadLength);
+                                        payload.Grow(payloadLength);
                                     }
 
-                                    prox.ReadBytes(Payload.Bytes, 0, payloadLength);
-                                    Payload.Length = payloadLength;
-                                    thisPayload = Payload;
+                                    prox.ReadBytes(payload.Bytes, 0, payloadLength);
+                                    payload.Length = payloadLength;
+                                    thisPayload = payload;
                                 }
                                 else
                                 {

@@ -52,6 +52,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
 [assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]
 [assembly: InternalsVisibleTo("Lucene.Net.Misc")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser")]
 
 //

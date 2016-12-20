@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -23,6 +24,10 @@ namespace Lucene.Net.Index
     /// Signals that no index was found in the Directory. Possibly because the
     /// directory is empty, however can also indicate an index corruption.
     /// </summary>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class IndexNotFoundException : FileNotFoundException
     {
         /// <summary>

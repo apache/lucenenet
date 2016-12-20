@@ -114,18 +114,18 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal BytesRef Payload;
+        internal BytesRef payload;
 
         public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
         {
             return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
         }
 
-        public override void FinishDocument(TermsHash termsHash)
+        internal override void FinishDocument(TermsHash termsHash)
         {
         }
 
-        public override void StartDocument()
+        internal override void StartDocument()
         {
         }
     }

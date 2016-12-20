@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
         /// Marks the most ram consuming active <seealso cref="DocumentsWriterPerThread"/> flush
         /// pending
         /// </summary>
-        protected internal virtual void MarkLargestWriterPending(DocumentsWriterFlushControl control, ThreadState perThreadState, long currentBytesPerThread)
+        protected virtual void MarkLargestWriterPending(DocumentsWriterFlushControl control, ThreadState perThreadState, long currentBytesPerThread)
         {
             control.FlushPending = FindLargestNonPendingWriter(control, perThreadState);
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriterConfig#getMaxBufferedDocs()"/>, otherwise
         /// <code>false</code>.
         /// </summary>
-        public virtual bool FlushOnDocCount()
+        protected internal virtual bool FlushOnDocCount() // LUCENENET TODO: Make property
         {
             return IWConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH;
         }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriterConfig#getMaxBufferedDeleteTerms()"/>, otherwise
         /// <code>false</code>.
         /// </summary>
-        public virtual bool FlushOnDeleteTerms()
+        protected internal virtual bool FlushOnDeleteTerms() // LUCENENET TODO: Make property
         {
             return IWConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH;
         }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriterConfig#getRAMBufferSizeMB()"/>, otherwise
         /// <code>false</code>.
         /// </summary>
-        public virtual bool FlushOnRAM()
+        protected internal virtual bool FlushOnRAM() // LUCENENET TODO: Make property
         {
             return IWConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH;
         }

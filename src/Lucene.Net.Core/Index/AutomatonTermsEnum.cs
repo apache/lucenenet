@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         /// Returns true if the term matches the automaton. Also stashes away the term
         /// to assist with smart enumeration.
         /// </summary>
-        protected internal override AcceptStatus Accept(BytesRef term)
+        protected override AcceptStatus Accept(BytesRef term)
         {
             if (CommonSuffixRef == null || StringHelper.EndsWith(term, CommonSuffixRef))
             {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override BytesRef NextSeekTerm(BytesRef term)
+        protected override BytesRef NextSeekTerm(BytesRef term)
         {
             //System.out.println("ATE.nextSeekTerm term=" + term);
             if (term == null)

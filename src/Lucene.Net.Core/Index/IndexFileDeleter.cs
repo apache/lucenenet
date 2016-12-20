@@ -111,9 +111,9 @@ namespace Lucene.Net.Index
         private readonly IndexWriter Writer;
 
         // called only from assert
-        private bool Locked()
+        private bool Locked() // LUCENENET TODO: Make property IsLocked
         {
-            //LUCENE TO-DO Check this logic
+            //LUCENENET TODO: This always returns true - probably incorrect
             return Writer == null || true /*Monitor. IsEntered(Writer)*/;
         }
 

@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Sole constructor, typically called by sub-classes constructors. </summary>
-        protected internal IndexDeletionPolicy()
+        protected IndexDeletionPolicy()
         {
         }
 

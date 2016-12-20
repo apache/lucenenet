@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        protected internal override DirectoryReader DoWrapDirectoryReader(DirectoryReader @in)
+        protected override DirectoryReader DoWrapDirectoryReader(DirectoryReader @in)
         {
             return new AssertingDirectoryReader(@in);
         }
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return @in.CoreCacheKey;
+                return input.CoreCacheKey;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return @in.CombinedCoreAndDeletesKey;
+                return input.CombinedCoreAndDeletesKey;
             }
         }
     }

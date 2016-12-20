@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         private bool ClosedByChild = false;
         private readonly AtomicInteger refCount = new AtomicInteger(1);
 
-        protected IndexReader()
+        internal IndexReader()
         {
             if (!(this is CompositeReader || this is AtomicReader))
             {
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public interface ReaderClosedListener
+        public interface ReaderClosedListener // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Invoked when the <seealso cref="IndexReader"/> is closed. </summary>
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
         /// <param name="directory"> the index directory </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// @deprecated Use <seealso cref="DirectoryReader#open(Directory)"/>
-        [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory)/>")]
+        [Obsolete("Use DirectoryReader.Open(Directory)")]
         public static DirectoryReader Open(Directory directory)
         {
             return DirectoryReader.Open(directory);
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
         ///  to -1 to skip loading the terms index entirely. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// @deprecated Use <seealso cref="DirectoryReader#open(Directory,int)"/>
-        [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory,int)/>")]
+        [Obsolete("Use DirectoryReader.Open(Directory,int)")]
         public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
         {
             return DirectoryReader.Open(directory, termInfosIndexDivisor);
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental </seealso>
         /// @deprecated Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>
-        [Obsolete("Use <seealso cref=DirectoryReader#open(IndexWriter,boolean)/>")]
+        [Obsolete("Use DirectoryReader.Open(IndexWriter,bool)")]
         public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
         {
             return DirectoryReader.Open(writer, applyAllDeletes);
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
         /// <param name="commit"> the commit point to open </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit)"/>
-        [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit)/>")]
+        [Obsolete("Use DirectoryReader.Open(IndexCommit)")]
         public static DirectoryReader Open(IndexCommit commit)
         {
             return DirectoryReader.Open(commit);
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
         ///  to -1 to skip loading the terms index entirely. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/>
-        [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit,int)/>")]
+        [Obsolete("Use DirectoryReader.Open(IndexCommit,int)/>")]
         public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
         {
             return DirectoryReader.Open(commit, termInfosIndexDivisor);
@@ -543,9 +543,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                {
-                    return NumDeletedDocs > 0;
-                }
+                return NumDeletedDocs > 0;
             }
         }
 

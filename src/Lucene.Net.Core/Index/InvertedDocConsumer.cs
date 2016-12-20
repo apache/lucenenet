@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    public abstract class InvertedDocConsumer
+    internal abstract class InvertedDocConsumer
     {
         /// <summary>
         /// Abort (called after hitting AbortException) </summary>

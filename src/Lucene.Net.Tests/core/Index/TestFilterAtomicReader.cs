@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 public override BytesRef Next()
                 {
                     BytesRef text;
-                    while ((text = @in.Next()) != null)
+                    while ((text = input.Next()) != null)
                     {
                         if (text.Utf8ToString().IndexOf('e') != -1)
                         {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
                 public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
-                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).DocsEnumIn_Nunit(), flags));
+                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).input, flags));
                 }
             }
 
@@ -99,8 +99,8 @@ namespace Lucene.Net.Index
             /// Filter that only returns odd numbered documents. </summary>
             private class TestPositions : FilterDocsAndPositionsEnum
             {
-                public TestPositions(DocsAndPositionsEnum @in)
-                    : base(@in)
+                public TestPositions(DocsAndPositionsEnum input)
+                    : base(input)
                 {
                 }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 public override int NextDoc()
                 {
                     int doc;
-                    while ((doc = @in.NextDoc()) != NO_MORE_DOCS)
+                    while ((doc = input.NextDoc()) != NO_MORE_DOCS)
                     {
                         if ((doc % 2) == 1)
                         {

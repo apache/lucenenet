@@ -412,7 +412,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// finds the smallest Lev(n) DFA that accepts the term. </summary>
-            protected internal override AcceptStatus Accept(BytesRef term)
+            protected override AcceptStatus Accept(BytesRef term)
             {
                 //System.out.println("AFTE.accept term=" + term);
                 int ed = Matchers.Length - 1;

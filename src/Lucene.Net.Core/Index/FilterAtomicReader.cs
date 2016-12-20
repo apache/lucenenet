@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         {
             while (reader is FilterAtomicReader)
             {
-                reader = ((FilterAtomicReader)reader).@in;
+                reader = ((FilterAtomicReader)reader).input;
             }
             return reader;
         }
@@ -67,14 +67,14 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying Fields instance. </summary>
-            protected internal readonly Fields input;
+            protected readonly Fields input;
 
             /// <summary>
             /// Creates a new FilterFields. </summary>
-            /// <param name="in"> the underlying Fields instance. </param>
-            public FilterFields(Fields @in)
+            /// <param name="input"> the underlying Fields instance. </param>
+            public FilterFields(Fields input)
             {
-                this.input = @in;
+                this.input = input;
             }
 
             public override IEnumerator<string> GetEnumerator()
@@ -103,39 +103,39 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying Terms instance. </summary>
-            protected internal readonly Terms @in;
+            protected readonly Terms input;
 
             /// <summary>
             /// Creates a new FilterTerms </summary>
-            /// <param name="in"> the underlying Terms instance. </param>
-            public FilterTerms(Terms @in)
+            /// <param name="input"> the underlying Terms instance. </param>
+            public FilterTerms(Terms input)
             {
-                this.@in = @in;
+                this.input = input;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return @in.Iterator(reuse);
+                return input.Iterator(reuse);
             }
 
             public override IComparer<BytesRef> Comparator
             {
                 get
                 {
-                    return @in.Comparator;
+                    return input.Comparator;
                 }
             }
 
             public override long Size()
             {
-                return @in.Size();
+                return input.Size();
             }
 
             public override long SumTotalTermFreq
             {
                 get
                 {
-                    return @in.SumTotalTermFreq;
+                    return input.SumTotalTermFreq;
                 }
             }
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return @in.SumDocFreq;
+                    return input.SumDocFreq;
                 }
             }
 
@@ -151,28 +151,28 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return @in.DocCount;
+                    return input.DocCount;
                 }
             }
 
             public override bool HasFreqs()
             {
-                return @in.HasFreqs();
+                return input.HasFreqs();
             }
 
             public override bool HasOffsets()
             {
-                return @in.HasOffsets();
+                return input.HasOffsets();
             }
 
             public override bool HasPositions()
             {
-                return @in.HasPositions();
+                return input.HasPositions();
             }
 
             public override bool HasPayloads()
             {
-                return @in.HasPayloads();
+                return input.HasPayloads();
             }
         }
 
@@ -182,76 +182,71 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying TermsEnum instance. </summary>
-            protected internal readonly TermsEnum @in;
+            protected internal readonly TermsEnum input;
 
             /// <summary>
             /// Creates a new FilterTermsEnum </summary>
-            /// <param name="in"> the underlying TermsEnum instance. </param>
-            public FilterTermsEnum(TermsEnum @in)
+            /// <param name="input"> the underlying TermsEnum instance. </param>
+            public FilterTermsEnum(TermsEnum input)
             {
-                this.@in = @in;
-            }
-
-            public TermsEnum TermsEnumIn_Nunit()
-            {
-                return @in;
+                this.input = input;
             }
 
             public override AttributeSource Attributes()
             {
-                return @in.Attributes();
+                return input.Attributes();
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                return @in.SeekCeil(text);
+                return input.SeekCeil(text);
             }
 
             public override void SeekExact(long ord)
             {
-                @in.SeekExact(ord);
+                input.SeekExact(ord);
             }
 
             public override BytesRef Next()
             {
-                return @in.Next();
+                return input.Next();
             }
 
             public override BytesRef Term()
             {
-                return @in.Term();
+                return input.Term();
             }
 
             public override long Ord()
             {
-                return @in.Ord();
+                return input.Ord();
             }
 
             public override int DocFreq()
             {
-                return @in.DocFreq();
+                return input.DocFreq();
             }
 
             public override long TotalTermFreq()
             {
-                return @in.TotalTermFreq();
+                return input.TotalTermFreq();
             }
 
             public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
             {
-                return @in.Docs(liveDocs, reuse, flags);
+                return input.Docs(liveDocs, reuse, flags);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                return @in.DocsAndPositions(liveDocs, reuse, flags);
+                return input.DocsAndPositions(liveDocs, reuse, flags);
             }
 
             public override IComparer<BytesRef> Comparator
             {
                 get
                 {
-                    return @in.Comparator;
+                    return input.Comparator;
                 }
             }
         }
@@ -263,44 +258,44 @@ namespace Lucene.Net.Index
             /// <summary>
             /// The underlying DocsEnum instance.
             /// </summary>
-            public DocsEnum DocsEnum { get; private set; }
+            protected internal DocsEnum input;
 
             /// <summary>
             /// Create a new FilterDocsEnum </summary>
-            /// <param name="in"> the underlying DocsEnum instance. </param>
-            public FilterDocsEnum(DocsEnum @in)
+            /// <param name="input"> the underlying DocsEnum instance. </param>
+            public FilterDocsEnum(DocsEnum input)
             {
-                this.DocsEnum = @in;
+                this.input = input;
             }
 
             public override AttributeSource Attributes()
             {
-                return DocsEnum.Attributes();
+                return input.Attributes();
             }
 
             public override int DocID()
             {
-                return DocsEnum.DocID();
+                return input.DocID();
             }
 
             public override int Freq()
             {
-                return DocsEnum.Freq();
+                return input.Freq();
             }
 
             public override int NextDoc()
             {
-                return DocsEnum.NextDoc();
+                return input.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return DocsEnum.Advance(target);
+                return input.Advance(target);
             }
 
             public override long Cost()
             {
-                return DocsEnum.Cost();
+                return input.Cost();
             }
         }
 
@@ -310,88 +305,83 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying DocsAndPositionsEnum instance. </summary>
-            protected internal readonly DocsAndPositionsEnum @in;
+            protected internal readonly DocsAndPositionsEnum input;
 
             /// <summary>
             /// Create a new FilterDocsAndPositionsEnum </summary>
-            /// <param name="in"> the underlying DocsAndPositionsEnum instance. </param>
-            public FilterDocsAndPositionsEnum(DocsAndPositionsEnum @in)
+            /// <param name="input"> the underlying DocsAndPositionsEnum instance. </param>
+            public FilterDocsAndPositionsEnum(DocsAndPositionsEnum input)
             {
-                this.@in = @in;
-            }
-
-            public DocsAndPositionsEnum DocsEnumIn_Nunit()
-            {
-                return @in;
+                this.input = input;
             }
 
             public override AttributeSource Attributes()
             {
-                return @in.Attributes();
+                return input.Attributes();
             }
 
             public override int DocID()
             {
-                return @in.DocID();
+                return input.DocID();
             }
 
             public override int Freq()
             {
-                return @in.Freq();
+                return input.Freq();
             }
 
             public override int NextDoc()
             {
-                return @in.NextDoc();
+                return input.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return @in.Advance(target);
+                return input.Advance(target);
             }
 
             public override int NextPosition()
             {
-                return @in.NextPosition();
+                return input.NextPosition();
             }
 
             public override int StartOffset()
             {
-                return @in.StartOffset();
+                return input.StartOffset();
             }
 
             public override int EndOffset()
             {
-                return @in.EndOffset();
+                return input.EndOffset();
             }
 
             public override BytesRef Payload
             {
                 get
                 {
-                    return @in.Payload;
+                    return input.Payload;
                 }
             }
 
             public override long Cost()
             {
-                return @in.Cost();
+                return input.Cost();
             }
         }
 
         /// <summary>
         /// The underlying AtomicReader. </summary>
-        protected internal readonly AtomicReader @in;
+        protected internal readonly AtomicReader input;
 
         /// <summary>
         /// <p>Construct a FilterAtomicReader based on the specified base reader.
         /// <p>Note that base reader is closed if this FilterAtomicReader is closed.</p> </summary>
         /// <param name="in"> specified base reader. </param>
-        public FilterAtomicReader(AtomicReader @in)
+        public FilterAtomicReader(AtomicReader input)
             : base()
         {
-            this.@in = @in;
-            @in.RegisterParentReader(this);
+            this.input = input;
+            input.RegisterParentReader(this);
         }
 
         public override Bits LiveDocs
@@ -399,7 +389,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return @in.LiveDocs;
+                return input.LiveDocs;
             }
         }
 
@@ -407,14 +397,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return @in.FieldInfos;
+                return input.FieldInfos;
             }
         }
 
         public override Fields GetTermVectors(int docID)
         {
             EnsureOpen();
-            return @in.GetTermVectors(docID);
+            return input.GetTermVectors(docID);
         }
 
         public override int NumDocs
@@ -423,7 +413,7 @@ namespace Lucene.Net.Index
             {
                 {
                     // Don't call ensureOpen() here (it could affect performance)
-                    return @in.NumDocs;
+                    return input.NumDocs;
                 }
             }
         }
@@ -433,19 +423,19 @@ namespace Lucene.Net.Index
             get
             {
                 // Don't call ensureOpen() here (it could affect performance)
-                return @in.MaxDoc;
+                return input.MaxDoc;
             }
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {
             EnsureOpen();
-            @in.Document(docID, visitor);
+            input.Document(docID, visitor);
         }
 
         protected internal override void DoClose()
         {
-            @in.Dispose();
+            input.Dispose();
         }
 
         public override Fields Fields
@@ -453,14 +443,14 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return @in.Fields;
+                return input.Fields;
             }
         }
 
         public override string ToString()
         {
             StringBuilder buffer = new StringBuilder("FilterAtomicReader(");
-            buffer.Append(@in);
+            buffer.Append(input);
             buffer.Append(')');
             return buffer.ToString();
         }
@@ -468,43 +458,43 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNumericDocValues(string field)
         {
             EnsureOpen();
-            return @in.GetNumericDocValues(field);
+            return input.GetNumericDocValues(field);
         }
 
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
             EnsureOpen();
-            return @in.GetBinaryDocValues(field);
+            return input.GetBinaryDocValues(field);
         }
 
         public override SortedDocValues GetSortedDocValues(string field)
         {
             EnsureOpen();
-            return @in.GetSortedDocValues(field);
+            return input.GetSortedDocValues(field);
         }
 
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
             EnsureOpen();
-            return @in.GetSortedSetDocValues(field);
+            return input.GetSortedSetDocValues(field);
         }
 
         public override NumericDocValues GetNormValues(string field)
         {
             EnsureOpen();
-            return @in.GetNormValues(field);
+            return input.GetNormValues(field);
         }
 
         public override Bits GetDocsWithField(string field)
         {
             EnsureOpen();
-            return @in.GetDocsWithField(field);
+            return input.GetDocsWithField(field);
         }
 
         public override void CheckIntegrity()
         {
             EnsureOpen();
-            @in.CheckIntegrity();
+            input.CheckIntegrity();
         }
     }
 }

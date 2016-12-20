@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    public abstract class InvertedDocEndConsumer
+    internal abstract class InvertedDocEndConsumer
     {
         internal abstract void Flush(IDictionary<string, InvertedDocEndConsumerPerField> fieldsToFlush, SegmentWriteState state);
 

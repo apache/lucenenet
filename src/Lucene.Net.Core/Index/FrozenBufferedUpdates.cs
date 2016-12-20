@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual IEnumerable<Term> TermsIterable()
+        public virtual IEnumerable<Term> TermsIterable() // LUCENENET TODO: Rename to TermsEnumerable() ?
         {
             return new IterableAnonymousInnerClassHelper(this);
         }
@@ -165,7 +166,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual IEnumerable<QueryAndLimit> QueriesIterable()
+        public virtual IEnumerable<QueryAndLimit> QueriesIterable() // LUCENENET TODO: Rename to QueriesEnumerable() ?
         {
             return new IterableAnonymousInnerClassHelper2(this);
         }
@@ -184,7 +185,7 @@ namespace Lucene.Net.Index
                 return new IteratorAnonymousInnerClassHelper(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -256,20 +257,9 @@ namespace Lucene.Net.Index
             return s;
         }
 
-        public virtual bool Any()
+        public virtual bool Any() // LUCENENET TODO: Make property?
         {
             return termCount > 0 || Queries.Length > 0 || NumericDVUpdates.Length > 0 || BinaryDVUpdates.Length > 0;
-        }
-
-        //For debugging only
-        public int TermCount
-        {
-            get { return termCount; }
-        }
-
-        public object Queries_Nunit()
-        {
-            return Queries.Clone();
         }
     }
 }

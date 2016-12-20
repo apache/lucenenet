@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void FinishDocument(TermsHash termsHash)
+        internal override void FinishDocument(TermsHash termsHash)
         {
             Debug.Assert(DocWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
 
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
             PerFields[NumVectorFields++] = fieldToFlush;
         }
 
-        public override void StartDocument()
+        internal override void StartDocument()
         {
             Debug.Assert(ClearLastVectorFieldName());
             Reset();

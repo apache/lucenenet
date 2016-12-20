@@ -33,11 +33,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Field's name </summary>
-        public readonly string Name;
+        public readonly string Name; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Internal field number </summary>
-        public readonly int Number;
+        public readonly int Number; // LUCENENET TODO: Make property
 
         private bool indexed;
         private DocValuesType_e? docValueType;
@@ -134,7 +134,9 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normsType, IDictionary<string, string> attributes)
+        public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
+            bool storePayloads, IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normsType, 
+            IDictionary<string, string> attributes)
         {
             this.Name = name;
             this.indexed = indexed;
@@ -233,9 +235,9 @@ namespace Lucene.Net.Index
             Debug.Assert(CheckConsistency());
         }
 
-        public DocValuesType_e? DocValuesType
+        public DocValuesType_e? DocValuesType // LUCENENET TODO: try to make non-nullable
         {
-            set
+            internal set
             {
                 if (docValueType != null && docValueType != value)
                 {
@@ -252,7 +254,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
-        public IndexOptions? FieldIndexOptions
+        // LUCENENET TODO: try to make non-nullable
+        public IndexOptions? FieldIndexOptions // LUCENENET TODO: Rename FieldIndex (after moving enum from this class)
         {
             get
             {
@@ -263,7 +266,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if this field has any docValues.
         /// </summary>
-        public bool HasDocValues()
+        public bool HasDocValues() // LUCENENET TODO: Make property
         {
             return docValueType != null;
         }
@@ -285,13 +288,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <seealso cref="DocValuesType_e"/> of the norm. this may be null if the field has no norms.
         /// </summary>
-        public DocValuesType_e? NormType
+        public DocValuesType_e? NormType // LUCENENET TODO: try to make non-nullable
         {
             get
             {
                 return NormTypeValue;
             }
-            set
+            internal set
             {
                 if (NormTypeValue != null && NormTypeValue != value)
                 {
@@ -308,7 +311,7 @@ namespace Lucene.Net.Index
             Debug.Assert(CheckConsistency());
         }
 
-        public void SetStorePayloads()
+        internal void SetStorePayloads()
         {
             if (indexed && (int)IndexOptionsValue.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
@@ -320,7 +323,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if norms are explicitly omitted for this field
         /// </summary>
-        public bool OmitsNorms()
+        public bool OmitsNorms() // LUCENENET TODO: Make property
         {
             return OmitNorms;
         }
@@ -328,7 +331,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if this field actually has any norms.
         /// </summary>
-        public bool HasNorms()
+        public bool HasNorms() // LUCENENET TODO: Make property
         {
             return NormTypeValue != null;
         }
@@ -336,7 +339,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if this field is indexed.
         /// </summary>
-        public bool Indexed
+        public bool Indexed // LUCENENET TODO: Rename IsIndexed
         {
             get
             {
@@ -347,7 +350,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if any payloads exist for this field.
         /// </summary>
-        public bool HasPayloads()
+        public bool HasPayloads() // LUCENENET TODO: Make property
         {
             return StorePayloads;
         }
@@ -355,7 +358,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if any term vectors exist for this field.
         /// </summary>
-        public bool HasVectors()
+        public bool HasVectors() // LUCENENET TODO: Make property
         {
             return StoreTermVector;
         }
@@ -408,7 +411,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns internal codec attributes map. May be null if no mappings exist.
         /// </summary>
-        public IDictionary<string, string> Attributes()
+        public IDictionary<string, string> Attributes() // LUCENENET TODO: Make property
         {
             return Attributes_Renamed;
         }

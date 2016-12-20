@@ -158,8 +158,8 @@ namespace Lucene.Net.Index
                 if (Random().Next(5) == 0)
                 {
                     FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
-                    Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.TermCount);
-                    Assert.AreEqual(queriesSinceFreeze, ((Query[])freezeGlobalBuffer.Queries_Nunit()).Length);
+                    Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.termCount);
+                    Assert.AreEqual(queriesSinceFreeze, ((Query[])freezeGlobalBuffer.Queries.Clone()).Length);
                     queriesSinceFreeze = 0;
                     termsSinceFreeze = 0;
                     Assert.IsFalse(queue.AnyChanges());
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(queue.AnyChanges(), "changes in global buffer");
             FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
             Assert.IsTrue(freezeGlobalBuffer.Any());
-            Assert.AreEqual(1, freezeGlobalBuffer.TermCount);
+            Assert.AreEqual(1, freezeGlobalBuffer.termCount);
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
         }
 

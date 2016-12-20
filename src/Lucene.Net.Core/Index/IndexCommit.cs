@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         ///  only used by <seealso cref="IndexWriter"/> after invoking the
         ///  <seealso cref="IndexDeletionPolicy"/>.
         /// </summary>
-        public abstract bool Deleted { get; }
+        public abstract bool Deleted { get; } // LUCENENET TODO: Rename IsDeleted
 
         /// <summary>
         /// Returns number of segments referenced by this commit. </summary>
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         ///  constructors, typically implicit.)
         /// </summary>
-        protected internal IndexCommit()
+        protected IndexCommit()
         {
         }
 

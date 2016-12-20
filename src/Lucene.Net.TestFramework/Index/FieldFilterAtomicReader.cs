@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("FieldFilterAtomicReader(reader=");
-            sb.Append(@in).Append(", fields=");
+            sb.Append(input).Append(", fields=");
             if (Negate)
             {
                 sb.Append('!');

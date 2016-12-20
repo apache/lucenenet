@@ -61,8 +61,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public class AssertingFields : FilterFields
         {
-            public AssertingFields(Fields @in)
-                : base(@in)
+            public AssertingFields(Fields input)
+                : base(input)
             {
             }
 
@@ -85,14 +85,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public class AssertingTerms : FilterTerms
         {
-            public AssertingTerms(Terms @in)
-                : base(@in)
+            public AssertingTerms(Terms input)
+                : base(input)
             {
             }
 
             public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
             {
-                TermsEnum termsEnum = @in.Intersect(automaton, bytes);
+                TermsEnum termsEnum = input.Intersect(automaton, bytes);
                 Debug.Assert(termsEnum != null);
                 Debug.Assert(bytes == null || bytes.Valid);
                 return new AssertingTermsEnum(termsEnum);
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingTermsEnum)
                 {
-                    reuse = ((AssertingTermsEnum)reuse).TermsEnumIn_Nunit();
+                    reuse = ((AssertingTermsEnum)reuse).input;
                 }
                 TermsEnum termsEnum = base.Iterator(reuse);
                 Debug.Assert(termsEnum != null);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingDocsEnum)
                 {
-                    reuse = ((AssertingDocsEnum)reuse).DocsEnum;
+                    reuse = ((AssertingDocsEnum)reuse).input;
                 }
                 DocsEnum docs = base.Docs(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsEnum(docs);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingDocsAndPositionsEnum)
                 {
-                    reuse = ((AssertingDocsAndPositionsEnum)reuse).DocsEnumIn_Nunit();
+                    reuse = ((AssertingDocsAndPositionsEnum)reuse).input;
                 }
                 DocsAndPositionsEnum docs = base.DocsAndPositions(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(State != DocsEnumState.FINISHED, "nextDoc() called after NO_MORE_DOCS");
                 int nextDoc = base.NextDoc();
-                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + DocsEnum);
+                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + input);
                 if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     State = DocsEnumState.FINISHED;
@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
 
             public override int DocID()
             {
-                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + DocsEnum.GetType() + " " + base.DocID() + " instead of " + Doc);
+                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + input.GetType() + " " + base.DocID() + " instead of " + Doc);
                 return Doc;
             }
 
@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
 
             public override int DocID()
             {
-                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + @in.GetType() + " " + base.DocID() + " instead of " + Doc);
+                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + input.GetType() + " " + base.DocID() + " instead of " + Doc);
                 return Doc;
             }
 

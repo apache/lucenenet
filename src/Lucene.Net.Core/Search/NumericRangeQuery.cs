@@ -470,7 +470,7 @@ namespace Lucene.Net.Search
                 RangeBounds.RemoveFirst();
             }
 
-            protected internal override BytesRef NextSeekTerm(BytesRef term)
+            protected override BytesRef NextSeekTerm(BytesRef term)
             {
                 while (RangeBounds.Count >= 2)
                 {
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search
                 return null;
             }
 
-            protected internal override AcceptStatus Accept(BytesRef term)
+            protected override AcceptStatus Accept(BytesRef term)
             {
                 while (CurrentUpperBound == null || TermComp.Compare(term, CurrentUpperBound) > 0)
                 {

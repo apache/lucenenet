@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
     /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
     internal abstract class FlushPolicy
     {
-        protected internal LiveIndexWriterConfig IWConfig;
-        protected internal InfoStream InfoStream;
+        protected LiveIndexWriterConfig IWConfig;
+        protected InfoStream InfoStream;
 
         /// <summary>
         /// Called for each delete term. If this is a delete triggered due to an update
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
         /// <p>
         /// this method will never return <code>null</code>
         /// </summary>
-        protected internal virtual ThreadState FindLargestNonPendingWriter(DocumentsWriterFlushControl control, ThreadState perThreadState)
+        protected virtual ThreadState FindLargestNonPendingWriter(DocumentsWriterFlushControl control, ThreadState perThreadState)
         {
             Debug.Assert(perThreadState.Dwpt.NumDocsInRAM > 0);
             long maxRamSoFar = perThreadState.BytesUsed;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             FlushPolicy clone;
 

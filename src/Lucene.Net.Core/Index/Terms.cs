@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                 this.StartTerm = startTerm;
             }
 
-            protected internal override BytesRef NextSeekTerm(BytesRef term)
+            protected override BytesRef NextSeekTerm(BytesRef term)
             {
                 if (term == null)
                 {

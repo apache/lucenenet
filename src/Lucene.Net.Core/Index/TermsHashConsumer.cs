@@ -25,9 +25,9 @@ namespace Lucene.Net.Index
 
         public abstract void Abort();
 
-        public abstract void StartDocument();
+        internal abstract void StartDocument();
 
-        public abstract void FinishDocument(TermsHash termsHash);
+        internal abstract void FinishDocument(TermsHash termsHash);
 
         public abstract TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);
     }
