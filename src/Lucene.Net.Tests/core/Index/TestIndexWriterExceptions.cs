@@ -2368,7 +2368,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override void HandleMergeException(Exception exc)
+            protected override void HandleMergeException(Exception exc)
             {
                 // suppress only FakeIOException:
                 if (!(exc is MockDirectoryWrapper.FakeIOException))

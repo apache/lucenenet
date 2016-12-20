@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Default termInfosIndexDivisor. </summary>
-        public const int DEFAULT_TERMS_INDEX_DIVISOR = 1;
+        public static readonly int DEFAULT_TERMS_INDEX_DIVISOR = 1;
 
         /// <summary>
         /// The index directory. </summary>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
         ///  Directory </summary>
         /// <param name="directory"> the index directory </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public static DirectoryReader Open(Directory directory)
+        new public static DirectoryReader Open(Directory directory)
         {
             return StandardDirectoryReader.Open(directory, null, DEFAULT_TERMS_INDEX_DIVISOR);
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         ///  implementations, including the default one in this release. It only makes
         ///  sense for terms indexes that can efficiently re-sample terms at load time. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
+        new public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
         {
             return StandardDirectoryReader.Open(directory, null, termInfosIndexDivisor);
         }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
         /// <seealso cref= #openIfChanged(DirectoryReader,IndexWriter,boolean)
         ///
         /// @lucene.experimental </seealso>
-        public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
+        new public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
         {
             return writer.GetReader(applyAllDeletes);
         }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
         ///  <seealso cref="IndexCommit"/>. </summary>
         /// <param name="commit"> the commit point to open </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public static DirectoryReader Open(IndexCommit commit)
+        new public static DirectoryReader Open(IndexCommit commit)
         {
             return StandardDirectoryReader.Open(commit.Directory, commit, DEFAULT_TERMS_INDEX_DIVISOR);
         }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
         ///  implementations, including the default one in this release. It only makes
         ///  sense for terms indexes that can efficiently re-sample terms at load time. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
+        new public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
         {
             return StandardDirectoryReader.Open(commit.Directory, commit, termInfosIndexDivisor);
         }
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
         /// cloned and not protected for modification outside of this reader.
         /// Subclasses of {@code DirectoryReader} should take care to not allow
         /// modification of this internal array, e.g. <seealso cref="#doOpenIfChanged()"/>. </param>
-        protected internal DirectoryReader(Directory directory, AtomicReader[] segmentReaders)
+        protected DirectoryReader(Directory directory, AtomicReader[] segmentReaders)
             : base(segmentReaders)
         {
             this.Directory_Renamed = directory;
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the directory this index resides in. </summary>
-        public Directory Directory()
+        public Directory Directory() // LUCENENET TODO: make property
         {
             // Don't ensureOpen here -- in certain cases, when a
             // cloned/reopened reader needs to commit, it may call
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
         /// changes.</p>
         /// </summary>
         /// <exception cref="IOException">           if there is a low-level IO error </exception>
-        public abstract bool Current { get; }
+        public abstract bool Current { get; } // LUCENENET TODO: Rename IsCurrent
 
         /// <summary>
         /// Expert: return the IndexCommit that this reader has opened.

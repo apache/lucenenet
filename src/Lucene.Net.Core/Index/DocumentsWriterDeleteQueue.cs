@@ -68,11 +68,11 @@ namespace Lucene.Net.Index
     /// will also not be added to its private deletes neither to the global deletes.
     ///
     /// </summary>
-    public sealed class DocumentsWriterDeleteQueue
+    internal sealed class DocumentsWriterDeleteQueue
     {
-        private Node Tail; // .NET port: can't use type without specifying type parameter, also not volatile due to Interlocked
+        private Node Tail; // LUCENENET NOTE: can't use type without specifying type parameter, also not volatile due to Interlocked
 
-        // .NET port: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
+        // LUCENENET NOTE: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
         private readonly DeleteSlice GlobalSlice;
 
         private readonly BufferedUpdates GlobalBufferedUpdates;
@@ -81,17 +81,17 @@ namespace Lucene.Net.Index
 
         internal readonly long Generation;
 
-        public DocumentsWriterDeleteQueue()
+        internal DocumentsWriterDeleteQueue()
             : this(0)
         {
         }
 
-        public DocumentsWriterDeleteQueue(long generation)
+        internal DocumentsWriterDeleteQueue(long generation)
             : this(new BufferedUpdates(), generation)
         {
         }
 
-        public DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
+        internal DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
         {
             this.GlobalBufferedUpdates = globalBufferedUpdates;
             this.Generation = generation;
@@ -103,13 +103,13 @@ namespace Lucene.Net.Index
             GlobalSlice = new DeleteSlice(Tail);
         }
 
-        public void AddDelete(params Query[] queries)
+        internal void AddDelete(params Query[] queries)
         {
             Add(new QueryArrayNode(queries));
             TryApplyGlobalSlice();
         }
 
-        public void AddDelete(params Term[] terms)
+        internal void AddDelete(params Term[] terms)
         {
             Add(new TermArrayNode(terms));
             TryApplyGlobalSlice();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// invariant for document update
         /// </summary>
-        public void Add(Term term, DeleteSlice slice)
+        internal void Add(Term term, DeleteSlice slice)
         {
             TermNode termNode = new TermNode(term);
             Add(termNode);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
             // we can do it just every n times or so?
         }
 
-        private void Add(Node item)
+        internal void Add(Node item)
         {
             /*
              * this non-blocking / 'wait-free' linked list add was inspired by Apache
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool AnyChanges()
+        internal bool AnyChanges()
         {
             GlobalBufferLock.@Lock();
             try
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public void TryApplyGlobalSlice()
+        internal void TryApplyGlobalSlice()
         {
             if (GlobalBufferLock.TryLock())
             {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
+        internal FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
         {
             GlobalBufferLock.@Lock();
             /*
@@ -270,12 +270,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public DeleteSlice NewSlice()
+        internal DeleteSlice NewSlice()
         {
             return new DeleteSlice(Tail);
         }
 
-        public bool UpdateSlice(DeleteSlice slice)
+        internal bool UpdateSlice(DeleteSlice slice)
         {
             if (slice.SliceTail != Tail) // If we are the same just
             {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        public class DeleteSlice
+        internal class DeleteSlice
         {
             // No need to be volatile, slices are thread captive (only accessed by one thread)!
             internal Node SliceHead; // we don't apply this one
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
                 SliceHead = SliceTail = currentTail;
             }
 
-            public virtual void Apply(BufferedUpdates del, int docIDUpto)
+            internal virtual void Apply(BufferedUpdates del, int docIDUpto)
             {
                 if (SliceHead == SliceTail)
                 {
@@ -338,12 +338,12 @@ namespace Lucene.Net.Index
             /// Returns <code>true</code> iff the given item is identical to the item
             /// hold by the slices tail, otherwise <code>false</code>.
             /// </summary>
-            public virtual bool IsTailItem(object item)
+            internal virtual bool IsTailItem(object item)
             {
                 return SliceTail.Item == item;
             }
 
-            internal virtual bool Empty
+            internal virtual bool Empty // LUCENENET TODO: Rename IsEmpty
             {
                 get
                 {
@@ -352,12 +352,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int NumGlobalTermDeletes()
+        public int NumGlobalTermDeletes() // LUCENENET TODO: Make property
         {
             return GlobalBufferedUpdates.NumTermDeletes.Get();
         }
 
-        public void Clear()
+        internal void Clear()
         {
             GlobalBufferLock.@Lock();
             try
@@ -372,10 +372,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        public class Node
+        internal class Node // LUCENENET specific - made internal instead of private because it is used in internal APIs
         {
             internal /*volatile*/ Node Next;
-            internal readonly object Item;
+            internal readonly object Item; // LUCENENET TODO: Can we make this generic like the original? Should make this a property as well
 
             internal Node(object item)
             {
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
 
             internal virtual bool CasNext(Node cmp, Node val)
             {
-                // .NET port: Interlocked.CompareExchange(location, value, comparand) is backwards from
+                // LUCENENET NOTE: Interlocked.CompareExchange(location, value, comparand) is backwards from
                 // AtomicReferenceFieldUpdater.compareAndSet(obj, expect, update), so swapping val and cmp.
                 // Return true if the result of the CompareExchange is the same as the comparison.
                 return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), cmp);
@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int BufferedUpdatesTermsSize
+        public int BufferedUpdatesTermsSize // LUCENENET TODO: Make GetBufferedUpdatesTermsSize() this is a bit risky to make a property
         {
             get
             {
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public long BytesUsed()
+        public long BytesUsed() // LUCENENET TODO: make property
         {
             return GlobalBufferedUpdates.BytesUsed.Get();
         }

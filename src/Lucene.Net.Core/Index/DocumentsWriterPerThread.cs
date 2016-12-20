@@ -43,19 +43,19 @@ namespace Lucene.Net.Index
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
-    public class DocumentsWriterPerThread
+    internal class DocumentsWriterPerThread
     {
         /// <summary>
         /// The IndexingChain must define the <seealso cref="#getChain(DocumentsWriterPerThread)"/> method
         /// which returns the DocConsumer that the DocumentsWriter calls to process the
         /// documents.
         /// </summary>
-        public abstract class IndexingChain
+        internal abstract class IndexingChain
         {
-            public abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
+            internal abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
         }
 
-        internal static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousInnerClassHelper();
+        private static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousInnerClassHelper();
 
         public static IndexingChain DefaultIndexingChain
         {
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
+            internal override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
             {
                 /*
                 this is the current indexing chain:
@@ -96,10 +96,13 @@ namespace Lucene.Net.Index
                 TermsHashConsumer termVectorsWriter = new TermVectorsConsumer(documentsWriterPerThread);
                 TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
 
-                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
+                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, 
+                    new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
                 NormsConsumer normsWriter = new NormsConsumer();
                 DocInverter docInverter = new DocInverter(documentsWriterPerThread.docState, termsHash, normsWriter);
-                StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(new StoredFieldsProcessor(documentsWriterPerThread), new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
+                StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(
+                                                            new StoredFieldsProcessor(documentsWriterPerThread), 
+                                                            new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
                 return new DocFieldProcessor(documentsWriterPerThread, docInverter, storedFields);
             }
         }
@@ -465,7 +468,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of delete terms in this <seealso cref="DocumentsWriterPerThread"/>
         /// </summary>
-        public virtual int NumDeleteTerms()
+        public virtual int NumDeleteTerms() // LUCENENET TODO: Make property
         {
             // public for FlushPolicy
             return PendingUpdates.NumTermDeletes.Get();
@@ -596,7 +599,7 @@ namespace Lucene.Net.Index
 
         private readonly HashSet<string> FilesToDelete = new HashSet<string>();
 
-        public virtual ISet<string> PendingFilesToDelete()
+        public virtual ISet<string> PendingFilesToDelete() // LUCENENET TODO: Make property
         {
             return FilesToDelete;
         }
@@ -685,7 +688,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual long BytesUsed()
+        public virtual long BytesUsed() // LUCENENET TODO: Make property
         {
             return bytesUsed.Get() + PendingUpdates.BytesUsed.Get();
         }
@@ -696,11 +699,11 @@ namespace Lucene.Net.Index
 
         /* if you increase this, you must fix field cache impl for
          * getTerms/getTermsIndex requires <= 32768 */
-        public static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
+        internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
         private class IntBlockAllocator : IntBlockPool.Allocator
         {
-            internal readonly Counter BytesUsed;
+            private readonly Counter BytesUsed;
 
             public IntBlockAllocator(Counter bytesUsed)
                 : base(IntBlockPool.INT_BLOCK_SIZE)
@@ -710,7 +713,7 @@ namespace Lucene.Net.Index
 
             /* Allocate another int[] from the shared pool */
 
-            public override int[] IntBlock
+            public override int[] IntBlock // LUCENENET TODO: Make method GetIntBlock() (non-deterministic)
             {
                 get
                 {

@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    public abstract class TermsHashConsumer
+    internal abstract class TermsHashConsumer
     {
         public abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);
 

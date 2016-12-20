@@ -48,7 +48,6 @@ namespace Lucene.Net.Index
 
         private readonly PagedBytes Bytes;
         private readonly DataOutput BytesOut;
-        private readonly DataInput BytesIn;
 
         private readonly Counter IwBytesUsed;
         private readonly AppendingDeltaPackedLongBuffer Lengths;
@@ -119,18 +118,18 @@ namespace Lucene.Net.Index
             BytesUsed = newBytesUsed;
         }
 
-        internal override void Finish(int maxDoc)
+        public override void Finish(int maxDoc)
         {
         }
 
-        internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+        public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
             Bytes.Freeze(false);
             dvConsumer.AddBinaryField(FieldInfo, GetBytesIterator(maxDoc));
         }
 
-        internal override void Abort()
+        public override void Abort()
         {
         }
 

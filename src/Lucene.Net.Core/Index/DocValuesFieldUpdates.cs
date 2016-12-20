@@ -25,20 +25,16 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class DocValuesFieldUpdates
+    internal abstract class AbstractDocValuesFieldUpdates // LUCENENET specific - Added Abstract prefix for the internal type
     {
-        public enum Type_e
-        {
-            NUMERIC,
-            BINARY
-        }
+        // LUCENENET specific: moved Type enum to new class named DocValuesFieldUpdates (the original name of this class)
 
         /// <summary>
         /// An iterator over documents and their updated values. Only documents with
         /// updates are returned by this iterator, and the documents are returned in
         /// increasing order.
         /// </summary>
-        internal interface Iterator
+        public interface Iterator // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Returns the next document which has an update, or
@@ -49,13 +45,13 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns the current document this iterator is on. </summary>
-            int Doc();
+            int Doc(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Returns the value of the document returned from <seealso cref="#nextDoc()"/>. A
             /// {@code null} value means that it was unset for this document.
             /// </summary>
-            object Value();
+            object Value(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Reset the iterator's state. Should be called before <seealso cref="#nextDoc()"/>
@@ -88,21 +84,21 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            internal virtual int Size()
+            internal virtual int Size() // LUCENENET TODO: Rename Count property
             {
                 return NumericDVUpdates.Count + BinaryDVUpdates.Count;
             }
 
-            internal virtual DocValuesFieldUpdates GetUpdates(string field, Type_e type)
+            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type_e type)
             {
                 switch (type)
                 {
-                    case Type_e.NUMERIC:
+                    case DocValuesFieldUpdates.Type_e.NUMERIC:
                         NumericDocValuesFieldUpdates num;
                         NumericDVUpdates.TryGetValue(field, out num);
                         return num;
 
-                    case Type_e.BINARY:
+                    case DocValuesFieldUpdates.Type_e.BINARY:
                         BinaryDocValuesFieldUpdates bin;
                         BinaryDVUpdates.TryGetValue(field, out bin);
                         return bin;
@@ -112,18 +108,18 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual DocValuesFieldUpdates NewUpdates(string field, Type_e type, int maxDoc)
+            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdates.Type_e type, int maxDoc)
             {
                 switch (type)
                 {
-                    case Type_e.NUMERIC:
+                    case DocValuesFieldUpdates.Type_e.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
                         Debug.Assert(!NumericDVUpdates.TryGetValue(field, out numericUpdates));
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         NumericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
-                    case Type_e.BINARY:
+                    case DocValuesFieldUpdates.Type_e.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
                         Debug.Assert(!BinaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
@@ -142,9 +138,9 @@ namespace Lucene.Net.Index
         }
 
         internal readonly string Field;
-        internal readonly Type_e Type;
+        internal readonly DocValuesFieldUpdates.Type_e Type;
 
-        protected internal DocValuesFieldUpdates(string field, Type_e type)
+        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdates.Type_e type)
         {
             this.Field = field;
             this.Type = type;
@@ -160,18 +156,29 @@ namespace Lucene.Net.Index
         /// Returns an <seealso cref="Iterator"/> over the updated documents and their
         /// values.
         /// </summary>
-        internal abstract Iterator GetIterator();
+        public abstract Iterator GetIterator(); // LUCENENET TODO: Rename Iterator()? Check consistency across API
 
         /// <summary>
-        /// Merge with another <seealso cref="DocValuesFieldUpdates"/>. this is called for a
+        /// Merge with another <seealso cref="AbstractDocValuesFieldUpdates"/>. this is called for a
         /// segment which received updates while it was being merged. The given updates
         /// should override whatever updates are in that instance.
         /// </summary>
-        public abstract void Merge(DocValuesFieldUpdates other);
+        public abstract void Merge(AbstractDocValuesFieldUpdates other);
 
         /// <summary>
         /// Returns true if this instance contains any updates. </summary>
         /// <returns> TODO </returns>
         public abstract bool Any();
+    }
+
+    public class DocValuesFieldUpdates
+    {
+        private DocValuesFieldUpdates() { } // Disallow creation
+
+        public enum Type_e // LUCENENET TODO: Rename Type
+        {
+            NUMERIC,
+            BINARY
+        }
     }
 }

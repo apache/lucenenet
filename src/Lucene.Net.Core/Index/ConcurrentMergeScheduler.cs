@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         ///  slightly higher priority than) the first thread that
         ///  calls merge.
         /// </summary>
-        public virtual int MergeThreadPriority
+        public virtual int MergeThreadPriority // LUCENENET TODO: Change back to GetMergeThreadPriority() and SetMergeThreadPriority() (complexity)
         {
             get
             {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         /// descending order and then pauses/unpauses threads from first to last --
         /// that way, smaller merges are guaranteed to run before larger ones.
         /// </summary>
-        protected internal virtual void UpdateMergeThreads()
+        protected virtual void UpdateMergeThreads()
         {
             lock (this)
             {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
         /// }
         /// </pre>
         /// </summary>
-        protected internal virtual bool Verbose()
+        protected internal virtual bool Verbose() // LUCENENET TODO: Make property
         {
             return Writer != null && Writer.infoStream.IsEnabled("CMS");
         }
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
         /// Returns the number of merge threads that are alive. Note that this number
         /// is &lt;= <seealso cref="#mergeThreads"/> size.
         /// </summary>
-        protected internal virtual int MergeThreadCount()
+        protected virtual int MergeThreadCount()
         {
             lock (this)
             {
@@ -509,14 +509,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual merge, by calling <seealso cref="IndexWriter#merge"/> </summary>
-        protected internal virtual void DoMerge(MergePolicy.OneMerge merge)
+        protected virtual void DoMerge(MergePolicy.OneMerge merge)
         {
             Writer.Merge(merge);
         }
 
         /// <summary>
         /// Create and return a new MergeThread </summary>
-        protected internal virtual MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
+        protected virtual MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
         {
             lock (this)
             {
@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
             internal IndexWriter TWriter;
             internal MergePolicy.OneMerge StartMerge;
             internal MergePolicy.OneMerge RunningMerge_Renamed;
-            internal volatile bool Done;
+            private volatile bool Done;
 
             /// <summary>
             /// Sole constructor. </summary>
@@ -598,7 +598,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Set the priority of this thread. </summary>
-            public virtual int ThreadPriority
+            public virtual int ThreadPriority // LUCENENET TODO: Change to SetThreadPriority(int)
             {
                 set
                 {
@@ -699,7 +699,7 @@ namespace Lucene.Net.Index
         /// Called when an exception is hit in a background merge
         ///  thread
         /// </summary>
-        protected internal virtual void HandleMergeException(Exception exc)
+        protected virtual void HandleMergeException(Exception exc)
         {
             try
             {

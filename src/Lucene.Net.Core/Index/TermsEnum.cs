@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the related attributes. </summary>
-        public virtual AttributeSource Attributes()
+        public virtual AttributeSource Attributes() // LUCENENET TODO: Change to property
         {
             if (Atts == null)
             {

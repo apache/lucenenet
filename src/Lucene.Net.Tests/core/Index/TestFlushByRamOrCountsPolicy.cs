@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void AssertActiveBytesAfter(DocumentsWriterFlushControl flushControl)
+        internal virtual void AssertActiveBytesAfter(DocumentsWriterFlushControl flushControl)
         {
             IEnumerator<ThreadState> allActiveThreads = flushControl.AllActiveThreadStates();
             long bytesUsed = 0;

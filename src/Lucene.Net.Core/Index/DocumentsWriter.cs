@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
     /// deleted so that the document is always atomically ("all
     /// or none") added to the index.
     /// </summary>
-    public sealed class DocumentsWriter : IDisposable
+    internal sealed class DocumentsWriter : IDisposable
     {
         private readonly Directory Directory;
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal DocumentsWriterDeleteQueue CurrentDeleteSession()
+        internal DocumentsWriterDeleteQueue CurrentDeleteSession() // LUCENENET TODO: Make property
         {
             return DeleteQueue;
         }
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool AnyChanges()
+        internal bool AnyChanges() // LUCENENET TODO: Make property ?
         {
             if (InfoStream.IsEnabled("DW"))
             {
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool AnyDeletions()
+        public bool AnyDeletions() // LUCENENET TODO: Make property ?
         {
             return DeleteQueue.AnyChanges();
         }
@@ -815,7 +815,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public LiveIndexWriterConfig Config
+        public LiveIndexWriterConfig Config // LUCENENET TODO: Rename IndexWriterConfig ?
         {
             get
             {
@@ -831,7 +831,7 @@ namespace Lucene.Net.Index
         internal sealed class ApplyDeletesEvent : Event
         {
             internal static readonly Event INSTANCE = new ApplyDeletesEvent();
-            internal int InstCount = 0;
+            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ApplyDeletesEvent()
             {
@@ -848,7 +848,7 @@ namespace Lucene.Net.Index
         internal sealed class MergePendingEvent : Event
         {
             internal static readonly Event INSTANCE = new MergePendingEvent();
-            internal int InstCount = 0;
+            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal MergePendingEvent()
             {
@@ -865,7 +865,7 @@ namespace Lucene.Net.Index
         internal sealed class ForcedPurgeEvent : Event
         {
             internal static readonly Event INSTANCE = new ForcedPurgeEvent();
-            internal int InstCount = 0;
+            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ForcedPurgeEvent()
             {
@@ -881,7 +881,7 @@ namespace Lucene.Net.Index
 
         internal class FlushFailedEvent : Event
         {
-            internal readonly SegmentInfo Info;
+            private readonly SegmentInfo Info;
 
             public FlushFailedEvent(SegmentInfo info)
             {
@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
 
         internal class DeleteNewFilesEvent : Event
         {
-            internal readonly ICollection<string> Files;
+            private readonly ICollection<string> Files;
 
             public DeleteNewFilesEvent(ICollection<string> files)
             {
@@ -909,7 +909,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public ConcurrentQueue<Event> EventQueue()
+        public ConcurrentQueue<Event> EventQueue() // LUCENENET TODO: Make property
         {
             return Events;
         }

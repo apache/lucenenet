@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
     /// <seealso cref="IndexWriterConfig#getRAMPerThreadHardLimitMB()"/> to prevent address
     /// space exhaustion.
     /// </summary>
-    public sealed class DocumentsWriterFlushControl
+    internal sealed class DocumentsWriterFlushControl
     {
         private readonly long HardMaxBytesPerDWPT;
         private long ActiveBytes_Renamed = 0;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
             this.BufferedUpdatesStream = bufferedUpdatesStream;
         }
 
-        public long ActiveBytes()
+        public long ActiveBytes() // LUCENENET TODO: make property
         {
             lock (this)
             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public long FlushBytes()
+        public long FlushBytes() // LUCENENET TODO: make property
         {
             lock (this)
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public long NetBytes()
+        public long NetBytes() // LUCENENET TODO: make property
         {
             lock (this)
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private long StallLimitBytes()
+        private long StallLimitBytes() // LUCENENET TODO: make property
         {
             double maxRamMB = Config.RAMBufferSizeMB;
             return maxRamMB != IndexWriterConfig.DISABLE_AUTO_FLUSH ? (long)(2 * (maxRamMB * 1024 * 1024)) : long.MaxValue;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="ThreadState"/> must have indexed at least on Document and must not be
         /// already pending.
         /// </summary>
-        public ThreadState FlushPending
+        public ThreadState FlushPending // LUCENENET TODO: Make SetFlushPending(ThreadState perThread)
         {
             set
             {
@@ -565,7 +565,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal int NumFlushingDWPT()
+        internal int NumFlushingDWPT() // LUCENENET TODO: Make property
         {
             lock (this)
             {
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool AndResetApplyAllDeletes
+        public bool AndResetApplyAllDeletes // LUCENENET TODO: Make GetAndResetApplyAllDeletes() (non-deterministic)
         {
             get
             {
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
             FlushDeletes.Set(true);
         }
 
-        internal int NumActiveDWPT()
+        internal int NumActiveDWPT() // LUCENENET TODO: Make property
         {
             return this.PerThreadPool.ActiveThreadState;
         }
@@ -853,7 +853,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <code>true</code> if a full flush is currently running
         /// </summary>
-        internal bool FullFlush
+        internal bool FullFlush // LUCENENET TODO: Rename IsFullFlush
         {
             get
             {
@@ -868,7 +868,7 @@ namespace Lucene.Net.Index
         /// Returns the number of flushes that are already checked out but not yet
         /// actively flushing
         /// </summary>
-        internal int NumQueuedFlushes()
+        internal int NumQueuedFlushes() // LUCENENET TODO: Make property
         {
             lock (this)
             {
@@ -881,7 +881,7 @@ namespace Lucene.Net.Index
         /// for flushing. this only applies during a full flush if a DWPT needs
         /// flushing but must not be flushed until the full flush has finished.
         /// </summary>
-        internal int NumBlockedFlushes()
+        internal int NumBlockedFlushes() // LUCENENET TODO: Make property
         {
             lock (this)
             {
@@ -918,7 +918,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <code>true</code> iff stalled
         /// </summary>
-        internal bool AnyStalledThreads()
+        internal bool AnyStalledThreads() // LUCENENET TODO: Make property
         {
             return StallControl.AnyStalledThreads();
         }

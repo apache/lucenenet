@@ -27,11 +27,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The readers ord in the top-level's leaves array </summary>
-        public readonly int Ord;
+        public readonly int Ord; // LUCENENET TODO: Make property
 
         /// <summary>
         /// The readers absolute doc base </summary>
-        public readonly int DocBase;
+        public readonly int DocBase; // LUCENENET TODO: Make property
 
         private readonly AtomicReader reader;
         private readonly IList<AtomicReaderContext> leaves;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             get { return reader; }
         }
 
-        // .NET Port: Can't change return type on override like Java, so adding helper property
+        // LUCENENET specific: Can't change return type on override like Java, so adding helper property
         // to avoid a bunch of casting.
         public AtomicReader AtomicReader
         {

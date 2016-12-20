@@ -36,13 +36,13 @@ namespace Lucene.Net.Index
         /// <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/> means
         /// that no offsets and payloads will be returned.
         /// </summary>
-        public const int FLAG_NONE = 0x0;
+        public static readonly int FLAG_NONE = 0x0;
 
         /// <summary>
         /// Flag to pass to <seealso cref="TermsEnum#docs(Bits,DocsEnum,int)"/>
         ///  if you require term frequencies in the returned enum.
         /// </summary>
-        public const int FLAG_FREQS = 0x1;
+        public static readonly int FLAG_FREQS = 0x1;
 
         private AttributeSource Atts = null;
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         ///  constructors, typically implicit.)
         /// </summary>
-        protected internal DocsEnum()
+        protected DocsEnum()
         {
         }
 

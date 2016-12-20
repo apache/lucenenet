@@ -72,7 +72,7 @@ namespace Lucene.Net
                 }
             }
 
-            protected internal override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
+            protected override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
                 thread.ThreadPriority = MergeThreadPriority;
@@ -81,12 +81,12 @@ namespace Lucene.Net
                 return thread;
             }
 
-            protected internal override void HandleMergeException(Exception t)
+            protected override void HandleMergeException(Exception t)
             {
                 OuterInstance.ExcCalled = true;
             }
 
-            protected internal override void DoMerge(MergePolicy.OneMerge merge)
+            protected override void DoMerge(MergePolicy.OneMerge merge)
             {
                 OuterInstance.MergeCalled = true;
                 base.DoMerge(merge);

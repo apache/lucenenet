@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     /// structure to hold them. We don't hold docIDs because these are applied on
     /// flush.
     /// </summary>
-    public class FrozenBufferedUpdates
+    internal class FrozenBufferedUpdates
     {
         /* Query we often undercount (say 24 bytes), plus int. */
         internal static readonly int BYTES_PER_DEL_QUERY = RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT + 24;

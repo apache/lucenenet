@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
-    public sealed class TermVectorsConsumer : TermsHashConsumer
+    internal sealed class TermVectorsConsumer : TermsHashConsumer
     {
         internal TermVectorsWriter Writer;
         internal readonly DocumentsWriterPerThread DocWriter;

@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
      * track which BufferedDeletes packets to apply to any given
      * segment. */
 
-    public class BufferedUpdatesStream
+    internal class BufferedUpdatesStream
     {
         // TODO: maybe linked list?
         private readonly IList<FrozenBufferedUpdates> Updates = new List<FrozenBufferedUpdates>();
@@ -109,17 +109,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual bool Any()
+        public virtual bool Any() // LUCENENET TODO: Make property ?
         {
             return bytesUsed.Get() != 0;
         }
 
-        public virtual int NumTerms()
+        public virtual int NumTerms() // LUCENENET TODO: Make property
         {
             return numTerms.Get();
         }
 
-        public virtual long BytesUsed()
+        public virtual long BytesUsed() // LUCENENET TODO: Make property
         {
             return bytesUsed.Get();
         }
@@ -127,13 +127,13 @@ namespace Lucene.Net.Index
         public class ApplyDeletesResult
         {
             // True if any actual deletes took place:
-            public readonly bool AnyDeletes;
+            public readonly bool AnyDeletes; // LUCENENET TODO: Make property
 
             // Current gen, for the merged segment:
-            public readonly long Gen;
+            public readonly long Gen; // LUCENENET TODO: Make property
 
             // If non-null, contains segments that are 100% deleted
-            public readonly IList<SegmentCommitInfo> AllDeleted;
+            public readonly IList<SegmentCommitInfo> AllDeleted; // LUCENENET TODO: Make property
 
             internal ApplyDeletesResult(bool anyDeletes, long gen, IList<SegmentCommitInfo> allDeleted)
             {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
                         bool segAllDeletes;
                         try
                         {
-                            DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
+                            AbstractDocValuesFieldUpdates.Container dvUpdates = new AbstractDocValuesFieldUpdates.Container();
                             if (coalescedUpdates != null)
                             {
                                 //System.out.println("    del coalesced");
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
                             {
                                 delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
                                 delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
-                                DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
+                                AbstractDocValuesFieldUpdates.Container dvUpdates = new AbstractDocValuesFieldUpdates.Container();
                                 ApplyDocValuesUpdates(coalescedUpdates.NumericDVUpdates, rld, reader, dvUpdates);
                                 ApplyDocValuesUpdates(coalescedUpdates.BinaryDVUpdates, rld, reader, dvUpdates);
                                 if (dvUpdates.Any())
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal virtual long NextGen
+        internal virtual long NextGen // LUCENENET TODO: Make property (non-deterministic)
         {
             get
             {
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
         }
 
         // DocValues updates
-        private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, DocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
+        private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, AbstractDocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
         {
             lock (this)
             {
@@ -615,7 +615,7 @@ namespace Lucene.Net.Index
 
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
-                        DocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.Field, update.Type);
+                        AbstractDocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.Field, update.Type);
                         if (dvUpdates == null)
                         {
                             dvUpdates = dvUpdatesContainer.NewUpdates(update.Field, update.Type, reader.MaxDoc);
@@ -637,8 +637,8 @@ namespace Lucene.Net.Index
 
         public class QueryAndLimit
         {
-            public readonly Query Query;
-            public readonly int? Limit;
+            public readonly Query Query; // LUCENENET TODO: Make property
+            public readonly int? Limit; // LUCENENET TODO: Make property (and check if we can work without the nullable)
 
             public QueryAndLimit(Query query, int? limit)
             {

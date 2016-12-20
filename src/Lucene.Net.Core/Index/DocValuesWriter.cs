@@ -21,10 +21,10 @@ namespace Lucene.Net.Index
 
     internal abstract class DocValuesWriter
     {
-        internal abstract void Abort();
+        public abstract void Abort();
 
-        internal abstract void Finish(int numDoc);
+        public abstract void Finish(int numDoc);
 
-        internal abstract void Flush(SegmentWriteState state, DocValuesConsumer consumer);
+        public abstract void Flush(SegmentWriteState state, DocValuesConsumer consumer);
     }
 }

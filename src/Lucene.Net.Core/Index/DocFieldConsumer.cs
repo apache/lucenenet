@@ -19,17 +19,17 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    public abstract class DocFieldConsumer
+    internal abstract class DocFieldConsumer
     {
         /// <summary>
         /// Called when DocumentsWriterPerThread decides to create a new
         ///  segment
         /// </summary>
-        public abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
+        internal abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
         /// <summary>
         /// Called when an aborting exception is hit </summary>
-        public abstract void Abort();
+        internal abstract void Abort();
 
         public abstract void StartDocument();
 

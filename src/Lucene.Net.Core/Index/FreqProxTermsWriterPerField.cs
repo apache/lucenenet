@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     // TODO: break into separate freq and prox writers as
     // codecs; make separate container (tii/tis/skip/*) that can
     // be configured as any number of files 1..N
-    public sealed class FreqProxTermsWriterPerField : TermsHashConsumerPerField, IComparable<FreqProxTermsWriterPerField>
+    internal sealed class FreqProxTermsWriterPerField : TermsHashConsumerPerField, IComparable<FreqProxTermsWriterPerField>
     {
         internal readonly FreqProxTermsWriter Parent;
         internal readonly TermsHashPerField TermsHashPerField;

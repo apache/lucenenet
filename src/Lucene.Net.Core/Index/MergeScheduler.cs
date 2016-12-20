@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Close this MergeScheduler. </summary>
-        public abstract void Dispose();
+        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
 
         public virtual IMergeScheduler Clone()
         {

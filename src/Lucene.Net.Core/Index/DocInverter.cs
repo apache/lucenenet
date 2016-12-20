@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
     ///  separately, from a Document, and accepts a
     ///  InvertedTermsConsumer to process those terms.
     /// </summary>
-    public sealed class DocInverter : DocFieldConsumer
+    internal sealed class DocInverter : DocFieldConsumer
     {
         internal readonly InvertedDocConsumer Consumer;
         internal readonly InvertedDocEndConsumer EndConsumer;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
             this.EndConsumer = endConsumer;
         }
 
-        public override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
+        internal override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             IDictionary<string, InvertedDocConsumerPerField> childFieldsToFlush = new Dictionary<string, InvertedDocConsumerPerField>();
             IDictionary<string, InvertedDocEndConsumerPerField> endChildFieldsToFlush = new Dictionary<string, InvertedDocEndConsumerPerField>();
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
             Consumer.FinishDocument();
         }
 
-        public override void Abort()
+        internal override void Abort()
         {
             try
             {

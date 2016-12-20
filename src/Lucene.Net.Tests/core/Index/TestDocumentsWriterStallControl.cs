@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public class Waiter : ThreadClass
+        internal class Waiter : ThreadClass
         {
             internal Synchronizer Sync;
             internal DocumentsWriterStallControl Ctrl;
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public class Updater : ThreadClass
+        internal class Updater : ThreadClass
         {
             internal Synchronizer Sync;
             internal DocumentsWriterStallControl Ctrl;
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
+        internal static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
         {
             ThreadClass[] array = new ThreadClass[num];
             for (int i = 0; i < array.Length; i++)

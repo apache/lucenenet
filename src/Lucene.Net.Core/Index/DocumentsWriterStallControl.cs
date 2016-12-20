@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     /// than the number of active <seealso cref="ThreadState"/>s threads are released and can
     /// continue indexing.
     /// </summary>
-    public sealed class DocumentsWriterStallControl
+    internal sealed class DocumentsWriterStallControl
     {
         private volatile bool Stalled;
         private int NumWaiting; // only with assert
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="DocumentsWriterStallControl"/> to healthy and release all threads
         /// waiting on <seealso cref="#waitIfStalled()"/>
         /// </summary>
-        public void UpdateStalled(bool stalled)
+        internal void UpdateStalled(bool stalled)
         {
             lock (this)
             {
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
         /// Blocks if documents writing is currently in a stalled state.
         ///
         /// </summary>
-        public void WaitIfStalled()
+        internal void WaitIfStalled()
         {
             if (Stalled)
             {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool AnyStalledThreads()
+        internal bool AnyStalledThreads() // LUCENENET TODO: Make property
         {
             return Stalled;
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
             return NumWaiting >= 0;
         }
 
-        public bool HasBlocked() // for tests
+        internal bool HasBlocked() // for tests // LUCENENET TODO: Make property
         {
             lock (this)
             {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool Healthy
+        internal bool Healthy // LUCENENET TODO: Rename IsHealthy
         {
             get
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool IsThreadQueued(ThreadClass t) // for tests
+        internal bool IsThreadQueued(ThreadClass t) // for tests
         {
             lock (this)
             {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool WasStalled() // for tests
+        internal bool WasStalled() // for tests // LUCENENET TODO: Make property
         {
             lock (this)
             {

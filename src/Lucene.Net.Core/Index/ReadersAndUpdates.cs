@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     // Used by IndexWriter to hold open SegmentReaders (for
     // searching or merging), plus pending deletes and updates,
     // for a given segment
-    public class ReadersAndUpdates
+    internal class ReadersAndUpdates
     {
         // Not final because we replace (clone) when we need to
         // change it and it's been shared:
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         // updates on the merged segment too.
         private bool IsMerging = false;
 
-        private readonly IDictionary<string, DocValuesFieldUpdates> MergingDVUpdates = new Dictionary<string, DocValuesFieldUpdates>();
+        private readonly IDictionary<string, AbstractDocValuesFieldUpdates> MergingDVUpdates = new Dictionary<string, AbstractDocValuesFieldUpdates>();
 
         public ReadersAndUpdates(IndexWriter writer, SegmentCommitInfo info)
         {
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
         }
 
         // Writes field updates (new _X_N updates files) to the directory
-        public virtual void WriteFieldUpdates(Directory dir, DocValuesFieldUpdates.Container dvUpdates)
+        public virtual void WriteFieldUpdates(Directory dir, AbstractDocValuesFieldUpdates.Container dvUpdates)
         {
             lock (this)
             {
@@ -599,7 +599,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.NumericDVUpdates)
                     {
-                        DocValuesFieldUpdates updates;
+                        AbstractDocValuesFieldUpdates updates;
                         if (!MergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
                             MergingDVUpdates[e.Key] = e.Value;
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
                     }
                     foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.BinaryDVUpdates)
                     {
-                        DocValuesFieldUpdates updates;
+                        AbstractDocValuesFieldUpdates updates;
                         if (!MergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
                             MergingDVUpdates[e.Key] = e.Value;
@@ -940,7 +940,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns updates that came in while this segment was merging. </summary>
-        public virtual IDictionary<string, DocValuesFieldUpdates> MergingFieldUpdates
+        public virtual IDictionary<string, AbstractDocValuesFieldUpdates> MergingFieldUpdates
         {
             get
             {

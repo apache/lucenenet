@@ -72,78 +72,78 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// True if no problems were found with the index. </summary>
-            public bool Clean;
+            public bool Clean; // LUCENENET TODO: Make property
 
             /// <summary>
             /// True if we were unable to locate and load the segments_N file. </summary>
-            public bool MissingSegments;
+            public bool MissingSegments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// True if we were unable to open the segments_N file. </summary>
-            public bool CantOpenSegments;
+            public bool CantOpenSegments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// True if we were unable to read the version number from segments_N file. </summary>
-            public bool MissingSegmentVersion;
+            public bool MissingSegmentVersion; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Name of latest segments_N file in the index. </summary>
-            public string SegmentsFileName;
+            public string SegmentsFileName; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Number of segments in the index. </summary>
-            public int NumSegments;
+            public int NumSegments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Empty unless you passed specific segments list to check as optional 3rd argument. </summary>
             ///  <seealso cref= CheckIndex#checkIndex(List)  </seealso>
-            public IList<string> SegmentsChecked = new List<string>();
+            public IList<string> SegmentsChecked = new List<string>(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
-            public bool ToolOutOfDate;
+            public bool ToolOutOfDate; // LUCENENET TODO: Make property
 
             /// <summary>
             /// List of <seealso cref="SegmentInfoStatus"/> instances, detailing status of each segment. </summary>
-            public IList<SegmentInfoStatus> SegmentInfos = new List<SegmentInfoStatus>();
+            public IList<SegmentInfoStatus> SegmentInfos = new List<SegmentInfoStatus>(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Directory index is in. </summary>
-            public Directory Dir;
+            public Directory Dir; // LUCENENET TODO: Make property
 
             /// <summary>
             /// SegmentInfos instance containing only segments that
             /// had no problems (this is used with the <seealso cref="CheckIndex#fixIndex"/>
             /// method to repair the index.
             /// </summary>
-            internal SegmentInfos NewSegments;
+            internal SegmentInfos NewSegments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// How many documents will be lost to bad segments. </summary>
-            public int TotLoseDocCount;
+            public int TotLoseDocCount; // LUCENENET TODO: Make property
 
             /// <summary>
             /// How many bad segments were found. </summary>
-            public int NumBadSegments;
+            public int NumBadSegments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// True if we checked only specific segments ({@link
             /// #checkIndex(List)}) was called with non-null
             /// argument).
             /// </summary>
-            public bool Partial;
+            public bool Partial; // LUCENENET TODO: Make property
 
             /// <summary>
             /// The greatest segment name. </summary>
-            public int MaxSegmentName;
+            public int MaxSegmentName; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Whether the SegmentInfos.counter is greater than any of the segments' names. </summary>
-            public bool ValidCounter;
+            public bool ValidCounter; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Holds the userData of the last commit in the index </summary>
-            public IDictionary<string, string> UserData;
+            public IDictionary<string, string> UserData; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Holds the status of each segment in the index.
@@ -159,97 +159,97 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Name of the segment. </summary>
-                public string Name;
+                public string Name; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Codec used to read this segment. </summary>
-                public Codec Codec;
+                public Codec Codec; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Document count (does not take deletions into account). </summary>
-                public int DocCount;
+                public int DocCount; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// True if segment is compound file format. </summary>
-                public bool Compound;
+                public bool Compound; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Number of files referenced by this segment. </summary>
-                public int NumFiles;
+                public int NumFiles; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Net size (MB) of the files referenced by this
                 ///  segment.
                 /// </summary>
-                public double SizeMB;
+                public double SizeMB; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Doc store offset, if this segment shares the doc
                 ///  store files (stored fields and term vectors) with
                 ///  other segments.  this is -1 if it does not share.
                 /// </summary>
-                public int DocStoreOffset = -1;
+                public int DocStoreOffset = -1; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// String of the shared doc store segment, or null if
                 ///  this segment does not share the doc store files.
                 /// </summary>
-                public string DocStoreSegment;
+                public string DocStoreSegment; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// True if the shared doc store files are compound file
                 ///  format.
                 /// </summary>
-                public bool DocStoreCompoundFile;
+                public bool DocStoreCompoundFile; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// True if this segment has pending deletions. </summary>
-                public bool HasDeletions;
+                public bool HasDeletions; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Current deletions generation. </summary>
-                public long DeletionsGen;
+                public long DeletionsGen; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Number of deleted documents. </summary>
-                public int NumDeleted;
+                public int NumDeleted; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// True if we were able to open an AtomicReader on this
                 ///  segment.
                 /// </summary>
-                public bool OpenReaderPassed;
+                public bool OpenReaderPassed; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Number of fields in this segment. </summary>
-                internal int NumFields;
+                internal int NumFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Map that includes certain
                 ///  debugging details that IndexWriter records into
                 ///  each segment it creates
                 /// </summary>
-                public IDictionary<string, string> Diagnostics;
+                public IDictionary<string, string> Diagnostics; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Status for testing of field norms (null if field norms could not be tested). </summary>
-                public FieldNormStatus FieldNormStatus;
+                public FieldNormStatus FieldNormStatus; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Status for testing of indexed terms (null if indexed terms could not be tested). </summary>
-                public TermIndexStatus TermIndexStatus;
+                public TermIndexStatus TermIndexStatus; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Status for testing of stored fields (null if stored fields could not be tested). </summary>
-                public StoredFieldStatus StoredFieldStatus;
+                public StoredFieldStatus StoredFieldStatus; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Status for testing of term vectors (null if term vectors could not be tested). </summary>
-                public TermVectorStatus TermVectorStatus;
+                public TermVectorStatus TermVectorStatus; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Status for testing of DocValues (null if DocValues could not be tested). </summary>
-                public DocValuesStatus DocValuesStatus;
+                public DocValuesStatus DocValuesStatus; // LUCENENET TODO: Make property
             }
 
             /// <summary>
@@ -263,11 +263,11 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Number of fields successfully tested </summary>
-                public long TotFields = 0L;
+                public long TotFields = 0L; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Exception thrown during term index test (null on success) </summary>
-                public Exception Error = null;
+                public Exception Error = null; // LUCENENET TODO: Make property
             }
 
             /// <summary>
@@ -281,23 +281,23 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Number of terms with at least one live doc. </summary>
-                public long TermCount = 0L;
+                public long TermCount = 0L; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Number of terms with zero live docs docs. </summary>
-                public long DelTermCount = 0L;
+                public long DelTermCount = 0L; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total frequency across all terms. </summary>
-                public long TotFreq = 0L;
+                public long TotFreq = 0L; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of positions. </summary>
-                public long TotPos = 0L;
+                public long TotPos = 0L; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Exception thrown during term index test (null on success) </summary>
-                public Exception Error = null;
+                public Exception Error = null; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Holds details of block allocations in the block
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
                 ///  <seealso cref="PostingsFormat"/> for this segment uses block
                 ///  tree.
                 /// </summary>
-                public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats = null;
+                public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats = null; // LUCENENET TODO: Make property
             }
 
             /// <summary>
@@ -319,15 +319,15 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Number of documents tested. </summary>
-                public int DocCount = 0;
+                public int DocCount = 0; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of stored fields tested. </summary>
-                public long TotFields = 0;
+                public long TotFields = 0; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Exception thrown during stored fields test (null on success) </summary>
-                public Exception Error = null;
+                public Exception Error = null; // LUCENENET TODO: Make property
             }
 
             /// <summary>
@@ -341,15 +341,15 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Number of documents tested. </summary>
-                public int DocCount = 0;
+                public int DocCount = 0; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of term vectors tested. </summary>
-                public long TotVectors = 0;
+                public long TotVectors = 0; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Exception thrown during term vector test (null on success) </summary>
-                public Exception Error = null;
+                public Exception Error = null; // LUCENENET TODO: Make property
             }
 
             /// <summary>
@@ -363,27 +363,27 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Total number of docValues tested. </summary>
-                public long TotalValueFields;
+                public long TotalValueFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of numeric fields </summary>
-                public long TotalNumericFields;
+                public long TotalNumericFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of binary fields </summary>
-                public long TotalBinaryFields;
+                public long TotalBinaryFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of sorted fields </summary>
-                public long TotalSortedFields;
+                public long TotalSortedFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Total number of sortedset fields </summary>
-                public long TotalSortedSetFields;
+                public long TotalSortedSetFields; // LUCENENET TODO: Make property
 
                 /// <summary>
                 /// Exception thrown during doc values test (null on success) </summary>
-                public Exception Error = null;
+                public Exception Error = null; // LUCENENET TODO: Make property
             }
         }
 
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void SetInfoStream(TextWriter @out, bool verbose)
         {
-            infoStream = @out;
+            infoStream = @out; // LUCENENET TODO: Create a wrapper class for the reader that is passed so it won't throw exceptions if it is disposed (the exceptions are pointless in this case)
             this.Verbose = verbose;
         }
 
@@ -437,11 +437,11 @@ namespace Lucene.Net.Index
             }
             set
             {
-                SetInfoStream(value, false);
+                SetInfoStream(value, false); // LUCENENET TODO: Make this an overload of SetInfoStream() - there was no getter in the original
             }
         }
 
-        public void FlushInfoStream()
+        public virtual void FlushInfoStream() // LUCENENET specific
         {
             infoStream.Flush();
         }

@@ -45,10 +45,10 @@ namespace Lucene.Net.Index
             // Does not implement anything - used only for type checking on IndexWriterConfig.
         }
 
-        public class MyIndexingChain : IndexingChain
+        private sealed class MyIndexingChain : IndexingChain
         {
             // Does not implement anything - used only for type checking on IndexWriterConfig.
-            public override DocConsumer GetChain(DocumentsWriterPerThread documentsWriter)
+            internal override DocConsumer GetChain(DocumentsWriterPerThread documentsWriter)
             {
                 return null;
             }

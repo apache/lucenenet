@@ -19,12 +19,17 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using System;
     using DataInput = Lucene.Net.Store.DataInput;
 
     /// <summary>
     /// this exception is thrown when Lucene detects
     /// an index that is too old for this Lucene version
     /// </summary>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class IndexFormatTooOldException : CorruptIndexException
     {
         /// <summary>

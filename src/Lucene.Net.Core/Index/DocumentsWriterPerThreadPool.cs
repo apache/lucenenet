@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     /// new <seealso cref="DocumentsWriterPerThread"/> instance.
     /// </p>
     /// </summary>
-    public abstract class DocumentsWriterPerThreadPool
+    internal abstract class DocumentsWriterPerThreadPool
     {
         /// <summary>
         /// <seealso cref="ThreadState"/> references and guards a
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         /// and release the lock in a finally block via <seealso cref="ThreadState#unlock()"/>
         /// before accessing the state.
         /// </summary>
-        public sealed class ThreadState : ReentrantLock
+        internal sealed class ThreadState : ReentrantLock
         {
             internal DocumentsWriterPerThread Dwpt;
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
             // guarded by Reentrant lock
             internal bool IsActive = true;
 
-            public ThreadState(DocumentsWriterPerThread dpwt)
+            internal ThreadState(DocumentsWriterPerThread dpwt)
             {
                 this.Dwpt = dpwt;
             }
@@ -77,14 +77,14 @@ namespace Lucene.Net.Index
             /// for indexing anymore. </summary>
             /// <seealso cref= #isActive()   </seealso>
 
-            internal void Deactivate()
+            internal void Deactivate() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
                 //Debug.Assert(this.HeldByCurrentThread);
                 IsActive = false;
                 Reset();
             }
 
-            internal void Reset()
+            internal void Reset() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
                 //Debug.Assert(this.HeldByCurrentThread);
                 this.Dwpt = null;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             /// only return <code>false</code> iff the DW has been closed and this
             /// ThreadState is already checked out for flush.
             /// </summary>
-            internal bool Active
+            internal bool Active // LUCENENET TODO: Rename IsActive
             {
                 get
                 {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal bool Initialized
+            internal bool Initialized // LUCENENET TODO: Rename IsInitialized
             {
                 get
                 {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             /// Returns <code>true</code> iff this <seealso cref="ThreadState"/> is marked as flush
             /// pending otherwise <code>false</code>
             /// </summary>
-            public bool FlushPending
+            public bool FlushPending // LUCENENET TODO: Rename IsFlushPending
             {
                 get
                 {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Creates a new <seealso cref="DocumentsWriterPerThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
         /// </summary>
-        public DocumentsWriterPerThreadPool(int maxNumThreadStates)
+        internal DocumentsWriterPerThreadPool(int maxNumThreadStates)
         {
             if (maxNumThreadStates < 1)
             {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the active number of <seealso cref="ThreadState"/> instances.
         /// </summary>
-        public virtual int ActiveThreadState
+        public virtual int ActiveThreadState // LUCENENET TODO: This name is not very clear
         {
             get
             {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
 
         // you cannot subclass this without being in o.a.l.index package anyway, so
         // the class is already pkg-private... fix me: see LUCENE-4013
-        public abstract ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter);
+        public abstract ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter); // LUCENENET NOTE: Made public rather than internal
 
         /// <summary>
         /// Returns the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the

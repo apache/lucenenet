@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
     /// pending iff the global active RAM consumption is >= the configured max RAM
     /// buffer.
     /// </summary>
-    public class FlushByRamOrCountsPolicy : FlushPolicy
+    internal class FlushByRamOrCountsPolicy : FlushPolicy
     {
         public override void OnDelete(DocumentsWriterFlushControl control, ThreadState state)
         {

@@ -79,21 +79,21 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Denotes a flush trigger is disabled. </summary>
-        public const int DISABLE_AUTO_FLUSH = -1;
+        public static readonly int DISABLE_AUTO_FLUSH = -1;
 
         /// <summary>
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). </summary>
-        public const int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
+        public static readonly int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). </summary>
-        public const int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
+        public static readonly int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Default value is 16 MB (which means flush when buffered docs consume
         /// approximately 16 MB RAM).
         /// </summary>
-        public const double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
+        public static readonly double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
 
         /// <summary>
         /// Default value for the write lock timeout (1,000 ms).
@@ -103,15 +103,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Default setting for <seealso cref="#setReaderPooling"/>. </summary>
-        public const bool DEFAULT_READER_POOLING = false;
+        public static readonly bool DEFAULT_READER_POOLING = false;
 
         /// <summary>
         /// Default value is 1. Change using <seealso cref="#setReaderTermsIndexDivisor(int)"/>. </summary>
-        public const int DEFAULT_READER_TERMS_INDEX_DIVISOR = DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR;
+        public static readonly int DEFAULT_READER_TERMS_INDEX_DIVISOR = DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR;
 
         /// <summary>
         /// Default value is 1945. Change using <seealso cref="#setRAMPerThreadHardLimitMB(int)"/> </summary>
-        public const int DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB = 1945;
+        public static readonly int DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB = 1945;
 
         /// <summary>
         /// The maximum number of simultaneous threads that may be
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
         /// <p>
         /// NOTE: this only takes effect when IndexWriter is first created.</p>
         /// </summary>
-        public IndexWriterConfig SetIndexerThreadPool(DocumentsWriterPerThreadPool threadPool)
+        internal IndexWriterConfig SetIndexerThreadPool(DocumentsWriterPerThreadPool threadPool)
         {
             if (threadPool == null)
             {
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override DocumentsWriterPerThreadPool IndexerThreadPool
+        internal override DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get
             {
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
         ///
         /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
-        public IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
+        internal IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
         {
             if (indexingChain == null)
             {
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override IndexingChain IndexingChain
+        internal override IndexingChain IndexingChain
         {
             get
             {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
         /// <seealso cref= #setMaxBufferedDeleteTerms(int) </seealso>
         /// <seealso cref= #setMaxBufferedDocs(int) </seealso>
         /// <seealso cref= #setRAMBufferSizeMB(double) </seealso>
-        public IndexWriterConfig SetFlushPolicy(FlushPolicy flushPolicy)
+        internal IndexWriterConfig SetFlushPolicy(FlushPolicy flushPolicy)
         {
             if (flushPolicy == null)
             {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override FlushPolicy FlushPolicy
+        internal override FlushPolicy FlushPolicy
         {
             get
             {

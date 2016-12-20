@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     /// posting list for many terms in RAM.
     /// </summary>
 
-    public sealed class ByteSliceWriter : DataOutput
+    internal sealed class ByteSliceWriter : DataOutput
     {
         private byte[] Slice;
         private int Upto;

@@ -73,6 +73,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
+        // LUCENENET TODO: Make remarks section
     /*
      * Final form of the un-inverted field:
      *   Each document points to a list of term numbers that are contained in that document.
@@ -107,11 +108,11 @@ namespace Lucene.Net.Index
     {
         // Term ords are shifted by this, internally, to reserve
         // values 0 (end term) and 1 (index is a pointer into byte array)
-        private const int TNUM_OFFSET = 2;
+        private static readonly int TNUM_OFFSET = 2;
 
         /// <summary>
         /// Every 128th term is indexed, by default. </summary>
-        public const int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
+        public static readonly int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
 
         private int IndexIntervalBits;
         private int IndexIntervalMask;
@@ -119,62 +120,62 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>
-        protected internal readonly int MaxTermDocFreq;
+        protected readonly int MaxTermDocFreq; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Field we are uninverting. </summary>
-        protected internal readonly string Field;
+        protected readonly string Field; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Number of terms in the field. </summary>
-        protected internal int NumTermsInField;
+        protected int NumTermsInField; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Total number of references to term numbers. </summary>
-        protected internal long TermInstances;
+        protected long TermInstances; // LUCENENET TODO: Camel Case
 
         private long Memsz;
 
         /// <summary>
         /// Total time to uninvert the field. </summary>
-        protected internal int Total_time;
+        protected int Total_time; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Time for phase1 of the uninvert process. </summary>
-        protected internal int Phase1_time;
+        protected int Phase1_time; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Holds the per-document ords or a pointer to the ords. </summary>
-        protected internal int[] Index;
+        protected int[] Index; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Holds term ords for documents. </summary>
-        protected internal sbyte[][] Tnums = new sbyte[256][];
+        protected sbyte[][] Tnums = new sbyte[256][]; // LUCENENET TODO: Camel Case, byte??
 
         /// <summary>
         /// Total bytes (sum of term lengths) for all indexed terms. </summary>
-        protected internal long SizeOfIndexedStrings;
+        protected long SizeOfIndexedStrings; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Holds the indexed (by default every 128th) terms. </summary>
-        protected internal BytesRef[] IndexedTermsArray;
+        protected BytesRef[] IndexedTermsArray; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// If non-null, only terms matching this prefix were
         ///  indexed.
         /// </summary>
-        protected internal BytesRef Prefix;
+        protected BytesRef Prefix; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Ordinal of the first term in the field, or 0 if the
         ///  <seealso cref="PostingsFormat"/> does not implement {@link
         ///  TermsEnum#ord}.
         /// </summary>
-        protected internal int OrdBase;
+        protected int OrdBase; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Used while uninverting. </summary>
-        protected internal DocsEnum DocsEnum;
+        protected DocsEnum DocsEnum; // LUCENENET TODO: Camel Case
 
         /// <summary>
         /// Returns total bytes used. </summary>
@@ -238,7 +239,7 @@ namespace Lucene.Net.Index
         /// Subclass inits w/ this, but be sure you then call
         ///  uninvert, only once
         /// </summary>
-        protected internal DocTermOrds(string field, int maxTermDocFreq, int indexIntervalBits)
+        protected DocTermOrds(string field, int maxTermDocFreq, int indexIntervalBits)
         {
             //System.out.println("DTO init field=" + field + " maxTDFreq=" + maxTermDocFreq);
             this.Field = field;
@@ -290,7 +291,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of terms in this field
         /// </summary>
-        public virtual int NumTerms()
+        public virtual int NumTerms() // LUCENENET TODO: Make property
         {
             return NumTermsInField;
         }
@@ -298,7 +299,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns {@code true} if no terms were indexed.
         /// </summary>
-        public virtual bool Empty
+        public virtual bool Empty // LUCENENET TODO: Rename IsEmpty
         {
             get
             {
@@ -308,7 +309,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Subclass can override this </summary>
-        protected internal virtual void VisitTerm(TermsEnum te, int termNum)
+        protected virtual void VisitTerm(TermsEnum te, int termNum)
         {
         }
 
@@ -317,13 +318,13 @@ namespace Lucene.Net.Index
         ///  to record the document frequency for each uninverted
         ///  term.
         /// </summary>
-        protected internal virtual void SetActualDocFreq(int termNum, int df)
+        protected virtual void SetActualDocFreq(int termNum, int df)
         {
         }
 
         /// <summary>
         /// Call this only once (if you subclass!) </summary>
-        protected internal virtual void Uninvert(AtomicReader reader, Bits liveDocs, BytesRef termPrefix)
+        protected virtual void Uninvert(AtomicReader reader, Bits liveDocs, BytesRef termPrefix)
         {
             FieldInfo info = reader.FieldInfos.FieldInfo(Field);
             if (info != null && info.HasDocValues())
@@ -909,7 +910,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(Term_Renamed != null);
             }
 
-            internal BytesRef SetTerm()
+            private BytesRef SetTerm()
             {
                 Term_Renamed = TermsEnum.Term();
                 //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));

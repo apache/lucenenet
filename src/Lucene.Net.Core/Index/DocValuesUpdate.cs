@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         /// <param name="term"> the <seealso cref="Term"/> which determines the documents that will be updated </param>
         /// <param name="field"> the <seealso cref="NumericDocValuesField"/> to update </param>
         /// <param name="value"> the updated value </param>
-        protected internal DocValuesUpdate(DocValuesFieldUpdates.Type_e type, Term term, string field, object value)
+        protected DocValuesUpdate(DocValuesFieldUpdates.Type_e type, Term term, string field, object value)
         {
             this.Type = type;
             this.Term = term;
@@ -56,9 +56,9 @@ namespace Lucene.Net.Index
             this.Value = value;
         }
 
-        internal abstract long ValueSizeInBytes();
+        internal abstract long ValueSizeInBytes(); // LUCENENT TODO: Name GetValueSizeInBytes() ?
 
-        internal int SizeInBytes()
+        internal int SizeInBytes() // LUCENENT TODO: Name GetSizeInBytes() ?
         {
             int sizeInBytes = RAW_SIZE_IN_BYTES;
             sizeInBytes += Term.Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         public sealed class BinaryDocValuesUpdate : DocValuesUpdate
         {
             /* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
-            internal static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+            private static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
             internal static readonly BytesRef MISSING = new BytesRef();
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// An in-place update to a numeric DocValues field </summary>
-        public sealed class NumericDocValuesUpdate : DocValuesUpdate
+        public sealed class NumericDocValuesUpdate : DocValuesUpdate // LUCENENET NOTE: Made public rather than internal because it is on a public API
         {
             internal static readonly long? MISSING = new long?(0);
 

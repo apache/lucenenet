@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             AddOneValue(value);
         }
 
-        internal override void Finish(int maxDoc)
+        public override void Finish(int maxDoc)
         {
             while (Pending.Size() < maxDoc)
             {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             BytesUsed = newBytesUsed;
         }
 
-        internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+        public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
 
-        internal override void Abort()
+        public override void Abort()
         {
         }
 

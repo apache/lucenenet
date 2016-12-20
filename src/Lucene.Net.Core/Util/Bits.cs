@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
     /// Interface for Bitset-like structures.
     /// @lucene.experimental
     /// </summary>
-    public interface Bits
+    public interface Bits // LUCENENET TODO: Rename IBits
     {
         /// <summary>
         /// Returns the value of the bit with the specified <code>index</code>.

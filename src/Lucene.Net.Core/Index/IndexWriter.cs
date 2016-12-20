@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
         ///  places if it is in "near real-time mode" (getReader()
         ///  has been called on this instance).
         /// </summary>
-        public class ReaderPool : IDisposable
+        internal class ReaderPool : IDisposable
         {
             private readonly IndexWriter OuterInstance;
 
@@ -3995,7 +3995,7 @@ namespace Lucene.Net.Index
         }
 
         // for testing only
-        public virtual DocumentsWriter DocsWriter
+        internal virtual DocumentsWriter DocsWriter
         {
             get
             {
@@ -4032,9 +4032,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+        private void SkipDeletedDoc(AbstractDocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
         {
-            foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
+            foreach (AbstractDocValuesFieldUpdates.Iterator iter in updatesIters)
             {
                 if (iter.Doc() == deletedDoc)
                 {
@@ -4073,12 +4073,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
+        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, AbstractDocValuesFieldUpdates[] dvFieldUpdates, AbstractDocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
         {
             int newDoc = -1;
             for (int idx = 0; idx < mergingFields.Length; idx++)
             {
-                DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
+                AbstractDocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
                 if (updatesIter.Doc() == curDoc) // document has an update
                 {
                     if (holder.MergedDeletesAndUpdates_Renamed == null)
@@ -4089,7 +4089,7 @@ namespace Lucene.Net.Index
                     {
                         newDoc = holder.DocMap.Map(docUpto);
                     }
-                    DocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
+                    AbstractDocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
                     dvUpdates.Add(newDoc, updatesIter.Value());
                     updatesIter.NextDoc(); // advance to next document
                 }
@@ -4131,7 +4131,7 @@ namespace Lucene.Net.Index
 
                 // Lazy init (only when we find a delete to carry over):
                 MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
-                DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
+                AbstractDocValuesFieldUpdates.Container mergedDVUpdates = new AbstractDocValuesFieldUpdates.Container();
 
                 for (int i = 0; i < sourceSegments.Count; i++)
                 {
@@ -4143,10 +4143,10 @@ namespace Lucene.Net.Index
                     // We hold a ref so it should still be in the pool:
                     Debug.Assert(rld != null, "seg=" + info.Info.Name);
                     Bits currentLiveDocs = rld.LiveDocs;
-                    IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
+                    IDictionary<string, AbstractDocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
-                    DocValuesFieldUpdates[] dvFieldUpdates;
-                    DocValuesFieldUpdates.Iterator[] updatesIters;
+                    AbstractDocValuesFieldUpdates[] dvFieldUpdates;
+                    AbstractDocValuesFieldUpdates.Iterator[] updatesIters;
                     if (mergingFieldUpdates.Count == 0)
                     {
                         mergingFields = null;
@@ -4156,13 +4156,13 @@ namespace Lucene.Net.Index
                     else
                     {
                         mergingFields = new string[mergingFieldUpdates.Count];
-                        dvFieldUpdates = new DocValuesFieldUpdates[mergingFieldUpdates.Count];
-                        updatesIters = new DocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
+                        dvFieldUpdates = new AbstractDocValuesFieldUpdates[mergingFieldUpdates.Count];
+                        updatesIters = new AbstractDocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
                         int idx = 0;
-                        foreach (KeyValuePair<string, DocValuesFieldUpdates> e in mergingFieldUpdates)
+                        foreach (KeyValuePair<string, AbstractDocValuesFieldUpdates> e in mergingFieldUpdates)
                         {
                             string field = e.Key;
-                            DocValuesFieldUpdates updates = e.Value;
+                            AbstractDocValuesFieldUpdates updates = e.Value;
                             mergingFields[idx] = field;
                             dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.Type);
                             if (dvFieldUpdates[idx] == null)

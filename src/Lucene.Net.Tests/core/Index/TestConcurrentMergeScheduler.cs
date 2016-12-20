@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
                 this.Failed = failed;
             }
 
-            protected internal override void DoMerge(MergePolicy.OneMerge merge)
+            protected override void DoMerge(MergePolicy.OneMerge merge)
             {
                 try
                 {
@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
                 SetMaxMergesAndThreads(5, 5);
             }
 
-            protected internal override void DoMerge(MergePolicy.OneMerge merge)
+            protected override void DoMerge(MergePolicy.OneMerge merge)
             {
                 TotMergedBytes += merge.TotalBytesSize();
                 base.DoMerge(merge);

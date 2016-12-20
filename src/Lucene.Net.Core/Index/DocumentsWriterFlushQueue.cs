@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal virtual bool HasTickets()
+        internal virtual bool HasTickets() // LUCENENET TODO: Make property
         {
             Debug.Assert(TicketCount_Renamed.Get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.Get());
             return TicketCount_Renamed.Get() != 0;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
             protected internal FrozenBufferedUpdates FrozenUpdates;
             protected internal bool Published = false;
 
-            protected internal FlushTicket(FrozenBufferedUpdates frozenUpdates)
+            protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
                 Debug.Assert(frozenUpdates != null);
                 this.FrozenUpdates = frozenUpdates;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 
             protected internal abstract void Publish(IndexWriter writer);
 
-            protected internal abstract bool CanPublish();
+            protected internal abstract bool CanPublish(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Publishes the flushed segment, segment private deletes (if any) and its
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
             /// publishing operation is synced on IW -> BDS so that the <seealso cref="SegmentInfo"/>'s
             /// delete generation is always GlobalPacket_deleteGeneration + 1
             /// </summary>
-            protected internal void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
+            protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
                 Debug.Assert(newSegment != null);
                 Debug.Assert(newSegment.SegmentInfo != null);
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
                 indexWriter.PublishFlushedSegment(newSegment.SegmentInfo, segmentUpdates, globalPacket);
             }
 
-            protected internal void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
+            protected void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
             {
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment == null)
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
 
         internal sealed class GlobalDeletesTicket : FlushTicket
         {
-            protected internal GlobalDeletesTicket(FrozenBufferedUpdates frozenUpdates)
+            internal GlobalDeletesTicket(FrozenBufferedUpdates frozenUpdates) // LUCENENET NOTE: Made internal rather than protected because class is sealed
                 : base(frozenUpdates)
             {
             }
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
             internal FlushedSegment Segment_Renamed;
             internal bool Failed = false;
 
-            protected internal SegmentFlushTicket(FrozenBufferedUpdates frozenDeletes)
+            internal SegmentFlushTicket(FrozenBufferedUpdates frozenDeletes) // LUCENENET NOTE: Made internal rather than protected because class is sealed
                 : base(frozenDeletes)
             {
             }
@@ -319,7 +319,8 @@ namespace Lucene.Net.Index
                 FinishFlush(writer, Segment_Renamed, FrozenUpdates);
             }
 
-            protected internal FlushedSegment Segment
+            // LUCENENET TODO: Make SetSegment(FlushedSegment segment)
+            internal FlushedSegment Segment // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
                 set
                 {
@@ -328,7 +329,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            protected internal void SetFailed()
+            internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
                 Debug.Assert(Segment_Renamed == null);
                 Failed = true;

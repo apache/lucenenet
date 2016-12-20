@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     /// (InvertedDocConsumerPerField).  It also interacts with an
     /// endConsumer (InvertedDocEndConsumerPerField).
     /// </summary>
-    public sealed class DocInverterPerField : DocFieldConsumerPerField
+    internal sealed class DocInverterPerField : DocFieldConsumerPerField
     {
         internal readonly FieldInfo fieldInfo;
         internal readonly InvertedDocConsumerPerField Consumer;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
             this.EndConsumer = parent.EndConsumer.AddField(this, fieldInfo);
         }
 
-        public override void Abort()
+        internal override void Abort()
         {
             try
             {
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
             EndConsumer.Finish();
         }
 
-        public override FieldInfo FieldInfo
+        internal override FieldInfo FieldInfo
         {
             get
             {

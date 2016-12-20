@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexingChain"/> that determines how documents are
         ///  indexed.
         /// </summary>
-        protected internal volatile IndexingChain indexingChain;
+        internal volatile IndexingChain indexingChain; // LUCENENET specific - made internal because IndexingChain is internal
 
         /// <summary>
         /// <seealso cref="Codec"/> used to write new segments. </summary>
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
         /// {@code DocumentsWriterPerThreadPool} to control how
         ///  threads are allocated to {@code DocumentsWriterPerThread}.
         /// </summary>
-        protected internal volatile DocumentsWriterPerThreadPool indexerThreadPool;
+        internal volatile DocumentsWriterPerThreadPool indexerThreadPool; // LUCENENET specific - made internal because DocumentsWriterPerThreadPool is internal
 
         /// <summary>
         /// True if readers should be pooled. </summary>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="FlushPolicy"/> to control when segments are
         ///  flushed.
         /// </summary>
-        protected internal volatile FlushPolicy flushPolicy;
+        internal volatile FlushPolicy flushPolicy; // LUCENENET specific - made internal because FlushPolicy is internal
 
         /// <summary>
         /// Sets the hard upper bound on RAM usage for a single
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
             mergeScheduler = new ConcurrentMergeScheduler();
 #endif
             writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
-            indexingChain = DocumentsWriterPerThread.defaultIndexingChain;
+            indexingChain = DocumentsWriterPerThread.DefaultIndexingChain;
             codec = Codec.Default;
             if (codec == null)
             {
@@ -598,7 +598,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref= IndexWriterConfig#setIndexerThreadPool(DocumentsWriterPerThreadPool) </seealso>
         /// <returns> the configured <seealso cref="DocumentsWriterPerThreadPool"/> instance. </returns>
-        public virtual DocumentsWriterPerThreadPool IndexerThreadPool
+        internal virtual DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get
             {
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
         /// Returns the indexing chain set on
         /// <seealso cref="IndexWriterConfig#setIndexingChain(IndexingChain)"/>.
         /// </summary>
-        public virtual IndexingChain IndexingChain
+        internal virtual IndexingChain IndexingChain
         {
             get
             {
@@ -663,7 +663,7 @@ namespace Lucene.Net.Index
         }
 
         /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
-        public virtual FlushPolicy FlushPolicy
+        internal virtual FlushPolicy FlushPolicy
         {
             get
             {

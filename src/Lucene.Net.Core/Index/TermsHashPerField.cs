@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     using Counter = Lucene.Net.Util.Counter;
     using IntBlockPool = Lucene.Net.Util.IntBlockPool;
 
-    public sealed class TermsHashPerField : InvertedDocConsumerPerField
+    internal sealed class TermsHashPerField : InvertedDocConsumerPerField
     {
         private const int HASH_INIT_SIZE = 4;
 

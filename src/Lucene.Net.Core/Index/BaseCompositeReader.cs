@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
         /// subreader for docID-based methods. <b>Please note:</b> this array is <b>not</b>
         /// cloned and not protected for modification, the subclass is responsible
         /// to do this. </param>
-        protected internal BaseCompositeReader(R[] subReaders)
+        protected BaseCompositeReader(R[] subReaders)
         {
             this.SubReaders = subReaders;
             this.SubReadersList = subReaders.ToList();// Collections.unmodifiableList(Arrays.asList(subReaders));
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             return this.Starts[readerIndex];
         }
 
-        public override IList<IndexReader> GetSequentialSubReaders()
+        protected internal override sealed IList<IndexReader> GetSequentialSubReaders() // LUCENENET TODO: Change to IList<R> (and see if it compiles - it should because R has a constraint)
         {
             return SubReadersList.Cast<IndexReader>().ToList();
         }

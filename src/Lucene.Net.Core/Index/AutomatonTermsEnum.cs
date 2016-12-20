@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         /// a looping transition at position: we set an upper bound and
         /// act like a TermRangeQuery for this portion of the term space.
         /// </summary>
-        private int Linear
+        private int Linear // LUCENENET TODO: Change to SetLinear(int)
         {
             set
             {

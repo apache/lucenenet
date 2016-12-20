@@ -31,17 +31,19 @@ namespace Lucene.Net.Index
      * point we read the forwarding address of the next slice
      * and then jump to it.*/
 
-    public sealed class ByteSliceReader : DataInput
+    public sealed class ByteSliceReader : DataInput // LUCENENET specific - changed from internal to public because returned from public API
     {
-        internal ByteBlockPool Pool;
-        internal int BufferUpto;
-        byte[] Buffer;
-        public int Upto;
-        internal int Limit;
-        internal int Level;
-        public int BufferOffset;
+        private ByteBlockPool Pool;
+        private int BufferUpto;
+        private byte[] Buffer;
+        private int Upto;
+        private int Limit;
+        private int Level;
+        public int BufferOffset; // LUCENENET TODO: make property
 
-        public int EndIndex;
+        public int EndIndex; // LUCENENET TODO: make property
+
+        internal ByteSliceReader() { } // LUCENENENET specific - made constructor internal since this class was meant to be internal
 
         public void Init(ByteBlockPool pool, int startIndex, int endIndex)
         {

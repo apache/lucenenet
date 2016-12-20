@@ -31,24 +31,24 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
+    /// A <seealso cref="AbstractDocValuesFieldUpdates"/> which holds updates of documents, of a single
     /// <seealso cref="BinaryDocValuesField"/>.
     ///
     /// @lucene.experimental
     /// </summary>
-    internal class BinaryDocValuesFieldUpdates : DocValuesFieldUpdates
+    internal class BinaryDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        internal sealed class Iterator : DocValuesFieldUpdates.Iterator
+        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
         {
-            internal readonly PagedGrowableWriter Offsets;
-            internal readonly int Size;
-            internal readonly PagedGrowableWriter Lengths;
-            internal readonly PagedMutable Docs;
-            internal readonly FixedBitSet DocsWithField;
-            internal long Idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
-            internal int Doc_Renamed = -1;
-            internal readonly BytesRef Value_Renamed;
-            internal int Offset, Length;
+            private readonly PagedGrowableWriter Offsets;
+            private readonly int Size;
+            private readonly PagedGrowableWriter Lengths;
+            private readonly PagedMutable Docs;
+            private readonly FixedBitSet DocsWithField;
+            private long Idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
+            private int Doc_Renamed = -1;
+            private readonly BytesRef Value_Renamed;
+            private int Offset, Length;
 
             internal Iterator(int size, PagedGrowableWriter offsets, PagedGrowableWriter lengths, PagedMutable docs, BytesRef values, FixedBitSet docsWithField)
             {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
         private int Size;
 
         public BinaryDocValuesFieldUpdates(string field, int maxDoc)
-            : base(field, Type_e.BINARY)
+            : base(field, DocValuesFieldUpdates.Type_e.BINARY)
         {
             DocsWithField = new FixedBitSet(64);
             Docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             ++Size;
         }
 
-        internal override DocValuesFieldUpdates.Iterator GetIterator()
+        public override AbstractDocValuesFieldUpdates.Iterator GetIterator()
         {
             PagedMutable docs = this.Docs;
             PagedGrowableWriter offsets = this.Offsets;
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void Merge(DocValuesFieldUpdates other)
+        public override void Merge(AbstractDocValuesFieldUpdates other)
         {
             BinaryDocValuesFieldUpdates otherUpdates = (BinaryDocValuesFieldUpdates)other;
             int newSize = Size + otherUpdates.Size;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
             Values.Append(otherUpdates.Values);
         }
 
-        public override bool Any()
+        public override bool Any() // LUCENENET TODO: This should be a property, except for Any() is already a common API in .NET so it might make sense to keep it
         {
             return Size > 0;
         }

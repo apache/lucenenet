@@ -24,7 +24,11 @@ namespace Lucene.Net.Index
     /// this exception is thrown when Lucene detects
     /// an inconsistency in the index.
     /// </summary>
-    public class CorruptIndexException : IOException
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
+    public class CorruptIndexException : IOException // LUCENENENET specific - made public instead of internal because there are public subclasses
     {
         /// <summary>
         /// Sole constructor. </summary>

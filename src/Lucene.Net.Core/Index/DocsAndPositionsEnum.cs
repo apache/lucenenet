@@ -28,19 +28,19 @@ namespace Lucene.Net.Index
         /// Flag to pass to <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/>
         ///  if you require offsets in the returned enum.
         /// </summary>
-        public const int FLAG_OFFSETS = 0x1;
+        public static readonly int FLAG_OFFSETS = 0x1;
 
         /// <summary>
         /// Flag to pass to  <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/>
         ///  if you require payloads in the returned enum.
         /// </summary>
-        public const int FLAG_PAYLOADS = 0x2;
+        public static readonly int FLAG_PAYLOADS = 0x2;
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal DocsAndPositionsEnum()
+        protected DocsAndPositionsEnum()
         {
         }
 

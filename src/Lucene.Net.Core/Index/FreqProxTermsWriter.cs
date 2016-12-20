@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-    public sealed class FreqProxTermsWriter : TermsHashConsumer
+    internal sealed class FreqProxTermsWriter : TermsHashConsumer
     {
         public override void Abort()
         // TODO: would be nice to factor out more of this, eg the
