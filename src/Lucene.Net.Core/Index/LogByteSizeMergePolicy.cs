@@ -24,12 +24,12 @@ namespace Lucene.Net.Index
     public class LogByteSizeMergePolicy : LogMergePolicy
     {
         /// Default minimum segment size.  <seealso cref= setMinMergeMB </seealso>
-        public const double DEFAULT_MIN_MERGE_MB = 1.6;
+        public static readonly double DEFAULT_MIN_MERGE_MB = 1.6;
 
         /// <summary>
         /// Default maximum segment size.  A segment of this size </summary>
         ///  or larger will never be merged.  <seealso cref= setMaxMergeMB  </seealso>
-        public const double DEFAULT_MAX_MERGE_MB = 2048;
+        public static readonly double DEFAULT_MAX_MERGE_MB = 2048;
 
         /// <summary>
         /// Default maximum segment size.  A segment of this size </summary>
@@ -42,19 +42,18 @@ namespace Lucene.Net.Index
         /// </summary>
         public LogByteSizeMergePolicy()
         {
-            MinMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
-            MaxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+            minMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
+            maxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
             
             // .Net port, original line is inappropriate, overflows in .NET 
             // and the property gets set to a negative value.
             // In Java however such statements results in long.MaxValue
 
             //MaxMergeSizeForForcedMerge = (long)(DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE * 1024 * 1024);
-            MaxMergeSizeForForcedMerge = long.MaxValue;
-            
+            maxMergeSizeForForcedMerge = long.MaxValue;
         }
 
-        protected internal override long Size(SegmentCommitInfo info)
+        protected override long Size(SegmentCommitInfo info)
         {
             return SizeBytes(info);
         }
@@ -76,15 +75,15 @@ namespace Lucene.Net.Index
         {
             set
             {
-                MaxMergeSize = (long)(value * 1024 * 1024);
-                if (MaxMergeSize < 0)
+                maxMergeSize = (long)(value * 1024 * 1024);
+                if (maxMergeSize < 0)
                 {
-                    MaxMergeSize = long.MaxValue;
+                    maxMergeSize = long.MaxValue;
                 }
             }
             get
             {
-                return ((double)MaxMergeSize) / 1024 / 1024;
+                return ((double)maxMergeSize) / 1024 / 1024;
             }
         }
 
@@ -99,15 +98,15 @@ namespace Lucene.Net.Index
         {
             set
             {
-                MaxMergeSizeForForcedMerge = (long)(value * 1024 * 1024);
-                if (MaxMergeSizeForForcedMerge < 0)
+                maxMergeSizeForForcedMerge = (long)(value * 1024 * 1024);
+                if (maxMergeSizeForForcedMerge < 0)
                 {
-                    MaxMergeSizeForForcedMerge = long.MaxValue;
+                    maxMergeSizeForForcedMerge = long.MaxValue;
                 }
             }
             get
             {
-                return ((double)MaxMergeSizeForForcedMerge) / 1024 / 1024;
+                return ((double)maxMergeSizeForForcedMerge) / 1024 / 1024;
             }
         }
 
@@ -126,15 +125,15 @@ namespace Lucene.Net.Index
         {
             set
             {
-                MinMergeSize = (long)(value * 1024 * 1024);
-                if (MinMergeSize < 0)
+                minMergeSize = (long)(value * 1024 * 1024);
+                if (minMergeSize < 0)
                 {
-                    MinMergeSize = long.MaxValue;
+                    minMergeSize = long.MaxValue;
                 }
             }
             get
             {
-                return ((double)MinMergeSize) / 1024 / 1024;
+                return ((double)minMergeSize) / 1024 / 1024;
             }
         }
     }

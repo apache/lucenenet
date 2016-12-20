@@ -31,21 +31,21 @@ namespace Lucene.Net.Index
 
     public sealed class MultiDocsAndPositionsEnum : DocsAndPositionsEnum
     {
-        private readonly MultiTermsEnum Parent;
-        internal readonly DocsAndPositionsEnum[] SubDocsAndPositionsEnum;
-        private EnumWithSlice[] Subs_Renamed;
-        internal int NumSubs_Renamed;
-        internal int Upto;
-        internal DocsAndPositionsEnum Current;
-        internal int CurrentBase;
-        internal int Doc = -1;
+        private readonly MultiTermsEnum parent;
+        internal readonly DocsAndPositionsEnum[] subDocsAndPositionsEnum;
+        private EnumWithSlice[] subs;
+        internal int numSubs;
+        internal int upto;
+        internal DocsAndPositionsEnum current;
+        internal int currentBase;
+        internal int doc = -1;
 
         /// <summary>
         /// Sole constructor. </summary>
         public MultiDocsAndPositionsEnum(MultiTermsEnum parent, int subReaderCount)
         {
-            this.Parent = parent;
-            SubDocsAndPositionsEnum = new DocsAndPositionsEnum[subReaderCount];
+            this.parent = parent;
+            subDocsAndPositionsEnum = new DocsAndPositionsEnum[subReaderCount];
         }
 
         /// <summary>
@@ -54,24 +54,24 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool CanReuse(MultiTermsEnum parent)
         {
-            return this.Parent == parent;
+            return this.parent == parent;
         }
 
         /// <summary>
         /// Rre-use and reset this instance on the provided slices. </summary>
         public MultiDocsAndPositionsEnum Reset(EnumWithSlice[] subs, int numSubs)
         {
-            this.NumSubs_Renamed = numSubs;
-            this.Subs_Renamed = new EnumWithSlice[subs.Length];
+            this.numSubs = numSubs;
+            this.subs = new EnumWithSlice[subs.Length];
             for (int i = 0; i < subs.Length; i++)
             {
-                this.Subs_Renamed[i] = new EnumWithSlice();
-                this.Subs_Renamed[i].DocsAndPositionsEnum = subs[i].DocsAndPositionsEnum;
-                this.Subs_Renamed[i].Slice = subs[i].Slice;
+                this.subs[i] = new EnumWithSlice();
+                this.subs[i].DocsAndPositionsEnum = subs[i].DocsAndPositionsEnum;
+                this.subs[i].Slice = subs[i].Slice;
             }
-            Upto = -1;
-            Doc = -1;
-            Current = null;
+            upto = -1;
+            doc = -1;
+            current = null;
             return this;
         }
 
@@ -82,66 +82,66 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NumSubs_Renamed;
+                return numSubs;
             }
         }
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
-        public EnumWithSlice[] Subs
+        public EnumWithSlice[] Subs // LUCENENET TODO: Make method GetSubs() (arrays should not be returned)
         {
             get
             {
-                return Subs_Renamed;
+                return subs;
             }
         }
 
         public override int Freq()
         {
-            Debug.Assert(Current != null);
-            return Current.Freq();
+            Debug.Assert(current != null);
+            return current.Freq();
         }
 
         public override int DocID()
         {
-            return Doc;
+            return doc;
         }
 
         public override int Advance(int target)
         {
-            Debug.Assert(target > Doc);
+            Debug.Assert(target > doc);
             while (true)
             {
-                if (Current != null)
+                if (current != null)
                 {
                     int doc;
-                    if (target < CurrentBase)
+                    if (target < currentBase)
                     {
                         // target was in the previous slice but there was no matching doc after it
-                        doc = Current.NextDoc();
+                        doc = current.NextDoc();
                     }
                     else
                     {
-                        doc = Current.Advance(target - CurrentBase);
+                        doc = current.Advance(target - currentBase);
                     }
                     if (doc == NO_MORE_DOCS)
                     {
-                        Current = null;
+                        current = null;
                     }
                     else
                     {
-                        return this.Doc = doc + CurrentBase;
+                        return this.doc = doc + currentBase;
                     }
                 }
-                else if (Upto == NumSubs_Renamed - 1)
+                else if (upto == numSubs - 1)
                 {
-                    return this.Doc = NO_MORE_DOCS;
+                    return this.doc = NO_MORE_DOCS;
                 }
                 else
                 {
-                    Upto++;
-                    Current = Subs_Renamed[Upto].DocsAndPositionsEnum;
-                    CurrentBase = Subs_Renamed[Upto].Slice.Start;
+                    upto++;
+                    current = subs[upto].DocsAndPositionsEnum;
+                    currentBase = subs[upto].Slice.Start;
                 }
             }
         }
@@ -150,52 +150,52 @@ namespace Lucene.Net.Index
         {
             while (true)
             {
-                if (Current == null)
+                if (current == null)
                 {
-                    if (Upto == NumSubs_Renamed - 1)
+                    if (upto == numSubs - 1)
                     {
-                        return this.Doc = NO_MORE_DOCS;
+                        return this.doc = NO_MORE_DOCS;
                     }
                     else
                     {
-                        Upto++;
-                        Current = Subs_Renamed[Upto].DocsAndPositionsEnum;
-                        CurrentBase = Subs_Renamed[Upto].Slice.Start;
+                        upto++;
+                        current = subs[upto].DocsAndPositionsEnum;
+                        currentBase = subs[upto].Slice.Start;
                     }
                 }
 
-                int doc = Current.NextDoc();
+                int doc = current.NextDoc();
                 if (doc != NO_MORE_DOCS)
                 {
-                    return this.Doc = CurrentBase + doc;
+                    return this.doc = currentBase + doc;
                 }
                 else
                 {
-                    Current = null;
+                    current = null;
                 }
             }
         }
 
         public override int NextPosition()
         {
-            return Current.NextPosition();
+            return current.NextPosition();
         }
 
         public override int StartOffset()
         {
-            return Current.StartOffset();
+            return current.StartOffset();
         }
 
         public override int EndOffset()
         {
-            return Current.EndOffset();
+            return current.EndOffset();
         }
 
         public override BytesRef Payload
         {
             get
             {
-                return Current.Payload;
+                return current.Payload;
             }
         }
 
@@ -212,13 +212,13 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// <seealso cref="DocsAndPositionsEnum"/> for this sub-reader. </summary>
-            public DocsAndPositionsEnum DocsAndPositionsEnum;
+            public DocsAndPositionsEnum DocsAndPositionsEnum; // LUCENENET TODO: Make property
 
             /// <summary>
             /// <seealso cref="ReaderSlice"/> describing how this sub-reader
             ///  fits into the composite reader.
             /// </summary>
-            public ReaderSlice Slice;
+            public ReaderSlice Slice; // LUCENENET TODO: Make property
 
             public override string ToString()
             {
@@ -229,9 +229,9 @@ namespace Lucene.Net.Index
         public override long Cost()
         {
             long cost = 0;
-            for (int i = 0; i < NumSubs_Renamed; i++)
+            for (int i = 0; i < numSubs; i++)
             {
-                cost += Subs_Renamed[i].DocsAndPositionsEnum.Cost();
+                cost += subs[i].DocsAndPositionsEnum.Cost();
             }
             return cost;
         }

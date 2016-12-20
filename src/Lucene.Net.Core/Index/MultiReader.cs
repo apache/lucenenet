@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public class MultiReader : BaseCompositeReader<IndexReader>
     {
-        private readonly bool CloseSubReaders;
+        private readonly bool closeSubReaders;
 
         /// <summary>
         /// <p>Construct a MultiReader aggregating the named set of (sub)readers.
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
         public MultiReader(IndexReader[] subReaders, bool closeSubReaders)
             : base((IndexReader[])subReaders.Clone())
         {
-            this.CloseSubReaders = closeSubReaders;
+            this.closeSubReaders = closeSubReaders;
             if (!closeSubReaders)
             {
                 for (int i = 0; i < subReaders.Length; i++)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        if (CloseSubReaders)
+                        if (closeSubReaders)
                         {
                             r.Dispose();
                         }

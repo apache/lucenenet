@@ -35,13 +35,13 @@ namespace Lucene.Net.Index
 
     public sealed class MultiTerms : Terms
     {
-        private readonly Terms[] Subs;
-        private readonly ReaderSlice[] SubSlices;
-        private readonly IComparer<BytesRef> TermComp;
-        private readonly bool HasFreqs_Renamed;
-        private readonly bool HasOffsets_Renamed;
-        private readonly bool HasPositions_Renamed;
-        private readonly bool HasPayloads_Renamed;
+        private readonly Terms[] subs;
+        private readonly ReaderSlice[] subSlices;
+        private readonly IComparer<BytesRef> termComp;
+        private readonly bool hasFreqs;
+        private readonly bool hasOffsets;
+        private readonly bool hasPositions;
+        private readonly bool hasPayloads;
 
         /// <summary>
         /// Sole constructor.
@@ -51,8 +51,8 @@ namespace Lucene.Net.Index
         ///        subs}) describing the sub-reader slices. </param>
         public MultiTerms(Terms[] subs, ReaderSlice[] subSlices)
         {
-            this.Subs = subs;
-            this.SubSlices = subSlices;
+            this.subs = subs;
+            this.subSlices = subSlices;
 
             IComparer<BytesRef> _termComp = null;
             Debug.Assert(subs.Length > 0, "inefficient: don't use MultiTerms over one sub");
@@ -82,19 +82,19 @@ namespace Lucene.Net.Index
                 _hasPayloads |= subs[i].HasPayloads();
             }
 
-            TermComp = _termComp;
-            HasFreqs_Renamed = _hasFreqs;
-            HasOffsets_Renamed = _hasOffsets;
-            HasPositions_Renamed = _hasPositions;
-            HasPayloads_Renamed = HasPositions_Renamed && _hasPayloads; // if all subs have pos, and at least one has payloads.
+            termComp = _termComp;
+            hasFreqs = _hasFreqs;
+            hasOffsets = _hasOffsets;
+            hasPositions = _hasPositions;
+            hasPayloads = hasPositions && _hasPayloads; // if all subs have pos, and at least one has payloads.
         }
 
         public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
         {
             IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
-            for (int i = 0; i < Subs.Length; i++)
+            for (int i = 0; i < subs.Length; i++)
             {
-                TermsEnum termsEnum = Subs[i].Intersect(compiled, startTerm);
+                TermsEnum termsEnum = subs[i].Intersect(compiled, startTerm);
                 if (termsEnum != null)
                 {
                     termsEnums.Add(new MultiTermsEnum.TermsEnumIndex(termsEnum, i));
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 
             if (termsEnums.Count > 0)
             {
-                return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
+                return (new MultiTermsEnum(subSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
             }
             else
             {
@@ -114,9 +114,9 @@ namespace Lucene.Net.Index
         public override TermsEnum Iterator(TermsEnum reuse)
         {
             IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
-            for (int i = 0; i < Subs.Length; i++)
+            for (int i = 0; i < subs.Length; i++)
             {
-                TermsEnum termsEnum = Subs[i].Iterator(null);
+                TermsEnum termsEnum = subs[i].Iterator(null);
                 if (termsEnum != null)
                 {
                     termsEnums.Add(new MultiTermsEnum.TermsEnumIndex(termsEnum, i));
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 
             if (termsEnums.Count > 0)
             {
-                return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
+                return (new MultiTermsEnum(subSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
             }
             else
             {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             get
             {
                 long sum = 0;
-                foreach (Terms terms in Subs)
+                foreach (Terms terms in subs)
                 {
                     long v = terms.SumTotalTermFreq;
                     if (v == -1)
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             get
             {
                 long sum = 0;
-                foreach (Terms terms in Subs)
+                foreach (Terms terms in subs)
                 {
                     long v = terms.SumDocFreq;
                     if (v == -1)
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
             get
             {
                 int sum = 0;
-                foreach (Terms terms in Subs)
+                foreach (Terms terms in subs)
                 {
                     int v = terms.DocCount;
                     if (v == -1)
@@ -196,28 +196,28 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return TermComp;
+                return termComp;
             }
         }
 
         public override bool HasFreqs()
         {
-            return HasFreqs_Renamed;
+            return hasFreqs;
         }
 
         public override bool HasOffsets()
         {
-            return HasOffsets_Renamed;
+            return hasOffsets;
         }
 
         public override bool HasPositions()
         {
-            return HasPositions_Renamed;
+            return hasPositions;
         }
 
         public override bool HasPayloads()
         {
-            return HasPayloads_Renamed;
+            return hasPayloads;
         }
     }
 }

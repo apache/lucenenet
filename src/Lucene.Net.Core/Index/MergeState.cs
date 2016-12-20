@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns true if there are any deletions. </summary>
-            public virtual bool HasDeletions()
+            public virtual bool HasDeletions() // LUCENENET TODO: Make property
             {
                 return NumDeletedDocs > 0;
             }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 return Build(maxDoc, liveDocs);
             }
 
-            public static DocMap Build(int maxDoc, Bits liveDocs)
+            internal static DocMap Build(int maxDoc, Bits liveDocs)
             {
                 Debug.Assert(liveDocs != null);
                 MonotonicAppendingLongBuffer docMap = new MonotonicAppendingLongBuffer();
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 
         private sealed class NoDelDocMap : DocMap
         {
-            internal readonly int maxDoc;
+            private readonly int maxDoc;
 
             internal NoDelDocMap(int maxDoc)
             {
@@ -167,33 +167,33 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="SegmentInfo"/> of the newly merged segment. </summary>
-        public readonly SegmentInfo SegmentInfo;
+        public readonly SegmentInfo SegmentInfo; // LUCENENET TODO: Make property
 
         /// <summary>
         /// <seealso cref="FieldInfos"/> of the newly merged segment. </summary>
-        public FieldInfos FieldInfos;
+        public FieldInfos FieldInfos; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Readers being merged. </summary>
-        public readonly IList<AtomicReader> Readers;
+        public readonly IList<AtomicReader> Readers; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Maps docIDs around deletions. </summary>
-        public DocMap[] DocMaps;
+        public DocMap[] DocMaps; // LUCENENET TODO: Make property ? arrays shouldn't be properties - perhaps leave a field?
 
         /// <summary>
         /// New docID base per reader. </summary>
-        public int[] DocBase;
+        public int[] DocBase; // LUCENENET TODO: Make property ?
 
         /// <summary>
         /// Holds the CheckAbort instance, which is invoked
         ///  periodically to see if the merge has been aborted.
         /// </summary>
-        public readonly CheckAbort checkAbort;
+        public readonly CheckAbort checkAbort; // LUCENENET TODO: Make property
 
         /// <summary>
         /// InfoStream for debugging messages. </summary>
-        public readonly InfoStream InfoStream;
+        public readonly InfoStream InfoStream; // LUCENENET TODO: Make property
 
         // TODO: get rid of this? it tells you which segments are 'aligned' (e.g. for bulk merging)
         // but is this really so expensive to compute again in different components, versus once in SM?
@@ -203,37 +203,37 @@ namespace Lucene.Net.Index
         /// name/number mapping, so their stored fields and term
         /// vectors may be bulk merged.
         /// </summary>
-        public SegmentReader[] MatchingSegmentReaders;
+        public SegmentReader[] MatchingSegmentReaders; // LUCENENET TODO: Make property ?
 
         /// <summary>
         /// How many <seealso cref="#matchingSegmentReaders"/> are set. </summary>
-        public int MatchedCount;
+        public int MatchedCount; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Sole constructor. </summary>
-        internal MergeState(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, CheckAbort checkAbort_)
+        internal MergeState(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, CheckAbort checkAbort)
         {
             this.Readers = readers;
             this.SegmentInfo = segmentInfo;
             this.InfoStream = infoStream;
-            this.checkAbort = checkAbort_;
+            this.checkAbort = checkAbort;
         }
 
         /// <summary>
         /// Class for recording units of work when merging segments.
         /// </summary>
-        public class CheckAbort
+        public class CheckAbort // LUCENENET TODO: De-nest to fix CLS issue
         {
-            internal double WorkCount;
-            internal readonly MergePolicy.OneMerge Merge;
-            internal readonly Directory Dir;
+            private double workCount;
+            private readonly MergePolicy.OneMerge merge;
+            private readonly Directory dir;
 
             /// <summary>
             /// Creates a #CheckAbort instance. </summary>
             public CheckAbort(MergePolicy.OneMerge merge, Directory dir)
             {
-                this.Merge = merge;
-                this.Dir = dir;
+                this.merge = merge;
+                this.dir = dir;
             }
 
             /// <summary>
@@ -246,11 +246,11 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual void Work(double units)
             {
-                WorkCount += units;
-                if (WorkCount >= 10000.0)
+                workCount += units;
+                if (workCount >= 10000.0)
                 {
-                    Merge.CheckAborted(Dir);
-                    WorkCount = 0;
+                    merge.CheckAborted(dir);
+                    workCount = 0;
                 }
             }
 

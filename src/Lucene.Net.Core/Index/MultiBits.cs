@@ -32,64 +32,64 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class MultiBits : Bits
     {
-        private readonly Bits[] Subs;
+        private readonly Bits[] subs;
 
         // length is 1+subs.length (the last entry has the maxDoc):
-        private readonly int[] Starts;
+        private readonly int[] starts;
 
-        private readonly bool DefaultValue;
+        private readonly bool sefaultValue;
 
         public MultiBits(Bits[] subs, int[] starts, bool defaultValue)
         {
             Debug.Assert(starts.Length == 1 + subs.Length);
-            this.Subs = subs;
-            this.Starts = starts;
-            this.DefaultValue = defaultValue;
+            this.subs = subs;
+            this.starts = starts;
+            this.sefaultValue = defaultValue;
         }
 
         private bool CheckLength(int reader, int doc)
         {
-            int length = Starts[1 + reader] - Starts[reader];
-            Debug.Assert(doc - Starts[reader] < length, "doc=" + doc + " reader=" + reader + " starts[reader]=" + Starts[reader] + " length=" + length);
+            int length = starts[1 + reader] - starts[reader];
+            Debug.Assert(doc - starts[reader] < length, "doc=" + doc + " reader=" + reader + " starts[reader]=" + starts[reader] + " length=" + length);
             return true;
         }
 
         public bool Get(int doc)
         {
-            int reader = ReaderUtil.SubIndex(doc, Starts);
+            int reader = ReaderUtil.SubIndex(doc, starts);
             Debug.Assert(reader != -1);
-            Bits bits = Subs[reader];
+            Bits bits = subs[reader];
             if (bits == null)
             {
-                return DefaultValue;
+                return sefaultValue;
             }
             else
             {
                 Debug.Assert(CheckLength(reader, doc));
-                return bits.Get(doc - Starts[reader]);
+                return bits.Get(doc - starts[reader]);
             }
         }
 
         public override string ToString()
         {
             StringBuilder b = new StringBuilder();
-            b.Append(Subs.Length + " subs: ");
-            for (int i = 0; i < Subs.Length; i++)
+            b.Append(subs.Length + " subs: ");
+            for (int i = 0; i < subs.Length; i++)
             {
                 if (i != 0)
                 {
                     b.Append("; ");
                 }
-                if (Subs[i] == null)
+                if (subs[i] == null)
                 {
-                    b.Append("s=" + Starts[i] + " l=null");
+                    b.Append("s=" + starts[i] + " l=null");
                 }
                 else
                 {
-                    b.Append("s=" + Starts[i] + " l=" + Subs[i].Length() + " b=" + Subs[i]);
+                    b.Append("s=" + starts[i] + " l=" + subs[i].Length() + " b=" + subs[i]);
                 }
             }
-            b.Append(" end=" + Starts[Subs.Length]);
+            b.Append(" end=" + starts[subs.Length]);
             return b.ToString();
         }
 
@@ -99,8 +99,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public sealed class SubResult
         {
-            public bool Matches;
-            public Bits Result;
+            public bool Matches; // LUCENENET TODO: Make property
+            public Bits Result; // LUCENENET TODO: Make property
         }
 
         /// <summary>
@@ -113,14 +113,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public SubResult GetMatchingSub(ReaderSlice slice)
         {
-            int reader = ReaderUtil.SubIndex(slice.Start, Starts);
+            int reader = ReaderUtil.SubIndex(slice.Start, starts);
             Debug.Assert(reader != -1);
-            Debug.Assert(reader < Subs.Length, "slice=" + slice + " starts[-1]=" + Starts[Starts.Length - 1]);
+            Debug.Assert(reader < subs.Length, "slice=" + slice + " starts[-1]=" + starts[starts.Length - 1]);
             SubResult subResult = new SubResult();
-            if (Starts[reader] == slice.Start && Starts[1 + reader] == slice.Start + slice.Length)
+            if (starts[reader] == slice.Start && starts[1 + reader] == slice.Start + slice.Length)
             {
                 subResult.Matches = true;
-                subResult.Result = Subs[reader];
+                subResult.Result = subs[reader];
             }
             else
             {
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 
         public int Length()
         {
-            return Starts[Starts.Length - 1];
+            return starts[starts.Length - 1];
         }
     }
 }

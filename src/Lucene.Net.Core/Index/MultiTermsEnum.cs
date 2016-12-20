@@ -35,32 +35,32 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class MultiTermsEnum : TermsEnum
     {
-        private readonly TermMergeQueue Queue;
-        private readonly TermsEnumWithSlice[] Subs; // all of our subs (one per sub-reader)
-        private readonly TermsEnumWithSlice[] CurrentSubs; // current subs that have at least one term for this field
-        private readonly TermsEnumWithSlice[] Top;
-        private readonly MultiDocsEnum.EnumWithSlice[] SubDocs;
-        private readonly MultiDocsAndPositionsEnum.EnumWithSlice[] SubDocsAndPositions;
+        private readonly TermMergeQueue queue;
+        private readonly TermsEnumWithSlice[] subs; // all of our subs (one per sub-reader)
+        private readonly TermsEnumWithSlice[] currentSubs; // current subs that have at least one term for this field
+        private readonly TermsEnumWithSlice[] top;
+        private readonly MultiDocsEnum.EnumWithSlice[] subDocs;
+        private readonly MultiDocsAndPositionsEnum.EnumWithSlice[] subDocsAndPositions;
 
-        private BytesRef LastSeek;
-        private bool LastSeekExact;
-        private readonly BytesRef LastSeekScratch = new BytesRef();
+        private BytesRef lastSeek;
+        private bool lastSeekExact;
+        private readonly BytesRef lastSeekScratch = new BytesRef();
 
-        private int NumTop;
-        private int NumSubs;
-        private BytesRef Current;
-        private IComparer<BytesRef> TermComp;
+        private int numTop;
+        private int numSubs;
+        private BytesRef current;
+        private IComparer<BytesRef> termComp;
 
         public class TermsEnumIndex
         {
             public static readonly TermsEnumIndex[] EMPTY_ARRAY = new TermsEnumIndex[0];
-            internal readonly int SubIndex;
-            internal readonly TermsEnum TermsEnum;
+            internal readonly int subIndex; // LUCENENET TODO: Make property
+            internal readonly TermsEnum termsEnum; // LUCENENET TODO: Make property
 
             public TermsEnumIndex(TermsEnum termsEnum, int subIndex)
             {
-                this.TermsEnum = termsEnum;
-                this.SubIndex = subIndex;
+                this.termsEnum = termsEnum;
+                this.subIndex = subIndex;
             }
         }
 
@@ -71,17 +71,17 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NumTop;
+                return numTop;
             }
         }
 
         /// <summary>
         /// Returns sub-reader slices positioned to the current term. </summary>
-        public TermsEnumWithSlice[] MatchArray
+        public TermsEnumWithSlice[] MatchArray // LUCENENET TODO: Change to GetMatchArray() (properties shouldn't return array)
         {
             get
             {
-                return Top;
+                return top;
             }
         }
 
@@ -91,32 +91,32 @@ namespace Lucene.Net.Index
         ///  merge.  </param>
         public MultiTermsEnum(ReaderSlice[] slices)
         {
-            Queue = new TermMergeQueue(slices.Length);
-            Top = new TermsEnumWithSlice[slices.Length];
-            Subs = new TermsEnumWithSlice[slices.Length];
-            SubDocs = new MultiDocsEnum.EnumWithSlice[slices.Length];
-            SubDocsAndPositions = new MultiDocsAndPositionsEnum.EnumWithSlice[slices.Length];
+            queue = new TermMergeQueue(slices.Length);
+            top = new TermsEnumWithSlice[slices.Length];
+            subs = new TermsEnumWithSlice[slices.Length];
+            subDocs = new MultiDocsEnum.EnumWithSlice[slices.Length];
+            subDocsAndPositions = new MultiDocsAndPositionsEnum.EnumWithSlice[slices.Length];
             for (int i = 0; i < slices.Length; i++)
             {
-                Subs[i] = new TermsEnumWithSlice(i, slices[i]);
-                SubDocs[i] = new MultiDocsEnum.EnumWithSlice();
-                SubDocs[i].Slice = slices[i];
-                SubDocsAndPositions[i] = new MultiDocsAndPositionsEnum.EnumWithSlice();
-                SubDocsAndPositions[i].Slice = slices[i];
+                subs[i] = new TermsEnumWithSlice(i, slices[i]);
+                subDocs[i] = new MultiDocsEnum.EnumWithSlice();
+                subDocs[i].Slice = slices[i];
+                subDocsAndPositions[i] = new MultiDocsAndPositionsEnum.EnumWithSlice();
+                subDocsAndPositions[i].Slice = slices[i];
             }
-            CurrentSubs = new TermsEnumWithSlice[slices.Length];
+            currentSubs = new TermsEnumWithSlice[slices.Length];
         }
 
         public override BytesRef Term()
         {
-            return Current;
+            return current;
         }
 
         public override IComparer<BytesRef> Comparator
         {
             get
             {
-                return TermComp;
+                return termComp;
             }
         }
 
@@ -126,39 +126,39 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermsEnum Reset(TermsEnumIndex[] termsEnumsIndex)
         {
-            Debug.Assert(termsEnumsIndex.Length <= Top.Length);
-            NumSubs = 0;
-            NumTop = 0;
-            TermComp = null;
-            Queue.Clear();
+            Debug.Assert(termsEnumsIndex.Length <= top.Length);
+            numSubs = 0;
+            numTop = 0;
+            termComp = null;
+            queue.Clear();
             for (int i = 0; i < termsEnumsIndex.Length; i++)
             {
                 TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
                 Debug.Assert(termsEnumIndex != null);
 
                 // init our term comp
-                if (TermComp == null)
+                if (termComp == null)
                 {
-                    Queue.TermComp = TermComp = termsEnumIndex.TermsEnum.Comparator;
+                    queue.TermComp = termComp = termsEnumIndex.termsEnum.Comparator;
                 }
                 else
                 {
                     // We cannot merge sub-readers that have
                     // different TermComps
-                    IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparator;
-                    if (subTermComp != null && !subTermComp.Equals(TermComp))
+                    IComparer<BytesRef> subTermComp = termsEnumIndex.termsEnum.Comparator;
+                    if (subTermComp != null && !subTermComp.Equals(termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + TermComp + "; cannot merge");
+                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
                 }
 
-                BytesRef term = termsEnumIndex.TermsEnum.Next();
+                BytesRef term = termsEnumIndex.termsEnum.Next();
                 if (term != null)
                 {
-                    TermsEnumWithSlice entry = Subs[termsEnumIndex.SubIndex];
-                    entry.Reset(termsEnumIndex.TermsEnum, term);
-                    Queue.Add(entry);
-                    CurrentSubs[NumSubs++] = entry;
+                    TermsEnumWithSlice entry = subs[termsEnumIndex.subIndex];
+                    entry.Reset(termsEnumIndex.termsEnum, term);
+                    queue.Add(entry);
+                    currentSubs[numSubs++] = entry;
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (Queue.Size() == 0)
+            if (queue.Size() == 0)
             {
                 return TermsEnum.EMPTY;
             }
@@ -178,19 +178,19 @@ namespace Lucene.Net.Index
 
         public override bool SeekExact(BytesRef term)
         {
-            Queue.Clear();
-            NumTop = 0;
+            queue.Clear();
+            numTop = 0;
 
             bool seekOpt = false;
-            if (LastSeek != null && TermComp.Compare(LastSeek, term) <= 0)
+            if (lastSeek != null && termComp.Compare(lastSeek, term) <= 0)
             {
                 seekOpt = true;
             }
 
-            LastSeek = null;
-            LastSeekExact = true;
+            lastSeek = null;
+            lastSeekExact = true;
 
-            for (int i = 0; i < NumSubs; i++)
+            for (int i = 0; i < numSubs; i++)
             {
                 bool status;
                 // LUCENE-2130: if we had just seek'd already, prior
@@ -201,10 +201,10 @@ namespace Lucene.Net.Index
                 // seek to the same spot.
                 if (seekOpt)
                 {
-                    BytesRef curTerm = CurrentSubs[i].Current;
+                    BytesRef curTerm = currentSubs[i].Current;
                     if (curTerm != null)
                     {
-                        int cmp = TermComp.Compare(term, curTerm);
+                        int cmp = termComp.Compare(term, curTerm);
                         if (cmp == 0)
                         {
                             status = true;
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            status = CurrentSubs[i].Terms.SeekExact(term);
+                            status = currentSubs[i].Terms.SeekExact(term);
                         }
                     }
                     else
@@ -225,38 +225,38 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    status = CurrentSubs[i].Terms.SeekExact(term);
+                    status = currentSubs[i].Terms.SeekExact(term);
                 }
 
                 if (status)
                 {
-                    Top[NumTop++] = CurrentSubs[i];
-                    Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
-                    Debug.Assert(term.Equals(CurrentSubs[i].Current));
+                    top[numTop++] = currentSubs[i];
+                    current = currentSubs[i].Current = currentSubs[i].Terms.Term();
+                    Debug.Assert(term.Equals(currentSubs[i].Current));
                 }
             }
 
             // if at least one sub had exact match to the requested
             // term then we found match
-            return NumTop > 0;
+            return numTop > 0;
         }
 
         public override SeekStatus SeekCeil(BytesRef term)
         {
-            Queue.Clear();
-            NumTop = 0;
-            LastSeekExact = false;
+            queue.Clear();
+            numTop = 0;
+            lastSeekExact = false;
 
             bool seekOpt = false;
-            if (LastSeek != null && TermComp.Compare(LastSeek, term) <= 0)
+            if (lastSeek != null && termComp.Compare(lastSeek, term) <= 0)
             {
                 seekOpt = true;
             }
 
-            LastSeekScratch.CopyBytes(term);
-            LastSeek = LastSeekScratch;
+            lastSeekScratch.CopyBytes(term);
+            lastSeek = lastSeekScratch;
 
-            for (int i = 0; i < NumSubs; i++)
+            for (int i = 0; i < numSubs; i++)
             {
                 SeekStatus status;
                 // LUCENE-2130: if we had just seek'd already, prior
@@ -267,10 +267,10 @@ namespace Lucene.Net.Index
                 // seek to the same spot.
                 if (seekOpt)
                 {
-                    BytesRef curTerm = CurrentSubs[i].Current;
+                    BytesRef curTerm = currentSubs[i].Current;
                     if (curTerm != null)
                     {
-                        int cmp = TermComp.Compare(term, curTerm);
+                        int cmp = termComp.Compare(term, curTerm);
                         if (cmp == 0)
                         {
                             status = SeekStatus.FOUND;
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            status = CurrentSubs[i].Terms.SeekCeil(term);
+                            status = currentSubs[i].Terms.SeekCeil(term);
                         }
                     }
                     else
@@ -291,36 +291,36 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    status = CurrentSubs[i].Terms.SeekCeil(term);
+                    status = currentSubs[i].Terms.SeekCeil(term);
                 }
 
                 if (status == SeekStatus.FOUND)
                 {
-                    Top[NumTop++] = CurrentSubs[i];
-                    Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
+                    top[numTop++] = currentSubs[i];
+                    current = currentSubs[i].Current = currentSubs[i].Terms.Term();
                 }
                 else
                 {
                     if (status == SeekStatus.NOT_FOUND)
                     {
-                        CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
-                        Debug.Assert(CurrentSubs[i].Current != null);
-                        Queue.Add(CurrentSubs[i]);
+                        currentSubs[i].Current = currentSubs[i].Terms.Term();
+                        Debug.Assert(currentSubs[i].Current != null);
+                        queue.Add(currentSubs[i]);
                     }
                     else
                     {
                         // enum exhausted
-                        CurrentSubs[i].Current = null;
+                        currentSubs[i].Current = null;
                     }
                 }
             }
 
-            if (NumTop > 0)
+            if (numTop > 0)
             {
                 // at least one sub had exact match to the requested term
                 return SeekStatus.FOUND;
             }
-            else if (Queue.Size() > 0)
+            else if (queue.Size() > 0)
             {
                 // no sub had exact match, but at least one sub found
                 // a term after the requested term -- advance to that
@@ -348,39 +348,39 @@ namespace Lucene.Net.Index
         {
             // extract all subs from the queue that have the same
             // top term
-            Debug.Assert(NumTop == 0);
+            Debug.Assert(numTop == 0);
             while (true)
             {
-                Top[NumTop++] = Queue.Pop();
-                if (Queue.Size() == 0 || !(Queue.Top()).Current.BytesEquals(Top[0].Current))
+                top[numTop++] = queue.Pop();
+                if (queue.Size() == 0 || !(queue.Top()).Current.BytesEquals(top[0].Current))
                 {
                     break;
                 }
             }
-            Current = Top[0].Current;
+            current = top[0].Current;
         }
 
         private void PushTop()
         {
             // call next() on each top, and put back into queue
-            for (int i = 0; i < NumTop; i++)
+            for (int i = 0; i < numTop; i++)
             {
-                Top[i].Current = Top[i].Terms.Next();
-                if (Top[i].Current != null)
+                top[i].Current = top[i].Terms.Next();
+                if (top[i].Current != null)
                 {
-                    Queue.Add(Top[i]);
+                    queue.Add(top[i]);
                 }
                 else
                 {
                     // no more fields in this reader
                 }
             }
-            NumTop = 0;
+            numTop = 0;
         }
 
         public override BytesRef Next()
         {
-            if (LastSeekExact)
+            if (lastSeekExact)
             {
                 // Must SeekCeil at this point, so those subs that
                 // didn't have the term can find the following term.
@@ -388,34 +388,34 @@ namespace Lucene.Net.Index
                 // subs that didn't match the last exact seek... but
                 // most impls short-circuit if you SeekCeil to term
                 // they are already on.
-                SeekStatus status = SeekCeil(Current);
+                SeekStatus status = SeekCeil(current);
                 Debug.Assert(status == SeekStatus.FOUND);
-                LastSeekExact = false;
+                lastSeekExact = false;
             }
-            LastSeek = null;
+            lastSeek = null;
 
             // restore queue
             PushTop();
 
             // gather equal top fields
-            if (Queue.Size() > 0)
+            if (queue.Size() > 0)
             {
                 PullTop();
             }
             else
             {
-                Current = null;
+                current = null;
             }
 
-            return Current;
+            return current;
         }
 
         public override int DocFreq()
         {
             int sum = 0;
-            for (int i = 0; i < NumTop; i++)
+            for (int i = 0; i < numTop; i++)
             {
-                sum += Top[i].Terms.DocFreq();
+                sum += top[i].Terms.DocFreq();
             }
             return sum;
         }
@@ -423,9 +423,9 @@ namespace Lucene.Net.Index
         public override long TotalTermFreq()
         {
             long sum = 0;
-            for (int i = 0; i < NumTop; i++)
+            for (int i = 0; i < numTop; i++)
             {
-                long v = Top[i].Terms.TotalTermFreq();
+                long v = top[i].Terms.TotalTermFreq();
                 if (v == -1)
                 {
                     return v;
@@ -445,12 +445,12 @@ namespace Lucene.Net.Index
                 // ... and was previously created w/ this MultiTermsEnum:
                 if (!docsEnum.CanReuse(this))
                 {
-                    docsEnum = new MultiDocsEnum(this, Subs.Length);
+                    docsEnum = new MultiDocsEnum(this, subs.Length);
                 }
             }
             else
             {
-                docsEnum = new MultiDocsEnum(this, Subs.Length);
+                docsEnum = new MultiDocsEnum(this, subs.Length);
             }
 
             MultiBits multiLiveDocs;
@@ -465,9 +465,9 @@ namespace Lucene.Net.Index
 
             int upto = 0;
 
-            for (int i = 0; i < NumTop; i++)
+            for (int i = 0; i < numTop; i++)
             {
-                TermsEnumWithSlice entry = Top[i];
+                TermsEnumWithSlice entry = top[i];
 
                 Bits b;
 
@@ -500,13 +500,13 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                Debug.Assert(entry.Index < docsEnum.SubDocsEnum.Length, entry.Index + " vs " + docsEnum.SubDocsEnum.Length + "; " + Subs.Length);
-                DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.SubDocsEnum[entry.Index], flags);
+                Debug.Assert(entry.Index < docsEnum.subDocsEnum.Length, entry.Index + " vs " + docsEnum.subDocsEnum.Length + "; " + subs.Length);
+                DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.subDocsEnum[entry.Index], flags);
                 if (subDocsEnum != null)
                 {
-                    docsEnum.SubDocsEnum[entry.Index] = subDocsEnum;
-                    SubDocs[upto].DocsEnum = subDocsEnum;
-                    SubDocs[upto].Slice = entry.SubSlice;
+                    docsEnum.subDocsEnum[entry.Index] = subDocsEnum;
+                    subDocs[upto].DocsEnum = subDocsEnum;
+                    subDocs[upto].Slice = entry.SubSlice;
                     upto++;
                 }
                 else
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return docsEnum.Reset(SubDocs, upto);
+                return docsEnum.Reset(subDocs, upto);
             }
         }
 
@@ -536,12 +536,12 @@ namespace Lucene.Net.Index
                 // ... and was previously created w/ this MultiTermsEnum:
                 if (!docsAndPositionsEnum.CanReuse(this))
                 {
-                    docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, Subs.Length);
+                    docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
                 }
             }
             else
             {
-                docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, Subs.Length);
+                docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
             }
 
             MultiBits multiLiveDocs;
@@ -556,9 +556,9 @@ namespace Lucene.Net.Index
 
             int upto = 0;
 
-            for (int i = 0; i < NumTop; i++)
+            for (int i = 0; i < numTop; i++)
             {
-                TermsEnumWithSlice entry = Top[i];
+                TermsEnumWithSlice entry = top[i];
 
                 Bits b;
 
@@ -569,7 +569,7 @@ namespace Lucene.Net.Index
                     // just pull the liveDocs from the sub reader, rather
                     // than making the inefficient
                     // Slice(Multi(sub-readers)):
-                    MultiBits.SubResult sub = multiLiveDocs.GetMatchingSub(Top[i].SubSlice);
+                    MultiBits.SubResult sub = multiLiveDocs.GetMatchingSub(top[i].SubSlice);
                     if (sub.Matches)
                     {
                         b = sub.Result;
@@ -579,12 +579,12 @@ namespace Lucene.Net.Index
                         // custom case: requested skip docs is foreign:
                         // must slice it on every access (very
                         // inefficient)
-                        b = new BitsSlice(liveDocs, Top[i].SubSlice);
+                        b = new BitsSlice(liveDocs, top[i].SubSlice);
                     }
                 }
                 else if (liveDocs != null)
                 {
-                    b = new BitsSlice(liveDocs, Top[i].SubSlice);
+                    b = new BitsSlice(liveDocs, top[i].SubSlice);
                 }
                 else
                 {
@@ -592,14 +592,14 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                Debug.Assert(entry.Index < docsAndPositionsEnum.SubDocsAndPositionsEnum.Length, entry.Index + " vs " + docsAndPositionsEnum.SubDocsAndPositionsEnum.Length + "; " + Subs.Length);
-                DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index], flags);
+                Debug.Assert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length, entry.Index + " vs " + docsAndPositionsEnum.subDocsAndPositionsEnum.Length + "; " + subs.Length);
+                DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index], flags);
 
                 if (subPostings != null)
                 {
-                    docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index] = subPostings;
-                    SubDocsAndPositions[upto].DocsAndPositionsEnum = subPostings;
-                    SubDocsAndPositions[upto].Slice = entry.SubSlice;
+                    docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index] = subPostings;
+                    subDocsAndPositions[upto].DocsAndPositionsEnum = subPostings;
+                    subDocsAndPositions[upto].Slice = entry.SubSlice;
                     upto++;
                 }
                 else
@@ -620,16 +620,16 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return docsAndPositionsEnum.Reset(SubDocsAndPositions, upto);
+                return docsAndPositionsEnum.Reset(subDocsAndPositions, upto);
             }
         }
 
         public sealed class TermsEnumWithSlice
         {
-            internal readonly ReaderSlice SubSlice;
-            internal TermsEnum Terms;
-            public BytesRef Current;
-            internal readonly int Index;
+            internal readonly ReaderSlice SubSlice; // LUCENENET TODO: Make property
+            internal TermsEnum Terms; // LUCENENET TODO: Make property
+            public BytesRef Current; // LUCENENET TODO: Make property
+            internal readonly int Index; // LUCENENET TODO: Make property
 
             public TermsEnumWithSlice(int index, ReaderSlice subSlice)
             {
@@ -675,7 +675,7 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            return "MultiTermsEnum(" + Arrays.ToString(Subs) + ")";
+            return "MultiTermsEnum(" + Arrays.ToString(subs) + ")";
         }
     }
 }

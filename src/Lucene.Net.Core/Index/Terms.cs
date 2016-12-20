@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         ///  field, you can pass it for possible reuse if the
         ///  implementation can do so.
         /// </summary>
-        public abstract TermsEnum Iterator(TermsEnum reuse);
+        public abstract TermsEnum Iterator(TermsEnum reuse); // TODO: Rename GetIterator for consistency? Or possibly GetEnumerator(TermsEnum) ?
 
         /// <summary>
         /// Returns a TermsEnum that iterates over all terms that

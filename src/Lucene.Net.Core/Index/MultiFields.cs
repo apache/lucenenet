@@ -45,9 +45,9 @@ namespace Lucene.Net.Index
 
     public sealed class MultiFields : Fields
     {
-        private readonly Fields[] Subs;
-        private readonly ReaderSlice[] SubSlices;
-        private readonly IDictionary<string, Terms> Terms_Renamed = new ConcurrentDictionary<string, Terms>();
+        private readonly Fields[] subs;
+        private readonly ReaderSlice[] subSlices;
+        private readonly IDictionary<string, Terms> terms = new ConcurrentDictionary<string, Terms>();
 
         /// <summary>
         /// Returns a single <seealso cref="Fields"/> instance for this
@@ -231,16 +231,16 @@ namespace Lucene.Net.Index
         // TODO: why is this public?
         public MultiFields(Fields[] subs, ReaderSlice[] subSlices)
         {
-            this.Subs = subs;
-            this.SubSlices = subSlices;
+            this.subs = subs;
+            this.subSlices = subSlices;
         }
 
         public override IEnumerator<string> GetEnumerator()
         {
-            IEnumerator<string>[] subIterators = new IEnumerator<string>[Subs.Length];
-            for (int i = 0; i < Subs.Length; i++)
+            IEnumerator<string>[] subIterators = new IEnumerator<string>[subs.Length];
+            for (int i = 0; i < subs.Length; i++)
             {
-                subIterators[i] = Subs[i].GetEnumerator();
+                subIterators[i] = subs[i].GetEnumerator();
             }
             return new MergedIterator<string>(subIterators);
         }
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
         public override Terms Terms(string field)
         {
             Terms result;
-            Terms_Renamed.TryGetValue(field, out result);
+            terms.TryGetValue(field, out result);
             if (result != null)
             {
                 return result;
@@ -260,13 +260,13 @@ namespace Lucene.Net.Index
             IList<ReaderSlice> slices2 = new List<ReaderSlice>();
 
             // Gather all sub-readers that share this field
-            for (int i = 0; i < Subs.Length; i++)
+            for (int i = 0; i < subs.Length; i++)
             {
-                Terms terms = Subs[i].Terms(field);
+                Terms terms = subs[i].Terms(field);
                 if (terms != null)
                 {
                     subs2.Add(terms);
-                    slices2.Add(SubSlices[i]);
+                    slices2.Add(subSlices[i]);
                 }
             }
             if (subs2.Count == 0)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
             else
             {
                 result = new MultiTerms(subs2.ToArray(/*Terms.EMPTY_ARRAY*/), slices2.ToArray(/*ReaderSlice.EMPTY_ARRAY*/));
-                Terms_Renamed[field] = result;
+                terms[field] = result;
             }
 
             return result;

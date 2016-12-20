@@ -51,13 +51,13 @@ namespace Lucene.Net.Index
         ///  log size, minus LEVEL_LOG_SPAN, and finding all
         ///  segments falling within that range.
         /// </summary>
-        public const double LEVEL_LOG_SPAN = 0.75;
+        public static readonly double LEVEL_LOG_SPAN = 0.75;
 
         /// <summary>
         /// Default merge factor, which is how many segments are
         ///  merged at a time
         /// </summary>
-        public const int DEFAULT_MERGE_FACTOR = 10;
+        public static readonly int DEFAULT_MERGE_FACTOR = 10;
 
         /// <summary>
         /// Default maximum segment size.  A segment of this size </summary>
@@ -68,24 +68,24 @@ namespace Lucene.Net.Index
         /// Default noCFSRatio.  If a merge's size is >= 10% of
         ///  the index, then we disable compound file for it. </summary>
         ///  <seealso cref= MergePolicy#setNoCFSRatio  </seealso>
-        public new const double DEFAULT_NO_CFS_RATIO = 0.1;
+        public new static readonly double DEFAULT_NO_CFS_RATIO = 0.1;
 
         /// <summary>
         /// How many segments to merge at a time. </summary>
-        protected internal int MergeFactor_Renamed = DEFAULT_MERGE_FACTOR;
+        private int mergeFactor = DEFAULT_MERGE_FACTOR; // LUCENENET specific - Made private because of CLS compliance
 
         /// <summary>
         /// Any segments whose size is smaller than this value
         ///  will be rounded up to this value.  this ensures that
         ///  tiny segments are aggressively merged.
         /// </summary>
-        protected internal long MinMergeSize;
+        protected long minMergeSize;
 
         /// <summary>
         /// If the size of a segment exceeds this value then it
         ///  will never be merged.
         /// </summary>
-        protected internal long MaxMergeSize;
+        protected long maxMergeSize;
 
         // Although the core MPs set it explicitly, we must default in case someone
         // out there wrote his own LMP ...
@@ -93,19 +93,19 @@ namespace Lucene.Net.Index
         /// If the size of a segment exceeds this value then it
         /// will never be merged during <seealso cref="IndexWriter#forceMerge"/>.
         /// </summary>
-        protected internal long MaxMergeSizeForForcedMerge = long.MaxValue;
+        protected long maxMergeSizeForForcedMerge = long.MaxValue;
 
         /// <summary>
         /// If a segment has more than this many documents then it
         ///  will never be merged.
         /// </summary>
-        protected internal int MaxMergeDocs_Renamed = DEFAULT_MAX_MERGE_DOCS;
+        private int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS; // LUCENENET specific - Made private because of CLS compliance
 
         /// <summary>
         /// If true, we pro-rate a segment's size by the
         ///  percentage of non-deleted documents.
         /// </summary>
-        protected internal bool CalibrateSizeByDeletes_Renamed = true;
+        private bool calibrateSizeByDeletes = true; // LUCENENET specific - Made private because of CLS compliance
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -120,9 +120,9 @@ namespace Lucene.Net.Index
         /// Returns true if {@code LMP} is enabled in {@link
         ///  IndexWriter}'s {@code infoStream}.
         /// </summary>
-        protected internal virtual bool Verbose()
+        protected virtual bool Verbose()
         {
-            IndexWriter w = Writer.Get();
+            IndexWriter w = writer.Get();
             return w != null && w.infoStream.IsEnabled("LMP");
         }
 
@@ -130,24 +130,34 @@ namespace Lucene.Net.Index
         /// Print a debug message to <seealso cref="IndexWriter"/>'s {@code
         ///  infoStream}.
         /// </summary>
-        protected internal virtual void Message(string message)
+        protected virtual void Message(string message)
         {
             if (Verbose())
             {
-                Writer.Get().infoStream.Message("LMP", message);
+                writer.Get().infoStream.Message("LMP", message);
             }
         }
 
         /// <summary>
-        /// <p>Returns the number of segments that are merged at
+        /// Gets or Sets the number of segments that are merged at
         /// once and also controls the total number of segments
-        /// allowed to accumulate in the index.</p>
+        /// allowed to accumulate in the index.
+        /// <para/>
+        /// This determines how often segment indices are merged by
+        /// AddDocument().  With smaller values, less RAM is used
+        /// while indexing, and searches are
+        /// faster, but indexing speed is slower.  With larger
+        /// values, more RAM is used during indexing, and while
+        /// searches is slower, indexing is
+        /// faster.  Thus larger values (> 10) are best for batch
+        /// index creation, and smaller values (&lt; 10) for indices
+        /// that are interactively maintained.
         /// </summary>
         public virtual int MergeFactor
         {
             get
             {
-                return MergeFactor_Renamed;
+                return mergeFactor;
             }
             set
             {
@@ -155,23 +165,23 @@ namespace Lucene.Net.Index
                 {
                     throw new System.ArgumentException("mergeFactor cannot be less than 2");
                 }
-                this.MergeFactor_Renamed = value;
+                this.mergeFactor = value;
             }
         }
 
         /// <summary>
-        /// Sets whether the segment size should be calibrated by
+        /// Gets or Sets whether the segment size should be calibrated by
         ///  the number of deletes when choosing segments for merge.
         /// </summary>
         public virtual bool CalibrateSizeByDeletes
         {
             set
             {
-                this.CalibrateSizeByDeletes_Renamed = value;
+                this.calibrateSizeByDeletes = value;
             }
             get
             {
-                return CalibrateSizeByDeletes_Renamed;
+                return calibrateSizeByDeletes;
             }
         }
 
@@ -185,11 +195,11 @@ namespace Lucene.Net.Index
         ///  non-deleted documents if {@link
         ///  #setCalibrateSizeByDeletes} is set.
         /// </summary>
-        protected internal virtual long SizeDocs(SegmentCommitInfo info)
+        protected virtual long SizeDocs(SegmentCommitInfo info)
         {
-            if (CalibrateSizeByDeletes_Renamed)
+            if (calibrateSizeByDeletes)
             {
-                int delCount = Writer.Get().NumDeletedDocs(info);
+                int delCount = writer.Get().NumDeletedDocs(info);
                 Debug.Assert(delCount <= info.Info.DocCount);
                 return (info.Info.DocCount - (long)delCount);
             }
@@ -205,9 +215,9 @@ namespace Lucene.Net.Index
         ///  non-deleted documents if {@link
         ///  #setCalibrateSizeByDeletes} is set.
         /// </summary>
-        protected internal virtual long SizeBytes(SegmentCommitInfo info)
+        protected virtual long SizeBytes(SegmentCommitInfo info)
         {
-            if (CalibrateSizeByDeletes_Renamed)
+            if (calibrateSizeByDeletes)
             {
                 return base.Size(info);
             }
@@ -219,7 +229,7 @@ namespace Lucene.Net.Index
         ///  merging is less than or equal to the specified {@code
         ///  maxNumSegments}.
         /// </summary>
-        protected internal virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        protected virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
             int numSegments = infos.Size();
             int numToMerge = 0;
@@ -258,11 +268,11 @@ namespace Lucene.Net.Index
             while (start >= 0)
             {
                 SegmentCommitInfo info = infos.Info(start);
-                if (Size(info) > MaxMergeSizeForForcedMerge || SizeDocs(info) > MaxMergeDocs_Renamed)
+                if (Size(info) > maxMergeSizeForForcedMerge || SizeDocs(info) > maxMergeDocs)
                 {
                     if (Verbose())
                     {
-                        Message("findForcedMergesSizeLimit: skip segment=" + info + ": size is > maxMergeSize (" + MaxMergeSizeForForcedMerge + ") or sizeDocs is > maxMergeDocs (" + MaxMergeDocs_Renamed + ")");
+                        Message("findForcedMergesSizeLimit: skip segment=" + info + ": size is > maxMergeSize (" + maxMergeSizeForForcedMerge + ") or sizeDocs is > maxMergeDocs (" + maxMergeDocs + ")");
                     }
                     // need to skip that segment + add a merge for the 'right' segments,
                     // unless there is only 1 which is merged.
@@ -274,7 +284,7 @@ namespace Lucene.Net.Index
                     }
                     last = start;
                 }
-                else if (last - start == MergeFactor_Renamed)
+                else if (last - start == mergeFactor)
                 {
                     // mergeFactor eligible segments were found, add them as a merge.
                     spec.Add(new OneMerge(segments.SubList(start, last)));
@@ -305,10 +315,10 @@ namespace Lucene.Net.Index
 
             // First, enroll all "full" merges (size
             // mergeFactor) to potentially be run concurrently:
-            while (last - maxNumSegments + 1 >= MergeFactor_Renamed)
+            while (last - maxNumSegments + 1 >= mergeFactor)
             {
-                spec.Add(new OneMerge(segments.SubList(last - MergeFactor_Renamed, last)));
-                last -= MergeFactor_Renamed;
+                spec.Add(new OneMerge(segments.SubList(last - mergeFactor, last)));
+                last -= mergeFactor;
             }
 
             // Only if there are no full merges pending do we
@@ -430,7 +440,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < last; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
-                if (Size(info) > MaxMergeSizeForForcedMerge || SizeDocs(info) > MaxMergeDocs_Renamed)
+                if (Size(info) > maxMergeSizeForForcedMerge || SizeDocs(info) > maxMergeDocs)
                 {
                     anyTooLarge = true;
                     break;
@@ -464,7 +474,7 @@ namespace Lucene.Net.Index
 
             var spec = new MergeSpecification();
             int firstSegmentWithDeletions = -1;
-            IndexWriter w = Writer.Get();
+            IndexWriter w = writer.Get();
             Debug.Assert(w != null);
             for (int i = 0; i < numSegments; i++)
             {
@@ -480,7 +490,7 @@ namespace Lucene.Net.Index
                     {
                         firstSegmentWithDeletions = i;
                     }
-                    else if (i - firstSegmentWithDeletions == MergeFactor_Renamed)
+                    else if (i - firstSegmentWithDeletions == mergeFactor)
                     {
                         // We've seen mergeFactor segments in a row with
                         // deletions, so force a merge now:
@@ -520,21 +530,21 @@ namespace Lucene.Net.Index
 
         private class SegmentInfoAndLevel : IComparable<SegmentInfoAndLevel>
         {
-            internal readonly SegmentCommitInfo Info;
-            internal readonly float Level;
-            private int Index;
+            internal readonly SegmentCommitInfo info;
+            internal readonly float level;
+            private int index;
 
             public SegmentInfoAndLevel(SegmentCommitInfo info, float level, int index)
             {
-                this.Info = info;
-                this.Level = level;
-                this.Index = index;
+                this.info = info;
+                this.level = level;
+                this.index = index;
             }
 
             // Sorts largest to smallest
             public virtual int CompareTo(SegmentInfoAndLevel other)
             {
-                return other.Level.CompareTo(Level);
+                return other.level.CompareTo(level);
             }
         }
 
@@ -558,9 +568,9 @@ namespace Lucene.Net.Index
             // Compute levels, which is just log (base mergeFactor)
             // of the size of each segment
             IList<SegmentInfoAndLevel> levels = new List<SegmentInfoAndLevel>();
-            var norm = (float)Math.Log(MergeFactor_Renamed);
+            var norm = (float)Math.Log(mergeFactor);
 
-            ICollection<SegmentCommitInfo> mergingSegments = Writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> mergingSegments = writer.Get().MergingSegments;
 
             for (int i = 0; i < numSegments; i++)
             {
@@ -580,22 +590,22 @@ namespace Lucene.Net.Index
                 {
                     long segBytes = SizeBytes(info);
                     string extra = mergingSegments.Contains(info) ? " [merging]" : "";
-                    if (size >= MaxMergeSize)
+                    if (size >= maxMergeSize)
                     {
                         extra += " [skip: too large]";
                     }
-                    Message("seg=" + Writer.Get().SegString(info) + " level=" + infoLevel.Level + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00} MB", segBytes / 1024 / 1024.0) + extra);
+                    Message("seg=" + writer.Get().SegString(info) + " level=" + infoLevel.level + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00} MB", segBytes / 1024 / 1024.0) + extra);
                 }
             }
 
             float levelFloor;
-            if (MinMergeSize <= 0)
+            if (minMergeSize <= 0)
             {
                 levelFloor = (float)0.0;
             }
             else
             {
-                levelFloor = (float)(Math.Log(MinMergeSize) / norm);
+                levelFloor = (float)(Math.Log(minMergeSize) / norm);
             }
 
             // Now, we quantize the log values into levels.  The
@@ -614,10 +624,10 @@ namespace Lucene.Net.Index
             {
                 // Find max level of all segments not already
                 // quantized.
-                float maxLevel = levels[start].Level;
+                float maxLevel = levels[start].level;
                 for (int i = 1 + start; i < numMergeableSegments; i++)
                 {
-                    float level = levels[i].Level;
+                    float level = levels[i].level;
                     if (level > maxLevel)
                     {
                         maxLevel = level;
@@ -646,7 +656,7 @@ namespace Lucene.Net.Index
                 int upto = numMergeableSegments - 1;
                 while (upto >= start)
                 {
-                    if (levels[upto].Level >= levelBottom)
+                    if (levels[upto].level >= levelBottom)
                     {
                         break;
                     }
@@ -658,15 +668,15 @@ namespace Lucene.Net.Index
                 }
 
                 // Finally, record all merges that are viable at this level:
-                int end = start + MergeFactor_Renamed;
+                int end = start + mergeFactor;
                 while (end <= 1 + upto)
                 {
                     bool anyTooLarge = false;
                     bool anyMerging = false;
                     for (int i = start; i < end; i++)
                     {
-                        SegmentCommitInfo info = levels[i].Info;
-                        anyTooLarge |= (Size(info) >= MaxMergeSize || SizeDocs(info) >= MaxMergeDocs_Renamed);
+                        SegmentCommitInfo info = levels[i].info;
+                        anyTooLarge |= (Size(info) >= maxMergeSize || SizeDocs(info) >= maxMergeDocs);
                         if (mergingSegments.Contains(info))
                         {
                             anyMerging = true;
@@ -687,12 +697,12 @@ namespace Lucene.Net.Index
                         IList<SegmentCommitInfo> mergeInfos = new List<SegmentCommitInfo>();
                         for (int i = start; i < end; i++)
                         {
-                            mergeInfos.Add(levels[i].Info);
-                            Debug.Assert(infos.Contains(levels[i].Info));
+                            mergeInfos.Add(levels[i].info);
+                            Debug.Assert(infos.Contains(levels[i].info));
                         }
                         if (Verbose())
                         {
-                            Message("  add merge=" + Writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
+                            Message("  add merge=" + writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
                         }
                         spec.Add(new OneMerge(mergeInfos));
                     }
@@ -702,7 +712,7 @@ namespace Lucene.Net.Index
                     }
 
                     start = end;
-                    end = start + MergeFactor_Renamed;
+                    end = start + mergeFactor;
                 }
 
                 start = 1 + upto;
@@ -731,25 +741,25 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.MaxMergeDocs_Renamed = value;
+                this.maxMergeDocs = value;
             }
             get
             {
-                return MaxMergeDocs_Renamed;
+                return maxMergeDocs;
             }
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("[" + this.GetType().Name + ": ");
-            sb.Append("minMergeSize=").Append(MinMergeSize).Append(", ");
-            sb.Append("mergeFactor=").Append(MergeFactor_Renamed).Append(", ");
-            sb.Append("maxMergeSize=").Append(MaxMergeSize).Append(", ");
-            sb.Append("maxMergeSizeForForcedMerge=").Append(MaxMergeSizeForForcedMerge).Append(", ");
-            sb.Append("calibrateSizeByDeletes=").Append(CalibrateSizeByDeletes_Renamed).Append(", ");
-            sb.Append("maxMergeDocs=").Append(MaxMergeDocs_Renamed).Append(", ");
+            sb.Append("minMergeSize=").Append(minMergeSize).Append(", ");
+            sb.Append("mergeFactor=").Append(mergeFactor).Append(", ");
+            sb.Append("maxMergeSize=").Append(maxMergeSize).Append(", ");
+            sb.Append("maxMergeSizeForForcedMerge=").Append(maxMergeSizeForForcedMerge).Append(", ");
+            sb.Append("calibrateSizeByDeletes=").Append(calibrateSizeByDeletes).Append(", ");
+            sb.Append("maxMergeDocs=").Append(maxMergeDocs).Append(", ");
             sb.Append("maxCFSSegmentSizeMB=").Append(MaxCFSSegmentSizeMB).Append(", ");
-            sb.Append("noCFSRatio=").Append(NoCFSRatio_Renamed);
+            sb.Append("noCFSRatio=").Append(noCFSRatio_);
             sb.Append("]");
             return sb.ToString();
         }

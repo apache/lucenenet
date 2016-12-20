@@ -38,85 +38,85 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class NumericDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
+        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
         {
-            internal readonly int Size;
-            internal readonly PagedGrowableWriter Values;
-            internal readonly FixedBitSet DocsWithField;
-            internal readonly PagedMutable Docs;
-            internal long Idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
-            internal int Doc_Renamed = -1;
-            internal long? Value_Renamed = null;
+            private readonly int size;
+            private readonly PagedGrowableWriter values;
+            private readonly FixedBitSet docsWithField;
+            private readonly PagedMutable docs;
+            private long idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
+            private int doc = -1;
+            private long? value = null;
 
             internal Iterator(int size, PagedGrowableWriter values, FixedBitSet docsWithField, PagedMutable docs)
             {
-                this.Size = size;
-                this.Values = values;
-                this.DocsWithField = docsWithField;
-                this.Docs = docs;
+                this.size = size;
+                this.values = values;
+                this.docsWithField = docsWithField;
+                this.docs = docs;
             }
 
             public object Value()
             {
-                return Value_Renamed;
+                return value;
             }
 
             public int NextDoc()
             {
-                if (Idx >= Size)
+                if (idx >= size)
                 {
-                    Value_Renamed = null;
-                    return Doc_Renamed = DocIdSetIterator.NO_MORE_DOCS;
+                    value = null;
+                    return doc = DocIdSetIterator.NO_MORE_DOCS;
                 }
-                Doc_Renamed = (int)Docs.Get(Idx);
-                ++Idx;
-                while (Idx < Size && Docs.Get(Idx) == Doc_Renamed)
+                doc = (int)docs.Get(idx);
+                ++idx;
+                while (idx < size && docs.Get(idx) == doc)
                 {
-                    ++Idx;
+                    ++idx;
                 }
-                if (!DocsWithField.Get((int)(Idx - 1)))
+                if (!docsWithField.Get((int)(idx - 1)))
                 {
-                    Value_Renamed = null;
+                    value = null;
                 }
                 else
                 {
                     // idx points to the "next" element
-                    Value_Renamed = Convert.ToInt64(Values.Get(Idx - 1));
+                    value = Convert.ToInt64(values.Get(idx - 1));
                 }
-                return Doc_Renamed;
+                return doc;
             }
 
             public int Doc()
             {
-                return Doc_Renamed;
+                return doc;
             }
 
             public void Reset()
             {
-                Doc_Renamed = -1;
-                Value_Renamed = null;
-                Idx = 0;
+                doc = -1;
+                value = null;
+                idx = 0;
             }
         }
 
-        private FixedBitSet DocsWithField;
-        private PagedMutable Docs;
-        private PagedGrowableWriter Values;
-        private int Size;
+        private FixedBitSet docsWithField;
+        private PagedMutable docs;
+        private PagedGrowableWriter values;
+        private int size;
 
         public NumericDocValuesFieldUpdates(string field, int maxDoc)
             : base(field, DocValuesFieldUpdates.Type_e.NUMERIC)
         {
-            DocsWithField = new FixedBitSet(64);
-            Docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
-            Values = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
-            Size = 0;
+            docsWithField = new FixedBitSet(64);
+            docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
+            values = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
+            size = 0;
         }
 
         public override void Add(int doc, object value)
         {
             // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
-            if (Size == int.MaxValue)
+            if (size == int.MaxValue)
             {
                 throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries");
             }
@@ -128,83 +128,83 @@ namespace Lucene.Net.Index
             }
 
             // grow the structures to have room for more elements
-            if (Docs.Size() == Size)
+            if (docs.Size() == size)
             {
-                Docs = Docs.Grow(Size + 1);
-                Values = Values.Grow(Size + 1);
-                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size());
+                docs = docs.Grow(size + 1);
+                values = values.Grow(size + 1);
+                docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size());
             }
 
             if (val != NumericDocValuesUpdate.MISSING)
             {
                 // only mark the document as having a value in that field if the value wasn't set to null (MISSING)
-                DocsWithField.Set(Size);
+                docsWithField.Set(size);
             }
 
-            Docs.Set(Size, doc);
-            Values.Set(Size, (long)val);
-            ++Size;
+            docs.Set(size, doc);
+            values.Set(size, (long)val);
+            ++size;
         }
 
         public override AbstractDocValuesFieldUpdates.Iterator GetIterator()
         {
-            PagedMutable docs = this.Docs;
-            PagedGrowableWriter values = this.Values;
-            FixedBitSet docsWithField = this.DocsWithField;
-            new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, values, docsWithField).Sort(0, Size);
+            PagedMutable docs = this.docs;
+            PagedGrowableWriter values = this.values;
+            FixedBitSet docsWithField = this.docsWithField;
+            new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, values, docsWithField).Sort(0, size);
 
-            return new Iterator(Size, values, docsWithField, docs);
+            return new Iterator(size, values, docsWithField, docs);
         }
 
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
-            private readonly NumericDocValuesFieldUpdates OuterInstance;
+            private readonly NumericDocValuesFieldUpdates outerInstance;
 
-            private PagedMutable Docs;
-            private PagedGrowableWriter Values;
-            private FixedBitSet DocsWithField;
+            private PagedMutable docs;
+            private PagedGrowableWriter values;
+            private FixedBitSet docsWithField;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(NumericDocValuesFieldUpdates outerInstance, PagedMutable docs, PagedGrowableWriter values, FixedBitSet docsWithField)
             {
-                this.OuterInstance = outerInstance;
-                this.Docs = docs;
-                this.Values = values;
-                this.DocsWithField = docsWithField;
+                this.outerInstance = outerInstance;
+                this.docs = docs;
+                this.values = values;
+                this.docsWithField = docsWithField;
             }
 
             protected override void Swap(int i, int j)
             {
-                long tmpDoc = Docs.Get(j);
-                Docs.Set(j, Docs.Get(i));
-                Docs.Set(i, tmpDoc);
+                long tmpDoc = docs.Get(j);
+                docs.Set(j, docs.Get(i));
+                docs.Set(i, tmpDoc);
 
-                long tmpVal = Values.Get(j);
-                Values.Set(j, Values.Get(i));
-                Values.Set(i, tmpVal);
+                long tmpVal = values.Get(j);
+                values.Set(j, values.Get(i));
+                values.Set(i, tmpVal);
 
-                bool tmpBool = DocsWithField.Get(j);
-                if (DocsWithField.Get(i))
+                bool tmpBool = docsWithField.Get(j);
+                if (docsWithField.Get(i))
                 {
-                    DocsWithField.Set(j);
+                    docsWithField.Set(j);
                 }
                 else
                 {
-                    DocsWithField.Clear(j);
+                    docsWithField.Clear(j);
                 }
                 if (tmpBool)
                 {
-                    DocsWithField.Set(i);
+                    docsWithField.Set(i);
                 }
                 else
                 {
-                    DocsWithField.Clear(i);
+                    docsWithField.Clear(i);
                 }
             }
 
             protected override int Compare(int i, int j)
             {
-                int x = (int)Docs.Get(i);
-                int y = (int)Docs.Get(j);
+                int x = (int)docs.Get(i);
+                int y = (int)docs.Get(j);
                 return (x < y) ? -1 : ((x == y) ? 0 : 1);
             }
         }
@@ -213,29 +213,29 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(other is NumericDocValuesFieldUpdates);
             NumericDocValuesFieldUpdates otherUpdates = (NumericDocValuesFieldUpdates)other;
-            if (Size + otherUpdates.Size > int.MaxValue)
+            if (size + otherUpdates.size > int.MaxValue)
             {
-                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
+                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + size + " other.size=" + otherUpdates.size);
             }
-            Docs = Docs.Grow(Size + otherUpdates.Size);
-            Values = Values.Grow(Size + otherUpdates.Size);
-            DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size());
-            for (int i = 0; i < otherUpdates.Size; i++)
+            docs = docs.Grow(size + otherUpdates.size);
+            values = values.Grow(size + otherUpdates.size);
+            docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size());
+            for (int i = 0; i < otherUpdates.size; i++)
             {
-                int doc = (int)otherUpdates.Docs.Get(i);
-                if (otherUpdates.DocsWithField.Get(i))
+                int doc = (int)otherUpdates.docs.Get(i);
+                if (otherUpdates.docsWithField.Get(i))
                 {
-                    DocsWithField.Set(Size);
+                    docsWithField.Set(size);
                 }
-                Docs.Set(Size, doc);
-                Values.Set(Size, otherUpdates.Values.Get(i));
-                ++Size;
+                docs.Set(size, doc);
+                values.Set(size, otherUpdates.values.Get(i));
+                ++size;
             }
         }
 
         public override bool Any()
         {
-            return Size > 0;
+            return size > 0;
         }
     }
 }

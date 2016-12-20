@@ -439,16 +439,16 @@ namespace Lucene.Net.Index
         public class OrdinalMap
         {
             // cache key of whoever asked for this awful thing
-            internal readonly object Owner;
+            internal readonly object owner;
 
             // globalOrd -> (globalOrd - segmentOrd) where segmentOrd is the the ordinal in the first segment that contains this term
-            internal readonly MonotonicAppendingLongBuffer GlobalOrdDeltas;
+            internal readonly MonotonicAppendingLongBuffer globalOrdDeltas;
 
             // globalOrd -> first segment container
-            internal readonly AppendingPackedLongBuffer FirstSegments;
+            internal readonly AppendingPackedLongBuffer firstSegments;
 
             // for every segment, segmentOrd -> (globalOrd - segmentOrd)
-            internal readonly MonotonicAppendingLongBuffer[] OrdDeltas;
+            internal readonly MonotonicAppendingLongBuffer[] ordDeltas;
 
             /// <summary>
             /// Creates an ordinal map that allows mapping ords to/from a merged
@@ -461,13 +461,13 @@ namespace Lucene.Net.Index
             {
                 // create the ordinal mappings by pulling a termsenum over each sub's
                 // unique terms, and walking a multitermsenum over those
-                this.Owner = owner;
-                GlobalOrdDeltas = new MonotonicAppendingLongBuffer(PackedInts.COMPACT);
-                FirstSegments = new AppendingPackedLongBuffer(PackedInts.COMPACT);
-                OrdDeltas = new MonotonicAppendingLongBuffer[subs.Length];
-                for (int i = 0; i < OrdDeltas.Length; i++)
+                this.owner = owner;
+                globalOrdDeltas = new MonotonicAppendingLongBuffer(PackedInts.COMPACT);
+                firstSegments = new AppendingPackedLongBuffer(PackedInts.COMPACT);
+                ordDeltas = new MonotonicAppendingLongBuffer[subs.Length];
+                for (int i = 0; i < ordDeltas.Length; i++)
                 {
-                    OrdDeltas[i] = new MonotonicAppendingLongBuffer();
+                    ordDeltas[i] = new MonotonicAppendingLongBuffer();
                 }
                 long[] segmentOrds = new long[subs.Length];
                 ReaderSlice[] slices = new ReaderSlice[subs.Length];
@@ -491,23 +491,23 @@ namespace Lucene.Net.Index
                         // for each unique term, just mark the first segment index/delta where it occurs
                         if (i == 0)
                         {
-                            FirstSegments.Add(segmentIndex);
-                            GlobalOrdDeltas.Add(delta);
+                            firstSegments.Add(segmentIndex);
+                            globalOrdDeltas.Add(delta);
                         }
                         // for each per-segment ord, map it back to the global term.
                         while (segmentOrds[segmentIndex] <= segmentOrd)
                         {
-                            OrdDeltas[segmentIndex].Add(delta);
+                            ordDeltas[segmentIndex].Add(delta);
                             segmentOrds[segmentIndex]++;
                         }
                     }
                     globalOrd++;
                 }
-                FirstSegments.Freeze();
-                GlobalOrdDeltas.Freeze();
-                for (int i = 0; i < OrdDeltas.Length; ++i)
+                firstSegments.Freeze();
+                globalOrdDeltas.Freeze();
+                for (int i = 0; i < ordDeltas.Length; ++i)
                 {
-                    OrdDeltas[i].Freeze();
+                    ordDeltas[i].Freeze();
                 }
             }
 
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual long GetGlobalOrd(int segmentIndex, long segmentOrd)
             {
-                return segmentOrd + OrdDeltas[segmentIndex].Get(segmentOrd);
+                return segmentOrd + ordDeltas[segmentIndex].Get(segmentOrd);
             }
 
             /// <summary>
@@ -526,7 +526,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual long GetFirstSegmentOrd(long globalOrd)
             {
-                return globalOrd - GlobalOrdDeltas.Get(globalOrd);
+                return globalOrd - globalOrdDeltas.Get(globalOrd);
             }
 
             /// <summary>
@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual int GetFirstSegmentNumber(long globalOrd)
             {
-                return (int)FirstSegments.Get(globalOrd);
+                return (int)firstSegments.Get(globalOrd);
             }
 
             /// <summary>
@@ -545,7 +545,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return GlobalOrdDeltas.Size();
+                    return globalOrdDeltas.Size();
                 }
             }
 
@@ -554,10 +554,10 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual long RamBytesUsed()
             {
-                long size = GlobalOrdDeltas.RamBytesUsed() + FirstSegments.RamBytesUsed();
-                for (int i = 0; i < OrdDeltas.Length; i++)
+                long size = globalOrdDeltas.RamBytesUsed() + firstSegments.RamBytesUsed();
+                for (int i = 0; i < ordDeltas.Length; i++)
                 {
-                    size += OrdDeltas[i].RamBytesUsed();
+                    size += ordDeltas[i].RamBytesUsed();
                 }
                 return size;
             }
@@ -571,21 +571,21 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts;
+            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method (properties shouldn't return array)
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedDocValues[] Values;
+            public readonly SortedDocValues[] Values; // LUCENENET TODO: Make getter method
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public readonly OrdinalMap Mapping;
+            public readonly OrdinalMap Mapping; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Creates a new MultiSortedDocValues over <code>values</code> </summary>
             internal MultiSortedDocValues(SortedDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                Debug.Assert(values.Length == mapping.OrdDeltas.Length);
+                Debug.Assert(values.Length == mapping.ordDeltas.Length);
                 Debug.Assert(docStarts.Length == values.Length + 1);
                 this.Values = values;
                 this.DocStarts = docStarts;
@@ -623,15 +623,15 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts;
+            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method (properties should not return array)
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedSetDocValues[] Values;
+            public readonly SortedSetDocValues[] Values; // LUCENENET TODO: Make getter method
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public readonly OrdinalMap Mapping;
+            public readonly OrdinalMap Mapping; // LUCENENET TODO: Make property
 
             internal int CurrentSubIndex;
 
@@ -639,7 +639,7 @@ namespace Lucene.Net.Index
             /// Creates a new MultiSortedSetDocValues over <code>values</code> </summary>
             internal MultiSortedSetDocValues(SortedSetDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                Debug.Assert(values.Length == mapping.OrdDeltas.Length);
+                Debug.Assert(values.Length == mapping.ordDeltas.Length);
                 Debug.Assert(docStarts.Length == values.Length + 1);
                 this.Values = values;
                 this.DocStarts = docStarts;

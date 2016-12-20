@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal NumericDocValues()
+        protected NumericDocValues()
         {
         }
 

@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _fieldTerm.Field = _fieldReader._fieldInfo.Name;
                     _state = _blockTermsReader._postingsReader.NewTermState();
                     _state.TotalTermFreq = -1;
-                    _state.Ord = -1;
+                    _state.ord = -1;
 
                     _termSuffixes = new byte[128];
                     _docFreqBytes = new byte[64];
@@ -500,7 +500,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         _blocksSinceSeek = 0;
 
                         if (_doOrd)
-                            _state.Ord = _indexEnum.Ord - 1;
+                            _state.ord = _indexEnum.Ord - 1;
                         
                         _term.CopyBytes(_indexEnum.Term);
                     }
@@ -551,7 +551,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                     while (_state.TermBlockOrd < _blockTermCount - 1)
                                     {
                                         _state.TermBlockOrd++;
-                                        _state.Ord++;
+                                        _state.ord++;
                                         _termSuffixesReader.SkipBytes(_termSuffixesReader.ReadVInt());
                                     }
                                     var suffix = _termSuffixesReader.ReadVInt();
@@ -562,7 +562,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                     }
                                     _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
                                 }
-                                _state.Ord++;
+                                _state.ord++;
 
                                 if (!NextBlock())
                                 {
@@ -600,7 +600,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         while (true)
                         {
                             _state.TermBlockOrd++;
-                            _state.Ord++;
+                            _state.ord++;
 
                             var suffix = _termSuffixesReader.ReadVInt();
 
@@ -696,7 +696,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var pendingSeekCount = _state.TermBlockOrd;
                     var result = NextBlock();
 
-                    var savOrd = _state.Ord;
+                    var savOrd = _state.ord;
 
                     // Block must exist since seek(TermState) was called w/ a
                     // TermState previously returned by this enum when positioned
@@ -709,7 +709,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         Debug.Assert(nextResult != null);
                     }
                     _seekPending = false;
-                    _state.Ord = savOrd;
+                    _state.ord = savOrd;
                     return _next();
                 }
 
@@ -743,7 +743,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _state.TermBlockOrd++;
 
                     // NOTE: meaningless in the non-ord case
-                    _state.Ord++;
+                    _state.ord++;
 
                     return _term;
                 }
@@ -788,7 +788,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
                     Debug.Assert(otherState is BlockTermState);
-                    Debug.Assert(!_doOrd || ((BlockTermState) otherState).Ord < _fieldReader._numTerms);
+                    Debug.Assert(!_doOrd || ((BlockTermState) otherState).ord < _fieldReader._numTerms);
                     _state.CopyFrom(otherState);
                     _seekPending = true;
                     _indexIsCurrent = false;
@@ -822,12 +822,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _blocksSinceSeek = 0;
                     _seekPending = false;
 
-                    _state.Ord = _indexEnum.Ord - 1;
-                    Debug.Assert(_state.Ord >= -1, "Ord=" + _state.Ord);
+                    _state.ord = _indexEnum.Ord - 1;
+                    Debug.Assert(_state.ord >= -1, "Ord=" + _state.ord);
                     _term.CopyBytes(_indexEnum.Term);
 
                     // Now, scan:
-                    var left = (int) (ord - _state.Ord);
+                    var left = (int) (ord - _state.ord);
                     while (left > 0)
                     {
                         var term = _next();
@@ -843,7 +843,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     if (!_doOrd)
                         throw new NotSupportedException();
 
-                    return _state.Ord;
+                    return _state.ord;
                 }
 
                 // Does initial decode of next block of terms; this

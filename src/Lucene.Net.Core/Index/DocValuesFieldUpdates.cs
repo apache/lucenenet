@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
         /// updates are returned by this iterator, and the documents are returned in
         /// increasing order.
         /// </summary>
-        public interface Iterator // LUCENENET TODO: Rename with "I"
+        public interface Iterator // LUCENENET TODO: Rename with "I" (or should this be renamed to IEnumerator?)
         {
             /// <summary>
             /// Returns the next document which has an update, or

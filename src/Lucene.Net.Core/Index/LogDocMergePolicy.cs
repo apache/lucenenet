@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     public class LogDocMergePolicy : LogMergePolicy
     {
         /// Default minimum segment size.  <seealso cref= setMinMergeDocs </seealso>
-        public const int DEFAULT_MIN_MERGE_DOCS = 1000;
+        public static readonly int DEFAULT_MIN_MERGE_DOCS = 1000;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
@@ -34,15 +34,15 @@ namespace Lucene.Net.Index
         /// </summary>
         public LogDocMergePolicy()
         {
-            MinMergeSize = DEFAULT_MIN_MERGE_DOCS;
+            minMergeSize = DEFAULT_MIN_MERGE_DOCS;
 
             // maxMergeSize(ForForcedMerge) are never used by LogDocMergePolicy; set
             // it to Long.MAX_VALUE to disable it
-            MaxMergeSize = long.MaxValue;
-            MaxMergeSizeForForcedMerge = long.MaxValue;
+            maxMergeSize = long.MaxValue;
+            maxMergeSizeForForcedMerge = long.MaxValue;
         }
 
-        protected internal override long Size(SegmentCommitInfo info)
+        protected override long Size(SegmentCommitInfo info)
         {
             return SizeDocs(info);
         }
@@ -62,11 +62,11 @@ namespace Lucene.Net.Index
         {
             set
             {
-                MinMergeSize = value;
+                minMergeSize = value;
             }
             get
             {
-                return (int)MinMergeSize;
+                return (int)minMergeSize;
             }
         }
     }

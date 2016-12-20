@@ -24,56 +24,56 @@ namespace Lucene.Net.Index
 
     internal sealed class NormsConsumerPerField : InvertedDocEndConsumerPerField, IComparable<NormsConsumerPerField>
     {
-        private readonly FieldInfo FieldInfo;
-        private readonly DocumentsWriterPerThread.DocState DocState;
-        private readonly Similarity Similarity;
-        private readonly FieldInvertState FieldState;
-        private NumericDocValuesWriter Consumer;
+        private readonly FieldInfo fieldInfo;
+        private readonly DocumentsWriterPerThread.DocState docState;
+        private readonly Similarity similarity;
+        private readonly FieldInvertState fieldState;
+        private NumericDocValuesWriter consumer;
 
         public NormsConsumerPerField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo, NormsConsumer parent)
         {
-            this.FieldInfo = fieldInfo;
-            DocState = docInverterPerField.DocState;
-            FieldState = docInverterPerField.FieldState;
-            Similarity = DocState.Similarity;
+            this.fieldInfo = fieldInfo;
+            docState = docInverterPerField.DocState;
+            fieldState = docInverterPerField.FieldState;
+            similarity = docState.Similarity;
         }
 
         public int CompareTo(NormsConsumerPerField other)
         {
-            return FieldInfo.Name.CompareTo(other.FieldInfo.Name);
+            return fieldInfo.Name.CompareTo(other.fieldInfo.Name);
         }
 
         internal override void Finish()
         {
-            if (FieldInfo.Indexed && !FieldInfo.OmitsNorms())
+            if (fieldInfo.Indexed && !fieldInfo.OmitsNorms())
             {
-                if (Consumer == null)
+                if (consumer == null)
                 {
-                    FieldInfo.NormType = FieldInfo.DocValuesType_e.NUMERIC;
-                    Consumer = new NumericDocValuesWriter(FieldInfo, DocState.DocWriter.bytesUsed, false);
+                    fieldInfo.NormType = FieldInfo.DocValuesType_e.NUMERIC;
+                    consumer = new NumericDocValuesWriter(fieldInfo, docState.DocWriter.bytesUsed, false);
                 }
-                Consumer.AddValue(DocState.DocID, Similarity.ComputeNorm(FieldState));
+                consumer.AddValue(docState.DocID, similarity.ComputeNorm(fieldState));
             }
         }
 
         internal void Flush(SegmentWriteState state, DocValuesConsumer normsWriter)
         {
             int docCount = state.SegmentInfo.DocCount;
-            if (Consumer == null)
+            if (consumer == null)
             {
                 return; // null type - not omitted but not written -
                 // meaning the only docs that had
                 // norms hit exceptions (but indexed=true is set...)
             }
-            Consumer.Finish(docCount);
-            Consumer.Flush(state, normsWriter);
+            consumer.Finish(docCount);
+            consumer.Flush(state, normsWriter);
         }
 
-        internal bool Empty
+        internal bool Empty // LUCENENET TODO: Rename IsEmpty
         {
             get
             {
-                return Consumer == null;
+                return consumer == null;
             }
         }
 

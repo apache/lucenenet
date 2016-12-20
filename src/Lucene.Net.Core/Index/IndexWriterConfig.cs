@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexWriterConfig SetIndexCommit(IndexCommit commit)
         {
-            this.Commit = commit;
+            this.commit = commit;
             return this;
         }
 
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Commit;
+                return commit;
             }
         }
 

@@ -50,36 +50,52 @@ namespace Lucene.Net.Index
         private volatile IndexReaderWarmer mergedSegmentWarmer;
         private volatile int termIndexInterval; // TODO: this should be private to the codec, not settable here
 
+        // LUCENENET specific: Volatile fields are not CLS compliant,
+        // so we are making them internal. This class cannot be inherited
+        // from outside of the assembly anyway, since it has no public 
+        // constructors.
+
+        // LUCENENET TODO: Should we keep the SetXXX(foo) methods,
+        // or go with straight properties? If we use properties,
+        // we can use the shorter .NET syntax:
+
+        // var conf = new IndexWriterConfig
+        // {
+        //     OpenMode = OpenMode.CREATE,
+        //     Codec = new Lucene46Codec()
+        // };
+
+
         // modified by IndexWriterConfig
         /// <summary>
         /// <seealso cref="DelPolicy"/> controlling when commit
         ///  points are deleted.
         /// </summary>
-        protected internal volatile IndexDeletionPolicy delPolicy;
+        internal volatile IndexDeletionPolicy delPolicy;
 
         /// <summary>
         /// <seealso cref="IndexCommit"/> that <seealso cref="IndexWriter"/> is
         ///  opened on.
         /// </summary>
-        protected internal volatile IndexCommit Commit;
+        internal volatile IndexCommit commit;
 
         /// <summary>
         /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
         ///  with.
         /// </summary>
-        protected internal OpenMode_e? openMode;
+        internal OpenMode_e? openMode; // LUCENENET TODO: Can we eliminate the nullable?
 
         /// <summary>
         /// <seealso cref="Similarity"/> to use when encoding norms. </summary>
-        protected internal volatile Similarity similarity;
+        internal volatile Similarity similarity;
 
         /// <summary>
         /// <seealso cref="MergeScheduler"/> to use for running merges. </summary>
-        protected internal volatile IMergeScheduler mergeScheduler;
+        internal volatile IMergeScheduler mergeScheduler;
 
         /// <summary>
         /// Timeout when trying to obtain the write lock on init. </summary>
-        protected internal long writeLockTimeout;
+        internal long writeLockTimeout;
 
         /// <summary>
         /// <seealso cref="IndexingChain"/> that determines how documents are
@@ -89,15 +105,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="Codec"/> used to write new segments. </summary>
-        protected internal volatile Codec codec;
+        internal volatile Codec codec;
 
         /// <summary>
         /// <seealso cref="InfoStream"/> for debugging messages. </summary>
-        protected internal volatile InfoStream infoStream;
+        internal volatile InfoStream infoStream;
 
         /// <summary>
         /// <seealso cref="MergePolicy"/> for selecting merges. </summary>
-        protected internal volatile MergePolicy mergePolicy;
+        internal volatile MergePolicy mergePolicy;
 
         /// <summary>
         /// {@code DocumentsWriterPerThreadPool} to control how
@@ -107,7 +123,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// True if readers should be pooled. </summary>
-        protected internal volatile bool readerPooling;
+        internal volatile bool readerPooling;
 
         /// <summary>
         /// <seealso cref="FlushPolicy"/> to control when segments are
@@ -119,19 +135,19 @@ namespace Lucene.Net.Index
         /// Sets the hard upper bound on RAM usage for a single
         ///  segment, after which the segment is forced to flush.
         /// </summary>
-        protected internal volatile int PerThreadHardLimitMB;
+        internal volatile int PerThreadHardLimitMB;
 
         /// <summary>
         /// <seealso cref="LuceneVersion"/> that <seealso cref="IndexWriter"/> should emulate. </summary>
-        protected internal readonly LuceneVersion MatchVersion;
+        internal readonly LuceneVersion MatchVersion;
 
         /// <summary>
         /// True if segment flushes should use compound file format </summary>
-        protected internal volatile bool useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
+        internal volatile bool useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
 
         /// <summary>
         /// True if merging should check integrity of segments before merge </summary>
-        protected internal volatile bool checkIntegrityAtMerge = IndexWriterConfig.DEFAULT_CHECK_INTEGRITY_AT_MERGE;
+        internal volatile bool checkIntegrityAtMerge = IndexWriterConfig.DEFAULT_CHECK_INTEGRITY_AT_MERGE;
 
         // used by IndexWriterConfig
         internal LiveIndexWriterConfig(Analyzer analyzer, LuceneVersion matchVersion)
@@ -145,7 +161,7 @@ namespace Lucene.Net.Index
             mergedSegmentWarmer = null;
             termIndexInterval = IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL; // TODO: this should be private to the codec, not settable here
             delPolicy = new KeepOnlyLastCommitDeletionPolicy();
-            Commit = null;
+            commit = null;
             useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
             openMode = OpenMode_e.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
@@ -184,7 +200,7 @@ namespace Lucene.Net.Index
             MatchVersion = config.MatchVersion;
             analyzer = config.Analyzer;
             delPolicy = config.DelPolicy;
-            Commit = config.IndexCommit;
+            commit = config.IndexCommit;
             openMode = config.OpenMode;
             similarity = config.Similarity;
             mergeScheduler = config.MergeScheduler;
@@ -514,7 +530,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriterConfig#setIndexDeletionPolicy(IndexDeletionPolicy)"/> or
         /// the default <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>/
         /// </summary>
-        public virtual IndexDeletionPolicy DelPolicy
+        public virtual IndexDeletionPolicy DelPolicy // LUCENENET TODO: Rename IndexDeletionPolicy
         {
             get
             {
@@ -531,7 +547,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Commit;
+                return commit;
             }
         }
 

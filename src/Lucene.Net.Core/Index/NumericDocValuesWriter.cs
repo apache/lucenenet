@@ -37,40 +37,40 @@ namespace Lucene.Net.Index
     {
         private const long MISSING = 0L;
 
-        private AppendingDeltaPackedLongBuffer Pending;
-        private readonly Counter IwBytesUsed;
-        private long BytesUsed;
-        private FixedBitSet DocsWithField;
-        private readonly FieldInfo FieldInfo;
+        private AppendingDeltaPackedLongBuffer pending;
+        private readonly Counter iwBytesUsed;
+        private long bytesUsed;
+        private FixedBitSet docsWithField;
+        private readonly FieldInfo fieldInfo;
 
         public NumericDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed, bool trackDocsWithField)
         {
-            Pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
-            DocsWithField = trackDocsWithField ? new FixedBitSet(64) : null;
-            BytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
-            this.FieldInfo = fieldInfo;
-            this.IwBytesUsed = iwBytesUsed;
-            iwBytesUsed.AddAndGet(BytesUsed);
+            pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            docsWithField = trackDocsWithField ? new FixedBitSet(64) : null;
+            bytesUsed = pending.RamBytesUsed() + DocsWithFieldBytesUsed();
+            this.fieldInfo = fieldInfo;
+            this.iwBytesUsed = iwBytesUsed;
+            iwBytesUsed.AddAndGet(bytesUsed);
         }
 
         public virtual void AddValue(int docID, long value)
         {
-            if (docID < Pending.Size())
+            if (docID < pending.Size())
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
 
             // Fill in any holes:
-            for (int i = (int)Pending.Size(); i < docID; ++i)
+            for (int i = (int)pending.Size(); i < docID; ++i)
             {
-                Pending.Add(MISSING);
+                pending.Add(MISSING);
             }
 
-            Pending.Add(value);
-            if (DocsWithField != null)
+            pending.Add(value);
+            if (docsWithField != null)
             {
-                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, docID);
-                DocsWithField.Set(docID);
+                docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
+                docsWithField.Set(docID);
             }
 
             UpdateBytesUsed();
@@ -79,14 +79,14 @@ namespace Lucene.Net.Index
         private long DocsWithFieldBytesUsed()
         {
             // size of the long[] + some overhead
-            return DocsWithField == null ? 0 : RamUsageEstimator.SizeOf(DocsWithField.Bits) + 64;
+            return docsWithField == null ? 0 : RamUsageEstimator.SizeOf(docsWithField.Bits) + 64;
         }
 
         private void UpdateBytesUsed()
         {
-            long newBytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
-            IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
-            BytesUsed = newBytesUsed;
+            long newBytesUsed = pending.RamBytesUsed() + DocsWithFieldBytesUsed();
+            iwBytesUsed.AddAndGet(newBytesUsed - bytesUsed);
+            bytesUsed = newBytesUsed;
         }
 
         public override void Finish(int maxDoc)
@@ -97,14 +97,14 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
-            dvConsumer.AddNumericField(FieldInfo, GetNumericIterator(maxDoc));
+            dvConsumer.AddNumericField(fieldInfo, GetNumericIterator(maxDoc));
         }
 
         private IEnumerable<long?> GetNumericIterator(int maxDoc)
         {
             // LUCENENET specific: using yield return instead of custom iterator type. Much less code.
-            AbstractAppendingLongBuffer.Iterator iter = Pending.GetIterator();
-            int size = (int)Pending.Size();
+            AbstractAppendingLongBuffer.Iterator iter = pending.GetIterator();
+            int size = (int)pending.Size();
             int upto = 0;
 
             while (upto < maxDoc)
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
                 if (upto < size)
                 {
                     var v = iter.Next();
-                    if (DocsWithField == null || DocsWithField.Get(upto))
+                    if (docsWithField == null || docsWithField.Get(upto))
                     {
                         value = v;
                     }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    value = DocsWithField != null ? (long?) null : MISSING;
+                    value = docsWithField != null ? (long?) null : MISSING;
                 }
                 upto++;
                 // TODO: make reusable Number

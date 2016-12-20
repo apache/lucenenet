@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override long Size(SegmentCommitInfo info)
+        protected override long Size(SegmentCommitInfo info)
         {
             return long.MaxValue;
         }
@@ -90,19 +90,6 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             return "NoMergePolicy";
-        }
-
-        // Redundant method calls here for TestMethodsOverridden in TestNoMergePolicy
-        public override double NoCFSRatio
-        {
-            get { return base.NoCFSRatio; }
-            set { base.NoCFSRatio = value; }
-        }
-
-        public override double MaxCFSSegmentSizeMB
-        {
-            get { return base.MaxCFSSegmentSizeMB; }
-            set { base.MaxCFSSegmentSizeMB = value; }
         }
     }
 }

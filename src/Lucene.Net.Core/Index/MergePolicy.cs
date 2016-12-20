@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// Sole constructor, typically invoked from sub-classes constructors. </summary>
-            protected internal DocMap()
+            protected DocMap()
             {
             }
 
@@ -109,31 +109,31 @@ namespace Lucene.Net.Index
         public class OneMerge
         {
             internal SegmentCommitInfo info; // used by IndexWriter
-            internal bool RegisterDone; // used by IndexWriter
-            internal long MergeGen; // used by IndexWriter
-            internal bool IsExternal; // used by IndexWriter
-            public int MaxNumSegments = -1; // used by IndexWriter
+            internal bool registerDone; // used by IndexWriter
+            internal long mergeGen; // used by IndexWriter
+            internal bool isExternal; // used by IndexWriter
+            public int maxNumSegments = -1; // used by IndexWriter
 
             /// <summary>
             /// Estimated size in bytes of the merged segment. </summary>
-            public long EstimatedMergeBytes; // used by IndexWriter
+            public long EstimatedMergeBytes; // used by IndexWriter // LUCENENET TODO: Make property, original was volatile
 
             // Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
-            internal long TotalMergeBytes;
+            internal long totalMergeBytes; // LUCENENET TODO: original was volatile
 
-            internal IList<SegmentReader> Readers; // used by IndexWriter
+            internal IList<SegmentReader> readers; // used by IndexWriter
 
             /// <summary>
             /// Segments to be merged. </summary>
-            public readonly IList<SegmentCommitInfo> Segments;
+            public readonly IList<SegmentCommitInfo> Segments; // LUCENENET TODO: Make property
 
             /// <summary>
             /// Number of documents in the merged segment. </summary>
-            public readonly int TotalDocCount;
+            public readonly int TotalDocCount; // LUCENENET TODO: Make property
 
-            internal bool Aborted_Renamed;
-            internal Exception Error;
-            internal bool Paused;
+            internal bool aborted;
+            internal Exception error;
+            internal bool paused;
 
             /// <summary>
             /// Sole constructor. </summary>
@@ -163,23 +163,23 @@ namespace Lucene.Net.Index
             ///  deletes that happened during the merge can be applied to the newly
             ///  merged segment.
             /// </summary>
-            public virtual IList<AtomicReader> MergeReaders
+            public virtual IList<AtomicReader> MergeReaders // LUCENENET TODO: Make method?
             {
                 get
                 {
-                    if (Readers == null)
+                    if (this.readers == null)
                     {
                         throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
                     }
-                    IList<AtomicReader> readers = new List<AtomicReader>(this.Readers.Count);
-                    foreach (AtomicReader reader in this.Readers)
+                    IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
+                    foreach (AtomicReader reader in this.readers)
                     {
                         if (reader.NumDocs > 0)
                         {
                             readers.Add(reader);
                         }
                     }
-                    return readers;
+                    return readers; // LUCENENET TODO: Collections.UnmodifiableList(readers)
                 }
             }
 
@@ -236,14 +236,14 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        this.Error = value;
+                        this.error = value;
                     }
                 }
                 get
                 {
                     lock (this)
                     {
-                        return Error;
+                        return error;
                     }
                 }
             }
@@ -257,20 +257,20 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    Aborted_Renamed = true;
+                    aborted = true;
                     Monitor.PulseAll(this);
                 }
             }
 
             /// <summary>
             /// Returns true if this merge was aborted. </summary>
-            internal virtual bool Aborted
+            internal virtual bool Aborted // LUCENENET TODO: Rename IsAborted
             {
                 get
                 {
                     lock (this)
                     {
-                        return Aborted_Renamed;
+                        return aborted;
                     }
                 }
             }
@@ -283,12 +283,12 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Aborted_Renamed)
+                    if (aborted)
                     {
                         throw new MergeAbortedException("merge is aborted: " + SegString(dir));
                     }
 
-                    while (Paused)
+                    while (paused)
                     {
 #if !NETSTANDARD
                         try
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
                             throw new Exception(ie.Message, ie);
                         }
 #endif
-                        if (Aborted_Renamed)
+                        if (aborted)
                         {
                             throw new MergeAbortedException("merge is aborted: " + SegString(dir));
                         }
@@ -317,13 +317,13 @@ namespace Lucene.Net.Index
             ///  <seealso cref="ConcurrentMergeScheduler"/> will pause merges
             ///  if too many are running).
             /// </summary>
-            public virtual bool Pause
+            internal virtual bool Pause // LUCENENET TODO: Rename IsPaused
             {
-                set
+                set // LUCENENET TODO: Make SetPause(bool paused)
                 {
                     lock (this)
                     {
-                        this.Paused = value;
+                        this.paused = value;
                         if (!value)
                         {
                             // Wakeup merge thread, if it's waiting
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        return Paused;
+                        return paused;
                     }
                 }
             }
@@ -360,11 +360,11 @@ namespace Lucene.Net.Index
                 {
                     b.Append(" into ").Append(info.Info.Name);
                 }
-                if (MaxNumSegments != -1)
+                if (maxNumSegments != -1)
                 {
-                    b.Append(" [maxNumSegments=" + MaxNumSegments + "]");
+                    b.Append(" [maxNumSegments=" + maxNumSegments + "]");
                 }
-                if (Aborted_Renamed)
+                if (aborted)
                 {
                     b.Append(" [ABORTED]");
                 }
@@ -377,9 +377,9 @@ namespace Lucene.Net.Index
             /// input total size. this is only set once the merge is
             /// initialized by IndexWriter.
             /// </summary>
-            public virtual long TotalBytesSize()
+            public virtual long TotalBytesSize() // LUCENENET TODO: Make property
             {
-                return TotalMergeBytes;
+                return totalMergeBytes;
             }
 
             /// <summary>
@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
             /// Note that this does not indicate the number of documents after the merge.
             ///
             /// </summary>
-            public virtual int TotalNumDocs()
+            public virtual int TotalNumDocs() // LUCENENET TODO: Make property
             {
                 int total = 0;
                 foreach (SegmentCommitInfo info in Segments)
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return new MergeInfo(TotalDocCount, EstimatedMergeBytes, IsExternal, MaxNumSegments);
+                    return new MergeInfo(TotalDocCount, EstimatedMergeBytes, isExternal, maxNumSegments);
                 }
             }
         }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
             /// The subset of segments to be included in the primitive merge.
             /// </summary>
 
-            public readonly IList<OneMerge> Merges = new List<OneMerge>();
+            public readonly IList<OneMerge> Merges = new List<OneMerge>(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Sole constructor.  Use {@link
@@ -462,18 +462,18 @@ namespace Lucene.Net.Index
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
-    [Serializable]
+        [Serializable]
 #endif
         public class MergeException : Exception
         {
-            internal Directory Dir;
+            private Directory dir;
 
             /// <summary>
             /// Create a {@code MergeException}. </summary>
             public MergeException(string message, Directory dir)
                 : base(message)
             {
-                this.Dir = dir;
+                this.dir = dir;
             }
 
             /// <summary>
@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             public MergeException(Exception exc, Directory dir)
                 : base(exc.Message)
             {
-                this.Dir = dir;
+                this.dir = dir;
             }
 
             /// <summary>
@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return Dir;
+                    return dir;
                 }
             }
         }
@@ -503,6 +503,10 @@ namespace Lucene.Net.Index
         ///  <code>false</code>.  Normally this exception is
         ///  privately caught and suppresed by <seealso cref="IndexWriter"/>.
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class MergeAbortedException : System.IO.IOException
         {
             /// <summary>
@@ -526,7 +530,7 @@ namespace Lucene.Net.Index
         /// Default ratio for compound file system usage. Set to <tt>1.0</tt>, always use
         /// compound file system.
         /// </summary>
-        protected internal const double DEFAULT_NO_CFS_RATIO = 1.0;
+        protected internal static readonly double DEFAULT_NO_CFS_RATIO = 1.0;
 
         /// <summary>
         /// Default max segment size in order to use compound file system. Set to <seealso cref="Long#MAX_VALUE"/>.
@@ -535,27 +539,27 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="IndexWriter"/> that contains this instance. </summary>
-        protected internal SetOnce<IndexWriter> Writer;
+        protected internal SetOnce<IndexWriter> writer;
 
         /// <summary>
         /// If the size of the merge segment exceeds this ratio of
         ///  the total index size then it will remain in
         ///  non-compound format
         /// </summary>
-        protected internal double NoCFSRatio_Renamed = DEFAULT_NO_CFS_RATIO;
+        protected internal double noCFSRatio_ = DEFAULT_NO_CFS_RATIO;
 
         /// <summary>
         /// If the size of the merged segment exceeds
         ///  this value then it will not use compound file format.
         /// </summary>
-        protected internal long MaxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
+        protected internal long maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
         public virtual object Clone()
         {
             MergePolicy clone;
             clone = (MergePolicy)base.MemberwiseClone();
 
-            clone.Writer = new SetOnce<IndexWriter>();
+            clone.writer = new SetOnce<IndexWriter>();
             return clone;
         }
 
@@ -574,11 +578,11 @@ namespace Lucene.Net.Index
         /// and maxCFSSegmentSize. this ctor should be used by subclasses using different
         /// defaults than the <seealso cref="MergePolicy"/>
         /// </summary>
-        protected internal MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
+        protected MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
         {
-            Writer = new SetOnce<IndexWriter>();
-            this.NoCFSRatio_Renamed = defaultNoCFSRatio;
-            this.MaxCFSSegmentSize = defaultMaxCFSSegmentSize;
+            writer = new SetOnce<IndexWriter>();
+            this.noCFSRatio_ = defaultNoCFSRatio;
+            this.maxCFSSegmentSize = defaultMaxCFSSegmentSize;
         }
 
         /// <summary>
@@ -587,11 +591,11 @@ namespace Lucene.Net.Index
         /// called more than once, <seealso cref="AlreadySetException"/> is thrown.
         /// </summary>
         /// <seealso cref= SetOnce </seealso>
-        public virtual IndexWriter IndexWriter
+        public virtual IndexWriter IndexWriter // LUCENENET TODO: Make SetIndexWriter(IndexWriter writer)
         {
             set
             {
-                this.Writer.Set(value);
+                this.writer.Set(value);
             }
         }
 
@@ -654,7 +658,7 @@ namespace Lucene.Net.Index
                 return false;
             }
             long mergedInfoSize = Size(mergedInfo);
-            if (mergedInfoSize > MaxCFSSegmentSize)
+            if (mergedInfoSize > maxCFSSegmentSize)
             {
                 return false;
             }
@@ -675,10 +679,10 @@ namespace Lucene.Net.Index
         ///  SegmentCommitInfo}, pro-rated by percentage of
         ///  non-deleted documents is set.
         /// </summary>
-        protected internal virtual long Size(SegmentCommitInfo info)
+        protected virtual long Size(SegmentCommitInfo info)
         {
             long byteSize = info.SizeInBytes();
-            int delCount = Writer.Get().NumDeletedDocs(info);
+            int delCount = writer.Get().NumDeletedDocs(info);
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
             Debug.Assert(delRatio <= 1.0);
             return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
@@ -689,9 +693,9 @@ namespace Lucene.Net.Index
         ///  pending deletes, is in the same dir as the
         ///  writer, and matches the current compound file setting
         /// </summary>
-        protected internal bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
+        protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
-            IndexWriter w = Writer.Get();
+            IndexWriter w = writer.Get();
             Debug.Assert(w != null);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions && !info.Info.HasSeparateNorms() && info.Info.Dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
@@ -701,11 +705,11 @@ namespace Lucene.Net.Index
         /// Returns current {@code noCFSRatio}.
         /// </summary>
         ///  <seealso cref= #setNoCFSRatio  </seealso>
-        public virtual double NoCFSRatio
+        public double NoCFSRatio
         {
             get
             {
-                return NoCFSRatio_Renamed;
+                return noCFSRatio_;
             }
             set
             {
@@ -713,17 +717,17 @@ namespace Lucene.Net.Index
                 {
                     throw new System.ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
                 }
-                this.NoCFSRatio_Renamed = value;
+                this.noCFSRatio_ = value;
             }
         }
 
         /// <summary>
         /// Returns the largest size allowed for a compound file segment </summary>
-        public virtual double MaxCFSSegmentSizeMB
+        public double MaxCFSSegmentSizeMB
         {
             get
             {
-                return MaxCFSSegmentSize / 1024 / 1024.0;
+                return maxCFSSegmentSize / 1024 / 1024.0;
             }
             set
             {
@@ -732,7 +736,7 @@ namespace Lucene.Net.Index
                     throw new System.ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
                 }
                 value *= 1024 * 1024;
-                this.MaxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;
+                this.maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;
             }
         }
     }

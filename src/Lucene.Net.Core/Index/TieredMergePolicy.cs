@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = writer.Get().MergingSegments;
             ICollection<SegmentCommitInfo> toBeMerged = new HashSet<SegmentCommitInfo>();
 
             List<SegmentCommitInfo> infosSorted = new List<SegmentCommitInfo>(infos.AsList());
@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
                     {
                         extra += " [floored]";
                     }
-                    Message("  seg=" + Writer.Get().SegString(info) + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", segBytes / 1024 / 1024.0) + " MB" + extra);
+                    Message("  seg=" + writer.Get().SegString(info) + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", segBytes / 1024 / 1024.0) + " MB" + extra);
                 }
 
                 minSegmentBytes = Math.Min(segBytes, minSegmentBytes);
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
                         MergeScore score = Score(candidate, hitTooLarge, mergingBytes);
                         if (Verbose())
                         {
-                            Message("  maybe=" + Writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", totAfterMergeBytes / 1024.0 / 1024.0));
+                            Message("  maybe=" + writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", totAfterMergeBytes / 1024.0 / 1024.0));
                         }
 
                         // If we are already running a max sized merge
@@ -570,7 +570,7 @@ namespace Lucene.Net.Index
 
                         if (Verbose())
                         {
-                            Message("  add merge=" + Writer.Get().SegString(merge.Segments) + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format(CultureInfo.InvariantCulture, "%.3f", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
+                            Message("  add merge=" + writer.Get().SegString(merge.Segments) + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format(CultureInfo.InvariantCulture, "%.3f", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
                         }
                     }
                     else
@@ -676,12 +676,12 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + segmentsToMerge);
+                Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + segmentsToMerge);
             }
 
             List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
             bool forceMergeRunning = false;
-            ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = writer.Get().MergingSegments;
             bool? segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
@@ -736,7 +736,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.SubList(end - MaxMergeAtOnceExplicit_Renamed, end));
                 if (Verbose())
                 {
-                    Message("add merge=" + Writer.Get().SegString(merge.Segments));
+                    Message("add merge=" + writer.Get().SegString(merge.Segments));
                 }
                 spec.Add(merge);
                 end -= MaxMergeAtOnceExplicit_Renamed;
@@ -749,7 +749,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.SubList(end - numToMerge, end));
                 if (Verbose())
                 {
-                    Message("add final merge=" + merge.SegString(Writer.Get().Directory));
+                    Message("add final merge=" + merge.SegString(writer.Get().Directory));
                 }
                 spec = new MergeSpecification();
                 spec.Add(merge);
@@ -762,13 +762,13 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findForcedDeletesMerges infos=" + Writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
+                Message("findForcedDeletesMerges infos=" + writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
             }
             List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
-            ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = writer.Get().MergingSegments;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                double pctDeletes = 100.0 * ((double)Writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
+                double pctDeletes = 100.0 * ((double)writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
                 if (pctDeletes > ForceMergeDeletesPctAllowed_Renamed && !merging.Contains(info))
                 {
                     eligible.Add(info);
@@ -804,7 +804,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.SubList(start, end));
                 if (Verbose())
                 {
-                    Message("add merge=" + Writer.Get().SegString(merge.Segments));
+                    Message("add merge=" + writer.Get().SegString(merge.Segments));
                 }
                 spec.Add(merge);
                 start = end;
@@ -824,13 +824,13 @@ namespace Lucene.Net.Index
 
         private bool Verbose()
         {
-            IndexWriter w = Writer.Get();
+            IndexWriter w = writer.Get();
             return w != null && w.infoStream.IsEnabled("TMP");
         }
 
         private void Message(string message)
         {
-            Writer.Get().infoStream.Message("TMP", message);
+            writer.Get().infoStream.Message("TMP", message);
         }
 
         public override string ToString()
@@ -843,7 +843,7 @@ namespace Lucene.Net.Index
             sb.Append("forceMergeDeletesPctAllowed=").Append(ForceMergeDeletesPctAllowed_Renamed).Append(", ");
             sb.Append("segmentsPerTier=").Append(SegsPerTier).Append(", ");
             sb.Append("maxCFSSegmentSizeMB=").Append(MaxCFSSegmentSizeMB).Append(", ");
-            sb.Append("noCFSRatio=").Append(NoCFSRatio_Renamed);
+            sb.Append("noCFSRatio=").Append(noCFSRatio_);
             return sb.ToString();
         }
     }

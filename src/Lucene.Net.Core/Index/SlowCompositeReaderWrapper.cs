@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
                     if (docValues != null)
                     {
                         map = docValues.Mapping;
-                        if (map.Owner == CoreCacheKey)
+                        if (map.owner == CoreCacheKey)
                         {
                             CachedOrdMaps[field] = map;
                         }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
                     if (docValues != null)
                     {
                         map = docValues.Mapping;
-                        if (map.Owner == CoreCacheKey)
+                        if (map.owner == CoreCacheKey)
                         {
                             CachedOrdMaps[field] = map;
                         }

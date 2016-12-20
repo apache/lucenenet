@@ -46,10 +46,10 @@ namespace Lucene.Net.Index
         {
             this.Calendar = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue));
             this.Random = random;
-            MaxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
+            maxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
         }
 
-        protected internal override long Size(SegmentCommitInfo info)
+        protected override long Size(SegmentCommitInfo info)
         {
             int hourOfDay = Calendar.Hour;
             if (hourOfDay < 6 || hourOfDay > 20 || Random.Next(23) == 5)

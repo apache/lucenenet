@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
             int numSegments = segmentInfos.Size();
 
             IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
-            ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = base.writer.Get().MergingSegments;
 
             foreach (SegmentCommitInfo sipc in segmentInfos.Segments)
             {
