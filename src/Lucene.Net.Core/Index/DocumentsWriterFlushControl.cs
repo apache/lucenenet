@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DocumentsWriter.DeleteQueue.NumGlobalTermDeletes() + BufferedUpdatesStream.NumTerms();
+                return DocumentsWriter.DeleteQueue.NumGlobalTermDeletes() + BufferedUpdatesStream.NumTerms;
             }
         }
 
@@ -561,7 +561,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DocumentsWriter.DeleteQueue.BytesUsed() + BufferedUpdatesStream.BytesUsed();
+                return DocumentsWriter.DeleteQueue.BytesUsed() + BufferedUpdatesStream.BytesUsed;
             }
         }
 

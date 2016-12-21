@@ -109,31 +109,31 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual bool Any() // LUCENENET TODO: Make property ?
+        public virtual bool Any() // LUCENENET TODO: This should be a property, except for Any() is already a common API in .NET so it might make sense to keep it
         {
             return bytesUsed.Get() != 0;
         }
 
-        public virtual int NumTerms() // LUCENENET TODO: Make property
+        public virtual int NumTerms
         {
-            return numTerms.Get();
+            get { return numTerms.Get(); }
         }
 
-        public virtual long BytesUsed() // LUCENENET TODO: Make property
+        public virtual long BytesUsed
         {
-            return bytesUsed.Get();
+            get { return bytesUsed.Get(); }
         }
 
         public class ApplyDeletesResult
         {
             // True if any actual deletes took place:
-            public readonly bool AnyDeletes; // LUCENENET TODO: Make property
+            public bool AnyDeletes { get; private set; }
 
             // Current gen, for the merged segment:
-            public readonly long Gen; // LUCENENET TODO: Make property
+            public long Gen { get; private set; }
 
             // If non-null, contains segments that are 100% deleted
-            public readonly IList<SegmentCommitInfo> AllDeleted; // LUCENENET TODO: Make property
+            public IList<SegmentCommitInfo> AllDeleted { get; private set; }
 
             internal ApplyDeletesResult(bool anyDeletes, long gen, IList<SegmentCommitInfo> allDeleted)
             {
@@ -381,14 +381,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal virtual long NextGen // LUCENENET TODO: Make property (non-deterministic)
+        internal virtual long GetNextGen()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return NextGen_Renamed++;
-                }
+                return NextGen_Renamed++;
             }
         }
 
@@ -637,8 +634,8 @@ namespace Lucene.Net.Index
 
         public class QueryAndLimit
         {
-            public readonly Query Query; // LUCENENET TODO: Make property
-            public readonly int? Limit; // LUCENENET TODO: Make property (and check if we can work without the nullable)
+            public Query Query { get; private set; }
+            public int? Limit { get; private set; } // LUCENENET TODO: check if we can work without the nullable
 
             public QueryAndLimit(Query query, int? limit)
             {

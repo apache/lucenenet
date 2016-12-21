@@ -2902,7 +2902,7 @@ namespace Lucene.Net.Index
                         {
                             // Since we don't have a delete packet to apply we can get a new
                             // generation right away
-                            nextGen = BufferedUpdatesStream.NextGen;
+                            nextGen = BufferedUpdatesStream.GetNextGen();
                         }
                         if (infoStream.IsEnabled("IW"))
                         {
@@ -3921,7 +3921,7 @@ namespace Lucene.Net.Index
                 }
                 else if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "don't apply deletes now delTermCount=" + BufferedUpdatesStream.NumTerms() + " bytesUsed=" + BufferedUpdatesStream.BytesUsed());
+                    infoStream.Message("IW", "don't apply deletes now delTermCount=" + BufferedUpdatesStream.NumTerms + " bytesUsed=" + BufferedUpdatesStream.BytesUsed);
                 }
             }
         }
@@ -3968,7 +3968,7 @@ namespace Lucene.Net.Index
         public long RamSizeInBytes() // LUCENENET TODO: Make property ?
         {
             EnsureOpen();
-            return DocWriter.FlushControl.NetBytes() + BufferedUpdatesStream.BytesUsed();
+            return DocWriter.FlushControl.NetBytes() + BufferedUpdatesStream.BytesUsed;
         }
 
         // for testing only

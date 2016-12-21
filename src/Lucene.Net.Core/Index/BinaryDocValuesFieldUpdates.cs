@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
             Values.Append(otherUpdates.Values);
         }
 
-        public override bool Any() // LUCENENET TODO: This should be a property, except for Any() is already a common API in .NET so it might make sense to keep it
+        public override bool Any()
         {
             return Size > 0;
         }
