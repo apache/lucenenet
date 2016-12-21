@@ -33,29 +33,29 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// <seealso cref="InfoStream"/> used for debugging messages. </summary>
-        public readonly InfoStream InfoStream; // LUCENENET TODO: Make property
+        public InfoStream InfoStream { get; private set; }
 
         /// <summary>
         /// <seealso cref="Directory"/> where this segment will be written
         ///  to.
         /// </summary>
-        public readonly Directory Directory; // LUCENENET TODO: Make property
+        public Directory Directory { get; private set; }
 
         /// <summary>
         /// <seealso cref="SegmentInfo"/> describing this segment. </summary>
-        public readonly SegmentInfo SegmentInfo; // LUCENENET TODO: Make property
+        public SegmentInfo SegmentInfo { get; private set; }
 
         /// <summary>
         /// <seealso cref="FieldInfos"/> describing all fields in this
         ///  segment.
         /// </summary>
-        public readonly FieldInfos FieldInfos; // LUCENENET TODO: Make property
+        public FieldInfos FieldInfos { get; private set; }
 
         /// <summary>
         /// Number of deleted documents set while flushing the
         ///  segment.
         /// </summary>
-        public int DelCountOnFlush; // LUCENENET TODO: Make property
+        public int DelCountOnFlush { get; set; }
 
         /// <summary>
         /// Deletes and updates to apply while we are flushing the segment. A Term is
@@ -63,13 +63,13 @@ namespace Lucene.Net.Index
         /// the docIDUpto, meaning any docID &lt; docIDUpto containing this term should
         /// be deleted/updated.
         /// </summary>
-        public readonly BufferedUpdates SegUpdates; // LUCENENET TODO: Make property
+        public BufferedUpdates SegUpdates { get; private set; }
 
         /// <summary>
         /// <seealso cref="MutableBits"/> recording live documents; this is
         ///  only set if there is one or more deleted documents.
         /// </summary>
-        public MutableBits LiveDocs; // LUCENENET TODO: Make property
+        public MutableBits LiveDocs { get; set; }
 
         /// <summary>
         /// Unique suffix for any postings files written for this
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
         ///  write/read must be derived using this suffix (use
         ///  <seealso cref="IndexFileNames#segmentFileName(String,String,String)"/>).
         /// </summary>
-        public readonly string SegmentSuffix; // LUCENENET TODO: Make property
+        public string SegmentSuffix { get; private set; }
 
         /// <summary>
         /// Expert: The fraction of terms in the "dictionary" which should be stored
@@ -88,14 +88,13 @@ namespace Lucene.Net.Index
         /// slower.  Searching is typically not dominated by dictionary lookup, so
         /// tweaking this is rarely useful.
         /// </summary>
-         // LUCENENET TODO: Make property
-        public int TermIndexInterval; // TODO: this should be private to the codec, not settable here or in IWC
+        public int TermIndexInterval { get; set; } // TODO: this should be private to the codec, not settable here or in IWC
 
         /// <summary>
         /// <seealso cref="IOContext"/> for all writes; you should pass this
         ///  to <seealso cref="Directory#createOutput(String,IOContext)"/>.
         /// </summary>
-        public readonly IOContext Context; // LUCENENET TODO: Make property
+        public IOContext Context { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>
