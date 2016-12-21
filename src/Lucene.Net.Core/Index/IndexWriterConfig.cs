@@ -119,21 +119,21 @@ namespace Lucene.Net.Index
         ///  than this many threads arrive they will wait for
         ///  others to finish. Default value is 8.
         /// </summary>
-        public const int DEFAULT_MAX_THREAD_STATES = 8;
+        public static readonly int DEFAULT_MAX_THREAD_STATES = 8;
 
         /// <summary>
         /// Default value for compound file system for newly written segments
         ///  (set to <code>true</code>). For batch indexing with very large
         ///  ram buffers use <code>false</code>
         /// </summary>
-        public const bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
+        public static readonly bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
 
         /// <summary>
         /// Default value for calling <seealso cref="AtomicReader#checkIntegrity()"/> before
         ///  merging segments (set to <code>false</code>). You can set this
         ///  to <code>true</code> for additional safety.
         /// </summary>
-        public const bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
+        public static readonly bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
 
         /// <summary>
         /// Sets the default (for any instance) maximum time to wait for a write lock
