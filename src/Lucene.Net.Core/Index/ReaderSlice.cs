@@ -30,15 +30,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Document ID this slice starts from. </summary>
-        public readonly int Start; // LUCENENET TODO: Make property
+        public int Start { get; private set; }
 
         /// <summary>
         /// Number of documents in this slice. </summary>
-        public readonly int Length; // LUCENENET TODO: Make property
+        public int Length { get; private set; }
 
         /// <summary>
         /// Sub-reader index for this slice. </summary>
-        public readonly int ReaderIndex; // LUCENENET TODO: Make property
+        public int ReaderIndex { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>
