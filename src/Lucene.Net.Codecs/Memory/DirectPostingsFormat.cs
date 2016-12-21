@@ -860,7 +860,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override TermState TermState()
                 {
                     OrdTermState state = new OrdTermState();
-                    state.ord = termOrd;
+                    state.Ord = termOrd;
                     return state;
                 }
 
@@ -950,7 +950,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void SeekExact(BytesRef term, TermState state)
                 {
-                    termOrd = (int) ((OrdTermState) state).ord;
+                    termOrd = (int) ((OrdTermState) state).Ord;
                     SetTerm();
                     Debug.Assert(term.Equals(scratch));
                 }
@@ -1655,7 +1655,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override TermState TermState()
                 {
                     OrdTermState state = new OrdTermState();
-                    state.ord = termOrd;
+                    state.Ord = termOrd;
                     return state;
                 }
 

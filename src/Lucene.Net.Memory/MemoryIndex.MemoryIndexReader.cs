@@ -400,13 +400,13 @@ namespace Lucene.Net.Index.Memory
                 public override void SeekExact(BytesRef term, TermState state)
                 {
                     Debug.Assert(state != null);
-                    this.SeekExact(((OrdTermState)state).ord);
+                    this.SeekExact(((OrdTermState)state).Ord);
                 }
 
                 public override TermState TermState()
                 {
                     OrdTermState ts = new OrdTermState();
-                    ts.ord = termUpto;
+                    ts.Ord = termUpto;
                     return ts;
                 }
             }

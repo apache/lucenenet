@@ -150,13 +150,13 @@ namespace Lucene.Net.Index
         public override void SeekExact(BytesRef term, TermState state)
         {
             Debug.Assert(state != null && state is OrdTermState);
-            this.SeekExact(((OrdTermState)state).ord);
+            this.SeekExact(((OrdTermState)state).Ord);
         }
 
         public override TermState TermState()
         {
             OrdTermState state = new OrdTermState();
-            state.ord = CurrentOrd;
+            state.Ord = CurrentOrd;
             return state;
         }
     }

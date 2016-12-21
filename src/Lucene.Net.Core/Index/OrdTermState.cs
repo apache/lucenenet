@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
         /// Term ordinal, i.e. it's position in the full list of
         ///  sorted terms.
         /// </summary>
-        public long ord;
+        public long Ord { get; set; }
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -41,12 +41,12 @@ namespace Lucene.Net.Index
         public override void CopyFrom(TermState other)
         {
             Debug.Assert(other is OrdTermState, "can not copy from " + other.GetType().Name);
-            this.ord = ((OrdTermState)other).ord;
+            this.Ord = ((OrdTermState)other).Ord;
         }
 
         public override string ToString()
         {
-            return "OrdTermState ord=" + ord;
+            return "OrdTermState ord=" + Ord;
         }
     }
 }
