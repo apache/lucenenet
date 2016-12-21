@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class NumericDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
+        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
         {
             private readonly int size;
             private readonly PagedGrowableWriter values;
@@ -56,9 +56,9 @@ namespace Lucene.Net.Index
                 this.docs = docs;
             }
 
-            public object Value()
+            public object Value
             {
-                return value;
+                get { return value; }
             }
 
             public int NextDoc()
@@ -86,9 +86,9 @@ namespace Lucene.Net.Index
                 return doc;
             }
 
-            public int Doc()
+            public int Doc
             {
-                return doc;
+                get { return doc; }
             }
 
             public void Reset()
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             ++size;
         }
 
-        public override AbstractDocValuesFieldUpdates.Iterator GetIterator()
+        public override AbstractDocValuesFieldUpdates.IIterator GetIterator()
         {
             PagedMutable docs = this.docs;
             PagedGrowableWriter values = this.values;

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
         /// updates are returned by this iterator, and the documents are returned in
         /// increasing order.
         /// </summary>
-        public interface Iterator // LUCENENET TODO: Rename with "I" (or should this be renamed to IEnumerator?)
+        public interface IIterator // LUCENENET TODO: should this be renamed to IEnumerator?
         {
             /// <summary>
             /// Returns the next document which has an update, or
@@ -45,13 +45,13 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns the current document this iterator is on. </summary>
-            int Doc(); // LUCENENET TODO: Make property
+            int Doc { get; }
 
             /// <summary>
             /// Returns the value of the document returned from <seealso cref="#nextDoc()"/>. A
             /// {@code null} value means that it was unset for this document.
             /// </summary>
-            object Value(); // LUCENENET TODO: Make property
+            object Value { get; } // LUCENENET TODO: Should this interface be made generic?
 
             /// <summary>
             /// Reset the iterator's state. Should be called before <seealso cref="#nextDoc()"/>
@@ -153,10 +153,10 @@ namespace Lucene.Net.Index
         public abstract void Add(int doc, object value);
 
         /// <summary>
-        /// Returns an <seealso cref="Iterator"/> over the updated documents and their
+        /// Returns an <seealso cref="IIterator"/> over the updated documents and their
         /// values.
         /// </summary>
-        public abstract Iterator GetIterator(); // LUCENENET TODO: Rename Iterator()? Check consistency across API
+        public abstract IIterator GetIterator(); // LUCENENET TODO: Rename Iterator()? Check consistency across API
 
         /// <summary>
         /// Merge with another <seealso cref="AbstractDocValuesFieldUpdates"/>. this is called for a

@@ -682,7 +682,7 @@ namespace Lucene.Net.Index
             {
                 if (curDoc == updateDoc) //document has an updated value
                 {
-                    long? value = (long?)iter.Value(); // either null or updated
+                    long? value = (long?)iter.Value; // either null or updated
                     updateDoc = iter.NextDoc(); //prepare for next round
                     yield return value;
                 }
@@ -713,7 +713,7 @@ namespace Lucene.Net.Index
             {
                 if (curDoc == updateDoc) //document has an updated value
                 {
-                    BytesRef value = (BytesRef)iter.Value(); // either null or updated
+                    BytesRef value = (BytesRef)iter.Value; // either null or updated
                     updateDoc = iter.NextDoc(); //prepare for next round
                     yield return value;
                 }
