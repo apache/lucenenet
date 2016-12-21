@@ -831,8 +831,8 @@ namespace Lucene.Net.Index
                         infoStream.Write("    test: fields..............");
                     }
                     FieldInfos fieldInfos = reader.FieldInfos;
-                    Msg(infoStream, "OK [" + fieldInfos.Size() + " fields]");
-                    segInfoStat.NumFields = fieldInfos.Size();
+                    Msg(infoStream, "OK [" + fieldInfos.Size + " fields]");
+                    segInfoStat.NumFields = fieldInfos.Size;
 
                     // Test Field Norms
                     segInfoStat.FieldNormStatus = TestFieldNorms(reader, infoStream);

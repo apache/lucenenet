@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // then we make an empty prx file, same as if we are wrapped in
                 // per-field postingsformat. maybe... we shouldn't
                 // bother w/ this opto?  just create empty prx file...?
-                if (state.FieldInfos.HasProx())
+                if (state.FieldInfos.HasProx)
                 {
                     // At least one field does not omit TF, so create the
                     // prox file

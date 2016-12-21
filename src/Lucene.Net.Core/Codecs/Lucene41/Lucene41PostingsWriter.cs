@@ -123,13 +123,13 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 CodecUtil.WriteHeader(DocOut, DOC_CODEC, VERSION_CURRENT);
                 ForUtil = new ForUtil(acceptableOverheadRatio, DocOut);
-                if (state.FieldInfos.HasProx())
+                if (state.FieldInfos.HasProx)
                 {
                     PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
                     posOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), state.Context);
                     CodecUtil.WriteHeader(posOut, POS_CODEC, VERSION_CURRENT);
 
-                    if (state.FieldInfos.HasPayloads())
+                    if (state.FieldInfos.HasPayloads)
                     {
                         PayloadBytes = new byte[128];
                         PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         PayloadLengthBuffer = null;
                     }
 
-                    if (state.FieldInfos.HasOffsets())
+                    if (state.FieldInfos.HasOffsets)
                     {
                         OffsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
                         OffsetLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         OffsetLengthBuffer = null;
                     }
 
-                    if (state.FieldInfos.HasPayloads() || state.FieldInfos.HasOffsets())
+                    if (state.FieldInfos.HasPayloads || state.FieldInfos.HasOffsets)
                     {
                         payOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.PAY_EXTENSION), state.Context);
                         CodecUtil.WriteHeader(payOut, PAY_CODEC, VERSION_CURRENT);

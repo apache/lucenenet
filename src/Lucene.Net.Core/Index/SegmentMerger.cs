@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             {
                 t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
             }
-            if (MergeState.FieldInfos.HasDocValues())
+            if (MergeState.FieldInfos.HasDocValues)
             {
                 MergeDocValues(segmentWriteState);
             }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
                 MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge doc values [" + numMerged + " docs]");
             }
 
-            if (MergeState.FieldInfos.HasNorms())
+            if (MergeState.FieldInfos.HasNorms)
             {
                 if (MergeState.InfoStream.IsEnabled("SM"))
                 {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (MergeState.FieldInfos.HasVectors())
+            if (MergeState.FieldInfos.HasVectors)
             {
                 if (MergeState.InfoStream.IsEnabled("SM"))
                 {

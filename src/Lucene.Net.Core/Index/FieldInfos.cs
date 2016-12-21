@@ -98,59 +98,62 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns true if any fields have freqs </summary>
-        public virtual bool HasFreq() // LUCENENET TODO: Make property
+        public virtual bool HasFreq
         {
-            return hasFreq;
+            get { return hasFreq; }
         }
 
         /// <summary>
         /// Returns true if any fields have positions </summary>
-        public virtual bool HasProx() // LUCENENET TODO: Make property
+        public virtual bool HasProx
         {
-            return hasProx;
+            get { return hasProx; }
         }
 
         /// <summary>
         /// Returns true if any fields have payloads </summary>
-        public virtual bool HasPayloads() // LUCENENET TODO: Make property
+        public virtual bool HasPayloads
         {
-            return hasPayloads;
+            get { return hasPayloads; }
         }
 
         /// <summary>
         /// Returns true if any fields have offsets </summary>
-        public virtual bool HasOffsets() // LUCENENET TODO: Make property
+        public virtual bool HasOffsets
         {
-            return hasOffsets;
+            get { return hasOffsets; }
         }
 
         /// <summary>
         /// Returns true if any fields have vectors </summary>
-        public virtual bool HasVectors() // LUCENENET TODO: Make property
+        public virtual bool HasVectors
         {
-            return hasVectors;
+            get { return hasVectors; }
         }
 
         /// <summary>
         /// Returns true if any fields have norms </summary>
-        public virtual bool HasNorms() // LUCENENET TODO: Make property
+        public virtual bool HasNorms
         {
-            return hasNorms;
+            get { return hasNorms; }
         }
 
         /// <summary>
         /// Returns true if any fields have DocValues </summary>
-        public virtual bool HasDocValues() // LUCENENET TODO: Make property
+        public virtual bool HasDocValues
         {
-            return hasDocValues;
+            get { return hasDocValues; }
         }
 
         /// <summary>
         /// Returns the number of fields </summary>
-        public virtual int Size() // LUCENENET TODO: Make property, rename Count
+        public virtual int Size // LUCENENET TODO: rename Count
         {
-            Debug.Assert(byNumber.Count == byName.Count);
-            return byNumber.Count;
+            get
+            {
+                Debug.Assert(byNumber.Count == byName.Count);
+                return byNumber.Count;
+            }
         }
 
         /// <summary>

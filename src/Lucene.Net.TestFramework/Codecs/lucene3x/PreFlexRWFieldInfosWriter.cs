@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             try
             {
                 output.WriteVInt(FORMAT_PREFLEX_RW);
-                output.WriteVInt(infos.Size());
+                output.WriteVInt(infos.Size);
                 foreach (FieldInfo fi in infos)
                 {
                     sbyte bits = 0x0;

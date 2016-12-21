@@ -1875,7 +1875,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext ctx in r0.Leaves)
             {
                 SegmentReader sr = (SegmentReader)ctx.Reader;
-                Assert.IsFalse(sr.FieldInfos.HasVectors());
+                Assert.IsFalse(sr.FieldInfos.HasVectors);
             }
 
             r0.Dispose();

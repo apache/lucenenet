@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // Really we'd need to init prxOut lazily on write, and
                 // then somewhere record that we actually wrote it so we
                 // know whether to open on read:
-                if (fieldInfos.HasProx())
+                if (fieldInfos.HasProx)
                 {
                     proxIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene40PostingsFormat.PROX_EXTENSION), ioContext);
                     CodecUtil.CheckHeader(proxIn, PRX_CODEC, VERSION_START, VERSION_CURRENT);

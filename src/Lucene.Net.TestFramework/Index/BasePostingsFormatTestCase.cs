@@ -484,7 +484,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done init postings; " + AllTerms.Count + " total terms, across " + FieldInfos.Size() + " fields");
+                Console.WriteLine("TEST: done init postings; " + AllTerms.Count + " total terms, across " + FieldInfos.Size + " fields");
             }
         }
 

@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                 }
                 numDocs = si.Info.DocCount - si.DelCount;
 
-                if (FieldInfos.HasDocValues())
+                if (FieldInfos.HasDocValues)
                 {
                     InitDocValuesProducers(codec);
                 }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
                     fieldInfos = ReadFieldInfos(si);
                 }
 
-                if (FieldInfos.HasDocValues())
+                if (FieldInfos.HasDocValues)
                 {
                     InitDocValuesProducers(codec);
                 }

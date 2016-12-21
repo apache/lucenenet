@@ -1634,7 +1634,7 @@ namespace Lucene.Net.Index
                     sis.Read(dir);
                     foreach (AtomicReaderContext context in reader.Leaves)
                     {
-                        Assert.IsFalse((context.AtomicReader).FieldInfos.HasVectors());
+                        Assert.IsFalse((context.AtomicReader).FieldInfos.HasVectors);
                     }
                     reader.Dispose();
                     dir.Dispose();

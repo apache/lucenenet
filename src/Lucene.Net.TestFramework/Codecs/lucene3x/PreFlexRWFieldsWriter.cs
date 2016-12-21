@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             success = false;
             try
             {
-                if (state.FieldInfos.HasProx())
+                if (state.FieldInfos.HasProx)
                 {
                     string proxFile = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, "", Lucene3xPostingsFormat.PROX_EXTENSION);
                     ProxOut = state.Directory.CreateOutput(proxFile, state.Context);

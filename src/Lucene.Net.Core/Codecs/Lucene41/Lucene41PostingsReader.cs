@@ -55,12 +55,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 Version = CodecUtil.CheckHeader(docIn, Lucene41PostingsWriter.DOC_CODEC, Lucene41PostingsWriter.VERSION_START, Lucene41PostingsWriter.VERSION_CURRENT);
                 forUtil = new ForUtil(docIn);
 
-                if (fieldInfos.HasProx())
+                if (fieldInfos.HasProx)
                 {
                     posIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), ioContext);
                     CodecUtil.CheckHeader(posIn, Lucene41PostingsWriter.POS_CODEC, Version, Version);
 
-                    if (fieldInfos.HasPayloads() || fieldInfos.HasOffsets())
+                    if (fieldInfos.HasPayloads || fieldInfos.HasOffsets)
                     {
                         payIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene41PostingsFormat.PAY_EXTENSION), ioContext);
                         CodecUtil.CheckHeader(payIn, Lucene41PostingsWriter.PAY_CODEC, Version, Version);

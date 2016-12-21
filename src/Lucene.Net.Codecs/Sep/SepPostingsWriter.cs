@@ -118,14 +118,14 @@ namespace Lucene.Net.Codecs.Sep
                 DOC_OUT = factory.CreateOutput(state.Directory, docFileName, state.Context);
                 DOC_INDEX = DOC_OUT.Index();
 
-                if (state.FieldInfos.HasFreq())
+                if (state.FieldInfos.HasFreq)
                 {
                     var frqFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FREQ_EXTENSION);
                     FREQ_OUT = factory.CreateOutput(state.Directory, frqFileName, state.Context);
                     FREQ_INDEX = FREQ_OUT.Index();
                 }
 
-                if (state.FieldInfos.HasProx())
+                if (state.FieldInfos.HasProx)
                 {
                     var posFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, POS_EXTENSION);
                     POS_OUT = factory.CreateOutput(state.Directory, posFileName, state.Context);

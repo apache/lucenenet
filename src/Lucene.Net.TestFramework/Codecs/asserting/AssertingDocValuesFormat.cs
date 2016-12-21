@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.asserting
 
         public override DocValuesProducer FieldsProducer(SegmentReadState state)
         {
-            Debug.Assert(state.FieldInfos.HasDocValues());
+            Debug.Assert(state.FieldInfos.HasDocValues);
             DocValuesProducer producer = @in.FieldsProducer(state);
             Debug.Assert(producer != null);
             return new AssertingDocValuesProducer(producer, state.SegmentInfo.DocCount);

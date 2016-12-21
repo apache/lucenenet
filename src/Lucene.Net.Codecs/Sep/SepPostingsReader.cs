@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Sep
                         IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.SKIP_EXTENSION),
                         context);
 
-                if (fieldInfos.HasFreq())
+                if (fieldInfos.HasFreq)
                 {
                     _freqIn = intFactory.OpenInput(dir,
                         IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.FREQ_EXTENSION),
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     _freqIn = null;
                 }
-                if (fieldInfos.HasProx())
+                if (fieldInfos.HasProx)
                 {
                     _posIn = intFactory.OpenInput(dir,
                         IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.POS_EXTENSION),

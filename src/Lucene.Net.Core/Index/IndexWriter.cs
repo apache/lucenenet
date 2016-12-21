@@ -5079,7 +5079,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        infoStream.Message("IW", "merge codec=" + codec + " docCount=" + merge.info.Info.DocCount + "; merged segment has " + (mergeState.FieldInfos.HasVectors() ? "vectors" : "no vectors") + "; " + (mergeState.FieldInfos.HasNorms() ? "norms" : "no norms") + "; " + (mergeState.FieldInfos.HasDocValues() ? "docValues" : "no docValues") + "; " + (mergeState.FieldInfos.HasProx() ? "prox" : "no prox") + "; " + (mergeState.FieldInfos.HasProx() ? "freqs" : "no freqs"));
+                        infoStream.Message("IW", "merge codec=" + codec + " docCount=" + merge.info.Info.DocCount + "; merged segment has " + (mergeState.FieldInfos.HasVectors ? "vectors" : "no vectors") + "; " + (mergeState.FieldInfos.HasNorms ? "norms" : "no norms") + "; " + (mergeState.FieldInfos.HasDocValues ? "docValues" : "no docValues") + "; " + (mergeState.FieldInfos.HasProx ? "prox" : "no prox") + "; " + (mergeState.FieldInfos.HasProx ? "freqs" : "no freqs"));
                     }
                 }
 

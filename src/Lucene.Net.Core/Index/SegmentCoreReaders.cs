@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
 
-                if (fieldInfos.HasNorms())
+                if (fieldInfos.HasNorms)
                 {
                     NormsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
                     Debug.Assert(NormsProducer != null);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
 #endif
                 //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
-                if (fieldInfos.HasVectors()) // open term vector files only as needed
+                if (fieldInfos.HasVectors) // open term vector files only as needed
                 {
                     TermVectorsReaderOrig = si.Info.Codec.TermVectorsFormat.VectorsReader(cfsDir, si.Info, fieldInfos, context);
                 }
