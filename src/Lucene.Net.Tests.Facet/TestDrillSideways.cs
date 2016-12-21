@@ -40,6 +40,7 @@ namespace Lucene.Net.Facet
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
     using Collector = Lucene.Net.Search.Collector;
@@ -76,7 +77,7 @@ namespace Lucene.Net.Facet
 
             // Writes facet ords to a separate directory from the
             // main index:
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
@@ -256,7 +257,7 @@ namespace Lucene.Net.Facet
 
             // Writes facet ords to a separate directory from the
             // main index:
-            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
@@ -312,7 +313,7 @@ namespace Lucene.Net.Facet
 
             // Writes facet ords to a separate directory from the
             // main index:
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("dim", true);
@@ -527,7 +528,7 @@ namespace Lucene.Net.Facet
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwc.SetInfoStream(InfoStream.NO_OUTPUT);
             var w = new RandomIndexWriter(Random(), d, iwc);
-            var tw = new DirectoryTaxonomyWriter(td, IndexWriterConfig.OpenMode_e.CREATE);
+            var tw = new DirectoryTaxonomyWriter(td, OpenMode.CREATE);
             FacetsConfig config = new FacetsConfig();
             for (int i = 0; i < numDims; i++)
             {
@@ -1308,7 +1309,7 @@ namespace Lucene.Net.Facet
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
             var writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             IndexSearcher searcher = NewSearcher(writer.Reader);
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 

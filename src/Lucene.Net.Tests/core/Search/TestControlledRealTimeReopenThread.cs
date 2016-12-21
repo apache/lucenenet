@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using KeepOnlyLastCommitDeletionPolicy = Lucene.Net.Index.KeepOnlyLastCommitDeletionPolicy;
     using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SnapshotDeletionPolicy = Lucene.Net.Index.SnapshotDeletionPolicy;
     using Term = Lucene.Net.Index.Term;
@@ -639,7 +640,7 @@ namespace Lucene.Net.Search
             Directory dir = new NRTCachingDirectory(NewFSDirectory(CreateTempDir("nrt")), 5, 128);
             IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, new MockAnalyzer(Random()));
             config.SetIndexDeletionPolicy(sdp);
-            config.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE_OR_APPEND);
+            config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
             IndexWriter iw = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
             TrackingIndexWriter tiw = new TrackingIndexWriter(iw);

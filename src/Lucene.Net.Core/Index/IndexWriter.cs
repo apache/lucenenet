@@ -47,7 +47,6 @@ namespace Lucene.Net.Index
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
     using MergeInfo = Lucene.Net.Store.MergeInfo;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Query = Lucene.Net.Search.Query;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
@@ -823,13 +822,13 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                OpenMode_e? mode = config.OpenMode;
+                OpenMode? mode = config.OpenMode;
                 bool create;
-                if (mode == OpenMode_e.CREATE)
+                if (mode == OpenMode.CREATE)
                 {
                     create = true;
                 }
-                else if (mode == OpenMode_e.APPEND)
+                else if (mode == OpenMode.APPEND)
                 {
                     create = false;
                 }

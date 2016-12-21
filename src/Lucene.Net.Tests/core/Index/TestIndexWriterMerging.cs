@@ -33,7 +33,6 @@ namespace Lucene.Net.Index
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TextField = TextField;
 
     [TestFixture]
@@ -103,7 +102,7 @@ namespace Lucene.Net.Index
 
         private void FillIndex(Random random, Directory dir, int start, int numDocs)
         {
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(2)));
 
             for (int i = start; i < (start + numDocs); i++)
             {
@@ -373,7 +372,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: pass=" + pass);
                 }
 
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
                 if (pass == 2)
                 {
                     conf.SetMergeScheduler(new SerialMergeScheduler());
@@ -424,7 +423,7 @@ namespace Lucene.Net.Index
                     reader.Dispose();
 
                     // Reopen
-                    writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy()));
+                    writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()));
                 }
                 writer.Dispose();
             }

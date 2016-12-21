@@ -33,7 +33,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -127,7 +126,7 @@ namespace Lucene.Net.Index
 
         private void DoTestReopenWithCommit(Random random, Directory dir, bool withReopen)
         {
-            IndexWriter iwriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.CREATE).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter iwriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(NewLogMergePolicy()));
             iwriter.Commit();
             DirectoryReader reader = DirectoryReader.Open(dir);
             try

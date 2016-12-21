@@ -49,7 +49,6 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using NumericDocValuesField = NumericDocValuesField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using SortedDocValuesField = SortedDocValuesField;
@@ -1546,7 +1545,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
             }
             catch (Exception e)
             {

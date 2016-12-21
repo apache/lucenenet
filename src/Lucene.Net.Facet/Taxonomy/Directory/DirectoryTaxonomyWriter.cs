@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using ReaderManager = Lucene.Net.Index.ReaderManager;
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
     using StringField = Lucene.Net.Documents.StringField;

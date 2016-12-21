@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using MockFixedLengthPayloadFilter = Lucene.Net.Analysis.MockFixedLengthPayloadFilter;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MockVariableLengthPayloadFilter = Lucene.Net.Analysis.MockVariableLengthPayloadFilter;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene41
             iw.Dispose();
             Verify(dir);
             TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
-            iwc.SetOpenMode(OpenMode_e.APPEND);
+            iwc.SetOpenMode(OpenMode.APPEND);
             IndexWriter iw2 = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
             iw2.ForceMerge(1);
             iw2.Dispose();

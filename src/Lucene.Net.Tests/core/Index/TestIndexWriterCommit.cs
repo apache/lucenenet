@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -123,7 +122,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(14, hits.Length, "first number of hits");
             reader.Dispose();
 
-            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10));
+            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10));
             for (int j = 0; j < 17; j++)
             {
                 AddDoc(writer);
@@ -150,7 +149,7 @@ namespace Lucene.Net.Index
 
             // Now make sure we can re-open the index, add docs,
             // and all is good:
-            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10));
+            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10));
 
             // On abort, writer in fact may write to the same
             // segments_N file:
@@ -226,7 +225,7 @@ namespace Lucene.Net.Index
 
             dir.TrackDiskUsage = true;
             long startDiskUsage = dir.MaxUsedSizeInBytes;
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
             for (int j = 0; j < 1470; j++)
             {
                 AddDocWithIndex(writer, j);
@@ -309,7 +308,7 @@ namespace Lucene.Net.Index
             }
             writer.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
             // Open a reader before closing (commiting) the writer:
@@ -335,7 +334,7 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: do real full merge");
             }
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 

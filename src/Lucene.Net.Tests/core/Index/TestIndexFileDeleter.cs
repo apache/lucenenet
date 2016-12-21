@@ -33,7 +33,6 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     /*
       Verify we can read the pre-2.1 file format, do searches
@@ -125,7 +124,7 @@ namespace Lucene.Net.Index
 
             // Open & close a writer: it should delete the above 4
             // files and nothing more:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
             writer.Dispose();
 
             string[] files2 = dir.ListAll();

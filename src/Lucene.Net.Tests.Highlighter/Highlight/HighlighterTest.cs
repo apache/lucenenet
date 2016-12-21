@@ -1863,7 +1863,7 @@ namespace Lucene.Net.Search.Highlight
 
         private void deleteDocument()
         {
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
             writer.DeleteDocuments(new Term("t_text1", "del"));
             // To see negative idf, keep comment the following line
             //writer.forceMerge(1);

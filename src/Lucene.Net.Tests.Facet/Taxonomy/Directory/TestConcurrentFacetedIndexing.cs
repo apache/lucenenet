@@ -14,7 +14,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
 

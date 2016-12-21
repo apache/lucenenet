@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using Term = Lucene.Net.Index.Term;
 
     [TestFixture]

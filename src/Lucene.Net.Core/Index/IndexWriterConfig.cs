@@ -51,27 +51,7 @@ namespace Lucene.Net.Index
     /// @since 3.1 </seealso>
     public sealed class IndexWriterConfig : LiveIndexWriterConfig
     {
-        /// <summary>
-        /// Specifies the open mode for <seealso cref="IndexWriter"/>.
-        /// </summary>
-        public enum OpenMode_e // LUCENENET TODO: Move outside of IndexWriterConfig and rename to OpenMode
-        {
-            /// <summary>
-            /// Creates a new index or overwrites an existing one.
-            /// </summary>
-            CREATE,
-
-            /// <summary>
-            /// Opens an existing index.
-            /// </summary>
-            APPEND,
-
-            /// <summary>
-            /// Creates a new index if one does not exist,
-            /// otherwise it opens the index and documents will be appended.
-            /// </summary>
-            CREATE_OR_APPEND
-        }
+        // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
         /// <summary>
         /// Default value is 32. Change using <seealso cref="#setTermIndexInterval(int)"/>. </summary>
@@ -217,7 +197,7 @@ namespace Lucene.Net.Index
         ///
         /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
-        public IndexWriterConfig SetOpenMode(OpenMode_e? openMode)
+        public IndexWriterConfig SetOpenMode(OpenMode? openMode)
         {
             if (openMode == null)
             {
@@ -227,7 +207,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override OpenMode_e? OpenMode // LUCENENET TODO: Make non-nullable if possible
+        public override OpenMode? OpenMode // LUCENENET TODO: Make non-nullable if possible
         {
             get
             {
@@ -714,5 +694,27 @@ namespace Lucene.Net.Index
             sb.Append("writer=").Append(writer).Append("\n");
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Specifies the open mode for <seealso cref="IndexWriter"/>.
+    /// </summary>
+    public enum OpenMode // LUCENENET specific: Moved outside of IndexWriterConfig to prevent naming conflict
+    {
+        /// <summary>
+        /// Creates a new index or overwrites an existing one.
+        /// </summary>
+        CREATE,
+
+        /// <summary>
+        /// Opens an existing index.
+        /// </summary>
+        APPEND,
+
+        /// <summary>
+        /// Creates a new index if one does not exist,
+        /// otherwise it opens the index and documents will be appended.
+        /// </summary>
+        CREATE_OR_APPEND
     }
 }

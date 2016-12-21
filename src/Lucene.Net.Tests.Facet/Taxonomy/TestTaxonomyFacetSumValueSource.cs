@@ -59,6 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using NUnit.Framework;
     [TestFixture]
     public class TestTaxonomyFacetSumValueSource : FacetTestCase
@@ -73,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Writes facet ords to a separate directory from the
             // main index:
-            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
@@ -142,7 +143,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Writes facet ords to a separate directory from the
             // main index:
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
@@ -208,7 +209,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Writes facet ords to a separate directory from the
             // main index:
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = new FacetsConfig();
             config.SetIndexFieldName("a", "$facets2");

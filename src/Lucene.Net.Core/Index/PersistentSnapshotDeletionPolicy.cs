@@ -29,7 +29,6 @@ namespace Lucene.Net.Index
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     /// <summary>
     /// A <seealso cref="SnapshotDeletionPolicy"/> which adds a persistence layer so that

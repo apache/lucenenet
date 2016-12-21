@@ -36,7 +36,6 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
@@ -94,7 +93,7 @@ namespace Lucene.Net.Index
             // now we add another document which has payloads for field f3 and verify if the SegmentMerger
             // enabled payloads for that field
             analyzer = new PayloadAnalyzer(); // Clear payload state for each field
-            writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.CREATE));
+            writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE));
             d = new Document();
             d.Add(NewTextField("f1", "this field has no payloads", Field.Store.NO));
             d.Add(NewTextField("f2", "this field has payloads in all docs", Field.Store.NO));
@@ -133,7 +132,7 @@ namespace Lucene.Net.Index
         private void PerformTest(Directory dir)
         {
             PayloadAnalyzer analyzer = new PayloadAnalyzer();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy()));
 
             // should be in sync with value in TermInfosWriter
             const int skipInterval = 16;
@@ -266,7 +265,7 @@ namespace Lucene.Net.Index
 
             // test long payload
             analyzer = new PayloadAnalyzer();
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE));
             string singleTerm = "lucene";
 
             d = new Document();

@@ -30,7 +30,6 @@ namespace Lucene.Net.Index
     using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /// <summary>
@@ -83,7 +82,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
         ///  with.
         /// </summary>
-        internal OpenMode_e? openMode; // LUCENENET TODO: Can we eliminate the nullable?
+        internal OpenMode? openMode; // LUCENENET TODO: Can we eliminate the nullable?
 
         /// <summary>
         /// <seealso cref="Similarity"/> to use when encoding norms. </summary>
@@ -163,7 +162,7 @@ namespace Lucene.Net.Index
             delPolicy = new KeepOnlyLastCommitDeletionPolicy();
             commit = null;
             useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
-            openMode = OpenMode_e.CREATE_OR_APPEND;
+            openMode = Index.OpenMode.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
 #if FEATURE_TASKMERGESCHEDULER
             mergeScheduler = new TaskMergeScheduler();
@@ -517,7 +516,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the <seealso cref="OpenMode"/> set by <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/>. </summary>
-        public virtual OpenMode_e? OpenMode
+        public virtual OpenMode? OpenMode
         {
             get
             {

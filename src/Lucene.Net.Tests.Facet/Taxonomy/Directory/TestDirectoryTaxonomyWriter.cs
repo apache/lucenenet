@@ -19,7 +19,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;

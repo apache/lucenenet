@@ -29,7 +29,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using ReferenceManager = Lucene.Net.Search.ReferenceManager;
     using SearcherFactory = Lucene.Net.Search.SearcherFactory;
@@ -47,7 +46,7 @@ namespace Lucene.Net.Index
             MergePolicy policy = new LogByteSizeMergePolicy();
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetMergePolicy(policy);
-            conf.SetOpenMode(OpenMode_e.CREATE_OR_APPEND);
+            conf.SetOpenMode(OpenMode.CREATE_OR_APPEND);
 
             IndexWriter writer = new IndexWriter(directory, conf);
 

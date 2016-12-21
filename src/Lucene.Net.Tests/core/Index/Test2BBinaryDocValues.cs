@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(scheduler)
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+                            .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);
 
             Document doc = new Document();
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(scheduler)
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+                            .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);
 
             Document doc = new Document();

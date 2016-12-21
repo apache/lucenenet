@@ -39,7 +39,7 @@ namespace Lucene.Net.Misc
 
 #pragma warning disable 612, 618
             using (IndexWriter writer = new IndexWriter(mergedIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)
-               .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE)))
+               .SetOpenMode(OpenMode.CREATE)))
 #pragma warning restore 612, 618
             {
 

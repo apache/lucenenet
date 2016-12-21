@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.Lucene41
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             Iw.Dispose();
             TestUtil.CheckIndex(Dir); // for some extra coverage, checkIndex before we forceMerge
-            Iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND);
+            Iwc.SetOpenMode(OpenMode.APPEND);
             IndexWriter iw = new IndexWriter(Dir, (IndexWriterConfig)Iwc.Clone());
             iw.ForceMerge(1);
             iw.Dispose();

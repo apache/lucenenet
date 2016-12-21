@@ -52,6 +52,7 @@ namespace Lucene.Net.Util.Fst
     using MultiFields = Lucene.Net.Index.MultiFields;
     //using ResultLong = Lucene.Net.Util.Fst.Util.Result<long?>;
     //using ResultPair = Lucene.Net.Util.Fst.Util.Result<long?>;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using Pair = Lucene.Net.Util.Fst.PairOutputs<long?, long?>.Pair;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -1019,7 +1020,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("TEST: cycle=" + cycle);
                 }
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
                 Document doc = new Document();
                 Field idField = NewStringField("id", "", Field.Store.NO);
                 doc.Add(idField);
@@ -1185,7 +1186,7 @@ namespace Lucene.Net.Util.Fst
             Directory dir = NewDirectory();
 
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                .SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
             Field f = NewStringField("field", "", Field.Store.NO);
             doc.Add(f);

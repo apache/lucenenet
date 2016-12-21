@@ -44,6 +44,7 @@ namespace Lucene.Net.Facet.Range
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
@@ -218,7 +219,7 @@ namespace Lucene.Net.Facet.Range
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Directory td = NewDirectory();
-            DirectoryTaxonomyWriter tw = new DirectoryTaxonomyWriter(td, IndexWriterConfig.OpenMode_e.CREATE);
+            DirectoryTaxonomyWriter tw = new DirectoryTaxonomyWriter(td, OpenMode.CREATE);
 
             FacetsConfig config = new FacetsConfig();
 

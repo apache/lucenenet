@@ -34,6 +34,7 @@ namespace Lucene.Net.Store
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
 
     /// <summary>
     /// JUnit testcase to test RAMDirectory. RAMDirectory itself is used in many testcases,
@@ -59,7 +60,7 @@ namespace Lucene.Net.Store
             IndexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 
             Directory dir = NewFSDirectory(IndexDir);
-            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.CREATE));
             // add some documents
             Document doc = null;
             for (int i = 0; i < DocsToAdd; i++)
@@ -113,7 +114,7 @@ namespace Lucene.Net.Store
             MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())));
             dir.Dispose();
 
-            IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
+            IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
             Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);

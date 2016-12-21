@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Spans
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
 

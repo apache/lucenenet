@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

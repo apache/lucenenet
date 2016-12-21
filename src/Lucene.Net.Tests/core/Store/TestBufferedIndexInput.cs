@@ -35,6 +35,7 @@ namespace Lucene.Net.Store
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
@@ -265,7 +266,7 @@ namespace Lucene.Net.Store
                 var writer = new IndexWriter(
                     dir,
                     new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                        .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE)
+                        .SetOpenMode(OpenMode.CREATE)
                         .SetMergePolicy(NewLogMergePolicy(false)));
                     
                 for (int i = 0; i < 37; i++)

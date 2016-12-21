@@ -386,7 +386,7 @@ namespace Lucene.Net.Search.VectorHighlight
         protected void make1dmfIndex(Analyzer analyzer, params String[] values)
         {
             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(
-                TEST_VERSION_CURRENT, analyzer).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = (true);
@@ -406,7 +406,7 @@ namespace Lucene.Net.Search.VectorHighlight
         protected void make1dmfIndexNA(params String[] values)
         {
             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(
-                TEST_VERSION_CURRENT, analyzerK).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                TEST_VERSION_CURRENT, analyzerK).SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = (true);

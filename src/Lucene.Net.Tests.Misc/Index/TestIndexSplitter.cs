@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             IndexWriter iw = new IndexWriter(
                 fsDir,
                 new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).
-                    SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).
+                    SetOpenMode(OpenMode.CREATE).
                     SetMergePolicy(mergePolicy)
             );
             for (int x = 0; x < 100; x++)

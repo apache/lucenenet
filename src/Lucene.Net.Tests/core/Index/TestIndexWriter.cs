@@ -61,7 +61,6 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NoLockFactory = Lucene.Net.Store.NoLockFactory;
     using NumericDocValuesField = NumericDocValuesField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -138,7 +137,7 @@ namespace Lucene.Net.Index
 
             // make sure opening a new index for create over
             // this existing one works correctly:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
             Assert.AreEqual(0, writer.MaxDoc);
             Assert.AreEqual(0, writer.NumDocs());
             writer.Dispose();
@@ -219,7 +218,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(reader.NumDocs, 1, "should be one document");
 
             // now open index for create:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
             Assert.AreEqual(writer.MaxDoc, 0, "should be zero documents");
             AddDoc(writer);
             writer.Dispose();
@@ -271,7 +270,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
             writer.Commit();
             writer.Dispose();
 
@@ -594,7 +593,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(10, hits.Length);
             reader.Dispose();
 
-            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(10));
+            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10));
             // Enable norms for only 1 doc, post flush
             for (int j = 0; j < 27; j++)
             {
@@ -699,7 +698,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(100, hits.Length, "did not get right number of hits");
             reader.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
             writer.Dispose();
             dir.Dispose();
         }
@@ -1826,7 +1825,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("c", "val", customType));
             w.AddDocument(doc);
             w.AddDocument(doc);
-            IndexWriter w2 = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(OpenMode_e.CREATE));
+            IndexWriter w2 = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(OpenMode.CREATE));
 
             w2.Dispose();
             // If we don't do that, the test fails on Windows
@@ -2512,7 +2511,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // validate that it's also visible when opening a new IndexWriter
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetOpenMode(OpenMode.APPEND));
             Assert.AreEqual("value", writer.CommitData["key"]);
             writer.Dispose();
 
@@ -2652,15 +2651,15 @@ namespace Lucene.Net.Index
                 int mode = i / 2;
                 if (mode == 0)
                 {
-                    iwc.SetOpenMode(OpenMode_e.CREATE);
+                    iwc.SetOpenMode(OpenMode.CREATE);
                 }
                 else if (mode == 1)
                 {
-                    iwc.SetOpenMode(OpenMode_e.APPEND);
+                    iwc.SetOpenMode(OpenMode.APPEND);
                 }
                 else if (mode == 2)
                 {
-                    iwc.SetOpenMode(OpenMode_e.CREATE_OR_APPEND);
+                    iwc.SetOpenMode(OpenMode.CREATE_OR_APPEND);
                 }
 
                 if (VERBOSE)

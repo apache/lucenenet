@@ -42,7 +42,6 @@ namespace Lucene.Net.Index
     using StringField = Lucene.Net.Documents.StringField;
     using TextField = Lucene.Net.Documents.TextField;
     //using IndexOptions = Lucene.Net.Index.IndexOptions;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using FieldCache = Lucene.Net.Search.FieldCache;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -542,7 +541,7 @@ namespace Lucene.Net.Index
         public virtual void ChangeIndexWithAdds(Random random, Directory dir, string origOldName)
         {
             // open writer
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.APPEND));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.APPEND));
             // add 10 docs
             for (int i = 0; i < 10; i++)
             {
@@ -572,7 +571,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
 
             // fully merge
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -598,7 +597,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
 
             // fully merge
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.APPEND));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 

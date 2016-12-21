@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, IndexWriterConfig.OpenMode_e.APPEND));
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, OpenMode.APPEND));
                 searcherMgr = new SearcherManager(writer, true, null);
             }
         }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// codec to use. 
         /// </summary>
         protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, 
-            Analyzer indexAnalyzer, IndexWriterConfig.OpenMode_e openMode)
+            Analyzer indexAnalyzer, OpenMode openMode)
         {
             IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer);
             iwc.SetCodec(new Lucene46Codec());
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // First pass: build a temporary normal Lucene index,
                 // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, IndexWriterConfig.OpenMode_e.CREATE));
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, OpenMode.CREATE));
                 //long t0 = System.nanoTime();
 
                 // TODO: use threads?

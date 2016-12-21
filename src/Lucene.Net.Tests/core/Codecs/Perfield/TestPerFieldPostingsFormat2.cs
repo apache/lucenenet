@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Perfield
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
-                new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
+                new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             IndexWriter writer = NewWriter(dir, iwconf);
             AddDocs(writer, 10);
             writer.Commit();
@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.Perfield
                 Console.WriteLine("TEST: make new index");
             }
             IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
-                new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
+                new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
             IndexWriter writer = NewWriter(dir, iwconf);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Perfield
             Codec codec = iwconf.Codec;
 
             iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                .SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND).SetCodec(codec);
+                .SetOpenMode(OpenMode.APPEND).SetCodec(codec);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setNoCFSRatio(0.0);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
             iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Perfield
             {
                 int num = TestUtil.NextInt(Random(), 30, 60);
                 IndexWriterConfig config = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                config.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE_OR_APPEND);
+                config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
                 IndexWriter writer = NewWriter(dir, config);
                 for (int j = 0; j < docsPerRound; j++)
                 {

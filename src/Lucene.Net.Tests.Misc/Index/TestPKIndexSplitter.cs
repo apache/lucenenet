@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
             {
                 using (w = new IndexWriter(dir, NewIndexWriterConfig(
                     TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
-                    .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+                    .SetOpenMode(OpenMode.CREATE).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
                 {
                     for (int x = 0; x < 11; x++)
                     {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
                 using (w = new IndexWriter(dir, NewIndexWriterConfig(
 
                     TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
-                        .SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+                        .SetOpenMode(OpenMode.APPEND).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
                 {
                     w.DeleteDocuments(midTerm);
                     w.DeleteDocuments(new Term("id", string.Format(CultureInfo.InvariantCulture, format, 2)));

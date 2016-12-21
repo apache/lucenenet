@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
@@ -91,7 +90,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             doc.Add(NewStringField(field, val, Field.Store.NO));
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(100)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(100)));
 
             for (int i = 0; i < ndocs; i++)
             {

@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     [TestFixture]
     public class TestIndexWriterMergePolicy : LuceneTestCase
@@ -91,7 +90,7 @@ namespace Lucene.Net.Index
 
                 mp = new LogDocMergePolicy();
                 mp.MergeFactor = 10;
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(mp));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(mp));
                 mp.MinMergeDocs = 100;
                 CheckInvariants(writer);
             }
@@ -147,13 +146,13 @@ namespace Lucene.Net.Index
                 }
                 writer.Dispose();
 
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(101).SetMergePolicy(new LogDocMergePolicy()).SetMergeScheduler(new SerialMergeScheduler()));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(101).SetMergePolicy(new LogDocMergePolicy()).SetMergeScheduler(new SerialMergeScheduler()));
             }
 
             writer.Dispose();
             LogDocMergePolicy ldmp = new LogDocMergePolicy();
             ldmp.MergeFactor = 10;
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(ldmp).SetMergeScheduler(new SerialMergeScheduler()));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(ldmp).SetMergeScheduler(new SerialMergeScheduler()));
 
             // merge policy only fixes segments on levels where merges
             // have been triggered, so check invariants after all adds
@@ -201,7 +200,7 @@ namespace Lucene.Net.Index
             ldmp = new LogDocMergePolicy();
             ldmp.MergeFactor = 5;
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                .SetOpenMode(OpenMode_e.APPEND)
+                .SetOpenMode(OpenMode.APPEND)
                 .SetMaxBufferedDocs(10)
                 .SetMergePolicy(ldmp)
                 .SetMergeScheduler(scheduler);

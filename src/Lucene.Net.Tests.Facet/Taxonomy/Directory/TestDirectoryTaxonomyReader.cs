@@ -12,7 +12,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 for (int i = 0; i < n; i++)
                 {
                     int k = random.Next(n);
-                    tw = new DirectoryTaxonomyWriter(dir, IndexWriterConfig.OpenMode_e.CREATE);
+                    tw = new DirectoryTaxonomyWriter(dir, OpenMode.CREATE);
                     for (int j = 0; j <= k; j++)
                     {
                         tw.AddCategory(cp[j]);
@@ -277,7 +277,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 this.outerInstance = outerInstance;
             }
 
-            protected override IndexWriterConfig CreateIndexWriterConfig(IndexWriterConfig.OpenMode_e openMode)
+            protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
             {
                 IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
                 LogMergePolicy lmp = (LogMergePolicy)conf.MergePolicy;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.AreEqual(cp_a, r1.GetPath(1));
 
             // now recreate, add a different category
-            writer = new DirectoryTaxonomyWriter(dir, IndexWriterConfig.OpenMode_e.CREATE);
+            writer = new DirectoryTaxonomyWriter(dir, OpenMode.CREATE);
             FacetLabel cp_b = new FacetLabel("b");
             writer.AddCategory(cp_b);
             writer.Dispose();

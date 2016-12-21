@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+using OpenMode = Lucene.Net.Index.OpenMode;
 
 namespace Lucene.Net.Search.VectorHighlight
 {

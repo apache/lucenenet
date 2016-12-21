@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -543,7 +544,7 @@ namespace Lucene.Net.Search
                 MockAnalyzer analyzer = new MockAnalyzer(Random());
                 analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-                iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+                iwc.SetOpenMode(OpenMode.CREATE);
                 if (VERBOSE)
                 {
                     iwc.InfoStream = new PrintStreamInfoStream(Console.Out);

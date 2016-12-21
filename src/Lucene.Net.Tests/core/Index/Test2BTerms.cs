@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                                            .SetRAMBufferSizeMB(256.0)
                                            .SetMergeScheduler(scheduler)
                                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                                           .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                                           .SetOpenMode(OpenMode.CREATE));
 
                 MergePolicy mp = w.Config.MergePolicy;
                 if (mp is LogByteSizeMergePolicy)

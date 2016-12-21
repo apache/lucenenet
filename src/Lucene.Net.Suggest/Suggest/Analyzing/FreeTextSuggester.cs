@@ -327,7 +327,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 #pragma warning disable 612, 618
                 IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, indexAnalyzer);
 #pragma warning restore 612, 618
-                iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+                iwc.SetOpenMode(OpenMode.CREATE);
                 iwc.SetRAMBufferSizeMB(ramBufferSizeMB);
                 IndexWriter writer = new IndexWriter(dir, iwc);
 

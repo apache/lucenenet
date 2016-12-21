@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MultiFields = Lucene.Net.Index.MultiFields;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using Terms = Lucene.Net.Index.Terms;
 
     [TestFixture]

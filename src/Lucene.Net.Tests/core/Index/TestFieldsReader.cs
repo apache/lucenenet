@@ -35,7 +35,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
@@ -231,7 +230,7 @@ namespace Lucene.Net.Index
             try
             {
                 Directory dir = new FaultyFSDirectory(indexDir);
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE);
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE);
                 IndexWriter writer = new IndexWriter(dir, iwc);
                 for (int i = 0; i < 2; i++)
                 {

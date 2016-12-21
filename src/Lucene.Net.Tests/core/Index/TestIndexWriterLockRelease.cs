@@ -24,7 +24,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     /// <summary>
     /// this tests the patch for issue #LUCENE-715 (IndexWriter does not
@@ -40,13 +39,13 @@ namespace Lucene.Net.Index
             Directory dir = NewFSDirectory(CreateTempDir("testLockRelease"));
             try
             {
-                new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
+                new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
             }
             catch (FileNotFoundException /*| NoSuchFileException*/ e)
             {
                 try
                 {
-                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
+                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
                 }
                 catch (FileNotFoundException /*| NoSuchFileException*/ e1)
                 {

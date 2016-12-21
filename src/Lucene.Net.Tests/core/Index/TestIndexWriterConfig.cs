@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Store = Field.Store;
 
     [TestFixture]
@@ -66,7 +65,7 @@ namespace Lucene.Net.Index
 #else
             Assert.AreEqual(typeof(ConcurrentMergeScheduler), conf.MergeScheduler.GetType());
 #endif
-            Assert.AreEqual(OpenMode_e.CREATE_OR_APPEND, conf.OpenMode);
+            Assert.AreEqual(OpenMode.CREATE_OR_APPEND, conf.OpenMode);
             // we don't need to assert this, it should be unspecified
             Assert.IsTrue(IndexSearcher.DefaultSimilarity == conf.Similarity);
             Assert.AreEqual(IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, conf.TermIndexInterval);

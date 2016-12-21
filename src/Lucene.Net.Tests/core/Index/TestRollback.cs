@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
             rw.Dispose();
 
             // If buffer size is small enough to cause a flush, errors ensue...
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(OpenMode.APPEND));
 
             for (int i = 0; i < 3; i++)
             {

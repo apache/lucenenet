@@ -468,7 +468,7 @@ namespace Lucene.Net.Search.Spell
                 var dir = this.spellIndex;
 #pragma warning disable 612, 618
                 using (var writer = new IndexWriter(dir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)
-                   .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE))) { }
+                   .SetOpenMode(OpenMode.CREATE))) { }
 #pragma warning restore 612, 618
                 SwapSearcher(dir);
             }

@@ -34,7 +34,7 @@ namespace Lucene.Net.Facet
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;

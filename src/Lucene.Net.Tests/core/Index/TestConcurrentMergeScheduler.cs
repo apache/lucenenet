@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
@@ -225,7 +224,7 @@ namespace Lucene.Net.Index
                 TestIndexWriter.AssertNoUnreferencedFiles(directory, "testNoExtraFiles");
 
                 // Reopen
-                writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(2));
+                writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(2));
             }
 
             writer.Dispose();
@@ -275,7 +274,7 @@ namespace Lucene.Net.Index
                 reader.Dispose();
 
                 // Reopen
-                writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy(100)));
+                writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy(100)));
             }
             writer.Dispose();
 

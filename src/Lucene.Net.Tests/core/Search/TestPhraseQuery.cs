@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     using System.IO;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using OpenMode = Lucene.Net.Index.OpenMode;
 
     /// <summary>
     /// Tests <seealso cref="PhraseQuery"/>.

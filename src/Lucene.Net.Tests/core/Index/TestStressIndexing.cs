@@ -29,7 +29,6 @@ namespace Lucene.Net.Index
     using Lucene.Net.Util;
     using NUnit.Framework;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     [TestFixture]
     public class TestStressIndexing : LuceneTestCase
@@ -173,7 +172,7 @@ namespace Lucene.Net.Index
 
         public virtual void RunStressTest(Directory directory, IConcurrentMergeScheduler mergeScheduler)
         {
-            IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
+            IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
             modifier.Commit();
 
             TimedThread[] threads = new TimedThread[4];
