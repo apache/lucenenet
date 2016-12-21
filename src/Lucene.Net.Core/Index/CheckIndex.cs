@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
     public class CheckIndex
     {
         private TextWriter infoStream;
-        private Directory Dir;
+        private Directory dir;
 
         /// <summary>
         /// Returned from <seealso cref="#checkIndex()"/> detailing the health and status of the index.
@@ -416,11 +416,11 @@ namespace Lucene.Net.Index
         /// Create a new CheckIndex on the directory. </summary>
         public CheckIndex(Directory dir)
         {
-            this.Dir = dir;
+            this.dir = dir;
             infoStream = null;
         }
 
-        private bool CrossCheckTermVectors_Renamed;
+        private bool crossCheckTermVectors;
 
         /// <summary>
         /// If true, term vectors are compared against postings to
@@ -431,15 +431,15 @@ namespace Lucene.Net.Index
         {
             set
             {
-                CrossCheckTermVectors_Renamed = value;
+                crossCheckTermVectors = value;
             }
             get
             {
-                return CrossCheckTermVectors_Renamed;
+                return crossCheckTermVectors;
             }
         }
 
-        private bool Verbose;
+        private bool verbose;
 
         /// <summary>
         /// Set infoStream where messages should go.  If null, no
@@ -449,7 +449,7 @@ namespace Lucene.Net.Index
         public virtual void SetInfoStream(TextWriter @out, bool verbose)
         {
             infoStream = @out; // LUCENENET TODO: Create a wrapper class for the reader that is passed so it won't throw exceptions if it is disposed (the exceptions are pointless in this case)
-            this.Verbose = verbose;
+            this.verbose = verbose;
         }
 
         /// <summary>
@@ -515,10 +515,10 @@ namespace Lucene.Net.Index
             NumberFormatInfo nf = CultureInfo.CurrentCulture.NumberFormat;
             SegmentInfos sis = new SegmentInfos();
             Status result = new Status();
-            result.Dir = Dir;
+            result.Dir = dir;
             try
             {
-                sis.Read(Dir);
+                sis.Read(dir);
             }
             catch (Exception t)
             {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             IndexInput input = null;
             try
             {
-                input = Dir.OpenInput(segmentsFileName, IOContext.READONCE);
+                input = dir.OpenInput(segmentsFileName, IOContext.READONCE);
             }
             catch (Exception t)
             {
@@ -838,13 +838,13 @@ namespace Lucene.Net.Index
                     segInfoStat.FieldNormStatus = TestFieldNorms(reader, infoStream);
 
                     // Test the Term Index
-                    segInfoStat.TermIndexStatus = TestPostings(reader, infoStream, Verbose);
+                    segInfoStat.TermIndexStatus = TestPostings(reader, infoStream, verbose);
 
                     // Test Stored Fields
                     segInfoStat.StoredFieldStatus = TestStoredFields(reader, infoStream);
 
                     // Test Term Vectors
-                    segInfoStat.TermVectorStatus = TestTermVectors(reader, infoStream, Verbose, CrossCheckTermVectors_Renamed);
+                    segInfoStat.TermVectorStatus = TestTermVectors(reader, infoStream, verbose, crossCheckTermVectors);
 
                     segInfoStat.DocValuesStatus = TestDocValues(reader, infoStream);
 
@@ -2341,18 +2341,18 @@ namespace Lucene.Net.Index
             result.NewSegments.Commit(result.Dir);
         }
 
-        private static bool AssertsOn_Renamed;
+        private static bool assertsOn;
 
         private static bool TestAsserts()
         {
-            AssertsOn_Renamed = true;
+            assertsOn = true;
             return true;
         }
 
         private static bool AssertsOn()
         {
             Debug.Assert(TestAsserts());
-            return AssertsOn_Renamed;
+            return assertsOn;
         }
 
         /*

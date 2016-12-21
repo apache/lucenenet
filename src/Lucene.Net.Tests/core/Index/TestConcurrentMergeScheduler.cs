@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
                 catch (Exception t)
                 {
                     Failed.Set(true);
-                    Writer.MergeFinish(merge);
+                    writer.MergeFinish(merge);
                     throw new Exception(t.Message, t);
                 }
             }

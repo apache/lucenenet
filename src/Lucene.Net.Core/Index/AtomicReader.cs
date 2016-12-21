@@ -50,10 +50,10 @@ namespace Lucene.Net.Index
     {
         private void InitializeInstanceFields()
         {
-            ReaderContext = new AtomicReaderContext(this);
+            readerContext = new AtomicReaderContext(this);
         }
 
-        private AtomicReaderContext ReaderContext;
+        private AtomicReaderContext readerContext;
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return ReaderContext;
+                return readerContext;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return ReaderContext;
+                return readerContext;
             }
         }
 

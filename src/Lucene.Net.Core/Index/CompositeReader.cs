@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class CompositeReader : IndexReader
     {
-        private volatile CompositeReaderContext ReaderContext = null; // lazy init
+        private volatile CompositeReaderContext readerContext = null; // lazy init
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -113,12 +113,12 @@ namespace Lucene.Net.Index
             {
                 EnsureOpen();
                 // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
-                if (ReaderContext == null)
+                if (readerContext == null)
                 {
                     Debug.Assert(GetSequentialSubReaders() != null);
-                    ReaderContext = CompositeReaderContext.Create(this);
+                    readerContext = CompositeReaderContext.Create(this);
                 }
-                return ReaderContext;
+                return readerContext;
             }
         }
     }

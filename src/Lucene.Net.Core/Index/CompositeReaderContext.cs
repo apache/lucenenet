@@ -86,18 +86,18 @@ namespace Lucene.Net.Index
 
         public sealed class Builder
         {
-            private readonly CompositeReader Reader;
-            private readonly IList<AtomicReaderContext> Leaves = new List<AtomicReaderContext>();
-            private int LeafDocBase = 0;
+            private readonly CompositeReader reader;
+            private readonly IList<AtomicReaderContext> leaves = new List<AtomicReaderContext>();
+            private int leafDocBase = 0;
 
             public Builder(CompositeReader reader)
             {
-                this.Reader = reader;
+                this.reader = reader;
             }
 
             public CompositeReaderContext Build()
             {
-                return (CompositeReaderContext)Build(null, Reader, 0, 0);
+                return (CompositeReaderContext)Build(null, reader, 0, 0);
             }
 
             internal IndexReaderContext Build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
@@ -105,9 +105,9 @@ namespace Lucene.Net.Index
                 var ar = reader as AtomicReader;
                 if (ar != null)
                 {
-                    var atomic = new AtomicReaderContext(parent, ar, ord, docBase, Leaves.Count, LeafDocBase);
-                    Leaves.Add(atomic);
-                    LeafDocBase += reader.MaxDoc;
+                    var atomic = new AtomicReaderContext(parent, ar, ord, docBase, leaves.Count, leafDocBase);
+                    leaves.Add(atomic);
+                    leafDocBase += reader.MaxDoc;
                     return atomic;
                 }
                 else
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
                     CompositeReaderContext newParent;
                     if (parent == null)
                     {
-                        newParent = new CompositeReaderContext(cr, children, Leaves);
+                        newParent = new CompositeReaderContext(cr, children, leaves);
                     }
                     else
                     {
