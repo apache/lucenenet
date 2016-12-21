@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         {
             if (Writer == null)
             {
-                IOContext context = new IOContext(new FlushInfo(DocWriter.NumDocsInRAM, DocWriter.BytesUsed()));
+                IOContext context = new IOContext(new FlushInfo(DocWriter.NumDocsInRAM, DocWriter.BytesUsed));
                 Writer = DocWriter.Codec.TermVectorsFormat.VectorsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
                 LastDocID = 0;
             }

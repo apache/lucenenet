@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
 
         private void CommitPerThreadBytes(ThreadState perThread)
         {
-            long delta = perThread.Dwpt.BytesUsed() - perThread.BytesUsed;
+            long delta = perThread.Dwpt.BytesUsed - perThread.BytesUsed;
             perThread.BytesUsed += delta;
             /*
              * We need to differentiate here if we are pending since setFlushPending

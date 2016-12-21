@@ -79,19 +79,16 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override int[] IntBlock
+        public override int[] GetIntBlock()
         {
-            get
+            if (FreeBlocks_Renamed == 0)
             {
-                if (FreeBlocks_Renamed == 0)
-                {
-                    BytesUsed_Renamed.AddAndGet(BlockSize * RamUsageEstimator.NUM_BYTES_INT);
-                    return new int[BlockSize];
-                }
-                int[] b = FreeByteBlocks[--FreeBlocks_Renamed];
-                FreeByteBlocks[FreeBlocks_Renamed] = null;
-                return b;
+                BytesUsed_Renamed.AddAndGet(BlockSize * RamUsageEstimator.NUM_BYTES_INT);
+                return new int[BlockSize];
             }
+            int[] b = FreeByteBlocks[--FreeBlocks_Renamed];
+            FreeByteBlocks[FreeBlocks_Renamed] = null;
+            return b;
         }
 
         public override void RecycleIntBlocks(int[][] blocks, int start, int end)

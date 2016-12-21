@@ -46,12 +46,9 @@ namespace Lucene.Net.Util
 
             public abstract void RecycleIntBlocks(int[][] blocks, int start, int end);
 
-            public virtual int[] IntBlock
+            public virtual int[] GetIntBlock()
             {
-                get
-                {
-                    return new int[BlockSize];
-                }
+                return new int[BlockSize];
             }
         }
 
@@ -183,7 +180,7 @@ namespace Lucene.Net.Util
                 Array.Copy(Buffers, 0, newBuffers, 0, Buffers.Length);
                 Buffers = newBuffers;
             }
-            Buffer = Buffers[1 + BufferUpto] = allocator.IntBlock;
+            Buffer = Buffers[1 + BufferUpto] = allocator.GetIntBlock();
             BufferUpto++;
 
             IntUpto = 0;

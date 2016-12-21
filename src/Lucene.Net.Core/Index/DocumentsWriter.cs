@@ -532,9 +532,9 @@ namespace Lucene.Net.Index
                 {
                     if (dwpt.CheckAndResetHasAborted())
                     {
-                        if (dwpt.PendingFilesToDelete().Count > 0)
+                        if (dwpt.PendingFilesToDelete.Count > 0)
                         {
-                            PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
+                            PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete));
                         }
                         SubtractFlushedNumDocs(dwptNumDocs);
                         FlushControl.DoOnAbort(perThread);
@@ -578,9 +578,9 @@ namespace Lucene.Net.Index
                 {
                     if (dwpt.CheckAndResetHasAborted())
                     {
-                        if (dwpt.PendingFilesToDelete().Count > 0)
+                        if (dwpt.PendingFilesToDelete.Count > 0)
                         {
-                            PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
+                            PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete));
                         }
                         SubtractFlushedNumDocs(dwptNumDocs);
                         FlushControl.DoOnAbort(perThread);
@@ -639,9 +639,9 @@ namespace Lucene.Net.Index
                         finally
                         {
                             SubtractFlushedNumDocs(flushingDocsInRam);
-                            if (flushingDWPT.PendingFilesToDelete().Count > 0)
+                            if (flushingDWPT.PendingFilesToDelete.Count > 0)
                             {
-                                PutEvent(new DeleteNewFilesEvent(flushingDWPT.PendingFilesToDelete()));
+                                PutEvent(new DeleteNewFilesEvent(flushingDWPT.PendingFilesToDelete));
                                 hasEvents = true;
                             }
                             if (!dwptSuccess)

@@ -468,10 +468,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of delete terms in this <seealso cref="DocumentsWriterPerThread"/>
         /// </summary>
-        public virtual int NumDeleteTerms() // LUCENENET TODO: Make property
+        public virtual int NumDeleteTerms
         {
-            // public for FlushPolicy
-            return PendingUpdates.NumTermDeletes.Get();
+            get
+            {
+                // public for FlushPolicy
+                return PendingUpdates.NumTermDeletes.Get();
+            }
         }
 
         /// <summary>
@@ -514,8 +517,8 @@ namespace Lucene.Net.Index
             Debug.Assert(numDocsInRAM > 0);
             Debug.Assert(DeleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
             SegmentInfo_Renamed.DocCount = numDocsInRAM;
-            SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed())));
-            double startMBUsed = BytesUsed() / 1024.0 / 1024.0;
+            SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));
+            double startMBUsed = BytesUsed / 1024.0 / 1024.0;
 
             // Apply delete-by-docID now (delete-byDocID only
             // happens when an exception is hit processing that
@@ -599,9 +602,9 @@ namespace Lucene.Net.Index
 
         private readonly HashSet<string> FilesToDelete = new HashSet<string>();
 
-        public virtual ISet<string> PendingFilesToDelete() // LUCENENET TODO: Make property
+        public virtual ISet<string> PendingFilesToDelete
         {
-            return FilesToDelete;
+            get { return FilesToDelete; }
         }
 
         /// <summary>
@@ -688,9 +691,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual long BytesUsed() // LUCENENET TODO: Make property
+        public virtual long BytesUsed
         {
-            return bytesUsed.Get() + PendingUpdates.BytesUsed.Get();
+            get { return bytesUsed.Get() + PendingUpdates.BytesUsed.Get(); }
         }
 
         /* Initial chunks size of the shared byte[] blocks used to
@@ -713,14 +716,11 @@ namespace Lucene.Net.Index
 
             /* Allocate another int[] from the shared pool */
 
-            public override int[] IntBlock // LUCENENET TODO: Make method GetIntBlock() (non-deterministic)
+            public override int[] GetIntBlock()
             {
-                get
-                {
-                    int[] b = new int[IntBlockPool.INT_BLOCK_SIZE];
-                    BytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
-                    return b;
-                }
+                int[] b = new int[IntBlockPool.INT_BLOCK_SIZE];
+                BytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
+                return b;
             }
 
             public override void RecycleIntBlocks(int[][] blocks, int offset, int length)

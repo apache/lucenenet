@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
                 ThreadState next = allActiveThreads.Current;
                 if (next.DocumentsWriterPerThread != null)
                 {
-                    bytesUsed += next.DocumentsWriterPerThread.BytesUsed();
+                    bytesUsed += next.DocumentsWriterPerThread.BytesUsed;
                 }
             }
             Assert.AreEqual(bytesUsed, flushControl.ActiveBytes);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
                 {
                     toFlush = state;
                 }
-                else if (FlushOnDeleteTerms() && state.DocumentsWriterPerThread.NumDeleteTerms() >= IWConfig.MaxBufferedDeleteTerms)
+                else if (FlushOnDeleteTerms() && state.DocumentsWriterPerThread.NumDeleteTerms >= IWConfig.MaxBufferedDeleteTerms)
                 {
                     toFlush = state;
                 }
