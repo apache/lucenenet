@@ -33,30 +33,30 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The <seealso cref="SegmentInfo"/> that we wrap. </summary>
-        public readonly SegmentInfo Info; // LUCENENET TODO: Make property
+        public SegmentInfo Info { get; private set; }
 
         // How many deleted docs in the segment:
-        private int DelCount_Renamed;
+        private int delCount;
 
         // Generation number of the live docs file (-1 if there
         // are no deletes yet):
-        private long DelGen_Renamed;
+        private long delGen;
 
         // Normally 1+delGen, unless an exception was hit on last
         // attempt to write:
-        private long NextWriteDelGen;
+        private long nextWriteDelGen;
 
         // Generation number of the FieldInfos (-1 if there are no updates)
-        private long FieldInfosGen_Renamed;
+        private long fieldInfosGen;
 
         // Normally 1 + fieldInfosGen, unless an exception was hit on last attempt to
         // write
-        private long NextWriteFieldInfosGen;
+        private long nextWriteFieldInfosGen;
 
         // Track the per-generation updates files
-        private readonly IDictionary<long, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long, ISet<string>>();
+        private readonly IDictionary<long, ISet<string>> genUpdatesFiles = new Dictionary<long, ISet<string>>();
 
-        private long SizeInBytes_Renamed = -1; // LUCENENET TODO: This was volatile in the original
+        private long sizeInBytes = -1; // LUCENENET TODO: This was volatile in the original
 
         /// <summary>
         /// Sole constructor.
@@ -73,25 +73,25 @@ namespace Lucene.Net.Index
         public SegmentCommitInfo(SegmentInfo info, int delCount, long delGen, long fieldInfosGen)
         {
             this.Info = info;
-            this.DelCount_Renamed = delCount;
-            this.DelGen_Renamed = delGen;
+            this.delCount = delCount;
+            this.delGen = delGen;
             if (delGen == -1)
             {
-                NextWriteDelGen = 1;
+                nextWriteDelGen = 1;
             }
             else
             {
-                NextWriteDelGen = delGen + 1;
+                nextWriteDelGen = delGen + 1;
             }
 
-            this.FieldInfosGen_Renamed = fieldInfosGen;
+            this.fieldInfosGen = fieldInfosGen;
             if (fieldInfosGen == -1)
             {
-                NextWriteFieldInfosGen = 1;
+                nextWriteFieldInfosGen = 1;
             }
             else
             {
-                NextWriteFieldInfosGen = fieldInfosGen + 1;
+                nextWriteFieldInfosGen = fieldInfosGen + 1;
             }
         }
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return CollectionsHelper.UnmodifiableMap(GenUpdatesFiles_Renamed);
+                return CollectionsHelper.UnmodifiableMap(genUpdatesFiles);
             }
         }
 
@@ -111,8 +111,8 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.GenUpdatesFiles_Renamed.Clear();
-                this.GenUpdatesFiles_Renamed.PutAll(value);
+                this.genUpdatesFiles.Clear();
+                this.genUpdatesFiles.PutAll(value);
             }
         }
 
@@ -120,9 +120,9 @@ namespace Lucene.Net.Index
         /// Called when we succeed in writing deletes </summary>
         internal virtual void AdvanceDelGen()
         {
-            DelGen_Renamed = NextWriteDelGen;
-            NextWriteDelGen = DelGen_Renamed + 1;
-            SizeInBytes_Renamed = -1;
+            delGen = nextWriteDelGen;
+            nextWriteDelGen = delGen + 1;
+            sizeInBytes = -1;
         }
 
         /// <summary>
@@ -132,16 +132,16 @@ namespace Lucene.Net.Index
         /// </summary>
         internal virtual void AdvanceNextWriteDelGen()
         {
-            NextWriteDelGen++;
+            nextWriteDelGen++;
         }
 
         /// <summary>
         /// Called when we succeed in writing a new FieldInfos generation. </summary>
         internal virtual void AdvanceFieldInfosGen()
         {
-            FieldInfosGen_Renamed = NextWriteFieldInfosGen;
-            NextWriteFieldInfosGen = FieldInfosGen_Renamed + 1;
-            SizeInBytes_Renamed = -1;
+            fieldInfosGen = nextWriteFieldInfosGen;
+            nextWriteFieldInfosGen = fieldInfosGen + 1;
+            sizeInBytes = -1;
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal virtual void AdvanceNextWriteFieldInfosGen()
         {
-            NextWriteFieldInfosGen++;
+            nextWriteFieldInfosGen++;
         }
 
         /// <summary>
@@ -161,17 +161,17 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long SizeInBytes()
         {
-            if (SizeInBytes_Renamed == -1)
+            if (sizeInBytes == -1)
             {
                 long sum = 0;
                 foreach (string fileName in Files())
                 {
                     sum += Info.Dir.FileLength(fileName);
                 }
-                SizeInBytes_Renamed = sum;
+                sizeInBytes = sum;
             }
 
-            return SizeInBytes_Renamed;
+            return sizeInBytes;
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
             Info.Codec.LiveDocsFormat.Files(this, files);
 
             // Must separately add any field updates files
-            foreach (ISet<string> updateFiles in GenUpdatesFiles_Renamed.Values)
+            foreach (ISet<string> updateFiles in genUpdatesFiles.Values)
             {
                 CollectionsHelper.AddAll(files, updateFiles);
             }
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
             set // LUCENENET TODO: Make method (has side-effect)
             {
                 bufferedDeletesGen = value;
-                SizeInBytes_Renamed = -1;
+                sizeInBytes = -1;
             }
         }
 
@@ -219,14 +219,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool HasDeletions() // LUCENENET TODO: Make property ?
         {
-            return DelGen_Renamed != -1;
+            return delGen != -1;
         }
 
         /// <summary>
         /// Returns true if there are any field updates for the segment in this commit. </summary>
         public virtual bool HasFieldUpdates() // LUCENENET TODO: Make property ?
         {
-            return FieldInfosGen_Renamed != -1;
+            return fieldInfosGen != -1;
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NextWriteFieldInfosGen;
+                return nextWriteFieldInfosGen;
             }
         }
 
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return FieldInfosGen_Renamed;
+                return fieldInfosGen;
             }
         }
 
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NextWriteDelGen;
+                return nextWriteDelGen;
             }
         }
 
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DelGen_Renamed;
+                return delGen;
             }
         }
 
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DelCount_Renamed;
+                return delCount;
             }
             internal set
             {
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.ArgumentException("invalid delCount=" + value + " (docCount=" + Info.DocCount + ")");
                 }
-                this.DelCount_Renamed = value;
+                this.delCount = value;
             }
         }
 
@@ -298,14 +298,14 @@ namespace Lucene.Net.Index
         /// Returns a description of this segment. </summary>
         public virtual string ToString(Directory dir, int pendingDelCount)
         {
-            string s = Info.ToString(dir, DelCount_Renamed + pendingDelCount);
-            if (DelGen_Renamed != -1)
+            string s = Info.ToString(dir, delCount + pendingDelCount);
+            if (delGen != -1)
             {
-                s += ":delGen=" + DelGen_Renamed;
+                s += ":delGen=" + delGen;
             }
-            if (FieldInfosGen_Renamed != -1)
+            if (fieldInfosGen != -1)
             {
-                s += ":fieldInfosGen=" + FieldInfosGen_Renamed;
+                s += ":fieldInfosGen=" + fieldInfosGen;
             }
             return s;
         }
@@ -317,18 +317,18 @@ namespace Lucene.Net.Index
 
         public virtual object Clone()
         {
-            SegmentCommitInfo other = new SegmentCommitInfo(Info, DelCount_Renamed, DelGen_Renamed, FieldInfosGen_Renamed);
+            SegmentCommitInfo other = new SegmentCommitInfo(Info, delCount, delGen, fieldInfosGen);
             // Not clear that we need to carry over nextWriteDelGen
             // (i.e. do we ever clone after a failed write and
             // before the next successful write?), but just do it to
             // be safe:
-            other.NextWriteDelGen = NextWriteDelGen;
-            other.NextWriteFieldInfosGen = NextWriteFieldInfosGen;
+            other.nextWriteDelGen = nextWriteDelGen;
+            other.nextWriteFieldInfosGen = nextWriteFieldInfosGen;
 
             // deep clone
-            foreach (KeyValuePair<long, ISet<string>> e in GenUpdatesFiles_Renamed)
+            foreach (KeyValuePair<long, ISet<string>> e in genUpdatesFiles)
             {
-                other.GenUpdatesFiles_Renamed[e.Key] = new HashSet<string>(e.Value);
+                other.genUpdatesFiles[e.Key] = new HashSet<string>(e.Value);
             }
 
             return other;
