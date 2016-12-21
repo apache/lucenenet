@@ -84,9 +84,9 @@ namespace Lucene.Net.Index
             iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
             IndexWriter writer = new IndexWriter(dir, iwc);
             flushPolicy = (MockDefaultFlushPolicy)writer.Config.FlushPolicy;
-            Assert.IsFalse(flushPolicy.FlushOnDocCount());
-            Assert.IsFalse(flushPolicy.FlushOnDeleteTerms());
-            Assert.IsTrue(flushPolicy.FlushOnRAM());
+            Assert.IsFalse(flushPolicy.FlushOnDocCount);
+            Assert.IsFalse(flushPolicy.FlushOnDeleteTerms);
+            Assert.IsTrue(flushPolicy.FlushOnRAM);
             DocumentsWriter docsWriter = writer.DocsWriter;
             Assert.IsNotNull(docsWriter);
             DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
@@ -143,9 +143,9 @@ namespace Lucene.Net.Index
                 iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 IndexWriter writer = new IndexWriter(dir, iwc);
                 flushPolicy = (MockDefaultFlushPolicy)writer.Config.FlushPolicy;
-                Assert.IsTrue(flushPolicy.FlushOnDocCount());
-                Assert.IsFalse(flushPolicy.FlushOnDeleteTerms());
-                Assert.IsFalse(flushPolicy.FlushOnRAM());
+                Assert.IsTrue(flushPolicy.FlushOnDocCount);
+                Assert.IsFalse(flushPolicy.FlushOnDeleteTerms);
+                Assert.IsFalse(flushPolicy.FlushOnRAM);
                 DocumentsWriter docsWriter = writer.DocsWriter;
                 Assert.IsNotNull(docsWriter);
                 DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
             Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
             Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
-            if (flushPolicy.FlushOnRAM() && !flushPolicy.FlushOnDocCount() && !flushPolicy.FlushOnDeleteTerms())
+            if (flushPolicy.FlushOnRAM && !flushPolicy.FlushOnDocCount && !flushPolicy.FlushOnDeleteTerms)
             {
                 long maxRAMBytes = (long)(iwc.RAMBufferSizeMB * 1024.0 * 1024.0);
                 Assert.IsTrue(flushPolicy.PeakBytesWithoutFlush <= maxRAMBytes, "peak bytes without flush exceeded watermark");
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
             IndexReader r = DirectoryReader.Open(dir);
             Assert.AreEqual(numDocumentsToIndex, r.NumDocs);
             Assert.AreEqual(numDocumentsToIndex, r.MaxDoc);
-            if (!flushPolicy.FlushOnRAM())
+            if (!flushPolicy.FlushOnRAM)
             {
                 assertFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled);
                 assertFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
                 {
                     toFlush = state;
                 }
-                else if (FlushOnDeleteTerms() && state.DocumentsWriterPerThread.NumDeleteTerms >= IWConfig.MaxBufferedDeleteTerms)
+                else if (FlushOnDeleteTerms && state.DocumentsWriterPerThread.NumDeleteTerms >= IWConfig.MaxBufferedDeleteTerms)
                 {
                     toFlush = state;
                 }
@@ -416,11 +416,11 @@ namespace Lucene.Net.Index
                 {
                     toFlush = state;
                 }
-                else if (FlushOnDocCount() && state.DocumentsWriterPerThread.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
+                else if (FlushOnDocCount && state.DocumentsWriterPerThread.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
                 {
                     toFlush = state;
                 }
-                else if (FlushOnRAM() && activeBytes >= (long)(IWConfig.RAMBufferSizeMB * 1024.0 * 1024.0))
+                else if (FlushOnRAM && activeBytes >= (long)(IWConfig.RAMBufferSizeMB * 1024.0 * 1024.0))
                 {
                     toFlush = FindLargestNonPendingWriter(control, state);
                     Assert.IsFalse(toFlush.IsFlushPending);
