@@ -32,16 +32,10 @@ namespace Lucene.Net.Collation
 	[Obsolete("remove when CollationKeyFilter is removed.")]
 	public class TestCollationKeyFilter : CollationTestBase
 	{
-		private readonly bool InstanceFieldsInitialized = false;
-
 		public TestCollationKeyFilter()
 		{
-			if (!this.InstanceFieldsInitialized)
-			{
-				this.InitializeInstanceFields();
-				this.InstanceFieldsInitialized = true;
-			}
-		}
+            InitializeInstanceFields();
+        }
 
 		private void InitializeInstanceFields()
 		{

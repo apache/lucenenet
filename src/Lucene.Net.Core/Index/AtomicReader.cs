@@ -48,8 +48,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class AtomicReader : IndexReader
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             ReaderContext = new AtomicReaderContext(this);
@@ -64,11 +62,7 @@ namespace Lucene.Net.Index
         protected internal AtomicReader()
             : base()
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
         }
 
         public sealed override IndexReaderContext Context

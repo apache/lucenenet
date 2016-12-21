@@ -253,8 +253,6 @@ namespace Lucene.Net.Analysis.Core
 
     internal sealed class PayloadSetter : TokenFilter
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             p = new BytesRef(data, 0, 1);
@@ -263,11 +261,7 @@ namespace Lucene.Net.Analysis.Core
         internal IPayloadAttribute payloadAtt;
         public PayloadSetter(TokenStream input) : base(input)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             payloadAtt = AddAttribute<IPayloadAttribute>();
         }
 

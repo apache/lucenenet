@@ -37,8 +37,6 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class OfflineSorter
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             Buffer = new BytesRefArray(BufferBytesUsed);
@@ -142,8 +140,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public class SortInfo
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal virtual void InitializeInstanceFields()
             {
                 BufferSize = OuterInstance.RamBufferSize.Bytes;
@@ -182,11 +178,7 @@ namespace Lucene.Net.Util
             {
                 this.OuterInstance = outerInstance;
 
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
             }
 
             public override string ToString()
@@ -215,11 +207,6 @@ namespace Lucene.Net.Util
         public OfflineSorter()
             : this(DEFAULT_COMPARATOR, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         /// <summary>
@@ -230,11 +217,6 @@ namespace Lucene.Net.Util
         public OfflineSorter(IComparer<BytesRef> comparator)
             : this(comparator, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         /// <summary>
@@ -242,11 +224,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public OfflineSorter(IComparer<BytesRef> comparator, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             if (ramBufferSize.Bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
             {
                 throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.Bytes);

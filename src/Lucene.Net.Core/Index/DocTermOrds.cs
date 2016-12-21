@@ -726,8 +726,6 @@ namespace Lucene.Net.Index
 
         private sealed class OrdWrappedTermsEnum : TermsEnum
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 Ord_Renamed = -OuterInstance.IndexInterval - 1;
@@ -743,11 +741,7 @@ namespace Lucene.Net.Index
             {
                 this.OuterInstance = outerInstance;
 
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 Debug.Assert(outerInstance.IndexedTermsArray != null);
                 TermsEnum = reader.Fields.Terms(outerInstance.Field).Iterator(null);
             }

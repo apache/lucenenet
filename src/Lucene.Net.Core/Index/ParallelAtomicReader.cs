@@ -46,8 +46,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public class ParallelAtomicReader : AtomicReader
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             Fields_Renamed = new ParallelFields(this);
@@ -70,11 +68,6 @@ namespace Lucene.Net.Index
         public ParallelAtomicReader(params AtomicReader[] readers)
             : this(true, readers)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         /// <summary>
@@ -84,11 +77,6 @@ namespace Lucene.Net.Index
         public ParallelAtomicReader(bool closeSubReaders, params AtomicReader[] readers)
             : this(closeSubReaders, readers, readers)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         /// <summary>
@@ -98,11 +86,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, AtomicReader[] readers, AtomicReader[] storedFieldsReaders)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             this.CloseSubReaders = closeSubReaders;
             if (readers.Length == 0 && storedFieldsReaders.Length > 0)
             {

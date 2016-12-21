@@ -75,8 +75,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	/// </summary>
 	public sealed class WordDelimiterFilter : TokenFilter
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             concat = new WordDelimiterConcatenation(this);
@@ -211,11 +209,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, sbyte[] charTypeTable, int configurationFlags, CharArraySet protWords)
               : base(@in)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             if (!matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
                 throw new System.ArgumentException("This class only works with Lucene 4.8+. To emulate the old (broken) behavior of WordDelimiterFilter, use Lucene47WordDelimiterFilter");
@@ -240,11 +234,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, int configurationFlags, CharArraySet protWords)
               : this(matchVersion, @in, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, configurationFlags, protWords)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         public override bool IncrementToken()

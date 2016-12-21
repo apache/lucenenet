@@ -523,15 +523,9 @@ namespace Lucene.Net.Search
 
         private sealed class IntQueue
         {
-            internal bool InstanceFieldsInitialized = false;
-
             public IntQueue()
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
             }
 
             internal void InitializeInstanceFields()

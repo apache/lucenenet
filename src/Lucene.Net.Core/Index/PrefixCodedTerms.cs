@@ -128,15 +128,9 @@ namespace Lucene.Net.Index
         /// Builds a PrefixCodedTerms: call add repeatedly, then finish. </summary>
         public class Builder
         {
-            internal bool InstanceFieldsInitialized = false;
-
             public Builder()
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
             }
 
             internal virtual void InitializeInstanceFields()

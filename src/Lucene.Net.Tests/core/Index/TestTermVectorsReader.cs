@@ -39,15 +39,9 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTermVectorsReader : LuceneTestCase
     {
-        private bool InstanceFieldsInitialized = false;
-
         public TestTermVectorsReader()
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
         }
 
         private void InitializeInstanceFields()

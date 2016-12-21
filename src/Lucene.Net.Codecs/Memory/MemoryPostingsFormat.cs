@@ -103,8 +103,6 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class TermsWriter : TermsConsumer
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 postingsWriter = new PostingsWriter(this);
@@ -120,11 +118,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public TermsWriter(IndexOutput @out, FieldInfo field, bool doPackFST, float acceptableOverheadRatio)
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 this.@out = @out;
                 this.field = field;
                 this.doPackFST = doPackFST;
@@ -388,8 +382,6 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class FSTDocsEnum : DocsEnum
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 @in = new ByteArrayDataInput(buffer);
@@ -410,11 +402,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsEnum(IndexOptions indexOptions, bool storePayloads)
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 this.indexOptions = indexOptions;
                 this.storePayloads = storePayloads;
             }
@@ -551,8 +539,6 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class FSTDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 @in = new ByteArrayDataInput(buffer);
@@ -579,11 +565,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsAndPositionsEnum(bool storePayloads, bool storeOffsets)
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 this.storePayloads = storePayloads;
                 this.storeOffsets = storeOffsets;
             }

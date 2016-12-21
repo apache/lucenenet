@@ -44,8 +44,6 @@ namespace Lucene.Net.Search
     public class ControlledRealTimeReopenThread<T> : ThreadClass, IDisposable
         where T : class
     {
-        private bool InstanceFieldsInitialized = false;
-
         /*private void InitializeInstanceFields()
         {
             ReopenCond = ReopenLock.NewCondition();
@@ -80,11 +78,7 @@ namespace Lucene.Net.Search
         ///        become visible. </param>
         public ControlledRealTimeReopenThread(TrackingIndexWriter writer, ReferenceManager<T> manager, double targetMaxStaleSec, double targetMinStaleSec)
         {
-            /*if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }*/
+            //InitializeInstanceFields();
             if (targetMaxStaleSec < targetMinStaleSec)
             {
                 throw new System.ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec + ") < targetMinStaleSec (=" + targetMinStaleSec + ")");

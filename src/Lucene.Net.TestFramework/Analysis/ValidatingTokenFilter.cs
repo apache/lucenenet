@@ -40,8 +40,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class ValidatingTokenFilter : TokenFilter
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             PosIncAtt = getAttrIfExists<PositionIncrementAttribute>();
@@ -88,11 +86,7 @@ namespace Lucene.Net.Analysis
         public ValidatingTokenFilter(TokenStream @in, string name, bool offsetsAreCorrect)
             : base(@in)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             this.Name = name;
             this.OffsetsAreCorrect = offsetsAreCorrect;
         }

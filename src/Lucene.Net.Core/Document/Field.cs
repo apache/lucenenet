@@ -633,8 +633,6 @@ namespace Lucene.Net.Documents
 
         internal sealed class StringTokenStream : TokenStream
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 TermAttribute = AddAttribute<ICharTermAttribute>();
@@ -653,11 +651,7 @@ namespace Lucene.Net.Documents
             /// </summary>
             internal StringTokenStream()
             {
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
             }
 
             /// <summary>

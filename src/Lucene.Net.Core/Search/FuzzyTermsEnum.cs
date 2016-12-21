@@ -55,8 +55,6 @@ namespace Lucene.Net.Search
     /// </summary>
     public class FuzzyTermsEnum : TermsEnum
     {
-        private readonly bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             BoostAtt = Attributes().AddAttribute<IBoostAttribute>();
@@ -110,11 +108,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public FuzzyTermsEnum(Terms terms, AttributeSource atts, Term term, float minSimilarity, int prefixLength, bool transpositions)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             if (minSimilarity >= 1.0f && minSimilarity != (int)minSimilarity)
             {
                 throw new System.ArgumentException("fractional edit distances are not allowed");
@@ -377,8 +371,6 @@ namespace Lucene.Net.Search
         /// </summary>
         private class AutomatonFuzzyTermsEnum : FilteredTermsEnum
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal virtual void InitializeInstanceFields()
             {
                 BoostAtt = Attributes().AddAttribute<IBoostAttribute>();
@@ -397,11 +389,7 @@ namespace Lucene.Net.Search
             {
                 this.OuterInstance = outerInstance;
 
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 this.Matchers = new ByteRunAutomaton[compiled.Length];
                 for (int i = 0; i < compiled.Length; i++)
                 {

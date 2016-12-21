@@ -29,8 +29,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
     [Obsolete]
     public sealed class Lucene47WordDelimiterFilter : TokenFilter
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             concat = new WordDelimiterConcatenation(this);
@@ -165,11 +163,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             posIncAttribute = AddAttribute<IPositionIncrementAttribute>();
             typeAttribute = AddAttribute<ITypeAttribute>();
 
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
             this.flags = configurationFlags;
             this.protWords = protWords;
             this.iterator = new WordDelimiterIterator(charTypeTable, Has(SPLIT_ON_CASE_CHANGE), Has(SPLIT_ON_NUMERICS), Has(STEM_ENGLISH_POSSESSIVE));
@@ -185,11 +179,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public Lucene47WordDelimiterFilter(TokenStream @in, int configurationFlags, CharArraySet protWords)
             : this(@in, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, configurationFlags, protWords)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
         }
 
         public override bool IncrementToken()

@@ -29,16 +29,10 @@ namespace Lucene.Net.Collation
     [TestFixture]
 	public class TestCollationKeyAnalyzer : CollationTestBase
 	{
-		private readonly bool InstanceFieldsInitialized = false;
-
 		public TestCollationKeyAnalyzer()
 		{
-			if (!this.InstanceFieldsInitialized)
-			{
-				this.InitializeInstanceFields();
-				this.InstanceFieldsInitialized = true;
-			}
-		}
+            InitializeInstanceFields();
+        }
 		
 		private void InitializeInstanceFields()
 		{

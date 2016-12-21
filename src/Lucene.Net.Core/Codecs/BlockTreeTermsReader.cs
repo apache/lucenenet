@@ -80,8 +80,6 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class BlockTreeTermsReader : FieldsProducer
     {
-        private bool InstanceFieldsInitialized = false;
-
         private void InitializeInstanceFields()
         {
             NO_OUTPUT = FstOutputs.NoOutput;
@@ -114,11 +112,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. </summary>
         public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor)
         {
-            if (!InstanceFieldsInitialized)
-            {
-                InitializeInstanceFields();
-                InstanceFieldsInitialized = true;
-            }
+            InitializeInstanceFields();
 
             this.PostingsReader = postingsReader;
 

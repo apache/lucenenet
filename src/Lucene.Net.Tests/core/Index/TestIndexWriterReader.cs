@@ -458,8 +458,6 @@ namespace Lucene.Net.Index
 
         private class AddDirectoriesThreads
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal virtual void InitializeInstanceFields()
             {
                 Threads = new ThreadClass[OuterInstance.NumThreads];
@@ -482,11 +480,7 @@ namespace Lucene.Net.Index
             {
                 this.OuterInstance = outerInstance;
 
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
                 this.NumDirs = numDirs;
                 this.MainWriter = mainWriter;
                 AddDir = NewDirectory();

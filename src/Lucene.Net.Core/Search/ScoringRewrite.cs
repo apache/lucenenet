@@ -147,8 +147,6 @@ namespace Lucene.Net.Search
 
         internal sealed class ParallelArraysTermCollector : TermCollector
         {
-            internal bool InstanceFieldsInitialized = false;
-
             internal void InitializeInstanceFields()
             {
                 Terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
@@ -160,11 +158,7 @@ namespace Lucene.Net.Search
             {
                 this.OuterInstance = outerInstance;
 
-                if (!InstanceFieldsInitialized)
-                {
-                    InitializeInstanceFields();
-                    InstanceFieldsInitialized = true;
-                }
+                InitializeInstanceFields();
             }
 
             internal readonly TermFreqBoostByteStart Array = new TermFreqBoostByteStart(16);
