@@ -28,19 +28,19 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The reader context for this reader's immediate parent, or null if none </summary>
-        public readonly CompositeReaderContext Parent; // LUCENENET TODO: Make property
+        public CompositeReaderContext Parent { get; private set; }
 
         /// <summary>
         /// <code>true</code> if this context struct represents the top level reader within the hierarchical context </summary>
-        public readonly bool IsTopLevel; // LUCENENET TODO: Make property
+        public bool IsTopLevel { get; private set; }
 
         /// <summary>
         /// the doc base for this reader in the parent, <tt>0</tt> if parent is null </summary>
-        public readonly int DocBaseInParent; // LUCENENET TODO: Make property
+        public int DocBaseInParent { get; private set; }
 
         /// <summary>
         /// the ord for this reader in the parent, <tt>0</tt> if parent is null </summary>
-        public readonly int OrdInParent; // LUCENENET TODO: Make property
+        public int OrdInParent { get; private set; }
 
         internal IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
         {
