@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             Assert.AreEqual(typeof(MockAnalyzer), conf.Analyzer.GetType());
             Assert.IsNull(conf.IndexCommit);
-            Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.DelPolicy.GetType());
+            Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.IndexDeletionPolicy.GetType());
 #if FEATURE_TASKMERGESCHEDULER
             Assert.AreEqual(typeof(TaskMergeScheduler), conf.MergeScheduler.GetType());
 #else
@@ -269,8 +269,8 @@ namespace Lucene.Net.Index
             IndexWriterConfig clone = (IndexWriterConfig)conf.Clone();
 
             // Make sure parameters that can't be reused are cloned
-            IndexDeletionPolicy delPolicy = conf.DelPolicy;
-            IndexDeletionPolicy delPolicyClone = clone.DelPolicy;
+            IndexDeletionPolicy delPolicy = conf.IndexDeletionPolicy;
+            IndexDeletionPolicy delPolicyClone = clone.IndexDeletionPolicy;
             Assert.IsTrue(delPolicy.GetType() == delPolicyClone.GetType() && (delPolicy != delPolicyClone || delPolicy.Clone() == delPolicyClone.Clone()));
 
             FlushPolicy flushPolicy = conf.FlushPolicy;
@@ -303,9 +303,9 @@ namespace Lucene.Net.Index
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
             // Test IndexDeletionPolicy
-            Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.DelPolicy.GetType());
+            Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.IndexDeletionPolicy.GetType());
             conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(null));
-            Assert.AreEqual(typeof(SnapshotDeletionPolicy), conf.DelPolicy.GetType());
+            Assert.AreEqual(typeof(SnapshotDeletionPolicy), conf.IndexDeletionPolicy.GetType());
             try
             {
                 conf.SetIndexDeletionPolicy(null);

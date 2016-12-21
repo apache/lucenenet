@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             {
                 // expected
             }
-            dp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            dp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.Commit();
 
             ThreadClass t = new ThreadAnonymousInnerClassHelper(stopTime, writer, NewField);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
             // Create 3 snapshots: snapshot0, snapshot1, snapshot2
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
             writer.Dispose();
 
@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
             ThreadClass[] threads = new ThreadClass[10];
             IndexCommit[] snapshots = new IndexCommit[threads.Length];
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             PrepareIndexAndSnapshots(sdp, writer, 1);
 
             // Create another commit - we must do that, because otherwise the "snapshot"
@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
 
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
             // on onInit().
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
             IndexCommit s1 = sdp.Snapshot();

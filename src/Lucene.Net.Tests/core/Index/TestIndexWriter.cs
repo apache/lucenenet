@@ -1699,7 +1699,7 @@ namespace Lucene.Net.Index
             // in case a deletion policy which holds onto commits is used.
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
             // First commit
             Document doc = new Document();

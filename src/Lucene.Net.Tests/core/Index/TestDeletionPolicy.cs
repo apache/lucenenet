@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
             MergePolicy mp = conf.MergePolicy;
             mp.NoCFSRatio = 1.0;
             IndexWriter writer = new IndexWriter(dir, conf);
-            ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.DelPolicy;
+            ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
             IDictionary<string, string> commitData = new Dictionary<string, string>();
             commitData["commitTime"] = Convert.ToString(Environment.TickCount);
             writer.CommitData = commitData;
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
                 mp = conf.MergePolicy;
                 mp.NoCFSRatio = 1.0;
                 writer = new IndexWriter(dir, conf);
-                policy = (ExpirationTimeDeletionPolicy)writer.Config.DelPolicy;
+                policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
                 for (int j = 0; j < 17; j++)
                 {
                     AddDoc(writer);
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                 MergePolicy mp = conf.MergePolicy;
                 mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
                 IndexWriter writer = new IndexWriter(dir, conf);
-                KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy)writer.Config.DelPolicy;
+                KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy)writer.Config.IndexDeletionPolicy;
                 for (int i = 0; i < 107; i++)
                 {
                     AddDoc(writer);
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: open writer for forceMerge");
                     }
                     writer = new IndexWriter(dir, conf);
-                    policy = (KeepAllDeletionPolicy)writer.Config.DelPolicy;
+                    policy = (KeepAllDeletionPolicy)writer.Config.IndexDeletionPolicy;
                     writer.ForceMerge(1);
                     writer.Dispose();
                 }
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllDeletionPolicy(this, dir)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
-            KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy)writer.Config.DelPolicy;
+            KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy)writer.Config.IndexDeletionPolicy;
             for (int i = 0; i < 10; i++)
             {
                 AddDoc(writer);
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
                 MergePolicy mp = conf.MergePolicy;
                 mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
                 IndexWriter writer = new IndexWriter(dir, conf);
-                KeepNoneOnInitDeletionPolicy policy = (KeepNoneOnInitDeletionPolicy)writer.Config.DelPolicy;
+                KeepNoneOnInitDeletionPolicy policy = (KeepNoneOnInitDeletionPolicy)writer.Config.IndexDeletionPolicy;
                 for (int i = 0; i < 107; i++)
                 {
                     AddDoc(writer);
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
                 mp = conf.MergePolicy;
                 mp.NoCFSRatio = 1.0;
                 writer = new IndexWriter(dir, conf);
-                policy = (KeepNoneOnInitDeletionPolicy)writer.Config.DelPolicy;
+                policy = (KeepNoneOnInitDeletionPolicy)writer.Config.IndexDeletionPolicy;
                 writer.ForceMerge(1);
                 writer.Dispose();
 
@@ -613,7 +613,7 @@ namespace Lucene.Net.Index
                     MergePolicy mp = conf.MergePolicy;
                     mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
                     IndexWriter writer = new IndexWriter(dir, conf);
-                    policy = (KeepLastNDeletionPolicy)writer.Config.DelPolicy;
+                    policy = (KeepLastNDeletionPolicy)writer.Config.IndexDeletionPolicy;
                     for (int i = 0; i < 17; i++)
                     {
                         AddDoc(writer);
@@ -682,7 +682,7 @@ namespace Lucene.Net.Index
                 MergePolicy mp = conf.MergePolicy;
                 mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
                 IndexWriter writer = new IndexWriter(dir, conf);
-                KeepLastNDeletionPolicy policy = (KeepLastNDeletionPolicy)writer.Config.DelPolicy;
+                KeepLastNDeletionPolicy policy = (KeepLastNDeletionPolicy)writer.Config.IndexDeletionPolicy;
                 writer.Dispose();
                 Term searchTerm = new Term("content", "aaa");
                 Query query = new TermQuery(searchTerm);
@@ -693,7 +693,7 @@ namespace Lucene.Net.Index
                     mp = conf.MergePolicy;
                     mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
                     writer = new IndexWriter(dir, conf);
-                    policy = (KeepLastNDeletionPolicy)writer.Config.DelPolicy;
+                    policy = (KeepLastNDeletionPolicy)writer.Config.IndexDeletionPolicy;
                     for (int j = 0; j < 17; j++)
                     {
                         AddDocWithID(writer, i * (N + 1) + j);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                     conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetIndexDeletionPolicy(policy).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
                     writer = new IndexWriter(dir, conf);
-                    policy = (KeepLastNDeletionPolicy)writer.Config.DelPolicy;
+                    policy = (KeepLastNDeletionPolicy)writer.Config.IndexDeletionPolicy;
                     writer.DeleteDocuments(new Term("id", "" + (i * (N + 1) + 3)));
                     // this is a commit
                     writer.Dispose();
@@ -713,7 +713,7 @@ namespace Lucene.Net.Index
                     reader.Dispose();
 
                     writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetIndexDeletionPolicy(policy));
-                    policy = (KeepLastNDeletionPolicy)writer.Config.DelPolicy;
+                    policy = (KeepLastNDeletionPolicy)writer.Config.IndexDeletionPolicy;
                     // this will not commit: there are no changes
                     // pending because we opened for "create":
                     writer.Dispose();

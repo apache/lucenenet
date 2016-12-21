@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 
         // modified by IndexWriterConfig
         /// <summary>
-        /// <seealso cref="DelPolicy"/> controlling when commit
+        /// <seealso cref="IndexDeletionPolicy"/> controlling when commit
         ///  points are deleted.
         /// </summary>
         internal volatile IndexDeletionPolicy delPolicy;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
             termIndexInterval = config.TermIndexInterval;
             MatchVersion = config.MatchVersion;
             analyzer = config.Analyzer;
-            delPolicy = config.DelPolicy;
+            delPolicy = config.IndexDeletionPolicy;
             commit = config.IndexCommit;
             openMode = config.OpenMode;
             similarity = config.Similarity;
@@ -525,11 +525,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="DelPolicy"/> specified in
+        /// Returns the <seealso cref="IndexDeletionPolicy"/> specified in
         /// <seealso cref="IndexWriterConfig#setIndexDeletionPolicy(IndexDeletionPolicy)"/> or
         /// the default <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>/
         /// </summary>
-        public virtual IndexDeletionPolicy DelPolicy // LUCENENET TODO: Rename IndexDeletionPolicy
+        public virtual IndexDeletionPolicy IndexDeletionPolicy
         {
             get
             {
@@ -772,7 +772,7 @@ namespace Lucene.Net.Index
             sb.Append("mergedSegmentWarmer=").Append(MergedSegmentWarmer).Append("\n");
             sb.Append("readerTermsIndexDivisor=").Append(ReaderTermsIndexDivisor).Append("\n");
             sb.Append("termIndexInterval=").Append(TermIndexInterval).Append("\n"); // TODO: this should be private to the codec, not settable here
-            sb.Append("delPolicy=").Append(DelPolicy.GetType().Name).Append("\n");
+            sb.Append("delPolicy=").Append(IndexDeletionPolicy.GetType().Name).Append("\n");
             IndexCommit commit = IndexCommit;
             sb.Append("commit=").Append(commit == null ? "null" : commit.ToString()).Append("\n");
             sb.Append("openMode=").Append(OpenMode).Append("\n");

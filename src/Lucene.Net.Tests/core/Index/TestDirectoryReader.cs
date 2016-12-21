@@ -948,7 +948,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
-            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
+            SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
             sdp.Snapshot();

@@ -904,7 +904,7 @@ namespace Lucene.Net.Index
                 // KeepOnlyLastCommitDeleter:
                 lock (this)
                 {
-                    deleter = new IndexFileDeleter(directory, config.DelPolicy, segmentInfos, infoStream, this, initialIndexExists);
+                    deleter = new IndexFileDeleter(directory, config.IndexDeletionPolicy, segmentInfos, infoStream, this, initialIndexExists);
                 }
 
                 if (deleter.StartingCommitDeleted)

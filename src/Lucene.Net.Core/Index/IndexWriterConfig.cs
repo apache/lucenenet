@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: allows an optional <seealso cref="IndexDeletionPolicy"/> implementation to be
+        /// Expert: allows an optional <seealso cref="Index.IndexDeletionPolicy"/> implementation to be
         /// specified. You can use this to control when prior commits are deleted from
         /// the index. The default policy is <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>
         /// which removes all prior commits as soon as a new commit is done (this
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override IndexDeletionPolicy DelPolicy // LUCENENET TODO: Rename back to IndexDeletionPolicy
+        public override IndexDeletionPolicy IndexDeletionPolicy
         {
             get
             {
