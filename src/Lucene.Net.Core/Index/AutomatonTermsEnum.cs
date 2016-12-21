@@ -156,44 +156,41 @@ namespace Lucene.Net.Index
         /// a looping transition at position: we set an upper bound and
         /// act like a TermRangeQuery for this portion of the term space.
         /// </summary>
-        private int Linear // LUCENENET TODO: Change to SetLinear(int)
+        private void SetLinear(int position)
         {
-            set
+            Debug.Assert(Linear_Renamed == false);
+
+            int state = RunAutomaton.InitialState;
+            int maxInterval = 0xff;
+            for (int i = 0; i < position; i++)
             {
-                Debug.Assert(Linear_Renamed == false);
-
-                int state = RunAutomaton.InitialState;
-                int maxInterval = 0xff;
-                for (int i = 0; i < value; i++)
-                {
-                    state = RunAutomaton.Step(state, SeekBytesRef.Bytes[i] & 0xff);
-                    Debug.Assert(state >= 0, "state=" + state);
-                }
-                for (int i = 0; i < AllTransitions[state].Length; i++)
-                {
-                    Transition t = AllTransitions[state][i];
-                    if (t.Min <= (SeekBytesRef.Bytes[value] & 0xff) && (SeekBytesRef.Bytes[value] & 0xff) <= t.Max)
-                    {
-                        maxInterval = t.Max;
-                        break;
-                    }
-                }
-                // 0xff terms don't get the optimization... not worth the trouble.
-                if (maxInterval != 0xff)
-                {
-                    maxInterval++;
-                }
-                int length = value + 1; // value + maxTransition
-                if (LinearUpperBound.Bytes.Length < length)
-                {
-                    LinearUpperBound.Bytes = new byte[length];
-                }
-                Array.Copy(SeekBytesRef.Bytes, 0, LinearUpperBound.Bytes, 0, value);
-                LinearUpperBound.Bytes[value] = (byte)maxInterval;
-                LinearUpperBound.Length = length;
-
-                Linear_Renamed = true;
+                state = RunAutomaton.Step(state, SeekBytesRef.Bytes[i] & 0xff);
+                Debug.Assert(state >= 0, "state=" + state);
             }
+            for (int i = 0; i < AllTransitions[state].Length; i++)
+            {
+                Transition t = AllTransitions[state][i];
+                if (t.Min <= (SeekBytesRef.Bytes[position] & 0xff) && (SeekBytesRef.Bytes[position] & 0xff) <= t.Max)
+                {
+                    maxInterval = t.Max;
+                    break;
+                }
+            }
+            // 0xff terms don't get the optimization... not worth the trouble.
+            if (maxInterval != 0xff)
+            {
+                maxInterval++;
+            }
+            int length = position + 1; // value + maxTransition
+            if (LinearUpperBound.Bytes.Length < length)
+            {
+                LinearUpperBound.Bytes = new byte[length];
+            }
+            Array.Copy(SeekBytesRef.Bytes, 0, LinearUpperBound.Bytes, 0, position);
+            LinearUpperBound.Bytes[position] = (byte)maxInterval;
+            LinearUpperBound.Length = length;
+
+            Linear_Renamed = true;
         }
 
         private readonly IntsRef SavedStates = new IntsRef(10);
@@ -232,7 +229,7 @@ namespace Lucene.Net.Index
                     // we found a loop, record it for faster enumeration
                     if ((Finite == false) && !Linear_Renamed && Visited[nextState] == CurGen)
                     {
-                        Linear = pos;
+                        SetLinear(pos);
                     }
                     state = nextState;
                 }
@@ -343,7 +340,7 @@ namespace Lucene.Net.Index
                         // we found a loop, record it for faster enumeration
                         if ((Finite == false) && !Linear_Renamed && Visited[state] == CurGen)
                         {
-                            Linear = SeekBytesRef.Length - 1;
+                            SetLinear(SeekBytesRef.Length - 1);
                         }
                     }
                     return true;
