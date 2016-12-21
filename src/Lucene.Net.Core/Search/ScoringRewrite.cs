@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
                 set
                 {
                     this.TermsEnum = value;
-                    this.BoostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
+                    this.BoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
                 }
             }
 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
     {
         private void InitializeInstanceFields()
         {
-            BoostAtt = Attributes().AddAttribute<IBoostAttribute>();
+            BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
         }
 
         private TermsEnum ActualEnum;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
             set
             {
                 this.ActualEnum = value;
-                this.ActualBoostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
+                this.ActualBoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
             }
         }
 
@@ -373,7 +373,7 @@ namespace Lucene.Net.Search
         {
             internal virtual void InitializeInstanceFields()
             {
-                BoostAtt = Attributes().AddAttribute<IBoostAttribute>();
+                BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
             }
 
             private readonly FuzzyTermsEnum OuterInstance;

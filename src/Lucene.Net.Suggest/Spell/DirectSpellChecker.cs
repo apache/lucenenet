@@ -470,7 +470,7 @@ namespace Lucene.Net.Search.Spell
             BytesRef queryTerm = new BytesRef(term.Text());
             BytesRef candidateTerm;
             ScoreTerm st = new ScoreTerm();
-            IBoostAttribute boostAtt = e.Attributes().AddAttribute<IBoostAttribute>();
+            IBoostAttribute boostAtt = e.Attributes.AddAttribute<IBoostAttribute>();
             while ((candidateTerm = e.Next()) != null)
             {
                 float boost = boostAtt.Boost;

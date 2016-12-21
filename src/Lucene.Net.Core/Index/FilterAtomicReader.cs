@@ -192,9 +192,9 @@ namespace Lucene.Net.Index
                 this.input = input;
             }
 
-            public override AttributeSource Attributes()
+            public override AttributeSource Attributes
             {
-                return input.Attributes();
+                get { return input.Attributes; }
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
@@ -268,9 +268,9 @@ namespace Lucene.Net.Index
                 this.input = input;
             }
 
-            public override AttributeSource Attributes()
+            public override AttributeSource Attributes
             {
-                return input.Attributes();
+                get { return input.Attributes; }
             }
 
             public override int DocID()
@@ -315,9 +315,9 @@ namespace Lucene.Net.Index
                 this.input = input;
             }
 
-            public override AttributeSource Attributes()
+            public override AttributeSource Attributes
             {
-                return input.Attributes();
+                get { return input.Attributes; }
             }
 
             public override int DocID()

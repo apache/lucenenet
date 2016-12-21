@@ -225,7 +225,7 @@ namespace Lucene.Net.Sandbox.Queries
                         int totalVariantDocFreqs = 0;
                         BytesRef possibleMatch;
                         IBoostAttribute boostAtt =
-                          fe.Attributes().AddAttribute<IBoostAttribute>();
+                          fe.Attributes.AddAttribute<IBoostAttribute>();
                         while ((possibleMatch = fe.Next()) != null)
                         {
                             numVariants++;

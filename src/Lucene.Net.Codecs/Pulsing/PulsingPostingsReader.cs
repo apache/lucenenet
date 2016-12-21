@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Pulsing
             if (de == null)
                 return null;
             
-            var atts = de.Attributes();
+            var atts = de.Attributes;
             DocsEnum result;
             atts.AddAttribute<IPulsingEnumAttribute>().Enums().TryGetValue(this, out result);
             return result;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         private DocsEnum SetOther(DocsEnum de, DocsEnum other)
         {
-            var atts = de.Attributes();
+            var atts = de.Attributes;
             return atts.AddAttribute<IPulsingEnumAttribute>().Enums()[this] = other;
         }
 

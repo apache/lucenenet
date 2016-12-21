@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                     : base(iterator, bref1, bref2, true, true)
                 {
                     this.OuterInstance = outerInstance;
-                    boostAtt = Attributes().AddAttribute<IBoostAttribute>();
+                    boostAtt = Attributes.AddAttribute<IBoostAttribute>();
                 }
 
                 internal readonly IBoostAttribute boostAtt;

@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
                     }
-                    boostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
+                    boostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
                 }
             }
 

@@ -62,13 +62,16 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the related attributes. </summary>
-        public virtual AttributeSource Attributes() // LUCENENET TODO: Change to property ?
+        public virtual AttributeSource Attributes
         {
-            if (atts == null)
+            get
             {
-                atts = new AttributeSource();
+                if (atts == null)
+                {
+                    atts = new AttributeSource();
+                }
+                return atts;
             }
-            return atts;
         }
 
         /// <summary>
@@ -333,11 +336,14 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public override AttributeSource Attributes() // make it synchronized here, to prevent double lazy init
+            public override AttributeSource Attributes // make it synchronized here, to prevent double lazy init
             {
-                lock (this)
+                get
                 {
-                    return base.Attributes();
+                    lock (this)
+                    {
+                        return base.Attributes;
+                    }
                 }
             }
 

@@ -88,7 +88,7 @@ namespace Lucene.Net.Sandbox.Queries
                 : base(outerInstance.Terms.Iterator(null))
             {
                 this.outerInstance = outerInstance;
-                this.boostAtt = Attributes().AddAttribute<IBoostAttribute>();
+                this.boostAtt = Attributes.AddAttribute<IBoostAttribute>();
 
                 this.text = new int[outerInstance.TermLength - outerInstance.RealPrefixLength];
                 System.Array.Copy(outerInstance.TermText, outerInstance.RealPrefixLength, text, 0, text.Length);

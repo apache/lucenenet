@@ -144,9 +144,9 @@ namespace Lucene.Net.Index
         /// Returns the related attributes, the returned <seealso cref="AttributeSource"/>
         /// is shared with the delegate {@code TermsEnum}.
         /// </summary>
-        public override AttributeSource Attributes()
+        public override AttributeSource Attributes
         {
-            return Tenum.Attributes();
+            get { return Tenum.Attributes; }
         }
 
         public override BytesRef Term()
