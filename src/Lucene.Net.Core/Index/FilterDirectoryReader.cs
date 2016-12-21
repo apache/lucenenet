@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool IsCurrent // LUCENENET TODO: Rename IsCurrent
+        public override bool IsCurrent
         {
             get
             {
