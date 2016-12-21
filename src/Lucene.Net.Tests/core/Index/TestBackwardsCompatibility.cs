@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
                 CheckIndex.Status indexStatus;
                 using (var infoStream = new StringWriter(sb))
                 {
-                    checker.InfoStream = infoStream;
+                    checker.SetInfoStream(infoStream);
                     indexStatus = checker.DoCheckIndex();
                 }
                 Assert.IsFalse(indexStatus.Clean);

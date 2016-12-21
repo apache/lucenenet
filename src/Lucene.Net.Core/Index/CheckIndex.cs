@@ -68,82 +68,85 @@ namespace Lucene.Net.Index
         {
             internal Status()
             {
+                // Set property defaults
+                SegmentsChecked = new List<string>();
+                SegmentInfos = new List<SegmentInfoStatus>();
             }
 
             /// <summary>
             /// True if no problems were found with the index. </summary>
-            public bool Clean; // LUCENENET TODO: Make property
+            public bool Clean { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// True if we were unable to locate and load the segments_N file. </summary>
-            public bool MissingSegments; // LUCENENET TODO: Make property
+            public bool MissingSegments { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// True if we were unable to open the segments_N file. </summary>
-            public bool CantOpenSegments; // LUCENENET TODO: Make property
+            public bool CantOpenSegments { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// True if we were unable to read the version number from segments_N file. </summary>
-            public bool MissingSegmentVersion; // LUCENENET TODO: Make property
+            public bool MissingSegmentVersion { get; internal set; } // LUCENENET specific - made setter internal
 
-            /// <summary>
-            /// Name of latest segments_N file in the index. </summary>
-            public string SegmentsFileName; // LUCENENET TODO: Make property
+        /// <summary>
+        /// Name of latest segments_N file in the index. </summary>
+        public string SegmentsFileName { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Number of segments in the index. </summary>
-            public int NumSegments; // LUCENENET TODO: Make property
+            public int NumSegments { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Empty unless you passed specific segments list to check as optional 3rd argument. </summary>
             ///  <seealso cref= CheckIndex#checkIndex(List)  </seealso>
-            public IList<string> SegmentsChecked = new List<string>(); // LUCENENET TODO: Make property
+            public IList<string> SegmentsChecked { get; internal set; } // LUCENENET specific - made setter internal 
 
             /// <summary>
             /// True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
-            public bool ToolOutOfDate; // LUCENENET TODO: Make property
+            public bool ToolOutOfDate { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// List of <seealso cref="SegmentInfoStatus"/> instances, detailing status of each segment. </summary>
-            public IList<SegmentInfoStatus> SegmentInfos = new List<SegmentInfoStatus>(); // LUCENENET TODO: Make property
+            public IList<SegmentInfoStatus> SegmentInfos { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Directory index is in. </summary>
-            public Directory Dir; // LUCENENET TODO: Make property
+            public Directory Dir { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// SegmentInfos instance containing only segments that
             /// had no problems (this is used with the <seealso cref="CheckIndex#fixIndex"/>
             /// method to repair the index.
             /// </summary>
-            internal SegmentInfos NewSegments; // LUCENENET TODO: Make property
+            internal SegmentInfos NewSegments { get; set; }
 
             /// <summary>
             /// How many documents will be lost to bad segments. </summary>
-            public int TotLoseDocCount; // LUCENENET TODO: Make property
+            public int TotLoseDocCount { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// How many bad segments were found. </summary>
-            public int NumBadSegments; // LUCENENET TODO: Make property
+            public int NumBadSegments { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// True if we checked only specific segments ({@link
             /// #checkIndex(List)}) was called with non-null
             /// argument).
             /// </summary>
-            public bool Partial; // LUCENENET TODO: Make property
+            public bool Partial { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// The greatest segment name. </summary>
-            public int MaxSegmentName; // LUCENENET TODO: Make property
+            public int MaxSegmentName { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Whether the SegmentInfos.counter is greater than any of the segments' names. </summary>
-            public bool ValidCounter; // LUCENENET TODO: Make property
+            public bool ValidCounter { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Holds the userData of the last commit in the index </summary>
-            public IDictionary<string, string> UserData; // LUCENENET TODO: Make property
+            public IDictionary<string, string> UserData { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Holds the status of each segment in the index.
@@ -155,101 +158,103 @@ namespace Lucene.Net.Index
             {
                 internal SegmentInfoStatus()
                 {
+                    // Set property defaults
+                    DocStoreOffset = -1;
                 }
 
                 /// <summary>
                 /// Name of the segment. </summary>
-                public string Name; // LUCENENET TODO: Make property
+                public string Name { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Codec used to read this segment. </summary>
-                public Codec Codec; // LUCENENET TODO: Make property
+                public Codec Codec { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Document count (does not take deletions into account). </summary>
-                public int DocCount; // LUCENENET TODO: Make property
+                public int DocCount { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// True if segment is compound file format. </summary>
-                public bool Compound; // LUCENENET TODO: Make property
+                public bool Compound { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Number of files referenced by this segment. </summary>
-                public int NumFiles; // LUCENENET TODO: Make property
+                public int NumFiles { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Net size (MB) of the files referenced by this
                 ///  segment.
                 /// </summary>
-                public double SizeMB; // LUCENENET TODO: Make property
+                public double SizeMB { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Doc store offset, if this segment shares the doc
                 ///  store files (stored fields and term vectors) with
                 ///  other segments.  this is -1 if it does not share.
                 /// </summary>
-                public int DocStoreOffset = -1; // LUCENENET TODO: Make property
+                public int DocStoreOffset { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// String of the shared doc store segment, or null if
                 ///  this segment does not share the doc store files.
                 /// </summary>
-                public string DocStoreSegment; // LUCENENET TODO: Make property
+                public string DocStoreSegment { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// True if the shared doc store files are compound file
                 ///  format.
                 /// </summary>
-                public bool DocStoreCompoundFile; // LUCENENET TODO: Make property
+                public bool DocStoreCompoundFile { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// True if this segment has pending deletions. </summary>
-                public bool HasDeletions; // LUCENENET TODO: Make property
+                public bool HasDeletions { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Current deletions generation. </summary>
-                public long DeletionsGen; // LUCENENET TODO: Make property
+                public long DeletionsGen { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Number of deleted documents. </summary>
-                public int NumDeleted; // LUCENENET TODO: Make property
+                public int NumDeleted { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// True if we were able to open an AtomicReader on this
                 ///  segment.
                 /// </summary>
-                public bool OpenReaderPassed; // LUCENENET TODO: Make property
+                public bool OpenReaderPassed { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Number of fields in this segment. </summary>
-                internal int NumFields; // LUCENENET TODO: Make property
+                internal int NumFields { get; set; }
 
                 /// <summary>
                 /// Map that includes certain
                 ///  debugging details that IndexWriter records into
                 ///  each segment it creates
                 /// </summary>
-                public IDictionary<string, string> Diagnostics; // LUCENENET TODO: Make property
+                public IDictionary<string, string> Diagnostics { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Status for testing of field norms (null if field norms could not be tested). </summary>
-                public FieldNormStatus FieldNormStatus; // LUCENENET TODO: Make property
+                public FieldNormStatus FieldNormStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Status for testing of indexed terms (null if indexed terms could not be tested). </summary>
-                public TermIndexStatus TermIndexStatus; // LUCENENET TODO: Make property
+                public TermIndexStatus TermIndexStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Status for testing of stored fields (null if stored fields could not be tested). </summary>
-                public StoredFieldStatus StoredFieldStatus; // LUCENENET TODO: Make property
+                public StoredFieldStatus StoredFieldStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Status for testing of term vectors (null if term vectors could not be tested). </summary>
-                public TermVectorStatus TermVectorStatus; // LUCENENET TODO: Make property
+                public TermVectorStatus TermVectorStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Status for testing of DocValues (null if DocValues could not be tested). </summary>
-                public DocValuesStatus DocValuesStatus; // LUCENENET TODO: Make property
+                public DocValuesStatus DocValuesStatus { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
@@ -259,15 +264,18 @@ namespace Lucene.Net.Index
             {
                 internal FieldNormStatus()
                 {
+                    // Set property defaults
+                    TotFields = 0L;
+                    Error = null;
                 }
 
                 /// <summary>
                 /// Number of fields successfully tested </summary>
-                public long TotFields = 0L; // LUCENENET TODO: Make property
+                public long TotFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Exception thrown during term index test (null on success) </summary>
-                public Exception Error = null; // LUCENENET TODO: Make property
+                public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
@@ -277,27 +285,34 @@ namespace Lucene.Net.Index
             {
                 internal TermIndexStatus()
                 {
+                    // Set property defaults
+                    TermCount = 0L;
+                    DelTermCount = 0L;
+                    TotFreq = 0L;
+                    TotPos = 0L;
+                    Error = null;
+                    BlockTreeStats = null;
                 }
 
                 /// <summary>
                 /// Number of terms with at least one live doc. </summary>
-                public long TermCount = 0L; // LUCENENET TODO: Make property
+                public long TermCount { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Number of terms with zero live docs docs. </summary>
-                public long DelTermCount = 0L; // LUCENENET TODO: Make property
+                public long DelTermCount { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total frequency across all terms. </summary>
-                public long TotFreq = 0L; // LUCENENET TODO: Make property
+                public long TotFreq { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of positions. </summary>
-                public long TotPos = 0L; // LUCENENET TODO: Make property
+                public long TotPos { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Exception thrown during term index test (null on success) </summary>
-                public Exception Error = null; // LUCENENET TODO: Make property
+                public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Holds details of block allocations in the block
@@ -305,7 +320,7 @@ namespace Lucene.Net.Index
                 ///  <seealso cref="PostingsFormat"/> for this segment uses block
                 ///  tree.
                 /// </summary>
-                public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats = null; // LUCENENET TODO: Make property
+                public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
@@ -315,19 +330,23 @@ namespace Lucene.Net.Index
             {
                 internal StoredFieldStatus()
                 {
+                    // Set property defaults
+                    DocCount = 0;
+                    TotFields = 0;
+                    Error = null;
                 }
 
                 /// <summary>
                 /// Number of documents tested. </summary>
-                public int DocCount = 0; // LUCENENET TODO: Make property
+                public int DocCount { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of stored fields tested. </summary>
-                public long TotFields = 0; // LUCENENET TODO: Make property
+                public long TotFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Exception thrown during stored fields test (null on success) </summary>
-                public Exception Error = null; // LUCENENET TODO: Make property
+                public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
@@ -337,19 +356,23 @@ namespace Lucene.Net.Index
             {
                 internal TermVectorStatus()
                 {
+                    // Set property defaults
+                    DocCount = 0;
+                    TotVectors = 0;
+                    Error = null;
                 }
 
                 /// <summary>
                 /// Number of documents tested. </summary>
-                public int DocCount = 0; // LUCENENET TODO: Make property
+                public int DocCount { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of term vectors tested. </summary>
-                public long TotVectors = 0; // LUCENENET TODO: Make property
+                public long TotVectors { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Exception thrown during term vector test (null on success) </summary>
-                public Exception Error = null; // LUCENENET TODO: Make property
+                public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
@@ -359,31 +382,33 @@ namespace Lucene.Net.Index
             {
                 internal DocValuesStatus()
                 {
+                    // Set property defaults
+                    Error = null;
                 }
 
                 /// <summary>
                 /// Total number of docValues tested. </summary>
-                public long TotalValueFields; // LUCENENET TODO: Make property
+                public long TotalValueFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of numeric fields </summary>
-                public long TotalNumericFields; // LUCENENET TODO: Make property
+                public long TotalNumericFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of binary fields </summary>
-                public long TotalBinaryFields; // LUCENENET TODO: Make property
+                public long TotalBinaryFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of sorted fields </summary>
-                public long TotalSortedFields; // LUCENENET TODO: Make property
+                public long TotalSortedFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Total number of sortedset fields </summary>
-                public long TotalSortedSetFields; // LUCENENET TODO: Make property
+                public long TotalSortedSetFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Exception thrown during doc values test (null on success) </summary>
-                public Exception Error = null; // LUCENENET TODO: Make property
+                public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
         }
 
@@ -429,15 +454,17 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Set infoStream where messages should go. See <seealso cref="#setInfoStream(PrintStream,boolean)"/>. </summary>
+        public virtual void SetInfoStream(TextWriter @out)
+        {
+            SetInfoStream(@out, false);
+        }
+        
+        // LUCENENET specific - added getter so we don't need to keep a reference outside of this class to dispose
         public virtual TextWriter InfoStream
         {
             get
             {
-                return infoStream;
-            }
-            set
-            {
-                SetInfoStream(value, false); // LUCENENET TODO: Make this an overload of SetInfoStream() - there was no getter in the original
+                return infoStream; // LUCENENET TODO: Perhaps this class should implement IDisposable so we can clean this up and set it to null
             }
         }
 

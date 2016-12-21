@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
 
                 MemoryStream bos = new MemoryStream(1024);
                 CheckIndex checker = new CheckIndex(dir);
-                checker.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
+                checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8));
                 CheckIndex.Status indexStatus = checker.DoCheckIndex();
                 Assert.IsFalse(indexStatus.Clean);
                 Assert.IsTrue(bos.ToString().Contains(typeof(IndexFormatTooOldException).Name));
