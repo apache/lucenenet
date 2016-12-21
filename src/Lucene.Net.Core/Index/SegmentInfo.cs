@@ -52,40 +52,40 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Unique segment name in the directory. </summary>
-        public readonly string Name;
+        public string Name { get; private set; }
 
-        private int DocCount_Renamed; // number of docs in seg
+        private int docCount; // number of docs in seg
 
         /// <summary>
         /// Where this segment resides. </summary>
-        public readonly Directory Dir; // LUCENENET TODO: Make property
+        public Directory Dir { get; private set; }
 
-        private bool IsCompoundFile;
+        private bool isCompoundFile;
 
-        private Codec Codec_Renamed;
+        private Codec codec;
 
-        private IDictionary<string, string> Diagnostics_Renamed;
+        private IDictionary<string, string> diagnostics;
 
         /// @deprecated not used anymore
         [Obsolete("not used anymore")]
-        private IDictionary<string, string> Attributes_Renamed;
+        private IDictionary<string, string> attributes;
 
         // Tracks the Lucene version this segment was created with, since 3.1. Null
         // indicates an older than 3.0 index, and it's used to detect a too old index.
         // The format expected is "x.y" - "2.x" for pre-3.0 indexes (or null), and
         // specific versions afterwards ("3.0", "3.1" etc.).
         // see Constants.LUCENE_MAIN_VERSION.
-        private string Version_Renamed;
+        private string version;
 
         public IDictionary<string, string> Diagnostics
         {
             set
             {
-                this.Diagnostics_Renamed = value;
+                this.diagnostics = value;
             }
             get
             {
-                return Diagnostics_Renamed;
+                return diagnostics;
             }
         }
 
@@ -108,13 +108,13 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(!(dir is TrackingDirectoryWrapper));
             this.Dir = dir;
-            this.Version_Renamed = version;
+            this.version = version;
             this.Name = name;
-            this.DocCount_Renamed = docCount;
-            this.IsCompoundFile = isCompoundFile;
-            this.Codec_Renamed = codec;
-            this.Diagnostics_Renamed = diagnostics;
-            this.Attributes_Renamed = attributes;
+            this.docCount = docCount;
+            this.isCompoundFile = isCompoundFile;
+            this.codec = codec;
+            this.diagnostics = diagnostics;
+            this.attributes = attributes;
         }
 
         /// @deprecated separate norms are not supported in >= 4.0
@@ -133,11 +133,11 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.IsCompoundFile = value;
+                this.isCompoundFile = value;
             }
             get
             {
-                return IsCompoundFile;
+                return isCompoundFile;
             }
         }
 
@@ -147,16 +147,16 @@ namespace Lucene.Net.Index
         {
             set
             {
-                Debug.Assert(this.Codec_Renamed == null);
+                Debug.Assert(this.codec == null);
                 if (value == null)
                 {
                     throw new System.ArgumentException("codec must be non-null");
                 }
-                this.Codec_Renamed = value;
+                this.codec = value;
             }
             get
             {
-                return Codec_Renamed;
+                return codec;
             }
         }
 
@@ -168,19 +168,19 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (this.DocCount_Renamed == -1)
+                if (this.docCount == -1)
                 {
                     throw new InvalidOperationException("docCount isn't set yet");
                 }
-                return DocCount_Renamed;
+                return docCount;
             }
             set
             {
-                if (this.DocCount_Renamed != -1)
+                if (this.docCount != -1)
                 {
                     throw new InvalidOperationException("docCount was already set");
                 }
-                this.DocCount_Renamed = value;
+                this.docCount = value;
             }
         }
 
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
         public string ToString(Directory dir, int delCount)
         {
             StringBuilder s = new StringBuilder();
-            s.Append(Name).Append('(').Append(Version_Renamed == null ? "?" : Version_Renamed).Append(')').Append(':');
+            s.Append(Name).Append('(').Append(version == null ? "?" : version).Append(')').Append(':');
             char cfs = UseCompoundFile ? 'c' : 'C';
             s.Append(cfs);
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
             {
                 s.Append('x');
             }
-            s.Append(DocCount_Renamed);
+            s.Append(docCount);
 
             if (delCount != 0)
             {
@@ -269,11 +269,11 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.Version_Renamed = value;
+                this.version = value;
             }
             get
             {
-                return Version_Renamed;
+                return version;
             }
         }
 
@@ -340,13 +340,13 @@ namespace Lucene.Net.Index
         [Obsolete("no longer supported")]
         public string GetAttribute(string key)
         {
-            if (Attributes_Renamed == null)
+            if (attributes == null)
             {
                 return null;
             }
             else
             {
-                return Attributes_Renamed[key];
+                return attributes[key];
             }
         }
 
@@ -364,11 +364,11 @@ namespace Lucene.Net.Index
         [Obsolete("no longer supported")]
         public string PutAttribute(string key, string value)
         {
-            if (Attributes_Renamed == null)
+            if (attributes == null)
             {
-                Attributes_Renamed = new Dictionary<string, string>();
+                attributes = new Dictionary<string, string>();
             }
-            return Attributes_Renamed[key] = value;
+            return attributes[key] = value;
         }
 
         /// <summary>
@@ -378,9 +378,9 @@ namespace Lucene.Net.Index
         /// </returns>
         /// @deprecated no longer supported
         [Obsolete("no longer supported")]
-        public IDictionary<string, string> Attributes() // LUCENENET TODO: Make property
+        public IDictionary<string, string> Attributes
         {
-            return Attributes_Renamed;
+            get { return attributes; }
         }
     }
 }

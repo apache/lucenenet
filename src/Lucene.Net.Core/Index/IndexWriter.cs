@@ -3361,13 +3361,13 @@ namespace Lucene.Net.Index
             IDictionary<string, string> attributes;
             // copy the attributes map, we might modify it below.
             // also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
-            if (info.Info.Attributes() == null)
+            if (info.Info.Attributes == null)
             {
                 attributes = new Dictionary<string, string>();
             }
             else
             {
-                attributes = new Dictionary<string, string>(info.Info.Attributes());
+                attributes = new Dictionary<string, string>(info.Info.Attributes);
             }
             if (docStoreFiles3xOnly != null)
             {

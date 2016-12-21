@@ -669,7 +669,7 @@ namespace Lucene.Net.Index
                 output.WriteString(si.Version);
                 output.WriteInt(si.DocCount);
 
-                output.WriteStringStringMap(si.Attributes());
+                output.WriteStringStringMap(si.Attributes);
 
                 output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
