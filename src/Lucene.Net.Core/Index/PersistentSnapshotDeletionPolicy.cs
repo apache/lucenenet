@@ -60,9 +60,9 @@ namespace Lucene.Net.Index
         private static readonly string CODEC_NAME = "snapshots";
 
         // The index writer which maintains the snapshots metadata
-        private long NextWriteGen;
+        private long nextWriteGen;
 
-        private readonly Directory Dir;
+        private readonly Directory dir;
 
         /// <summary>
         /// <seealso cref="PersistentSnapshotDeletionPolicy"/> wraps another
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         public PersistentSnapshotDeletionPolicy(IndexDeletionPolicy primary, Directory dir, OpenMode mode)
             : base(primary)
         {
-            this.Dir = dir;
+            this.dir = dir;
 
             if (mode == OpenMode.CREATE)
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 
             LoadPriorSnapshots();
 
-            if (mode == OpenMode.APPEND && NextWriteGen == 0)
+            if (mode == OpenMode.APPEND && nextWriteGen == 0)
             {
                 throw new InvalidOperationException("no snapshots stored in this directory");
             }
@@ -201,8 +201,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                string fileName = SNAPSHOTS_PREFIX + NextWriteGen;
-                IndexOutput @out = Dir.CreateOutput(fileName, IOContext.DEFAULT);
+                string fileName = SNAPSHOTS_PREFIX + nextWriteGen;
+                IndexOutput @out = dir.CreateOutput(fileName, IOContext.DEFAULT);
                 bool success = false;
                 try
                 {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
                         IOUtils.CloseWhileHandlingException(@out);
                         try
                         {
-                            Dir.DeleteFile(fileName);
+                            dir.DeleteFile(fileName);
                         }
                         catch (Exception e)
                         {
@@ -235,14 +235,14 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                Dir.Sync(/*Collections.singletonList(*/new[] { fileName }/*)*/);
+                dir.Sync(/*Collections.singletonList(*/new[] { fileName }/*)*/);
 
-                if (NextWriteGen > 0)
+                if (nextWriteGen > 0)
                 {
-                    string lastSaveFile = SNAPSHOTS_PREFIX + (NextWriteGen - 1);
+                    string lastSaveFile = SNAPSHOTS_PREFIX + (nextWriteGen - 1);
                     try
                     {
-                        Dir.DeleteFile(lastSaveFile);
+                        dir.DeleteFile(lastSaveFile);
                     }
                     catch (IOException ioe)
                     {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                NextWriteGen++;
+                nextWriteGen++;
             }
         }
 
@@ -258,11 +258,11 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                foreach (string file in Dir.ListAll())
+                foreach (string file in dir.ListAll())
                 {
                     if (file.StartsWith(SNAPSHOTS_PREFIX))
                     {
-                        Dir.DeleteFile(file);
+                        dir.DeleteFile(file);
                     }
                 }
             }
@@ -276,13 +276,13 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (NextWriteGen == 0)
+                if (nextWriteGen == 0)
                 {
                     return null;
                 }
                 else
                 {
-                    return SNAPSHOTS_PREFIX + (NextWriteGen - 1);
+                    return SNAPSHOTS_PREFIX + (nextWriteGen - 1);
                 }
             }
         }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
                 long genLoaded = -1;
                 IOException ioe = null;
                 IList<string> snapshotFiles = new List<string>();
-                foreach (string file in Dir.ListAll())
+                foreach (string file in dir.ListAll())
                 {
                     if (file.StartsWith(SNAPSHOTS_PREFIX))
                     {
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
                         {
                             snapshotFiles.Add(file);
                             IDictionary<long, int> m = new Dictionary<long, int>();
-                            IndexInput @in = Dir.OpenInput(file, IOContext.DEFAULT);
+                            IndexInput @in = dir.OpenInput(file, IOContext.DEFAULT);
                             try
                             {
                                 CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_START);
@@ -360,11 +360,11 @@ namespace Lucene.Net.Index
                         {
                             if (!curFileName.Equals(file))
                             {
-                                Dir.DeleteFile(file);
+                                dir.DeleteFile(file);
                             }
                         }
                     }
-                    NextWriteGen = 1 + genLoaded;
+                    nextWriteGen = 1 + genLoaded;
                 }
             }
         }
