@@ -119,9 +119,14 @@ namespace Lucene.Net.Index
                 return (int)ThreadPriority.Normal;
 #endif 
             }
-            set
-            {
-            }
+        }
+
+        /// <summary>
+        /// This method has no effect in <see cref="TaskMergeScheduler"/> because the
+        /// <see cref="MergeThreadPriority"/> returns a constant value.
+        /// </summary>
+        public void SetMergeThreadPriority(int priority)
+        {
         }
 
         /// <summary>

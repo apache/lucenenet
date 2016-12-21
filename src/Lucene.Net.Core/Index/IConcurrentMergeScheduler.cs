@@ -5,8 +5,9 @@
     {
         int MaxThreadCount { get; }
         int MaxMergeCount { get; }
-        int MergeThreadPriority { get; set; }
+        int MergeThreadPriority { get; }
 
+        void SetMergeThreadPriority(int priority);
         void Sync();
         void SetMaxMergesAndThreads(int maxMergeCount, int maxThreadCount);
 

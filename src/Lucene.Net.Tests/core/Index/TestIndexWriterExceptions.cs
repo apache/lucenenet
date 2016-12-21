@@ -2109,7 +2109,7 @@ namespace Lucene.Net.Index
 
                         IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
-                        suppressFakeIOE.MergeThreadPriority = cms.MergeThreadPriority;
+                        suppressFakeIOE.SetMergeThreadPriority(cms.MergeThreadPriority);
                         iwc.SetMergeScheduler(suppressFakeIOE);
                     }
 

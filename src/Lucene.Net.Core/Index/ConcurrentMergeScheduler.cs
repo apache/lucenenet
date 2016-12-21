@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         ///  slightly higher priority than) the first thread that
         ///  calls merge.
         /// </summary>
-        public virtual int MergeThreadPriority // LUCENENET TODO: Change back to GetMergeThreadPriority() and SetMergeThreadPriority() (complexity)
+        public virtual int MergeThreadPriority
         {
             get
             {
@@ -165,17 +165,26 @@ namespace Lucene.Net.Index
                     return MergeThreadPriority_Renamed;
                 }
             }
-            set
+        }
+
+        /// <summary>
+        /// Set the base priority that merge threads run at.
+        /// Note that CMS may increase priority of some merge
+        /// threads beyond this base priority.  It's best not to
+        /// set this any higher than
+        /// <see cref="ThreadPriority.Highest"/>(4)-maxThreadCount, so that CMS has
+        /// room to set relative priority among threads.
+        /// </summary>
+        public virtual void SetMergeThreadPriority(int priority)
+        {
+            lock (this)
             {
-                lock (this)
+                if (priority > (int)ThreadPriority.Highest || priority < (int)ThreadPriority.Lowest)
                 {
-                    if (value > (int)ThreadPriority.Highest || value < (int)ThreadPriority.Lowest)
-                    {
-                        throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
-                    }
-                    MergeThreadPriority_Renamed = value;
-                    UpdateMergeThreads();
+                    throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
                 }
+                MergeThreadPriority_Renamed = priority;
+                UpdateMergeThreads();
             }
         }
 
