@@ -346,9 +346,9 @@ namespace Lucene.Net.Index.Sorter
                 throw new System.NotSupportedException();
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
             public override int DocID()
             {

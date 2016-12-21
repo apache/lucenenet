@@ -425,8 +425,8 @@ namespace Lucene.Net.Codecs.Lucene41
             while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(docid, rightDocs.NextDoc());
-                int freq = leftDocs.Freq();
-                Assert.AreEqual(freq, rightDocs.Freq());
+                int freq = leftDocs.Freq;
+                Assert.AreEqual(freq, rightDocs.Freq);
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition());
@@ -531,8 +531,8 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     return;
                 }
-                int freq = leftDocs.Freq();
-                Assert.AreEqual(freq, rightDocs.Freq());
+                int freq = leftDocs.Freq;
+                Assert.AreEqual(freq, rightDocs.Freq);
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition());

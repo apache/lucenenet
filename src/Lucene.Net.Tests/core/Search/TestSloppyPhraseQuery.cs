@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 TotalHits++;
-                Max = Math.Max(Max, Scorer_Renamed.Freq());
+                Max = Math.Max(Max, Scorer_Renamed.Freq);
             }
 
             public override AtomicReaderContext NextReader
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                Assert.IsFalse(float.IsInfinity(scorer.Freq()));
+                Assert.IsFalse(float.IsInfinity(scorer.Freq));
                 Assert.IsFalse(float.IsInfinity(scorer.Score()));
             }
 

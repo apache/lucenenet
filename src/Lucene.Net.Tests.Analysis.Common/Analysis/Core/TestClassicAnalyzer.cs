@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis.Core
                     // massive term is skipped:
                     DocsAndPositionsEnum tps = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "content", new BytesRef("another"));
                     assertTrue(tps.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                    assertEquals(1, tps.Freq());
+                    assertEquals(1, tps.Freq);
                     assertEquals(3, tps.NextPosition());
 
                     // Make sure the doc that has the massive term is in

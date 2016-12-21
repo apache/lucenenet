@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 
         internal void FirstPosition()
         {
-            Count = Postings.Freq(); // read first pos
+            Count = Postings.Freq; // read first pos
             NextPosition();
         }
 

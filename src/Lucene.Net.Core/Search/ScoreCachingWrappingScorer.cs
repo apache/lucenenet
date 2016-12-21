@@ -56,9 +56,9 @@ namespace Lucene.Net.Search
             return CurScore;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return Scorer.Freq();
+            get { return Scorer.Freq; }
         }
 
         public override int DocID()

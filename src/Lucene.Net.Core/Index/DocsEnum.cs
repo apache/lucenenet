@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
         /// <b>NOTE:</b> if the <seealso cref="DocsEnum"/> was obtain with <seealso cref="#FLAG_NONE"/>,
         /// the result of this method is undefined.
         /// </summary>
-        public abstract int Freq(); // LUCENENET TODO: make property
+        public abstract int Freq { get; }
 
         /// <summary>
         /// Returns the related attributes. </summary>

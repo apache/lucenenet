@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
             while ((doc = expected.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(doc, actual.NextDoc());
-                Assert.AreEqual(expected.Freq(), actual.Freq());
+                Assert.AreEqual(expected.Freq, actual.Freq);
                 float expectedScore = expected.Score();
                 float actualScore = actual.Score();
                 Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
             while ((doc = expected.Advance(prevDoc + amount)) != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(doc, actual.Advance(prevDoc + amount));
-                Assert.AreEqual(expected.Freq(), actual.Freq());
+                Assert.AreEqual(expected.Freq, actual.Freq);
                 float expectedScore = expected.Score();
                 float actualScore = actual.Score();
                 Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
@@ -378,9 +378,9 @@ namespace Lucene.Net.Search
                 return (float)Score_Renamed * ((BooleanWeight)weight).Coord(CurrentMatched, ((BooleanWeight)weight).MaxCoord);
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return CurrentMatched;
+                get { return CurrentMatched; }
             }
 
             public override int DocID()

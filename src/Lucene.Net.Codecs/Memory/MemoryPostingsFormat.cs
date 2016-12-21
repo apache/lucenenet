@@ -526,9 +526,9 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return freq_Renamed;
+                get { return freq_Renamed; }
             }
 
             public override long Cost()
@@ -750,9 +750,9 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return freq_Renamed;
+                get { return freq_Renamed; }
             }
 
             public override long Cost()

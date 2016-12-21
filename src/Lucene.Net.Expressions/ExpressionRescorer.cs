@@ -66,9 +66,9 @@ namespace Lucene.Net.Expressions
                 return doc;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return freq;
+                get { return freq; }
             }
 
             public override int NextDoc()

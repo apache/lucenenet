@@ -228,9 +228,9 @@ namespace Lucene.Net.Index
                 return DocID_Renamed;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Freq_Renamed;
+                get { return Freq_Renamed; }
             }
 
             public override int NextPosition()
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
                     int docID = 0;
                     while ((docID = postings.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                     {
-                        int freq = postings.Freq();
+                        int freq = postings.Freq;
                         if (VERBOSE)
                         {
                             Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.Freq_Renamed);
@@ -948,15 +948,15 @@ namespace Lucene.Net.Index
                 {
                     if (VERBOSE)
                     {
-                        Console.WriteLine("    now freq()=" + expected.Freq());
+                        Console.WriteLine("    now freq()=" + expected.Freq);
                     }
-                    int freq = docsEnum.Freq();
-                    Assert.AreEqual(expected.Freq(), freq, "freq is wrong");
+                    int freq = docsEnum.Freq;
+                    Assert.AreEqual(expected.Freq, freq, "freq is wrong");
                 }
 
                 if (doCheckPositions)
                 {
-                    int freq = docsEnum.Freq();
+                    int freq = docsEnum.Freq;
                     int numPosToConsume;
                     if (!alwaysTestMax && options.Contains(Option.PARTIAL_POS_CONSUME) && Random().Next(5) == 1)
                     {

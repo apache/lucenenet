@@ -142,9 +142,9 @@ namespace Lucene.Net.Search
             return sum * Coord;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return docsAndFreqs.Length;
+            get { return docsAndFreqs.Length; }
         }
 
         public override long Cost()

@@ -164,7 +164,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 if (positions.DocID() == i)
                 {
-                    if (positions.Freq() == 0) // shouldn't happen
+                    if (positions.Freq == 0) // shouldn't happen
                     {
                         throw new CorruptIndexException("Missing parent data for category " + i);
                     }

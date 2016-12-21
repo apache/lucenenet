@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
                 int doc = dpEnum.DocID();
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                Assert.AreEqual(dpEnum.Freq(), Positions[i].Length);
+                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.IsNotNull(dpEnum);
-                Assert.AreEqual(dpEnum.Freq(), Positions[i].Length);
+                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsNotNull(dpEnum);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                Assert.AreEqual(dpEnum.Freq(), Positions[i].Length);
+                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.IsNotNull(dpEnum);
-                Assert.AreEqual(dpEnum.Freq(), Positions[i].Length);
+                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());

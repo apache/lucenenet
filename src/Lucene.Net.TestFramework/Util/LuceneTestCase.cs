@@ -2052,8 +2052,8 @@ namespace Lucene.Net.Util
             while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(docid, rightDocs.NextDoc(), info);
-                int freq = leftDocs.Freq();
-                Assert.AreEqual(freq, rightDocs.Freq(), info);
+                int freq = leftDocs.Freq;
+                Assert.AreEqual(freq, rightDocs.Freq, info);
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
@@ -2083,7 +2083,7 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(docid, rightDocs.NextDoc(), info);
                 if (hasFreqs)
                 {
-                    Assert.AreEqual(leftDocs.Freq(), rightDocs.Freq(), info);
+                    Assert.AreEqual(leftDocs.Freq, rightDocs.Freq, info);
                 }
             }
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc(), info);
@@ -2125,7 +2125,7 @@ namespace Lucene.Net.Util
                 }
                 if (hasFreqs)
                 {
-                    Assert.AreEqual(leftDocs.Freq(), rightDocs.Freq(), info);
+                    Assert.AreEqual(leftDocs.Freq, rightDocs.Freq, info);
                 }
             }
         }
@@ -2166,8 +2166,8 @@ namespace Lucene.Net.Util
                 {
                     return;
                 }
-                int freq = leftDocs.Freq();
-                Assert.AreEqual(freq, rightDocs.Freq(), info);
+                int freq = leftDocs.Freq;
+                Assert.AreEqual(freq, rightDocs.Freq, info);
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);

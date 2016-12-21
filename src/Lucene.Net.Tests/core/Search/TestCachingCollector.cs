@@ -40,9 +40,9 @@ namespace Lucene.Net.Search
                 return 0;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 0;
+                get { return 0; }
             }
 
             public override int DocID()

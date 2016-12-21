@@ -672,9 +672,9 @@ namespace Lucene.Net.Codecs.Lucene40
             private int Freq_Renamed;
             private Bits LiveDocs;
 
-            public override int Freq()
+            public override int Freq
             {
-                return Freq_Renamed;
+                get { return Freq_Renamed; }
             }
 
             public override int DocID()
@@ -727,16 +727,19 @@ namespace Lucene.Net.Codecs.Lucene40
             private readonly BytesRef Payload_Renamed = new BytesRef();
             private byte[] PayloadBytes;
 
-            public override int Freq()
+            public override int Freq
             {
-                if (Positions != null)
+                get
                 {
-                    return Positions.Length;
-                }
-                else
-                {
-                    Debug.Assert(StartOffsets != null);
-                    return StartOffsets.Length;
+                    if (Positions != null)
+                    {
+                        return Positions.Length;
+                    }
+                    else
+                    {
+                        Debug.Assert(StartOffsets != null);
+                        return StartOffsets.Length;
+                    }
                 }
             }
 

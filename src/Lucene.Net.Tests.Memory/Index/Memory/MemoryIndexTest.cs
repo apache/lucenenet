@@ -167,8 +167,8 @@ namespace Lucene.Net.Index.Memory
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
                             {
                                 assertEquals(iwDocsAndPos.DocID(), memDocsAndPos.NextDoc());
-                                assertEquals(iwDocsAndPos.Freq(), memDocsAndPos.Freq());
-                                for (int i = 0; i < iwDocsAndPos.Freq(); i++)
+                                assertEquals(iwDocsAndPos.Freq, memDocsAndPos.Freq);
+                                for (int i = 0; i < iwDocsAndPos.Freq; i++)
                                 {
                                     assertEquals("term: " + iwTermsIter.Term().Utf8ToString(), iwDocsAndPos.NextPosition(), memDocsAndPos.NextPosition());
                                     if (offsets)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index.Memory
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
                             {
                                 assertEquals(iwDocsAndPos.DocID(), memDocsAndPos.NextDoc());
-                                assertEquals(iwDocsAndPos.Freq(), memDocsAndPos.Freq());
+                                assertEquals(iwDocsAndPos.Freq, memDocsAndPos.Freq);
                             }
                         }
                     }
@@ -565,8 +565,8 @@ namespace Lucene.Net.Index.Memory
                 docsPosEnum.NextDoc();
                 memDocsPosEnum.NextDoc();
 
-                int freq = docsPosEnum.Freq();
-                assertEquals(freq, memDocsPosEnum.Freq());
+                int freq = docsPosEnum.Freq;
+                assertEquals(freq, memDocsPosEnum.Freq);
                 for (int i = 0; i < freq; i++)
                 {
                     string failDesc = " (field:" + field_name + " term:" + currentTerm + ")";

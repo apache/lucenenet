@@ -338,7 +338,7 @@ namespace Lucene.Net.Join
                         {
                             // TODO: specialize this into dedicated classes per-scoreMode
                             float childScore = _childScorer.Score();
-                            int childFreq = _childScorer.Freq();
+                            int childFreq = _childScorer.Freq;
                             if (_pendingChildScores != null)
                             {
                                 _pendingChildScores[_childDocUpto] = childScore;
@@ -390,9 +390,9 @@ namespace Lucene.Net.Join
                 return _parentScore;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return _parentFreq;
+                get { return _parentFreq; }
             }
             
             public override int Advance(int parentTarget)

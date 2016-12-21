@@ -88,9 +88,9 @@ namespace Lucene.Net.Codecs
             return Subs_Renamed;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return Current.Freq();
+            get { return Current.Freq; }
         }
 
         public override int DocID()

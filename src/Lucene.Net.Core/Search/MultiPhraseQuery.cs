@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = OuterInstance.slop == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
+                        float freq = OuterInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq();
                         SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search
             {
                 postings = _queue.Top();
 
-                int freq = postings.Freq();
+                int freq = postings.Freq;
                 for (int i = 0; i < freq; i++)
                 {
                     _posList.Add(postings.NextPosition());
@@ -688,9 +688,9 @@ namespace Lucene.Net.Search
             return NextDoc();
         }
 
-        public override sealed int Freq()
+        public override sealed int Freq
         {
-            return _freq;
+            get { return _freq; }
         }
 
         public override sealed int DocID()

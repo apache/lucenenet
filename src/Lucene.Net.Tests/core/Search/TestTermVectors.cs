@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.IsNotNull(dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(5, dpEnum.Freq());
+            Assert.AreEqual(5, dpEnum.Freq);
             for (int i = 0; i < 5; i++)
             {
                 Assert.AreEqual(i, dpEnum.NextPosition());
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsNotNull(dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(5, dpEnum.Freq());
+            Assert.AreEqual(5, dpEnum.Freq);
             for (int i = 0; i < 5; i++)
             {
                 dpEnum.NextPosition();

@@ -210,9 +210,9 @@ namespace Lucene.Net.Search
             return "ExactPhraseScorer(" + weight + ")";
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return Freq_Renamed;
+            get { return Freq_Renamed; }
         }
 
         public override int DocID()
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < ChunkStates.Length; i++)
             {
                 ChunkState cs = ChunkStates[i];
-                cs.PosLimit = cs.PosEnum.Freq();
+                cs.PosLimit = cs.PosEnum.Freq;
                 cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
                 cs.PosUpto = 1;
                 cs.LastPos = -1;

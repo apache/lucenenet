@@ -636,9 +636,9 @@ namespace Lucene.Net.Search
             return tg;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return NumMatches;
+            get { return NumMatches; }
         }
 
         internal float SloppyFreq()

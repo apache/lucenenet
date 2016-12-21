@@ -253,7 +253,7 @@ namespace Lucene.Net.Index.Sorter
             // test nextDoc()
             while ((doc = sortedPositions.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
-                int freq = sortedPositions.Freq();
+                int freq = sortedPositions.Freq;
                 assertEquals("incorrect freq for doc=" + doc, sortedValues[doc] / 10 + 1, freq);
                 for (int i = 0; i < freq; i++)
                 {
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index.Sorter
             doc = 0;
             while ((doc = sortedPositions.Advance(doc + TestUtil.NextInt(Random(), 1, 5))) != DocIdSetIterator.NO_MORE_DOCS)
             {
-                int freq = sortedPositions.Freq();
+                int freq = sortedPositions.Freq;
                 assertEquals("incorrect freq for doc=" + doc, sortedValues[doc] / 10 + 1, freq);
                 for (int i = 0; i < freq; i++)
                 {

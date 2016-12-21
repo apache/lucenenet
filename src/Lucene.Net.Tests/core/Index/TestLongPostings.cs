@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
 
                         if (Random().Next(6) == 3)
                         {
-                            int freq = postings.Freq();
+                            int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
                             for (int pos = 0; pos < freq; pos++)
                             {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
 
                         if (Random().Next(6) == 3)
                         {
-                            int freq = postings.Freq();
+                            int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
                             for (int pos = 0; pos < freq; pos++)
                             {
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
 
                         if (Random().Next(6) == 3 && postings != null)
                         {
-                            int freq = postings.Freq();
+                            int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
                         }
                     }
@@ -555,7 +555,7 @@ namespace Lucene.Net.Index
 
                         if (Random().Next(6) == 3 && postings != null)
                         {
-                            int freq = postings.Freq();
+                            int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4, "got invalid freq=" + freq);
                         }
                     }

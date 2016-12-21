@@ -465,7 +465,7 @@ namespace Lucene.Net.Index.Sorter
                             freqs = ArrayUtil.Grow(freqs, freqs.Length + 1);
                         }
                         docs[i] = docMap.OldToNew(doc);
-                        freqs[i] = @in.Freq();
+                        freqs[i] = @in.Freq;
                         ++i;
                     }
                 }
@@ -510,9 +510,9 @@ namespace Lucene.Net.Index.Sorter
                 return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return withFreqs && docIt < upto ? freqs[docIt] : 1;
+                get { return withFreqs && docIt < upto ? freqs[docIt] : 1; }
             }
 
             public override int NextDoc()
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index.Sorter
 
             internal virtual void AddPositions(DocsAndPositionsEnum @in, IndexOutput @out)
             {
-                int freq = @in.Freq();
+                int freq = @in.Freq;
                 @out.WriteVInt(freq);
                 int previousPosition = 0;
                 int previousEndOffset = 0;
@@ -731,9 +731,9 @@ namespace Lucene.Net.Index.Sorter
                 get { return endOffset; }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return currFreq;
+                get { return currFreq; }
             }
 
             public override BytesRef Payload

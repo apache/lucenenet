@@ -643,7 +643,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
                 if (doc == pDoc)
                 {
-                    weights[i] = scorer.Weight(contentLength, de.Freq());
+                    weights[i] = scorer.Weight(contentLength, de.Freq);
                     de.NextPosition();
                     pq.Add(new OffsetsEnum(de, i));
                 }
@@ -726,7 +726,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         Debug.Assert(term != null);
                     }
                     current.AddMatch(start, end, term);
-                    if (off.pos == dp.Freq())
+                    if (off.pos == dp.Freq)
                     {
                         break; // removed from pq
                     }
@@ -844,9 +844,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 get { return null; }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 0;
+                get { return 0; }
             }
 
             public override int DocID()

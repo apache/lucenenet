@@ -325,7 +325,7 @@ namespace Lucene.Net.Codecs
 
                         int docID = docsAndPositionsEnum.NextDoc();
                         Debug.Assert(docID != DocIdSetIterator.NO_MORE_DOCS);
-                        Debug.Assert(docsAndPositionsEnum.Freq() == freq);
+                        Debug.Assert(docsAndPositionsEnum.Freq == freq);
 
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {

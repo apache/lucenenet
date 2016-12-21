@@ -362,9 +362,9 @@ namespace Lucene.Net.Search
                 return TheScore;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 1;
+                get { return 1; }
             }
 
             public override int Advance(int target)

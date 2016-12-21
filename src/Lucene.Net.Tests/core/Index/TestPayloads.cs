@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                 {
                     tps[i].NextDoc();
                 }
-                int freq = tps[0].Freq();
+                int freq = tps[0].Freq;
 
                 for (int i = 0; i < freq; i++)
                 {
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
                 tp = terms.DocsAndPositions(liveDocs, tp);
                 while (tp.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    int freq = tp.Freq();
+                    int freq = tp.Freq;
                     for (int i = 0; i < freq; i++)
                     {
                         tp.NextPosition();

@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("a"));
             Assert.IsNotNull(dp);
             Assert.AreEqual(0, dp.NextDoc());
-            Assert.AreEqual(2, dp.Freq());
+            Assert.AreEqual(2, dp.Freq);
             Assert.AreEqual(0, dp.NextPosition());
             Assert.AreEqual(0, dp.StartOffset);
             Assert.AreEqual(6, dp.EndOffset);
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("b"));
             Assert.IsNotNull(dp);
             Assert.AreEqual(0, dp.NextDoc());
-            Assert.AreEqual(1, dp.Freq());
+            Assert.AreEqual(1, dp.Freq);
             Assert.AreEqual(1, dp.NextPosition());
             Assert.AreEqual(8, dp.StartOffset);
             Assert.AreEqual(9, dp.EndOffset);
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
             dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("c"));
             Assert.IsNotNull(dp);
             Assert.AreEqual(0, dp.NextDoc());
-            Assert.AreEqual(1, dp.Freq());
+            Assert.AreEqual(1, dp.Freq);
             Assert.AreEqual(3, dp.NextPosition());
             Assert.AreEqual(19, dp.StartOffset);
             Assert.AreEqual(50, dp.EndOffset);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
                 while ((doc = dp.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     string storedNumbers = reader.Document(doc).Get("numbers");
-                    int freq = dp.Freq();
+                    int freq = dp.Freq;
                     for (int i = 0; i < freq; i++)
                     {
                         dp.NextPosition();
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                 DocsAndPositionsEnum dp = MultiFields.GetTermPositionsEnum(reader, null, "numbers", new BytesRef("hundred"));
                 int doc = dp.Advance(num);
                 Assert.AreEqual(num, doc);
-                int freq = dp.Freq();
+                int freq = dp.Freq;
                 for (int i = 0; i < freq; i++)
                 {
                     string storedNumbers = reader.Document(doc).Get("numbers");
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
                             IList<Token> expected = actualTokens[term][docIDToID.Get(doc)];
                             //System.out.println("      doc=" + docIDToID.Get(doc) + " docID=" + doc + " " + expected.Size() + " freq");
                             Assert.IsNotNull(expected);
-                            Assert.AreEqual(expected.Count, docs.Freq());
+                            Assert.AreEqual(expected.Count, docs.Freq);
                         }
 
                         // explicitly exclude offsets here
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
                             IList<Token> expected = actualTokens[term][docIDToID.Get(doc)];
                             //System.out.println("      doc=" + docIDToID.Get(doc) + " " + expected.Size() + " freq");
                             Assert.IsNotNull(expected);
-                            Assert.AreEqual(expected.Count, docsAndPositions.Freq());
+                            Assert.AreEqual(expected.Count, docsAndPositions.Freq);
                             foreach (Token token in expected)
                             {
                                 int pos = Convert.ToInt32(token.Type);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
                             IList<Token> expected = actualTokens[term][docIDToID.Get(doc)];
                             //System.out.println("      doc=" + docIDToID.Get(doc) + " " + expected.Size() + " freq");
                             Assert.IsNotNull(expected);
-                            Assert.AreEqual(expected.Count, docsAndPositionsAndOffsets.Freq());
+                            Assert.AreEqual(expected.Count, docsAndPositionsAndOffsets.Freq);
                             foreach (Token token in expected)
                             {
                                 int pos = Convert.ToInt32(token.Type);

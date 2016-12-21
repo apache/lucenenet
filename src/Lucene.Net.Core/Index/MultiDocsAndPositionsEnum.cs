@@ -96,10 +96,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            Debug.Assert(current != null);
-            return current.Freq();
+            get
+            {
+                Debug.Assert(current != null);
+                return current.Freq;
+            }
         }
 
         public override int DocID()

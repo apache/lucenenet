@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Highlight
                 string term = text.Utf8ToString();
 
                 dpEnum.NextDoc();
-                int freq = dpEnum.Freq();
+                int freq = dpEnum.Freq;
                 for (int posUpto = 0; posUpto < freq; posUpto++)
                 {
                     int pos = dpEnum.NextPosition();

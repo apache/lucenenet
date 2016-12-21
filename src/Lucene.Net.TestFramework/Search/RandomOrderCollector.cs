@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             Scores[Buffered] = Scorer_Renamed.Score();
             try
             {
-                Freqs[Buffered] = Scorer_Renamed.Freq();
+                Freqs[Buffered] = Scorer_Renamed.Freq;
             }
             catch (System.NotSupportedException)
             {

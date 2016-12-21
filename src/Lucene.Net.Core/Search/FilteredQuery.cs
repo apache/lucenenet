@@ -234,9 +234,9 @@ namespace Lucene.Net.Search
                 return Scorer.Score();
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Scorer.Freq();
+                get { return Scorer.Freq; }
             }
 
             public override ICollection<ChildScorer> Children
@@ -365,9 +365,9 @@ namespace Lucene.Net.Search
                 return Scorer.Score();
             }
 
-            public override sealed int Freq()
+            public override sealed int Freq
             {
-                return Scorer.Freq();
+                get { return Scorer.Freq; }
             }
 
             public override sealed ICollection<ChildScorer> Children

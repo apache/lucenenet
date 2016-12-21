@@ -192,9 +192,9 @@ namespace Lucene.Net.Queries.Function
                 return score > float.NegativeInfinity ? score : -float.MaxValue;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return scorer.Freq();
+                get { return scorer.Freq; }
             }
 
             public override ICollection<ChildScorer> Children

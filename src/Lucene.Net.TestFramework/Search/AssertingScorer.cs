@@ -120,10 +120,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            Debug.Assert(Iterating());
-            return @in.Freq();
+            get
+            {
+                Debug.Assert(Iterating());
+                return @in.Freq;
+            }
         }
 
         public override int DocID()

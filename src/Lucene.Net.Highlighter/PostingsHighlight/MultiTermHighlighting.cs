@@ -289,9 +289,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return int.MaxValue;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return int.MaxValue; // lie
+                get { return int.MaxValue; } // lie
             }
 
             public override int StartOffset

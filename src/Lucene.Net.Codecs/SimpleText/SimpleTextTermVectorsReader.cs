@@ -488,10 +488,13 @@ namespace Lucene.Net.Codecs.SimpleText
             private int _freqRenamed;
             private Bits _liveDocs;
 
-            public override int Freq()
+            public override int Freq
             {
-                Debug.Assert(_freqRenamed != -1);
-                return _freqRenamed;
+                get
+                {
+                    Debug.Assert(_freqRenamed != -1);
+                    return _freqRenamed;
+                }
             }
 
             public override int DocID()
@@ -536,13 +539,16 @@ namespace Lucene.Net.Codecs.SimpleText
             private int[] _startOffsets;
             private int[] _endOffsets;
 
-            public override int Freq()
+            public override int Freq
             {
-                if (_positions != null)
-                    return _positions.Length;
+                get
+                {
+                    if (_positions != null)
+                        return _positions.Length;
 
-                Debug.Assert(_startOffsets != null);
-                return _startOffsets.Length;
+                    Debug.Assert(_startOffsets != null);
+                    return _startOffsets.Length;
+                }
             }
 
             public override int DocID()

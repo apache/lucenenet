@@ -245,9 +245,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override int DocID()

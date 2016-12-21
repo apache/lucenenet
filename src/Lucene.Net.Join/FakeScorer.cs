@@ -53,9 +53,9 @@ namespace Lucene.Net.Join
             return 1;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            throw new NotSupportedException("FakeScorer doesn't support Freq()");
+            get { throw new NotSupportedException("FakeScorer doesn't support Freq()"); }
         }
 
         public override float Score()

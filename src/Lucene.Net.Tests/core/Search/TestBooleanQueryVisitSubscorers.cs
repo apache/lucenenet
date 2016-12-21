@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
                 {
                     if (doc == scorer.DocID())
                     {
-                        freq += scorer.Freq();
+                        freq += scorer.Freq;
                     }
                 }
                 DocCounts[doc + DocBase] = freq;

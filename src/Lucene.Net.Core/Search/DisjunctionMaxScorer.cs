@@ -84,9 +84,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return Freq_Renamed;
+            get { return Freq_Renamed; }
         }
     }
 }

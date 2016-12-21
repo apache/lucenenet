@@ -82,9 +82,9 @@ namespace Lucene.Net.Search
             return (float)score * Coord[NrMatchers];
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return NrMatchers;
+            get { return NrMatchers; }
         }
     }
 }

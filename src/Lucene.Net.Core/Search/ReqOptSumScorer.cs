@@ -89,11 +89,14 @@ namespace Lucene.Net.Search
             return optScorerDoc == curDoc ? reqScore + OptScorer.Score() : reqScore;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            // we might have deferred advance()
-            Score();
-            return (OptScorer != null && OptScorer.DocID() == ReqScorer.DocID()) ? 2 : 1;
+            get
+            {
+                // we might have deferred advance()
+                Score();
+                return (OptScorer != null && OptScorer.DocID() == ReqScorer.DocID()) ? 2 : 1;
+            }
         }
 
         public override ICollection<ChildScorer> Children

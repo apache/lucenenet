@@ -142,9 +142,9 @@ namespace Lucene.Net.Search
                 return LastDocScore;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 1;
+                get { return 1; }
             }
 
             public override int DocID()
@@ -352,9 +352,9 @@ namespace Lucene.Net.Search
             return sum * coordinator.CoordFactors[coordinator.NrMatchers];
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return CountingSumScorer.Freq();
+            get { return CountingSumScorer.Freq; }
         }
 
         public override int Advance(int target)

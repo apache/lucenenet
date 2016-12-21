@@ -540,9 +540,9 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Current.Positions.Length;
+                get { return Current.Positions.Length; }
             }
 
             public override int DocID()
@@ -597,9 +597,9 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Current.Positions.Length;
+                get { return Current.Positions.Length; }
             }
 
             public override int DocID()

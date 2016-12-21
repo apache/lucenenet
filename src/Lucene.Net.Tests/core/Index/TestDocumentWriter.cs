@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "repeated", new BytesRef("repeated"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            int freq = termPositions.Freq();
+            int freq = termPositions.Freq;
             Assert.AreEqual(2, freq);
             Assert.AreEqual(0, termPositions.NextPosition());
             Assert.AreEqual(502, termPositions.NextPosition());
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
 
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, reader.LiveDocs, "f1", new BytesRef("a"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            int freq = termPositions.Freq();
+            int freq = termPositions.Freq;
             Assert.AreEqual(3, freq);
             Assert.AreEqual(0, termPositions.NextPosition());
             Assert.IsNotNull(termPositions.Payload);
@@ -280,18 +280,18 @@ namespace Lucene.Net.Index
 
             DocsAndPositionsEnum termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, termPositions.Freq());
+            Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(0, termPositions.NextPosition());
 
             termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term2"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(2, termPositions.Freq());
+            Assert.AreEqual(2, termPositions.Freq);
             Assert.AreEqual(1, termPositions.NextPosition());
             Assert.AreEqual(3, termPositions.NextPosition());
 
             termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term3"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, termPositions.Freq());
+            Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(2, termPositions.NextPosition());
             reader.Dispose();
         }

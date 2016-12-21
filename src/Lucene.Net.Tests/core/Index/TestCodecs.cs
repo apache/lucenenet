@@ -814,7 +814,7 @@ namespace Lucene.Net.Index
                                 Assert.AreEqual(term2.Docs[upto2], doc);
                                 if (!field.OmitTF)
                                 {
-                                    Assert.AreEqual(term2.Positions[upto2].Length, postings.Freq());
+                                    Assert.AreEqual(term2.Positions[upto2].Length, postings.Freq);
                                     if (Random().Next(2) == 1)
                                     {
                                         this.VerifyPositions(term2.Positions[upto2], postings);
@@ -881,7 +881,7 @@ namespace Lucene.Net.Index
                 DocsEnum de = ((AtomicReader)ctx.Reader).TermDocsEnum(term);
                 while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    Assert.AreEqual(1, de.Freq(), "wrong freq for doc " + de.DocID());
+                    Assert.AreEqual(1, de.Freq, "wrong freq for doc " + de.DocID());
                 }
             }
             reader.Dispose();

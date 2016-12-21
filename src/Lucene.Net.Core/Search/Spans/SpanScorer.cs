@@ -98,9 +98,9 @@ namespace Lucene.Net.Search.Spans
             return DocScorer.Score(Doc, Freq_Renamed);
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return NumMatches;
+            get { return NumMatches; }
         }
 
         /// <summary>

@@ -285,9 +285,9 @@ namespace Lucene.Net.Search
             return Doc;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return NrMatchers;
+            get { return NrMatchers; }
         }
 
         /// <summary>

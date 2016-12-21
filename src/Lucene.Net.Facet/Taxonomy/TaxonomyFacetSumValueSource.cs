@@ -81,9 +81,9 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return score_Renamed;
             }
-            public override int Freq()
+            public override int Freq
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
             public override int DocID()
             {

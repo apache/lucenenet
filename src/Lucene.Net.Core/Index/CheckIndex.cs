@@ -1179,7 +1179,7 @@ namespace Lucene.Net.Index
                         int freq = -1;
                         if (hasFreqs)
                         {
-                            freq = docs2.Freq();
+                            freq = docs2.Freq;
                             if (freq <= 0)
                             {
                                 throw new Exception("term " + term + ": doc " + doc + ": freq " + freq + " is out of bounds");
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Index
                             // When a field didn't index freq, it must
                             // consistently "lie" and pretend that freq was
                             // 1:
-                            if (docs2.Freq() != 1)
+                            if (docs2.Freq != 1)
                             {
                                 throw new Exception("term " + term + ": doc " + doc + ": freq " + freq + " != 1 when Terms.hasFreqs() is false");
                             }
@@ -1291,7 +1291,7 @@ namespace Lucene.Net.Index
                             {
                                 visitedDocs.Set(docsNoDel.DocID());
                                 docCount++;
-                                totalTermFreq += docsNoDel.Freq();
+                                totalTermFreq += docsNoDel.Freq;
                             }
                         }
                         else
@@ -1342,7 +1342,7 @@ namespace Lucene.Net.Index
                                 {
                                     throw new Exception("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
                                 }
-                                int freq = postings.Freq();
+                                int freq = postings.Freq;
                                 if (freq <= 0)
                                 {
                                     throw new Exception("termFreq " + freq + " is out of bounds");
@@ -2203,10 +2203,10 @@ namespace Lucene.Net.Index
 
                                     if (postingsHasFreq)
                                     {
-                                        int tf = docs2.Freq();
-                                        if (postingsHasFreq && postingsDocs2.Freq() != tf)
+                                        int tf = docs2.Freq;
+                                        if (postingsHasFreq && postingsDocs2.Freq != tf)
                                         {
-                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": freq=" + tf + " differs from postings freq=" + postingsDocs2.Freq());
+                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": freq=" + tf + " differs from postings freq=" + postingsDocs2.Freq);
                                         }
 
                                         if (hasProx)

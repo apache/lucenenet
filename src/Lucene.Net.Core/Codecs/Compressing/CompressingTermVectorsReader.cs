@@ -1163,10 +1163,13 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                CheckDoc();
-                return TermFreq;
+                get
+                {
+                    CheckDoc();
+                    return TermFreq;
+                }
             }
 
             public override int DocID()

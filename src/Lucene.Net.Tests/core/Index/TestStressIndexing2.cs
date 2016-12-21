@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
                                 if (dpEnum != null)
                                 {
                                     Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                                    int freq = dpEnum.Freq();
+                                    int freq = dpEnum.Freq;
                                     Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
                                     for (int posUpto = 0; posUpto < freq; posUpto++)
                                     {
@@ -489,7 +489,7 @@ namespace Lucene.Net.Index
                                     dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                                    int freq = dEnum.Freq();
+                                    int freq = dEnum.Freq;
                                     Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
                                 }
                             }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Index
                                 if (dpEnum != null)
                                 {
                                     Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                                    int freq = dpEnum.Freq();
+                                    int freq = dpEnum.Freq;
                                     Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
                                     for (int posUpto = 0; posUpto < freq; posUpto++)
                                     {
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
                                     dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                                    int freq = dEnum.Freq();
+                                    int freq = dEnum.Freq;
                                     Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
                                 }
                             }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Index
                     while (docs1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = docs1.DocID();
-                        int f = docs1.Freq();
+                        int f = docs1.Freq;
                         info1[len1] = (((long)d) << 32) | f;
                         len1++;
                     }
@@ -635,7 +635,7 @@ namespace Lucene.Net.Index
                     while (docs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = r2r1[docs2.DocID()];
-                        int f = docs2.Freq();
+                        int f = docs2.Freq;
                         info2[len2] = (((long)d) << 32) | f;
                         len2++;
                     }
@@ -748,8 +748,8 @@ namespace Lucene.Net.Index
                         //Assert.AreEqual(docID1, docID2);
                         Assert.IsTrue(docID1 != DocIdSetIterator.NO_MORE_DOCS);
 
-                        int freq1 = dpEnum1.Freq();
-                        int freq2 = dpEnum2.Freq();
+                        int freq1 = dpEnum1.Freq;
+                        int freq2 = dpEnum2.Freq;
                         Assert.AreEqual(freq1, freq2);
                         IOffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute<IOffsetAttribute>() ? dpEnum1.Attributes().GetAttribute<IOffsetAttribute>() : null;
                         IOffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute<IOffsetAttribute>() ? dpEnum2.Attributes().GetAttribute<IOffsetAttribute>() : null;
@@ -789,8 +789,8 @@ namespace Lucene.Net.Index
                         //int docID2 = dEnum2.NextDoc();
                         //Assert.AreEqual(docID1, docID2);
                         Assert.IsTrue(docID1 != DocIdSetIterator.NO_MORE_DOCS);
-                        int freq1 = dEnum1.Freq();
-                        int freq2 = dEnum2.Freq();
+                        int freq1 = dEnum1.Freq;
+                        int freq2 = dEnum2.Freq;
                         Assert.AreEqual(freq1, freq2);
                         Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum1.NextDoc());
                         Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum2.NextDoc());

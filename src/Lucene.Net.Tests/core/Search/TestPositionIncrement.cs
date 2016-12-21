@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
             int count = 0;
             Assert.IsTrue(tp.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             // "a" occurs 4 times
-            Assert.AreEqual(4, tp.Freq());
+            Assert.AreEqual(4, tp.Freq);
             Assert.AreEqual(0, tp.NextPosition());
             Assert.AreEqual(1, tp.NextPosition());
             Assert.AreEqual(3, tp.NextPosition());

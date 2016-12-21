@@ -85,13 +85,13 @@ namespace Lucene.Net.Index
                     do
                     {
                         string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.DocID(); // TODO: + " usePayloads: " + usePayload;
-                        Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+                        Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
                         Assert.AreEqual(0, docsAndPosEnum.NextPosition(), msg);
-                        Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+                        Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
                         Assert.AreEqual(10, docsAndPosEnum.NextPosition(), msg);
-                        Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+                        Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
                         Assert.AreEqual(20, docsAndPosEnum.NextPosition(), msg);
-                        Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+                        Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
                         Assert.AreEqual(30, docsAndPosEnum.NextPosition(), msg);
                     } while (docsAndPosEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                         int?[] pos = positionsInDoc[atomicReaderContext.DocBase + docID];
-                        Assert.AreEqual(pos.Length, docsAndPosEnum.Freq());
+                        Assert.AreEqual(pos.Length, docsAndPosEnum.Freq);
                         // number of positions read should be random - don't read all of them
                         // allways
                         int howMany = Random().Next(20) == 0 ? pos.Length - Random().Next(pos.Length) : pos.Length;
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
                         if (freqInDoc[context.DocBase + j] != 0)
                         {
                             Assert.AreEqual(j, docsEnum.DocID());
-                            Assert.AreEqual(docsEnum.Freq(), freqInDoc[context.DocBase + j]);
+                            Assert.AreEqual(docsEnum.Freq, freqInDoc[context.DocBase + j]);
                             if (i % 2 == 0 && Random().Next(10) == 0)
                             {
                                 int next = FindNext(freqInDoc, context.DocBase + j + 1, context.DocBase + maxDoc) - context.DocBase;
@@ -362,10 +362,10 @@ namespace Lucene.Net.Index
                         initDoc = docsAndPosEnum.Advance(Random().Next(maxDoc));
                     }
                     string msg = "Iteration: " + i + " initDoc: " + initDoc; // TODO: + " payloads: " + usePayload;
-                    Assert.AreEqual(howMany / 2, docsAndPosEnum.Freq());
+                    Assert.AreEqual(howMany / 2, docsAndPosEnum.Freq);
                     for (int j = 0; j < howMany; j += 2)
                     {
-                        Assert.AreEqual(j, docsAndPosEnum.NextPosition(), "position missmatch index: " + j + " with freq: " + docsAndPosEnum.Freq() + " -- " + msg);
+                        Assert.AreEqual(j, docsAndPosEnum.NextPosition(), "position missmatch index: " + j + " with freq: " + docsAndPosEnum.Freq + " -- " + msg);
                     }
                 }
             }

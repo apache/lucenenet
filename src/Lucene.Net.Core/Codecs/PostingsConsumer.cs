@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs
                         break;
                     }
                     visitedDocs.Set(doc);
-                    int freq = postings.Freq();
+                    int freq = postings.Freq;
                     this.StartDoc(doc, freq);
                     this.FinishDoc();
                     df++;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
                         break;
                     }
                     visitedDocs.Set(doc);
-                    int freq = postingsEnum.Freq();
+                    int freq = postingsEnum.Freq;
                     this.StartDoc(doc, freq);
                     totTF += freq;
                     for (int i = 0; i < freq; i++)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs
                         break;
                     }
                     visitedDocs.Set(doc);
-                    int freq = postingsEnum.Freq();
+                    int freq = postingsEnum.Freq;
                     this.StartDoc(doc, freq);
                     totTF += freq;
                     for (int i = 0; i < freq; i++)

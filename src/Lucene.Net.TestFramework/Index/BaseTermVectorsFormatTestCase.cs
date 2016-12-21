@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(docsEnum);
                 Assert.AreEqual(0, docsEnum.NextDoc());
                 Assert.AreEqual(0, docsEnum.DocID());
-                Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?)docsEnum.Freq());
+                Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?)docsEnum.Freq);
                 Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
                 this.docsEnum.Value = docsEnum;
 
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
                 if (terms.HasPositions() || terms.HasOffsets())
                 {
                     Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
-                    int freq = docsAndPositionsEnum.Freq();
+                    int freq = docsAndPositionsEnum.Freq;
                     Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?)freq);
                     if (docsAndPositionsEnum != null)
                     {

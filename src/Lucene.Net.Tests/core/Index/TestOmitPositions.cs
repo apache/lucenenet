@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             DocsEnum de = TestUtil.Docs(Random(), reader, "foo", new BytesRef("test"), null, null, DocsEnum.FLAG_FREQS);
             while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
-                Assert.AreEqual(2, de.Freq());
+                Assert.AreEqual(2, de.Freq);
             }
 
             reader.Dispose();

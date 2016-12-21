@@ -1168,9 +1168,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Docs.Freq;
+                get { return Docs.Freq; }
             }
 
             public override int DocID()
@@ -1237,9 +1237,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return Pos.Freq;
+                get { return Pos.Freq; }
             }
 
             public override int DocID()

@@ -404,7 +404,7 @@ namespace Lucene.Net.Codecs.Memory
                             scratch.Add(docID);
                             if (hasFreq)
                             {
-                                int freq = docsEnum2.Freq();
+                                int freq = docsEnum2.Freq;
                                 scratch.Add(freq);
                                 if (hasPos)
                                 {
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Memory
                             docs[upto] = docID;
                             if (hasFreq)
                             {
-                                int freq = docsEnum2.Freq();
+                                int freq = docsEnum2.Freq;
                                 freqs[upto] = freq;
                                 if (hasPos)
                                 {
@@ -1845,9 +1845,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 1;
+                get { return 1; }
             }
 
             public override int Advance(int target)
@@ -1928,9 +1928,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return postings[upto + 1];
+                get { return postings[upto + 1]; }
             }
 
             public override int Advance(int target)
@@ -2026,10 +2026,10 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
                 // TODO: can I do postings[upto+1]?
-                return freq_Renamed;
+                get { return freq_Renamed; }
             }
 
             public override int Advance(int target)
@@ -2171,9 +2171,9 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return freq_Renamed;
+                get { return freq_Renamed; }
             }
 
             public override int NextPosition()
@@ -2305,15 +2305,18 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                if (freqs == null)
+                get
                 {
-                    return 1;
-                }
-                else
-                {
-                    return freqs[upto];
+                    if (freqs == null)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return freqs[upto];
+                    }
                 }
             }
 
@@ -2507,9 +2510,9 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed = NO_MORE_DOCS;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return freqs[upto];
+                get { return freqs[upto]; }
             }
 
             public override int DocID()

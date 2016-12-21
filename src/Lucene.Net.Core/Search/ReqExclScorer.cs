@@ -115,9 +115,9 @@ namespace Lucene.Net.Search
             return ReqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return ReqScorer.Freq();
+            get { return ReqScorer.Freq; }
         }
 
         public override ICollection<ChildScorer> Children

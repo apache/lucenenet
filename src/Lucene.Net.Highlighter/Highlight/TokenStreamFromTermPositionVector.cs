@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 dpEnum.NextDoc();
-                int freq = dpEnum.Freq();
+                int freq = dpEnum.Freq;
                 for (int j = 0; j < freq; j++)
                 {
                     int pos = dpEnum.NextPosition();

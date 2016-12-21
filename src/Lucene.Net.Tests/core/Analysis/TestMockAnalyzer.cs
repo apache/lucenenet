@@ -372,7 +372,7 @@ namespace Lucene.Net.Analysis
             Assert.AreEqual(new BytesRef("a"), te.Next());
             DocsAndPositionsEnum dpe = te.DocsAndPositions(null, null);
             Assert.AreEqual(0, dpe.NextDoc());
-            Assert.AreEqual(2, dpe.Freq());
+            Assert.AreEqual(2, dpe.Freq);
             Assert.AreEqual(0, dpe.NextPosition());
             Assert.AreEqual(0, dpe.StartOffset);
             int endOffset = dpe.EndOffset;

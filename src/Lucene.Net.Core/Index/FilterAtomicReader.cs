@@ -278,9 +278,9 @@ namespace Lucene.Net.Index
                 return input.DocID();
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return input.Freq();
+                get { return input.Freq; }
             }
 
             public override int NextDoc()
@@ -325,9 +325,9 @@ namespace Lucene.Net.Index
                 return input.DocID();
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return input.Freq();
+                get { return input.Freq; }
             }
 
             public override int NextDoc()

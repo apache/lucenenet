@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = scorer.Freq();
+                        float freq = scorer.Freq;
                         SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";

@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             {
                 int docId = termDocs.DocID();
                 Assert.IsTrue(docId == 0);
-                int freq = termDocs.Freq();
+                int freq = termDocs.Freq;
                 Assert.IsTrue(freq == 3);
             }
             reader.Dispose();
@@ -155,10 +155,10 @@ namespace Lucene.Net.Index
             // with next
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(0, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(1, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.Advance(2) != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(2, tdocs.DocID());
             Assert.IsTrue(tdocs.Advance(4) != DocIdSetIterator.NO_MORE_DOCS);
@@ -185,10 +185,10 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(10, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(11, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.Advance(12) != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(12, tdocs.DocID());
             Assert.IsTrue(tdocs.Advance(15) != DocIdSetIterator.NO_MORE_DOCS);
@@ -219,10 +219,10 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(26, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(27, tdocs.DocID());
-            Assert.AreEqual(4, tdocs.Freq());
+            Assert.AreEqual(4, tdocs.Freq);
             Assert.IsTrue(tdocs.Advance(28) != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(28, tdocs.DocID());
             Assert.IsTrue(tdocs.Advance(40) != DocIdSetIterator.NO_MORE_DOCS);

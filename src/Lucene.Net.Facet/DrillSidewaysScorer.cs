@@ -742,9 +742,9 @@ namespace Lucene.Net.Facet
                 return outerInstance.collectDocID;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 1 + outerInstance.dims.Length;
+                get { return 1 + outerInstance.dims.Length; }
             }
 
             public override int NextDoc()

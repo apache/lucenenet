@@ -370,9 +370,9 @@ namespace Lucene.Net.Queries
                 return qWeight * provider.CustomScore(subQueryScorer.DocID(), subQueryScorer.Score(), vScores);
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return subQueryScorer.Freq();
+                get { return subQueryScorer.Freq; }
             }
 
             public override ICollection<ChildScorer> Children

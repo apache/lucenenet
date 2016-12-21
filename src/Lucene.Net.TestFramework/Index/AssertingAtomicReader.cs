@@ -328,13 +328,16 @@ namespace Lucene.Net.Index
                 return Doc;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
-                Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
-                int freq = base.Freq();
-                Debug.Assert(freq > 0);
-                return freq;
+                get
+                {
+                    Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
+                    Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
+                    int freq = base.Freq;
+                    Debug.Assert(freq > 0);
+                    return freq;
+                }
             }
         }
 
@@ -367,7 +370,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     State = DocsEnumState.ITERATING;
-                    PositionMax = base.Freq();
+                    PositionMax = base.Freq;
                 }
                 Debug.Assert(base.DocID() == nextDoc);
                 return Doc = nextDoc;
@@ -388,7 +391,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     State = DocsEnumState.ITERATING;
-                    PositionMax = base.Freq();
+                    PositionMax = base.Freq;
                 }
                 Debug.Assert(base.DocID() == advanced);
                 return Doc = advanced;
@@ -400,13 +403,16 @@ namespace Lucene.Net.Index
                 return Doc;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
-                Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
-                int freq = base.Freq();
-                Debug.Assert(freq > 0);
-                return freq;
+                get
+                {
+                    Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
+                    Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
+                    int freq = base.Freq;
+                    Debug.Assert(freq > 0);
+                    return freq;
+                }
             }
 
             public override int NextPosition()

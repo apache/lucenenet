@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     return false;
                 }
-                Freq = Postings_Renamed.Freq();
+                Freq = Postings_Renamed.Freq;
                 Count = 0;
             }
             Position = Postings_Renamed.NextPosition();
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            Freq = Postings_Renamed.Freq();
+            Freq = Postings_Renamed.Freq;
             Count = 0;
             Position = Postings_Renamed.NextPosition();
             Count++;

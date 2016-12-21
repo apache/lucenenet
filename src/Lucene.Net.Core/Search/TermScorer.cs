@@ -52,9 +52,9 @@ namespace Lucene.Net.Search
             return DocsEnum.DocID();
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return DocsEnum.Freq();
+            get { return DocsEnum.Freq; }
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
         public override float Score()
         {
             Debug.Assert(DocID() != NO_MORE_DOCS);
-            return DocScorer.Score(DocsEnum.DocID(), DocsEnum.Freq());
+            return DocScorer.Score(DocsEnum.DocID(), DocsEnum.Freq);
         }
 
         /// <summary>

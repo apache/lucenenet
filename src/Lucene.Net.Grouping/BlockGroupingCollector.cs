@@ -99,9 +99,9 @@ namespace Lucene.Net.Search.Grouping
                 return score;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                throw new InvalidOperationException(); // TODO: wtf does this class do?
+                get { throw new InvalidOperationException(); } // TODO: wtf does this class do?
             }
 
             public override int DocID()

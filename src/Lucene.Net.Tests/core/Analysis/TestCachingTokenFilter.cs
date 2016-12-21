@@ -62,18 +62,18 @@ namespace Lucene.Net.Analysis
             IndexReader reader = writer.Reader;
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, termPositions.Freq());
+            Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(0, termPositions.NextPosition());
 
             termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term2"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(2, termPositions.Freq());
+            Assert.AreEqual(2, termPositions.Freq);
             Assert.AreEqual(1, termPositions.NextPosition());
             Assert.AreEqual(3, termPositions.NextPosition());
 
             termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term3"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, termPositions.Freq());
+            Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(2, termPositions.NextPosition());
             reader.Dispose();
             writer.Dispose();

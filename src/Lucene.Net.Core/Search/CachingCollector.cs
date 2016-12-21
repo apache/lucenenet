@@ -97,9 +97,9 @@ namespace Lucene.Net.Search
                 return Doc;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
             public override int NextDoc()

@@ -493,9 +493,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 return _cost;
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return _freq;
+                get { return _freq; }
             }
         }
 
@@ -587,9 +587,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return _freq;
+                get { return _freq; }
             }
 
             public override int DocID()

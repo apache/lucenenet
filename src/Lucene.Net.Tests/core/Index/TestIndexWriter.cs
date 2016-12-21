@@ -654,7 +654,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, reader.DocFreq(t));
             DocsEnum td = TestUtil.Docs(Random(), reader, "field", new BytesRef("a"), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
             td.NextDoc();
-            Assert.AreEqual(128 * 1024, td.Freq());
+            Assert.AreEqual(128 * 1024, td.Freq);
             reader.Dispose();
             dir.Dispose();
         }
@@ -1080,14 +1080,14 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.IsNotNull(dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, dpEnum.Freq());
+            Assert.AreEqual(1, dpEnum.Freq);
             Assert.AreEqual(100, dpEnum.NextPosition());
 
             Assert.IsNotNull(termsEnum.Next());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsNotNull(dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.AreEqual(1, dpEnum.Freq());
+            Assert.AreEqual(1, dpEnum.Freq);
             Assert.AreEqual(101, dpEnum.NextPosition());
             Assert.IsNull(termsEnum.Next());
 

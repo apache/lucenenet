@@ -398,9 +398,9 @@ namespace Lucene.Net.Join
                 return scores[currentDoc];
             }
             
-            public override int Freq()
+            public override int Freq
             {
-                return 1;
+                get { return 1; }
             }
 
             public override int DocID()

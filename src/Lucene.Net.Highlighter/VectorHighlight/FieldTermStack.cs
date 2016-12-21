@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 // For weight look here: http://lucene.apache.org/core/3_6_0/api/core/org/apache/lucene/search/DefaultSimilarity.html
                 float weight = (float)(Math.Log(numDocs / (double)(reader.DocFreq(new Term(fieldName, text)) + 1)) + 1.0);
 
-                int freq = dpEnum.Freq();
+                int freq = dpEnum.Freq;
 
                 for (int i = 0; i < freq; i++)
                 {

@@ -125,9 +125,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     this.outerInstance = outerInstance;
                 }
 
-                public override int Freq()
+                public override int Freq
                 {
-                    return 0;
+                    get { return 0; }
                 }
 
                 public override int DocID()
@@ -175,7 +175,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     }
 
                     // a match!
-                    return similarity.Tf(docs.Freq());
+                    return similarity.Tf(docs.Freq);
                 }
                 catch (IOException e)
                 {

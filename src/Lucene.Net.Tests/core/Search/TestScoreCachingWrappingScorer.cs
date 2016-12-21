@@ -48,9 +48,9 @@ namespace Lucene.Net.Search
                 return Idx == Scores.Length ? float.NaN : Scores[Idx++];
             }
 
-            public override int Freq()
+            public override int Freq
             {
-                return 1;
+                get { return 1; }
             }
 
             public override int DocID()
