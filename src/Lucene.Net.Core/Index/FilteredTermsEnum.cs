@@ -38,11 +38,11 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class FilteredTermsEnum : TermsEnum
     {
-        private BytesRef InitialSeekTerm_Renamed = null;
-        private bool DoSeek;
-        private BytesRef ActualTerm = null;
+        private BytesRef initialSeekTerm = null;
+        private bool doSeek;
+        private BytesRef actualTerm = null;
 
-        private readonly TermsEnum Tenum;
+        private readonly TermsEnum tenum;
 
         /// <summary>
         /// Return value, if term should be accepted or the iteration should
@@ -96,8 +96,8 @@ namespace Lucene.Net.Index
         public FilteredTermsEnum(TermsEnum tenum, bool startWithSeek)
         {
             Debug.Assert(tenum != null);
-            this.Tenum = tenum;
-            DoSeek = startWithSeek;
+            this.tenum = tenum;
+            doSeek = startWithSeek;
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.InitialSeekTerm_Renamed = value;
+                this.initialSeekTerm = value;
             }
         }
 
@@ -135,8 +135,8 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual BytesRef NextSeekTerm(BytesRef currentTerm)
         {
-            BytesRef t = InitialSeekTerm_Renamed;
-            InitialSeekTerm_Renamed = null;
+            BytesRef t = initialSeekTerm;
+            initialSeekTerm = null;
             return t;
         }
 
@@ -146,30 +146,30 @@ namespace Lucene.Net.Index
         /// </summary>
         public override AttributeSource Attributes
         {
-            get { return Tenum.Attributes; }
+            get { return tenum.Attributes; }
         }
 
         public override BytesRef Term()
         {
-            return Tenum.Term();
+            return tenum.Term();
         }
 
         public override IComparer<BytesRef> Comparator
         {
             get
             {
-                return Tenum.Comparator;
+                return tenum.Comparator;
             }
         }
 
         public override int DocFreq()
         {
-            return Tenum.DocFreq();
+            return tenum.DocFreq();
         }
 
         public override long TotalTermFreq()
         {
-            return Tenum.TotalTermFreq();
+            return tenum.TotalTermFreq();
         }
 
         /// <summary>
@@ -201,17 +201,17 @@ namespace Lucene.Net.Index
 
         public override long Ord()
         {
-            return Tenum.Ord();
+            return tenum.Ord();
         }
 
         public override DocsEnum Docs(Bits bits, DocsEnum reuse, int flags)
         {
-            return Tenum.Docs(bits, reuse, flags);
+            return tenum.Docs(bits, reuse, flags);
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(Bits bits, DocsAndPositionsEnum reuse, int flags)
         {
-            return Tenum.DocsAndPositions(bits, reuse, flags);
+            return tenum.DocsAndPositions(bits, reuse, flags);
         }
 
         /// <summary>
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public override TermState TermState()
         {
-            Debug.Assert(Tenum != null);
-            return Tenum.TermState();
+            Debug.Assert(tenum != null);
+            return tenum.TermState();
         }
 
         public override BytesRef Next()
@@ -239,26 +239,26 @@ namespace Lucene.Net.Index
             for (; ; )
             {
                 // Seek or forward the iterator
-                if (DoSeek)
+                if (doSeek)
                 {
-                    DoSeek = false;
-                    BytesRef t = NextSeekTerm(ActualTerm);
+                    doSeek = false;
+                    BytesRef t = NextSeekTerm(actualTerm);
                     //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
                     // Make sure we always seek forward:
-                    Debug.Assert(ActualTerm == null || t == null || Comparator.Compare(t, ActualTerm) > 0, "curTerm=" + ActualTerm + " seekTerm=" + t);
-                    if (t == null || Tenum.SeekCeil(t) == SeekStatus.END)
+                    Debug.Assert(actualTerm == null || t == null || Comparator.Compare(t, actualTerm) > 0, "curTerm=" + actualTerm + " seekTerm=" + t);
+                    if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
                     {
                         // no more terms to seek to or enum exhausted
                         //System.out.println("  return null");
                         return null;
                     }
-                    ActualTerm = Tenum.Term();
+                    actualTerm = tenum.Term();
                     //System.out.println("  got term=" + actualTerm.utf8ToString());
                 }
                 else
                 {
-                    ActualTerm = Tenum.Next();
-                    if (ActualTerm == null)
+                    actualTerm = tenum.Next();
+                    if (actualTerm == null)
                     {
                         // enum exhausted
                         return null;
@@ -266,19 +266,19 @@ namespace Lucene.Net.Index
                 }
 
                 // check if term is accepted
-                switch (Accept(ActualTerm))
+                switch (Accept(actualTerm))
                 {
                     case FilteredTermsEnum.AcceptStatus.YES_AND_SEEK:
-                        DoSeek = true;
+                        doSeek = true;
                         // term accepted, but we need to seek so fall-through
                         goto case FilteredTermsEnum.AcceptStatus.YES;
                     case FilteredTermsEnum.AcceptStatus.YES:
                         // term accepted
-                        return ActualTerm;
+                        return actualTerm;
 
                     case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
                         // invalid term, seek next time
-                        DoSeek = true;
+                        doSeek = true;
                         break;
 
                     case FilteredTermsEnum.AcceptStatus.END:
