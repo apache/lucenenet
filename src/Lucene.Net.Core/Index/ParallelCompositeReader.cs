@@ -48,8 +48,8 @@ namespace Lucene.Net.Index
     /// </summary>
     public class ParallelCompositeReader : BaseCompositeReader<IndexReader>
     {
-        private readonly bool CloseSubReaders;
-        private readonly ISet<IndexReader> CompleteReaderSet = new IdentityHashSet<IndexReader>();
+        private readonly bool closeSubReaders;
+        private readonly ISet<IndexReader> completeReaderSet = new IdentityHashSet<IndexReader>();
 
         /// <summary>
         /// Create a ParallelCompositeReader based on the provided
@@ -77,19 +77,19 @@ namespace Lucene.Net.Index
         public ParallelCompositeReader(bool closeSubReaders, CompositeReader[] readers, CompositeReader[] storedFieldReaders)
             : base(PrepareSubReaders(readers, storedFieldReaders))
         {
-            this.CloseSubReaders = closeSubReaders;
-            CollectionsHelper.AddAll(CompleteReaderSet, readers);
-            CollectionsHelper.AddAll(CompleteReaderSet, storedFieldReaders);
+            this.closeSubReaders = closeSubReaders;
+            CollectionsHelper.AddAll(completeReaderSet, readers);
+            CollectionsHelper.AddAll(completeReaderSet, storedFieldReaders);
             // update ref-counts (like MultiReader):
             if (!closeSubReaders)
             {
-                foreach (IndexReader reader in CompleteReaderSet)
+                foreach (IndexReader reader in completeReaderSet)
                 {
                     reader.IncRef();
                 }
             }
             // finally add our own synthetic readers, so we close or decRef them, too (it does not matter what we do)
-            CollectionsHelper.AddAll(CompleteReaderSet, GetSequentialSubReaders());
+            CollectionsHelper.AddAll(completeReaderSet, GetSequentialSubReaders());
         }
 
         private static IndexReader[] PrepareSubReaders(CompositeReader[] readers, CompositeReader[] storedFieldsReaders)
@@ -220,11 +220,11 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 IOException ioe = null;
-                foreach (IndexReader reader in CompleteReaderSet)
+                foreach (IndexReader reader in completeReaderSet)
                 {
                     try
                     {
-                        if (CloseSubReaders)
+                        if (closeSubReaders)
                         {
                             reader.Dispose();
                         }
