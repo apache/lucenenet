@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             this.fieldInfo = fieldInfo;
             DocState = termsHashPerField.DocState;
             FieldState = termsHashPerField.FieldState;
-            IndexOptions = fieldInfo.IndexOptions;
+            SetIndexOptions(fieldInfo.IndexOptions);
         }
 
         internal override int StreamCount
@@ -97,25 +97,22 @@ namespace Lucene.Net.Index
         {
             // Record, up front, whether our in-RAM format will be
             // with or without term freqs:
-            IndexOptions = fieldInfo.IndexOptions;
+            SetIndexOptions(fieldInfo.IndexOptions);
             PayloadAttribute = null;
         }
 
-        private IndexOptions? IndexOptions // LUCENENET TODO: Change to SetIndexOptions(IndexOptions indexOptions)
+        private void SetIndexOptions(IndexOptions? indexOptions) // LUCENENET TODO: Can we eliminate the nullable
         {
-            set
+            if (indexOptions == null)
             {
-                if (value == null)
-                {
-                    // field could later be updated with indexed=true, so set everything on
-                    HasFreq = HasProx = HasOffsets = true;
-                }
-                else
-                {
-                    HasFreq = value >= Index.IndexOptions.DOCS_AND_FREQS;
-                    HasProx = value >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                    HasOffsets = value >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                }
+                // field could later be updated with indexed=true, so set everything on
+                HasFreq = HasProx = HasOffsets = true;
+            }
+            else
+            {
+                HasFreq = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS;
+                HasProx = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                HasOffsets = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
         }
 
