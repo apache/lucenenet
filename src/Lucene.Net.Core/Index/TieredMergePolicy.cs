@@ -336,19 +336,19 @@ namespace Lucene.Net.Index
 
         private class SegmentByteSizeDescending : IComparer<SegmentCommitInfo>
         {
-            private readonly TieredMergePolicy OuterInstance;
+            private readonly TieredMergePolicy outerInstance;
 
             public SegmentByteSizeDescending(TieredMergePolicy outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(SegmentCommitInfo o1, SegmentCommitInfo o2)
             {
                 try
                 {
-                    long sz1 = OuterInstance.Size(o1);
-                    long sz2 = OuterInstance.Size(o2);
+                    long sz1 = outerInstance.Size(o1);
+                    long sz2 = outerInstance.Size(o2);
                     if (sz1 > sz2)
                     {
                         return -1;
@@ -641,25 +641,25 @@ namespace Lucene.Net.Index
 
         private class MergeScoreAnonymousInnerClassHelper : MergeScore
         {
-            private readonly TieredMergePolicy OuterInstance;
+            private readonly TieredMergePolicy outerInstance;
 
-            private double Skew;
-            private double NonDelRatio;
-            private double FinalMergeScore;
+            private double skew;
+            private double nonDelRatio;
+            private double finalMergeScore;
 
             public MergeScoreAnonymousInnerClassHelper(TieredMergePolicy outerInstance, double skew, double nonDelRatio, double finalMergeScore)
             {
-                this.OuterInstance = outerInstance;
-                this.Skew = skew;
-                this.NonDelRatio = nonDelRatio;
-                this.FinalMergeScore = finalMergeScore;
+                this.outerInstance = outerInstance;
+                this.skew = skew;
+                this.nonDelRatio = nonDelRatio;
+                this.finalMergeScore = finalMergeScore;
             }
 
             internal override double Score
             {
                 get
                 {
-                    return FinalMergeScore;
+                    return finalMergeScore;
                 }
             }
 
@@ -667,7 +667,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return "skew=" + string.Format(CultureInfo.InvariantCulture, "%.3f", Skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "%.3f", NonDelRatio);
+                    return "skew=" + string.Format(CultureInfo.InvariantCulture, "%.3f", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "%.3f", nonDelRatio);
                 }
             }
         }
