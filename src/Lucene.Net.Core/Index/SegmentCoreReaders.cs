@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
                     cfsDir = dir;
                 }
 
-                FieldInfos fieldInfos = owner.FieldInfos_Renamed;
+                FieldInfos fieldInfos = owner.FieldInfos;
 
                 this.TermsIndexDivisor = termsIndexDivisor;
                 PostingsFormat format = codec.PostingsFormat;

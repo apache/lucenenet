@@ -47,18 +47,19 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class SegmentReader : AtomicReader
     {
-        private readonly SegmentCommitInfo Si;
-        private readonly Bits LiveDocs_Renamed;
+        private readonly SegmentCommitInfo si;
+        private readonly Bits liveDocs;
 
         // Normally set to si.docCount - si.delDocCount, unless we
         // were created as an NRT reader from IW, in which case IW
         // tells us the docCount:
         private readonly int numDocs;
 
-        internal readonly SegmentCoreReaders Core;
-        internal readonly SegmentDocValues SegDocValues;
+        private readonly SegmentCoreReaders core; // LUCENENET specific - made private
+        private readonly SegmentDocValues segDocValues; // LUCENENET specific - made private
 
-        internal readonly IDisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new IDisposableThreadLocalAnonymousInnerClassHelper();
+        // LUCENENET specific - made private
+        private readonly IDisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new IDisposableThreadLocalAnonymousInnerClassHelper();
 
         private class IDisposableThreadLocalAnonymousInnerClassHelper : IDisposableThreadLocal<IDictionary<string, object>>
         {
@@ -86,12 +87,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly IDictionary<string, DocValuesProducer> DvProducersByField = new Dictionary<string, DocValuesProducer>();
-        internal readonly ISet<DocValuesProducer> DvProducers = new IdentityHashSet<DocValuesProducer>();
+        // LUCENENET specific - made private
+        private readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
+        // LUCENENET specific - made private
+        private readonly ISet<DocValuesProducer> dvProducers = new IdentityHashSet<DocValuesProducer>();
 
-        internal readonly FieldInfos FieldInfos_Renamed;
+        private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 
-        private readonly IList<long?> DvGens = new List<long?>();
+        private readonly IList<long?> dvGens = new List<long?>();
 
         /// <summary>
         /// Constructs a new SegmentReader with a new core. </summary>
@@ -100,16 +103,16 @@ namespace Lucene.Net.Index
         // TODO: why is this public?
         public SegmentReader(SegmentCommitInfo si, int termInfosIndexDivisor, IOContext context)
         {
-            this.Si = si;
+            this.si = si;
             // TODO if the segment uses CFS, we may open the CFS file twice: once for
             // reading the FieldInfos (if they are not gen'd) and second time by
             // SegmentCoreReaders. We can open the CFS here and pass to SCR, but then it
             // results in less readable code (resource not closed where it was opened).
             // Best if we could somehow read FieldInfos in SCR but not keep it there, but
             // constructors don't allow returning two things...
-            FieldInfos_Renamed = ReadFieldInfos(si);
-            Core = new SegmentCoreReaders(this, si.Info.Dir, si, context, termInfosIndexDivisor);
-            SegDocValues = new SegmentDocValues();
+            fieldInfos = ReadFieldInfos(si);
+            core = new SegmentCoreReaders(this, si.Info.Dir, si, context, termInfosIndexDivisor);
+            segDocValues = new SegmentDocValues();
 
             bool success = false;
             Codec codec = si.Info.Codec;
@@ -118,16 +121,16 @@ namespace Lucene.Net.Index
                 if (si.HasDeletions())
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
-                    LiveDocs_Renamed = codec.LiveDocsFormat.ReadLiveDocs(Directory(), si, IOContext.READONCE);
+                    liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory(), si, IOContext.READONCE);
                 }
                 else
                 {
                     Debug.Assert(si.DelCount == 0);
-                    LiveDocs_Renamed = null;
+                    liveDocs = null;
                 }
                 numDocs = si.Info.DocCount - si.DelCount;
 
-                if (FieldInfos_Renamed.HasDocValues())
+                if (FieldInfos.HasDocValues())
                 {
                     InitDocValuesProducers(codec);
                 }
@@ -166,12 +169,12 @@ namespace Lucene.Net.Index
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr, Bits liveDocs, int numDocs)
         {
-            this.Si = si;
-            this.LiveDocs_Renamed = liveDocs;
+            this.si = si;
+            this.liveDocs = liveDocs;
             this.numDocs = numDocs;
-            this.Core = sr.Core;
-            Core.IncRef();
-            this.SegDocValues = sr.SegDocValues;
+            this.core = sr.core;
+            core.IncRef();
+            this.segDocValues = sr.segDocValues;
 
             //    System.out.println("[" + Thread.currentThread().getName() + "] SR.init: sharing reader: " + sr + " for gens=" + sr.genDVProducers.keySet());
 
@@ -182,14 +185,14 @@ namespace Lucene.Net.Index
                 Codec codec = si.Info.Codec;
                 if (si.FieldInfosGen == -1)
                 {
-                    FieldInfos_Renamed = sr.FieldInfos_Renamed;
+                    fieldInfos = sr.FieldInfos;
                 }
                 else
                 {
-                    FieldInfos_Renamed = ReadFieldInfos(si);
+                    fieldInfos = ReadFieldInfos(si);
                 }
 
-                if (FieldInfos_Renamed.HasDocValues())
+                if (FieldInfos.HasDocValues())
                 {
                     InitDocValuesProducers(codec);
                 }
@@ -207,7 +210,7 @@ namespace Lucene.Net.Index
         // initialize the per-field DocValuesProducer
         private void InitDocValuesProducers(Codec codec)
         {
-            Directory dir = Core.CfsReader != null ? Core.CfsReader : Si.Info.Dir;
+            Directory dir = core.CfsReader != null ? core.CfsReader : si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
             IDictionary<long?, IList<FieldInfo>> genInfos = GenInfos;
 
@@ -219,15 +222,15 @@ namespace Lucene.Net.Index
             {
                 long? gen = e.Key;
                 IList<FieldInfo> infos = e.Value;
-                DocValuesProducer dvp = SegDocValues.GetDocValuesProducer(gen, Si, IOContext.READ, dir, dvFormat, infos, TermInfosIndexDivisor);
+                DocValuesProducer dvp = segDocValues.GetDocValuesProducer(gen, si, IOContext.READ, dir, dvFormat, infos, TermInfosIndexDivisor);
                 foreach (FieldInfo fi in infos)
                 {
-                    DvProducersByField[fi.Name] = dvp;
-                    DvProducers.Add(dvp);
+                    dvProducersByField[fi.Name] = dvp;
+                    dvProducers.Add(dvp);
                 }
             }
 
-            DvGens.AddRange(genInfos.Keys);
+            dvGens.AddRange(genInfos.Keys);
         }
 
         /// <summary>
@@ -272,7 +275,7 @@ namespace Lucene.Net.Index
             get
             {
                 IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
-                foreach (FieldInfo fi in FieldInfos_Renamed)
+                foreach (FieldInfo fi in FieldInfos)
                 {
                     if (fi.DocValuesType == null)
                     {
@@ -297,7 +300,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return LiveDocs_Renamed;
+                return liveDocs;
             }
         }
 
@@ -306,18 +309,18 @@ namespace Lucene.Net.Index
             //System.out.println("SR.close seg=" + si);
             try
             {
-                Core.DecRef();
+                core.DecRef();
             }
             finally
             {
-                DvProducersByField.Clear();
+                dvProducersByField.Clear();
                 try
                 {
                     IOUtils.Close(docValuesLocal, docsWithFieldLocal);
                 }
                 finally
                 {
-                    SegDocValues.DecRef(DvGens);
+                    segDocValues.DecRef(dvGens);
                 }
             }
         }
@@ -327,7 +330,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return FieldInfos_Renamed;
+                return FieldInfos;
             }
         }
 
@@ -341,7 +344,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return Core.fieldsReaderLocal.Get();
+                return core.fieldsReaderLocal.Get();
             }
         }
 
@@ -356,7 +359,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return Core.Fields;
+                return core.Fields;
             }
         }
 
@@ -374,7 +377,7 @@ namespace Lucene.Net.Index
             get
             {
                 // Don't call ensureOpen() here (it could affect performance)
-                return Si.Info.DocCount;
+                return si.Info.DocCount;
             }
         }
 
@@ -388,7 +391,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return Core.termVectorsLocal.Get();
+                return core.termVectorsLocal.Get();
             }
         }
 
@@ -415,7 +418,7 @@ namespace Lucene.Net.Index
         {
             // SegmentInfo.toString takes dir and number of
             // *pending* deletions; so we reverse compute that here:
-            return Si.ToString(Si.Info.Dir, Si.Info.DocCount - numDocs - Si.DelCount);
+            return si.ToString(si.Info.Dir, si.Info.DocCount - numDocs - si.DelCount);
         }
 
         /// <summary>
@@ -425,7 +428,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Si.Info.Name;
+                return si.Info.Name;
             }
         }
 
@@ -436,7 +439,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Si;
+                return si;
             }
         }
 
@@ -447,7 +450,7 @@ namespace Lucene.Net.Index
             // Don't ensureOpen here -- in certain cases, when a
             // cloned/reopened reader needs to commit, it may call
             // this method on the closed original reader
-            return Si.Info.Dir;
+            return si.Info.Dir;
         }
 
         // this is necessary so that cloned SegmentReaders (which
@@ -460,7 +463,7 @@ namespace Lucene.Net.Index
                 // NOTE: if this ever changes, be sure to fix
                 // SegmentCoreReader.notifyCoreClosedListeners to match!
                 // Today it passes "this" as its coreCacheKey:
-                return Core;
+                return core;
             }
         }
 
@@ -480,7 +483,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Core.TermsIndexDivisor;
+                return core.TermsIndexDivisor;
             }
         }
 
@@ -489,7 +492,7 @@ namespace Lucene.Net.Index
         // DovDocValuesType.
         private FieldInfo GetDVField(string field, DocValuesType type)
         {
-            FieldInfo fi = FieldInfos_Renamed.FieldInfo(field);
+            FieldInfo fi = FieldInfos.FieldInfo(field);
             if (fi == null)
             {
                 // Field does not exist
@@ -527,7 +530,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
-                DvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetNumeric(fi);
                 dvFields[field] = dvs;
@@ -539,7 +542,7 @@ namespace Lucene.Net.Index
         public override Bits GetDocsWithField(string field)
         {
             EnsureOpen();
-            FieldInfo fi = FieldInfos_Renamed.FieldInfo(field);
+            FieldInfo fi = FieldInfos.FieldInfo(field);
             if (fi == null)
             {
                 // Field does not exist
@@ -558,7 +561,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
-                DvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetDocsWithField(fi);
                 dvFields[field] = dvs;
@@ -585,7 +588,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
-                DvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetBinary(fi);
                 dvFields[field] = dvs;
@@ -612,7 +615,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
-                DvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSorted(fi);
                 dvFields[field] = dvs;
@@ -639,7 +642,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
-                DvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSortedSet(fi);
                 dvFields[field] = dvs;
@@ -651,13 +654,13 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNormValues(string field)
         {
             EnsureOpen();
-            FieldInfo fi = FieldInfos_Renamed.FieldInfo(field);
+            FieldInfo fi = FieldInfos.FieldInfo(field);
             if (fi == null || !fi.HasNorms())
             {
                 // Field does not exist or does not index norms
                 return null;
             }
-            return Core.GetNormValues(fi);
+            return core.GetNormValues(fi);
         }
 
         /// <summary>
@@ -687,7 +690,7 @@ namespace Lucene.Net.Index
         public void AddCoreClosedListener(CoreClosedListener listener)
         {
             EnsureOpen();
-            Core.AddCoreClosedListener(listener);
+            core.AddCoreClosedListener(listener);
         }
 
         /// <summary>
@@ -695,7 +698,7 @@ namespace Lucene.Net.Index
         public void RemoveCoreClosedListener(CoreClosedListener listener)
         {
             EnsureOpen();
-            Core.RemoveCoreClosedListener(listener);
+            core.RemoveCoreClosedListener(listener);
         }
 
         /// <summary>
@@ -704,16 +707,16 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             long ramBytesUsed = 0;
-            if (DvProducers != null)
+            if (dvProducers != null)
             {
-                foreach (DocValuesProducer producer in DvProducers)
+                foreach (DocValuesProducer producer in dvProducers)
                 {
                     ramBytesUsed += producer.RamBytesUsed();
                 }
             }
-            if (Core != null)
+            if (core != null)
             {
-                ramBytesUsed += Core.RamBytesUsed();
+                ramBytesUsed += core.RamBytesUsed();
             }
             return ramBytesUsed;
         }
@@ -733,21 +736,21 @@ namespace Lucene.Net.Index
             }
 
             // terms/postings
-            if (Core.Fields != null)
+            if (core.Fields != null)
             {
-                Core.Fields.CheckIntegrity();
+                core.Fields.CheckIntegrity();
             }
 
             // norms
-            if (Core.NormsProducer != null)
+            if (core.NormsProducer != null)
             {
-                Core.NormsProducer.CheckIntegrity();
+                core.NormsProducer.CheckIntegrity();
             }
 
             // docvalues
-            if (DvProducers != null)
+            if (dvProducers != null)
             {
-                foreach (DocValuesProducer producer in DvProducers)
+                foreach (DocValuesProducer producer in dvProducers)
                 {
                     producer.CheckIntegrity();
                 }
