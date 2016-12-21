@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             }
             if (ensureNotStalled)
             {
-                Assert.IsFalse(docsWriter.FlushControl.StallControl.WasStalled());
+                Assert.IsFalse(docsWriter.FlushControl.StallControl.WasStalled);
             }
             writer.Dispose();
             Assert.AreEqual(0, flushControl.ActiveBytes);
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(numDocumentsToIndex, r.MaxDoc);
             if (!flushPolicy.FlushOnRAM())
             {
-                assertFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled());
-                assertFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked());
+                assertFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled);
+                assertFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked);
             }
             r.Dispose();
             writer.Dispose();
@@ -278,11 +278,11 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 if (numThreads[i] == 1)
                 {
-                    assertFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked());
+                    assertFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked);
                 }
                 if (docsWriter.FlushControl.PeakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
                 {
-                    Assert.IsTrue(docsWriter.FlushControl.StallControl.WasStalled());
+                    Assert.IsTrue(docsWriter.FlushControl.StallControl.WasStalled);
                 }
                 AssertActiveBytesAfter(flushControl);
                 writer.Dispose(true);

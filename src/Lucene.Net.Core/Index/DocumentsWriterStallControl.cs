@@ -126,15 +126,18 @@ namespace Lucene.Net.Index
             return NumWaiting >= 0;
         }
 
-        internal bool HasBlocked() // for tests // LUCENENET TODO: Make property
+        internal bool HasBlocked // for tests
         {
-            lock (this)
+            get
             {
-                return NumWaiting > 0;
+                lock (this)
+                {
+                    return NumWaiting > 0;
+                }
             }
         }
 
-        internal bool Healthy // LUCENENET TODO: Rename IsHealthy
+        internal bool IsHealthy // LUCENENET TODO: Rename IsHealthy
         {
             get
             {
@@ -150,11 +153,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool WasStalled() // for tests // LUCENENET TODO: Make property
+        internal bool WasStalled // for tests
         {
-            lock (this)
+            get
             {
-                return WasStalled_Renamed;
+                lock (this)
+                {
+                    return WasStalled_Renamed;
+                }
             }
         }
     }

@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             ctrl.UpdateStalled(false);
             ThreadClass[] waitThreads = WaitThreads(AtLeast(1), ctrl);
             Start(waitThreads);
-            Assert.IsFalse(ctrl.HasBlocked());
+            Assert.IsFalse(ctrl.HasBlocked);
             Assert.IsFalse(ctrl.AnyStalledThreads());
             Join(waitThreads);
 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             waitThreads = WaitThreads(AtLeast(1), ctrl);
             Start(waitThreads);
             AwaitState(ThreadState.WaitSleepJoin, waitThreads);
-            Assert.IsTrue(ctrl.HasBlocked());
+            Assert.IsTrue(ctrl.HasBlocked);
             Assert.IsTrue(ctrl.AnyStalledThreads());
             ctrl.UpdateStalled(false);
             Assert.IsFalse(ctrl.AnyStalledThreads());
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                         Assert.Fail("got exceptions in threads");
                     }
 
-                    if (ctrl.HasBlocked() && ctrl.Healthy)
+                    if (ctrl.HasBlocked && ctrl.IsHealthy)
                     {
                         AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
                     }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             int millisToSleep = 100;
             while (true)
             {
-                if (ctrl.HasBlocked() && ctrl.Healthy)
+                if (ctrl.HasBlocked && ctrl.IsHealthy)
                 {
                     for (int n = numReleasers + numStallers; n < numReleasers + numStallers + numWaiters; n++)
                     {
