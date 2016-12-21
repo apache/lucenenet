@@ -900,7 +900,7 @@ namespace Lucene.Net.Index
                 globalFieldNumberMap = FieldNumberMap;
                 config.FlushPolicy.Init(config);
                 docWriter = new DocumentsWriter(this, config, directory);
-                eventQueue = docWriter.EventQueue();
+                eventQueue = docWriter.EventQueue;
 
                 // Default deleter (for backwards compatibility) is
                 // KeepOnlyLastCommitDeleter:

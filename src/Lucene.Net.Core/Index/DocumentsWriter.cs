@@ -192,9 +192,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal DocumentsWriterDeleteQueue CurrentDeleteSession() // LUCENENET TODO: Make property
+        internal DocumentsWriterDeleteQueue CurrentDeleteSession
         {
-            return DeleteQueue;
+            get { return DeleteQueue; }
         }
 
         private bool ApplyAllDeletes(DocumentsWriterDeleteQueue deleteQueue)
@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
             // prevent too-frequent flushing of a long tail of
             // tiny segments:
             double ramBufferSizeMB = LIWConfig.RAMBufferSizeMB;
-            if (ramBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH && FlushControl.DeleteBytesUsed > (1024 * 1024 * ramBufferSizeMB / 2))
+            if (ramBufferSizeMB != Index.IndexWriterConfig.DISABLE_AUTO_FLUSH && FlushControl.DeleteBytesUsed > (1024 * 1024 * ramBufferSizeMB / 2))
             {
                 if (InfoStream.IsEnabled("DW"))
                 {
@@ -815,7 +815,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public LiveIndexWriterConfig Config // LUCENENET TODO: Rename IndexWriterConfig ?
+        public LiveIndexWriterConfig IndexWriterConfig
         {
             get
             {
@@ -909,9 +909,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public ConcurrentQueue<Event> EventQueue() // LUCENENET TODO: Make property
+        public ConcurrentQueue<Event> EventQueue
         {
-            return Events;
+            get { return Events; }
         }
     }
 }
