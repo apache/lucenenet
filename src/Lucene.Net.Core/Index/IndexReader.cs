@@ -74,8 +74,8 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class IndexReader : IDisposable
     {
-        private bool Closed = false;
-        private bool ClosedByChild = false;
+        private bool closed = false;
+        private bool closedByChild = false;
         private readonly AtomicInteger refCount = new AtomicInteger(1);
 
         internal IndexReader()
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             void OnClose(IndexReader reader);
         }
 
-        private readonly ISet<ReaderClosedListener> ReaderClosedListeners = new ConcurrentHashSet<ReaderClosedListener>();
+        private readonly ISet<ReaderClosedListener> readerClosedListeners = new ConcurrentHashSet<ReaderClosedListener>();
 
         //LUCENE TO-DO
         //private readonly ISet<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         public void AddReaderClosedListener(ReaderClosedListener listener)
         {
             EnsureOpen();
-            ReaderClosedListeners.Add(listener);
+            readerClosedListeners.Add(listener);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         public void RemoveReaderClosedListener(ReaderClosedListener listener)
         {
             EnsureOpen();
-            ReaderClosedListeners.Remove(listener);
+            readerClosedListeners.Remove(listener);
         }
 
         /// <summary>
@@ -144,9 +144,9 @@ namespace Lucene.Net.Index
 
         private void NotifyReaderClosedListeners(Exception th)
         {
-            lock (ReaderClosedListeners)
+            lock (readerClosedListeners)
             {
-                foreach (ReaderClosedListener listener in ReaderClosedListeners)
+                foreach (ReaderClosedListener listener in readerClosedListeners)
                 {
                     try
                     {
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
 
                     if (target != null)
                     {
-                        target.ClosedByChild = true;
+                        target.closedByChild = true;
                         // cross memory barrier by a fake write:
                         target.refCount.AddAndGet(0);
                         // recurse:
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
             int rc = refCount.DecrementAndGet();
             if (rc == 0)
             {
-                Closed = true;
+                closed = true;
                 Exception throwable = null;
                 try
                 {
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
             }
             // the happens before rule on reading the refCount, which must be after the fake write,
             // ensures that we see the value:
-            if (ClosedByChild)
+            if (closedByChild)
             {
                 throw new AlreadyClosedException("this IndexReader cannot be used anymore as one of its child readers was closed");
             }
@@ -563,10 +563,10 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (!Closed)
+                    if (!closed)
                     {
                         DecRef();
-                        Closed = true;
+                        closed = true;
                     }
                 }
             }
