@@ -39,13 +39,13 @@ namespace Lucene.Net.Index
             Second.AddField(docID, field, fieldInfo);
         }
 
-        public override void Flush(SegmentWriteState state)
+        public override void Flush(SegmentWriteState state) // LUCENENET NOTE: original was internal, but other implementations require public
         {
             First.Flush(state);
             Second.Flush(state);
         }
 
-        public override void Abort()
+        public override void Abort() // LUCENENET NOTE: original was internal, but other implementations require public
         {
             try
             {
@@ -63,13 +63,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void StartDocument()
+        public override void StartDocument() // LUCENENET NOTE: original was internal, but other implementations require public
         {
             First.StartDocument();
             Second.StartDocument();
         }
 
-        public override void FinishDocument()
+        internal override void FinishDocument()
         {
             First.FinishDocument();
             Second.FinishDocument();

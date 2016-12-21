@@ -28,11 +28,11 @@ namespace Lucene.Net.Index
     /// against e.g. FieldCache.getDocTermOrds that also works for single-valued
     /// fields.
     /// </summary>
-    public sealed class SingletonSortedSetDocValues : SortedSetDocValues
+    internal sealed class SingletonSortedSetDocValues : SortedSetDocValues
     {
         private readonly SortedDocValues @in;
-        private int DocID;
-        private bool Set;
+        private int docID;
+        private bool set;
 
         /// <summary>
         /// Creates a multi-valued view over the provided SortedDocValues </summary>
@@ -54,14 +54,14 @@ namespace Lucene.Net.Index
 
         public override long NextOrd()
         {
-            if (Set)
+            if (set)
             {
                 return NO_MORE_ORDS;
             }
             else
             {
-                Set = true;
-                return @in.GetOrd(DocID);
+                set = true;
+                return @in.GetOrd(docID);
             }
         }
 
@@ -69,8 +69,8 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.DocID = value;
-                Set = false;
+                this.docID = value;
+                set = false;
             }
         }
 

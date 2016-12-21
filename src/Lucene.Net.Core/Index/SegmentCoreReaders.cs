@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     /// Holds core readers that are shared (unchanged) when
     /// SegmentReader is cloned or reopened
     /// </summary>
-    public sealed class SegmentCoreReaders
+    internal sealed class SegmentCoreReaders
     {
         // Counts how many other readers share the core objects
         // (freqStream, proxStream, tis, etc.) of this reader;

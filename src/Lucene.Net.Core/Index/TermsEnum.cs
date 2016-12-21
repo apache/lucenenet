@@ -46,29 +46,29 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class TermsEnum : BytesRefIterator
     {
-        public abstract IComparer<BytesRef> Comparator { get; }
+        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET specific - must supply implementation for the interface
 
-        public abstract BytesRef Next();
+        public abstract BytesRef Next(); // LUCENENET specific - must supply implementation for the interface
 
-        private AttributeSource Atts = null;
+        private AttributeSource atts = null;
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
         ///  constructors, typically implicit.)
         /// </summary>
-        protected internal TermsEnum()
+        protected TermsEnum()
         {
         }
 
         /// <summary>
         /// Returns the related attributes. </summary>
-        public virtual AttributeSource Attributes() // LUCENENET TODO: Change to property
+        public virtual AttributeSource Attributes() // LUCENENET TODO: Change to property ?
         {
-            if (Atts == null)
+            if (atts == null)
             {
-                Atts = new AttributeSource();
+                atts = new AttributeSource();
             }
-            return Atts;
+            return atts;
         }
 
         /// <summary>
@@ -158,14 +158,14 @@ namespace Lucene.Net.Index
         ///  UnsupportedOperationException}).  Do not call this
         ///  when the enum is unpositioned.
         /// </summary>
-        public abstract long Ord(); // LUCENENET TODO: make property
+        public abstract long Ord(); // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Returns the number of documents containing the current
         ///  term.  Do not call this when the enum is unpositioned.
         ///  <seealso cref="SeekStatus#END"/>.
         /// </summary>
-        public abstract int DocFreq(); // LUCENENET TODO: make property
+        public abstract int DocFreq(); // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Returns the total number of occurrences of this term
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
         ///  other term measures, this measure does not take
         ///  deleted documents into account.
         /// </summary>
-        public abstract long TotalTermFreq(); // LUCENENET TODO: make property
+        public abstract long TotalTermFreq(); // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Get <seealso cref="DocsEnum"/> for the current term.  Do not
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref= TermState </seealso>
         /// <seealso cref= #seekExact(BytesRef, TermState) </seealso>
-        public virtual TermState TermState()
+        public virtual TermState TermState() // LUCENENET TODO: Rename GetTermState() ?
         {
             return new TermStateAnonymousInnerClassHelper(this);
         }

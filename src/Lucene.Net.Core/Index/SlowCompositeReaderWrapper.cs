@@ -112,9 +112,9 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             OrdinalMap map = null;
-            lock (CachedOrdMaps)
+            lock (cachedOrdMaps)
             {
-                if (!CachedOrdMaps.TryGetValue(field, out map))
+                if (!cachedOrdMaps.TryGetValue(field, out map))
                 {
                     // uncached, or not a multi dv
                     SortedDocValues dv = MultiDocValues.GetSortedValues(@in, field);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)
                         {
-                            CachedOrdMaps[field] = map;
+                            cachedOrdMaps[field] = map;
                         }
                     }
                     return dv;
@@ -153,9 +153,9 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             OrdinalMap map = null;
-            lock (CachedOrdMaps)
+            lock (cachedOrdMaps)
             {
-                if (!CachedOrdMaps.TryGetValue(field, out map))
+                if (!cachedOrdMaps.TryGetValue(field, out map))
                 {
                     // uncached, or not a multi dv
                     SortedSetDocValues dv = MultiDocValues.GetSortedSetValues(@in, field);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)
                         {
-                            CachedOrdMaps[field] = map;
+                            cachedOrdMaps[field] = map;
                         }
                     }
                     return dv;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 
         // TODO: this could really be a weak map somewhere else on the coreCacheKey,
         // but do we really need to optimize slow-wrapper any more?
-        private readonly IDictionary<string, OrdinalMap> CachedOrdMaps = new Dictionary<string, OrdinalMap>();
+        private readonly IDictionary<string, OrdinalMap> cachedOrdMaps = new Dictionary<string, OrdinalMap>();
 
         public override NumericDocValues GetNormValues(string field)
         {

@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal SortedDocValues()
+        protected SortedDocValues()
         {
         }
 
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
         /// Returns a <seealso cref="TermsEnum"/> over the values.
         /// The enum supports <seealso cref="TermsEnum#ord()"/> and <seealso cref="TermsEnum#seekExact(long)"/>.
         /// </summary>
-        public virtual TermsEnum TermsEnum()
+        public virtual TermsEnum TermsEnum() // LUCENENET TODO: Rename GetTermsEnum() ?
         {
             return new SortedDocValuesTermsEnum(this);
         }

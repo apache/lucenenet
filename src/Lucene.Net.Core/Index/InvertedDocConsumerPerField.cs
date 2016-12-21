@@ -36,6 +36,6 @@ namespace Lucene.Net.Index
         internal abstract void Finish();
 
         // Called on hitting an aborting exception
-        internal abstract void Abort();
+        public abstract void Abort();
     }
 }

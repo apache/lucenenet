@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The <seealso cref="SegmentInfo"/> that we wrap. </summary>
-        public readonly SegmentInfo Info;
+        public readonly SegmentInfo Info; // LUCENENET TODO: Make property
 
         // How many deleted docs in the segment:
         private int DelCount_Renamed;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         // Track the per-generation updates files
         private readonly IDictionary<long, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long, ISet<string>>();
 
-        private long SizeInBytes_Renamed = -1;
+        private long SizeInBytes_Renamed = -1; // LUCENENET TODO: This was volatile in the original
 
         /// <summary>
         /// Sole constructor.
@@ -198,17 +198,17 @@ namespace Lucene.Net.Index
 
         // NOTE: only used in-RAM by IW to track buffered deletes;
         // this is never written to/read from the Directory
-        private long BufferedDeletesGen_Renamed;
+        private long bufferedDeletesGen;
 
         internal virtual long BufferedDeletesGen
         {
             get
             {
-                return BufferedDeletesGen_Renamed;
+                return bufferedDeletesGen;
             }
-            set
+            set // LUCENENET TODO: Make method (has side-effect)
             {
-                BufferedDeletesGen_Renamed = value;
+                bufferedDeletesGen = value;
                 SizeInBytes_Renamed = -1;
             }
         }
@@ -217,14 +217,14 @@ namespace Lucene.Net.Index
         /// Returns true if there are any deletions for the
         /// segment at this commit.
         /// </summary>
-        public virtual bool HasDeletions()
+        public virtual bool HasDeletions() // LUCENENET TODO: Make property ?
         {
             return DelGen_Renamed != -1;
         }
 
         /// <summary>
         /// Returns true if there are any field updates for the segment in this commit. </summary>
-        public virtual bool HasFieldUpdates()
+        public virtual bool HasFieldUpdates() // LUCENENET TODO: Make property ?
         {
             return FieldInfosGen_Renamed != -1;
         }
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
             {
                 return DelCount_Renamed;
             }
-            set
+            internal set
             {
                 if (value < 0 || value > Info.DocCount)
                 {

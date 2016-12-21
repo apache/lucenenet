@@ -74,16 +74,16 @@ namespace Lucene.Net.Index
         /// Default noCFSRatio.  If a merge's size is >= 10% of
         ///  the index, then we disable compound file for it. </summary>
         ///  <seealso cref= MergePolicy#setNoCFSRatio  </seealso>
-        public new const double DEFAULT_NO_CFS_RATIO = 0.1;
+        public new static readonly double DEFAULT_NO_CFS_RATIO = 0.1;
 
-        private int MaxMergeAtOnce_Renamed = 10;
-        private long MaxMergedSegmentBytes = 5 * 1024 * 1024 * 1024L;
-        private int MaxMergeAtOnceExplicit_Renamed = 30;
+        private int maxMergeAtOnce = 10;
+        private long maxMergedSegmentBytes = 5 * 1024 * 1024 * 1024L;
+        private int maxMergeAtOnceExplicit = 30;
 
-        private long FloorSegmentBytes = 2 * 1024 * 1024L;
-        private double SegsPerTier = 10.0;
-        private double ForceMergeDeletesPctAllowed_Renamed = 10.0;
-        private double ReclaimDeletesWeight_Renamed = 2.0;
+        private long floorSegmentBytes = 2 * 1024 * 1024L;
+        private double segsPerTier = 10.0;
+        private double forceMergeDeletesPctAllowed = 10.0;
+        private double reclaimDeletesWeight = 2.0;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("maxMergeAtOnce must be > 1 (got " + v + ")");
             }
-            MaxMergeAtOnce_Renamed = v;
+            maxMergeAtOnce = v;
             return this;
         }
 
@@ -118,10 +118,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxMergeAtOnce_Renamed;
+                return maxMergeAtOnce;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetMaxMergeAtOnce(value);
             }
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("maxMergeAtOnceExplicit must be > 1 (got " + v + ")");
             }
-            MaxMergeAtOnceExplicit_Renamed = v;
+            maxMergeAtOnceExplicit = v;
             return this;
         }
 
@@ -152,10 +152,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxMergeAtOnceExplicit_Renamed;
+                return maxMergeAtOnceExplicit;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetMaxMergeAtOnceExplicit(value);
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                 throw new System.ArgumentException("maxMergedSegmentMB must be >=0 (got " + v + ")");
             }
             v *= 1024 * 1024;
-            MaxMergedSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
+            maxMergedSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
             return this;
         }
 
@@ -187,10 +187,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxMergedSegmentBytes / 1024 / 1024.0;
+                return maxMergedSegmentBytes / 1024 / 1024.0;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetMaxMergedSegmentMB(value);
             }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + v + ")");
             }
-            ReclaimDeletesWeight_Renamed = v;
+            reclaimDeletesWeight = v;
             return this;
         }
 
@@ -221,10 +221,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return ReclaimDeletesWeight_Renamed;
+                return reclaimDeletesWeight;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetReclaimDeletesWeight(value);
             }
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
                 throw new System.ArgumentException("floorSegmentMB must be >= 0.0 (got " + v + ")");
             }
             v *= 1024 * 1024;
-            FloorSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
+            floorSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
             return this;
         }
 
@@ -256,10 +256,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return FloorSegmentBytes / (1024 * 1024.0);
+                return floorSegmentBytes / (1024 * 1024.0);
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetFloorSegmentMB(value);
             }
@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + v + ")");
             }
-            ForceMergeDeletesPctAllowed_Renamed = v;
+            forceMergeDeletesPctAllowed = v;
             return this;
         }
 
@@ -288,10 +288,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return ForceMergeDeletesPctAllowed_Renamed;
+                return forceMergeDeletesPctAllowed;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetForceMergeDeletesPctAllowed(value);
             }
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("segmentsPerTier must be >= 2.0 (got " + v + ")");
             }
-            SegsPerTier = v;
+            segsPerTier = v;
             return this;
         }
 
@@ -325,10 +325,10 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return SegsPerTier;
+                return segsPerTier;
             }
 
-            set
+            set // LUCENENET TODO: Double setter functionality could be confusing
             {
                 SetSegmentsPerTier(value);
             }
@@ -373,13 +373,13 @@ namespace Lucene.Net.Index
         /// Holds score and explanation for a single candidate
         ///  merge.
         /// </summary>
-        protected internal abstract class MergeScore
+        protected abstract class MergeScore
         {
             /// <summary>
             /// Sole constructor. (For invocation by subclass
             ///  constructors, typically implicit.)
             /// </summary>
-            protected internal MergeScore()
+            protected MergeScore()
             {
             }
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
             /// Returns the score for this merge candidate; lower
             ///  scores are better.
             /// </summary>
-            internal abstract double Score { get; }
+            internal abstract double Score { get; } // LUCENENET TODO: Should this be public? Or should the class be internal? It doesn't make any sense to have protected class with no protected members.
 
             /// <summary>
             /// Human readable explanation of how the merge got this
@@ -421,11 +421,11 @@ namespace Lucene.Net.Index
                 if (Verbose())
                 {
                     string extra = merging.Contains(info) ? " [merging]" : "";
-                    if (segBytes >= MaxMergedSegmentBytes / 2.0)
+                    if (segBytes >= maxMergedSegmentBytes / 2.0)
                     {
                         extra += " [skip: too large]";
                     }
-                    else if (segBytes < FloorSegmentBytes)
+                    else if (segBytes < floorSegmentBytes)
                     {
                         extra += " [floored]";
                     }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
             // If we have too-large segments, grace them out
             // of the maxSegmentCount:
             int tooBigCount = 0;
-            while (tooBigCount < infosSorted.Count && Size(infosSorted[tooBigCount]) >= MaxMergedSegmentBytes / 2.0)
+            while (tooBigCount < infosSorted.Count && Size(infosSorted[tooBigCount]) >= maxMergedSegmentBytes / 2.0)
             {
                 totIndexBytes -= Size(infosSorted[tooBigCount]);
                 tooBigCount++;
@@ -455,14 +455,14 @@ namespace Lucene.Net.Index
             while (true)
             {
                 double segCountLevel = bytesLeft / (double)levelSize;
-                if (segCountLevel < SegsPerTier)
+                if (segCountLevel < segsPerTier)
                 {
                     allowedSegCount += Math.Ceiling(segCountLevel);
                     break;
                 }
-                allowedSegCount += SegsPerTier;
-                bytesLeft -= (long)(SegsPerTier * levelSize);
-                levelSize *= MaxMergeAtOnce_Renamed;
+                allowedSegCount += segsPerTier;
+                bytesLeft -= (long)(segsPerTier * levelSize);
+                levelSize *= maxMergeAtOnce;
             }
             int allowedSegCountInt = (int)allowedSegCount;
 
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                bool maxMergeIsRunning = mergingBytes >= MaxMergedSegmentBytes;
+                bool maxMergeIsRunning = mergingBytes >= maxMergedSegmentBytes;
 
                 if (Verbose())
                 {
@@ -511,18 +511,18 @@ namespace Lucene.Net.Index
                     long bestMergeBytes = 0;
 
                     // Consider all merge starts:
-                    for (int startIdx = 0; startIdx <= eligible.Count - MaxMergeAtOnce_Renamed; startIdx++)
+                    for (int startIdx = 0; startIdx <= eligible.Count - maxMergeAtOnce; startIdx++)
                     {
                         long totAfterMergeBytes = 0;
 
                         IList<SegmentCommitInfo> candidate = new List<SegmentCommitInfo>();
                         bool hitTooLarge = false;
-                        for (int idx = startIdx; idx < eligible.Count && candidate.Count < MaxMergeAtOnce_Renamed; idx++)
+                        for (int idx = startIdx; idx < eligible.Count && candidate.Count < maxMergeAtOnce; idx++)
                         {
                             SegmentCommitInfo info = eligible[idx];
                             long segBytes = Size(info);
 
-                            if (totAfterMergeBytes + segBytes > MaxMergedSegmentBytes)
+                            if (totAfterMergeBytes + segBytes > maxMergedSegmentBytes)
                             {
                                 hitTooLarge = true;
                                 // NOTE: we continue, so that we can try
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: scores one merge; subclasses can override. </summary>
-        protected internal virtual MergeScore Score(IList<SegmentCommitInfo> candidate, bool hitTooLarge, long mergingBytes)
+        protected virtual MergeScore Score(IList<SegmentCommitInfo> candidate, bool hitTooLarge, long mergingBytes)
         {
             long totBeforeMergeBytes = 0;
             long totAfterMergeBytes = 0;
@@ -613,7 +613,7 @@ namespace Lucene.Net.Index
                 // matter in this case because this merge will not
                 // "cascade" and so it cannot lead to N^2 merge cost
                 // over time:
-                skew = 1.0 / MaxMergeAtOnce_Renamed;
+                skew = 1.0 / maxMergeAtOnce;
             }
             else
             {
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
 
             // Strongly favor merges that reclaim deletes:
             double nonDelRatio = ((double)totAfterMergeBytes) / totBeforeMergeBytes;
-            mergeScore *= Math.Pow(nonDelRatio, ReclaimDeletesWeight_Renamed);
+            mergeScore *= Math.Pow(nonDelRatio, reclaimDeletesWeight);
 
             double finalMergeScore = mergeScore;
 
@@ -727,19 +727,19 @@ namespace Lucene.Net.Index
             MergeSpecification spec = null;
 
             // Do full merges, first, backwards:
-            while (end >= MaxMergeAtOnceExplicit_Renamed + maxSegmentCount - 1)
+            while (end >= maxMergeAtOnceExplicit + maxSegmentCount - 1)
             {
                 if (spec == null)
                 {
                     spec = new MergeSpecification();
                 }
-                OneMerge merge = new OneMerge(eligible.SubList(end - MaxMergeAtOnceExplicit_Renamed, end));
+                OneMerge merge = new OneMerge(eligible.SubList(end - maxMergeAtOnceExplicit, end));
                 if (Verbose())
                 {
                     Message("add merge=" + writer.Get().SegString(merge.Segments));
                 }
                 spec.Add(merge);
-                end -= MaxMergeAtOnceExplicit_Renamed;
+                end -= maxMergeAtOnceExplicit;
             }
 
             if (spec == null && !forceMergeRunning)
@@ -762,14 +762,14 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findForcedDeletesMerges infos=" + writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
+                Message("findForcedDeletesMerges infos=" + writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + forceMergeDeletesPctAllowed);
             }
             List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
             ICollection<SegmentCommitInfo> merging = writer.Get().MergingSegments;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
                 double pctDeletes = 100.0 * ((double)writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
-                if (pctDeletes > ForceMergeDeletesPctAllowed_Renamed && !merging.Contains(info))
+                if (pctDeletes > forceMergeDeletesPctAllowed && !merging.Contains(info))
                 {
                     eligible.Add(info);
                 }
@@ -795,7 +795,7 @@ namespace Lucene.Net.Index
                 // Don't enforce max merged size here: app is explicitly
                 // calling forceMergeDeletes, and knows this may take a
                 // long time / produce big segments (like forceMerge):
-                int end = Math.Min(start + MaxMergeAtOnceExplicit_Renamed, eligible.Count);
+                int end = Math.Min(start + maxMergeAtOnceExplicit, eligible.Count);
                 if (spec == null)
                 {
                     spec = new MergeSpecification();
@@ -819,7 +819,7 @@ namespace Lucene.Net.Index
 
         private long FloorSize(long bytes)
         {
-            return Math.Max(FloorSegmentBytes, bytes);
+            return Math.Max(floorSegmentBytes, bytes);
         }
 
         private bool Verbose()
@@ -836,12 +836,12 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("[" + this.GetType().Name + ": ");
-            sb.Append("maxMergeAtOnce=").Append(MaxMergeAtOnce_Renamed).Append(", ");
-            sb.Append("maxMergeAtOnceExplicit=").Append(MaxMergeAtOnceExplicit_Renamed).Append(", ");
-            sb.Append("maxMergedSegmentMB=").Append(MaxMergedSegmentBytes / 1024 / 1024.0).Append(", ");
-            sb.Append("floorSegmentMB=").Append(FloorSegmentBytes / 1024 / 1024.0).Append(", ");
-            sb.Append("forceMergeDeletesPctAllowed=").Append(ForceMergeDeletesPctAllowed_Renamed).Append(", ");
-            sb.Append("segmentsPerTier=").Append(SegsPerTier).Append(", ");
+            sb.Append("maxMergeAtOnce=").Append(maxMergeAtOnce).Append(", ");
+            sb.Append("maxMergeAtOnceExplicit=").Append(maxMergeAtOnceExplicit).Append(", ");
+            sb.Append("maxMergedSegmentMB=").Append(maxMergedSegmentBytes / 1024 / 1024.0).Append(", ");
+            sb.Append("floorSegmentMB=").Append(floorSegmentBytes / 1024 / 1024.0).Append(", ");
+            sb.Append("forceMergeDeletesPctAllowed=").Append(forceMergeDeletesPctAllowed).Append(", ");
+            sb.Append("segmentsPerTier=").Append(segsPerTier).Append(", ");
             sb.Append("maxCFSSegmentSizeMB=").Append(MaxCFSSegmentSizeMB).Append(", ");
             sb.Append("noCFSRatio=").Append(noCFSRatio_);
             return sb.ToString();

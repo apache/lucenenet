@@ -31,23 +31,23 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// <seealso cref="Directory"/> where this segment is read from. </summary>
-        public readonly Directory Directory;
+        public readonly Directory Directory; // LUCENENET TODO: Make property
 
         /// <summary>
         /// <seealso cref="SegmentInfo"/> describing this segment. </summary>
-        public readonly SegmentInfo SegmentInfo;
+        public readonly SegmentInfo SegmentInfo; // LUCENENET TODO: Make property
 
         /// <summary>
         /// <seealso cref="FieldInfos"/> describing all fields in this
         ///  segment.
         /// </summary>
-        public readonly FieldInfos FieldInfos;
+        public readonly FieldInfos FieldInfos; // LUCENENET TODO: Make property
 
         /// <summary>
         /// <seealso cref="IOContext"/> to pass to {@link
         ///  Directory#openInput(String,IOContext)}.
         /// </summary>
-        public readonly IOContext Context;
+        public readonly IOContext Context; // LUCENENET TODO: Make property
 
         /// <summary>
         /// The {@code termInfosIndexDivisor} to use, if
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         ///  that must do so), then it should negate this value to
         ///  get the app's terms divisor
         /// </summary>
-        public int TermsIndexDivisor;
+        public int TermsIndexDivisor; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Unique suffix for any postings files read for this
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
         ///  write/read must be derived using this suffix (use
         ///  <seealso cref="IndexFileNames#segmentFileName(String,String,String)"/>).
         /// </summary>
-        public readonly string SegmentSuffix;
+        public readonly string SegmentSuffix; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Create a {@code SegmentReadState}. </summary>

@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override void Abort()
+        public override void Abort()
         {
             Reset();
             if (NextPerField != null)
@@ -332,47 +332,47 @@ namespace Lucene.Net.Index
 
         private sealed class PostingsBytesStartArray : BytesRefHash.BytesStartArray
         {
-            internal readonly TermsHashPerField PerField;
-            internal readonly Counter BytesUsed_Renamed;
+            private readonly TermsHashPerField perField;
+            private readonly Counter bytesUsed;
 
             internal PostingsBytesStartArray(TermsHashPerField perField, Counter bytesUsed)
             {
-                this.PerField = perField;
-                this.BytesUsed_Renamed = bytesUsed;
+                this.perField = perField;
+                this.bytesUsed = bytesUsed;
             }
 
             public override int[] Init()
             {
-                if (PerField.PostingsArray == null)
+                if (perField.PostingsArray == null)
                 {
-                    PerField.PostingsArray = PerField.Consumer.CreatePostingsArray(2);
-                    BytesUsed_Renamed.AddAndGet(PerField.PostingsArray.Size * PerField.PostingsArray.BytesPerPosting());
+                    perField.PostingsArray = perField.Consumer.CreatePostingsArray(2);
+                    bytesUsed.AddAndGet(perField.PostingsArray.Size * perField.PostingsArray.BytesPerPosting());
                 }
-                return PerField.PostingsArray.TextStarts;
+                return perField.PostingsArray.TextStarts;
             }
 
             public override int[] Grow()
             {
-                ParallelPostingsArray postingsArray = PerField.PostingsArray;
-                int oldSize = PerField.PostingsArray.Size;
-                postingsArray = PerField.PostingsArray = postingsArray.Grow();
-                BytesUsed_Renamed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.Size - oldSize)));
+                ParallelPostingsArray postingsArray = perField.PostingsArray;
+                int oldSize = perField.PostingsArray.Size;
+                postingsArray = perField.PostingsArray = postingsArray.Grow();
+                bytesUsed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.Size - oldSize)));
                 return postingsArray.TextStarts;
             }
 
             public override int[] Clear()
             {
-                if (PerField.PostingsArray != null)
+                if (perField.PostingsArray != null)
                 {
-                    BytesUsed_Renamed.AddAndGet(-(PerField.PostingsArray.Size * PerField.PostingsArray.BytesPerPosting()));
-                    PerField.PostingsArray = null;
+                    bytesUsed.AddAndGet(-(perField.PostingsArray.Size * perField.PostingsArray.BytesPerPosting()));
+                    perField.PostingsArray = null;
                 }
                 return null;
             }
 
             public override Counter BytesUsed()
             {
-                return BytesUsed_Renamed;
+                return bytesUsed;
             }
         }
     }

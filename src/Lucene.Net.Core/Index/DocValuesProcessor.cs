@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        public override void FinishDocument()
+        internal override void FinishDocument()
         {
         }
 

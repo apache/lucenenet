@@ -116,30 +116,32 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
-        public const int VERSION_40 = 0;
+        public static readonly int VERSION_40 = 0;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.6+. </summary>
-        public const int VERSION_46 = 1;
+        public static readonly int VERSION_46 = 1;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.8+ </summary>
-        public const int VERSION_48 = 2;
+        public static readonly int VERSION_48 = 2;
 
         // Used for the segments.gen file only!
         // Whenever you add a new format, make it 1 smaller (negative version logic)!
-        private const int FORMAT_SEGMENTS_GEN_47 = -2;
+        private static readonly int FORMAT_SEGMENTS_GEN_47 = -2;
 
-        private const int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
-        private const int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
+        private static readonly int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
+        private static readonly int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
 
         /// <summary>
         /// Current format of segments.gen </summary>
-        public const int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
+        public static readonly int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
 
         /// <summary>
         /// Used to name new segments. </summary>
-        public int Counter;
+        public int Counter; // LUCENENET TODO: Make property
+
+        // LUCENENET specific: Version made into property (see below)
 
         private long _generation; // generation of the "segments_N" for the next commit
         private long _lastGeneration; // generation of the "segments_N" file we last successfully read
@@ -244,7 +246,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Get the segments_N filename in use by this segment infos.
         /// </summary>
-        public string SegmentsFileName
+        public string SegmentsFileName // LUCENENET TODO: Make method GetSegmentsFileName() (conversion)
         {
             get
             {
@@ -320,7 +322,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Get the next segments_N filename that will be written.
         /// </summary>
-        public string NextSegmentFileName
+        public string NextSegmentFileName // LUCENENET TODO: Make method GetNextSegmentFileName() (conversion)
         {
             get
             {
@@ -491,7 +493,7 @@ namespace Lucene.Net.Index
 
         // Only non-null after prepareCommit has been called and
         // before finishCommit is called
-        internal IndexOutput PendingSegnOutput;
+        internal IndexOutput pendingSegnOutput;
 
         private const string SEGMENT_INFO_UPGRADE_CODEC = "SegmentInfo3xUpgrade";
         private const int SEGMENT_INFO_UPGRADE_VERSION = 0;
@@ -578,7 +580,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 segnOutput.WriteStringStringMap(_userData);
-                PendingSegnOutput = segnOutput;
+                pendingSegnOutput = segnOutput;
                 success = true;
             }
             finally
@@ -716,6 +718,7 @@ namespace Lucene.Net.Index
             return sis;
         }
 
+        // LUCENENET specific property for accessing segments private field
         public List<SegmentCommitInfo> Segments
         {
             get { return segments; }
@@ -725,7 +728,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Counts how often the index has been changed.
         /// </summary>
-        public long Version { get; set; }
+        public long Version { get; internal set; }
 
         /// <summary>
         /// Returns current generation. </summary>
@@ -751,7 +754,7 @@ namespace Lucene.Net.Index
         /// If non-null, information about retries when loading
         /// the segments file will be printed to this.
         /// </summary>
-        public static StreamWriter InfoStream
+        public static StreamWriter InfoStream // LUCENENET TODO: Make this into TextWriter
         {
             set
             {
@@ -765,9 +768,11 @@ namespace Lucene.Net.Index
 
         /* Advanced configuration of retry logic in loading
            segments_N file */
-        private static int DefaultGenLookaheadCount_Renamed = 10;
+        private static int defaultGenLookaheadCount = 10;
 
         /// <summary>
+        /// Gets or Sets the <see cref="defaultGenLookaheadCount"/>.
+        /// 
         /// Advanced: set how many times to try incrementing the
         /// gen when loading the segments file.  this only runs if
         /// the primary (listing directory) and secondary (opening
@@ -776,25 +781,15 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public static int DefaultGenLookaheadCount
-        {
-            set
-            {
-                DefaultGenLookaheadCount_Renamed = value;
-            }
-        }
-
-        /// <summary>
-        /// Returns the {@code defaultGenLookaheadCount}.
-        /// </summary>
-        /// <seealso cref= #setDefaultGenLookaheadCount
-        ///
-        /// @lucene.experimental </seealso>
-        public static int DefaultGenLookahedCount
+        public static int DefaultGenLookaheadCount // LUCENENET specific: corrected spelling issue with the getter
         {
             get
             {
-                return DefaultGenLookaheadCount_Renamed;
+                return defaultGenLookaheadCount;
+            }
+            set
+            {
+                defaultGenLookaheadCount = value;
             }
         }
 
@@ -820,13 +815,13 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract class FindSegmentsFile
         {
-            internal readonly Directory Directory;
+            internal readonly Directory directory;
 
             /// <summary>
             /// Sole constructor. </summary>
-            protected FindSegmentsFile(Directory directory)
+            public FindSegmentsFile(Directory directory)
             {
-                this.Directory = directory;
+                this.directory = directory;
             }
 
             /// <summary>
@@ -844,7 +839,7 @@ namespace Lucene.Net.Index
             {
                 if (commit != null)
                 {
-                    if (Directory != commit.Directory)
+                    if (directory != commit.Directory)
                     {
                         throw new IOException("the specified commit does not match the specified Directory");
                     }
@@ -889,7 +884,7 @@ namespace Lucene.Net.Index
 
                         long genA = -1;
 
-                        files = Directory.ListAll();
+                        files = directory.ListAll();
 
                         if (files != null)
                         {
@@ -910,7 +905,7 @@ namespace Lucene.Net.Index
                         ChecksumIndexInput genInput = null;
                         try
                         {
-                            genInput = Directory.OpenChecksumInput(IndexFileNames.SEGMENTS_GEN, IOContext.READONCE);
+                            genInput = directory.OpenChecksumInput(IndexFileNames.SEGMENTS_GEN, IOContext.READONCE);
                         }
                         catch (IOException e)
                         {
@@ -977,7 +972,7 @@ namespace Lucene.Net.Index
                         if (gen == -1)
                         {
                             // Neither approach found a generation
-                            throw new IndexNotFoundException("no segments* file found in " + Directory + ": files: " + Arrays.ToString(files));
+                            throw new IndexNotFoundException("no segments* file found in " + directory + ": files: " + Arrays.ToString(files));
                         }
                     }
 
@@ -994,7 +989,7 @@ namespace Lucene.Net.Index
                     // advance the generation.
                     if (!useFirstMethod)
                     {
-                        if (genLookaheadCount < DefaultGenLookaheadCount_Renamed)
+                        if (genLookaheadCount < defaultGenLookaheadCount)
                         {
                             gen++;
                             genLookaheadCount++;
@@ -1061,7 +1056,7 @@ namespace Lucene.Net.Index
 
                             try
                             {
-                                Directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
+                                directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
                                 prevExists = true;
                             }
                             catch (IOException ioe)
@@ -1115,12 +1110,12 @@ namespace Lucene.Net.Index
 
         internal void RollbackCommit(Directory dir)
         {
-            if (PendingSegnOutput != null)
+            if (pendingSegnOutput != null)
             {
                 // Suppress so we keep throwing the original exception
                 // in our caller
-                IOUtils.CloseWhileHandlingException(PendingSegnOutput);
-                PendingSegnOutput = null;
+                IOUtils.CloseWhileHandlingException(pendingSegnOutput);
+                pendingSegnOutput = null;
 
                 // Must carefully compute fileName from "generation"
                 // since lastGeneration isn't incremented:
@@ -1145,7 +1140,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void PrepareCommit(Directory dir)
         {
-            if (PendingSegnOutput != null)
+            if (pendingSegnOutput != null)
             {
                 throw new InvalidOperationException("prepareCommit was already called");
             }
@@ -1186,14 +1181,14 @@ namespace Lucene.Net.Index
 
         internal void FinishCommit(Directory dir)
         {
-            if (PendingSegnOutput == null)
+            if (pendingSegnOutput == null)
             {
                 throw new InvalidOperationException("prepareCommit was not called");
             }
             bool success = false;
             try
             {
-                CodecUtil.WriteFooter(PendingSegnOutput);
+                CodecUtil.WriteFooter(pendingSegnOutput);
                 success = true;
             }
             finally
@@ -1208,7 +1203,7 @@ namespace Lucene.Net.Index
                     success = false;
                     try
                     {
-                        PendingSegnOutput.Dispose();
+                        pendingSegnOutput.Dispose();
                         success = true;
                     }
                     finally
@@ -1220,7 +1215,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            PendingSegnOutput = null;
+                            pendingSegnOutput = null;
                         }
                     }
                 }
@@ -1334,7 +1329,7 @@ namespace Lucene.Net.Index
         /// Returns sum of all segment's docCounts.  Note that
         ///  this does not include deletions
         /// </summary>
-        public int TotalDocCount()
+        public int TotalDocCount() // LUCENENET TODO: Make property
         {
             return segments.Sum(info => info.Info.DocCount);
         }
@@ -1415,7 +1410,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns number of <seealso cref="SegmentCommitInfo"/>s. </summary>
-        public int Size()
+        public int Size() // LUCENENET TODO: Make rename Count and make property
         {
             return segments.Count;
         }

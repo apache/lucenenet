@@ -31,14 +31,14 @@ namespace Lucene.Net.Index
     /// </summary>
     public class SimpleMergedSegmentWarmer : IndexReaderWarmer
     {
-        private readonly InfoStream InfoStream;
+        private readonly InfoStream infoStream;
 
         /// <summary>
         /// Creates a new SimpleMergedSegmentWarmer </summary>
         /// <param name="infoStream"> InfoStream to log statistics about warming. </param>
         public SimpleMergedSegmentWarmer(InfoStream infoStream)
         {
-            this.InfoStream = infoStream;
+            this.infoStream = infoStream;
         }
 
         public override void Warm(AtomicReader reader)
@@ -92,9 +92,9 @@ namespace Lucene.Net.Index
             reader.Document(0);
             reader.GetTermVectors(0);
 
-            if (InfoStream.IsEnabled("SMSW"))
+            if (infoStream.IsEnabled("SMSW"))
             {
-                InfoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (Environment.TickCount - startTime));
+                infoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (Environment.TickCount - startTime));
             }
         }
     }

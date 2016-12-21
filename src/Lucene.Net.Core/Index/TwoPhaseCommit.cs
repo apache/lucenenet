@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public interface TwoPhaseCommit
+    public interface TwoPhaseCommit // LUCENENET TODO: Rename with "I"
     {
         /// <summary>
         /// The first stage of a 2-phase commit. Implementations should do as much work

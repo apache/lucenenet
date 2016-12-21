@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     ///  things like dates, email addresses, urls, etc.
     /// </summary>
 
-    public sealed class Term : IComparable<Term>, IEquatable<Term>
+    public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
         /// <summary>
         /// Constructs a Term with the given field and bytes.
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         /// example, you should clone a copy rather than pass reused bytes from
         /// a TermsEnum.
         /// </summary>
-        public void Set(string fld, BytesRef bytes)
+        internal void Set(string fld, BytesRef bytes)
         {
             Field = fld;
             this.Bytes = bytes;

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class SingleTermsEnum : FilteredTermsEnum
     {
-        private readonly BytesRef SingleRef;
+        private readonly BytesRef singleRef;
 
         /// <summary>
         /// Creates a new <code>SingleTermsEnum</code>.
@@ -43,13 +43,13 @@ namespace Lucene.Net.Index
         public SingleTermsEnum(TermsEnum tenum, BytesRef termText)
             : base(tenum)
         {
-            SingleRef = termText;
+            singleRef = termText;
             InitialSeekTerm = termText;
         }
 
         protected override AcceptStatus Accept(BytesRef term)
         {
-            return term.Equals(SingleRef) ? AcceptStatus.YES : AcceptStatus.END;
+            return term.Equals(singleRef) ? AcceptStatus.YES : AcceptStatus.END;
         }
     }
 }

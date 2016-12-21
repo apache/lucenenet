@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal SortedSetDocValues()
+        protected SortedSetDocValues()
         {
         }
 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
         /// When returned by <seealso cref="#nextOrd()"/> it means there are no more
         /// ordinals for the document.
         /// </summary>
-        public const long NO_MORE_ORDS = -1;
+        public static readonly long NO_MORE_ORDS = -1;
 
         /// <summary>
         /// Returns the next ordinal for the current document (previously

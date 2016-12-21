@@ -42,13 +42,13 @@ namespace Lucene.Net.Index
         /// Used by some member fields to mean not present (e.g.,
         ///  norms, deletions).
         /// </summary>
-        public const int NO = -1; // e.g. no norms; no deletes;
+        public static readonly int NO = -1; // e.g. no norms; no deletes;
 
         /// <summary>
         /// Used by some member fields to mean present (e.g.,
         ///  norms, deletions).
         /// </summary>
-        public const int YES = 1; // e.g. have norms; have deletes;
+        public static readonly int YES = 1; // e.g. have norms; have deletes;
 
         /// <summary>
         /// Unique segment name in the directory. </summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Where this segment resides. </summary>
-        public readonly Directory Dir;
+        public readonly Directory Dir; // LUCENENET TODO: Make property
 
         private bool IsCompoundFile;
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 
         /// @deprecated separate norms are not supported in >= 4.0
         [Obsolete("separate norms are not supported in >= 4.0")]
-        internal bool HasSeparateNorms()
+        internal bool HasSeparateNorms() // LUCENENET TODO: Make property
         {
             return GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null;
         }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         /// Returns number of documents in this segment (deletions
         ///  are not taken into account).
         /// </summary>
-        public int DocCount
+        public int DocCount // LUCENENET TODO: Make method ? throws exception
         {
             get
             {
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sets the files written for this segment. </summary>
-        public ISet<string> Files
+        public ISet<string> Files // LUCENENET TODO: Make method ? throws exception
         {
             get
             {
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
         /// </returns>
         /// @deprecated no longer supported
         [Obsolete("no longer supported")]
-        public IDictionary<string, string> Attributes()
+        public IDictionary<string, string> Attributes() // LUCENENET TODO: Make property
         {
             return Attributes_Renamed;
         }

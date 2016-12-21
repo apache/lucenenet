@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-    public sealed class StandardDirectoryReader : DirectoryReader
+    internal sealed class StandardDirectoryReader : DirectoryReader
     {
         private readonly IndexWriter Writer;
         private readonly SegmentInfos SegmentInfos;
@@ -55,13 +55,11 @@ namespace Lucene.Net.Index
 
         private class FindSegmentsFileAnonymousInnerClassHelper : SegmentInfos.FindSegmentsFile
         {
-            private readonly Directory directory;
             private readonly int termInfosIndexDivisor;
 
             public FindSegmentsFileAnonymousInnerClassHelper(Directory directory, int termInfosIndexDivisor)
                 : base(directory)
             {
-                this.directory = directory;
                 this.termInfosIndexDivisor = termInfosIndexDivisor;
             }
 

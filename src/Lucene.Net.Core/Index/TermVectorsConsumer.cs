@@ -53,6 +53,7 @@ namespace Lucene.Net.Index
             DocState = docWriter.docState;
         }
 
+        // LUCENENE specific - original was internal, but FreqProxTermsWriter requires public (little point, since both are internal classes)
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             if (Writer != null)

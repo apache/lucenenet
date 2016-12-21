@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal StoredFieldVisitor()
+        protected StoredFieldVisitor()
         {
         }
 
@@ -61,19 +61,19 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Process a int numeric field. </summary>
-        public virtual void Int32Field(FieldInfo fieldInfo, int value)
+        public virtual void Int32Field(FieldInfo fieldInfo, int value) // LUCENENET specific: Renamed from IntField to Int32Field per .NET conventions
         {
         }
 
         /// <summary>
         /// Process a long numeric field. </summary>
-        public virtual void Int64Field(FieldInfo fieldInfo, long value)
+        public virtual void Int64Field(FieldInfo fieldInfo, long value) // LUCENENET specific: Renamed from LongField to Int64Field per .NET conventions
         {
         }
 
         /// <summary>
         /// Process a float numeric field. </summary>
-        public virtual void SingleField(FieldInfo fieldInfo, float value)
+        public virtual void SingleField(FieldInfo fieldInfo, float value) // LUCENENET specific: Renamed from FloatField to SingleField per .NET conventions
         {
         }
 

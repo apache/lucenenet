@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Abort (called after hitting AbortException) </summary>
-        internal abstract void Abort();
+        public abstract void Abort();
 
         /// <summary>
         /// Flush a new segment </summary>

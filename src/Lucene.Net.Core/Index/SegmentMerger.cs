@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     /// segments.
     /// </summary>
     /// <seealso cref= #merge </seealso>
-    public sealed class SegmentMerger
+    internal sealed class SegmentMerger
     {
         private readonly Directory Directory;
         private readonly int TermIndexInterval;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
         private readonly FieldInfos.Builder FieldInfosBuilder;
 
         // note, just like in codec apis Directory 'dir' is NOT the same as segmentInfo.dir!!
-        public SegmentMerger(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, Directory dir, int termIndexInterval, MergeState.CheckAbort checkAbort, FieldInfos.FieldNumbers fieldNumbers, IOContext context, bool validate)
+        internal SegmentMerger(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, Directory dir, int termIndexInterval, MergeState.CheckAbort checkAbort, FieldInfos.FieldNumbers fieldNumbers, IOContext context, bool validate)
         {
             // validate incoming readers
             if (validate)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// True if any merging should happen </summary>
-        internal bool ShouldMerge()
+        internal bool ShouldMerge() // LUCENENET TODO: Make property ? DocCount could throw exception
         {
             return MergeState.SegmentInfo.DocCount > 0;
         }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         /// <returns> The number of documents that were merged </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public MergeState Merge()
+        internal MergeState Merge()
         {
             if (!ShouldMerge())
             {

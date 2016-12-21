@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.internal
         /// </summary>
-        public static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
+        internal static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
         {
             Directory dir;
             bool closeDir;
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
         }
 
         // returns a gen->List<FieldInfo> mapping. Fields without DV updates have gen=-1
-        private IDictionary<long?, IList<FieldInfo>> GenInfos
+        private IDictionary<long?, IList<FieldInfo>> GenInfos // LUCENENET TODO: Make method GetGenInfos() (complexity)
         {
             get
             {
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the directory this index resides in. </summary>
-        public Directory Directory()
+        public Directory Directory() // LUCENENET TODO: Make property
         {
             // Don't ensureOpen here -- in certain cases, when a
             // cloned/reopened reader needs to commit, it may call
@@ -673,7 +673,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public interface CoreClosedListener
+        public interface CoreClosedListener // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Invoked when the shared core of the original {@code

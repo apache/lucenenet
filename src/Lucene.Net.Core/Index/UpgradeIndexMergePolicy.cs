@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Wrapped <seealso cref="MergePolicy"/>. </summary>
-        protected internal readonly MergePolicy @base;
+        protected readonly MergePolicy @base;
 
         /// <summary>
         /// Wrap the given <seealso cref="MergePolicy"/> and intercept forceMerge requests to
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
         /// so all segments created with a different version number than this Lucene version will
         /// get upgraded.
         /// </summary>
-        protected internal virtual bool ShouldUpgradeSegment(SegmentCommitInfo si)
+        protected virtual bool ShouldUpgradeSegment(SegmentCommitInfo si)
         {
             return !Constants.LUCENE_MAIN_VERSION.Equals(si.Info.Version);
         }

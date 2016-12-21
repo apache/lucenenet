@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
     /// Prefix codes term instances (prefixes are shared)
     /// @lucene.experimental
     /// </summary>
-    public class PrefixCodedTerms : IEnumerable<Term>
+    internal class PrefixCodedTerms : IEnumerable<Term>
     {
         internal readonly RAMFile Buffer;
 
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
             return new PrefixCodedTermsIterator(Buffer);
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
             private BytesRef bytes = new BytesRef();
             private Term term;
 
-            public PrefixCodedTermsIterator(RAMFile buffer)
+            internal PrefixCodedTermsIterator(RAMFile buffer)
             {
                 term = new Term(field, bytes);
 
@@ -84,21 +85,21 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public Term Current
+            public virtual Term Current
             {
                 get { return term; }
             }
 
-            public void Dispose()
+            public virtual void Dispose()
             {
             }
 
-            object System.Collections.IEnumerator.Current
+            object IEnumerator.Current
             {
                 get { return Current; }
             }
 
-            public bool MoveNext()
+            public virtual bool MoveNext()
             {
                 if (input.FilePointer < input.Length())
                 {
@@ -118,9 +119,9 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            public void Reset()
+            public virtual void Reset()
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
 
@@ -138,9 +139,9 @@ namespace Lucene.Net.Index
                 Output = new RAMOutputStream(Buffer);
             }
 
-            internal RAMFile Buffer = new RAMFile();
-            internal RAMOutputStream Output;
-            internal Term LastTerm = new Term("");
+            private RAMFile Buffer = new RAMFile();
+            private RAMOutputStream Output;
+            private Term LastTerm = new Term("");
 
             /// <summary>
             /// add a term </summary>
@@ -187,7 +188,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual int SharedPrefix(BytesRef term1, BytesRef term2)
+            private int SharedPrefix(BytesRef term1, BytesRef term2)
             {
                 int pos1 = 0;
                 int pos1End = pos1 + Math.Min(term1.Length, term2.Length);

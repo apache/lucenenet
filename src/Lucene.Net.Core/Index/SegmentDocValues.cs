@@ -128,9 +128,5 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
-        internal void Release()
-        {
-        }
     }
 }

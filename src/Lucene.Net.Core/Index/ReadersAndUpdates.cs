@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
     {
         // Not final because we replace (clone) when we need to
         // change it and it's been shared:
-        public readonly SegmentCommitInfo Info;
+        public readonly SegmentCommitInfo Info; // LUCENENET TODO: Make property
 
         // Tracks how many consumers are using this instance:
         private readonly AtomicInteger RefCount_Renamed = new AtomicInteger(1);
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual Bits ReadOnlyLiveDocs
+        public virtual Bits ReadOnlyLiveDocs // LUCENENET TODO: Make GetReadOnlyLiveDocs() (has side-effect)
         {
             get
             {

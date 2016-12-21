@@ -41,9 +41,9 @@ namespace Lucene.Net.Index
         ///
         ///  @lucene.internal
         /// </summary>
-        public readonly IndexReaderContext TopReaderContext;
+        public readonly IndexReaderContext TopReaderContext; // LUCENENET TODO: Make property
 
-        private readonly TermState[] States;
+        private readonly TermState[] states;
         private int docFreq;
         private long totalTermFreq;
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
             {
                 len = context.Leaves.Count;
             }
-            States = new TermState[len];
+            states = new TermState[len];
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
         public void Clear()
         {
             docFreq = 0;
-            Arrays.Fill(States, null);
+            Arrays.Fill(states, null);
         }
 
         /// <summary>
@@ -133,8 +133,8 @@ namespace Lucene.Net.Index
         public void Register(TermState state, int ord, int docFreq, long totalTermFreq)
         {
             Debug.Assert(state != null, "state must not be null");
-            Debug.Assert(ord >= 0 && ord < States.Length);
-            Debug.Assert(States[ord] == null, "state for ord: " + ord + " already registered");
+            Debug.Assert(ord >= 0 && ord < states.Length);
+            Debug.Assert(states[ord] == null, "state for ord: " + ord + " already registered");
             this.docFreq += docFreq;
             if (this.totalTermFreq >= 0 && totalTermFreq >= 0)
             {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             {
                 this.totalTermFreq = -1;
             }
-            States[ord] = state;
+            states[ord] = state;
         }
 
         /// <summary>
@@ -157,8 +157,8 @@ namespace Lucene.Net.Index
         ///         <seealso cref="TermState"/> for the reader was registered </returns>
         public TermState Get(int ord)
         {
-            Debug.Assert(ord >= 0 && ord < States.Length);
-            return States[ord];
+            Debug.Assert(ord >= 0 && ord < states.Length);
+            return states[ord];
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
         ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </summary>
         /// <returns> the accumulated term frequency of all <seealso cref="TermState"/>
         ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </returns>
-        public long TotalTermFreq()
+        public long TotalTermFreq() // LUCENENET TODO: Make property
         {
             return totalTermFreq;
         }

@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void FinishDocument()
+        internal override void FinishDocument()
         {
             Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
 

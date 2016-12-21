@@ -36,6 +36,10 @@ namespace Lucene.Net.Index
         /// Thrown by <seealso cref="TwoPhaseCommitTool#execute(TwoPhaseCommit...)"/> when an
         /// object fails to prepareCommit().
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class PrepareCommitFailException
             : System.IO.IOException
         {
@@ -51,6 +55,10 @@ namespace Lucene.Net.Index
         /// Thrown by <seealso cref="TwoPhaseCommitTool#execute(TwoPhaseCommit...)"/> when an
         /// object fails to commit().
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class CommitFailException : System.IO.IOException
         {
             /// <summary>

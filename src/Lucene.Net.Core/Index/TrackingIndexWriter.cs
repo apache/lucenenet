@@ -42,8 +42,8 @@ namespace Lucene.Net.Index
 
     public class TrackingIndexWriter
     {
-        private readonly IndexWriter Writer;
-        private readonly AtomicLong IndexingGen = new AtomicLong(1);
+        private readonly IndexWriter writer;
+        private readonly AtomicLong indexingGen = new AtomicLong(1);
 
         /// <summary>
         /// Create a {@code TrackingIndexWriter} wrapping the
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TrackingIndexWriter(IndexWriter writer)
         {
-            this.Writer = writer;
+            this.writer = writer;
         }
 
         /// <summary>
@@ -61,9 +61,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d, Analyzer a)
         {
-            Writer.UpdateDocument(t, d, a);
+            writer.UpdateDocument(t, d, a);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d)
         {
-            Writer.UpdateDocument(t, d);
+            writer.UpdateDocument(t, d);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -85,9 +85,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
         {
-            Writer.UpdateDocuments(t, docs, a);
+            writer.UpdateDocuments(t, docs, a);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -97,9 +97,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs)
         {
-            Writer.UpdateDocuments(t, docs);
+            writer.UpdateDocuments(t, docs);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long DeleteDocuments(Term t)
         {
-            Writer.DeleteDocuments(t);
+            writer.DeleteDocuments(t);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -119,9 +119,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long DeleteDocuments(params Term[] terms)
         {
-            Writer.DeleteDocuments(terms);
+            writer.DeleteDocuments(terms);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long DeleteDocuments(Query q)
         {
-            Writer.DeleteDocuments(q);
+            writer.DeleteDocuments(q);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -141,9 +141,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long DeleteDocuments(params Query[] queries)
         {
-            Writer.DeleteDocuments(queries);
+            writer.DeleteDocuments(queries);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -152,9 +152,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long DeleteAll()
         {
-            Writer.DeleteAll();
+            writer.DeleteAll();
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -164,9 +164,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddDocument(IEnumerable<IndexableField> d, Analyzer a)
         {
-            Writer.AddDocument(d, a);
+            writer.AddDocument(d, a);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -176,9 +176,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
         {
-            Writer.AddDocuments(docs, a);
+            writer.AddDocuments(docs, a);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -187,9 +187,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddDocument(IEnumerable<IndexableField> d)
         {
-            Writer.AddDocument(d);
+            writer.AddDocument(d);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -198,9 +198,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs)
         {
-            Writer.AddDocuments(docs);
+            writer.AddDocuments(docs);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -209,9 +209,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddIndexes(params Directory[] dirs)
         {
-            Writer.AddIndexes(dirs);
+            writer.AddIndexes(dirs);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -220,9 +220,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long AddIndexes(params IndexReader[] readers)
         {
-            Writer.AddIndexes(readers);
+            writer.AddIndexes(readers);
             // Return gen as of when indexing finished:
-            return IndexingGen.Get();
+            return indexingGen.Get();
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return IndexingGen.Get();
+                return indexingGen.Get();
             }
         }
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Writer;
+                return writer;
             }
         }
 
@@ -250,11 +250,11 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.internal
         /// </summary>
-        public virtual long AndIncrementGeneration
+        public virtual long AndIncrementGeneration // LUCENENET TODO: Make method GetAndIncrementGeneration()
         {
             get
             {
-                return IndexingGen.IncrementAndGet();
+                return indexingGen.IncrementAndGet();
             }
         }
 
@@ -265,9 +265,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long TryDeleteDocument(IndexReader reader, int docID)
         {
-            if (Writer.TryDeleteDocument(reader, docID))
+            if (writer.TryDeleteDocument(reader, docID))
             {
-                return IndexingGen.Get();
+                return indexingGen.Get();
             }
             else
             {

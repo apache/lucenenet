@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal RandomAccessOrds()
+        protected RandomAccessOrds()
         {
         }
 
@@ -52,6 +52,6 @@ namespace Lucene.Net.Index
         /// Returns the cardinality for the current document (previously
         /// set by <seealso cref="#setDocument(int)"/>.
         /// </summary>
-        public abstract int Cardinality();
+        public abstract int Cardinality(); // LUCENENET TODO: Make property ?
     }
 }

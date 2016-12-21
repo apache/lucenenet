@@ -27,6 +27,6 @@ namespace Lucene.Net.Index
 
         public abstract void StartDocument();
 
-        public abstract void FinishDocument();
+        internal abstract void FinishDocument();
     }
 }
