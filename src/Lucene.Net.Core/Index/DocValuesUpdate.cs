@@ -36,24 +36,24 @@ namespace Lucene.Net.Index
          */
         private static readonly int RAW_SIZE_IN_BYTES = 8 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 8 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 8 * RamUsageEstimator.NUM_BYTES_INT;
 
-        internal readonly DocValuesFieldUpdates.Type_e Type;
-        internal readonly Term Term;
-        internal readonly string Field;
-        internal readonly object Value;
-        internal int DocIDUpto = -1; // unassigned until applied, and confusing that it's here, when it's just used in BufferedDeletes...
+        internal readonly DocValuesFieldUpdates.Type_e type;
+        internal readonly Term term;
+        internal readonly string field;
+        internal readonly object value;
+        internal int docIDUpto = -1; // unassigned until applied, and confusing that it's here, when it's just used in BufferedDeletes...
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="term"> the <seealso cref="Term"/> which determines the documents that will be updated </param>
+        /// <param name="term"> the <seealso cref="term"/> which determines the documents that will be updated </param>
         /// <param name="field"> the <seealso cref="NumericDocValuesField"/> to update </param>
         /// <param name="value"> the updated value </param>
         protected DocValuesUpdate(DocValuesFieldUpdates.Type_e type, Term term, string field, object value)
         {
-            this.Type = type;
-            this.Term = term;
-            this.Field = field;
-            this.Value = value;
+            this.type = type;
+            this.term = term;
+            this.field = field;
+            this.value = value;
         }
 
         internal abstract long ValueSizeInBytes(); // LUCENENT TODO: Name GetValueSizeInBytes() ?
@@ -61,16 +61,16 @@ namespace Lucene.Net.Index
         internal int SizeInBytes() // LUCENENT TODO: Name GetSizeInBytes() ?
         {
             int sizeInBytes = RAW_SIZE_IN_BYTES;
-            sizeInBytes += Term.Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
-            sizeInBytes += Term.Bytes.Bytes.Length;
-            sizeInBytes += Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
+            sizeInBytes += term.Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
+            sizeInBytes += term.Bytes.Bytes.Length;
+            sizeInBytes += field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
             sizeInBytes += (int)ValueSizeInBytes();
             return sizeInBytes;
         }
 
         public override string ToString()
         {
-            return "term=" + Term + ",field=" + Field + ",value=" + Value;
+            return "term=" + term + ",field=" + field + ",value=" + value;
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 
             internal override long ValueSizeInBytes()
             {
-                return RAW_VALUE_SIZE_IN_BYTES + ((BytesRef)Value).Bytes.Length;
+                return RAW_VALUE_SIZE_IN_BYTES + ((BytesRef)value).Bytes.Length;
             }
         }
 

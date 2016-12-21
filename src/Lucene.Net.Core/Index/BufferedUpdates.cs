@@ -245,20 +245,20 @@ namespace Lucene.Net.Index
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
             OrderedDictionary fieldUpdates = null;
-            if (!NumericUpdates.TryGetValue(update.Field, out fieldUpdates))
+            if (!NumericUpdates.TryGetValue(update.field, out fieldUpdates))
             {
                 fieldUpdates = new OrderedDictionary();
-                NumericUpdates[update.Field] = fieldUpdates;
+                NumericUpdates[update.field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
 
             NumericDocValuesUpdate current = null;
-            if (fieldUpdates.Contains(update.Term))
+            if (fieldUpdates.Contains(update.term))
             {
-                current = fieldUpdates[update.Term] as NumericDocValuesUpdate;
+                current = fieldUpdates[update.term] as NumericDocValuesUpdate;
             }
 
-            if (current != null && docIDUpto < current.DocIDUpto)
+            if (current != null && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -267,14 +267,14 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            update.DocIDUpto = docIDUpto;
+            update.docIDUpto = docIDUpto;
             // since it's an OrderedDictionary, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
             if (current != null)
             {
-                fieldUpdates.Remove(update.Term);
+                fieldUpdates.Remove(update.term);
             }
-            fieldUpdates[update.Term] = update;
+            fieldUpdates[update.term] = update;
             NumNumericUpdates.IncrementAndGet();
             if (current == null)
             {
@@ -285,20 +285,20 @@ namespace Lucene.Net.Index
         public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
         {
             OrderedDictionary fieldUpdates;
-            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates))
+            if (!BinaryUpdates.TryGetValue(update.field, out fieldUpdates))
             {
                 fieldUpdates = new OrderedDictionary();
-                BinaryUpdates[update.Field] = fieldUpdates;
+                BinaryUpdates[update.field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
 
             BinaryDocValuesUpdate current = null;
-            if (fieldUpdates.Contains(update.Term))
+            if (fieldUpdates.Contains(update.term))
             {
-                current = fieldUpdates[update.Term] as BinaryDocValuesUpdate;
+                current = fieldUpdates[update.term] as BinaryDocValuesUpdate;
             }
 
-            if (current != null && docIDUpto < current.DocIDUpto)
+            if (current != null && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -307,14 +307,14 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            update.DocIDUpto = docIDUpto;
+            update.docIDUpto = docIDUpto;
             // since it's an OrderedDictionary, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
             if (current != null)
             {
-                fieldUpdates.Remove(update.Term);
+                fieldUpdates.Remove(update.term);
             }
-            fieldUpdates[update.Term] = update;
+            fieldUpdates[update.term] = update;
             NumBinaryUpdates.IncrementAndGet();
             if (current == null)
             {

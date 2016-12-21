@@ -569,8 +569,8 @@ namespace Lucene.Net.Index
                 //System.out.println(Thread.currentThread().getName() + " numericDVUpdate reader=" + reader);
                 foreach (DocValuesUpdate update in updates)
                 {
-                    Term term = update.Term;
-                    int limit = update.DocIDUpto;
+                    Term term = update.term;
+                    int limit = update.docIDUpto;
 
                     // TODO: we traverse the terms in update order (not term order) so that we
                     // apply the updates in the correct order, i.e. if two terms udpate the
@@ -612,10 +612,10 @@ namespace Lucene.Net.Index
 
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
-                        AbstractDocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.Field, update.Type);
+                        AbstractDocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.field, update.type);
                         if (dvUpdates == null)
                         {
-                            dvUpdates = dvUpdatesContainer.NewUpdates(update.Field, update.Type, reader.MaxDoc);
+                            dvUpdates = dvUpdatesContainer.NewUpdates(update.field, update.type, reader.MaxDoc);
                         }
                         int doc;
                         while ((doc = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -625,7 +625,7 @@ namespace Lucene.Net.Index
                             {
                                 break; // no more docs that can be updated for this term
                             }
-                            dvUpdates.Add(doc, update.Value);
+                            dvUpdates.Add(doc, update.value);
                         }
                     }
                 }

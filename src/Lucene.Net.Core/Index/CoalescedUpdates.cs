@@ -54,15 +54,15 @@ namespace Lucene.Net.Index
 
             foreach (NumericDocValuesUpdate nu in @in.NumericDVUpdates)
             {
-                NumericDocValuesUpdate clone = new NumericDocValuesUpdate(nu.Term, nu.Field, (long?)nu.Value);
-                clone.DocIDUpto = int.MaxValue;
+                NumericDocValuesUpdate clone = new NumericDocValuesUpdate(nu.term, nu.field, (long?)nu.value);
+                clone.docIDUpto = int.MaxValue;
                 NumericDVUpdates.Add(clone);
             }
 
             foreach (BinaryDocValuesUpdate bu in @in.BinaryDVUpdates)
             {
-                BinaryDocValuesUpdate clone = new BinaryDocValuesUpdate(bu.Term, bu.Field, (BytesRef)bu.Value);
-                clone.DocIDUpto = int.MaxValue;
+                BinaryDocValuesUpdate clone = new BinaryDocValuesUpdate(bu.term, bu.field, (BytesRef)bu.value);
+                clone.docIDUpto = int.MaxValue;
                 BinaryDVUpdates.Add(clone);
             }
         }
