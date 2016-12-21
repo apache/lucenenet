@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
         ///
         ///  @lucene.internal
         /// </summary>
-        public readonly IndexReaderContext TopReaderContext; // LUCENENET TODO: Make property
+        public IndexReaderContext TopReaderContext { get; private set; }
 
         private readonly TermState[] states;
         private int docFreq;
