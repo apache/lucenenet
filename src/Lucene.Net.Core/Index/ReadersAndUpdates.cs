@@ -480,7 +480,7 @@ namespace Lucene.Net.Index
                     {
                         // clone FieldInfos so that we can update their dvGen separately from
                         // the reader's infos and write them to a new fieldInfos_gen file
-                        FieldInfos.Builder builder = new FieldInfos.Builder(Writer.GlobalFieldNumberMap);
+                        FieldInfos.Builder builder = new FieldInfos.Builder(Writer.globalFieldNumberMap);
                         // cannot use builder.add(reader.getFieldInfos()) because it does not
                         // clone FI.attributes as well FI.dvGen
                         foreach (FieldInfo fi in reader.FieldInfos)

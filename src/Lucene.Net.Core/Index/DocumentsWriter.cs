@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             FlushPolicy = config.FlushPolicy;
             this.Writer = writer;
             this.Events = new ConcurrentQueue<Event>();
-            FlushControl = new DocumentsWriterFlushControl(this, config, writer.BufferedUpdatesStream);
+            FlushControl = new DocumentsWriterFlushControl(this, config, writer.bufferedUpdatesStream);
         }
 
         internal bool DeleteQueries(params Query[] queries)
@@ -500,7 +500,7 @@ namespace Lucene.Net.Index
         {
             if (state.Active && state.Dwpt == null)
             {
-                FieldInfos.Builder infos = new FieldInfos.Builder(Writer.GlobalFieldNumberMap);
+                FieldInfos.Builder infos = new FieldInfos.Builder(Writer.globalFieldNumberMap);
                 state.Dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, LIWConfig, InfoStream, DeleteQueue, infos);
             }
         }
