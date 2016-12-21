@@ -1953,7 +1953,7 @@ namespace Lucene.Net.Index
                 get { return "foo"; }
             }
 
-            public IndexableFieldType FieldType
+            public IIndexableFieldType FieldType
             {
                 get { return StringField.TYPE_NOT_STORED; }
             }

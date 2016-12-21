@@ -46,10 +46,10 @@ namespace Lucene.Net.Index
         string Name { get; }
 
         /// <summary>
-        /// <seealso cref="IndexableFieldType"/> describing the properties
+        /// <seealso cref="IIndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
-        IndexableFieldType FieldType { get; }
+        IIndexableFieldType FieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.
@@ -65,8 +65,8 @@ namespace Lucene.Net.Index
         /// the range of that encoding.
         /// <p>
         /// It is illegal to return a boost other than 1.0f for a field that is not
-        /// indexed (<seealso cref="IndexableFieldType#indexed()"/> is false) or omits normalization values
-        /// (<seealso cref="IndexableFieldType#omitNorms()"/> returns true).
+        /// indexed (<seealso cref="IIndexableFieldType#indexed()"/> is false) or omits normalization values
+        /// (<seealso cref="IIndexableFieldType#omitNorms()"/> returns true).
         /// </summary>
         /// <seealso cref= Similarity#computeNorm(FieldInvertState) </seealso>
         /// <seealso cref= DefaultSimilarity#encodeNormValue(float) </seealso>

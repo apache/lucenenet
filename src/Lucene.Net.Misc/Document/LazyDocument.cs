@@ -205,7 +205,7 @@ namespace Lucene.Net.Documents
                 return RealValue.GetNumericValue();
             }
 
-            public virtual IndexableFieldType FieldType
+            public virtual IIndexableFieldType FieldType
             {
                 get { return RealValue.FieldType; }
             }

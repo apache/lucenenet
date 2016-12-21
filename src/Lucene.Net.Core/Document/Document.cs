@@ -27,12 +27,12 @@ namespace Lucene.Net.Documents
     /// Documents are the unit of indexing and search.
     ///
     /// A Document is a set of fields.  Each field has a name and a textual value.
-    /// A field may be <seealso cref="Lucene.Net.Index.IndexableFieldType#stored() stored"/> with the document, in which
+    /// A field may be <seealso cref="Lucene.Net.Index.IIndexableFieldType#stored() stored"/> with the document, in which
     /// case it is returned with search hits on the document.  Thus each document
     /// should typically contain one or more stored fields which uniquely identify
     /// it.
     ///
-    /// <p>Note that fields which are <i>not</i> <seealso cref="Lucene.Net.Index.IndexableFieldType#stored() stored"/> are
+    /// <p>Note that fields which are <i>not</i> <seealso cref="Lucene.Net.Index.IIndexableFieldType#stored() stored"/> are
     /// <i>not</i> available in documents retrieved from the index, e.g. with {@link
     /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.</p>
     /// </summary>

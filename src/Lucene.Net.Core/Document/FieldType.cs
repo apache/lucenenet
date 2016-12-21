@@ -25,7 +25,7 @@ namespace Lucene.Net.Documents
     /// <summary>
     /// Describes the properties of a field.
     /// </summary>
-    public class FieldType : IndexableFieldType
+    public class FieldType : IIndexableFieldType
     {
         // LUCENENET specific: Moved the NumericType enum outside of this class
 

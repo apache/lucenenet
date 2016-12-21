@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
             ///  set these fields when they succeed in consuming
             ///  the document
             /// </summary>
-            public FieldInfo AddOrUpdate(string name, IndexableFieldType fieldType)
+            public FieldInfo AddOrUpdate(string name, IIndexableFieldType fieldType)
             {
                 // TODO: really, indexer shouldn't even call this
                 // method (it's only called from DocFieldProcessor);

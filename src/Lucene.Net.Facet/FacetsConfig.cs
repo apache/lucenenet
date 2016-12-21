@@ -34,7 +34,7 @@ namespace Lucene.Net.Facet
     using Field = Lucene.Net.Documents.Field;
     using FloatAssociationFacetField = Lucene.Net.Facet.Taxonomy.FloatAssociationFacetField;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
-    using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
+    using IIndexableFieldType = Lucene.Net.Index.IIndexableFieldType;
     using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
     using IntsRef = Lucene.Net.Util.IntsRef;
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
@@ -392,7 +392,7 @@ namespace Lucene.Net.Facet
 
             foreach (IIndexableField field in doc.Fields)
             {
-                IndexableFieldType ft = field.FieldType;
+                IIndexableFieldType ft = field.FieldType;
                 if (ft != FacetField.TYPE && ft != SortedSetDocValuesFacetField.TYPE && ft != AssociationFacetField.TYPE)
                 {
                     result.Add(field);

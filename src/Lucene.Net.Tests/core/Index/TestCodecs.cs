@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                 Array.Sort(terms);
             }
 
-            private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
+            private class IndexableFieldTypeAnonymousInnerClassHelper : IIndexableFieldType
             {
                 private readonly FieldData OuterInstance;
 

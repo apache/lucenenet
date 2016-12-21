@@ -40,7 +40,7 @@ namespace Lucene.Net.Documents
     /// index, so that they may be returned with hits on the document.
     ///
     /// <p/>
-    /// NOTE: the field type is an <seealso cref="IndexableFieldType"/>.  Making changes
+    /// NOTE: the field type is an <seealso cref="IIndexableFieldType"/>.  Making changes
     /// to the state of the IndexableFieldType will impact any
     /// Field it is used in.  It is strongly recommended that no
     /// changes be made after Field instantiation.
@@ -551,7 +551,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns the <seealso cref="FieldType"/> for this field. </summary>
-        public virtual IndexableFieldType FieldType
+        public virtual IIndexableFieldType FieldType
         {
             get { return mType; }
         }

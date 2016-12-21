@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        internal void Update(IndexableFieldType ft)
+        internal void Update(IIndexableFieldType ft)
         {
             Update(ft.IsIndexed, false, ft.OmitNorms, false, ft.IndexOptions);
         }

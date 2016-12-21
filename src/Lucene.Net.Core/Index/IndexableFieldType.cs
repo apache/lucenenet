@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
     /// Describes the properties of a field.
     /// @lucene.experimental
     /// </summary>
-    public interface IndexableFieldType // LUCENENET TODO: Rename with "I"
+    public interface IIndexableFieldType
     {
         /// <summary>
         /// True if this field should be indexed (inverted) </summary>

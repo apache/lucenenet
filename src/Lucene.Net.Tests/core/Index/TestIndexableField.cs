@@ -51,14 +51,14 @@ namespace Lucene.Net.Index
             private readonly TestIndexableField OuterInstance;
 
             internal readonly int Counter;
-            internal readonly IndexableFieldType fieldType;
+            internal readonly IIndexableFieldType fieldType;
 
             public MyField()
             {
                 fieldType = new IndexableFieldTypeAnonymousInnerClassHelper(this);
             }
 
-            private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
+            private class IndexableFieldTypeAnonymousInnerClassHelper : IIndexableFieldType
             {
                 private MyField OuterInstance;
 
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public IndexableFieldType FieldType
+            public IIndexableFieldType FieldType
             {
                 get { return fieldType; }
             }
