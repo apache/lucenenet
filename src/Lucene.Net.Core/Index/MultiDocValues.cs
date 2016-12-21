@@ -103,19 +103,19 @@ namespace Lucene.Net.Index
 
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            private Lucene.Net.Index.NumericDocValues[] Values;
-            private int[] Starts;
+            private NumericDocValues[] values;
+            private int[] starts;
 
-            public NumericDocValuesAnonymousInnerClassHelper(Lucene.Net.Index.NumericDocValues[] values, int[] starts)
+            public NumericDocValuesAnonymousInnerClassHelper(NumericDocValues[] values, int[] starts)
             {
-                this.Values = values;
-                this.Starts = starts;
+                this.values = values;
+                this.starts = starts;
             }
 
             public override long Get(int docID)
             {
-                int subIndex = ReaderUtil.SubIndex(docID, Starts);
-                return Values[subIndex].Get(docID - Starts[subIndex]);
+                int subIndex = ReaderUtil.SubIndex(docID, starts);
+                return values[subIndex].Get(docID - starts[subIndex]);
             }
         }
 
@@ -172,19 +172,19 @@ namespace Lucene.Net.Index
 
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
-            private Lucene.Net.Index.NumericDocValues[] Values;
-            private int[] Starts;
+            private NumericDocValues[] values;
+            private int[] starts;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(Lucene.Net.Index.NumericDocValues[] values, int[] starts)
+            public NumericDocValuesAnonymousInnerClassHelper2(NumericDocValues[] values, int[] starts)
             {
-                this.Values = values;
-                this.Starts = starts;
+                this.values = values;
+                this.starts = starts;
             }
 
             public override long Get(int docID)
             {
-                int subIndex = ReaderUtil.SubIndex(docID, Starts);
-                return Values[subIndex].Get(docID - Starts[subIndex]);
+                int subIndex = ReaderUtil.SubIndex(docID, starts);
+                return values[subIndex].Get(docID - starts[subIndex]);
             }
         }
 
@@ -302,19 +302,19 @@ namespace Lucene.Net.Index
 
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
-            private Lucene.Net.Index.BinaryDocValues[] Values;
-            private int[] Starts;
+            private BinaryDocValues[] values;
+            private int[] starts;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(Lucene.Net.Index.BinaryDocValues[] values, int[] starts)
+            public BinaryDocValuesAnonymousInnerClassHelper(BinaryDocValues[] values, int[] starts)
             {
-                this.Values = values;
-                this.Starts = starts;
+                this.values = values;
+                this.starts = starts;
             }
 
             public override void Get(int docID, BytesRef result)
             {
-                int subIndex = ReaderUtil.SubIndex(docID, Starts);
-                Values[subIndex].Get(docID - Starts[subIndex], result);
+                int subIndex = ReaderUtil.SubIndex(docID, starts);
+                values[subIndex].Get(docID - starts[subIndex], result);
             }
         }
 
@@ -579,7 +579,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public readonly OrdinalMap Mapping; // LUCENENET TODO: Make property
+            public OrdinalMap Mapping { get; private set; }
 
             /// <summary>
             /// Creates a new MultiSortedDocValues over <code>values</code> </summary>
@@ -631,7 +631,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public readonly OrdinalMap Mapping; // LUCENENET TODO: Make property
+            public OrdinalMap Mapping { get; private set; }
 
             internal int CurrentSubIndex;
 
