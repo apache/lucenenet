@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Event = Lucene.Net.Index.IndexWriter.Event;
+    using IEvent = Lucene.Net.Index.IndexWriter.IEvent;
     using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
         internal readonly FlushPolicy FlushPolicy;
         internal readonly DocumentsWriterFlushControl FlushControl;
         private readonly IndexWriter Writer;
-        private readonly ConcurrentQueue<Event> Events;
+        private readonly ConcurrentQueue<IEvent> Events;
 
         internal DocumentsWriter(IndexWriter writer, LiveIndexWriterConfig config, Directory directory)
         {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             this.PerThreadPool = config.IndexerThreadPool;
             FlushPolicy = config.FlushPolicy;
             this.Writer = writer;
-            this.Events = new ConcurrentQueue<Event>();
+            this.Events = new ConcurrentQueue<IEvent>();
             FlushControl = new DocumentsWriterFlushControl(this, config, writer.bufferedUpdatesStream);
         }
 
@@ -823,14 +823,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void PutEvent(Event @event)
+        private void PutEvent(IEvent @event)
         {
             Events.Enqueue(@event);
         }
 
-        internal sealed class ApplyDeletesEvent : Event
+        internal sealed class ApplyDeletesEvent : IEvent
         {
-            internal static readonly Event INSTANCE = new ApplyDeletesEvent();
+            internal static readonly IEvent INSTANCE = new ApplyDeletesEvent();
             private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ApplyDeletesEvent()
@@ -845,9 +845,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal sealed class MergePendingEvent : Event
+        internal sealed class MergePendingEvent : IEvent
         {
-            internal static readonly Event INSTANCE = new MergePendingEvent();
+            internal static readonly IEvent INSTANCE = new MergePendingEvent();
             private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal MergePendingEvent()
@@ -862,9 +862,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal sealed class ForcedPurgeEvent : Event
+        internal sealed class ForcedPurgeEvent : IEvent
         {
-            internal static readonly Event INSTANCE = new ForcedPurgeEvent();
+            internal static readonly IEvent INSTANCE = new ForcedPurgeEvent();
             private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ForcedPurgeEvent()
@@ -879,7 +879,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class FlushFailedEvent : Event
+        internal class FlushFailedEvent : IEvent
         {
             private readonly SegmentInfo Info;
 
@@ -894,7 +894,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class DeleteNewFilesEvent : Event
+        internal class DeleteNewFilesEvent : IEvent
         {
             private readonly ICollection<string> Files;
 
@@ -909,7 +909,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public ConcurrentQueue<Event> EventQueue
+        public ConcurrentQueue<IEvent> EventQueue
         {
             get { return Events; }
         }

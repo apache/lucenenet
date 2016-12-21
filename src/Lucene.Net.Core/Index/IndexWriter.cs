@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
         internal readonly FieldNumbers globalFieldNumberMap;
 
         private readonly DocumentsWriter docWriter;
-        private readonly ConcurrentQueue<Event> eventQueue;
+        private readonly ConcurrentQueue<IEvent> eventQueue;
         internal readonly IndexFileDeleter deleter;
 
         // used by forceMerge to note those needing merging
@@ -1088,7 +1088,7 @@ namespace Lucene.Net.Index
             {
                 return true;
             }
-            foreach (Event e in eventQueue)
+            foreach (IEvent e in eventQueue)
             {
                 Debug.Assert(e is DocumentsWriter.MergePendingEvent, e.ToString());
             }
@@ -3721,9 +3721,9 @@ namespace Lucene.Net.Index
         ///  merged finished, this method may return true right
         ///  after you had just called <seealso cref="#commit"/>.
         /// </summary>
-        public bool HasUncommittedChanges() // LUCENENET TODO: Make property
+        public bool HasUncommittedChanges
         {
-            return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any();
+            get { return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any(); }
         }
 
         private void CommitInternal()
@@ -4729,7 +4729,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    _mergeInit(merge);
+                    MergeInitImpl(merge);
                     success = true;
                 }
                 finally
@@ -4746,7 +4746,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void _mergeInit(MergePolicy.OneMerge merge) // LUCENENET TODO: Rename (pascal)
+        private void MergeInitImpl(MergePolicy.OneMerge merge) // LUCENENET specific: renamed from _mergeInit
         {
             lock (this)
             {
@@ -5661,7 +5661,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual bool Closed // LUCENENET TODO: Rename IsClosed
+        public virtual bool IsClosed
         {
             get
             {
@@ -5865,9 +5865,9 @@ namespace Lucene.Net.Index
             return ProcessEvents(eventQueue, triggerMerge, forcePurge);
         }
 
-        private bool ProcessEvents(ConcurrentQueue<Event> queue, bool triggerMerge, bool forcePurge)
+        private bool ProcessEvents(ConcurrentQueue<IEvent> queue, bool triggerMerge, bool forcePurge)
         {
-            Event @event;
+            IEvent @event;
             bool processed = false;
             //while ((@event = queue.RemoveFirst()) != null)
             while (queue.TryDequeue(out @event))
@@ -5884,7 +5884,7 @@ namespace Lucene.Net.Index
         /// encoded inside the <seealso cref="#process(IndexWriter, boolean, boolean)"/> method.
         ///
         /// </summary>
-        public interface Event // LUCENENET TODO: Rename "I"
+        public interface IEvent
         {
             /// <summary>
             /// Processes the event. this method is called by the <seealso cref="IndexWriter"/>

@@ -2422,7 +2422,7 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             // even though we hit exception: we are closed, no locks or files held, index in good state
-            Assert.IsTrue(iw.Closed);
+            Assert.IsTrue(iw.IsClosed);
             Assert.IsFalse(IndexWriter.IsLocked(dir));
 
             r = DirectoryReader.Open(dir);
@@ -2504,7 +2504,7 @@ namespace Lucene.Net.Index
                 r.Dispose();
 
                 // even though we hit exception: we are closed, no locks or files held, index in good state
-                Assert.IsTrue(iw.Closed);
+                Assert.IsTrue(iw.IsClosed);
                 Assert.IsFalse(IndexWriter.IsLocked(dir));
 
                 r = DirectoryReader.Open(dir);

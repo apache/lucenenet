@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                if (Writer == null || Writer.Closed)
+                if (Writer == null || Writer.IsClosed)
                 {
                     // Fully read the segments file: this ensures that it's
                     // completely written so that if

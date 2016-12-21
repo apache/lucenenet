@@ -2712,47 +2712,47 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Assert.IsTrue(writer.HasUncommittedChanges()); // this will be true because a commit will create an empty index
+            Assert.IsTrue(writer.HasUncommittedChanges); // this will be true because a commit will create an empty index
             Document doc = new Document();
             doc.Add(NewTextField("myfield", "a b c", Field.Store.NO));
             writer.AddDocument(doc);
-            Assert.IsTrue(writer.HasUncommittedChanges());
+            Assert.IsTrue(writer.HasUncommittedChanges);
 
             // Must commit, waitForMerges, commit again, to be
             // certain that hasUncommittedChanges returns false:
             writer.Commit();
             writer.WaitForMerges();
             writer.Commit();
-            Assert.IsFalse(writer.HasUncommittedChanges());
+            Assert.IsFalse(writer.HasUncommittedChanges);
             writer.AddDocument(doc);
-            Assert.IsTrue(writer.HasUncommittedChanges());
+            Assert.IsTrue(writer.HasUncommittedChanges);
             writer.Commit();
             doc = new Document();
             doc.Add(NewStringField("id", "xyz", Field.Store.YES));
             writer.AddDocument(doc);
-            Assert.IsTrue(writer.HasUncommittedChanges());
+            Assert.IsTrue(writer.HasUncommittedChanges);
 
             // Must commit, waitForMerges, commit again, to be
             // certain that hasUncommittedChanges returns false:
             writer.Commit();
             writer.WaitForMerges();
             writer.Commit();
-            Assert.IsFalse(writer.HasUncommittedChanges());
+            Assert.IsFalse(writer.HasUncommittedChanges);
             writer.DeleteDocuments(new Term("id", "xyz"));
-            Assert.IsTrue(writer.HasUncommittedChanges());
+            Assert.IsTrue(writer.HasUncommittedChanges);
 
             // Must commit, waitForMerges, commit again, to be
             // certain that hasUncommittedChanges returns false:
             writer.Commit();
             writer.WaitForMerges();
             writer.Commit();
-            Assert.IsFalse(writer.HasUncommittedChanges());
+            Assert.IsFalse(writer.HasUncommittedChanges);
             writer.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Assert.IsFalse(writer.HasUncommittedChanges());
+            Assert.IsFalse(writer.HasUncommittedChanges);
             writer.AddDocument(doc);
-            Assert.IsTrue(writer.HasUncommittedChanges());
+            Assert.IsTrue(writer.HasUncommittedChanges);
 
             writer.Dispose();
             dir.Dispose();
