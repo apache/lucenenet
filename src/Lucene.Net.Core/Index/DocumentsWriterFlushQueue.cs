@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             {
                 // the actual flush is done asynchronously and once done the FlushedSegment
                 // is passed to the flush ticket
-                ticket.Segment = segment;
+                ticket.SetSegment(segment);
             }
         }
 
@@ -117,10 +117,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal virtual bool HasTickets() // LUCENENET TODO: Make property
+        internal virtual bool HasTickets
         {
-            Debug.Assert(TicketCount_Renamed.Get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.Get());
-            return TicketCount_Renamed.Get() != 0;
+            get
+            {
+                Debug.Assert(TicketCount_Renamed.Get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.Get());
+                return TicketCount_Renamed.Get() != 0;
+            }
         }
 
         private int InnerPurge(IndexWriter writer)
@@ -134,7 +137,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     head = Queue.Count <= 0 ? null : Queue.First.Value;
-                    canPublish = head != null && head.CanPublish(); // do this synced
+                    canPublish = head != null && head.CanPublish; // do this synced
                 }
                 if (canPublish)
                 {
@@ -232,7 +235,7 @@ namespace Lucene.Net.Index
 
             protected internal abstract void Publish(IndexWriter writer);
 
-            protected internal abstract bool CanPublish(); // LUCENENET TODO: Make property
+            protected internal abstract bool CanPublish { get; }
 
             /// <summary>
             /// Publishes the flushed segment, segment private deletes (if any) and its
@@ -296,9 +299,9 @@ namespace Lucene.Net.Index
                 FinishFlush(writer, null, FrozenUpdates);
             }
 
-            protected internal override bool CanPublish()
+            protected internal override bool CanPublish
             {
-                return true;
+                get { return true; }
             }
         }
 
@@ -319,14 +322,10 @@ namespace Lucene.Net.Index
                 FinishFlush(writer, Segment_Renamed, FrozenUpdates);
             }
 
-            // LUCENENET TODO: Make SetSegment(FlushedSegment segment)
-            internal FlushedSegment Segment // LUCENENET NOTE: Made internal rather than protected because class is sealed
+            internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                set
-                {
-                    Debug.Assert(!Failed);
-                    this.Segment_Renamed = value;
-                }
+                Debug.Assert(!Failed);
+                this.Segment_Renamed = segment;
             }
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
@@ -335,9 +334,9 @@ namespace Lucene.Net.Index
                 Failed = true;
             }
 
-            protected internal override bool CanPublish()
+            protected internal override bool CanPublish
             {
-                return Segment_Renamed != null || Failed;
+                get { return Segment_Renamed != null || Failed; }
             }
         }
     }

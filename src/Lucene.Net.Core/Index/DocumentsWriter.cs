@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
         {
             if (InfoStream.IsEnabled("DW"))
             {
-                InfoStream.Message("DW", "anyChanges? numDocsInRam=" + NumDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + TicketQueue.HasTickets() + " pendingChangesInFullFlush: " + PendingChangesInCurrentFullFlush);
+                InfoStream.Message("DW", "anyChanges? numDocsInRam=" + NumDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + TicketQueue.HasTickets + " pendingChangesInFullFlush: " + PendingChangesInCurrentFullFlush);
             }
             /*
              * changes are either in a DWPT or in the deleteQueue.
@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
              * before they are published to the IW. ie we need to check if the
              * ticket queue has any tickets.
              */
-            return NumDocsInRAM.Get() != 0 || AnyDeletions() || TicketQueue.HasTickets() || PendingChangesInCurrentFullFlush;
+            return NumDocsInRAM.Get() != 0 || AnyDeletions() || TicketQueue.HasTickets || PendingChangesInCurrentFullFlush;
         }
 
         public int BufferedDeleteTermsSize
@@ -779,7 +779,7 @@ namespace Lucene.Net.Index
                     TicketQueue.AddDeletes(flushingDeleteQueue);
                 }
                 TicketQueue.ForcePurge(indexWriter);
-                Debug.Assert(!flushingDeleteQueue.AnyChanges() && !TicketQueue.HasTickets());
+                Debug.Assert(!flushingDeleteQueue.AnyChanges() && !TicketQueue.HasTickets);
             }
             finally
             {
