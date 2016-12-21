@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             {
                 while (true)
                 {
-                    MergePolicy.OneMerge merge = writer.NextMerge;
+                    MergePolicy.OneMerge merge = writer.GetNextMerge();
                     if (merge == null)
                     {
                         break;

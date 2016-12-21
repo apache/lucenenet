@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (!MayMerge.Get() && writer.NextMerge != null)
+                    if (!MayMerge.Get() && writer.GetNextMerge() != null)
                     {
                         throw new InvalidOperationException();
                     }

@@ -2449,24 +2449,21 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public virtual MergePolicy.OneMerge NextMerge // LUCENENET TODO: Make GetNextMerge() (non-deterministic)
+        public virtual MergePolicy.OneMerge GetNextMerge()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                if (pendingMerges.Count == 0)
                 {
-                    if (pendingMerges.Count == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        // Advance the merge from pending to running
-                        MergePolicy.OneMerge merge = pendingMerges.First.Value;
-                        pendingMerges.RemoveFirst();
-                        runningMerges.Add(merge);
-                        return merge;
-                    }
+                    return null;
+                }
+                else
+                {
+                    // Advance the merge from pending to running
+                    MergePolicy.OneMerge merge = pendingMerges.First.Value;
+                    pendingMerges.RemoveFirst();
+                    runningMerges.Add(merge);
+                    return merge;
                 }
             }
         }

@@ -139,7 +139,7 @@ namespace Lucene.Net
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
                 MergePolicy.OneMerge merge = null;
-                while ((merge = writer.NextMerge) != null)
+                while ((merge = writer.GetNextMerge()) != null)
                 {
                     if (VERBOSE)
                     {
