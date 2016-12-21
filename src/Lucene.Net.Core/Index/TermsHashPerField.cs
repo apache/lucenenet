@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 
         internal override void Start(IndexableField f)
         {
-            TermAtt = FieldState.AttributeSource_Renamed.GetAttribute<ITermToBytesRefAttribute>();
+            TermAtt = FieldState.AttributeSource.GetAttribute<ITermToBytesRefAttribute>();
             TermBytesRef = TermAtt.BytesRef;
             Consumer.Start(f);
             if (NextPerField != null)

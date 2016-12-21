@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
                     if (i > 0)
                     {
-                        FieldState.Position_Renamed += analyzed ? DocState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
+                        FieldState.Position += analyzed ? DocState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
                     }
 
                     /*
@@ -110,10 +110,10 @@ namespace Lucene.Net.Index
                     {
                         bool hasMoreTokens = stream.IncrementToken();
 
-                        FieldState.AttributeSource_Renamed = stream;
+                        FieldState.AttributeSource = stream;
 
-                        IOffsetAttribute offsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IOffsetAttribute>();
-                        IPositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IPositionIncrementAttribute>();
+                        IOffsetAttribute offsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
+                        IPositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource.AddAttribute<IPositionIncrementAttribute>();
 
                         if (hasMoreTokens)
                         {
@@ -133,11 +133,11 @@ namespace Lucene.Net.Index
                                 {
                                     throw new System.ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name + "'");
                                 }
-                                if (FieldState.Position_Renamed == 0 && posIncr == 0)
+                                if (FieldState.Position == 0 && posIncr == 0)
                                 {
                                     throw new System.ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name + "'");
                                 }
-                                int position = FieldState.Position_Renamed + posIncr;
+                                int position = FieldState.Position + posIncr;
                                 if (position > 0)
                                 {
                                     // NOTE: confusing: this "mirrors" the
@@ -151,17 +151,17 @@ namespace Lucene.Net.Index
 
                                 // position is legal, we can safely place it in fieldState now.
                                 // not sure if anything will use fieldState after non-aborting exc...
-                                FieldState.Position_Renamed = position;
+                                FieldState.Position = position;
 
                                 if (posIncr == 0)
                                 {
-                                    FieldState.NumOverlap_Renamed++;
+                                    FieldState.NumOverlap++;
                                 }
 
                                 if (checkOffsets)
                                 {
-                                    int startOffset = FieldState.Offset_Renamed + offsetAttribute.StartOffset;
-                                    int endOffset = FieldState.Offset_Renamed + offsetAttribute.EndOffset;
+                                    int startOffset = FieldState.Offset + offsetAttribute.StartOffset;
+                                    int endOffset = FieldState.Offset + offsetAttribute.EndOffset;
                                     if (startOffset < 0 || endOffset < startOffset)
                                     {
                                         throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
@@ -192,16 +192,16 @@ namespace Lucene.Net.Index
                                         DocState.DocWriter.SetAborting();
                                     }
                                 }
-                                FieldState.Length_Renamed++;
-                                FieldState.Position_Renamed++;
+                                FieldState.Length++;
+                                FieldState.Position++;
                             } while (stream.IncrementToken());
                         }
                         // trigger streams to perform end-of-stream operations
                         stream.End();
                         // TODO: maybe add some safety? then again, its already checked
                         // when we come back around to the field...
-                        FieldState.Position_Renamed += posIncrAttribute.PositionIncrement;
-                        FieldState.Offset_Renamed += offsetAttribute.EndOffset;
+                        FieldState.Position += posIncrAttribute.PositionIncrement;
+                        FieldState.Offset += offsetAttribute.EndOffset;
 
                         if (DocState.MaxTermPrefix != null)
                         {
@@ -233,8 +233,8 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
-                    FieldState.Boost_Renamed *= field.Boost;
+                    FieldState.Offset += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
+                    FieldState.Boost *= field.Boost;
                 }
 
                 // LUCENE-2387: don't hang onto the field, so GC can

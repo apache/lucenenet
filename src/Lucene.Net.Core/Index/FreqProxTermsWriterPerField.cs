@@ -133,9 +133,9 @@ namespace Lucene.Net.Index
 
         internal override void Start(IndexableField f)
         {
-            if (FieldState.AttributeSource_Renamed.HasAttribute<IPayloadAttribute>())
+            if (FieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
             {
-                PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<IPayloadAttribute>();
+                PayloadAttribute = FieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
             }
             else
             {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             }
             if (HasOffsets)
             {
-                OffsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IOffsetAttribute>();
+                OffsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
             }
             else
             {
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             }
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
-            postings.LastPositions[termID] = FieldState.Position_Renamed;
+            postings.LastPositions[termID] = FieldState.Position;
         }
 
         internal void WriteOffsets(int termID, int offsetAccum)
@@ -212,10 +212,10 @@ namespace Lucene.Net.Index
                 postings.TermFreqs[termID] = 1;
                 if (HasProx)
                 {
-                    WriteProx(termID, FieldState.Position_Renamed);
+                    WriteProx(termID, FieldState.Position);
                     if (HasOffsets)
                     {
-                        WriteOffsets(termID, FieldState.Offset_Renamed);
+                        WriteOffsets(termID, FieldState.Offset);
                     }
                 }
                 else
@@ -223,8 +223,8 @@ namespace Lucene.Net.Index
                     Debug.Assert(!HasOffsets);
                 }
             }
-            FieldState.MaxTermFrequency_Renamed = Math.Max(1, FieldState.MaxTermFrequency_Renamed);
-            FieldState.UniqueTermCount_Renamed++;
+            FieldState.MaxTermFrequency = Math.Max(1, FieldState.MaxTermFrequency);
+            FieldState.UniqueTermCount++;
         }
 
         internal override void AddTerm(int termID)
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
                     TermsHashPerField.WriteVInt(0, postings.LastDocCodes[termID]);
                     postings.LastDocCodes[termID] = DocState.DocID - postings.LastDocIDs[termID];
                     postings.LastDocIDs[termID] = DocState.DocID;
-                    FieldState.UniqueTermCount_Renamed++;
+                    FieldState.UniqueTermCount++;
                 }
             }
             else if (DocState.DocID != postings.LastDocIDs[termID])
@@ -265,34 +265,34 @@ namespace Lucene.Net.Index
                     TermsHashPerField.WriteVInt(0, postings.TermFreqs[termID]);
                 }
                 postings.TermFreqs[termID] = 1;
-                FieldState.MaxTermFrequency_Renamed = Math.Max(1, FieldState.MaxTermFrequency_Renamed);
+                FieldState.MaxTermFrequency = Math.Max(1, FieldState.MaxTermFrequency);
                 postings.LastDocCodes[termID] = (DocState.DocID - postings.LastDocIDs[termID]) << 1;
                 postings.LastDocIDs[termID] = DocState.DocID;
                 if (HasProx)
                 {
-                    WriteProx(termID, FieldState.Position_Renamed);
+                    WriteProx(termID, FieldState.Position);
                     if (HasOffsets)
                     {
                         postings.LastOffsets[termID] = 0;
-                        WriteOffsets(termID, FieldState.Offset_Renamed);
+                        WriteOffsets(termID, FieldState.Offset);
                     }
                 }
                 else
                 {
                     Debug.Assert(!HasOffsets);
                 }
-                FieldState.UniqueTermCount_Renamed++;
+                FieldState.UniqueTermCount++;
             }
             else
             {
-                FieldState.MaxTermFrequency_Renamed = Math.Max(FieldState.MaxTermFrequency_Renamed, ++postings.TermFreqs[termID]);
+                FieldState.MaxTermFrequency = Math.Max(FieldState.MaxTermFrequency, ++postings.TermFreqs[termID]);
                 if (HasProx)
                 {
-                    WriteProx(termID, FieldState.Position_Renamed - postings.LastPositions[termID]);
+                    WriteProx(termID, FieldState.Position - postings.LastPositions[termID]);
                 }
                 if (HasOffsets)
                 {
-                    WriteOffsets(termID, FieldState.Offset_Renamed);
+                    WriteOffsets(termID, FieldState.Offset);
                 }
             }
         }

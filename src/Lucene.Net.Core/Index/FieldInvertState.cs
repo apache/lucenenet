@@ -29,15 +29,16 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class FieldInvertState
     {
-        internal string Name_Renamed;
-        internal int Position_Renamed;
-        internal int Length_Renamed;
-        internal int NumOverlap_Renamed;
-        internal int Offset_Renamed;
-        internal int MaxTermFrequency_Renamed;
-        internal int UniqueTermCount_Renamed;
-        internal float Boost_Renamed;
-        internal AttributeSource AttributeSource_Renamed;
+        // LUCENENET specific - made fields private and added internal setters so they can be set
+        private string name;
+        private int position;
+        private int length;
+        private int numOverlap;
+        private int offset;
+        private int maxTermFrequency;
+        private int uniqueTermCount;
+        private float boost;
+        private AttributeSource attributeSource;
 
         /// <summary>
         /// Creates {code FieldInvertState} for the specified
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public FieldInvertState(string name)
         {
-            this.Name_Renamed = name;
+            this.name = name;
         }
 
         /// <summary>
@@ -54,12 +55,12 @@ namespace Lucene.Net.Index
         /// </summary>
         public FieldInvertState(string name, int position, int length, int numOverlap, int offset, float boost)
         {
-            this.Name_Renamed = name;
-            this.Position_Renamed = position;
-            this.Length_Renamed = length;
-            this.NumOverlap_Renamed = numOverlap;
-            this.Offset_Renamed = offset;
-            this.Boost_Renamed = boost;
+            this.name = name;
+            this.position = position;
+            this.length = length;
+            this.numOverlap = numOverlap;
+            this.offset = offset;
+            this.boost = boost;
         }
 
         /// <summary>
@@ -67,14 +68,14 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void Reset()
         {
-            Position_Renamed = 0;
-            Length_Renamed = 0;
-            NumOverlap_Renamed = 0;
-            Offset_Renamed = 0;
-            MaxTermFrequency_Renamed = 0;
-            UniqueTermCount_Renamed = 0;
-            Boost_Renamed = 1.0f;
-            AttributeSource_Renamed = null;
+            position = 0;
+            length = 0;
+            numOverlap = 0;
+            offset = 0;
+            maxTermFrequency = 0;
+            uniqueTermCount = 0;
+            boost = 1.0f;
+            attributeSource = null;
         }
 
         /// <summary>
@@ -84,7 +85,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Position_Renamed;
+                return position;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                position = value;
             }
         }
 
@@ -95,11 +100,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Length_Renamed;
+                return length;
             }
             set
             {
-                this.Length_Renamed = value;
+                this.length = value;
             }
         }
 
@@ -110,11 +115,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NumOverlap_Renamed;
+                return numOverlap;
             }
             set
             {
-                this.NumOverlap_Renamed = value;
+                this.numOverlap = value;
             }
         }
 
@@ -125,7 +130,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Offset_Renamed;
+                return offset;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                offset = value;
             }
         }
 
@@ -138,11 +147,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Boost_Renamed;
+                return boost;
             }
             set
             {
-                this.Boost_Renamed = value;
+                this.boost = value;
             }
         }
 
@@ -155,7 +164,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxTermFrequency_Renamed;
+                return maxTermFrequency;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                maxTermFrequency = value;
             }
         }
 
@@ -166,7 +179,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return UniqueTermCount_Renamed;
+                return uniqueTermCount;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                uniqueTermCount = value;
             }
         }
 
@@ -179,7 +196,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return AttributeSource_Renamed;
+                return attributeSource;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                attributeSource = value;
             }
         }
 
@@ -190,7 +211,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Name_Renamed;
+                return name;
+            }
+            internal set // LUCENENET specific to protect private field
+            {
+                name = value;
             }
         }
     }

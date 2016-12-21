@@ -239,15 +239,15 @@ namespace Lucene.Net.Index
         {
             if (DoVectorOffsets)
             {
-                OffsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IOffsetAttribute>();
+                OffsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
             }
             else
             {
                 OffsetAttribute = null;
             }
-            if (DoVectorPayloads && FieldState.AttributeSource_Renamed.HasAttribute<IPayloadAttribute>())
+            if (DoVectorPayloads && FieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
             {
-                PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<IPayloadAttribute>();
+                PayloadAttribute = FieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
             }
             else
             {
@@ -259,8 +259,8 @@ namespace Lucene.Net.Index
         {
             if (DoVectorOffsets)
             {
-                int startOffset = FieldState.Offset_Renamed + OffsetAttribute.StartOffset;
-                int endOffset = FieldState.Offset_Renamed + OffsetAttribute.EndOffset;
+                int startOffset = FieldState.Offset + OffsetAttribute.StartOffset;
+                int endOffset = FieldState.Offset + OffsetAttribute.EndOffset;
 
                 TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);
                 TermsHashPerField.WriteVInt(1, endOffset - startOffset);
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
                     payload = PayloadAttribute.Payload;
                 }
 
-                int pos = FieldState.Position_Renamed - postings.LastPositions[termID];
+                int pos = FieldState.Position - postings.LastPositions[termID];
                 if (payload != null && payload.Length > 0)
                 {
                     TermsHashPerField.WriteVInt(0, (pos << 1) | 1);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
                 {
                     TermsHashPerField.WriteVInt(0, pos << 1);
                 }
-                postings.LastPositions[termID] = FieldState.Position_Renamed;
+                postings.LastPositions[termID] = FieldState.Position;
             }
         }
 
