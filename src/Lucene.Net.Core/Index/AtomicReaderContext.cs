@@ -27,11 +27,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The readers ord in the top-level's leaves array </summary>
-        public readonly int Ord; // LUCENENET TODO: Make property
+        public int Ord { get; private set; }
 
         /// <summary>
         /// The readers absolute doc base </summary>
-        public readonly int DocBase; // LUCENENET TODO: Make property
+        public int DocBase { get; private set; }
 
         private readonly AtomicReader reader;
         private readonly IList<AtomicReaderContext> leaves;
