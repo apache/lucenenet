@@ -24,39 +24,39 @@ namespace Lucene.Net.Index
 
     internal class TwoStoredFieldsConsumers : StoredFieldsConsumer
     {
-        private readonly StoredFieldsConsumer First;
-        private readonly StoredFieldsConsumer Second;
+        private readonly StoredFieldsConsumer first;
+        private readonly StoredFieldsConsumer fecond;
 
         public TwoStoredFieldsConsumers(StoredFieldsConsumer first, StoredFieldsConsumer second)
         {
-            this.First = first;
-            this.Second = second;
+            this.first = first;
+            this.fecond = second;
         }
 
         public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
         {
-            First.AddField(docID, field, fieldInfo);
-            Second.AddField(docID, field, fieldInfo);
+            first.AddField(docID, field, fieldInfo);
+            fecond.AddField(docID, field, fieldInfo);
         }
 
         public override void Flush(SegmentWriteState state) // LUCENENET NOTE: original was internal, but other implementations require public
         {
-            First.Flush(state);
-            Second.Flush(state);
+            first.Flush(state);
+            fecond.Flush(state);
         }
 
         public override void Abort() // LUCENENET NOTE: original was internal, but other implementations require public
         {
             try
             {
-                First.Abort();
+                first.Abort();
             }
             catch (Exception)
             {
             }
             try
             {
-                Second.Abort();
+                fecond.Abort();
             }
             catch (Exception)
             {
@@ -65,14 +65,14 @@ namespace Lucene.Net.Index
 
         public override void StartDocument() // LUCENENET NOTE: original was internal, but other implementations require public
         {
-            First.StartDocument();
-            Second.StartDocument();
+            first.StartDocument();
+            fecond.StartDocument();
         }
 
         internal override void FinishDocument()
         {
-            First.FinishDocument();
-            Second.FinishDocument();
+            first.FinishDocument();
+            fecond.FinishDocument();
         }
     }
 }
