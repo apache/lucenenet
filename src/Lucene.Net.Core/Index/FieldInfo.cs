@@ -33,26 +33,26 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Field's name </summary>
-        public readonly string Name; // LUCENENET TODO: Make property
+        public string Name { get; private set; }
 
         /// <summary>
         /// Internal field number </summary>
-        public readonly int Number; // LUCENENET TODO: Make property
+        public int Number { get; private set; }
 
         private bool indexed;
         private DocValuesType_e? docValueType;
 
         // True if any document indexed term vectors
-        private bool StoreTermVector;
+        private bool storeTermVector;
 
-        private DocValuesType_e? NormTypeValue;
-        private bool OmitNorms; // omit norms associated with indexed fields
-        private IndexOptions? IndexOptionsValue;
-        private bool StorePayloads; // whether this field stores payloads together with term positions
+        private DocValuesType_e? normTypeValue;
+        private bool omitNorms; // omit norms associated with indexed fields
+        private IndexOptions? indexOptionsValue;
+        private bool storePayloads; // whether this field stores payloads together with term positions
 
-        private IDictionary<string, string> Attributes_Renamed;
+        private IDictionary<string, string> attributes;
 
-        private long DvGen = -1; // the DocValues generation of this field
+        private long dvGen = -1; // the DocValues generation of this field
 
         /// <summary>
         /// Controls how much information is stored in the postings lists.
@@ -144,21 +144,21 @@ namespace Lucene.Net.Index
             this.docValueType = docValues;
             if (indexed)
             {
-                this.StoreTermVector = storeTermVector;
-                this.StorePayloads = storePayloads;
-                this.OmitNorms = omitNorms;
-                this.IndexOptionsValue = indexOptions;
-                this.NormTypeValue = !omitNorms ? normsType : null;
+                this.storeTermVector = storeTermVector;
+                this.storePayloads = storePayloads;
+                this.omitNorms = omitNorms;
+                this.indexOptionsValue = indexOptions;
+                this.normTypeValue = !omitNorms ? normsType : null;
             } // for non-indexed fields, leave defaults
             else
             {
-                this.StoreTermVector = false;
-                this.StorePayloads = false;
-                this.OmitNorms = false;
-                this.IndexOptionsValue = null;
-                this.NormTypeValue = null;
+                this.storeTermVector = false;
+                this.storePayloads = false;
+                this.omitNorms = false;
+                this.indexOptionsValue = null;
+                this.normTypeValue = null;
             }
-            this.Attributes_Renamed = attributes;
+            this.attributes = attributes;
             Debug.Assert(CheckConsistency());
         }
 
@@ -166,21 +166,21 @@ namespace Lucene.Net.Index
         {
             if (!indexed)
             {
-                Debug.Assert(!StoreTermVector);
-                Debug.Assert(!StorePayloads);
-                Debug.Assert(!OmitNorms);
-                Debug.Assert(NormTypeValue == null);
-                Debug.Assert(IndexOptionsValue == null);
+                Debug.Assert(!storeTermVector);
+                Debug.Assert(!storePayloads);
+                Debug.Assert(!omitNorms);
+                Debug.Assert(normTypeValue == null);
+                Debug.Assert(indexOptionsValue == null);
             }
             else
             {
-                Debug.Assert(IndexOptionsValue != null);
-                if (OmitNorms)
+                Debug.Assert(indexOptionsValue != null);
+                if (omitNorms)
                 {
-                    Debug.Assert(NormTypeValue == null);
+                    Debug.Assert(normTypeValue == null);
                 }
                 // Cannot store payloads unless positions are indexed:
-                Debug.Assert(((int)IndexOptionsValue.GetValueOrDefault() >= (int)IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) || !this.StorePayloads);
+                Debug.Assert(((int)indexOptionsValue.GetValueOrDefault() >= (int)IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) || !this.storePayloads);
             }
 
             return true;
@@ -201,34 +201,34 @@ namespace Lucene.Net.Index
             }
             if (indexed) // if updated field data is not for indexing, leave the updates out
             {
-                if (this.StoreTermVector != storeTermVector)
+                if (this.storeTermVector != storeTermVector)
                 {
-                    this.StoreTermVector = true; // once vector, always vector
+                    this.storeTermVector = true; // once vector, always vector
                 }
-                if (this.StorePayloads != storePayloads)
+                if (this.storePayloads != storePayloads)
                 {
-                    this.StorePayloads = true;
+                    this.storePayloads = true;
                 }
-                if (this.OmitNorms != omitNorms)
+                if (this.omitNorms != omitNorms)
                 {
-                    this.OmitNorms = true; // if one require omitNorms at least once, it remains off for life
-                    this.NormTypeValue = null;
+                    this.omitNorms = true; // if one require omitNorms at least once, it remains off for life
+                    this.normTypeValue = null;
                 }
-                if (this.IndexOptionsValue != indexOptions)
+                if (this.indexOptionsValue != indexOptions)
                 {
-                    if (this.IndexOptionsValue == null)
+                    if (this.indexOptionsValue == null)
                     {
-                        this.IndexOptionsValue = indexOptions;
+                        this.indexOptionsValue = indexOptions;
                     }
                     else
                     {
                         // downgrade
-                        IndexOptionsValue = (int)IndexOptionsValue.GetValueOrDefault() < (int)indexOptions ? IndexOptionsValue : indexOptions;
+                        indexOptionsValue = (int)indexOptionsValue.GetValueOrDefault() < (int)indexOptions ? indexOptionsValue : indexOptions;
                     }
-                    if ((int)IndexOptionsValue.GetValueOrDefault() < (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if ((int)indexOptionsValue.GetValueOrDefault() < (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
                         // cannot store payloads if we don't store positions:
-                        this.StorePayloads = false;
+                        this.storePayloads = false;
                     }
                 }
             }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return IndexOptionsValue;
+                return indexOptionsValue;
             }
         }
 
@@ -277,11 +277,11 @@ namespace Lucene.Net.Index
         {
             set
             {
-                this.DvGen = value;
+                this.dvGen = value;
             }
             get
             {
-                return DvGen;
+                return dvGen;
             }
         }
 
@@ -292,30 +292,30 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NormTypeValue;
+                return normTypeValue;
             }
             internal set
             {
-                if (NormTypeValue != null && NormTypeValue != value)
+                if (normTypeValue != null && normTypeValue != value)
                 {
-                    throw new System.ArgumentException("cannot change Norm type from " + NormTypeValue + " to " + value + " for field \"" + Name + "\"");
+                    throw new System.ArgumentException("cannot change Norm type from " + normTypeValue + " to " + value + " for field \"" + Name + "\"");
                 }
-                NormTypeValue = value;
+                normTypeValue = value;
                 Debug.Assert(CheckConsistency());
             }
         }
 
         internal void SetStoreTermVectors()
         {
-            StoreTermVector = true;
+            storeTermVector = true;
             Debug.Assert(CheckConsistency());
         }
 
         internal void SetStorePayloads()
         {
-            if (indexed && (int)IndexOptionsValue.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (indexed && (int)indexOptionsValue.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                StorePayloads = true;
+                storePayloads = true;
             }
             Debug.Assert(CheckConsistency());
         }
@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool OmitsNorms() // LUCENENET TODO: Make property
         {
-            return OmitNorms;
+            return omitNorms;
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasNorms() // LUCENENET TODO: Make property
         {
-            return NormTypeValue != null;
+            return normTypeValue != null;
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasPayloads() // LUCENENET TODO: Make property
         {
-            return StorePayloads;
+            return storePayloads;
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasVectors() // LUCENENET TODO: Make property
         {
-            return StoreTermVector;
+            return storeTermVector;
         }
 
         /// <summary>
@@ -368,14 +368,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public string GetAttribute(string key)
         {
-            if (Attributes_Renamed == null)
+            if (attributes == null)
             {
                 return null;
             }
             else
             {
                 string ret;
-                Attributes_Renamed.TryGetValue(key, out ret);
+                attributes.TryGetValue(key, out ret);
                 return ret;
             }
         }
@@ -392,19 +392,19 @@ namespace Lucene.Net.Index
         /// </summary>
         public string PutAttribute(string key, string value)
         {
-            if (Attributes_Renamed == null)
+            if (attributes == null)
             {
-                Attributes_Renamed = new Dictionary<string, string>();
+                attributes = new Dictionary<string, string>();
             }
 
             string ret;
             // The key was not previously assigned, null will be returned
-            if (!Attributes_Renamed.TryGetValue(key, out ret))
+            if (!attributes.TryGetValue(key, out ret))
             {
                 ret = null;
             }
 
-            Attributes_Renamed[key] = value;
+            attributes[key] = value;
             return ret;
         }
 
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public IDictionary<string, string> Attributes() // LUCENENET TODO: Make property
         {
-            return Attributes_Renamed;
+            return attributes;
         }
     }
 }
