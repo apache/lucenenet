@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
                 {
                     this.OuterInstance = outerInstance;
                     this.Prefix = prefix;
-                    InitialSeekTerm = new BytesRef("");
+                    SetInitialSeekTerm(new BytesRef(""));
                 }
 
                 protected override AcceptStatus Accept(BytesRef term)

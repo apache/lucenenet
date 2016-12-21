@@ -109,12 +109,9 @@ namespace Lucene.Net.Index
         /// <P>You can only use this method, if you keep the default
         /// implementation of <seealso cref="#nextSeekTerm"/>.
         /// </summary>
-        protected BytesRef InitialSeekTerm // LUCENENET TODO: Make method SetInitialSeekTerm(BytesRef term)
+        protected void SetInitialSeekTerm(BytesRef term)
         {
-            set
-            {
-                this.initialSeekTerm = value;
-            }
+            this.initialSeekTerm = term;
         }
 
         /// <summary>

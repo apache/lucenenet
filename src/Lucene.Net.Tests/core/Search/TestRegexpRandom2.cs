@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
                     this.OuterInstance = outerInstance;
 
                     InitializeInstanceFields();
-                    InitialSeekTerm = new BytesRef("");
+                    SetInitialSeekTerm(new BytesRef(""));
                 }
 
                 protected override AcceptStatus Accept(BytesRef term)

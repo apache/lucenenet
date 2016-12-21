@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
             : base(tenum)
         {
             singleRef = termText;
-            InitialSeekTerm = termText;
+            SetInitialSeekTerm(termText);
         }
 
         protected override AcceptStatus Accept(BytesRef term)

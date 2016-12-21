@@ -98,7 +98,7 @@ namespace Lucene.Net.Sandbox.Queries
                 this.p = new int[this.text.Length + 1];
 
 
-                InitialSeekTerm = prefixBytesRef;
+                SetInitialSeekTerm(prefixBytesRef);
             }
 
             private readonly BytesRef prefixBytesRef;
