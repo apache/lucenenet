@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
         internal int LastGen = -1;
 
         internal int FieldCount;
-        internal IndexableField[] Fields = new IndexableField[1];
+        internal IIndexableField[] Fields = new IIndexableField[1];
 
         public DocFieldProcessorPerField(DocFieldProcessor docFieldProcessor, FieldInfo fieldInfo)
         {
@@ -43,12 +43,12 @@ namespace Lucene.Net.Index
             this.FieldInfo = fieldInfo;
         }
 
-        public void AddField(IndexableField field)
+        public void AddField(IIndexableField field)
         {
             if (FieldCount == Fields.Length)
             {
                 int newSize = ArrayUtil.Oversize(FieldCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
-                IndexableField[] newArray = new IndexableField[newSize];
+                IIndexableField[] newArray = new IIndexableField[newSize];
                 Array.Copy(Fields, 0, newArray, 0, FieldCount);
                 Fields = newArray;
             }

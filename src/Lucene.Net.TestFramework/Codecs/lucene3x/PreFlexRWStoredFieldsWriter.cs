@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
         }
 
-        public override void WriteField(FieldInfo info, IndexableField field)
+        public override void WriteField(FieldInfo info, IIndexableField field)
         {
             FieldsStream.WriteVInt(info.Number);
             int bits = 0;

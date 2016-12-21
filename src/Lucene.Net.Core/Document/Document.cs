@@ -36,9 +36,9 @@ namespace Lucene.Net.Documents
     /// <i>not</i> available in documents retrieved from the index, e.g. with {@link
     /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.</p>
     /// </summary>
-    public sealed class Document : IEnumerable<IndexableField>
+    public sealed class Document : IEnumerable<IIndexableField>
     {
-        private readonly List<IndexableField> fields = new List<IndexableField>();
+        private readonly List<IIndexableField> fields = new List<IIndexableField>();
 
         /// <summary>
         /// Constructs a new document with no fields. </summary>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public IEnumerator<IndexableField> GetEnumerator()
+        public IEnumerator<IIndexableField> GetEnumerator()
         {
             return fields.GetEnumerator();
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Documents
         /// a document has to be deleted from an index and a new changed version of that
         /// document has to be added.</p>
         /// </summary>
-        public void Add(IndexableField field)
+        public void Add(IIndexableField field)
         {
             fields.Add(field);
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Documents
         {
             for (int i = fields.Count - 1; i >= 0; i--)
             {
-                IndexableField field = fields[i];
+                IIndexableField field = fields[i];
 
                 if (field.Name.Equals(name))
                 {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Documents
         {
             for (int i = fields.Count - 1; i >= 0; i--)
             {
-                IndexableField field = fields[i];
+                IIndexableField field = fields[i];
 
                 if (field.Name.Equals(name))
                 {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Documents
         {
             var result = new List<BytesRef>();
 
-            foreach (IndexableField field in fields)
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name))
                 {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Documents
         /// <returns> a <code>BytesRef</code> containing the binary field value or <code>null</code> </returns>
         public BytesRef GetBinaryValue(string name)
         {
-            foreach (IndexableField field in fields)
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name))
                 {
@@ -174,9 +174,9 @@ namespace Lucene.Net.Documents
         /// null.  If multiple fields exists with this name, this method returns the
         /// first value added.
         /// </summary>
-        public IndexableField GetField(string name)
+        public IIndexableField GetField(string name)
         {
-            foreach (IndexableField field in fields)
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name))
                 {
@@ -187,16 +187,16 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Returns an array of <seealso cref="IndexableField"/>s with the given name.
+        /// Returns an array of <seealso cref="IIndexableField"/>s with the given name.
         /// this method returns an empty array when there are no
         /// matching fields.  It never returns null.
         /// </summary>
         /// <param name="name"> the name of the field </param>
         /// <returns> a <code>IndexableField[]</code> array </returns>
-        public IndexableField[] GetFields(string name)
+        public IIndexableField[] GetFields(string name)
         {
-            var result = new List<IndexableField>();
-            foreach (IndexableField field in fields)
+            var result = new List<IIndexableField>();
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name))
                 {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Documents
         /// index, e.g. <seealso cref="IndexSearcher#doc(int)"/> or {@link
         /// IndexReader#document(int)}.</p>
         /// </summary>
-        public List<IndexableField> Fields
+        public List<IIndexableField> Fields
         {
             get
             {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Documents
         public string[] GetValues(string name)
         {
             var result = new List<string>();
-            foreach (IndexableField field in fields)
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name) && field.GetStringValue() != null)
                 {
@@ -263,7 +263,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public string Get(string name)
         {
-            foreach (IndexableField field in fields)
+            foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name, System.StringComparison.Ordinal) && field.GetStringValue() != null)
                 {
@@ -281,7 +281,7 @@ namespace Lucene.Net.Documents
             buffer.Append("Document<");
             for (int i = 0; i < fields.Count; i++)
             {
-                IndexableField field = fields[i];
+                IIndexableField field = fields[i];
                 buffer.Append(field.ToString());
                 if (i != fields.Count - 1)
                 {

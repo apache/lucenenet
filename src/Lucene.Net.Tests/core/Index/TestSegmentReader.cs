@@ -76,8 +76,8 @@ namespace Lucene.Net.Index
             //There are 2 unstored fields on the document that are not preserved across writing
             Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(TestDoc) - DocHelper.Unstored.Count);
 
-            IList<IndexableField> fields = result.Fields;
-            foreach (IndexableField field in fields)
+            IList<IIndexableField> fields = result.Fields;
+            foreach (IIndexableField field in fields)
             {
                 Assert.IsTrue(field != null);
                 Assert.IsTrue(DocHelper.NameValues.ContainsKey(field.Name));
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
             // test omit norms
             for (int i = 0; i < DocHelper.Fields.Length; i++)
             {
-                IndexableField f = DocHelper.Fields[i];
+                IIndexableField f = DocHelper.Fields[i];
                 if (f.FieldType.IsIndexed)
                 {
                     Assert.AreEqual(reader.GetNormValues(f.Name) != null, !f.FieldType.OmitNorms);

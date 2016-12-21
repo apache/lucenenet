@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet
     using FacetLabel = Lucene.Net.Facet.Taxonomy.FacetLabel;
     using Field = Lucene.Net.Documents.Field;
     using FloatAssociationFacetField = Lucene.Net.Facet.Taxonomy.FloatAssociationFacetField;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
     using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
     using IntsRef = Lucene.Net.Util.IntsRef;
@@ -290,7 +290,7 @@ namespace Lucene.Net.Facet
 
             var seenDims = new HashSet<string>();
 
-            foreach (IndexableField field in doc.Fields)
+            foreach (IIndexableField field in doc.Fields)
             {
                 if (field.FieldType == FacetField.TYPE)
                 {
@@ -390,7 +390,7 @@ namespace Lucene.Net.Facet
 
             //System.out.println("add stored: " + addedStoredFields);
 
-            foreach (IndexableField field in doc.Fields)
+            foreach (IIndexableField field in doc.Fields)
             {
                 IndexableFieldType ft = field.FieldType;
                 if (ft != FacetField.TYPE && ft != SortedSetDocValuesFacetField.TYPE && ft != AssociationFacetField.TYPE)

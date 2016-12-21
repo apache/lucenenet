@@ -458,7 +458,7 @@ namespace Lucene.Net.Index.Memory
                 IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, mockAnalyzer));
                 Document nextDoc = lineFileDocs.NextDoc();
                 Document doc = new Document();
-                foreach (IndexableField field in nextDoc.Fields)
+                foreach (IIndexableField field in nextDoc.Fields)
                 {
                     if (field.FieldType.IsIndexed)
                     {
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index.Memory
 
                 writer.AddDocument(doc);
                 writer.Dispose();
-                foreach (IndexableField field in doc.Fields)
+                foreach (IIndexableField field in doc.Fields)
                 {
                     memory.AddField(field.Name, ((Field)field).GetStringValue(), mockAnalyzer);
                 }

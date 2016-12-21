@@ -149,12 +149,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Adds a Document. </summary>
         /// <seealso cref= IndexWriter#addDocument(Iterable) </seealso>
-        public virtual void AddDocument(IEnumerable<IndexableField> doc)
+        public virtual void AddDocument(IEnumerable<IIndexableField> doc)
         {
             AddDocument(doc, w.Analyzer);
         }
 
-        public virtual void AddDocument(IEnumerable<IndexableField> doc, Analyzer a)
+        public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
         {
             if (r.Next(5) == 3)
             {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                w.AddDocuments(new IterableAnonymousInnerClassHelper<IndexableField>(this, doc), a);
+                w.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
             }
             else
             {
@@ -257,13 +257,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs)
+        public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             w.AddDocuments(docs);
             MaybeCommit();
         }
 
-        public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IndexableField>> docs)
+        public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             w.UpdateDocuments(delTerm, docs);
             MaybeCommit();
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Updates a document. </summary>
         /// <seealso cref= IndexWriter#updateDocument(Term, Iterable) </seealso>
-        public virtual void UpdateDocument(Term t, IEnumerable<IndexableField> doc)
+        public virtual void UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
         {
             if (r.Next(5) == 3)
             {
@@ -285,19 +285,19 @@ namespace Lucene.Net.Index
             MaybeCommit();
         }
 
-        private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IndexableField>>
+        private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IIndexableField>>
         {
             private readonly RandomIndexWriter OuterInstance;
 
-            private IEnumerable<IndexableField> Doc;
+            private IEnumerable<IIndexableField> Doc;
 
-            public IterableAnonymousInnerClassHelper2(RandomIndexWriter outerInstance, IEnumerable<IndexableField> doc)
+            public IterableAnonymousInnerClassHelper2(RandomIndexWriter outerInstance, IEnumerable<IIndexableField> doc)
             {
                 this.OuterInstance = outerInstance;
                 this.Doc = doc;
             }
 
-            public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
+            public IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper2(this);
             }
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IndexableField>>
+            private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IIndexableField>>
             {
                 private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
 
@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
                 }
 
                 internal bool done;
-                private IEnumerable<IndexableField> current;
+                private IEnumerable<IIndexableField> current;
 
                 public bool MoveNext()
                 {
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public IEnumerable<IndexableField> Current
+                public IEnumerable<IIndexableField> Current
                 {
                     get { return current; }
                 }

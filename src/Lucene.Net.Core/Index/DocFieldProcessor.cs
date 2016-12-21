@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             // seen before (eg suddenly turning on norms or
             // vectors, etc.):
 
-            foreach (IndexableField field in DocState.Doc)
+            foreach (IIndexableField field in DocState.Doc)
             {
                 string fieldName = field.Name;
 

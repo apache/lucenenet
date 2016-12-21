@@ -390,10 +390,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
             DirectoryReader reader = DirectoryReader.Open(dir);
             Document doc2 = reader.Document(reader.MaxDoc - 1);
-            IndexableField[] fields = doc2.GetFields("bin1");
+            IIndexableField[] fields = doc2.GetFields("bin1");
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
-            IndexableField b1 = fields[0];
+            IIndexableField b1 = fields[0];
             Assert.IsTrue(b1.GetBinaryValue() != null);
             BytesRef bytesRef = b1.GetBinaryValue();
             Assert.AreEqual(bin.Length, bytesRef.Length);
@@ -634,11 +634,11 @@ namespace Lucene.Net.Index
                 {
                     Document doc1 = index1.Document(i);
                     Document doc2 = index2.Document(i);
-                    IList<IndexableField> field1 = doc1.Fields;
-                    IList<IndexableField> field2 = doc2.Fields;
+                    IList<IIndexableField> field1 = doc1.Fields;
+                    IList<IIndexableField> field2 = doc2.Fields;
                     Assert.AreEqual(field1.Count, field2.Count, "Different numbers of fields for doc " + i + ".");
-                    IEnumerator<IndexableField> itField1 = field1.GetEnumerator();
-                    IEnumerator<IndexableField> itField2 = field2.GetEnumerator();
+                    IEnumerator<IIndexableField> itField1 = field1.GetEnumerator();
+                    IEnumerator<IIndexableField> itField2 = field2.GetEnumerator();
                     while (itField1.MoveNext())
                     {
                         Field curField1 = (Field)itField1.Current;

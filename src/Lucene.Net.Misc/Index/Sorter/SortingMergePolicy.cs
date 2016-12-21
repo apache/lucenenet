@@ -32,7 +32,7 @@ namespace Lucene.Net.Index.Sorter
     /// will be sorted while segments resulting from a flush will be in the order
     /// in which documents have been added.
     /// <para><b>NOTE</b>: Never use this policy if you rely on
-    /// <see cref="Index.IndexWriter.AddDocuments(IEnumerable{IEnumerable{IndexableField}}, Analysis.Analyzer)">IndexWriter.AddDocuments</see> 
+    /// <see cref="Index.IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)">IndexWriter.AddDocuments</see> 
     /// to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
     /// </para>
     /// <para><b>NOTE</b>: This policy should only be used with idempotent <see cref="Sort"/>s 

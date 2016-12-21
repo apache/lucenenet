@@ -29,8 +29,8 @@ namespace Lucene.Net.Search.Grouping
     /// single pass collector, as long as you are grouping by a
     /// doc block field, ie all documents sharing a given group
     /// value were indexed as a doc block using the atomic
-    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IndexableField}}, Analysis.Analyzer)"/> or
-    /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IndexableField}}, Analysis.Analyzer)"/>
+    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> or
+    /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
     /// API.
     /// 
     /// <para>

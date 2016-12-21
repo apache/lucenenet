@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="field">The field to retrieve on the document</param>
         /// <param name="doc">The document to fall back on</param>
         /// <param name="analyzer">The analyzer to use for creating the TokenStream if the vector doesn't exist</param>
-        /// <returns>The <see cref="TokenStream"/> for the <see cref="IndexableField"/> on the <see cref="Document"/></returns>
+        /// <returns>The <see cref="TokenStream"/> for the <see cref="IIndexableField"/> on the <see cref="Document"/></returns>
         /// <exception cref="IOException">if there was an error loading</exception>
         public static TokenStream GetAnyTokenStream(IndexReader reader, int docId,
             string field, Document doc, Analyzer analyzer)

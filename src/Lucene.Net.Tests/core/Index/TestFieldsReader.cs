@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             TestDoc = new Document();
             FieldInfos = new FieldInfos.Builder();
             DocHelper.SetupDoc(TestDoc);
-            foreach (IndexableField field in TestDoc)
+            foreach (IIndexableField field in TestDoc)
             {
                 FieldInfos.AddOrUpdate(field.Name, field.FieldType);
             }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 
             DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
             reader.Document(0, visitor);
-            IList<IndexableField> fields = visitor.Document.Fields;
+            IList<IIndexableField> fields = visitor.Document.Fields;
             Assert.AreEqual(1, fields.Count);
             Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name);
             reader.Dispose();

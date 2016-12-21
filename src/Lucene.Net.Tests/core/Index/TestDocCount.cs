@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private IEnumerable<IndexableField> Doc()
+        private IEnumerable<IIndexableField> Doc()
         {
             Document doc = new Document();
             int numFields = TestUtil.NextInt(Random(), 1, 10);

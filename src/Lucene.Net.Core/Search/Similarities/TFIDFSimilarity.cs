@@ -480,7 +480,7 @@ namespace Lucene.Net.Search.Similarities
     ///            <big><big><big>&prod;</big></big></big>
     ///          </td>
     ///          <td valign="middle" align="right" rowspan="1">
-    ///            <seealso cref="Lucene.Net.Index.IndexableField#boost() f.boost"/>()
+    ///            <seealso cref="Lucene.Net.Index.IIndexableField#boost() f.boost"/>()
     ///          </td>
     ///        </tr>
     ///        <tr valigh="top">

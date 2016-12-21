@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Suggest
 
                     if (hasPayloads)
                     {
-                        IndexableField payload = doc.GetField(outerInstance.payloadField);
+                        IIndexableField payload = doc.GetField(outerInstance.payloadField);
                         if (payload == null || (payload.GetBinaryValue() == null && payload.GetStringValue() == null))
                         {
                             continue;
@@ -182,8 +182,8 @@ namespace Lucene.Net.Search.Suggest
 
                     if (hasContexts)
                     {
-                        IndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
-                        foreach (IndexableField contextField in contextFields)
+                        IIndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
+                        foreach (IIndexableField contextField in contextFields)
                         {
                             if (contextField.GetBinaryValue() == null && contextField.GetStringValue() == null)
                             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search.Suggest
                         }
                     }
 
-                    IndexableField fieldVal = doc.GetField(outerInstance.field);
+                    IIndexableField fieldVal = doc.GetField(outerInstance.field);
                     if (fieldVal == null || (fieldVal.GetBinaryValue() == null && fieldVal.GetStringValue() == null))
                     {
                         continue;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Suggest
             /// </summary>
             protected internal virtual long GetWeight(Document doc, int docId)
             {
-                IndexableField weight = doc.GetField(outerInstance.weightField);
+                IIndexableField weight = doc.GetField(outerInstance.weightField);
                 if (weight != null) // found weight as stored
                 {
                     // LUCENENET TODO: See if we can make NumericValue into Decimal (which can be converted to any other type of number)

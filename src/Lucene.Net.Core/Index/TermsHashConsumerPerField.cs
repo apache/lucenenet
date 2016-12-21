@@ -25,13 +25,13 @@ namespace Lucene.Net.Index
     /// </summary>
     internal abstract class TermsHashConsumerPerField
     {
-        internal abstract bool Start(IndexableField[] fields, int count);
+        internal abstract bool Start(IIndexableField[] fields, int count);
 
         internal abstract void Finish();
 
         internal abstract void SkippingLongTerm();
 
-        internal abstract void Start(IndexableField field);
+        internal abstract void Start(IIndexableField field);
 
         internal abstract void NewTerm(int termID);
 

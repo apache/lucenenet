@@ -37,7 +37,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             Document losAngeles = new Document();
             losAngeles.Add(new StringField("name", "Los Angeles", Field.Store.YES));
-            foreach (IndexableField field in prefixGridStrategy.CreateIndexableFields(point))
+            foreach (IIndexableField field in prefixGridStrategy.CreateIndexableFields(point))
             {
                 losAngeles.Add(field);
             }

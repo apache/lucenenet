@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("field", "one two three four five", Field.Store.YES));
             doc.Add(NewTextField("repeated", "this is a repeated field - first part", Field.Store.YES));
-            IndexableField repeatedField = NewTextField("repeated", "second part of a repeated field", Field.Store.YES);
+            IIndexableField repeatedField = NewTextField("repeated", "second part of a repeated field", Field.Store.YES);
             doc.Add(repeatedField);
             doc.Add(NewTextField("palindrome", "one two three two one", Field.Store.YES));
             writer.AddDocument(doc);

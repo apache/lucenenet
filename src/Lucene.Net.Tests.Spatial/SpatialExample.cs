@@ -116,7 +116,7 @@ namespace Lucene.Net.Spatial
             // strategies; see the javadocs of the SpatialStrategy impl to see.
             foreach (IShape shape in shapes)
             {
-                foreach (IndexableField f in strategy.CreateIndexableFields(shape))
+                foreach (IIndexableField f in strategy.CreateIndexableFields(shape))
                 {
                     doc.Add(f);
                 }

@@ -27,7 +27,7 @@ namespace Lucene.Net.Documents
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using Fields = Lucene.Net.Index.Fields;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -57,9 +57,9 @@ namespace Lucene.Net.Documents
 
             FieldType ft = new FieldType();
             ft.IsStored = true;
-            IndexableField stringFld = new Field("string", BinaryVal, ft);
-            IndexableField binaryFld = new StoredField("binary", BinaryVal.GetBytes(Encoding.UTF8));
-            IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.GetBytes(Encoding.UTF8));
+            IIndexableField stringFld = new Field("string", BinaryVal, ft);
+            IIndexableField binaryFld = new StoredField("binary", BinaryVal.GetBytes(Encoding.UTF8));
+            IIndexableField binaryFld2 = new StoredField("binary", BinaryVal2.GetBytes(Encoding.UTF8));
 
             doc.Add(stringFld);
             doc.Add(binaryFld);
@@ -262,10 +262,10 @@ namespace Lucene.Net.Documents
 
         private void DoAssert(Documents.Document doc, bool fromIndex)
         {
-            IndexableField[] keywordFieldValues = doc.GetFields("keyword");
-            IndexableField[] textFieldValues = doc.GetFields("text");
-            IndexableField[] unindexedFieldValues = doc.GetFields("unindexed");
-            IndexableField[] unstoredFieldValues = doc.GetFields("unstored");
+            IIndexableField[] keywordFieldValues = doc.GetFields("keyword");
+            IIndexableField[] textFieldValues = doc.GetFields("text");
+            IIndexableField[] unindexedFieldValues = doc.GetFields("unindexed");
+            IIndexableField[] unstoredFieldValues = doc.GetFields("unstored");
 
             Assert.IsTrue(keywordFieldValues.Length == 2);
             Assert.IsTrue(textFieldValues.Length == 2);

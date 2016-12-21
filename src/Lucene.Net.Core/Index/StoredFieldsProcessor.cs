@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         }
 
         private int NumStoredFields;
-        private IndexableField[] StoredFields = new IndexableField[1];
+        private IIndexableField[] StoredFields = new IIndexableField[1];
         private FieldInfo[] FieldInfos = new FieldInfo[1];
 
         public void Reset()
@@ -156,14 +156,14 @@ namespace Lucene.Net.Index
             Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument end"));
         }
 
-        public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
+        public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
             if (field.FieldType.IsStored)
             {
                 if (NumStoredFields == StoredFields.Length)
                 {
                     int newSize = ArrayUtil.Oversize(NumStoredFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
-                    IndexableField[] newArray = new IndexableField[newSize];
+                    IIndexableField[] newArray = new IIndexableField[newSize];
                     Array.Copy(StoredFields, 0, newArray, 0, NumStoredFields);
                     StoredFields = newArray;
 

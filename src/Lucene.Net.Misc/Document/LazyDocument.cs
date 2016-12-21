@@ -62,7 +62,7 @@ namespace Lucene.Net.Documents
         /// per LazyDocument instance.
         /// </para>
         /// </summary>
-        public virtual IndexableField GetField(FieldInfo fieldInfo)
+        public virtual IIndexableField GetField(FieldInfo fieldInfo)
         {
             fieldNames.Add(fieldInfo.Name);
             IList<LazyField> values = fields.ContainsKey(fieldInfo.Number) ? fields[fieldInfo.Number] : null;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Documents
             Document d = Document;
 
             IList<LazyField> lazyValues = fields[fieldNum];
-            IndexableField[] realValues = d.GetFields(name);
+            IIndexableField[] realValues = d.GetFields(name);
 
             Debug.Assert(realValues.Length <= lazyValues.Count, "More lazy values then real values for field: " + name);
 
@@ -136,13 +136,13 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// @lucene.internal 
         /// </summary>
-        public class LazyField : IndexableField
+        public class LazyField : IIndexableField
         {
             private readonly LazyDocument outerInstance;
 
             internal string name;
             internal int fieldNum;
-            internal volatile IndexableField realValue = null;
+            internal volatile IIndexableField realValue = null;
 
             internal LazyField(LazyDocument outerInstance, string name, int fieldNum)
             {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Documents
                 get { return null != realValue; }
             }
 
-            internal virtual IndexableField RealValue
+            internal virtual IIndexableField RealValue
             {
                 get
                 {

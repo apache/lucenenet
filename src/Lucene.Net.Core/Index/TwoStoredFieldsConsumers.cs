@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
             this.fecond = second;
         }
 
-        public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
+        public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
             first.AddField(docID, field, fieldInfo);
             fecond.AddField(docID, field, fieldInfo);

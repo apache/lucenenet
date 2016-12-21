@@ -540,8 +540,8 @@ namespace Lucene.Net.Queries.Mlt
                 if (vector == null)
                 {
                     Document d = ir.Document(docNum);
-                    IndexableField[] fields = d.GetFields(fieldName);
-                    foreach (IndexableField field in fields)
+                    IIndexableField[] fields = d.GetFields(fieldName);
+                    foreach (IIndexableField field in fields)
                     {
                         string stringValue = field.GetStringValue();
                         if (stringValue != null)

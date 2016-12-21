@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexableField : LuceneTestCase
     {
-        private class MyField : IndexableField
+        private class MyField : IIndexableField
         {
             private readonly TestIndexableField OuterInstance;
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
                     // stored:
                     if (stored)
                     {
-                        IndexableField f = doc.GetField(name);
+                        IIndexableField f = doc.GetField(name);
                         Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
                         if (binary)
                         {
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<IndexableField>
+        private class IterableAnonymousInnerClassHelper : IEnumerable<IIndexableField>
         {
             private readonly TestIndexableField OuterInstance;
 
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index
                 this.FinalBaseCount = finalBaseCount;
             }
 
-            public virtual IEnumerator<IndexableField> GetEnumerator()
+            public virtual IEnumerator<IIndexableField> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper(this, OuterInstance);
             }
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<IndexableField>
+            private class IteratorAnonymousInnerClassHelper : IEnumerator<IIndexableField>
             {
                 private readonly IterableAnonymousInnerClassHelper OuterInstance;
                 private readonly TestIndexableField OuterTextIndexableField;
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
                 }
 
                 internal int fieldUpto;
-                private IndexableField current;
+                private IIndexableField current;
 
                 public bool MoveNext()
                 {
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public IndexableField Current
+                public IIndexableField Current
                 {
                     get { return current; }
                 }

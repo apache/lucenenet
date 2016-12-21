@@ -149,15 +149,15 @@ namespace Lucene.Net.Index
 
         internal static Term IdTerm = new Term("id", "");
         internal IndexingThread[] Threads;
-        internal static IComparer<IndexableField> fieldNameComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static IComparer<IIndexableField> fieldNameComparator = new ComparatorAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<IndexableField>
+        private class ComparatorAnonymousInnerClassHelper : IComparer<IIndexableField>
         {
             public ComparatorAnonymousInnerClassHelper()
             {
             }
 
-            public virtual int Compare(IndexableField o1, IndexableField o2)
+            public virtual int Compare(IIndexableField o1, IIndexableField o2)
             {
                 return o1.Name.CompareTo(o2.Name);
             }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
             while (iter.MoveNext())
             {
                 Document d = iter.Current;
-                List<IndexableField> fields = new List<IndexableField>();
+                List<IIndexableField> fields = new List<IIndexableField>();
                 fields.AddRange(d.Fields);
                 // put fields in same order each time
                 fields.Sort(fieldNameComparator);
@@ -674,8 +674,8 @@ namespace Lucene.Net.Index
 
         public static void VerifyEquals(Document d1, Document d2)
         {
-            List<IndexableField> ff1 = d1.Fields;
-            List<IndexableField> ff2 = d2.Fields;
+            List<IIndexableField> ff1 = d1.Fields;
+            List<IIndexableField> ff2 = d2.Fields;
 
             ff1.Sort(fieldNameComparator);
             ff2.Sort(fieldNameComparator);
@@ -684,8 +684,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < ff1.Count; i++)
             {
-                IndexableField f1 = ff1[i];
-                IndexableField f2 = ff2[i];
+                IIndexableField f1 = ff1[i];
+                IIndexableField f2 = ff2[i];
                 if (f1.GetBinaryValue() != null)
                 {
                     Debug.Assert(f2.GetBinaryValue() != null);

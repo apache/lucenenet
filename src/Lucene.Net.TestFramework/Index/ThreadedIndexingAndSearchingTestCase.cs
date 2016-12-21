@@ -100,22 +100,22 @@ namespace Lucene.Net.Index
             return @in;
         }
 
-        protected internal virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IndexableField>> docs)
+        protected internal virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             Writer.UpdateDocuments(id, docs);
         }
 
-        protected internal virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IndexableField>> docs)
+        protected internal virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             Writer.AddDocuments(docs);
         }
 
-        protected internal virtual void AddDocument(Term id, IEnumerable<IndexableField> doc)
+        protected internal virtual void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             Writer.AddDocument(doc);
         }
 
-        protected internal virtual void UpdateDocument(Term term, IEnumerable<IndexableField> doc)
+        protected internal virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
         {
             Writer.UpdateDocument(term, doc);
         }

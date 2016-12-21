@@ -5,7 +5,7 @@ namespace Lucene.Net.Codecs.asserting
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IOContext = Lucene.Net.Store.IOContext;
 
     /*
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.asserting
                 DocStatus = Status.FINISHED;
             }
 
-            public override void WriteField(FieldInfo info, IndexableField field)
+            public override void WriteField(FieldInfo info, IIndexableField field)
             {
                 Debug.Assert(DocStatus == Status.STARTED);
                 @in.WriteField(info, field);

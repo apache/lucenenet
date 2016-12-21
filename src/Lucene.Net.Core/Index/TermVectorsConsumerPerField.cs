@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override bool Start(IndexableField[] fields, int count)
+        internal override bool Start(IIndexableField[] fields, int count)
         {
             DoVectors = false;
             DoVectorPositions = false;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < count; i++)
             {
-                IndexableField field = fields[i];
+                IIndexableField field = fields[i];
                 if (field.FieldType.IsIndexed)
                 {
                     if (field.FieldType.StoreTermVectors)
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             MaxNumPostings = 0;
         }
 
-        internal override void Start(IndexableField f)
+        internal override void Start(IIndexableField f)
         {
             if (DoVectorOffsets)
             {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using KeepOnlyLastCommitDeletionPolicy = Lucene.Net.Index.KeepOnlyLastCommitDeletionPolicy;
     using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IndexableField>> docs)
+        protected internal override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = GenWriter.UpdateDocuments(id, docs);
 
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
 
         }
 
-        protected internal override void AddDocuments(Term id, IEnumerable<IEnumerable<IndexableField>> docs)
+        protected internal override void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = GenWriter.AddDocuments(docs);
             // Randomly verify the add "took":
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
             LastGens.Value = gen;
         }
 
-        protected internal override void AddDocument(Term id, IEnumerable<IndexableField> doc)
+        protected internal override void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = GenWriter.AddDocument(doc);
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             LastGens.Value = gen;
         }
 
-        protected internal override void UpdateDocument(Term id, IEnumerable<IndexableField> doc)
+        protected internal override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = GenWriter.UpdateDocument(id, doc);
             // Randomly verify the udpate "took":
@@ -513,7 +513,7 @@ namespace Lucene.Net.Search
 
             }
 
-            public override void UpdateDocument(Term term, IEnumerable<IndexableField> doc, Analyzer analyzer)
+            public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
                 try

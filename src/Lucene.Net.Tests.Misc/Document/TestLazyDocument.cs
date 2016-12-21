@@ -86,7 +86,7 @@ namespace Lucene.Net.Documents
                 IDictionary<string, int> fieldValueCounts = new HashMap<string, int>();
 
                 // at this point, all FIELDS should be Lazy and unrealized
-                foreach (IndexableField f in d)
+                foreach (IIndexableField f in d)
                 {
                     numFieldValues++;
                     if (f.Name.equals("never_load"))
@@ -125,7 +125,7 @@ namespace Lucene.Net.Documents
 
                 // pick a single field name to load a single value
                 string fieldName = FIELDS[Random().nextInt(FIELDS.Length)];
-                IndexableField[] fieldValues = d.GetFields(fieldName);
+                IIndexableField[] fieldValues = d.GetFields(fieldName);
                 assertEquals("#vals in field: " + fieldName,
                              NUM_VALUES, fieldValues.Length);
                 int valNum = Random().nextInt(fieldValues.Length);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Documents
                              fieldValues[valNum].GetStringValue());
 
                 // now every value of fieldName should be loaded
-                foreach (IndexableField f in d)
+                foreach (IIndexableField f in d)
                 {
                     if (f.Name.equals("never_load"))
                     {
@@ -166,7 +166,7 @@ namespace Lucene.Net.Documents
                 // ensure we have all the values we expect now, and that
                 // adding one more lazy field didn't "unload" the existing LazyField's
                 // we already loaded.
-                foreach (IndexableField f in d)
+                foreach (IIndexableField f in d)
                 {
                     if (f.Name.equals("never_load"))
                     {

@@ -420,13 +420,13 @@ namespace Lucene.Net.Index
                 if (liveDocs.Get(i))
                 {
                     Document d = reader.Document(i);
-                    IList<IndexableField> fields = d.Fields;
+                    IList<IIndexableField> fields = d.Fields;
                     bool isProxDoc = d.GetField("content3") == null;
                     if (isProxDoc)
                     {
                         int numFields = is40Index ? 7 : 5;
                         Assert.AreEqual(numFields, fields.Count);
-                        IndexableField f = d.GetField("id");
+                        IIndexableField f = d.GetField("id");
                         Assert.AreEqual("" + i, f.GetStringValue());
 
                         f = d.GetField("utf8");

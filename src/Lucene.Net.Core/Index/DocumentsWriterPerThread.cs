@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
             internal InfoStream InfoStream;
             internal Similarity Similarity;
             internal int DocID;
-            internal IEnumerable<IndexableField> Doc;
+            internal IEnumerable<IIndexableField> Doc;
             internal string MaxTermPrefix;
 
             internal DocState(DocumentsWriterPerThread docWriter, InfoStream infoStream)
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        public virtual void UpdateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
+        public virtual void UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
         {
             Debug.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
             Debug.Assert(DeleteQueue != null);
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
             FinishDocument(delTerm);
         }
 
-        public virtual int UpdateDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer, Term delTerm)
+        public virtual int UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
         {
             Debug.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
             Debug.Assert(DeleteQueue != null);
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             bool allDocsIndexed = false;
             try
             {
-                foreach (IEnumerable<IndexableField> doc in docs)
+                foreach (IEnumerable<IIndexableField> doc in docs)
                 {
                     docState.Doc = doc;
                     docState.DocID = numDocsInRAM;

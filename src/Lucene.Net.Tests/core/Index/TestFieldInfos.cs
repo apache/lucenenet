@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
             //Positive test of FieldInfos
             Assert.IsTrue(TestDoc != null);
             FieldInfos.Builder builder = new FieldInfos.Builder();
-            foreach (IndexableField field in TestDoc)
+            foreach (IIndexableField field in TestDoc)
             {
                 builder.AddOrUpdate(field.Name, field.FieldType);
             }

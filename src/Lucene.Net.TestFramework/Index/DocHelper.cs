@@ -118,18 +118,18 @@ namespace Lucene.Net.Index
         // could use LinkedHashMap for this purpose if Java1.4 is OK
         public static Field[] Fields = null;
 
-        public static IDictionary<string, IndexableField> All = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Indexed = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Stored = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Unstored = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Unindexed = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Termvector = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Notermvector = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> Lazy = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> NoNorms = new Dictionary<string, IndexableField>();
-        public static IDictionary<string, IndexableField> NoTf = new Dictionary<string, IndexableField>();
+        public static IDictionary<string, IIndexableField> All = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Indexed = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Stored = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Unstored = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Unindexed = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Termvector = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Notermvector = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Lazy = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> NoNorms = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> NoTf = new Dictionary<string, IIndexableField>();
 
-        private static void Add(IDictionary<string, IndexableField> map, IndexableField field)
+        private static void Add(IDictionary<string, IIndexableField> map, IIndexableField field)
         {
             map[field.Name] = field;
         }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
             Fields[Fields.Length - 1] = LargeLazyField;
             for (int i = 0; i < Fields.Length; i++)
             {
-                IndexableField f = Fields[i];
+                IIndexableField f = Fields[i];
                 Add(All, f);
                 if (f.FieldType.IsIndexed)
                 {

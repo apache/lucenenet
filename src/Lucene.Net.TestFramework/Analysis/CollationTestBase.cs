@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis
 			for (int i = 0; i < n; ++i)
 			{
 				Document doc = searcher.Doc(result[i].Doc);
-				IndexableField[] v = doc.GetFields("tracer");
+				IIndexableField[] v = doc.GetFields("tracer");
 				for (var j = 0; j < v.Length; ++j)
 				{
 					buff.Append(v[j].GetStringValue());

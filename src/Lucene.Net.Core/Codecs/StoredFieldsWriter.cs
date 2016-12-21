@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs
     using Document = Documents.Document;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using MergeState = Lucene.Net.Index.MergeState;
 
     /// <summary>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes a single stored field. </summary>
-        public abstract void WriteField(FieldInfo info, IndexableField field);
+        public abstract void WriteField(FieldInfo info, IIndexableField field);
 
         /// <summary>
         /// Aborts writing entirely, implementation should remove
@@ -129,10 +129,10 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// sugar method for startDocument() + writeField() for every stored field in the document </summary>
-        protected void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IndexableField
+        protected void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IIndexableField
         {
             int storedCount = 0;
-            foreach (IndexableField field in doc)
+            foreach (IIndexableField field in doc)
             {
                 if (field.FieldType.IsStored)
                 {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs
 
             StartDocument(storedCount);
 
-            foreach (IndexableField field in doc)
+            foreach (IIndexableField field in doc)
             {
                 if (field.FieldType.IsStored)
                 {

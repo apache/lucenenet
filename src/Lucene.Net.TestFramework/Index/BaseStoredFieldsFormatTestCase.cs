@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             Document doc2 = r.Document(0);
-            IEnumerator<IndexableField> it = doc2.Fields.GetEnumerator();
+            IEnumerator<IIndexableField> it = doc2.Fields.GetEnumerator();
             Assert.IsTrue(it.MoveNext());
             Field f = (Field)it.Current;
             Assert.AreEqual(f.Name, "zzz");
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
 
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
-            IndexableField f2 = doc2.GetField("binary");
+            IIndexableField f2 = doc2.GetField("binary");
             b = f2.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
             {
                 string fldName = fld.Name;
                 Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
-                IndexableField sField = sDoc.GetField(fldName);
+                IIndexableField sField = sDoc.GetField(fldName);
                 if (typeof(Field) == fld.GetType())
                 {
                     Assert.AreEqual(fld.GetBinaryValue(), sField.GetBinaryValue());
@@ -735,7 +735,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(1, topDocs.TotalHits, "" + i);
                 Document doc = rd.Document(topDocs.ScoreDocs[0].Doc);
                 Assert.IsNotNull(doc);
-                IndexableField[] fieldValues = doc.GetFields("fld");
+                IIndexableField[] fieldValues = doc.GetFields("fld");
                 Assert.AreEqual(docs[i].GetFields("fld").Length, fieldValues.Length);
                 if (fieldValues.Length > 0)
                 {

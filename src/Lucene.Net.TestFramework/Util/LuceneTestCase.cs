@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
     using FieldType = FieldType;
     using FlushInfo = Lucene.Net.Store.FlushInfo;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -2335,7 +2335,7 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                Comparison<IIndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
@@ -2353,7 +2353,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// checks that two stored fields are equivalent
         /// </summary>
-        public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
+        public void AssertStoredFieldEquals(string info, IIndexableField leftField, IIndexableField rightField)
         {
             Assert.AreEqual(leftField.Name, rightField.Name, info);
             Assert.AreEqual(leftField.GetBinaryValue(), rightField.GetBinaryValue(), info);
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Util
 
         public virtual int Compare(object arg0, object arg1)
         {
-            return System.String.Compare(((IndexableField)arg0).Name, ((IndexableField)arg1).Name, System.StringComparison.Ordinal);
+            return System.String.Compare(((IIndexableField)arg0).Name, ((IIndexableField)arg1).Name, System.StringComparison.Ordinal);
         }
     }
 }

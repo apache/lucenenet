@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
     ///  @lucene.experimental
     /// </summary>
 
-    public interface IndexableField // LUCENENET TODO: Rename with "I"
+    public interface IIndexableField
     {
         /// <summary>
         /// Field name </summary>

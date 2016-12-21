@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
     using FieldType = FieldType;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
     using FloatField = FloatField;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IntField = IntField;
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Util
         public static Document CloneDocument(Document doc1)
         {
             Document doc2 = new Document();
-            foreach (IndexableField f in doc1.Fields)
+            foreach (IIndexableField f in doc1.Fields)
             {
                 Field field1 = (Field)f;
                 Field field2;

@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void ProcessFields(IndexableField[] fields, int count)
+        public override void ProcessFields(IIndexableField[] fields, int count)
         {
             FieldState.Reset();
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < count; i++)
             {
-                IndexableField field = fields[i];
+                IIndexableField field = fields[i];
                 IndexableFieldType fieldType = field.FieldType;
 
                 // TODO FI: this should be "genericized" to querying

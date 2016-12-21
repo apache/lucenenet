@@ -10,7 +10,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Field = Field;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldType = FieldType;
-    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Document doc = NewDocument();
             for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE; i++)
             {
-                foreach (IndexableField f in doc.Fields)
+                foreach (IIndexableField f in doc.Fields)
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Document doc = NewDocument();
             for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE * 16; i++)
             {
-                foreach (IndexableField f in doc.Fields)
+                foreach (IIndexableField f in doc.Fields)
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Document doc = NewDocument();
             for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE / 2; i++)
             {
-                foreach (IndexableField f in doc.Fields)
+                foreach (IIndexableField f in doc.Fields)
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2");
                 }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Document doc = NewDocument();
             for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE / 2; i++)
             {
-                foreach (IndexableField f in doc.Fields)
+                foreach (IIndexableField f in doc.Fields)
                 {
                     string proto = (f.Name + " " + f.Name + " " + f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2");
                     StringBuilder val = new StringBuilder();

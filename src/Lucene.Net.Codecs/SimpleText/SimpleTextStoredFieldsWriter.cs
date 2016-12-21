@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	using FieldInfo = Index.FieldInfo;
 	using FieldInfos = Index.FieldInfos;
 	using IndexFileNames = Index.IndexFileNames;
-	using IndexableField = Index.IndexableField;
+	using IIndexableField = Index.IIndexableField;
 	using Directory = Store.Directory;
 	using IOContext = Store.IOContext;
 	using IndexOutput = Store.IndexOutput;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	        _numDocsWritten++;
 	    }
 
-        public override void WriteField(FieldInfo info, IndexableField field)
+        public override void WriteField(FieldInfo info, IIndexableField field)
         {
             Write(FIELD);
             Write(info.Number.ToString(CultureInfo.InvariantCulture));

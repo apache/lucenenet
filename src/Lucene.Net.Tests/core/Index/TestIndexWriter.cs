@@ -1523,7 +1523,7 @@ namespace Lucene.Net.Index
 
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
-            IndexableField f3 = doc2.GetField("binary");
+            IIndexableField f3 = doc2.GetField("binary");
             b = f3.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
@@ -2530,7 +2530,7 @@ namespace Lucene.Net.Index
             HashSet<string> liveIds = new HashSet<string>();
             for (int i = 0; i < iters; i++)
             {
-                IList<IEnumerable<IndexableField>> docs = new List<IEnumerable<IndexableField>>();
+                IList<IEnumerable<IIndexableField>> docs = new List<IEnumerable<IIndexableField>>();
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
                 FieldType idFt = new FieldType(TextField.TYPE_STORED);
 
@@ -2557,7 +2557,7 @@ namespace Lucene.Net.Index
                     if (success)
                     {
                         docCount += docs.Count;
-                        foreach (IEnumerable<IndexableField> indexDocument in docs)
+                        foreach (IEnumerable<IIndexableField> indexDocument in docs)
                         {
                             liveIds.Add(((Document)indexDocument).Get("id"));
                         }
@@ -2584,18 +2584,18 @@ namespace Lucene.Net.Index
             IOUtils.Close(reader, w, dir);
         }
 
-        private class RandomFailingFieldIterable : IEnumerable<IEnumerable<IndexableField>>
+        private class RandomFailingFieldIterable : IEnumerable<IEnumerable<IIndexableField>>
         {
-            internal readonly IList<IEnumerable<IndexableField>> DocList;
+            internal readonly IList<IEnumerable<IIndexableField>> DocList;
             internal readonly Random Random;
 
-            public RandomFailingFieldIterable(IList<IEnumerable<IndexableField>> docList, Random random)
+            public RandomFailingFieldIterable(IList<IEnumerable<IIndexableField>> docList, Random random)
             {
                 this.DocList = docList;
                 this.Random = random;
             }
 
-            public virtual IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
+            public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
                 return DocList.GetEnumerator();
                 //return new IteratorAnonymousInnerClassHelper(this, docIter);

@@ -1922,7 +1922,7 @@ namespace Lucene.Net.Index
             {
                 doc = new Document();
                 // try to boost with norms omitted
-                IList<IndexableField> list = new List<IndexableField>();
+                IList<IIndexableField> list = new List<IIndexableField>();
                 list.Add(new IndexableFieldAnonymousInnerClassHelper(this));
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");
@@ -1939,7 +1939,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexableFieldAnonymousInnerClassHelper : IndexableField
+        private class IndexableFieldAnonymousInnerClassHelper : IIndexableField
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 

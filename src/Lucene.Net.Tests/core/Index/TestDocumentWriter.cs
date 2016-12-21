@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(doc != null);
 
             //System.out.println("Document: " + doc);
-            IndexableField[] fields = doc.GetFields("textField2");
+            IIndexableField[] fields = doc.GetFields("textField2");
             Assert.IsTrue(fields != null && fields.Length == 1);
             Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_2_TEXT));
             Assert.IsTrue(fields[0].FieldType.StoreTermVectors);

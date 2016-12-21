@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         private bool DoCall;
         private bool DoNextCall;
 
-        internal override void Start(IndexableField f)
+        internal override void Start(IIndexableField f)
         {
             TermAtt = FieldState.AttributeSource.GetAttribute<ITermToBytesRefAttribute>();
             TermBytesRef = TermAtt.BytesRef;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override bool Start(IndexableField[] fields, int count)
+        internal override bool Start(IIndexableField[] fields, int count)
         {
             DoCall = Consumer.Start(fields, count);
             BytesHash.Reinit();

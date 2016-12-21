@@ -23,10 +23,10 @@ namespace Lucene.Net.Index
         // occurrences for this field in the document.  Return
         // true if you wish to see inverted tokens for these
         // fields:
-        internal abstract bool Start(IndexableField[] fields, int count);
+        internal abstract bool Start(IIndexableField[] fields, int count);
 
         // Called before a field instance is being processed
-        internal abstract void Start(IndexableField field);
+        internal abstract void Start(IIndexableField field);
 
         // Called once per inverted token
         internal abstract void Add();

@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
 
     internal abstract class StoredFieldsConsumer
     {
-        public abstract void AddField(int docID, IndexableField field, FieldInfo fieldInfo);
+        public abstract void AddField(int docID, IIndexableField field, FieldInfo fieldInfo);
 
         public abstract void Flush(SegmentWriteState state);
 

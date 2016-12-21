@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#updateDocument(Term,Iterable,Analyzer)}
         ///  and returns the generation that reflects this change.
         /// </summary>
-        public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d, Analyzer a)
+        public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d, Analyzer a)
         {
             writer.UpdateDocument(t, d, a);
             // Return gen as of when indexing finished:
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#updateDocument(Term,Iterable)} and
         ///  returns the generation that reflects this change.
         /// </summary>
-        public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d)
+        public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d)
         {
             writer.UpdateDocument(t, d);
             // Return gen as of when indexing finished:
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#updateDocuments(Term,Iterable,Analyzer)}
         ///  and returns the generation that reflects this change.
         /// </summary>
-        public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
+        public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer a)
         {
             writer.UpdateDocuments(t, docs, a);
             // Return gen as of when indexing finished:
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#updateDocuments(Term,Iterable)} and returns
         ///  the generation that reflects this change.
         /// </summary>
-        public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs)
+        public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             writer.UpdateDocuments(t, docs);
             // Return gen as of when indexing finished:
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#addDocument(Iterable,Analyzer)} and
         ///  returns the generation that reflects this change.
         /// </summary>
-        public virtual long AddDocument(IEnumerable<IndexableField> d, Analyzer a)
+        public virtual long AddDocument(IEnumerable<IIndexableField> d, Analyzer a)
         {
             writer.AddDocument(d, a);
             // Return gen as of when indexing finished:
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
         ///  IndexWriter#addDocuments(Iterable,Analyzer)} and
         ///  returns the generation that reflects this change.
         /// </summary>
-        public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
+        public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer a)
         {
             writer.AddDocuments(docs, a);
             // Return gen as of when indexing finished:
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
         /// Calls <seealso cref="IndexWriter#addDocument(Iterable)"/>
         ///  and returns the generation that reflects this change.
         /// </summary>
-        public virtual long AddDocument(IEnumerable<IndexableField> d)
+        public virtual long AddDocument(IEnumerable<IIndexableField> d)
         {
             writer.AddDocument(d);
             // Return gen as of when indexing finished:
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
         /// Calls <seealso cref="IndexWriter#addDocuments(Iterable)"/> and
         ///  returns the generation that reflects this change.
         /// </summary>
-        public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs)
+        public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             writer.AddDocuments(docs);
             // Return gen as of when indexing finished:

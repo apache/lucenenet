@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Compressing
             BufferedDocs.Length = 0;
         }
 
-        public override void WriteField(FieldInfo info, IndexableField field)
+        public override void WriteField(FieldInfo info, IIndexableField field)
         {
             int bits = 0;
             BytesRef bytes;

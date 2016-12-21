@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override bool Start(IndexableField[] fields, int count)
+        internal override bool Start(IIndexableField[] fields, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        internal override void Start(IndexableField f)
+        internal override void Start(IIndexableField f)
         {
             if (FieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
             {

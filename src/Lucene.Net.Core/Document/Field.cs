@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
     /// Field it is used in.  It is strongly recommended that no
     /// changes be made after Field instantiation.
     /// </summary>
-    public class Field : IndexableField
+    public class Field : IIndexableField
     {
         /// <summary>
         /// Field's type

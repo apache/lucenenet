@@ -93,7 +93,7 @@ namespace Lucene.Net.Classification.Utils
                     }
                     else
                     {
-                        foreach (IndexableField storableField in originalIndex.Document(scoreDoc.Doc).Fields)
+                        foreach (IIndexableField storableField in originalIndex.Document(scoreDoc.Doc).Fields)
                         {
                             if (storableField.GetReaderValue() != null)
                             {

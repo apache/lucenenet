@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool UpdateDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer, Term delTerm)
+        internal bool UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
         {
             bool hasEvents = PreUpdate();
 
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
             return PostUpdate(flushingDWPT, hasEvents);
         }
 
-        internal bool UpdateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
+        internal bool UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
         {
             bool hasEvents = PreUpdate();
 
