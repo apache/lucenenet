@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         private readonly Analyzer analyzer;
 
         private volatile int maxBufferedDocs;
-        private double RamBufferSizeMB;
+        private double ramBufferSizeMB;
         private volatile int maxBufferedDeleteTerms;
         private volatile int readerTermsIndexDivisor;
         private volatile IndexReaderWarmer mergedSegmentWarmer;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
         {
             this.analyzer = analyzer;
             this.MatchVersion = matchVersion;
-            RamBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
+            ramBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
             maxBufferedDocs = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
             maxBufferedDeleteTerms = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DELETE_TERMS;
             readerTermsIndexDivisor = IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             maxBufferedDeleteTerms = config.MaxBufferedDeleteTerms;
             maxBufferedDocs = config.MaxBufferedDocs;
             mergedSegmentWarmer = config.MergedSegmentWarmer;
-            RamBufferSizeMB = config.RAMBufferSizeMB;
+            ramBufferSizeMB = config.RAMBufferSizeMB;
             readerTermsIndexDivisor = config.ReaderTermsIndexDivisor;
             termIndexInterval = config.TermIndexInterval;
             MatchVersion = config.MatchVersion;
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
             }
-            this.RamBufferSizeMB = ramBufferSizeMB;
+            this.ramBufferSizeMB = ramBufferSizeMB;
             return this;
         }
 
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return RamBufferSizeMB;
+                return ramBufferSizeMB;
             }
         }
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("maxBufferedDocs must at least be 2 when enabled");
             }
-            if (maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH && RamBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+            if (maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
             {
                 throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
             }
