@@ -99,8 +99,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public sealed class SubResult
         {
-            public bool Matches; // LUCENENET TODO: Make property
-            public Bits Result; // LUCENENET TODO: Make property
+            public bool Matches { get; internal set; }
+            public Bits Result { get; internal set; }
         }
 
         /// <summary>
