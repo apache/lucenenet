@@ -80,22 +80,22 @@ namespace Lucene.Net.Index
 
         private class AutomatonTermsEnumAnonymousInnerClassHelper : AutomatonTermsEnum
         {
-            private readonly Terms OuterInstance;
+            private readonly Terms outerInstance;
 
-            private BytesRef StartTerm;
+            private BytesRef startTerm;
 
             public AutomatonTermsEnumAnonymousInnerClassHelper(Terms outerInstance, Lucene.Net.Index.TermsEnum iterator, CompiledAutomaton compiled, BytesRef startTerm)
                 : base(iterator, compiled)
             {
-                this.OuterInstance = outerInstance;
-                this.StartTerm = startTerm;
+                this.outerInstance = outerInstance;
+                this.startTerm = startTerm;
             }
 
             protected override BytesRef NextSeekTerm(BytesRef term)
             {
                 if (term == null)
                 {
-                    term = StartTerm;
+                    term = startTerm;
                 }
                 return base.NextSeekTerm(term);
             }
