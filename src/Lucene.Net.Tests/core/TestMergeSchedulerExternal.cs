@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
@@ -39,6 +40,7 @@ namespace Lucene.Net
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using Util;
+
     /// <summary>
     /// Holds tests cases to verify external APIs are accessible
     /// while not being in Lucene.Net.Index package.
@@ -75,7 +77,7 @@ namespace Lucene.Net
             protected override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
-                thread.ThreadPriority = MergeThreadPriority;
+                thread.SetThreadPriority((ThreadPriority)MergeThreadPriority);
                 thread.SetDaemon(true);
                 thread.Name = "MyMergeThread";
                 return thread;

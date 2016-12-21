@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
                         {
                             Message("set priority of merge thread " + mergeThread.Name + " to " + pri);
                         }
-                        mergeThread.ThreadPriority = pri;
+                        mergeThread.SetThreadPriority((ThreadPriority)pri);
                         pri = Math.Min((int)ThreadPriority.Highest, 1 + pri);
                     }
                 }
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 MergeThread thread = new MergeThread(this, writer, merge);
-                thread.ThreadPriority = mergeThreadPriority;
+                thread.SetThreadPriority((ThreadPriority)mergeThreadPriority);
                 thread.IsBackground = true;
                 thread.Name = "Lucene Merge Thread #" + mergeThreadCount++;
                 return thread;
@@ -607,24 +607,21 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Set the priority of this thread. </summary>
-            public virtual int ThreadPriority // LUCENENET TODO: Change to SetThreadPriority(int)
+            public virtual void SetThreadPriority(ThreadPriority priority)
             {
-                set
+                try
                 {
-                    try
-                    {
-                        Priority = (ThreadPriority)value;
-                    }
-                    catch (System.NullReferenceException npe)
-                    {
-                        // Strangely, Sun's JDK 1.5 on Linux sometimes
-                        // throws NPE out of here...
-                    }
-                    catch (System.Security.SecurityException se)
-                    {
-                        // Ignore this because we will still run fine with
-                        // normal thread priority
-                    }
+                    Priority = priority;
+                }
+                catch (System.NullReferenceException npe)
+                {
+                    // Strangely, Sun's JDK 1.5 on Linux sometimes
+                    // throws NPE out of here...
+                }
+                catch (System.Security.SecurityException se)
+                {
+                    // Ignore this because we will still run fine with
+                    // normal thread priority
                 }
             }
 
