@@ -355,11 +355,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool Deleted
+            public override bool IsDeleted
             {
                 get
                 {
-                    return cp.Deleted;
+                    return cp.IsDeleted;
                 }
             }
 

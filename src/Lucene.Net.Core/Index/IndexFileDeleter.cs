@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
             // sometime it may not be the most recent commit
             Checkpoint(segmentInfos, false);
 
-            StartingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.Deleted;
+            StartingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.IsDeleted;
 
             DeleteCommits();
         }
@@ -843,7 +843,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool Deleted
+            public override bool IsDeleted
             {
                 get
                 {

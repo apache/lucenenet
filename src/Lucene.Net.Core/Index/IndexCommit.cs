@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         ///  only used by <seealso cref="IndexWriter"/> after invoking the
         ///  <seealso cref="IndexDeletionPolicy"/>.
         /// </summary>
-        public abstract bool Deleted { get; } // LUCENENET TODO: Rename IsDeleted
+        public abstract bool IsDeleted { get; }
 
         /// <summary>
         /// Returns number of segments referenced by this commit. </summary>

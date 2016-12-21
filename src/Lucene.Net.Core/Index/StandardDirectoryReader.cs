@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool Deleted
+            public override bool IsDeleted
             {
                 get
                 {

@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 foreach (IndexCommit commit in commits)
                 {
                     commit.Delete();
-                    Assert.IsTrue(commit.Deleted);
+                    Assert.IsTrue(commit.IsDeleted);
                 }
             }
 
