@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
         /// }
         /// </pre>
         /// </summary>
-        protected internal bool Verbose()
+        protected internal bool Verbose() // LUCENENET TODO: Make property
         {
             return _writer != null && _writer.infoStream.IsEnabled(COMPONENT_NAME);
         }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
         /// Returns the number of merge threads that are alive. Note that this number
         /// is &lt;= <seealso cref="#mergeThreads"/> size.
         /// </summary>
-        private int MergeThreadCount()
+        private int MergeThreadCount() // LUCENENET TODO: Make property
         {
             return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null);
         }
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     long startStallTime = 0;
-                    while (writer.HasPendingMerges() && MergeThreadCount() >= MaxMergeCount)
+                    while (writer.HasPendingMerges && MergeThreadCount() >= MaxMergeCount)
                     {
                         // this means merging has fallen too far behind: we
                         // have already created maxMergeCount threads, and

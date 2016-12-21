@@ -2473,11 +2473,14 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public virtual bool HasPendingMerges() // LUCENENET TODO: Make property
+        public virtual bool HasPendingMerges
         {
-            lock (this)
+            get
             {
-                return pendingMerges.Count != 0;
+                lock (this)
+                {
+                    return pendingMerges.Count != 0;
+                }
             }
         }
 
