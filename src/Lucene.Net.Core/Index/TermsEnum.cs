@@ -255,11 +255,11 @@ namespace Lucene.Net.Index
 
         private class TermStateAnonymousInnerClassHelper : TermState
         {
-            private readonly TermsEnum OuterInstance;
+            private readonly TermsEnum outerInstance;
 
             public TermStateAnonymousInnerClassHelper(TermsEnum outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void CopyFrom(TermState other)
