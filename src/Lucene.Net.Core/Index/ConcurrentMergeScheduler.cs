@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
                     // pause the thread if maxThreadCount is smaller than the number of merge threads.
                     bool doPause = threadIdx < activeMergeCount - MaxThreadCount_Renamed;
 
-                    if (Verbose())
+                    if (IsVerbose)
                     {
                         if (doPause != merge.Pause)
                         {
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
 
                     if (!doPause)
                     {
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("set priority of merge thread " + mergeThread.Name + " to " + pri);
                         }
@@ -300,9 +300,9 @@ namespace Lucene.Net.Index
         /// }
         /// </pre>
         /// </summary>
-        protected internal virtual bool Verbose() // LUCENENET TODO: Make property
+        protected virtual bool IsVerbose
         {
-            return writer != null && writer.infoStream.IsEnabled("CMS");
+            get { return writer != null && writer.infoStream.IsEnabled("CMS"); }
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                 // these newly proposed merges will likely already be
                 // registered.
 
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("now merge");
                     Message("  index: " + writer.SegString());
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
                         // thread to prevent creation of new segments,
                         // until merging has caught up:
                         startStallTime = Environment.TickCount;
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("    too many merges; stalling...");
                         }
@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (Verbose())
+                    if (IsVerbose)
                     {
                         if (startStallTime != 0)
                         {
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
                     MergePolicy.OneMerge merge = writer.NextMerge;
                     if (merge == null)
                     {
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("  no more merges pending; now return");
                         }
@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
                     bool success = false;
                     try
                     {
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("  consider merge " + writer.SegString(merge.Segments));
                         }
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
                         // merge:
                         MergeThread merger = GetMergeThread(writer, merge);
                         mergeThreads.Add(merger);
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("    launch new thread [" + merger.Name + "]");
                         }
@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    if (OuterInstance.Verbose())
+                    if (OuterInstance.IsVerbose)
                     {
                         OuterInstance.Message("  merge thread: start");
                     }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
                         if (merge != null)
                         {
                             OuterInstance.UpdateMergeThreads();
-                            if (OuterInstance.Verbose())
+                            if (OuterInstance.IsVerbose)
                             {
                                 OuterInstance.Message("  merge thread: do another merge " + TWriter.SegString(merge.Segments));
                             }
@@ -672,7 +672,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (OuterInstance.Verbose())
+                    if (OuterInstance.IsVerbose)
                     {
                         OuterInstance.Message("  merge thread: done");
                     }
