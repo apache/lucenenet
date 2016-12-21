@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
                 bool throwOnClose = !Rarely();
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
                 FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
-                IList<IndexReader.ReaderClosedListener> listeners = new List<IndexReader.ReaderClosedListener>();
+                IList<IndexReader.IReaderClosedListener> listeners = new List<IndexReader.IReaderClosedListener>();
                 int listenerCount = Random().Next(20);
                 AtomicInteger count = new AtomicInteger();
                 bool faultySet = false;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class CountListener : IndexReader.ReaderClosedListener
+        private sealed class CountListener : IndexReader.IReaderClosedListener
         {
             internal readonly AtomicInteger Count;
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class FaultyListener : IndexReader.ReaderClosedListener
+        private sealed class FaultyListener : IndexReader.IReaderClosedListener
         {
             public void OnClose(IndexReader reader)
             {

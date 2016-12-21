@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Occur = Lucene.Net.Search.BooleanClause.Occur;
-    using ReaderClosedListener = Lucene.Net.Index.IndexReader.ReaderClosedListener;
+    using IReaderClosedListener = Lucene.Net.Index.IndexReader.IReaderClosedListener;
 
     [TestFixture]
     public class TestParallelCompositeReader : LuceneTestCase
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper : ReaderClosedListener
+        private class ReaderClosedListenerAnonymousInnerClassHelper : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader OuterInstance;
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper2 : ReaderClosedListener
+        private class ReaderClosedListenerAnonymousInnerClassHelper2 : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader OuterInstance;
 

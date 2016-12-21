@@ -156,9 +156,9 @@ namespace Lucene.Net.Search
         }
 
         // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
-        internal readonly IndexReader.ReaderClosedListener purgeReader;
+        internal readonly IndexReader.IReaderClosedListener purgeReader;
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
+        private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
         {
             private FieldCacheImpl OuterInstance;
 

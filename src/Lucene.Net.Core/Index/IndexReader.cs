@@ -92,37 +92,37 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public interface ReaderClosedListener // LUCENENET TODO: Rename with "I"
+        public interface IReaderClosedListener
         {
             /// <summary>
             /// Invoked when the <seealso cref="IndexReader"/> is closed. </summary>
             void OnClose(IndexReader reader);
         }
 
-        private readonly ISet<ReaderClosedListener> readerClosedListeners = new ConcurrentHashSet<ReaderClosedListener>();
+        private readonly ISet<IReaderClosedListener> readerClosedListeners = new ConcurrentHashSet<IReaderClosedListener>();
 
         //LUCENE TO-DO
         //private readonly ISet<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
         private readonly ISet<IdentityWeakReference<IndexReader>> parentReaders = new ConcurrentHashSet<IdentityWeakReference<IndexReader>>();
 
         /// <summary>
-        /// Expert: adds a <seealso cref="ReaderClosedListener"/>.  The
+        /// Expert: adds a <seealso cref="IReaderClosedListener"/>.  The
         /// provided listener will be invoked when this reader is closed.
         ///
         /// @lucene.experimental
         /// </summary>
-        public void AddReaderClosedListener(ReaderClosedListener listener)
+        public void AddReaderClosedListener(IReaderClosedListener listener)
         {
             EnsureOpen();
             readerClosedListeners.Add(listener);
         }
 
         /// <summary>
-        /// Expert: remove a previously added <seealso cref="ReaderClosedListener"/>.
+        /// Expert: remove a previously added <seealso cref="IReaderClosedListener"/>.
         ///
         /// @lucene.experimental
         /// </summary>
-        public void RemoveReaderClosedListener(ReaderClosedListener listener)
+        public void RemoveReaderClosedListener(IReaderClosedListener listener)
         {
             EnsureOpen();
             readerClosedListeners.Remove(listener);
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
         {
             lock (readerClosedListeners)
             {
-                foreach (ReaderClosedListener listener in readerClosedListeners)
+                foreach (IReaderClosedListener listener in readerClosedListeners)
                 {
                     try
                     {

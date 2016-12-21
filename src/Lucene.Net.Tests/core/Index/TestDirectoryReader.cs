@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             DirectoryReader reader = writer.Reader;
             int[] closeCount = new int[1];
-            IndexReader.ReaderClosedListener listener = new ReaderClosedListenerAnonymousInnerClassHelper(this, reader, closeCount);
+            IndexReader.IReaderClosedListener listener = new ReaderClosedListenerAnonymousInnerClassHelper(this, reader, closeCount);
 
             reader.AddReaderClosedListener(listener);
 
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
+        private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
         {
             private readonly TestDirectoryReader OuterInstance;
 
