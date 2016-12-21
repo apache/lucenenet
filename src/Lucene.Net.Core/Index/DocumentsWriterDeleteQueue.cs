@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
                  * and if the global slice is up-to-date
                  * and if globalBufferedUpdates has changes
                  */
-                return GlobalBufferedUpdates.Any() || !GlobalSlice.Empty || GlobalSlice.SliceTail != Tail || Tail.Next != null;
+                return GlobalBufferedUpdates.Any() || !GlobalSlice.IsEmpty || GlobalSlice.SliceTail != Tail || Tail.Next != null;
             }
             finally
             {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Index
                 return SliceTail.Item == item;
             }
 
-            internal virtual bool Empty // LUCENENET TODO: Rename IsEmpty
+            internal virtual bool IsEmpty
             {
                 get
                 {
@@ -352,9 +352,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int NumGlobalTermDeletes() // LUCENENET TODO: Make property
+        public int NumGlobalTermDeletes
         {
-            return GlobalBufferedUpdates.NumTermDeletes.Get();
+            get { return GlobalBufferedUpdates.NumTermDeletes.Get(); }
         }
 
         internal void Clear()
@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int BufferedUpdatesTermsSize // LUCENENET TODO: Make GetBufferedUpdatesTermsSize() this is a bit risky to make a property
+        public int BufferedUpdatesTermsSize
         {
             get
             {
@@ -525,9 +525,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public long BytesUsed() // LUCENENET TODO: make property
+        public long BytesUsed
         {
-            return GlobalBufferedUpdates.BytesUsed.Get();
+            get { return GlobalBufferedUpdates.BytesUsed.Get(); }
         }
 
         public override string ToString()

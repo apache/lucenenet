@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                     AssertAllBetween(last2, j, bd2, ids);
                     last2 = j + 1;
                 }
-                Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes());
+                Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes);
             }
             assertEquals(uniqueValues, new HashSet<Term>(bd1.Terms.Keys));
             assertEquals(uniqueValues, new HashSet<Term>(bd2.Terms.Keys));
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                 frozenSet.Add(new Term(t.Field, bytesRef));
             }
             assertEquals(uniqueValues, frozenSet);
-            Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
+            Assert.AreEqual(0, queue.NumGlobalTermDeletes, "num deletes must be 0 after freeze");
         }
 
         private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int?[] ids)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                 bytesRef.CopyBytes(t.Bytes);
                 frozenSet.Add(new Term(t.Field, bytesRef));
             }
-            Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
+            Assert.AreEqual(0, queue.NumGlobalTermDeletes, "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
             assertEquals(uniqueValues, frozenSet);
         }

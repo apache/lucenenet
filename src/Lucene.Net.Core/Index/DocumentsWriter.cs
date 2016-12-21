@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DeleteQueue.NumGlobalTermDeletes();
+                return DeleteQueue.NumGlobalTermDeletes;
             }
         }
 

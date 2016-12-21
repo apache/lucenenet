@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
             {
                 // apply all deletes before we flush and release the delete slice
                 DeleteSlice.Apply(PendingUpdates, numDocsInRAM);
-                Debug.Assert(DeleteSlice.Empty);
+                Debug.Assert(DeleteSlice.IsEmpty);
                 DeleteSlice.Reset();
             }
             return globalUpdates;
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
         internal virtual FlushedSegment Flush()
         {
             Debug.Assert(numDocsInRAM > 0);
-            Debug.Assert(DeleteSlice.Empty, "all deletes must be applied in prepareFlush");
+            Debug.Assert(DeleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
             SegmentInfo_Renamed.DocCount = numDocsInRAM;
             SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed())));
             double startMBUsed = BytesUsed() / 1024.0 / 1024.0;
