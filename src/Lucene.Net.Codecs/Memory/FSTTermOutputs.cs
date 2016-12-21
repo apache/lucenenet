@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Memory
     using Support;
 
     using FieldInfo = Index.FieldInfo;
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using DataInput = Store.DataInput;
     using DataOutput = Store.DataOutput;
    
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Memory
 
         protected internal FSTTermOutputs(FieldInfo fieldInfo, int longsSize)
         {
-            _hasPos = (fieldInfo.FieldIndexOptions != IndexOptions.DOCS_ONLY);
+            _hasPos = (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY);
             _longsSize = longsSize;
         }
 

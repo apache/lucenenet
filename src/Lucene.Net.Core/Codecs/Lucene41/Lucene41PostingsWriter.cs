@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using DataOutput = Store.DataOutput;
     using FieldInfo = Index.FieldInfo;
     using IndexFileNames = Index.IndexFileNames;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Store.IndexOutput;
     using IOUtils = Util.IOUtils;
     using PackedInts = Util.Packed.PackedInts;
@@ -242,10 +243,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override int SetField(FieldInfo fieldInfo)
         {
-            FieldInfo.IndexOptions? indexOptions = fieldInfo.FieldIndexOptions;
-            FieldHasFreqs = indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
-            FieldHasPositions = indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            FieldHasOffsets = indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            IndexOptions? indexOptions = fieldInfo.IndexOptions;
+            FieldHasFreqs = indexOptions >= IndexOptions.DOCS_AND_FREQS;
+            FieldHasPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            FieldHasOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             FieldHasPayloads = fieldInfo.HasPayloads();
             SkipWriter.SetField(FieldHasPositions, FieldHasOffsets, FieldHasPayloads);
             LastState = EmptyState;

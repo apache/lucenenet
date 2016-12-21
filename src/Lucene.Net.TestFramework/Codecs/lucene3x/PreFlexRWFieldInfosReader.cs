@@ -21,13 +21,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
     using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
@@ -69,20 +70,20 @@ namespace Lucene.Net.Codecs.Lucene3x
                     bool storeTermVector = (bits & PreFlexRWFieldInfosWriter.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & PreFlexRWFieldInfosWriter.OMIT_NORMS) != 0;
                     bool storePayloads = (bits & PreFlexRWFieldInfosWriter.STORE_PAYLOADS) != 0;
-                    FieldInfo.IndexOptions? indexOptions;
+                    IndexOptions? indexOptions;
                     if (!isIndexed)
                     {
                         indexOptions = null;
                     }
                     else if ((bits & PreFlexRWFieldInfosWriter.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                        indexOptions = IndexOptions.DOCS_ONLY;
                     }
                     else if ((bits & PreFlexRWFieldInfosWriter.OMIT_POSITIONS) != 0)
                     {
                         if (format <= PreFlexRWFieldInfosWriter.FORMAT_OMIT_POSITIONS)
                         {
-                            indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                            indexOptions = IndexOptions.DOCS_AND_FREQS;
                         }
                         else
                         {
@@ -91,13 +92,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     }
 
                     // LUCENE-3027: past indices were able to write
                     // storePayloads=true when omitTFAP is also true,
                     // which is invalid.  We correct that, here:
-                    if (indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if (indexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
                         storePayloads = false;
                     }

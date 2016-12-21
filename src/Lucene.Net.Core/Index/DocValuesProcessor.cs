@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType_e = Lucene.Net.DocValuesType_e;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     internal sealed class DocValuesProcessor : StoredFieldsConsumer

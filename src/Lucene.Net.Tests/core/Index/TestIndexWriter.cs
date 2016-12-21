@@ -2127,10 +2127,10 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
             FieldType docsAndFreqs = new FieldType(TextField.TYPE_NOT_STORED);
-            docsAndFreqs.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            docsAndFreqs.IndexOptions = IndexOptions.DOCS_AND_FREQS;
 
             FieldType docsOnly = new FieldType(TextField.TYPE_NOT_STORED);
-            docsOnly.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            docsOnly.IndexOptions = IndexOptions.DOCS_ONLY;
 
             Document doc = new Document();
             doc.Add(new Field("field", "a b c", docsAndFreqs));

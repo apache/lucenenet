@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using DataOutput = Lucene.Net.Store.DataOutput;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         internal readonly int TotalNumDocs;
 
-        internal FieldInfo.IndexOptions? IndexOptions;
+        internal IndexOptions? IndexOptions;
         internal bool StorePayloads;
         internal bool StoreOffsets;
 
@@ -188,9 +189,9 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             */
             this.FieldInfo = fieldInfo;
-            IndexOptions = fieldInfo.FieldIndexOptions;
+            IndexOptions = fieldInfo.IndexOptions;
 
-            StoreOffsets = IndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            StoreOffsets = IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             StorePayloads = fieldInfo.HasPayloads();
             LastState = EmptyState;
             //System.out.println("  set init blockFreqStart=" + freqStart);
@@ -221,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Debug.Assert(docID < TotalNumDocs, "docID=" + docID + " totalNumDocs=" + TotalNumDocs);
 
             LastDocID = docID;
-            if (IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+            if (IndexOptions == Index.IndexOptions.DOCS_ONLY)
             {
                 FreqOut.WriteVInt(delta);
             }
@@ -244,7 +245,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-            Debug.Assert(IndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, "invalid indexOptions: " + IndexOptions);
+            Debug.Assert(IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, "invalid indexOptions: " + IndexOptions);
             Debug.Assert(ProxOut != null);
 
             int delta = position - LastPosition;
@@ -350,7 +351,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(state.SkipOffset > 0);
                 @out.WriteVLong(state.SkipOffset);
             }
-            if (IndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 @out.WriteVLong(state.ProxStart - LastState.ProxStart);
             }

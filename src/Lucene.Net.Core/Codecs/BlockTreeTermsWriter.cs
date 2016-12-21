@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IntsRef = Lucene.Net.Util.IntsRef;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -950,7 +951,7 @@ namespace Lucene.Net.Codecs
 
                         // Write term stats, to separate byte[] blob:
                         StatsWriter.WriteVInt(state.DocFreq);
-                        if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                        if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
                             Debug.Assert(state.TotalTermFreq >= state.DocFreq, state.TotalTermFreq + " vs " + state.DocFreq);
                             StatsWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
@@ -993,7 +994,7 @@ namespace Lucene.Net.Codecs
 
                             // Write term stats, to separate byte[] blob:
                             StatsWriter.WriteVInt(state.DocFreq);
-                            if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                            if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 Debug.Assert(state.TotalTermFreq >= state.DocFreq);
                                 StatsWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
@@ -1178,7 +1179,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    Debug.Assert(sumTotalTermFreq == 0 || fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
+                    Debug.Assert(sumTotalTermFreq == 0 || fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
                     Debug.Assert(sumDocFreq == 0);
                     Debug.Assert(docCount == 0);
                 }
@@ -1207,7 +1208,7 @@ namespace Lucene.Net.Codecs
                     @out.WriteVLong(field.NumTerms);
                     @out.WriteVInt(field.RootCode.Length);
                     @out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
-                    if (field.fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                    if (field.fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         @out.WriteVLong(field.SumTotalTermFreq);
                     }

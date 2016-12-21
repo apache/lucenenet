@@ -359,7 +359,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             get
             {
                 var ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                ft.IndexOptions = IndexOptions.DOCS_ONLY;
                 ft.OmitNorms = true;
 
                 return ft;

@@ -17,7 +17,7 @@ namespace Lucene.Net.Tests.Queries.Function
     // [Util.LuceneTestCase.SuppressCodecs("Lucene3x")]
     public class TestDocValuesFieldSources : LuceneTestCase
     {
-        private void DoTest(FieldInfo.DocValuesType_e type)
+        private void DoTest(DocValuesType_e type)
         {
             Directory d = NewDirectory();
             IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -26,13 +26,13 @@ namespace Lucene.Net.Tests.Queries.Function
             Field f;
             switch (type)
             {
-                case FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     f = new BinaryDocValuesField("dv", new BytesRef());
                     break;
-                case FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     f = new SortedDocValuesField("dv", new BytesRef());
                     break;
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     f = new NumericDocValuesField("dv", 0);
                     break;
                 default:
@@ -50,15 +50,15 @@ namespace Lucene.Net.Tests.Queries.Function
                 id.SetInt64Value(i);
                 switch (type)
                 {
-                    case FieldInfo.DocValuesType_e.SORTED:
-                    case FieldInfo.DocValuesType_e.BINARY:
+                    case DocValuesType_e.SORTED:
+                    case DocValuesType_e.BINARY:
                         do
                         {
                             vals[i] = TestUtil.RandomSimpleString(Random(), 20);
                         } while (((string)vals[i]).Length == 0);
                         f.SetBytesValue(new BytesRef((string)vals[i]));
                         break;
-                    case FieldInfo.DocValuesType_e.NUMERIC:
+                    case DocValuesType_e.NUMERIC:
                         int bitsPerValue = Random().NextIntBetween(1, 31); // keep it an int
                         vals[i] = (long)Random().Next((int)PackedInts.MaxValue(bitsPerValue));
                         f.SetInt64Value((long) vals[i]);
@@ -79,11 +79,11 @@ namespace Lucene.Net.Tests.Queries.Function
                 ValueSource vs;
                 switch (type)
                 {
-                    case FieldInfo.DocValuesType_e.BINARY:
-                    case FieldInfo.DocValuesType_e.SORTED:
+                    case DocValuesType_e.BINARY:
+                    case DocValuesType_e.SORTED:
                         vs = new BytesRefFieldSource("dv");
                         break;
-                    case FieldInfo.DocValuesType_e.NUMERIC:
+                    case DocValuesType_e.NUMERIC:
                         vs = new LongFieldSource("dv");
                         break;
                     default:
@@ -111,11 +111,11 @@ namespace Lucene.Net.Tests.Queries.Function
                     object expected = vals[ids.IntVal(i)];
                     switch (type)
                     {
-                        case FieldInfo.DocValuesType_e.SORTED:
+                        case DocValuesType_e.SORTED:
                             values.OrdVal(i); // no exception
                             assertTrue(values.NumOrd() >= 1);
-                            goto case FieldInfo.DocValuesType_e.BINARY;
-                        case FieldInfo.DocValuesType_e.BINARY:
+                            goto case DocValuesType_e.BINARY;
+                        case DocValuesType_e.BINARY:
                             assertEquals(expected, values.ObjectVal(i));
                             assertEquals(expected, values.StrVal(i));
                             assertEquals(expected, values.ObjectVal(i));
@@ -123,7 +123,7 @@ namespace Lucene.Net.Tests.Queries.Function
                             assertTrue(values.BytesVal(i, bytes));
                             assertEquals(new BytesRef((string)expected), bytes);
                             break;
-                        case FieldInfo.DocValuesType_e.NUMERIC:
+                        case DocValuesType_e.NUMERIC:
                             assertEquals(Convert.ToInt64(expected, CultureInfo.InvariantCulture), values.LongVal(i));
                             break;
                     }
@@ -136,10 +136,10 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void Test()
         {
-            var values = Enum.GetValues(typeof(FieldInfo.DocValuesType_e));
-            foreach (FieldInfo.DocValuesType_e type in values)
+            var values = Enum.GetValues(typeof(DocValuesType_e));
+            foreach (DocValuesType_e type in values)
             {
-                if (type != FieldInfo.DocValuesType_e.SORTED_SET)
+                if (type != DocValuesType_e.SORTED_SET)
                 {
                     DoTest(type);
                 }

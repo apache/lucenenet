@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             CustomType5.IsTokenized = false;
             NoNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, CustomType5);
             CustomType6 = new FieldType(TextField.TYPE_STORED);
-            CustomType6.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            CustomType6.IndexOptions = IndexOptions.DOCS_ONLY;
             NoTFField = new Field(NO_TF_KEY, NO_TF_TEXT, CustomType6);
             CustomType7 = new FieldType();
             CustomType7.IsStored = true;
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
                 {
                     Add(Unstored, f);
                 }
-                if (f.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
                 {
                     Add(NoNorms, f);
                 }
-                if (f.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }

@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             get
             {
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                 ft.StoreTermVectors = true;
                 ft.StoreTermVectorPositions = true;
                 ft.OmitNorms = true;

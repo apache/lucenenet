@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace Lucene.Net.Codecs
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -168,7 +170,7 @@ namespace Lucene.Net.Codecs
                     rootCode.Length = numBytes;
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                     Debug.Assert(fieldInfo != null, "field=" + field);
-                    long sumTotalTermFreq = fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? -1 : @in.ReadVLong();
+                    long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVLong();
                     long sumDocFreq = @in.ReadVLong();
                     int docCount = @in.ReadVInt();
                     int longsSize = Version >= BlockTreeTermsWriter.VERSION_META_ARRAY ? @in.ReadVInt() : 0;
@@ -620,17 +622,17 @@ namespace Lucene.Net.Codecs
 
             public override bool HasFreqs()
             {
-                return fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
             }
 
             public override bool HasOffsets()
             {
-                return fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
 
             public override bool HasPositions()
             {
-                return fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             }
 
             public override bool HasPayloads()
@@ -992,7 +994,7 @@ namespace Lucene.Net.Codecs
                             // stats
                             TermState.DocFreq = StatsReader.ReadVInt();
                             //if (DEBUG) System.out.println("    dF=" + state.docFreq);
-                            if (OuterInstance.OuterInstance.fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                            if (OuterInstance.OuterInstance.fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 TermState.TotalTermFreq = TermState.DocFreq + StatsReader.ReadVLong();
                                 //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);
@@ -1180,7 +1182,7 @@ namespace Lucene.Net.Codecs
 
                 public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
                 {
-                    if (OuterInstance.fieldInfo.FieldIndexOptions < FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if (OuterInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
                         // Positions were not indexed:
                         return null;
@@ -2595,7 +2597,7 @@ namespace Lucene.Net.Codecs
 
                 public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
                 {
-                    if (OuterInstance.fieldInfo.FieldIndexOptions < FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if (OuterInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
                         // Positions were not indexed:
                         return null;
@@ -3066,7 +3068,7 @@ namespace Lucene.Net.Codecs
                             // stats
                             State.DocFreq = StatsReader.ReadVInt();
                             //if (DEBUG) System.out.println("    dF=" + state.docFreq);
-                            if (OuterInstance.OuterInstance.fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                            if (OuterInstance.OuterInstance.fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 State.TotalTermFreq = State.DocFreq + StatsReader.ReadVLong();
                                 //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);

@@ -24,6 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using Term = Lucene.Net.Index.Term;
 
     /// @deprecated (4.0)
@@ -53,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private bool HaveSkipped;
 
         protected internal bool CurrentFieldStoresPayloads;
-        protected internal FieldInfo.IndexOptions? IndexOptions;
+        protected internal IndexOptions? indexOptions;
 
         public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
         {
@@ -106,7 +107,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             Count = 0;
             FieldInfo fi = FieldInfos.FieldInfo(term.Field);
-            this.IndexOptions = (fi != null) ? fi.FieldIndexOptions : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            this.indexOptions = (fi != null) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             CurrentFieldStoresPayloads = (fi != null) && fi.HasPayloads();
             if (ti == null)
             {
@@ -166,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 int docCode = FreqStream.ReadVInt();
 
-                if (IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (indexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Doc_Renamed += docCode;
                 }
@@ -200,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual int Read(int[] docs, int[] freqs)
         {
             int length = docs.Length;
-            if (IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+            if (indexOptions == IndexOptions.DOCS_ONLY)
             {
                 return ReadNoTf(docs, freqs, length);
             }

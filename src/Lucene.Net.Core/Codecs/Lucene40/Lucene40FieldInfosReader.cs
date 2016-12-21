@@ -22,11 +22,13 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
@@ -67,32 +69,32 @@ namespace Lucene.Net.Codecs.Lucene40
                     bool storeTermVector = (bits & Lucene40FieldInfosFormat.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & Lucene40FieldInfosFormat.OMIT_NORMS) != 0;
                     bool storePayloads = (bits & Lucene40FieldInfosFormat.STORE_PAYLOADS) != 0;
-                    FieldInfo.IndexOptions indexOptions;
+                    IndexOptions indexOptions;
                     if (!isIndexed)
                     {
-                        indexOptions = default(FieldInfo.IndexOptions);
+                        indexOptions = default(IndexOptions);
                     }
                     else if ((bits & Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                        indexOptions = IndexOptions.DOCS_ONLY;
                     }
                     else if ((bits & Lucene40FieldInfosFormat.OMIT_POSITIONS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS;
                     }
                     else if ((bits & Lucene40FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                     }
                     else
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     }
 
                     // LUCENE-3027: past indices were able to write
                     // storePayloads=true when omitTFAP is also true,
                     // which is invalid.  We correct that, here:
-                    if (isIndexed && indexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (isIndexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         storePayloads = false;
                     }
@@ -107,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     if (oldNormsType.Mapping != null)
                     {
-                        if (oldNormsType.Mapping != FieldInfo.DocValuesType_e.NUMERIC)
+                        if (oldNormsType.Mapping != DocValuesType_e.NUMERIC)
                         {
                             throw new CorruptIndexException("invalid norm type: " + oldNormsType + " (resource=" + input + ")");
                         }
@@ -139,19 +141,19 @@ namespace Lucene.Net.Codecs.Lucene40
         internal class LegacyDocValuesType
         {
             internal static readonly LegacyDocValuesType NONE = new LegacyDocValuesType("NONE", null);
-            internal static readonly LegacyDocValuesType VAR_INTS = new LegacyDocValuesType("VAR_INTS", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_32 = new LegacyDocValuesType("FLOAT_32", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_64 = new LegacyDocValuesType("FLOAT_64", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_STRAIGHT = new LegacyDocValuesType("BYTES_FIXED_STRAIGHT", FieldInfo.DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_DEREF = new LegacyDocValuesType("BYTES_FIXED_DEREF", FieldInfo.DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_STRAIGHT = new LegacyDocValuesType("BYTES_VAR_STRAIGHT", FieldInfo.DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_DEREF = new LegacyDocValuesType("BYTES_VAR_DEREF", FieldInfo.DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType FIXED_INTS_16 = new LegacyDocValuesType("FIXED_INTS_16", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_32 = new LegacyDocValuesType("FIXED_INTS_32", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_64 = new LegacyDocValuesType("FIXED_INTS_64", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_8 = new LegacyDocValuesType("FIXED_INTS_8", FieldInfo.DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_SORTED = new LegacyDocValuesType("BYTES_FIXED_SORTED", FieldInfo.DocValuesType_e.SORTED);
-            internal static readonly LegacyDocValuesType BYTES_VAR_SORTED = new LegacyDocValuesType("BYTES_VAR_SORTED", FieldInfo.DocValuesType_e.SORTED);
+            internal static readonly LegacyDocValuesType VAR_INTS = new LegacyDocValuesType("VAR_INTS", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType FLOAT_32 = new LegacyDocValuesType("FLOAT_32", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType FLOAT_64 = new LegacyDocValuesType("FLOAT_64", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_STRAIGHT = new LegacyDocValuesType("BYTES_FIXED_STRAIGHT", DocValuesType_e.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_DEREF = new LegacyDocValuesType("BYTES_FIXED_DEREF", DocValuesType_e.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_VAR_STRAIGHT = new LegacyDocValuesType("BYTES_VAR_STRAIGHT", DocValuesType_e.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_VAR_DEREF = new LegacyDocValuesType("BYTES_VAR_DEREF", DocValuesType_e.BINARY);
+            internal static readonly LegacyDocValuesType FIXED_INTS_16 = new LegacyDocValuesType("FIXED_INTS_16", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_32 = new LegacyDocValuesType("FIXED_INTS_32", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_64 = new LegacyDocValuesType("FIXED_INTS_64", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_8 = new LegacyDocValuesType("FIXED_INTS_8", DocValuesType_e.NUMERIC);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_SORTED = new LegacyDocValuesType("BYTES_FIXED_SORTED", DocValuesType_e.SORTED);
+            internal static readonly LegacyDocValuesType BYTES_VAR_SORTED = new LegacyDocValuesType("BYTES_VAR_SORTED", DocValuesType_e.SORTED);
 
             private static readonly LegacyDocValuesType[] values = new[] {
                 NONE,
@@ -204,16 +206,16 @@ namespace Lucene.Net.Codecs.Lucene40
                 {"BYTES_VAR_SORTED", 13}
             };
 
-            private readonly FieldInfo.DocValuesType_e? mapping;
+            private readonly DocValuesType_e? mapping;
             private readonly string name;
 
-            private LegacyDocValuesType(string name, FieldInfo.DocValuesType_e? mapping)
+            private LegacyDocValuesType(string name, DocValuesType_e? mapping)
             {
                 this.name = name;
                 this.mapping = mapping;
             }
 
-            public FieldInfo.DocValuesType_e? Mapping // LUCENENET TODO: Can we make this non-nullable?
+            public DocValuesType_e? Mapping // LUCENENET TODO: Can we make this non-nullable?
             {
                 get { return mapping; }
             }

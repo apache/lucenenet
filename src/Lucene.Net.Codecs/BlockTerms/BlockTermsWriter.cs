@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _output.WriteVInt(field.FieldInfo.Number);
                     _output.WriteVLong(field.NumTerms);
                     _output.WriteVLong(field.TermsStartPointer);
-                    if (field.FieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         _output.WriteVLong(field.SumTotalTermFreq);
                     }
@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     Debug.Assert(state != null);
 
                     _bytesWriter.WriteVInt(state.DocFreq);
-                    if (_fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                    if (_fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         _bytesWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
                     }

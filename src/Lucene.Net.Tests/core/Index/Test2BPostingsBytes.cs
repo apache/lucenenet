@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
             ft.OmitNorms = true;
             MyTokenStream tokenStream = new MyTokenStream();
             Field field = new Field("field", tokenStream, ft);

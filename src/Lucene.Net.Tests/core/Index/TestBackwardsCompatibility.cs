@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
     using TextField = Lucene.Net.Documents.TextField;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+    //using IndexOptions = Lucene.Net.Index.IndexOptions;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using FieldCache = Lucene.Net.Search.FieldCache;

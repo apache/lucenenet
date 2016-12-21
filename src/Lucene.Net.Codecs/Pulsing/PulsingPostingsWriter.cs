@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly SegmentWriteState _segmentState;
         private IndexOutput _termsOut;
         private readonly List<FieldMetaData> _fields;
-        private FieldInfo.IndexOptions? _indexOptions;
+        private IndexOptions? _indexOptions;
         private bool _storePayloads;
 
         // information for wrapped PF, in current field
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// <returns></returns>
         public override int SetField(FieldInfo fieldInfo)
         {
-            _indexOptions = fieldInfo.FieldIndexOptions;
+            _indexOptions = fieldInfo.IndexOptions;
             _storePayloads = fieldInfo.HasPayloads();
             _absolute = false;
             _longsSize = _wrappedPostingsWriter.SetField(fieldInfo);
@@ -185,11 +185,11 @@ namespace Lucene.Net.Codecs.Pulsing
                 Debug.Assert(_pendingCount < _pending.Length);
                 _currentDoc = _pending[_pendingCount];
                 _currentDoc.docID = docId;
-                if (_indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (_indexOptions == IndexOptions.DOCS_ONLY)
                 {
                     _pendingCount++;
                 }
-                else if (_indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+                else if (_indexOptions == IndexOptions.DOCS_AND_FREQS)
                 {
                     _pendingCount++;
                     _currentDoc.termFreq = termDocFreq;
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // given codec wants to store other interesting
                 // stuff, it could use this pulsing codec to do so
 
-                if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     var lastDocID = 0;
                     var pendingIDX = 0;
@@ -339,7 +339,7 @@ namespace Lucene.Net.Codecs.Pulsing
                                 _buffer.WriteVInt(posDelta);
                             }
 
-                            if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                            if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                             {
                                 //System.out.println("write=" + pos.startOffset + "," + pos.endOffset);
                                 var offsetDelta = pos.startOffset - lastOffset;
@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 else switch (_indexOptions)
                 {
-                    case FieldInfo.IndexOptions.DOCS_AND_FREQS:
+                    case IndexOptions.DOCS_AND_FREQS:
                     {
                         var lastDocId = 0;
                         for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
@@ -390,7 +390,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         }
                     }
                         break;
-                    case FieldInfo.IndexOptions.DOCS_ONLY:
+                    case IndexOptions.DOCS_ONLY:
                     {
                         var lastDocId = 0;
                         for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
@@ -475,7 +475,7 @@ namespace Lucene.Net.Codecs.Pulsing
             _wrappedPostingsWriter.StartTerm();
 
             // Flush all buffered docs
-            if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 Position doc = null;
 
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 foreach(var doc in _pending)
                 {
-                    _wrappedPostingsWriter.StartDoc(doc.docID, _indexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? 0 : doc.termFreq);
+                    _wrappedPostingsWriter.StartDoc(doc.docID, _indexOptions == IndexOptions.DOCS_ONLY ? 0 : doc.termFreq);
                 }
             }
             _pendingCount = -1;

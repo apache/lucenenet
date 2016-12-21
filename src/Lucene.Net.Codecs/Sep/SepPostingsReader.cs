@@ -133,10 +133,10 @@ namespace Lucene.Net.Codecs.Sep
         {
             var termState = (SepTermState) bTermState;
             termState.DOC_INDEX.Read(input, absolute);
-            if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
             {
                 termState.FREQ_INDEX.Read(input, absolute);
-                if (fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     termState.POS_INDEX.Read(input, absolute);
                     
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Sep
             Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
 
-            Debug.Assert(fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             var termState = (SepTermState)bTermState;
             SepDocsAndPositionsEnum postingsEnum;
             if (!(reuse is SepDocsAndPositionsEnum))
@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Sep
 
             // TODO: -- should we do omitTF with 2 different enum classes?
             private bool _omitTf;
-            private FieldInfo.IndexOptions _indexOptions;
+            private IndexOptions _indexOptions;
             private bool _storePayloads;
             private Bits _liveDocs;
             private readonly IntIndexInputReader _docReader;
@@ -358,10 +358,10 @@ namespace Lucene.Net.Codecs.Sep
             internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
             {
                 _liveDocs = liveDocs;
-                if (fieldInfo.FieldIndexOptions.HasValue)
-                    _indexOptions = fieldInfo.FieldIndexOptions.Value;
+                if (fieldInfo.IndexOptions.HasValue)
+                    _indexOptions = fieldInfo.IndexOptions.Value;
 
-                _omitTf = _indexOptions == FieldInfo.IndexOptions.DOCS_ONLY;
+                _omitTf = _indexOptions == IndexOptions.DOCS_ONLY;
                 _storePayloads = fieldInfo.HasPayloads();
 
                 // TODO: can't we only do this if consumer
@@ -627,7 +627,7 @@ namespace Lucene.Net.Codecs.Sep
                         //System.out.println("  init skip data skipFP=" + skipFP);
                         // We haven't yet skipped for this posting
                         _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, _payloadFp, _docFreq, _storePayloads);
-                        _skipper.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        _skipper.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         _skipped = true;
                     }
 

@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using CorruptIndexException = Index.CorruptIndexException;
     using DocValues = Index.DocValues;
     using FieldInfo = Index.FieldInfo;
-    using DocValuesType = Index.FieldInfo.DocValuesType_e;
+    using DocValuesType_e = Index.DocValuesType_e;
     using IndexFileNames = Index.IndexFileNames;
     using NumericDocValues = Index.NumericDocValues;
     using SegmentReadState = Index.SegmentReadState;
@@ -84,10 +84,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debug.Assert(StartsWith(SimpleTextDocValuesWriter.TYPE), SCRATCH.Utf8ToString());
 
                 var dvType =
-                    (FieldInfo.DocValuesType_e)
-                        Enum.Parse(typeof (FieldInfo.DocValuesType_e), StripPrefix(SimpleTextDocValuesWriter.TYPE));
+                    (DocValuesType_e)
+                        Enum.Parse(typeof (DocValuesType_e), StripPrefix(SimpleTextDocValuesWriter.TYPE));
 
-                if (dvType == FieldInfo.DocValuesType_e.NUMERIC)
+                if (dvType == DocValuesType_e.NUMERIC)
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MINVALUE),
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     field.DataStartFilePointer = DATA.FilePointer;
                     DATA.Seek(DATA.FilePointer + (1 + field.Pattern.Length + 2)*MAX_DOC);
                 }
-                else if (dvType == FieldInfo.DocValuesType_e.BINARY)
+                else if (dvType == DocValuesType_e.BINARY)
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH));
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     field.DataStartFilePointer = DATA.FilePointer;
                     DATA.Seek(DATA.FilePointer + (9 + field.Pattern.Length + field.MaxLength + 2)*MAX_DOC);
                 }
-                else if (dvType == FieldInfo.DocValuesType_e.SORTED || dvType == FieldInfo.DocValuesType_e.SORTED_SET)
+                else if (dvType == DocValuesType_e.SORTED || dvType == DocValuesType_e.SORTED_SET)
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.NUMVALUES));
@@ -193,13 +193,13 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             switch (field.DocValuesType)
             {
-                case FieldInfo.DocValuesType_e.SORTED_SET:
+                case DocValuesType_e.SORTED_SET:
                     return DocValues.DocsWithValue(GetSortedSet(field), MAX_DOC);
-                case FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     return DocValues.DocsWithValue(GetSorted(field), MAX_DOC);
-                case FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     return GetBinaryDocsWithField(field);
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     return GetNumericDocsWithField(field);
                 default:
                     throw new ArgumentOutOfRangeException();

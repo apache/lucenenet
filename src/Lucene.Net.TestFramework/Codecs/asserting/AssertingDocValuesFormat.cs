@@ -8,6 +8,7 @@ namespace Lucene.Net.Codecs.asserting
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using LongBitSet = Lucene.Net.Util.LongBitSet;
@@ -285,7 +286,7 @@ namespace Lucene.Net.Codecs.asserting
 
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
-                Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.NUMERIC || field.NormType == FieldInfo.DocValuesType_e.NUMERIC);
+                Debug.Assert(field.DocValuesType == DocValuesType_e.NUMERIC || field.NormType == DocValuesType_e.NUMERIC);
                 NumericDocValues values = @in.GetNumeric(field);
                 Debug.Assert(values != null);
                 return new AssertingAtomicReader.AssertingNumericDocValues(values, MaxDoc);
@@ -293,7 +294,7 @@ namespace Lucene.Net.Codecs.asserting
 
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
-                Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.BINARY);
+                Debug.Assert(field.DocValuesType == DocValuesType_e.BINARY);
                 BinaryDocValues values = @in.GetBinary(field);
                 Debug.Assert(values != null);
                 return new AssertingAtomicReader.AssertingBinaryDocValues(values, MaxDoc);
@@ -301,7 +302,7 @@ namespace Lucene.Net.Codecs.asserting
 
             public override SortedDocValues GetSorted(FieldInfo field)
             {
-                Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.SORTED);
+                Debug.Assert(field.DocValuesType == DocValuesType_e.SORTED);
                 SortedDocValues values = @in.GetSorted(field);
                 Debug.Assert(values != null);
                 return new AssertingAtomicReader.AssertingSortedDocValues(values, MaxDoc);
@@ -309,7 +310,7 @@ namespace Lucene.Net.Codecs.asserting
 
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
-                Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.SORTED_SET);
+                Debug.Assert(field.DocValuesType == DocValuesType_e.SORTED_SET);
                 SortedSetDocValues values = @in.GetSortedSet(field);
                 Debug.Assert(values != null);
                 return new AssertingAtomicReader.AssertingSortedSetDocValues(values, MaxDoc);

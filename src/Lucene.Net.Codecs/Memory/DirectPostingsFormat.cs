@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Memory
     using Lucene41PostingsFormat = Lucene41.Lucene41PostingsFormat;
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using FieldInfo = Index.FieldInfo;
     using Fields = Index.Fields;
     using OrdTermState = Index.OrdTermState;
@@ -338,9 +338,9 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.minSkipCount = minSkipCount;
 
-                hasFreq = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_ONLY) > 0;
-                hasPos = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
-                hasOffsets_Renamed = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
+                hasFreq = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_ONLY) > 0;
+                hasPos = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
+                hasOffsets_Renamed = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
                 hasPayloads_Renamed = fieldInfo.HasPayloads();
 
                 BytesRef term;

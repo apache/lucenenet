@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene45
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using DocValues = Lucene.Net.Index.DocValues;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -868,17 +869,17 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             switch (field.DocValuesType)
             {
-                case FieldInfo.DocValuesType_e.SORTED_SET:
+                case DocValuesType_e.SORTED_SET:
                     return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);
 
-                case FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     return DocValues.DocsWithValue(GetSorted(field), MaxDoc);
 
-                case FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     BinaryEntry be = Binaries[field.Number];
                     return GetMissingBits(be.MissingOffset);
 
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     NumericEntry ne = Numerics[field.Number];
                     return GetMissingBits(ne.MissingOffset);
 

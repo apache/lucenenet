@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+using IndexOptions = Lucene.Net.Index.IndexOptions;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -469,7 +469,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);
@@ -560,7 +560,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
-            offsetsType.IndexOptions = (FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+            offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "", offsetsType);
             Document doc = new Document();
             doc.Add(body);

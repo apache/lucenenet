@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfosWriter = Lucene.Net.Codecs.FieldInfosWriter;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using InfoStream = Lucene.Net.Util.InfoStream;

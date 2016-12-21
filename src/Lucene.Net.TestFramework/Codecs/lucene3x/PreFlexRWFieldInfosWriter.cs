@@ -24,6 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -85,12 +86,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (fi.Indexed)
                     {
                         bits |= IS_INDEXED;
-                        Debug.Assert(fi.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
-                        if (fi.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                        Debug.Assert(fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        if (fi.IndexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= OMIT_TERM_FREQ_AND_POSITIONS;
                         }
-                        else if (fi.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+                        else if (fi.IndexOptions == IndexOptions.DOCS_AND_FREQS)
                         {
                             bits |= OMIT_POSITIONS;
                         }

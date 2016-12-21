@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Sep
         internal readonly int TOTAL_NUM_DOCS;
 
         internal bool STORE_PAYLOADS;
-        internal FieldInfo.IndexOptions INDEX_OPTIONS;
+        internal IndexOptions INDEX_OPTIONS;
 
         internal FieldInfo FIELD_INFO;
 
@@ -172,12 +172,12 @@ namespace Lucene.Net.Codecs.Sep
         {
             DOC_INDEX.Mark();
             
-            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (INDEX_OPTIONS != IndexOptions.DOCS_ONLY)
             {
                 FREQ_INDEX.Mark();
             }
 
-            if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 POS_INDEX.Mark();
                 PAYLOAD_START = PAYLOAD_OUT.FilePointer;
@@ -193,15 +193,15 @@ namespace Lucene.Net.Codecs.Sep
         {
             FIELD_INFO = fi;
             
-            if (FIELD_INFO.FieldIndexOptions.HasValue)
-                INDEX_OPTIONS = FIELD_INFO.FieldIndexOptions.Value;
+            if (FIELD_INFO.IndexOptions.HasValue)
+                INDEX_OPTIONS = FIELD_INFO.IndexOptions.Value;
 
-            if (INDEX_OPTIONS >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+            if (INDEX_OPTIONS >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
             {
                 throw new System.NotSupportedException("this codec cannot index offsets");
             }
             SKIP_LIST_WRITER.IndexOptions = INDEX_OPTIONS;
-            STORE_PAYLOADS = INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
+            STORE_PAYLOADS = INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
                             FIELD_INFO.HasPayloads();
             LAST_PAYLOAD_FP = 0;
             LAST_SKIP_FP = 0;
@@ -212,10 +212,10 @@ namespace Lucene.Net.Codecs.Sep
         private SepTermState SetEmptyState()
         {
             var emptyState = new SepTermState {DocIndex = DOC_OUT.Index()};
-            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (INDEX_OPTIONS != IndexOptions.DOCS_ONLY)
             {
                 emptyState.FreqIndex = FREQ_OUT.Index();
-                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     emptyState.PosIndex = POS_OUT.Index();
                 }
@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.Sep
 
             LAST_DOC_ID = docId;
             DOC_OUT.Write(delta);
-            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (INDEX_OPTIONS != IndexOptions.DOCS_ONLY)
             {
                 //System.out.println("    sepw startDoc: write freq=" + termDocFreq);
                 FREQ_OUT.Write(termDocFreq);
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Sep
         /// Add a new position & payload </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
-            Debug.Assert(INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Debug.Assert(INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             int delta = position - LAST_POSITION;
             Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + LAST_POSITION);
             // not quite right (if pos=0 is repeated twice we don't catch it)
@@ -319,11 +319,11 @@ namespace Lucene.Net.Codecs.Sep
 
             state.DocIndex = DOC_OUT.Index();
             state.DocIndex.CopyFrom(DOC_INDEX, false);
-            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (INDEX_OPTIONS != IndexOptions.DOCS_ONLY)
             {
                 state.FreqIndex = FREQ_OUT.Index();
                 state.FreqIndex.CopyFrom(FREQ_INDEX, false);
-                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     state.PosIndex = POS_OUT.Index();
                     state.PosIndex.CopyFrom(POS_INDEX, false);
@@ -365,11 +365,11 @@ namespace Lucene.Net.Codecs.Sep
             }
             _lastState.DocIndex.CopyFrom(state.DocIndex, false);
             _lastState.DocIndex.Write(output, absolute);
-            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (INDEX_OPTIONS != IndexOptions.DOCS_ONLY)
             {
                 _lastState.FreqIndex.CopyFrom(state.FreqIndex, false);
                 _lastState.FreqIndex.Write(output, absolute);
-                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     _lastState.PosIndex.CopyFrom(state.PosIndex, false);
                     _lastState.PosIndex.Write(output, absolute);

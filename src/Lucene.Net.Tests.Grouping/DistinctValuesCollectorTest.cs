@@ -78,10 +78,10 @@ namespace Lucene.Net.Search.Grouping
         public virtual void TestSimple()
         {
             Random random = Random();
-            Index.FieldInfo.DocValuesType_e[] dvTypes = new Index.FieldInfo.DocValuesType_e[]{
-                Index.FieldInfo.DocValuesType_e.NUMERIC,
-                Index.FieldInfo.DocValuesType_e.BINARY,
-                Index.FieldInfo.DocValuesType_e.SORTED,
+            DocValuesType_e[] dvTypes = new DocValuesType_e[]{
+                DocValuesType_e.NUMERIC,
+                DocValuesType_e.BINARY,
+                DocValuesType_e.SORTED,
             };
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Grouping
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
             bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
-            Index.FieldInfo.DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (Index.FieldInfo.DocValuesType_e?)null;
+            DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (DocValuesType_e?)null;
 
             Document doc = new Document();
             AddField(doc, groupField, "1", dvType);
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     IndexSearcher searcher = NewSearcher(context.indexReader);
                     bool useDv = context.dvType != null && random.nextBoolean();
-                    Index.FieldInfo.DocValuesType_e? dvType = useDv ? context.dvType : null;
+                    DocValuesType_e? dvType = useDv ? context.dvType : null;
                     string term = context.contentStrings[random.nextInt(context.contentStrings.Length)];
                     Sort groupSort = new Sort(new SortField("id", SortField.Type_e.STRING));
                     int topN = 1 + random.nextInt(10);
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private void AddField(Document doc, string field, string value, Index.FieldInfo.DocValuesType_e? type)
+        private void AddField(Document doc, string field, string value, DocValuesType_e? type)
         {
             doc.Add(new StringField(field, value, Field.Store.YES));
             if (type == null)
@@ -432,13 +432,13 @@ namespace Lucene.Net.Search.Grouping
             Field valuesField = null;
             switch (type)
             {
-                case Index.FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     valuesField = new NumericDocValuesField(dvField, int.Parse(value, CultureInfo.InvariantCulture));
                     break;
-                case Index.FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     valuesField = new BinaryDocValuesField(dvField, new BytesRef(value));
                     break;
-                case Index.FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     valuesField = new SortedDocValuesField(dvField, new BytesRef(value));
                     break;
             }
@@ -448,7 +448,7 @@ namespace Lucene.Net.Search.Grouping
         private IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>> CreateDistinctCountCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
                                                                             string groupField,
                                                                             string countField,
-                                                                            Index.FieldInfo.DocValuesType_e? dvType)
+                                                                            DocValuesType_e? dvType)
         {
             Random random = Random();
             IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
@@ -462,7 +462,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(Index.FieldInfo.DocValuesType_e? dvType, Sort groupSort, string groupField, int topNGroups)
+        private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(DocValuesType_e? dvType, Sort groupSort, string groupField, int topNGroups)
         {
             Random random = Random();
             if (dvType != null)
@@ -527,9 +527,9 @@ namespace Lucene.Net.Search.Grouping
         private IndexContext CreateIndexContext()
         {
             Random random = Random();
-                Index.FieldInfo.DocValuesType_e[] dvTypes = new Index.FieldInfo.DocValuesType_e[]{
-                Index.FieldInfo.DocValuesType_e.BINARY,
-                Index.FieldInfo.DocValuesType_e.SORTED
+                DocValuesType_e[] dvTypes = new DocValuesType_e[]{
+                DocValuesType_e.BINARY,
+                DocValuesType_e.SORTED
             };
 
             Directory dir = NewDirectory();
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.Grouping
               );
 
             bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
-            Index.FieldInfo.DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (Index.FieldInfo.DocValuesType_e?)null;
+            DocValuesType_e? dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : (DocValuesType_e?)null;
 
             int numDocs = 86 + random.nextInt(1087) * RANDOM_MULTIPLIER;
             string[] groupValues = new string[numDocs / 5];
@@ -610,11 +610,11 @@ namespace Lucene.Net.Search.Grouping
 
             internal readonly Directory directory;
             internal readonly DirectoryReader indexReader;
-            internal readonly Index.FieldInfo.DocValuesType_e? dvType;
+            internal readonly DocValuesType_e? dvType;
             internal readonly IDictionary<string, IDictionary<string, ISet<string>>> searchTermToGroupCounts;
             internal readonly string[] contentStrings;
 
-            internal IndexContext(Directory directory, DirectoryReader indexReader, Index.FieldInfo.DocValuesType_e? dvType,
+            internal IndexContext(Directory directory, DirectoryReader indexReader, DocValuesType_e? dvType,
                          IDictionary<string, IDictionary<string, ISet<string>>> searchTermToGroupCounts, string[] contentStrings)
             {
                 this.directory = directory;

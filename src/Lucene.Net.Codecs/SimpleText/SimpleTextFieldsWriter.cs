@@ -22,7 +22,7 @@ using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using FieldInfo = Index.FieldInfo;
     using SegmentWriteState = Index.SegmentWriteState;
     using IndexOutput = Store.IndexOutput;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public SimpleTextPostingsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
                 _outerInstance = outerInstance;
-                _indexOptions = field.FieldIndexOptions.Value;
+                _indexOptions = field.IndexOptions.Value;
                 _writePositions = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                 _writeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }

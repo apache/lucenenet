@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IOContext = Lucene.Net.Store.IOContext;

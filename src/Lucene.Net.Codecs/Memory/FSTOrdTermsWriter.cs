@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Memory
     using System;
     using System.Collections.Generic;
 
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using FieldInfo = Index.FieldInfo;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
@@ -204,7 +204,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     blockOut.WriteVInt(field.FieldInfo.Number);
                     blockOut.WriteVLong(field.NumTerms);
-                    if (field.FieldInfo.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         blockOut.WriteVLong(field.SumTotalTermFreq);
                     }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace Lucene.Net.Index
 {
     using System;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
 
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more

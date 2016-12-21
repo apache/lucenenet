@@ -743,25 +743,25 @@ namespace Lucene.Net.Analysis
                 switch (random.Next(4))
                 {
                     case 0:
-                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                        ft.IndexOptions = IndexOptions.DOCS_ONLY;
                         break;
 
                     case 1:
-                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                        ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
                         break;
 
                     case 2:
-                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         break;
 
                     default:
                         if (supportsOffsets && offsetsAreCorrect)
                         {
-                            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                         }
                         else
                         {
-                            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         }
                         break;
                 }

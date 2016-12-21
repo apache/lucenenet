@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     var termsStartPointer = _input.ReadVLong();
                     var fieldInfo = fieldInfos.FieldInfo(field);
-                    var sumTotalTermFreq = fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_ONLY
+                    var sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY
                         ? -1
                         : _input.ReadVLong();
                     var sumDocFreq = _input.ReadVLong();
@@ -323,17 +323,17 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override bool HasFreqs()
             {
-                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
             }
 
             public override bool HasOffsets()
             {
-                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
 
             public override bool HasPositions()
             {
-                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             }
 
             public override bool HasPayloads()
@@ -774,7 +774,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
-                    if (_fieldReader._fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (_fieldReader._fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // Positions were not indexed:
                         return null;
@@ -942,7 +942,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // just skipN here:
 
                             _state.DocFreq = _freqReader.ReadVInt();
-                            if (_fieldReader._fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                            if (_fieldReader._fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVLong();
                             }

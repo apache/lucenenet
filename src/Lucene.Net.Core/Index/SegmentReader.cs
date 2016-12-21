@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;

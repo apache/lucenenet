@@ -683,7 +683,7 @@ namespace Lucene.Net.Search.Grouping
             List<List<Document>> updateDocs = new List<List<Document>>();
 
             FieldType groupEndType = new FieldType(StringField.TYPE_NOT_STORED);
-            groupEndType.IndexOptions = (Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_ONLY);
+            groupEndType.IndexOptions = (IndexOptions.DOCS_ONLY);
             groupEndType.OmitNorms = (true);
 
             //Console.WriteLine("TEST: index groups");

@@ -11,6 +11,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldType = FieldType;
     using IndexableField = Lucene.Net.Index.IndexableField;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private Document NewDocument()
         {
             Document doc = new Document();
-            foreach (FieldInfo.IndexOptions option in Enum.GetValues(typeof(FieldInfo.IndexOptions)))
+            foreach (IndexOptions option in Enum.GetValues(typeof(IndexOptions)))
             {
                 var ft = new FieldType(TextField.TYPE_NOT_STORED)
                 {

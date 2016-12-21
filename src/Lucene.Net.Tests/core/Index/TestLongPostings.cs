@@ -333,11 +333,11 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestLongPostingsNoPositions()
         {
-            DoTestLongPostingsNoPositions(FieldInfo.IndexOptions.DOCS_ONLY);
-            DoTestLongPostingsNoPositions(FieldInfo.IndexOptions.DOCS_AND_FREQS);
+            DoTestLongPostingsNoPositions(IndexOptions.DOCS_ONLY);
+            DoTestLongPostingsNoPositions(IndexOptions.DOCS_AND_FREQS);
         }
 
-        public virtual void DoTestLongPostingsNoPositions(FieldInfo.IndexOptions options)
+        public virtual void DoTestLongPostingsNoPositions(IndexOptions options)
         {
             // Don't use TestUtil.getTempDir so that we own the
             // randomness (ie same seed will point to same dir):
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs;
                 DocsEnum postings;
 
-                if (options == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (options == IndexOptions.DOCS_ONLY)
                 {
                     docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
                     postings = null;

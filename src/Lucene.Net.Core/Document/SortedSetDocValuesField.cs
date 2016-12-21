@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
 
         static SortedSetDocValuesField()
         {
-            TYPE.DocValueType = FieldInfo.DocValuesType_e.SORTED_SET;
+            TYPE.DocValueType = DocValuesType_e.SORTED_SET;
             TYPE.Freeze();
         }
 

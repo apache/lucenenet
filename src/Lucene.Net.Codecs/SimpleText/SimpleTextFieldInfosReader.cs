@@ -26,11 +26,12 @@ namespace Lucene.Net.Codecs.SimpleText
     using Support;
 
     using FieldInfo = Index.FieldInfo;
-    using DocValuesType = Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType = Index.DocValuesType_e;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
     using Directory = Store.Directory;
     using IOContext = Store.IOContext;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
     using StringHelper = Util.StringHelper;
@@ -76,12 +77,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ISINDEXED));
                     bool isIndexed = Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.ISINDEXED.Length, scratch));
 
-                    FieldInfo.IndexOptions? indexOptions;
+                    IndexOptions? indexOptions;
                     if (isIndexed)
                     {
                         SimpleTextUtil.ReadLine(input, scratch);
                         Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.INDEXOPTIONS));
-                        indexOptions = (FieldInfo.IndexOptions)Enum.Parse(typeof(FieldInfo.IndexOptions), ReadString(SimpleTextFieldInfosWriter.INDEXOPTIONS.Length,
+                        indexOptions = (IndexOptions)Enum.Parse(typeof(IndexOptions), ReadString(SimpleTextFieldInfosWriter.INDEXOPTIONS.Length,
                                 scratch));
                     }
                     else
@@ -106,12 +107,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
                     string nrmType = ReadString(SimpleTextFieldInfosWriter.NORMS_TYPE.Length, scratch);
-                    FieldInfo.DocValuesType_e? normsType = DocValuesType(nrmType);
+                    Index.DocValuesType_e? normsType = DocValuesType(nrmType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES));
                     string dvType = ReadString(SimpleTextFieldInfosWriter.DOCVALUES.Length, scratch);
-                    FieldInfo.DocValuesType_e? docValuesType = DocValuesType(dvType);
+                    Index.DocValuesType_e? docValuesType = DocValuesType(dvType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
@@ -160,9 +161,9 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public virtual FieldInfo.DocValuesType_e? DocValuesType(string dvType)
+        public virtual Index.DocValuesType_e? DocValuesType(string dvType)
         {
-            return "false".Equals(dvType) ? null : (FieldInfo.DocValuesType_e?)Enum.Parse(typeof(FieldInfo.DocValuesType_e), dvType);
+            return "false".Equals(dvType) ? null : (Index.DocValuesType_e?)Enum.Parse(typeof(Index.DocValuesType_e), dvType);
         }
 
         private static string ReadString(int offset, BytesRef scratch)

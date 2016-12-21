@@ -54,13 +54,13 @@ namespace Lucene.Net.Codecs.Pulsing
             switch (TestUtil.NextInt(Random(), 0, 2))
             {
                 case 0:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                    ft.IndexOptions = IndexOptions.DOCS_ONLY;
                     break;
                 case 1:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
                     break;
                 default:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     break;
             }
 
@@ -118,13 +118,13 @@ namespace Lucene.Net.Codecs.Pulsing
             switch (TestUtil.NextInt(Random(), 0, 2))
             {
                 case 0:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                    ft.IndexOptions = IndexOptions.DOCS_ONLY;
                     break;
                 case 1:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
                     break;
                 default:
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     break;
             }
 

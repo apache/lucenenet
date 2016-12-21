@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using FieldInfo = Lucene.Net.Index.FieldInfo; // javadocs
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using MergeState = Lucene.Net.Index.MergeState;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Default merge impl </summary>
-        public virtual void Merge(MergeState mergeState, FieldInfo.IndexOptions? indexOptions, TermsEnum termsEnum)
+        public virtual void Merge(MergeState mergeState, IndexOptions? indexOptions, TermsEnum termsEnum)
         {
             BytesRef term;
             Debug.Assert(termsEnum != null);
@@ -102,7 +103,7 @@ namespace Lucene.Net.Codecs
             long sumDFsinceLastAbortCheck = 0;
             FixedBitSet visitedDocs = new FixedBitSet(mergeState.SegmentInfo.DocCount);
 
-            if (indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+            if (indexOptions == IndexOptions.DOCS_ONLY)
             {
                 if (DocsEnum == null)
                 {
@@ -137,7 +138,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
-            else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+            else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
             {
                 if (DocsAndFreqsEnum == null)
                 {
@@ -170,7 +171,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
-            else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 if (PostingsEnum == null)
                 {
@@ -204,7 +205,7 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                Debug.Assert(indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
                 if (PostingsEnum == null)
                 {
                     PostingsEnum = new MappingMultiDocsAndPositionsEnum();
@@ -235,7 +236,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
-            Finish(indexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? -1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality());
+            Finish(indexOptions == IndexOptions.DOCS_ONLY ? -1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality());
         }
     }
 }

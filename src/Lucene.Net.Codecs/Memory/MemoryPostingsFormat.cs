@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Memory
 
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using FieldInfo = Index.FieldInfo;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Memory
                     lastDocID = docID;
                     docCount++;
 
-                    if (outerInstance.field.FieldIndexOptions == IndexOptions.DOCS_ONLY)
+                    if (outerInstance.field.IndexOptions == IndexOptions.DOCS_ONLY)
                     {
                         buffer.WriteVInt(delta);
                     }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Memory
                         buffer.WriteVInt(delta);
                     }
 
-                    if (outerInstance.field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                    if (outerInstance.field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                     {
                         // don't use startOffset - lastEndOffset, because this creates lots of negative vints for synonyms,
                         // and the numbers aren't that much smaller anyways.
@@ -264,7 +264,7 @@ namespace Lucene.Net.Codecs.Memory
                 Debug.Assert(buffer2.FilePointer == 0);
 
                 buffer2.WriteVInt(stats.DocFreq);
-                if (field.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
                     buffer2.WriteVLong(stats.TotalTermFreq - stats.DocFreq);
                 }
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     @out.WriteVInt(termCount);
                     @out.WriteVInt(field.Number);
-                    if (field.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                    if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         @out.WriteVLong(sumTotalTermFreq);
                     }
@@ -785,7 +785,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     buffer.Reset(current.Output.Bytes, current.Output.Offset, current.Output.Length);
                     docFreq_Renamed = buffer.ReadVInt();
-                    if (field.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                    if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
                         totalTermFreq_Renamed = docFreq_Renamed + buffer.ReadVLong();
                     }
@@ -847,14 +847,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 if (reuse == null || !(reuse is FSTDocsEnum))
                 {
-                    docsEnum = new FSTDocsEnum(field.FieldIndexOptions.Value, field.HasPayloads());
+                    docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads());
                 }
                 else
                 {
                     docsEnum = (FSTDocsEnum)reuse;
-                    if (!docsEnum.CanReuse(field.FieldIndexOptions.Value, field.HasPayloads()))
+                    if (!docsEnum.CanReuse(field.IndexOptions.Value, field.HasPayloads()))
                     {
-                        docsEnum = new FSTDocsEnum(field.FieldIndexOptions.Value, field.HasPayloads());
+                        docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads());
                     }
                 }
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
@@ -863,8 +863,8 @@ namespace Lucene.Net.Codecs.Memory
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
-                bool hasOffsets = field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-                if (field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                bool hasOffsets = field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                if (field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     return null;
                 }
@@ -954,7 +954,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.termCount = termCount;
                 int fieldNumber = @in.ReadVInt();
                 field = fieldInfos.FieldInfo(fieldNumber);
-                if (field.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
                     sumTotalTermFreq = @in.ReadVLong();
                 }
@@ -1012,17 +1012,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs()
             {
-                return field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             }
 
             public override bool HasOffsets()
             {
-                return field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override bool HasPositions()
             {
-                return field.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             }
 
             public override bool HasPayloads()

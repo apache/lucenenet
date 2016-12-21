@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
@@ -100,7 +101,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Fields[fi.Name] = fi;
                         PreTerms_[fi.Name] = new PreTerms(this, fi);
-                        if (fi.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                        if (fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                         {
                             anyProx = true;
                         }
@@ -261,19 +262,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override bool HasFreqs()
             {
-                return fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
             }
 
             public override bool HasOffsets()
             {
                 // preflex doesn't support this
-                Debug.Assert(fieldInfo.FieldIndexOptions < FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                Debug.Assert(fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
                 return false;
             }
 
             public override bool HasPositions()
             {
-                return fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             }
 
             public override bool HasPayloads()
@@ -1094,7 +1095,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 PreDocsAndPositionsEnum docsPosEnum;
-                if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (fieldInfo.IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     return null;
                 }

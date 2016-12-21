@@ -84,12 +84,12 @@ namespace Lucene.Net.Codecs
         /// Default merge impl: append documents, mapping around
         ///  deletes
         /// </summary>
-        public virtual TermStats Merge(MergeState mergeState, FieldInfo.IndexOptions? indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
+        public virtual TermStats Merge(MergeState mergeState, IndexOptions? indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
         {
             int df = 0;
             long totTF = 0;
 
-            if (indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+            if (indexOptions == IndexOptions.DOCS_ONLY)
             {
                 while (true)
                 {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs
                 }
                 totTF = -1;
             }
-            else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+            else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
             {
                 while (true)
                 {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs
                     totTF += freq;
                 }
             }
-            else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                Debug.Assert(indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
                 {
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs
                     df++;
                 }
             }
-            return new TermStats(df, indexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? -1 : totTF);
+            return new TermStats(df, indexOptions == IndexOptions.DOCS_ONLY ? -1 : totTF);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
 
     //using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
     using Document = Documents.Document;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
     using FieldType = FieldType;
@@ -184,9 +184,9 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldInfo.IndexOptions? IndexOptions
+                public IndexOptions? IndexOptions
                 {
-                    get { return OmitTF ? FieldInfo.IndexOptions.DOCS_ONLY : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
+                    get { return OmitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
                     set { }
                 }
 

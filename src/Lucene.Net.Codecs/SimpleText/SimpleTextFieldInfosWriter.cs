@@ -23,13 +23,14 @@ namespace Lucene.Net.Codecs.SimpleText
     using System.Collections.Generic;
 
     using FieldInfo = Index.FieldInfo;
-    using DocValuesType = Index.FieldInfo.DocValuesType_e;
+    using DocValuesType = Index.DocValuesType_e;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
     using Directory = Store.Directory;
     using IOContext = Store.IOContext;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using System.Globalization;
 
     /// <summary>
@@ -93,9 +94,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     if (fi.Indexed)
                     {
-                        Debug.Assert(fi.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        Debug.Assert(fi.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
                         SimpleTextUtil.Write(output, INDEXOPTIONS);
-                        SimpleTextUtil.Write(output, fi.FieldIndexOptions.ToString(), scratch);
+                        SimpleTextUtil.Write(output, fi.IndexOptions.ToString(), scratch);
                         SimpleTextUtil.WriteNewline(output);
                     }
 

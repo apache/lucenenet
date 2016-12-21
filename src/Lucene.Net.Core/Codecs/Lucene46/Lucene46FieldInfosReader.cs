@@ -22,11 +22,13 @@ namespace Lucene.Net.Codecs.Lucene46
 
     using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
@@ -65,32 +67,32 @@ namespace Lucene.Net.Codecs.Lucene46
                     bool storeTermVector = (bits & Lucene46FieldInfosFormat.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & Lucene46FieldInfosFormat.OMIT_NORMS) != 0;
                     bool storePayloads = (bits & Lucene46FieldInfosFormat.STORE_PAYLOADS) != 0;
-                    FieldInfo.IndexOptions indexOptions;
+                    IndexOptions indexOptions;
                     if (!isIndexed)
                     {
-                        indexOptions = default(FieldInfo.IndexOptions);
+                        indexOptions = default(IndexOptions);
                     }
                     else if ((bits & Lucene46FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+                        indexOptions = IndexOptions.DOCS_ONLY;
                     }
                     else if ((bits & Lucene46FieldInfosFormat.OMIT_POSITIONS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS;
                     }
                     else if ((bits & Lucene46FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS) != 0)
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                     }
                     else
                     {
-                        indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     }
 
                     // DV Types are packed in one byte
                     byte val = input.ReadByte();
-                    FieldInfo.DocValuesType_e? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
-                    FieldInfo.DocValuesType_e? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
+                    DocValuesType_e? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
+                    DocValuesType_e? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     long dvGen = input.ReadLong();
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, CollectionsHelper.UnmodifiableMap(attributes));
@@ -122,27 +124,27 @@ namespace Lucene.Net.Codecs.Lucene46
             }
         }
 
-        private static FieldInfo.DocValuesType_e? GetDocValuesType(IndexInput input, sbyte b)
+        private static DocValuesType_e? GetDocValuesType(IndexInput input, sbyte b)
         {
             if (b == 0)
             {
-                return default(FieldInfo.DocValuesType_e?);
+                return default(DocValuesType_e?);
             }
             else if (b == 1)
             {
-                return FieldInfo.DocValuesType_e.NUMERIC;
+                return DocValuesType_e.NUMERIC;
             }
             else if (b == 2)
             {
-                return FieldInfo.DocValuesType_e.BINARY;
+                return DocValuesType_e.BINARY;
             }
             else if (b == 3)
             {
-                return FieldInfo.DocValuesType_e.SORTED;
+                return DocValuesType_e.SORTED;
             }
             else if (b == 4)
             {
-                return FieldInfo.DocValuesType_e.SORTED_SET;
+                return DocValuesType_e.SORTED_SET;
             }
             else
             {

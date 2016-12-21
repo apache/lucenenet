@@ -20,9 +20,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    // javadocs
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-
     /// <summary>
     /// Describes the properties of a field.
     /// @lucene.experimental
@@ -96,7 +93,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexOptions"/>, describing what should be
         /// recorded into the inverted index
         /// </summary>
-        FieldInfo.IndexOptions? IndexOptions { get; set; } // LUCENENET TODO: Can we remove the nullable?
+        IndexOptions? IndexOptions { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
         NumericType? NumericType { get; set; } // LUCENENET TODO: Can we remove the nullable?
 

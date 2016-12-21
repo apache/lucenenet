@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Sep
         private readonly IntIndexInputIndex _lastDocIndex;
         private readonly IntIndexInputIndex _lastPosIndex;
 
-        private FieldInfo.IndexOptions _indexOptions;
+        private IndexOptions _indexOptions;
 
         private long _lastPayloadPointer;
         private int _lastPayloadLength;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
 
-        internal virtual FieldInfo.IndexOptions IndexOptions // LUCENENET TODO: Make into SetIndexOptions(FieldInfo.IndexOptions)
+        internal virtual IndexOptions IndexOptions // LUCENENET TODO: Make into SetIndexOptions(IndexOptions)
         {
             set { _indexOptions = value; }
         }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs.Sep
         protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             int delta;
-            Debug.Assert(_indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS ||
+            Debug.Assert(_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS ||
                          !_currentFieldStoresPayloads);
             if (_currentFieldStoresPayloads)
             {
@@ -194,11 +194,11 @@ namespace Lucene.Net.Codecs.Sep
                 delta = skipStream.ReadVInt();
             }
 
-            if (_indexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+            if (_indexOptions != IndexOptions.DOCS_ONLY)
                 _freqIndex[level].Read(skipStream, false);
             
             _docIndex[level].Read(skipStream, false);
-            if (_indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) return delta;
+            if (_indexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) return delta;
 
             _posIndex[level].Read(skipStream, false);
             

@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("f1", "v2", customType2));
             // f2 has no TF
             FieldType customType3 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType3.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            customType3.IndexOptions = IndexOptions.DOCS_ONLY;
             Field f = NewField("f2", "v1", customType3);
             doc.Add(f);
             doc.Add(NewField("f2", "v2", customType2));
@@ -399,10 +399,10 @@ namespace Lucene.Net.Index
             FieldInfos fi = reader.FieldInfos;
             // f1
             Assert.IsFalse(fi.FieldInfo("f1").HasNorms(), "f1 should have no norms");
-            Assert.AreEqual(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.FieldInfo("f1").FieldIndexOptions, "omitTermFreqAndPositions field bit should not be set for f1");
+            Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.FieldInfo("f1").IndexOptions, "omitTermFreqAndPositions field bit should not be set for f1");
             // f2
             Assert.IsTrue(fi.FieldInfo("f2").HasNorms(), "f2 should have norms");
-            Assert.AreEqual(FieldInfo.IndexOptions.DOCS_ONLY, fi.FieldInfo("f2").FieldIndexOptions, "omitTermFreqAndPositions field bit should be set for f2");
+            Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f2").IndexOptions, "omitTermFreqAndPositions field bit should be set for f2");
             reader.Dispose();
         }
     }

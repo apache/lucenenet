@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 
                     // only bother checking offsets if something will consume them.
                     // TODO: after we fix analyzers, also check if termVectorOffsets will be indexed.
-                    bool checkOffsets = fieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    bool checkOffsets = fieldType.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                     int lastStartOffset = 0;
 
                     if (i > 0)

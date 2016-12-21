@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
     using FieldInfo = Index.FieldInfo;
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using FieldInfos = Index.FieldInfos;
     using SegmentReadState = Index.SegmentReadState;
     using Terms = Index.Terms;
@@ -679,7 +679,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return (_fst != null && _fieldInfo.FieldIndexOptions.HasValue) ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.FieldIndexOptions.Value) : TermsEnum.EMPTY;
+                return (_fst != null && _fieldInfo.IndexOptions.HasValue) ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions.Value) : TermsEnum.EMPTY;
             }
 
             public override IComparer<BytesRef> Comparator
@@ -694,7 +694,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long SumTotalTermFreq
             {
-                get { return _fieldInfo.FieldIndexOptions == IndexOptions.DOCS_ONLY ? - 1 : _sumTotalTermFreq; }
+                get { return _fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? - 1 : _sumTotalTermFreq; }
             }
 
             public override long SumDocFreq
@@ -709,18 +709,18 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool HasFreqs()
             {
-                return _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             }
 
             public override bool HasOffsets()
             {
                 return
-                    _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override bool HasPositions()
             {
-                return _fieldInfo.FieldIndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             }
 
             public override bool HasPayloads()

@@ -628,7 +628,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     string gram = text.Substring(i, ng);
                     FieldType ft = new FieldType(StringField.TYPE_NOT_STORED);
-                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
                     Field ngramField = new Field(key, gram, ft);
                     // spellchecker does not use positional queries, but we want freqs
                     // for scoring these multivalued n-gram fields.

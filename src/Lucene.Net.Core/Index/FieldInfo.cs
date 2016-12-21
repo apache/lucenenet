@@ -54,80 +54,7 @@ namespace Lucene.Net.Index
 
         private long dvGen = -1; // the DocValues generation of this field
 
-        /// <summary>
-        /// Controls how much information is stored in the postings lists.
-        /// @lucene.experimental
-        /// </summary>
-        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
-        public enum IndexOptions // LUCENENET TODO: de-nest from this class
-        {
-            // NOTE: order is important here; FieldInfo uses this
-            // order to merge two conflicting IndexOptions (always
-            // "downgrades" by picking the lowest).
-            /// <summary>
-            /// Only documents are indexed: term frequencies and positions are omitted.
-            /// Phrase and other positional queries on the field will throw an exception, and scoring
-            /// will behave as if any term in the document appears only once.
-            /// </summary>
-            // TODO: maybe rename to just DOCS?
-            DOCS_ONLY,
-
-            /// <summary>
-            /// Only documents and term frequencies are indexed: positions are omitted.
-            /// this enables normal scoring, except Phrase and other positional queries
-            /// will throw an exception.
-            /// </summary>
-            DOCS_AND_FREQS,
-
-            /// <summary>
-            /// Indexes documents, frequencies and positions.
-            /// this is a typical default for full-text search: full scoring is enabled
-            /// and positional queries are supported.
-            /// </summary>
-            DOCS_AND_FREQS_AND_POSITIONS,
-
-            /// <summary>
-            /// Indexes documents, frequencies, positions and offsets.
-            /// Character offsets are encoded alongside the positions.
-            /// </summary>
-            DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS
-        }
-
-        /// <summary>
-        /// DocValues types.
-        /// Note that DocValues is strongly typed, so a field cannot have different types
-        /// across different documents.
-        /// </summary>
-        // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
-        public enum DocValuesType_e // LUCENENET TODO: Rename back to DocValuesType and de-nest from this class
-        {
-            /// <summary>
-            /// A per-document Number
-            /// </summary>
-            NUMERIC,
-
-            /// <summary>
-            /// A per-document byte[].  Values may be larger than
-            /// 32766 bytes, but different codecs may enforce their own limits.
-            /// </summary>
-            BINARY,
-
-            /// <summary>
-            /// A pre-sorted byte[]. Fields with this type only store distinct byte values
-            /// and store an additional offset pointer per document to dereference the shared
-            /// byte[]. The stored byte[] is presorted and allows access via document id,
-            /// ordinal and by-value.  Values must be <= 32766 bytes.
-            /// </summary>
-            SORTED,
-
-            /// <summary>
-            /// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values
-            /// and store additional offset pointers per document to dereference the shared
-            /// byte[]s. The stored byte[] is presorted and allows access via document id,
-            /// ordinal and by-value.  Values must be <= 32766 bytes.
-            /// </summary>
-            SORTED_SET
-        }
+        // LUCENENET specific: De-nested the IndexOptions and DocValuesType enums from this class to prevent naming conflicts
 
         /// <summary>
         /// Sole Constructor.
@@ -180,7 +107,7 @@ namespace Lucene.Net.Index
                     Debug.Assert(normTypeValue == null);
                 }
                 // Cannot store payloads unless positions are indexed:
-                Debug.Assert(((int)indexOptionsValue.GetValueOrDefault() >= (int)IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) || !this.storePayloads);
+                Debug.Assert(((int)indexOptionsValue.GetValueOrDefault() >= (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) || !this.storePayloads);
             }
 
             return true;
@@ -225,7 +152,7 @@ namespace Lucene.Net.Index
                         // downgrade
                         indexOptionsValue = (int)indexOptionsValue.GetValueOrDefault() < (int)indexOptions ? indexOptionsValue : indexOptions;
                     }
-                    if ((int)indexOptionsValue.GetValueOrDefault() < (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if ((int)indexOptionsValue.GetValueOrDefault() < (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
                         // cannot store payloads if we don't store positions:
                         this.storePayloads = false;
@@ -254,8 +181,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
-        // LUCENENET TODO: try to make non-nullable
-        public IndexOptions? FieldIndexOptions // LUCENENET TODO: Rename FieldIndex (after moving enum from this class)
+        public IndexOptions? IndexOptions // LUCENENET TODO: try to make non-nullable
         {
             get
             {
@@ -313,7 +239,7 @@ namespace Lucene.Net.Index
 
         internal void SetStorePayloads()
         {
-            if (indexed && (int)indexOptionsValue.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (indexed && (int)indexOptionsValue.GetValueOrDefault() >= (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 storePayloads = true;
             }
@@ -415,5 +341,80 @@ namespace Lucene.Net.Index
         {
             return attributes;
         }
+    }
+
+    /// <summary>
+    /// Controls how much information is stored in the postings lists.
+    /// @lucene.experimental
+    /// </summary>
+    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
+    public enum IndexOptions // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
+    {
+        // NOTE: order is important here; FieldInfo uses this
+        // order to merge two conflicting IndexOptions (always
+        // "downgrades" by picking the lowest).
+        /// <summary>
+        /// Only documents are indexed: term frequencies and positions are omitted.
+        /// Phrase and other positional queries on the field will throw an exception, and scoring
+        /// will behave as if any term in the document appears only once.
+        /// </summary>
+        // TODO: maybe rename to just DOCS?
+        DOCS_ONLY,
+
+        /// <summary>
+        /// Only documents and term frequencies are indexed: positions are omitted.
+        /// this enables normal scoring, except Phrase and other positional queries
+        /// will throw an exception.
+        /// </summary>
+        DOCS_AND_FREQS,
+
+        /// <summary>
+        /// Indexes documents, frequencies and positions.
+        /// this is a typical default for full-text search: full scoring is enabled
+        /// and positional queries are supported.
+        /// </summary>
+        DOCS_AND_FREQS_AND_POSITIONS,
+
+        /// <summary>
+        /// Indexes documents, frequencies, positions and offsets.
+        /// Character offsets are encoded alongside the positions.
+        /// </summary>
+        DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS
+    }
+
+    /// <summary>
+    /// DocValues types.
+    /// Note that DocValues is strongly typed, so a field cannot have different types
+    /// across different documents.
+    /// </summary>
+    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
+    public enum DocValuesType_e // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
+    {
+        /// <summary>
+        /// A per-document Number
+        /// </summary>
+        NUMERIC,
+
+        /// <summary>
+        /// A per-document byte[].  Values may be larger than
+        /// 32766 bytes, but different codecs may enforce their own limits.
+        /// </summary>
+        BINARY,
+
+        /// <summary>
+        /// A pre-sorted byte[]. Fields with this type only store distinct byte values
+        /// and store an additional offset pointer per document to dereference the shared
+        /// byte[]. The stored byte[] is presorted and allows access via document id,
+        /// ordinal and by-value.  Values must be <= 32766 bytes.
+        /// </summary>
+        SORTED,
+
+        /// <summary>
+        /// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values
+        /// and store additional offset pointers per document to dereference the shared
+        /// byte[]s. The stored byte[] is presorted and allows access via document id,
+        /// ordinal and by-value.  Values must be <= 32766 bytes.
+        /// </summary>
+        SORTED_SET
     }
 }

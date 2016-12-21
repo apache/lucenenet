@@ -4,13 +4,14 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs.Lucene40
 {
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -56,7 +57,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteVInt(infos.Size());
                 foreach (FieldInfo fi in infos)
                 {
-                    FieldInfo.IndexOptions? indexOptions = fi.FieldIndexOptions;
+                    IndexOptions? indexOptions = fi.IndexOptions;
                     sbyte bits = 0x0;
                     if (fi.HasVectors())
                     {
@@ -73,16 +74,16 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (fi.Indexed)
                     {
                         bits |= Lucene40FieldInfosFormat.IS_INDEXED;
-                        Debug.Assert(indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
-                        if (indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+                        Debug.Assert(indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
                         }
-                        else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                        else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                         {
                             bits |= Lucene40FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS;
                         }
-                        else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+                        else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
                         {
                             bits |= Lucene40FieldInfosFormat.OMIT_POSITIONS;
                         }

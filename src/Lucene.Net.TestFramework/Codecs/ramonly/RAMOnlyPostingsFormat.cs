@@ -31,6 +31,7 @@ namespace Lucene.Net.Codecs.ramonly
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -211,17 +212,17 @@ namespace Lucene.Net.Codecs.ramonly
 
             public override bool HasFreqs()
             {
-                return Info.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
             }
 
             public override bool HasOffsets()
             {
-                return Info.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
 
             public override bool HasPositions()
             {
-                return Info.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             }
 
             public override bool HasPayloads()
@@ -297,7 +298,7 @@ namespace Lucene.Net.Codecs.ramonly
 
             public override TermsConsumer AddField(FieldInfo field)
             {
-                if (field.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                if (field.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                 {
                     throw new System.NotSupportedException("this codec cannot index offsets");
                 }

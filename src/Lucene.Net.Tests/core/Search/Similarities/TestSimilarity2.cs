@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Similarities
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = IndexOptions.DOCS_ONLY;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Similarities
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = IndexOptions.DOCS_ONLY;
             ft.OmitNorms = true;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);

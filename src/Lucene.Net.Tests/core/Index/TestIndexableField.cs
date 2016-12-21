@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
     using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
@@ -126,9 +126,9 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldInfo.IndexOptions? IndexOptions
+                public IndexOptions? IndexOptions
                 {
-                    get { return FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
+                    get { return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
                     set { }
                 }
 

@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Memory
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
     using IndexInput = Store.IndexInput;
-    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using IndexOptions = Index.IndexOptions;
     using IOUtils = Util.IOUtils;
     using RamUsageEstimator = Util.RamUsageEstimator;
     using SegmentInfo = Index.SegmentInfo;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Memory
                     int fieldNumber = @in.ReadVInt();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
                     long numTerms = @in.ReadVLong();
-                    long sumTotalTermFreq = fieldInfo.FieldIndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVLong();
+                    long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVLong();
                     long sumDocFreq = @in.ReadVLong();
                     int docCount = @in.ReadVInt();
                     int longsSize = @in.ReadVInt();
@@ -219,17 +219,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             }
 
             public override bool HasOffsets()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override bool HasPositions()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             }
 
             public override bool HasPayloads()

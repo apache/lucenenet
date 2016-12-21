@@ -122,21 +122,21 @@ namespace Lucene.Net.Codecs.Lucene40
             dir.Dispose(); // checkindex
         }
 
-        internal virtual FieldInfo.IndexOptions IndexOptions()
+        internal virtual IndexOptions IndexOptions()
         {
             switch (Random().Next(4))
             {
                 case 0:
-                    return FieldInfo.IndexOptions.DOCS_ONLY;
+                    return Index.IndexOptions.DOCS_ONLY;
 
                 case 1:
-                    return FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                    return Index.IndexOptions.DOCS_AND_FREQS;
 
                 case 2:
-                    return FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
                 default:
-                    return FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
         }
 

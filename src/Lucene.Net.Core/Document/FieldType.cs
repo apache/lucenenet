@@ -37,11 +37,11 @@ namespace Lucene.Net.Documents
         private bool storeTermVectorPositions;
         private bool storeTermVectorPayloads;
         private bool omitNorms;
-        private FieldInfo.IndexOptions? indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+        private IndexOptions? indexOptions = Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
         private NumericType? numericType;
         private bool Frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
-        private FieldInfo.DocValuesType_e? docValueType;
+        private DocValuesType_e? docValueType;
 
         /// <summary>
         /// Create a new mutable FieldType with all of the properties from <code>ref</code>
@@ -243,7 +243,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         /// <seealso cref= #indexOptions() </seealso>
         // LUCENENET TODO: Can we remove the nullable here?
-        public virtual FieldInfo.IndexOptions? IndexOptions
+        public virtual IndexOptions? IndexOptions
         {
             get
             {
@@ -340,7 +340,7 @@ namespace Lucene.Net.Documents
                 {
                     result.Append(",omitNorms");
                 }
-                if (indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (indexOptions != Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     result.Append(",indexOptions=");
                     result.Append(indexOptions);
@@ -383,7 +383,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #docValueType() </seealso>
-        public virtual FieldInfo.DocValuesType_e? DocValueType
+        public virtual DocValuesType_e? DocValueType
         {
             get
             {

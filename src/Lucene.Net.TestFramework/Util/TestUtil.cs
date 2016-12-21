@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Documents.Document;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using DoubleField = DoubleField;
     using Field = Field;
     using FieldDoc = Lucene.Net.Search.FieldDoc;

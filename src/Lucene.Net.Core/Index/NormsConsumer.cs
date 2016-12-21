@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using NormsFormat = Lucene.Net.Codecs.NormsFormat;
 

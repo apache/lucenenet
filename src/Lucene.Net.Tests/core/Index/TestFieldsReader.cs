@@ -92,19 +92,19 @@ namespace Lucene.Net.Index
             Assert.IsTrue(field.FieldType.StoreTermVectors);
 
             Assert.IsFalse(field.FieldType.OmitNorms);
-            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsTrue(field.FieldType.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
             Assert.IsTrue(field != null);
             Assert.IsFalse(field.FieldType.StoreTermVectors);
             Assert.IsTrue(field.FieldType.OmitNorms);
-            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsTrue(field.FieldType.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.NO_TF_KEY);
             Assert.IsTrue(field != null);
             Assert.IsFalse(field.FieldType.StoreTermVectors);
             Assert.IsFalse(field.FieldType.OmitNorms);
-            Assert.IsTrue(field.FieldType.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY);
+            Assert.IsTrue(field.FieldType.IndexOptions == IndexOptions.DOCS_ONLY);
 
             DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
             reader.Document(0, visitor);

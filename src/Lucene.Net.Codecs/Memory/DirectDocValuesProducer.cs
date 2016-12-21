@@ -587,14 +587,14 @@ namespace Lucene.Net.Codecs.Memory
         {
             switch (field.DocValuesType)
             {
-                case FieldInfo.DocValuesType_e.SORTED_SET:
+                case DocValuesType_e.SORTED_SET:
                     return DocValues.DocsWithValue(GetSortedSet(field), maxDoc);
-                case FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     return DocValues.DocsWithValue(GetSorted(field), maxDoc);
-                case FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     BinaryEntry be = binaries[field.Number];
                     return GetMissingBits(field.Number, be.missingOffset, be.missingBytes);
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     NumericEntry ne = numerics[field.Number];
                     return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:

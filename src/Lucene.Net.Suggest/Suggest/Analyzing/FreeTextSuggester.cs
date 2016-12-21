@@ -333,7 +333,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 var ft = new FieldType(TextField.TYPE_NOT_STORED);
                 // TODO: if only we had IndexOptions.TERMS_ONLY...
-                ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
                 ft.OmitNorms = true;
                 ft.Freeze();
 

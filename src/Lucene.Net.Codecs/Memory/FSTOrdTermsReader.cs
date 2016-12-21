@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Memory
                 for (int i = 0; i < numFields; i++)
                 {
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(blockIn.ReadVInt());
-                    bool hasFreq = fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY;
+                    bool hasFreq = fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY;
                     long numTerms = blockIn.ReadVLong();
                     long sumTotalTermFreq = hasFreq ? blockIn.ReadVLong() : -1;
                     long sumDocFreq = blockIn.ReadVLong();
@@ -250,17 +250,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             }
 
             public override bool HasOffsets()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override bool HasPositions()
             {
-                return fieldInfo.FieldIndexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             }
 
             public override bool HasPayloads()

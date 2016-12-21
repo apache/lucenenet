@@ -425,7 +425,7 @@ namespace Lucene.Net.Index.Memory
 
                 if (!fieldInfos.ContainsKey(fieldName))
                 {
-                    fieldInfos[fieldName] = new FieldInfo(fieldName, true, fieldInfos.Count, false, false, false, this.storeOffsets ? FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, null, null, null);
+                    fieldInfos[fieldName] = new FieldInfo(fieldName, true, fieldInfos.Count, false, false, false, this.storeOffsets ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, null, null, null);
                 }
                 ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
                 IPositionIncrementAttribute posIncrAttribute = stream.AddAttribute<IPositionIncrementAttribute>();

@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Index
                 bool hasOffsets = terms.HasOffsets();
 
                 // term vectors cannot omit TF:
-                bool expectedHasFreqs = (isVectors || fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS);
+                bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS);
 
                 if (hasFreqs != expectedHasFreqs)
                 {
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Index
 
                 if (!isVectors)
                 {
-                    bool expectedHasPositions = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                    bool expectedHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                     if (hasPositions != expectedHasPositions)
                     {
                         throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Index
                         throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
                     }
 
-                    bool expectedHasOffsets = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    bool expectedHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                     if (hasOffsets != expectedHasOffsets)
                     {
                         throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
@@ -1977,7 +1977,7 @@ namespace Lucene.Net.Index
             }
             switch (fi.DocValuesType)
             {
-                case FieldInfo.DocValuesType_e.SORTED:
+                case DocValuesType_e.SORTED:
                     status.TotalSortedFields++;
                     CheckSortedDocValues(fi.Name, reader, reader.GetSortedDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -1986,7 +1986,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case FieldInfo.DocValuesType_e.SORTED_SET:
+                case DocValuesType_e.SORTED_SET:
                     status.TotalSortedSetFields++;
                     CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null)
@@ -1995,7 +1995,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case FieldInfo.DocValuesType_e.BINARY:
+                case DocValuesType_e.BINARY:
                     status.TotalBinaryFields++;
                     CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
                     if (reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2004,7 +2004,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     status.TotalNumericFields++;
                     CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2022,7 +2022,7 @@ namespace Lucene.Net.Index
         {
             switch (fi.NormType)
             {
-                case FieldInfo.DocValuesType_e.NUMERIC:
+                case DocValuesType_e.NUMERIC:
                     CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                     break;
 
@@ -2123,7 +2123,7 @@ namespace Lucene.Net.Index
                             {
                                 Terms terms = tfv.Terms(field);
                                 termsEnum = terms.Iterator(termsEnum);
-                                bool postingsHasFreq = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                                bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
                                 bool postingsHasPayload = fieldInfo.HasPayloads();
                                 bool vectorsHasPayload = terms.HasPayloads();
 

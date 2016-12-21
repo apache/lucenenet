@@ -128,7 +128,7 @@ namespace Lucene.Net.Index.Sorter
         {
             TERM_VECTORS_TYPE.StoreTermVectors = true;
             TERM_VECTORS_TYPE.Freeze();
-            POSITIONS_TYPE.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            POSITIONS_TYPE.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             POSITIONS_TYPE.Freeze();
         }
 
