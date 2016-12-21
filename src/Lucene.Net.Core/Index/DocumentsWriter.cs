@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
                     {
                         InfoStream.Message("DW", "abort");
                     }
-                    int limit = PerThreadPool.ActiveThreadState;
+                    int limit = PerThreadPool.NumThreadStatesActive;
                     for (int i = 0; i < limit; i++)
                     {
                         ThreadState perThread = PerThreadPool.GetThreadState(i);
@@ -335,18 +335,18 @@ namespace Lucene.Net.Index
         private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
         {
             //Debug.Assert(perThread.HeldByCurrentThread);
-            if (perThread.Active) // we might be closed
+            if (perThread.IsActive) // we might be closed
             {
-                if (perThread.Initialized)
+                if (perThread.IsInitialized)
                 {
                     try
                     {
-                        SubtractFlushedNumDocs(perThread.Dwpt.NumDocsInRAM);
-                        perThread.Dwpt.Abort(newFiles);
+                        SubtractFlushedNumDocs(perThread.dwpt.NumDocsInRAM);
+                        perThread.dwpt.Abort(newFiles);
                     }
                     finally
                     {
-                        perThread.Dwpt.CheckAndResetHasAborted();
+                        perThread.dwpt.CheckAndResetHasAborted();
                         FlushControl.DoOnAbort(perThread);
                     }
                 }
@@ -498,10 +498,10 @@ namespace Lucene.Net.Index
 
         private void EnsureInitialized(ThreadState state)
         {
-            if (state.Active && state.Dwpt == null)
+            if (state.IsActive && state.dwpt == null)
             {
                 FieldInfos.Builder infos = new FieldInfos.Builder(Writer.globalFieldNumberMap);
-                state.Dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, LIWConfig, InfoStream, DeleteQueue, infos);
+                state.dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, LIWConfig, InfoStream, DeleteQueue, infos);
             }
         }
 
@@ -514,14 +514,14 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (!perThread.Active)
+                if (!perThread.IsActive)
                 {
                     EnsureOpen();
                     Debug.Assert(false, "perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                Debug.Assert(perThread.Initialized);
-                DocumentsWriterPerThread dwpt = perThread.Dwpt;
+                Debug.Assert(perThread.IsInitialized);
+                DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
@@ -560,14 +560,14 @@ namespace Lucene.Net.Index
             DocumentsWriterPerThread flushingDWPT;
             try
             {
-                if (!perThread.Active)
+                if (!perThread.IsActive)
                 {
                     EnsureOpen();
                     Debug.Assert(false, "perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                Debug.Assert(perThread.Initialized);
-                DocumentsWriterPerThread dwpt = perThread.Dwpt;
+                Debug.Assert(perThread.IsInitialized);
+                DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
@@ -667,7 +667,7 @@ namespace Lucene.Net.Index
                      * Now we are done and try to flush the ticket queue if the head of the
                      * queue has already finished the flush.
                      */
-                    if (TicketQueue.TicketCount >= PerThreadPool.ActiveThreadState)
+                    if (TicketQueue.TicketCount >= PerThreadPool.NumThreadStatesActive)
                     {
                         // this means there is a backlog: the one
                         // thread in innerPurge can't keep up with all

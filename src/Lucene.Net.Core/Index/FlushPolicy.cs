@@ -112,19 +112,19 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual ThreadState FindLargestNonPendingWriter(DocumentsWriterFlushControl control, ThreadState perThreadState)
         {
-            Debug.Assert(perThreadState.Dwpt.NumDocsInRAM > 0);
-            long maxRamSoFar = perThreadState.BytesUsed;
+            Debug.Assert(perThreadState.dwpt.NumDocsInRAM > 0);
+            long maxRamSoFar = perThreadState.bytesUsed;
             // the dwpt which needs to be flushed eventually
             ThreadState maxRamUsingThreadState = perThreadState;
-            Debug.Assert(!perThreadState.FlushPending_Renamed, "DWPT should have flushed");
+            Debug.Assert(!perThreadState.flushPending, "DWPT should have flushed");
             IEnumerator<ThreadState> activePerThreadsIterator = control.AllActiveThreadStates();
             while (activePerThreadsIterator.MoveNext())
             {
                 ThreadState next = activePerThreadsIterator.Current;
-                if (!next.FlushPending_Renamed)
+                if (!next.flushPending)
                 {
-                    long nextRam = next.BytesUsed;
-                    if (nextRam > maxRamSoFar && next.Dwpt.NumDocsInRAM > 0)
+                    long nextRam = next.bytesUsed;
+                    if (nextRam > maxRamSoFar && next.dwpt.NumDocsInRAM > 0)
                     {
                         maxRamSoFar = nextRam;
                         maxRamUsingThreadState = next;

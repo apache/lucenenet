@@ -159,14 +159,14 @@ namespace Lucene.Net.Index
 
         private void CommitPerThreadBytes(ThreadState perThread)
         {
-            long delta = perThread.Dwpt.BytesUsed - perThread.BytesUsed;
-            perThread.BytesUsed += delta;
+            long delta = perThread.dwpt.BytesUsed - perThread.bytesUsed;
+            perThread.bytesUsed += delta;
             /*
              * We need to differentiate here if we are pending since setFlushPending
              * moves the perThread memory to the flushBytes and we could be set to
              * pending during a delete
              */
-            if (perThread.FlushPending_Renamed)
+            if (perThread.flushPending)
             {
                 FlushBytes_Renamed += delta;
             }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     CommitPerThreadBytes(perThread);
-                    if (!perThread.FlushPending_Renamed)
+                    if (!perThread.flushPending)
                     {
                         if (isUpdate)
                         {
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
                         {
                             FlushPolicy.OnInsert(this, perThread);
                         }
-                        if (!perThread.FlushPending_Renamed && perThread.BytesUsed > HardMaxBytesPerDWPT)
+                        if (!perThread.flushPending && perThread.bytesUsed > HardMaxBytesPerDWPT)
                         {
                             // Safety check to prevent a single DWPT exceeding its RAM limit. this
                             // is super important since we can not address more than 2048 MB per DWPT
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                     DocumentsWriterPerThread flushingDWPT;
                     if (FullFlush_Renamed)
                     {
-                        if (perThread.FlushPending_Renamed)
+                        if (perThread.flushPending)
                         {
                             CheckoutAndBlock(perThread);
                             flushingDWPT = NextPendingFlush();
@@ -333,11 +333,11 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(!perThread.FlushPending_Renamed);
-                if (perThread.Dwpt.NumDocsInRAM > 0)
+                Debug.Assert(!perThread.flushPending);
+                if (perThread.dwpt.NumDocsInRAM > 0)
                 {
-                    perThread.FlushPending_Renamed = true; // write access synced
-                    long bytes = perThread.BytesUsed;
+                    perThread.flushPending = true; // write access synced
+                    long bytes = perThread.bytesUsed;
                     FlushBytes_Renamed += bytes;
                     ActiveBytes_Renamed -= bytes;
                     NumPending++; // write access synced
@@ -352,13 +352,13 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    if (state.FlushPending_Renamed)
+                    if (state.flushPending)
                     {
-                        FlushBytes_Renamed -= state.BytesUsed;
+                        FlushBytes_Renamed -= state.bytesUsed;
                     }
                     else
                     {
-                        ActiveBytes_Renamed -= state.BytesUsed;
+                        ActiveBytes_Renamed -= state.bytesUsed;
                     }
                     Debug.Assert(AssertMemory());
                     // Take it out of the loop this DWPT is stale
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return perThread.FlushPending_Renamed ? InternalTryCheckOutForFlush(perThread) : null;
+                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
             }
         }
 
@@ -384,10 +384,10 @@ namespace Lucene.Net.Index
             perThread.@Lock();
             try
             {
-                Debug.Assert(perThread.FlushPending_Renamed, "can not block non-pending threadstate");
+                Debug.Assert(perThread.flushPending, "can not block non-pending threadstate");
                 Debug.Assert(FullFlush_Renamed, "can not block if fullFlush == false");
                 DocumentsWriterPerThread dwpt;
-                long bytes = perThread.BytesUsed;
+                long bytes = perThread.bytesUsed;
                 dwpt = PerThreadPool.Reset(perThread, Closed);
                 NumPending--;
                 BlockedFlushes.AddLast(new BlockedFlush(dwpt, bytes));
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
         private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread)
         {
             //Debug.Assert(Thread.HoldsLock(this));
-            Debug.Assert(perThread.FlushPending_Renamed);
+            Debug.Assert(perThread.flushPending);
             try
             {
                 // We are pending so all memory is already moved to flushBytes
@@ -409,11 +409,11 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        if (perThread.Initialized)
+                        if (perThread.IsInitialized)
                         {
                             //Debug.Assert(perThread.HeldByCurrentThread);
                             DocumentsWriterPerThread dwpt;
-                            long bytes = perThread.BytesUsed; // do that before
+                            long bytes = perThread.bytesUsed; // do that before
                             // replace!
                             dwpt = PerThreadPool.Reset(perThread, Closed);
                             Debug.Assert(!FlushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
@@ -458,11 +458,11 @@ namespace Lucene.Net.Index
             }
             if (numPending > 0 && !fullFlush) // don't check if we are doing a full flush
             {
-                int limit = PerThreadPool.ActiveThreadState;
+                int limit = PerThreadPool.NumThreadStatesActive;
                 for (int i = 0; i < limit && numPending > 0; i++)
                 {
                     ThreadState next = PerThreadPool.GetThreadState(i);
-                    if (next.FlushPending_Renamed)
+                    if (next.flushPending)
                     {
                         DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
                         if (dwpt != null)
@@ -493,7 +493,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public IEnumerator<ThreadState> AllActiveThreadStates()
         {
-            return GetPerThreadsIterator(PerThreadPool.ActiveThreadState);
+            return GetPerThreadsIterator(PerThreadPool.NumThreadStatesActive);
         }
 
         private IEnumerator<ThreadState> GetPerThreadsIterator(int upto)
@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
 
         internal int NumActiveDWPT
         {
-            get { return this.PerThreadPool.ActiveThreadState; }
+            get { return this.PerThreadPool.NumThreadStatesActive; }
         }
 
         internal ThreadState ObtainAndLock()
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                if (perThread.Initialized && perThread.Dwpt.DeleteQueue != DocumentsWriter.DeleteQueue)
+                if (perThread.IsInitialized && perThread.dwpt.DeleteQueue != DocumentsWriter.DeleteQueue)
                 {
                     // There is a flush-all in process and this DWPT is
                     // now stale -- enroll it for flush and try for
@@ -640,23 +640,23 @@ namespace Lucene.Net.Index
                 DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.Generation + 1);
                 DocumentsWriter.DeleteQueue = newQueue;
             }
-            int limit = PerThreadPool.ActiveThreadState;
+            int limit = PerThreadPool.NumThreadStatesActive;
             for (int i = 0; i < limit; i++)
             {
                 ThreadState next = PerThreadPool.GetThreadState(i);
                 next.@Lock();
                 try
                 {
-                    if (!next.Initialized)
+                    if (!next.IsInitialized)
                     {
-                        if (Closed && next.Active)
+                        if (Closed && next.IsActive)
                         {
                             PerThreadPool.DeactivateThreadState(next);
                         }
                         continue;
                     }
-                    Debug.Assert(next.Dwpt.DeleteQueue == flushingQueue || next.Dwpt.DeleteQueue == DocumentsWriter.DeleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + DocumentsWriter.DeleteQueue + " perThread queue: " + next.Dwpt.DeleteQueue + " numDocsInRam: " + next.Dwpt.NumDocsInRAM);
-                    if (next.Dwpt.DeleteQueue != flushingQueue)
+                    Debug.Assert(next.dwpt.DeleteQueue == flushingQueue || next.dwpt.DeleteQueue == DocumentsWriter.DeleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + DocumentsWriter.DeleteQueue + " perThread queue: " + next.dwpt.DeleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
+                    if (next.dwpt.DeleteQueue != flushingQueue)
                     {
                         // this one is already a new DWPT
                         continue;
@@ -689,14 +689,14 @@ namespace Lucene.Net.Index
 
         private bool AssertActiveDeleteQueue(DocumentsWriterDeleteQueue queue)
         {
-            int limit = PerThreadPool.ActiveThreadState;
+            int limit = PerThreadPool.NumThreadStatesActive;
             for (int i = 0; i < limit; i++)
             {
                 ThreadState next = PerThreadPool.GetThreadState(i);
                 next.@Lock();
                 try
                 {
-                    Debug.Assert(!next.Initialized || next.Dwpt.DeleteQueue == queue, "isInitialized: " + next.Initialized + " numDocs: " + (next.Initialized ? next.Dwpt.NumDocsInRAM : 0));
+                    Debug.Assert(!next.IsInitialized || next.dwpt.DeleteQueue == queue, "isInitialized: " + next.IsInitialized + " numDocs: " + (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
                 }
                 finally
                 {
@@ -712,18 +712,18 @@ namespace Lucene.Net.Index
         {
             if (InfoStream_Renamed.IsEnabled("DWFC"))
             {
-                InfoStream_Renamed.Message("DWFC", "addFlushableState " + perThread.Dwpt);
+                InfoStream_Renamed.Message("DWFC", "addFlushableState " + perThread.dwpt);
             }
-            DocumentsWriterPerThread dwpt = perThread.Dwpt;
+            DocumentsWriterPerThread dwpt = perThread.dwpt;
             //Debug.Assert(perThread.HeldByCurrentThread);
-            Debug.Assert(perThread.Initialized);
+            Debug.Assert(perThread.IsInitialized);
             Debug.Assert(FullFlush_Renamed);
             Debug.Assert(dwpt.DeleteQueue != DocumentsWriter.DeleteQueue);
             if (dwpt.NumDocsInRAM > 0)
             {
                 lock (this)
                 {
-                    if (!perThread.FlushPending_Renamed)
+                    if (!perThread.flushPending)
                     {
                         SetFlushPending(perThread);
                     }

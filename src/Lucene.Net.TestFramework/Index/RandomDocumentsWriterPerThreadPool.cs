@@ -46,21 +46,21 @@ namespace Lucene.Net.Index
         public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
         {
             ThreadState threadState = null;
-            if (ActiveThreadState == 0)
+            if (NumThreadStatesActive == 0)
             {
                 lock (this)
                 {
-                    if (ActiveThreadState == 0)
+                    if (NumThreadStatesActive == 0)
                     {
                         threadState = States[0] = NewThreadState();
                         return threadState;
                     }
                 }
             }
-            Debug.Assert(ActiveThreadState > 0);
+            Debug.Assert(NumThreadStatesActive > 0);
             for (int i = 0; i < MaxRetry; i++)
             {
-                int ord = Random.Next(ActiveThreadState);
+                int ord = Random.Next(NumThreadStatesActive);
                 lock (this)
                 {
                     threadState = States[ord];
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 ThreadState newThreadState = NewThreadState();
                 if (newThreadState != null) // did we get a new state?
                 {
-                    threadState = States[ActiveThreadState - 1] = newThreadState;
+                    threadState = States[NumThreadStatesActive - 1] = newThreadState;
                     //Debug.Assert(threadState.HeldByCurrentThread);
                     return threadState;
                 }

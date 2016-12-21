@@ -53,22 +53,22 @@ namespace Lucene.Net.Index
         /// </summary>
         internal sealed class ThreadState : ReentrantLock
         {
-            internal DocumentsWriterPerThread Dwpt;
+            internal DocumentsWriterPerThread dwpt;
 
             // TODO this should really be part of DocumentsWriterFlushControl
             // write access guarded by DocumentsWriterFlushControl
-            internal volatile bool FlushPending_Renamed = false;
+            internal volatile bool flushPending = false;
 
             // TODO this should really be part of DocumentsWriterFlushControl
             // write access guarded by DocumentsWriterFlushControl
-            internal long BytesUsed = 0;
+            internal long bytesUsed = 0;
 
             // guarded by Reentrant lock
-            internal bool IsActive = true;
+            internal bool isActive = true;
 
             internal ThreadState(DocumentsWriterPerThread dpwt)
             {
-                this.Dwpt = dpwt;
+                this.dwpt = dpwt;
             }
 
             /// <summary>
@@ -80,16 +80,16 @@ namespace Lucene.Net.Index
             internal void Deactivate() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
                 //Debug.Assert(this.HeldByCurrentThread);
-                IsActive = false;
+                isActive = false;
                 Reset();
             }
 
             internal void Reset() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
                 //Debug.Assert(this.HeldByCurrentThread);
-                this.Dwpt = null;
-                this.BytesUsed = 0;
-                this.FlushPending_Renamed = false;
+                this.dwpt = null;
+                this.bytesUsed = 0;
+                this.flushPending = false;
             }
 
             /// <summary>
@@ -97,21 +97,21 @@ namespace Lucene.Net.Index
             /// only return <code>false</code> iff the DW has been closed and this
             /// ThreadState is already checked out for flush.
             /// </summary>
-            internal bool Active // LUCENENET TODO: Rename IsActive
+            internal bool IsActive
             {
                 get
                 {
                     //Debug.Assert(this.HeldByCurrentThread);
-                    return IsActive;
+                    return isActive;
                 }
             }
 
-            internal bool Initialized // LUCENENET TODO: Rename IsInitialized
+            internal bool IsInitialized
             {
                 get
                 {
                     //Debug.Assert(this.HeldByCurrentThread);
-                    return Active && Dwpt != null;
+                    return IsActive && dwpt != null;
                 }
             }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                 {
                     //Debug.Assert(this.HeldByCurrentThread);
                     // public for FlushPolicy
-                    return BytesUsed;
+                    return bytesUsed;
                 }
             }
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
                 {
                     //Debug.Assert(this.HeldByCurrentThread);
                     // public for FlushPolicy
-                    return Dwpt;
+                    return dwpt;
                 }
             }
 
@@ -146,17 +146,17 @@ namespace Lucene.Net.Index
             /// Returns <code>true</code> iff this <seealso cref="ThreadState"/> is marked as flush
             /// pending otherwise <code>false</code>
             /// </summary>
-            public bool FlushPending // LUCENENET TODO: Rename IsFlushPending
+            public bool IsFlushPending
             {
                 get
                 {
-                    return FlushPending_Renamed;
+                    return flushPending;
                 }
             }
         }
 
-        private ThreadState[] ThreadStates;
-        private volatile int NumThreadStatesActive;
+        private ThreadState[] threadStates;
+        private volatile int numThreadStatesActive;
 
         /// <summary>
         /// Creates a new <seealso cref="DocumentsWriterPerThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
@@ -167,18 +167,18 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates);
             }
-            ThreadStates = new ThreadState[maxNumThreadStates];
-            NumThreadStatesActive = 0;
-            for (int i = 0; i < ThreadStates.Length; i++)
+            threadStates = new ThreadState[maxNumThreadStates];
+            numThreadStatesActive = 0;
+            for (int i = 0; i < threadStates.Length; i++)
             {
-                ThreadStates[i] = new ThreadState(null);
+                threadStates[i] = new ThreadState(null);
             }
         }
 
         public virtual object Clone()
         {
             // We should only be cloned before being used:
-            if (NumThreadStatesActive != 0)
+            if (numThreadStatesActive != 0)
             {
                 throw new InvalidOperationException("clone this object before it is used!");
             }
@@ -187,10 +187,10 @@ namespace Lucene.Net.Index
 
             clone = (DocumentsWriterPerThreadPool)base.MemberwiseClone();
 
-            clone.ThreadStates = new ThreadState[ThreadStates.Length];
-            for (int i = 0; i < ThreadStates.Length; i++)
+            clone.threadStates = new ThreadState[threadStates.Length];
+            for (int i = 0; i < threadStates.Length; i++)
             {
-                clone.ThreadStates[i] = new ThreadState(null);
+                clone.threadStates[i] = new ThreadState(null);
             }
             return clone;
         }
@@ -203,18 +203,18 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return ThreadStates.Length;
+                return threadStates.Length;
             }
         }
 
         /// <summary>
         /// Returns the active number of <seealso cref="ThreadState"/> instances.
         /// </summary>
-        public virtual int ActiveThreadState // LUCENENET TODO: This name is not very clear
+        public virtual int NumThreadStatesActive // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
         {
             get
             {
-                return NumThreadStatesActive;
+                return numThreadStatesActive;
             }
         }
 
@@ -231,18 +231,18 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (NumThreadStatesActive < ThreadStates.Length)
+                if (numThreadStatesActive < threadStates.Length)
                 {
-                    ThreadState threadState = ThreadStates[NumThreadStatesActive];
+                    ThreadState threadState = threadStates[numThreadStatesActive];
                     threadState.@Lock(); // lock so nobody else will get this ThreadState
                     bool unlock = true;
                     try
                     {
-                        if (threadState.Active)
+                        if (threadState.IsActive)
                         {
                             // unreleased thread states are deactivated during DW#close()
-                            NumThreadStatesActive++; // increment will publish the ThreadState
-                            Debug.Assert(threadState.Dwpt == null);
+                            numThreadStatesActive++; // increment will publish the ThreadState
+                            Debug.Assert(threadState.dwpt == null);
                             unlock = false;
                             return threadState;
                         }
@@ -267,16 +267,16 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                for (int i = NumThreadStatesActive; i < ThreadStates.Length; i++)
+                for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
-                    Debug.Assert(ThreadStates[i].TryLock(), "unreleased threadstate should not be locked");
+                    Debug.Assert(threadStates[i].TryLock(), "unreleased threadstate should not be locked");
                     try
                     {
-                        Debug.Assert(!ThreadStates[i].Initialized, "expected unreleased thread state to be inactive");
+                        Debug.Assert(!threadStates[i].IsInitialized, "expected unreleased thread state to be inactive");
                     }
                     finally
                     {
-                        ThreadStates[i].Unlock();
+                        threadStates[i].Unlock();
                     }
                 }
                 return true;
@@ -290,9 +290,9 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                for (int i = NumThreadStatesActive; i < ThreadStates.Length; i++)
+                for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
-                    ThreadState threadState = ThreadStates[i];
+                    ThreadState threadState = threadStates[i];
                     threadState.@Lock();
                     try
                     {
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
         internal virtual DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
         {
             //Debug.Assert(threadState.HeldByCurrentThread);
-            DocumentsWriterPerThread dwpt = threadState.Dwpt;
+            DocumentsWriterPerThread dwpt = threadState.dwpt;
             if (!closed)
             {
                 threadState.Reset();
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
         ///         given ord. </returns>
         internal virtual ThreadState GetThreadState(int ord)
         {
-            return ThreadStates[ord];
+            return threadStates[ord];
         }
 
         /// <summary>
@@ -351,10 +351,10 @@ namespace Lucene.Net.Index
         internal virtual ThreadState MinContendedThreadState()
         {
             ThreadState minThreadState = null;
-            int limit = NumThreadStatesActive;
+            int limit = numThreadStatesActive;
             for (int i = 0; i < limit; i++)
             {
-                ThreadState state = ThreadStates[i];
+                ThreadState state = threadStates[i];
                 if (minThreadState == null || state.QueueLength < minThreadState.QueueLength)
                 {
                     minThreadState = state;
@@ -371,13 +371,13 @@ namespace Lucene.Net.Index
         internal virtual int NumDeactivatedThreadStates()
         {
             int count = 0;
-            for (int i = 0; i < ThreadStates.Length; i++)
+            for (int i = 0; i < threadStates.Length; i++)
             {
-                ThreadState threadState = ThreadStates[i];
+                ThreadState threadState = threadStates[i];
                 threadState.@Lock();
                 try
                 {
-                    if (!threadState.IsActive)
+                    if (!threadState.isActive)
                     {
                         count++;
                     }
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
         /// <param name="threadState"> the state to deactivate </param>
         internal virtual void DeactivateThreadState(ThreadState threadState)
         {
-            Debug.Assert(threadState.Active);
+            Debug.Assert(threadState.IsActive);
             threadState.Deactivate();
         }
     }

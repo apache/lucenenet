@@ -369,9 +369,9 @@ namespace Lucene.Net.Index
                 List<ThreadState> pending = new List<ThreadState>();
                 List<ThreadState> notPending = new List<ThreadState>();
                 FindPending(control, pending, notPending);
-                bool flushCurrent = state.FlushPending;
+                bool flushCurrent = state.IsFlushPending;
                 ThreadState toFlush;
-                if (state.FlushPending)
+                if (state.IsFlushPending)
                 {
                     toFlush = state;
                 }
@@ -394,13 +394,13 @@ namespace Lucene.Net.Index
                     {
                         Assert.IsTrue(notPending.Remove(toFlush));
                     }
-                    Assert.IsTrue(toFlush.FlushPending);
+                    Assert.IsTrue(toFlush.IsFlushPending);
                     HasMarkedPending = true;
                 }
 
                 foreach (ThreadState threadState in notPending)
                 {
-                    Assert.IsFalse(threadState.FlushPending);
+                    Assert.IsFalse(threadState.IsFlushPending);
                 }
             }
 
@@ -409,10 +409,10 @@ namespace Lucene.Net.Index
                 List<ThreadState> pending = new List<ThreadState>();
                 List<ThreadState> notPending = new List<ThreadState>();
                 FindPending(control, pending, notPending);
-                bool flushCurrent = state.FlushPending;
+                bool flushCurrent = state.IsFlushPending;
                 long activeBytes = control.ActiveBytes;
                 ThreadState toFlush;
-                if (state.FlushPending)
+                if (state.IsFlushPending)
                 {
                     toFlush = state;
                 }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
                 else if (FlushOnRAM() && activeBytes >= (long)(IWConfig.RAMBufferSizeMB * 1024.0 * 1024.0))
                 {
                     toFlush = FindLargestNonPendingWriter(control, state);
-                    Assert.IsFalse(toFlush.FlushPending);
+                    Assert.IsFalse(toFlush.IsFlushPending);
                 }
                 else
                 {
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                     {
                         Assert.IsTrue(notPending.Remove(toFlush));
                     }
-                    Assert.IsTrue(toFlush.FlushPending);
+                    Assert.IsTrue(toFlush.IsFlushPending);
                     HasMarkedPending = true;
                 }
                 else
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
 
                 foreach (ThreadState threadState in notPending)
                 {
-                    Assert.IsFalse(threadState.FlushPending);
+                    Assert.IsFalse(threadState.IsFlushPending);
                 }
             }
         }
@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
             while (allActiveThreads.MoveNext())
             {
                 ThreadState next = allActiveThreads.Current;
-                if (next.FlushPending)
+                if (next.IsFlushPending)
                 {
                     pending.Add(next);
                 }

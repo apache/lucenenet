@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 
         public override void OnInsert(DocumentsWriterFlushControl control, ThreadState state)
         {
-            if (FlushOnDocCount() && state.Dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
+            if (FlushOnDocCount() && state.dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
             {
                 // Flush this state by num docs
                 control.SetFlushPending(state);
