@@ -36,6 +36,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public interface IIterator // LUCENENET TODO: should this be renamed to IEnumerator?
         {
+            // LUCENENET TODO: This was an abstract class in the original source (and internal)
+            // Should we make this an abstract classs here? And should it be public (and nested in DocValuesFieldUpdates)?
+
             /// <summary>
             /// Returns the next document which has an update, or
             /// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/> if there are no more documents to
@@ -89,16 +92,16 @@ namespace Lucene.Net.Index
                 return NumericDVUpdates.Count + BinaryDVUpdates.Count;
             }
 
-            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type_e type)
+            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type type)
             {
                 switch (type)
                 {
-                    case DocValuesFieldUpdates.Type_e.NUMERIC:
+                    case DocValuesFieldUpdates.Type.NUMERIC:
                         NumericDocValuesFieldUpdates num;
                         NumericDVUpdates.TryGetValue(field, out num);
                         return num;
 
-                    case DocValuesFieldUpdates.Type_e.BINARY:
+                    case DocValuesFieldUpdates.Type.BINARY:
                         BinaryDocValuesFieldUpdates bin;
                         BinaryDVUpdates.TryGetValue(field, out bin);
                         return bin;
@@ -108,18 +111,18 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdates.Type_e type, int maxDoc)
+            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdates.Type type, int maxDoc)
             {
                 switch (type)
                 {
-                    case DocValuesFieldUpdates.Type_e.NUMERIC:
+                    case DocValuesFieldUpdates.Type.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
                         Debug.Assert(!NumericDVUpdates.TryGetValue(field, out numericUpdates));
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         NumericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
-                    case DocValuesFieldUpdates.Type_e.BINARY:
+                    case DocValuesFieldUpdates.Type.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
                         Debug.Assert(!BinaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
@@ -138,9 +141,9 @@ namespace Lucene.Net.Index
         }
 
         internal readonly string Field;
-        internal readonly DocValuesFieldUpdates.Type_e Type;
+        internal readonly DocValuesFieldUpdates.Type Type;
 
-        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdates.Type_e type)
+        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdates.Type type)
         {
             this.Field = field;
             this.Type = type;
@@ -171,11 +174,13 @@ namespace Lucene.Net.Index
         public abstract bool Any();
     }
 
+    // LUCENENET specific class used to nest Type enumeration into the correct place
+    // primarily so it doesn't conflict with System.Type.
     public class DocValuesFieldUpdates
     {
         private DocValuesFieldUpdates() { } // Disallow creation
 
-        public enum Type_e // LUCENENET TODO: Rename Type
+        public enum Type
         {
             NUMERIC,
             BINARY

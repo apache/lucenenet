@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
         private int size;
 
         public NumericDocValuesFieldUpdates(string field, int maxDoc)
-            : base(field, DocValuesFieldUpdates.Type_e.NUMERIC)
+            : base(field, DocValuesFieldUpdates.Type.NUMERIC)
         {
             docsWithField = new FixedBitSet(64);
             docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
