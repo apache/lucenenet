@@ -38,7 +38,6 @@ namespace Lucene.Net.Index
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
-    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -1862,7 +1861,7 @@ namespace Lucene.Net.Index
         public virtual void UpdateNumericDocValue(Term term, string field, long? value)
         {
             EnsureOpen();
-            if (!globalFieldNumberMap.Contains(field, DocValuesType_e.NUMERIC))
+            if (!globalFieldNumberMap.Contains(field, DocValuesType.NUMERIC))
             {
                 throw new System.ArgumentException("can only update existing numeric-docvalues fields!");
             }
@@ -1908,7 +1907,7 @@ namespace Lucene.Net.Index
         public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
             EnsureOpen();
-            if (!globalFieldNumberMap.Contains(field, DocValuesType_e.BINARY))
+            if (!globalFieldNumberMap.Contains(field, DocValuesType.BINARY))
             {
                 throw new System.ArgumentException("can only update existing binary-docvalues fields!");
             }

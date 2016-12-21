@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Documents.Document;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using DoubleField = DoubleField;
     using Field = Field;
     using FieldDoc = Lucene.Net.Search.FieldDoc;
@@ -1032,21 +1032,21 @@ namespace Lucene.Net.Util
             {
                 Field field1 = (Field)f;
                 Field field2;
-                DocValuesType_e? dvType = field1.FieldType.DocValueType;
+                DocValuesType? dvType = field1.FieldType.DocValueType;
                 Documents.NumericType? numType = field1.FieldType.NumericType;
                 if (dvType != null)
                 {
                     switch (dvType)
                     {
-                        case DocValuesType_e.NUMERIC:
+                        case DocValuesType.NUMERIC:
                             field2 = new NumericDocValuesField(field1.Name, (long)field1.GetNumericValue());
                             break;
 
-                        case DocValuesType_e.BINARY:
+                        case DocValuesType.BINARY:
                             field2 = new BinaryDocValuesField(field1.Name, field1.GetBinaryValue());
                             break;
 
-                        case DocValuesType_e.SORTED:
+                        case DocValuesType.SORTED:
                             field2 = new SortedDocValuesField(field1.Name, field1.GetBinaryValue());
                             break;
 

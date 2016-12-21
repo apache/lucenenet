@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using FieldInfo = Index.FieldInfo;
     using IndexFileNames = Index.IndexFileNames;
     using SegmentWriteState = Index.SegmentWriteState;
-    using DocValuesType_e = Index.DocValuesType_e;
+    using DocValuesType = Index.DocValuesType;
     using IndexOutput = Store.IndexOutput;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
@@ -66,9 +66,9 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType_e.NUMERIC ||
-                         field.NormType == DocValuesType_e.NUMERIC);
-            WriteFieldEntry(field, DocValuesType_e.NUMERIC);
+            Debug.Assert(field.DocValuesType == DocValuesType.NUMERIC ||
+                         field.NormType == DocValuesType.NUMERIC);
+            WriteFieldEntry(field, DocValuesType.NUMERIC);
 
             // first pass to find min/max
             var minValue = long.MaxValue;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType_e.BINARY);
+            Debug.Assert(field.DocValuesType == DocValuesType.BINARY);
 
             var maxLength = 0;
             foreach (var value in values)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 var length = value == null ? 0 : value.Length;
                 maxLength = Math.Max(maxLength, length);
             }
-            WriteFieldEntry(field, DocValuesType_e.BINARY);
+            WriteFieldEntry(field, DocValuesType.BINARY);
 
             // write maxLength
             SimpleTextUtil.Write(data, MAXLENGTH);
@@ -189,8 +189,8 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType_e.SORTED);
-            WriteFieldEntry(field, DocValuesType_e.SORTED);
+            Debug.Assert(field.DocValuesType == DocValuesType.SORTED);
+            WriteFieldEntry(field, DocValuesType.SORTED);
 
             int valueCount = 0;
             int maxLength = -1;
@@ -275,8 +275,8 @@ namespace Lucene.Net.Codecs.SimpleText
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType_e.SORTED_SET);
-            WriteFieldEntry(field, DocValuesType_e.SORTED_SET);
+            Debug.Assert(field.DocValuesType == DocValuesType.SORTED_SET);
+            WriteFieldEntry(field, DocValuesType.SORTED_SET);
 
             long valueCount = 0;
             int maxLength = 0;
@@ -424,7 +424,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <summary>Write the header for this field </summary>
-        private void WriteFieldEntry(FieldInfo field, DocValuesType_e type)
+        private void WriteFieldEntry(FieldInfo field, DocValuesType type)
         {
             SimpleTextUtil.Write(data, FIELD);
             SimpleTextUtil.Write(data, field.Name, scratch);

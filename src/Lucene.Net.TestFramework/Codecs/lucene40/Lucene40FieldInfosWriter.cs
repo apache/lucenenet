@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs.Lucene40
 {
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// 4.0-style docvalues byte </summary>
-        public virtual sbyte DocValuesByte(DocValuesType_e? type, string legacyTypeAtt)
+        public virtual sbyte DocValuesByte(DocValuesType? type, string legacyTypeAtt)
         {
             if (type == null)
             {

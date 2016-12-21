@@ -1977,7 +1977,7 @@ namespace Lucene.Net.Index
             }
             switch (fi.DocValuesType)
             {
-                case DocValuesType_e.SORTED:
+                case DocValuesType.SORTED:
                     status.TotalSortedFields++;
                     CheckSortedDocValues(fi.Name, reader, reader.GetSortedDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -1986,7 +1986,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case DocValuesType_e.SORTED_SET:
+                case DocValuesType.SORTED_SET:
                     status.TotalSortedSetFields++;
                     CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null)
@@ -1995,7 +1995,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case DocValuesType_e.BINARY:
+                case DocValuesType.BINARY:
                     status.TotalBinaryFields++;
                     CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
                     if (reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2004,7 +2004,7 @@ namespace Lucene.Net.Index
                     }
                     break;
 
-                case DocValuesType_e.NUMERIC:
+                case DocValuesType.NUMERIC:
                     status.TotalNumericFields++;
                     CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2022,7 +2022,7 @@ namespace Lucene.Net.Index
         {
             switch (fi.NormType)
             {
-                case DocValuesType_e.NUMERIC:
+                case DocValuesType.NUMERIC:
                     CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                     break;
 

@@ -23,8 +23,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
-
     /// <summary>
     /// Collection of <seealso cref="FieldInfo"/>s (accessible by number or by name).
     ///  @lucene.experimental
@@ -206,7 +204,7 @@ namespace Lucene.Net.Index
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
             // sessions:
-            private readonly IDictionary<string, DocValuesType_e?> docValuesType;
+            private readonly IDictionary<string, DocValuesType?> docValuesType;
 
             // TODO: we should similarly catch an attempt to turn
             // norms back on after they were already ommitted; today
@@ -217,7 +215,7 @@ namespace Lucene.Net.Index
             {
                 this.nameToNumber = new Dictionary<string, int?>();
                 this.numberToName = new Dictionary<int?, string>();
-                this.docValuesType = new Dictionary<string, DocValuesType_e?>();
+                this.docValuesType = new Dictionary<string, DocValuesType?>();
             }
 
             /// <summary>
@@ -226,13 +224,13 @@ namespace Lucene.Net.Index
             /// number assigned if possible otherwise the first unassigned field number
             /// is used as the field number.
             /// </summary>
-            internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType_e? dvType)
+            internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType? dvType)
             {
                 lock (this)
                 {
                     if (dvType != null)
                     {
-                        DocValuesType_e? currentDVType;
+                        DocValuesType? currentDVType;
                         docValuesType.TryGetValue(fieldName, out currentDVType);
                         if (currentDVType == null)
                         {
@@ -273,13 +271,13 @@ namespace Lucene.Net.Index
             }
 
             // used by assert
-            internal bool ContainsConsistent(int? number, string name, DocValuesType_e? dvType)
+            internal bool ContainsConsistent(int? number, string name, DocValuesType? dvType)
             {
                 lock (this)
                 {
                     string NumberToNameStr;
                     int? NameToNumberVal;
-                    DocValuesType_e? DocValuesType_E;
+                    DocValuesType? DocValuesType_E;
 
                     numberToName.TryGetValue(number, out NumberToNameStr);
                     nameToNumber.TryGetValue(name, out NameToNumberVal);
@@ -293,7 +291,7 @@ namespace Lucene.Net.Index
             /// Returns true if the {@code fieldName} exists in the map and is of the
             /// same {@code dvType}.
             /// </summary>
-            internal bool Contains(string fieldName, DocValuesType_e? dvType)
+            internal bool Contains(string fieldName, DocValuesType? dvType)
             {
                 lock (this)
                 {
@@ -305,7 +303,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         // only return true if the field has the same dvType as the requested one
-                        DocValuesType_e? dvCand;
+                        DocValuesType? dvCand;
                         docValuesType.TryGetValue(fieldName, out dvCand);
                         return dvType == dvCand;
                     }
@@ -322,7 +320,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal void SetDocValuesType(int number, string name, DocValuesType_e? dvType)
+            internal void SetDocValuesType(int number, string name, DocValuesType? dvType)
             {
                 lock (this)
                 {
@@ -376,7 +374,7 @@ namespace Lucene.Net.Index
                 return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
             }
 
-            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)
+            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions? indexOptions, DocValuesType? docValues, DocValuesType? normType)
             {
                 FieldInfo fi = FieldInfo(name);
                 if (fi == null)

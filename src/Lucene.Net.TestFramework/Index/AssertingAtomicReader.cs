@@ -636,12 +636,12 @@ namespace Lucene.Net.Index
             if (dv != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.DocValuesType == DocValuesType_e.NUMERIC);
+                Debug.Assert(fi.DocValuesType == DocValuesType.NUMERIC);
                 return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
-                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType_e.NUMERIC);
+                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType.NUMERIC);
                 return null;
             }
         }
@@ -653,12 +653,12 @@ namespace Lucene.Net.Index
             if (dv != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.DocValuesType == DocValuesType_e.BINARY);
+                Debug.Assert(fi.DocValuesType == DocValuesType.BINARY);
                 return new AssertingBinaryDocValues(dv, MaxDoc);
             }
             else
             {
-                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType_e.BINARY);
+                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType.BINARY);
                 return null;
             }
         }
@@ -670,12 +670,12 @@ namespace Lucene.Net.Index
             if (dv != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.DocValuesType == DocValuesType_e.SORTED);
+                Debug.Assert(fi.DocValuesType == DocValuesType.SORTED);
                 return new AssertingSortedDocValues(dv, MaxDoc);
             }
             else
             {
-                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType_e.SORTED);
+                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED);
                 return null;
             }
         }
@@ -687,12 +687,12 @@ namespace Lucene.Net.Index
             if (dv != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.DocValuesType == DocValuesType_e.SORTED_SET);
+                Debug.Assert(fi.DocValuesType == DocValuesType.SORTED_SET);
                 return new AssertingSortedSetDocValues(dv, MaxDoc);
             }
             else
             {
-                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType_e.SORTED_SET);
+                Debug.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED_SET);
                 return null;
             }
         }

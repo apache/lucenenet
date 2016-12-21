@@ -26,7 +26,6 @@ namespace Lucene.Net.Codecs.SimpleText
     using Support;
 
     using FieldInfo = Index.FieldInfo;
-    //using DocValuesType = Index.DocValuesType_e;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
     using Directory = Store.Directory;
@@ -107,12 +106,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
                     string nrmType = ReadString(SimpleTextFieldInfosWriter.NORMS_TYPE.Length, scratch);
-                    Index.DocValuesType_e? normsType = DocValuesType(nrmType);
+                    Index.DocValuesType? normsType = DocValuesType(nrmType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES));
                     string dvType = ReadString(SimpleTextFieldInfosWriter.DOCVALUES.Length, scratch);
-                    Index.DocValuesType_e? docValuesType = DocValuesType(dvType);
+                    Index.DocValuesType? docValuesType = DocValuesType(dvType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
@@ -161,9 +160,9 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public virtual Index.DocValuesType_e? DocValuesType(string dvType)
+        public virtual Index.DocValuesType? DocValuesType(string dvType)
         {
-            return "false".Equals(dvType) ? null : (Index.DocValuesType_e?)Enum.Parse(typeof(Index.DocValuesType_e), dvType);
+            return "false".Equals(dvType) ? null : (Index.DocValuesType?)Enum.Parse(typeof(Index.DocValuesType), dvType);
         }
 
         private static string ReadString(int offset, BytesRef scratch)

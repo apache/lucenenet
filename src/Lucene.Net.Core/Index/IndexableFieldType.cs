@@ -101,6 +101,6 @@ namespace Lucene.Net.Index
         /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
         /// will be indexed into docValues.
         /// </summary>
-        DocValuesType_e? DocValueType { get; set; } // LUCENENET TODO: Can we remove the nullable?
+        DocValuesType? DocValueType { get; set; } // LUCENENET TODO: Can we remove the nullable?
     }
 }

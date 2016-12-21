@@ -41,7 +41,7 @@ namespace Lucene.Net.Documents
         private NumericType? numericType;
         private bool Frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
-        private DocValuesType_e? docValueType;
+        private DocValuesType? docValueType;
 
         /// <summary>
         /// Create a new mutable FieldType with all of the properties from <code>ref</code>
@@ -383,7 +383,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #docValueType() </seealso>
-        public virtual DocValuesType_e? DocValueType
+        public virtual DocValuesType? DocValueType
         {
             get
             {

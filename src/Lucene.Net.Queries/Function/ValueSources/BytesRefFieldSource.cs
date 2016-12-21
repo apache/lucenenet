@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FieldInfo fieldInfo = readerContext.AtomicReader.FieldInfos.FieldInfo(field);
             // To be sorted or not to be sorted, that is the question
             // TODO: do it cleaner?
-            if (fieldInfo != null && fieldInfo.DocValuesType == DocValuesType_e.BINARY)
+            if (fieldInfo != null && fieldInfo.DocValuesType == DocValuesType.BINARY)
             {
                 BinaryDocValues binaryValues = Search.FieldCache.DEFAULT.GetTerms(readerContext.AtomicReader, field, true);
                 Bits docsWithField = Search.FieldCache.DEFAULT.GetDocsWithField(readerContext.AtomicReader, field);

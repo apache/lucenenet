@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
-    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
     using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;

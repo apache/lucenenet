@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldInfosWriter = Lucene.Net.Codecs.FieldInfosWriter;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using InfoStream = Lucene.Net.Util.InfoStream;
@@ -183,10 +182,10 @@ namespace Lucene.Net.Index
             {
                 foreach (FieldInfo field in MergeState.FieldInfos)
                 {
-                    DocValuesType_e? type = field.DocValuesType;
+                    DocValuesType? type = field.DocValuesType;
                     if (type != null)
                     {
-                        if (type == DocValuesType_e.NUMERIC)
+                        if (type == DocValuesType.NUMERIC)
                         {
                             IList<NumericDocValues> toMerge = new List<NumericDocValues>();
                             IList<Bits> docsWithField = new List<Bits>();
@@ -204,7 +203,7 @@ namespace Lucene.Net.Index
                             }
                             consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
                         }
-                        else if (type == DocValuesType_e.BINARY)
+                        else if (type == DocValuesType.BINARY)
                         {
                             IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
                             IList<Bits> docsWithField = new List<Bits>();
@@ -222,7 +221,7 @@ namespace Lucene.Net.Index
                             }
                             consumer.MergeBinaryField(field, MergeState, toMerge, docsWithField);
                         }
-                        else if (type == DocValuesType_e.SORTED)
+                        else if (type == DocValuesType.SORTED)
                         {
                             IList<SortedDocValues> toMerge = new List<SortedDocValues>();
                             foreach (AtomicReader reader in MergeState.Readers)
@@ -236,7 +235,7 @@ namespace Lucene.Net.Index
                             }
                             consumer.MergeSortedField(field, MergeState, toMerge);
                         }
-                        else if (type == DocValuesType_e.SORTED_SET)
+                        else if (type == DocValuesType.SORTED_SET)
                         {
                             IList<SortedSetDocValues> toMerge = new List<SortedSetDocValues>();
                             foreach (AtomicReader reader in MergeState.Readers)

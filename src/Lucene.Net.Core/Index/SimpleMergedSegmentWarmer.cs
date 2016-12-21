@@ -3,7 +3,6 @@ using System.Diagnostics;
 namespace Lucene.Net.Index
 {
     using System;
-    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
 
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -65,19 +64,19 @@ namespace Lucene.Net.Index
                 {
                     switch (info.DocValuesType)
                     {
-                        case DocValuesType_e.NUMERIC:
+                        case DocValuesType.NUMERIC:
                             reader.GetNumericDocValues(info.Name);
                             break;
 
-                        case DocValuesType_e.BINARY:
+                        case DocValuesType.BINARY:
                             reader.GetBinaryDocValues(info.Name);
                             break;
 
-                        case DocValuesType_e.SORTED:
+                        case DocValuesType.SORTED:
                             reader.GetSortedDocValues(info.Name);
                             break;
 
-                        case DocValuesType_e.SORTED_SET:
+                        case DocValuesType.SORTED_SET:
                             reader.GetSortedSetDocValues(info.Name);
                             break;
 

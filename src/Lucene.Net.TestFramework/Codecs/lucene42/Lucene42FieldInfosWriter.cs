@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene42
          * limitations under the License.
          */
 
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -114,25 +114,25 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private static sbyte DocValuesByte(DocValuesType_e? type)
+        private static sbyte DocValuesByte(DocValuesType? type)
         {
             if (type == null)
             {
                 return 0;
             }
-            else if (type == DocValuesType_e.NUMERIC)
+            else if (type == DocValuesType.NUMERIC)
             {
                 return 1;
             }
-            else if (type == DocValuesType_e.BINARY)
+            else if (type == DocValuesType.BINARY)
             {
                 return 2;
             }
-            else if (type == DocValuesType_e.SORTED)
+            else if (type == DocValuesType.SORTED)
             {
                 return 3;
             }
-            else if (type == DocValuesType_e.SORTED_SET)
+            else if (type == DocValuesType.SORTED_SET)
             {
                 return 4;
             }

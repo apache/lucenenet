@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
 
         static BinaryDocValuesField()
         {
-            fType.DocValueType = DocValuesType_e.BINARY;
+            fType.DocValueType = DocValuesType.BINARY;
             fType.Freeze();
         }
 

@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene46
 
     using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -91,8 +91,8 @@ namespace Lucene.Net.Codecs.Lucene46
 
                     // DV Types are packed in one byte
                     byte val = input.ReadByte();
-                    DocValuesType_e? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
-                    DocValuesType_e? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
+                    DocValuesType? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
+                    DocValuesType? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     long dvGen = input.ReadLong();
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, CollectionsHelper.UnmodifiableMap(attributes));
@@ -124,27 +124,27 @@ namespace Lucene.Net.Codecs.Lucene46
             }
         }
 
-        private static DocValuesType_e? GetDocValuesType(IndexInput input, sbyte b)
+        private static DocValuesType? GetDocValuesType(IndexInput input, sbyte b)
         {
             if (b == 0)
             {
-                return default(DocValuesType_e?);
+                return default(DocValuesType?);
             }
             else if (b == 1)
             {
-                return DocValuesType_e.NUMERIC;
+                return DocValuesType.NUMERIC;
             }
             else if (b == 2)
             {
-                return DocValuesType_e.BINARY;
+                return DocValuesType.BINARY;
             }
             else if (b == 3)
             {
-                return DocValuesType_e.SORTED;
+                return DocValuesType.SORTED;
             }
             else if (b == 4)
             {
-                return DocValuesType_e.SORTED_SET;
+                return DocValuesType.SORTED_SET;
             }
             else
             {

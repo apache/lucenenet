@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
 
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    //using DocValuesType_e = Lucene.Net.DocValuesType_e;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     internal sealed class DocValuesProcessor : StoredFieldsConsumer
@@ -53,23 +52,23 @@ namespace Lucene.Net.Index
 
         public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
         {
-            DocValuesType_e? dvType = field.FieldType.DocValueType;
+            DocValuesType? dvType = field.FieldType.DocValueType;
             if (dvType != null)
             {
                 fieldInfo.DocValuesType = dvType;
-                if (dvType == DocValuesType_e.BINARY)
+                if (dvType == DocValuesType.BINARY)
                 {
                     AddBinaryField(fieldInfo, docID, field.GetBinaryValue());
                 }
-                else if (dvType == DocValuesType_e.SORTED)
+                else if (dvType == DocValuesType.SORTED)
                 {
                     AddSortedField(fieldInfo, docID, field.GetBinaryValue());
                 }
-                else if (dvType == DocValuesType_e.SORTED_SET)
+                else if (dvType == DocValuesType.SORTED_SET)
                 {
                     AddSortedSetField(fieldInfo, docID, field.GetBinaryValue());
                 }
-                else if (dvType == DocValuesType_e.NUMERIC)
+                else if (dvType == DocValuesType.NUMERIC)
                 {
                     if (!(field.GetNumericValue() is long?))
                     {

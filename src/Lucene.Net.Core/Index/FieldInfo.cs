@@ -40,12 +40,12 @@ namespace Lucene.Net.Index
         public int Number { get; private set; }
 
         private bool indexed;
-        private DocValuesType_e? docValueType;
+        private DocValuesType? docValueType;
 
         // True if any document indexed term vectors
         private bool storeTermVector;
 
-        private DocValuesType_e? normTypeValue;
+        private DocValuesType? normTypeValue;
         private bool omitNorms; // omit norms associated with indexed fields
         private IndexOptions? indexOptionsValue;
         private bool storePayloads; // whether this field stores payloads together with term positions
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         /// @lucene.experimental
         /// </summary>
         public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
-            bool storePayloads, IndexOptions? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normsType, 
+            bool storePayloads, IndexOptions? indexOptions, DocValuesType? docValues, DocValuesType? normsType, 
             IDictionary<string, string> attributes)
         {
             this.Name = name;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             Debug.Assert(CheckConsistency());
         }
 
-        public DocValuesType_e? DocValuesType // LUCENENET TODO: try to make non-nullable
+        public DocValuesType? DocValuesType // LUCENENET TODO: try to make non-nullable
         {
             internal set
             {
@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="DocValuesType_e"/> of the norm. this may be null if the field has no norms.
+        /// Returns <seealso cref="Index.DocValuesType"/> of the norm. this may be null if the field has no norms.
         /// </summary>
-        public DocValuesType_e? NormType // LUCENENET TODO: try to make non-nullable
+        public DocValuesType? NormType // LUCENENET TODO: try to make non-nullable
         {
             get
             {
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
     /// across different documents.
     /// </summary>
     // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
-    public enum DocValuesType_e // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
+    public enum DocValuesType // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
     {
         /// <summary>
         /// A per-document Number

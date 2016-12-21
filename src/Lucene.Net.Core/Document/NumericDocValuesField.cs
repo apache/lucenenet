@@ -40,7 +40,7 @@ namespace Lucene.Net.Documents
 
         static NumericDocValuesField()
         {
-            TYPE.DocValueType = DocValuesType_e.NUMERIC;
+            TYPE.DocValueType = DocValuesType.NUMERIC;
             TYPE.Freeze();
         }
 

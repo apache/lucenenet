@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     if (oldNormsType.Mapping != null)
                     {
-                        if (oldNormsType.Mapping != DocValuesType_e.NUMERIC)
+                        if (oldNormsType.Mapping != DocValuesType.NUMERIC)
                         {
                             throw new CorruptIndexException("invalid norm type: " + oldNormsType + " (resource=" + input + ")");
                         }
@@ -141,19 +141,19 @@ namespace Lucene.Net.Codecs.Lucene40
         internal class LegacyDocValuesType
         {
             internal static readonly LegacyDocValuesType NONE = new LegacyDocValuesType("NONE", null);
-            internal static readonly LegacyDocValuesType VAR_INTS = new LegacyDocValuesType("VAR_INTS", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_32 = new LegacyDocValuesType("FLOAT_32", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_64 = new LegacyDocValuesType("FLOAT_64", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_STRAIGHT = new LegacyDocValuesType("BYTES_FIXED_STRAIGHT", DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_DEREF = new LegacyDocValuesType("BYTES_FIXED_DEREF", DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_STRAIGHT = new LegacyDocValuesType("BYTES_VAR_STRAIGHT", DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_DEREF = new LegacyDocValuesType("BYTES_VAR_DEREF", DocValuesType_e.BINARY);
-            internal static readonly LegacyDocValuesType FIXED_INTS_16 = new LegacyDocValuesType("FIXED_INTS_16", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_32 = new LegacyDocValuesType("FIXED_INTS_32", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_64 = new LegacyDocValuesType("FIXED_INTS_64", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_8 = new LegacyDocValuesType("FIXED_INTS_8", DocValuesType_e.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_SORTED = new LegacyDocValuesType("BYTES_FIXED_SORTED", DocValuesType_e.SORTED);
-            internal static readonly LegacyDocValuesType BYTES_VAR_SORTED = new LegacyDocValuesType("BYTES_VAR_SORTED", DocValuesType_e.SORTED);
+            internal static readonly LegacyDocValuesType VAR_INTS = new LegacyDocValuesType("VAR_INTS", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType FLOAT_32 = new LegacyDocValuesType("FLOAT_32", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType FLOAT_64 = new LegacyDocValuesType("FLOAT_64", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_STRAIGHT = new LegacyDocValuesType("BYTES_FIXED_STRAIGHT", DocValuesType.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_DEREF = new LegacyDocValuesType("BYTES_FIXED_DEREF", DocValuesType.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_VAR_STRAIGHT = new LegacyDocValuesType("BYTES_VAR_STRAIGHT", DocValuesType.BINARY);
+            internal static readonly LegacyDocValuesType BYTES_VAR_DEREF = new LegacyDocValuesType("BYTES_VAR_DEREF", DocValuesType.BINARY);
+            internal static readonly LegacyDocValuesType FIXED_INTS_16 = new LegacyDocValuesType("FIXED_INTS_16", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_32 = new LegacyDocValuesType("FIXED_INTS_32", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_64 = new LegacyDocValuesType("FIXED_INTS_64", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType FIXED_INTS_8 = new LegacyDocValuesType("FIXED_INTS_8", DocValuesType.NUMERIC);
+            internal static readonly LegacyDocValuesType BYTES_FIXED_SORTED = new LegacyDocValuesType("BYTES_FIXED_SORTED", DocValuesType.SORTED);
+            internal static readonly LegacyDocValuesType BYTES_VAR_SORTED = new LegacyDocValuesType("BYTES_VAR_SORTED", DocValuesType.SORTED);
 
             private static readonly LegacyDocValuesType[] values = new[] {
                 NONE,
@@ -206,16 +206,16 @@ namespace Lucene.Net.Codecs.Lucene40
                 {"BYTES_VAR_SORTED", 13}
             };
 
-            private readonly DocValuesType_e? mapping;
+            private readonly DocValuesType? mapping;
             private readonly string name;
 
-            private LegacyDocValuesType(string name, DocValuesType_e? mapping)
+            private LegacyDocValuesType(string name, DocValuesType? mapping)
             {
                 this.name = name;
                 this.mapping = mapping;
             }
 
-            public DocValuesType_e? Mapping // LUCENENET TODO: Can we make this non-nullable?
+            public DocValuesType? Mapping // LUCENENET TODO: Can we make this non-nullable?
             {
                 get { return mapping; }
             }

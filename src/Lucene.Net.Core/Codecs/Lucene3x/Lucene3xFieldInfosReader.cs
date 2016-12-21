@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;

@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene46
      */
 
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;

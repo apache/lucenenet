@@ -18,7 +18,6 @@ namespace Lucene.Net.Index
 
     //using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
     using Document = Documents.Document;
-    //using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
     using FieldType = FieldType;
@@ -196,7 +195,7 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public DocValuesType_e? DocValueType
+                public DocValuesType? DocValueType
                 {
                     get { return null; }
                     set { }

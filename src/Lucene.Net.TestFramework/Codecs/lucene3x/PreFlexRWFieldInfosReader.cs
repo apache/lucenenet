@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using Directory = Lucene.Net.Store.Directory;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -103,11 +103,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                         storePayloads = false;
                     }
 
-                    DocValuesType_e? normType = isIndexed && !omitNorms ? (DocValuesType_e?)DocValuesType_e.NUMERIC : null;
+                    DocValuesType? normType = isIndexed && !omitNorms ? (DocValuesType?)DocValuesType.NUMERIC : null;
                     if (format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW && normType != null)
                     {
                         // RW can have norms but doesn't write them
-                        normType = input.ReadByte() != 0 ? (DocValuesType_e?)DocValuesType_e.NUMERIC : null;
+                        normType = input.ReadByte() != 0 ? (DocValuesType?)DocValuesType.NUMERIC : null;
                     }
 
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, normType, null);

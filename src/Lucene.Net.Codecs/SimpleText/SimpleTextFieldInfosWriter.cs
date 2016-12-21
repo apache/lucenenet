@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using System.Collections.Generic;
 
     using FieldInfo = Index.FieldInfo;
-    using DocValuesType = Index.DocValuesType_e;
+    using DocValuesType = Index.DocValuesType;
     using FieldInfos = Index.FieldInfos;
     using IndexFileNames = Index.IndexFileNames;
     using Directory = Store.Directory;

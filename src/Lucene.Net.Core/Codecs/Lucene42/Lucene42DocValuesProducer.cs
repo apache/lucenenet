@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using DocValues = Lucene.Net.Index.DocValues;
-    using DocValuesType_e = Lucene.Net.Index.DocValuesType_e;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -665,7 +665,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override Bits GetDocsWithField(FieldInfo field)
         {
-            if (field.DocValuesType == DocValuesType_e.SORTED_SET)
+            if (field.DocValuesType == DocValuesType.SORTED_SET)
             {
                 return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);
             }

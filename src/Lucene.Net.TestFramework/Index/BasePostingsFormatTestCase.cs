@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
-    using DocValuesType = Lucene.Net.Index.DocValuesType_e;
+    //using DocValuesType = Lucene.Net.Index.DocValuesType;
     using Field = Field;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
