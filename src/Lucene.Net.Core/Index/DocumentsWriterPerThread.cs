@@ -623,7 +623,7 @@ namespace Lucene.Net.Index
             {
                 if (IndexWriterConfig.UseCompoundFile)
                 {
-                    CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(InfoStream, Directory, MergeState.CheckAbort.NONE, newSegment.Info, context));
+                    CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(InfoStream, Directory, CheckAbort.NONE, newSegment.Info, context));
                     newSegment.Info.UseCompoundFile = true;
                 }
 

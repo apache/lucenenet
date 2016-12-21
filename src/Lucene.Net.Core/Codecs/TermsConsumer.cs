@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs
                             sumDocFreq += stats.DocFreq;
                             if (sumDFsinceLastAbortCheck > 60000)
                             {
-                                mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
+                                mergeState.CheckAbort.Work(sumDFsinceLastAbortCheck / 5.0);
                                 sumDFsinceLastAbortCheck = 0;
                             }
                         }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs
                         sumDocFreq += stats.DocFreq;
                         if (sumDFsinceLastAbortCheck > 60000)
                         {
-                            mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
+                            mergeState.CheckAbort.Work(sumDFsinceLastAbortCheck / 5.0);
                             sumDFsinceLastAbortCheck = 0;
                         }
                     }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs
                         sumDocFreq += stats.DocFreq;
                         if (sumDFsinceLastAbortCheck > 60000)
                         {
-                            mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
+                            mergeState.CheckAbort.Work(sumDFsinceLastAbortCheck / 5.0);
                             sumDFsinceLastAbortCheck = 0;
                         }
                     }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs
                         sumDocFreq += stats.DocFreq;
                         if (sumDFsinceLastAbortCheck > 60000)
                         {
-                            mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
+                            mergeState.CheckAbort.Work(sumDFsinceLastAbortCheck / 5.0);
                             sumDFsinceLastAbortCheck = 0;
                         }
                     }

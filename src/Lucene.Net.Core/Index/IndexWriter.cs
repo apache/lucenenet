@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using CheckAbort = Lucene.Net.Index.MergeState.CheckAbort;
+    //using CheckAbort = Lucene.Net.Index.CheckAbort;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Constants = Lucene.Net.Util.Constants;
@@ -3225,7 +3225,7 @@ namespace Lucene.Net.Index
 
                 SegmentInfo info = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergedName, -1, false, codec, null);
 
-                SegmentMerger merger = new SegmentMerger(mergeReaders, info, infoStream, trackingDir, config.TermIndexInterval, MergeState.CheckAbort.NONE, globalFieldNumberMap, context, config.CheckIntegrityAtMerge);
+                SegmentMerger merger = new SegmentMerger(mergeReaders, info, infoStream, trackingDir, config.TermIndexInterval, CheckAbort.NONE, globalFieldNumberMap, context, config.CheckIntegrityAtMerge);
 
                 if (!merger.ShouldMerge())
                 {
@@ -3275,7 +3275,7 @@ namespace Lucene.Net.Index
                     ICollection<string> filesToDelete = infoPerCommit.Files();
                     try
                     {
-                        CreateCompoundFile(infoStream, directory, MergeState.CheckAbort.NONE, info, context);
+                        CreateCompoundFile(infoStream, directory, CheckAbort.NONE, info, context);
                     }
                     finally
                     {
@@ -4944,7 +4944,7 @@ namespace Lucene.Net.Index
 
             IOContext context = new IOContext(merge.MergeInfo);
 
-            MergeState.CheckAbort checkAbort = new MergeState.CheckAbort(merge, directory);
+            CheckAbort checkAbort = new CheckAbort(merge, directory);
             TrackingDirectoryWrapper dirWrapper = new TrackingDirectoryWrapper(directory);
 
             if (infoStream.IsEnabled("IW"))

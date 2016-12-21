@@ -433,7 +433,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, start, numDocs);
                     AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, numDocs);
                     totalNumDocs += numDocs;
-                    mergeState.checkAbort.Work(300 * numDocs);
+                    mergeState.CheckAbort.Work(300 * numDocs);
                 }
             }
             else
@@ -451,7 +451,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     Fields vectors = reader.GetTermVectors(docNum);
                     AddAllDocVectors(vectors, mergeState);
                     totalNumDocs++;
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             return totalNumDocs;
@@ -470,7 +470,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, docCount, len);
                     AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, len);
                     docCount += len;
-                    mergeState.checkAbort.Work(300 * len);
+                    mergeState.CheckAbort.Work(300 * len);
                 }
             }
             else
@@ -481,7 +481,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // termVectorsWriter.addAllDocVectors; see LUCENE-1282
                     Fields vectors = reader.GetTermVectors(docNum);
                     AddAllDocVectors(vectors, mergeState);
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             return maxDoc;

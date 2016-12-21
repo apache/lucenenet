@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs
                     Document doc = reader.Document(i);
                     AddDocument(doc, mergeState.FieldInfos);
                     docCount++;
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             Finish(mergeState.FieldInfos, docCount);

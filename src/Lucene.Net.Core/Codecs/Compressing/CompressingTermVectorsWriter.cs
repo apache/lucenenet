@@ -892,7 +892,7 @@ namespace Lucene.Net.Codecs.Compressing
                         Fields vectors = reader.GetTermVectors(i);
                         AddAllDocVectors(vectors, mergeState);
                         ++docCount;
-                        mergeState.checkAbort.Work(300);
+                        mergeState.CheckAbort.Work(300);
                     }
                 }
                 else
@@ -926,7 +926,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 this.VectorsStream.CopyBytes(vectorsStream, chunkLength);
                                 docCount += chunkDocs;
                                 this.NumDocs += chunkDocs;
-                                mergeState.checkAbort.Work(300 * chunkDocs);
+                                mergeState.CheckAbort.Work(300 * chunkDocs);
                                 i = NextLiveDoc(docBase + chunkDocs, liveDocs, maxDoc);
                             }
                             else
@@ -936,7 +936,7 @@ namespace Lucene.Net.Codecs.Compressing
                                     Fields vectors = reader.GetTermVectors(i);
                                     AddAllDocVectors(vectors, mergeState);
                                     ++docCount;
-                                    mergeState.checkAbort.Work(300);
+                                    mergeState.CheckAbort.Work(300);
                                 }
                             }
                         }
@@ -945,7 +945,7 @@ namespace Lucene.Net.Codecs.Compressing
                             Fields vectors = reader.GetTermVectors(i);
                             AddAllDocVectors(vectors, mergeState);
                             ++docCount;
-                            mergeState.checkAbort.Work(300);
+                            mergeState.CheckAbort.Work(300);
                             i = NextLiveDoc(i + 1, liveDocs, maxDoc);
                         }
                     }

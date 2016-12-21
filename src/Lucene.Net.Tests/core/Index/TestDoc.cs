@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(si1.Info.Dir);
             SegmentInfo si = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, -1, false, codec, null);
 
-            SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(r1, r2), si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
+            SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(r1, r2), si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
 
             MergeState mergeState = merger.Merge();
             r1.Dispose();
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 
             if (useCompoundFile)
             {
-                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, MergeState.CheckAbort.NONE, info, NewIOContext(Random()));
+                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, CheckAbort.NONE, info, NewIOContext(Random()));
                 info.UseCompoundFile = true;
                 foreach (String fileToDelete in filesToDelete)
                 {

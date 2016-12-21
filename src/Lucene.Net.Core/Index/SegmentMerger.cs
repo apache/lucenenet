@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
         private readonly FieldInfos.Builder FieldInfosBuilder;
 
         // note, just like in codec apis Directory 'dir' is NOT the same as segmentInfo.dir!!
-        internal SegmentMerger(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, Directory dir, int termIndexInterval, MergeState.CheckAbort checkAbort, FieldInfos.FieldNumbers fieldNumbers, IOContext context, bool validate)
+        internal SegmentMerger(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, Directory dir, int termIndexInterval, CheckAbort checkAbort, FieldInfos.FieldNumbers fieldNumbers, IOContext context, bool validate)
         {
             // validate incoming readers
             if (validate)

@@ -458,7 +458,7 @@ namespace Lucene.Net.Codecs.Compressing
                         Document doc = reader.Document(i);
                         AddDocument(doc, mergeState.FieldInfos);
                         ++docCount;
-                        mergeState.checkAbort.Work(300);
+                        mergeState.CheckAbort.Work(300);
                     }
                 }
                 else
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 this.DocBase += it.ChunkDocs;
                                 docID = NextLiveDoc(it.DocBase + it.ChunkDocs, liveDocs, maxDoc);
                                 docCount += it.ChunkDocs;
-                                mergeState.checkAbort.Work(300 * it.ChunkDocs);
+                                mergeState.CheckAbort.Work(300 * it.ChunkDocs);
                             }
                             else
                             {
@@ -512,7 +512,7 @@ namespace Lucene.Net.Codecs.Compressing
                                     BufferedDocs.WriteBytes(it.Bytes.Bytes, it.Bytes.Offset + startOffsets[diff], it.Lengths[diff]);
                                     FinishDocument();
                                     ++docCount;
-                                    mergeState.checkAbort.Work(300);
+                                    mergeState.CheckAbort.Work(300);
                                 }
                             }
                         } while (docID < maxDoc);

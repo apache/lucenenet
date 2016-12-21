@@ -65,9 +65,9 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns true if there are any deletions. </summary>
-            public virtual bool HasDeletions() // LUCENENET TODO: Make property
+            public virtual bool HasDeletions
             {
-                return NumDeletedDocs > 0;
+                get { return NumDeletedDocs > 0; }
             }
 
             /// <summary>
@@ -108,14 +108,14 @@ namespace Lucene.Net.Index
             {
                 private int maxDoc;
                 private Bits LiveDocs;
-                private MonotonicAppendingLongBuffer DocMap;
+                private MonotonicAppendingLongBuffer docMap;
                 private int numDeletedDocs;
 
                 public DocMapAnonymousInnerClassHelper(int maxDoc, Bits liveDocs, MonotonicAppendingLongBuffer docMap, int numDeletedDocs)
                 {
                     this.maxDoc = maxDoc;
                     this.LiveDocs = liveDocs;
-                    this.DocMap = docMap;
+                    this.docMap = docMap;
                     this.numDeletedDocs = numDeletedDocs;
                 }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                     {
                         return -1;
                     }
-                    return (int)DocMap.Get(docID);
+                    return (int)docMap.Get(docID);
                 }
 
                 public override int MaxDoc
@@ -167,15 +167,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="SegmentInfo"/> of the newly merged segment. </summary>
-        public readonly SegmentInfo SegmentInfo; // LUCENENET TODO: Make property
+        public SegmentInfo SegmentInfo { get; private set; }
 
         /// <summary>
         /// <seealso cref="FieldInfos"/> of the newly merged segment. </summary>
-        public FieldInfos FieldInfos; // LUCENENET TODO: Make property
+        public FieldInfos FieldInfos { get; set; }
 
         /// <summary>
         /// Readers being merged. </summary>
-        public readonly IList<AtomicReader> Readers; // LUCENENET TODO: Make property
+        public IList<AtomicReader> Readers { get; private set; }
 
         /// <summary>
         /// Maps docIDs around deletions. </summary>
@@ -189,11 +189,11 @@ namespace Lucene.Net.Index
         /// Holds the CheckAbort instance, which is invoked
         ///  periodically to see if the merge has been aborted.
         /// </summary>
-        public readonly CheckAbort checkAbort; // LUCENENET TODO: Make property
+        public CheckAbort CheckAbort { get; private set; }
 
         /// <summary>
         /// InfoStream for debugging messages. </summary>
-        public readonly InfoStream InfoStream; // LUCENENET TODO: Make property
+        public InfoStream InfoStream { get; private set; }
 
         // TODO: get rid of this? it tells you which segments are 'aligned' (e.g. for bulk merging)
         // but is this really so expensive to compute again in different components, versus once in SM?
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// How many <seealso cref="#matchingSegmentReaders"/> are set. </summary>
-        public int MatchedCount; // LUCENENET TODO: Make property
+        public int MatchedCount { get; set; }
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -216,61 +216,61 @@ namespace Lucene.Net.Index
             this.Readers = readers;
             this.SegmentInfo = segmentInfo;
             this.InfoStream = infoStream;
-            this.checkAbort = checkAbort;
+            this.CheckAbort = checkAbort;
+        }
+    }
+
+    /// <summary>
+    /// Class for recording units of work when merging segments.
+    /// </summary>
+    public class CheckAbort // LUCENENET Specific: De-nested this class to fix CLS naming issue
+    {
+        private double workCount;
+        private readonly MergePolicy.OneMerge merge;
+        private readonly Directory dir;
+
+        /// <summary>
+        /// Creates a #CheckAbort instance. </summary>
+        public CheckAbort(MergePolicy.OneMerge merge, Directory dir)
+        {
+            this.merge = merge;
+            this.dir = dir;
         }
 
         /// <summary>
-        /// Class for recording units of work when merging segments.
+        /// Records the fact that roughly units amount of work
+        /// have been done since this method was last called.
+        /// When adding time-consuming code into SegmentMerger,
+        /// you should test different values for units to ensure
+        /// that the time in between calls to merge.checkAborted
+        /// is up to ~ 1 second.
         /// </summary>
-        public class CheckAbort // LUCENENET TODO: De-nest to fix CLS issue
+        public virtual void Work(double units)
         {
-            private double workCount;
-            private readonly MergePolicy.OneMerge merge;
-            private readonly Directory dir;
-
-            /// <summary>
-            /// Creates a #CheckAbort instance. </summary>
-            public CheckAbort(MergePolicy.OneMerge merge, Directory dir)
+            workCount += units;
+            if (workCount >= 10000.0)
             {
-                this.merge = merge;
-                this.dir = dir;
+                merge.CheckAborted(dir);
+                workCount = 0;
+            }
+        }
+
+        /// <summary>
+        /// If you use this: IW.close(false) cannot abort your merge!
+        /// @lucene.internal
+        /// </summary>
+        public static readonly CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();
+
+        private class CheckAbortAnonymousInnerClassHelper : CheckAbort
+        {
+            public CheckAbortAnonymousInnerClassHelper()
+                : base(null, null)
+            {
             }
 
-            /// <summary>
-            /// Records the fact that roughly units amount of work
-            /// have been done since this method was last called.
-            /// When adding time-consuming code into SegmentMerger,
-            /// you should test different values for units to ensure
-            /// that the time in between calls to merge.checkAborted
-            /// is up to ~ 1 second.
-            /// </summary>
-            public virtual void Work(double units)
+            public override void Work(double units)
             {
-                workCount += units;
-                if (workCount >= 10000.0)
-                {
-                    merge.CheckAborted(dir);
-                    workCount = 0;
-                }
-            }
-
-            /// <summary>
-            /// If you use this: IW.close(false) cannot abort your merge!
-            /// @lucene.internal
-            /// </summary>
-            public static readonly MergeState.CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();
-
-            private class CheckAbortAnonymousInnerClassHelper : MergeState.CheckAbort
-            {
-                public CheckAbortAnonymousInnerClassHelper()
-                    : base(null, null)
-                {
-                }
-
-                public override void Work(double units)
-                {
-                    // do nothing
-                }
+                // do nothing
             }
         }
     }

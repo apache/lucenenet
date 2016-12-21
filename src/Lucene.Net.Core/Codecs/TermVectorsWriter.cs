@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs
                     Fields vectors = reader.GetTermVectors(docID);
                     AddAllDocVectors(vectors, mergeState);
                     docCount++;
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             Finish(mergeState.FieldInfos, docCount);

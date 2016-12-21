@@ -351,7 +351,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, start, numDocs);
                     AddRawDocuments(stream, rawDocLengths, numDocs);
                     docCount += numDocs;
-                    mergeState.checkAbort.Work(300 * numDocs);
+                    mergeState.CheckAbort.Work(300 * numDocs);
                 }
             }
             else
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     Document doc = reader.Document(j);
                     AddDocument(doc, mergeState.FieldInfos);
                     docCount++;
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             return docCount;
@@ -391,7 +391,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, docCount, len);
                     AddRawDocuments(stream, rawDocLengths, len);
                     docCount += len;
-                    mergeState.checkAbort.Work(300 * len);
+                    mergeState.CheckAbort.Work(300 * len);
                 }
             }
             else
@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // fieldsWriter.addDocument; see LUCENE-1282
                     Document doc = reader.Document(docCount);
                     AddDocument(doc, mergeState.FieldInfos);
-                    mergeState.checkAbort.Work(300);
+                    mergeState.CheckAbort.Work(300);
                 }
             }
             return docCount;
