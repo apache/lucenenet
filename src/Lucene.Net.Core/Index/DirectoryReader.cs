@@ -388,12 +388,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the directory this index resides in. </summary>
-        public Directory Directory() // LUCENENET TODO: make property
+        public Directory Directory
         {
-            // Don't ensureOpen here -- in certain cases, when a
-            // cloned/reopened reader needs to commit, it may call
-            // this method on the closed original reader
-            return Directory_Renamed;
+            get
+            {
+                // Don't ensureOpen here -- in certain cases, when a
+                // cloned/reopened reader needs to commit, it may call
+                // this method on the closed original reader
+                return Directory_Renamed;
+            }
         }
 
         /// <summary>
@@ -457,7 +460,7 @@ namespace Lucene.Net.Index
         /// changes.</p>
         /// </summary>
         /// <exception cref="IOException">           if there is a low-level IO error </exception>
-        public abstract bool Current { get; } // LUCENENET TODO: Rename IsCurrent
+        public abstract bool IsCurrent { get; }
 
         /// <summary>
         /// Expert: return the IndexCommit that this reader has opened.

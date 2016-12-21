@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
         {
             if (commit == null)
             {
-                if (Current)
+                if (IsCurrent)
                 {
                     return null;
                 }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool Current
+        public override bool IsCurrent
         {
             get
             {

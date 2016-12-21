@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
                 {
                     IndexReader r = searcher.IndexReader;
                     Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
-                    return ((DirectoryReader)r).Current;
+                    return ((DirectoryReader)r).IsCurrent;
                 }
                 finally
                 {

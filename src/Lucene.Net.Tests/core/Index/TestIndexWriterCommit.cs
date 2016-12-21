@@ -80,12 +80,12 @@ namespace Lucene.Net.Index
                 hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
                 Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
                 r.Dispose();
-                Assert.IsTrue(reader.Current, "reader should have still been current");
+                Assert.IsTrue(reader.IsCurrent, "reader should have still been current");
             }
 
             // Now, close the writer:
             writer.Dispose();
-            Assert.IsFalse(reader.Current, "reader should not be current now");
+            Assert.IsFalse(reader.IsCurrent, "reader should not be current now");
 
             IndexReader ir = DirectoryReader.Open(dir);
             searcher = NewSearcher(ir);

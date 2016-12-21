@@ -148,17 +148,17 @@ namespace Lucene.Net.Index
             writer.Dispose();
             // set up reader:
             DirectoryReader reader = DirectoryReader.Open(d);
-            Assert.IsTrue(reader.Current);
+            Assert.IsTrue(reader.IsCurrent);
             // modify index by adding another document:
             writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
             AddDocumentWithFields(writer);
             writer.Dispose();
-            Assert.IsFalse(reader.Current);
+            Assert.IsFalse(reader.IsCurrent);
             // re-create index:
             writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
             AddDocumentWithFields(writer);
             writer.Dispose();
-            Assert.IsFalse(reader.Current);
+            Assert.IsFalse(reader.IsCurrent);
             reader.Dispose();
             d.Dispose();
         }
@@ -930,14 +930,14 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             writer.AddDocument(doc);
             DirectoryReader r = DirectoryReader.Open(dir);
-            Assert.IsTrue(r.Current);
+            Assert.IsTrue(r.IsCurrent);
             writer.AddDocument(doc);
             writer.PrepareCommit();
-            Assert.IsTrue(r.Current);
+            Assert.IsTrue(r.IsCurrent);
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
             Assert.IsNull(r2);
             writer.Commit();
-            Assert.IsFalse(r.Current);
+            Assert.IsFalse(r.IsCurrent);
             writer.Dispose();
             r.Dispose();
             dir.Dispose();

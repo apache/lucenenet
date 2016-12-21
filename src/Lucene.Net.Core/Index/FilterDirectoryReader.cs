@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         /// <param name="input"> the DirectoryReader to filter </param>
         /// <param name="wrapper"> the SubReaderWrapper to use to wrap subreaders </param>
         public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
-            : base(input.Directory(), wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
+            : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
         {
             this.input = input;
         }
@@ -143,11 +143,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool Current // LUCENENET TODO: Rename IsCurrent
+        public override bool IsCurrent // LUCENENET TODO: Rename IsCurrent
         {
             get
             {
-                return input.Current;
+                return input.IsCurrent;
             }
         }
 
