@@ -33,17 +33,17 @@ namespace Lucene.Net.Index
 
     public sealed class ByteSliceReader : DataInput // LUCENENET specific - changed from internal to public because returned from public API
     {
-        private ByteBlockPool Pool;
-        private int BufferUpto;
-        private byte[] Buffer;
-        private int Upto;
-        private int Limit;
-        private int Level;
-        public int BufferOffset; // LUCENENET TODO: make property
+        private ByteBlockPool pool;
+        private int bufferUpto;
+        private byte[] buffer;
+        private int upto;
+        private int limit;
+        private int level;
+        public int BufferOffset { get; internal set; } // LUCENENET specific - changed setter to internal
 
-        public int EndIndex; // LUCENENET TODO: make property
+        public int EndIndex { get; internal set; } // LUCENENET specific - changed setter to internal
 
-        internal ByteSliceReader() { } // LUCENENENET specific - made constructor internal since this class was meant to be internal
+        internal ByteSliceReader() { } // LUCENENET specific - made constructor internal since this class was meant to be internal
 
         public void Init(ByteBlockPool pool, int startIndex, int endIndex)
         {
@@ -51,43 +51,43 @@ namespace Lucene.Net.Index
             Debug.Assert(startIndex >= 0);
             Debug.Assert(endIndex >= 0);
 
-            this.Pool = pool;
+            this.pool = pool;
             this.EndIndex = endIndex;
 
-            Level = 0;
-            BufferUpto = startIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
-            BufferOffset = BufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
-            Buffer = pool.Buffers[BufferUpto];
-            Upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+            level = 0;
+            bufferUpto = startIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+            BufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
+            buffer = pool.Buffers[bufferUpto];
+            upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             int firstSize = ByteBlockPool.LEVEL_SIZE_ARRAY[0];
 
             if (startIndex + firstSize >= endIndex)
             {
                 // There is only this one slice to read
-                Limit = endIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+                limit = endIndex & ByteBlockPool.BYTE_BLOCK_MASK;
             }
             else
             {
-                Limit = Upto + firstSize - 4;
+                limit = upto + firstSize - 4;
             }
         }
 
         public bool Eof()
         {
-            Debug.Assert(Upto + BufferOffset <= EndIndex);
-            return Upto + BufferOffset == EndIndex;
+            Debug.Assert(upto + BufferOffset <= EndIndex);
+            return upto + BufferOffset == EndIndex;
         }
 
         public override byte ReadByte()
         {
             Debug.Assert(!Eof());
-            Debug.Assert(Upto <= Limit);
-            if (Upto == Limit)
+            Debug.Assert(upto <= limit);
+            if (upto == limit)
             {
                 NextSlice();
             }
-            return (byte)Buffer[Upto++];
+            return (byte)buffer[upto++];
         }
 
         public long WriteTo(DataOutput @out)
@@ -95,17 +95,17 @@ namespace Lucene.Net.Index
             long size = 0;
             while (true)
             {
-                if (Limit + BufferOffset == EndIndex)
+                if (limit + BufferOffset == EndIndex)
                 {
-                    Debug.Assert(EndIndex - BufferOffset >= Upto);
-                    @out.WriteBytes(Buffer, Upto, Limit - Upto);
-                    size += Limit - Upto;
+                    Debug.Assert(EndIndex - BufferOffset >= upto);
+                    @out.WriteBytes(buffer, upto, limit - upto);
+                    size += limit - upto;
                     break;
                 }
                 else
                 {
-                    @out.WriteBytes(Buffer, Upto, Limit - Upto);
-                    size += Limit - Upto;
+                    @out.WriteBytes(buffer, upto, limit - upto);
+                    size += limit - upto;
                     NextSlice();
                 }
             }
@@ -116,28 +116,28 @@ namespace Lucene.Net.Index
         public void NextSlice()
         {
             // Skip to our next slice
-            int nextIndex = ((Buffer[Limit] & 0xff) << 24) + ((Buffer[1 + Limit] & 0xff) << 16) + ((Buffer[2 + Limit] & 0xff) << 8) + (Buffer[3 + Limit] & 0xff);
+            int nextIndex = ((buffer[limit] & 0xff) << 24) + ((buffer[1 + limit] & 0xff) << 16) + ((buffer[2 + limit] & 0xff) << 8) + (buffer[3 + limit] & 0xff);
 
-            Level = ByteBlockPool.NEXT_LEVEL_ARRAY[Level];
-            int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[Level];
+            level = ByteBlockPool.NEXT_LEVEL_ARRAY[level];
+            int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[level];
 
-            BufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
-            BufferOffset = BufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
+            bufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+            BufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
 
-            Buffer = Pool.Buffers[BufferUpto];
-            Upto = nextIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+            buffer = pool.Buffers[bufferUpto];
+            upto = nextIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             if (nextIndex + newSize >= EndIndex)
             {
                 // We are advancing to the final slice
                 Debug.Assert(EndIndex - nextIndex > 0);
-                Limit = EndIndex - BufferOffset;
+                limit = EndIndex - BufferOffset;
             }
             else
             {
                 // this is not the final slice (subtract 4 for the
                 // forwarding address at the end of this new slice)
-                Limit = Upto + newSize - 4;
+                limit = upto + newSize - 4;
             }
         }
 
@@ -145,11 +145,11 @@ namespace Lucene.Net.Index
         {
             while (len > 0)
             {
-                int numLeft = Limit - Upto;
+                int numLeft = limit - upto;
                 if (numLeft < len)
                 {
                     // Read entire slice
-                    Array.Copy(Buffer, Upto, b, offset, numLeft);
+                    Array.Copy(buffer, upto, b, offset, numLeft);
                     offset += numLeft;
                     len -= numLeft;
                     NextSlice();
@@ -157,8 +157,8 @@ namespace Lucene.Net.Index
                 else
                 {
                     // this slice is the last one
-                    Array.Copy(Buffer, Upto, b, offset, len);
-                    Upto += len;
+                    Array.Copy(buffer, upto, b, offset, len);
+                    upto += len;
                     break;
                 }
             }
