@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs
                     {
                         int position = postingsEnum.NextPosition();
                         BytesRef payload = postingsEnum.Payload;
-                        this.AddPosition(position, payload, postingsEnum.StartOffset(), postingsEnum.EndOffset());
+                        this.AddPosition(position, payload, postingsEnum.StartOffset, postingsEnum.EndOffset);
                     }
                     this.FinishDoc();
                     df++;

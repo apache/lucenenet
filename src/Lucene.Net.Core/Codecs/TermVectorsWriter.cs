@@ -330,8 +330,8 @@ namespace Lucene.Net.Codecs
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
                             int pos = docsAndPositionsEnum.NextPosition();
-                            int startOffset = docsAndPositionsEnum.StartOffset();
-                            int endOffset = docsAndPositionsEnum.EndOffset();
+                            int startOffset = docsAndPositionsEnum.StartOffset;
+                            int endOffset = docsAndPositionsEnum.EndOffset;
 
                             BytesRef payload = docsAndPositionsEnum.Payload;
 

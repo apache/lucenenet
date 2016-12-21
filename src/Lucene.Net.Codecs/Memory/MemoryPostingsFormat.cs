@@ -718,14 +718,14 @@ namespace Lucene.Net.Codecs.Memory
                 return pos;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return startOffset_Renamed;
+                get { return startOffset_Renamed; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return startOffset_Renamed + offsetLength;
+                get { return startOffset_Renamed + offsetLength; }
             }
 
             public override BytesRef Payload

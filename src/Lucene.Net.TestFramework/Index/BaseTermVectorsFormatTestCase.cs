@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
                             }
                             else
                             {
-                                indexes = tk.StartOffsetToTerms[docsAndPositionsEnum.StartOffset()];
+                                indexes = tk.StartOffsetToTerms[docsAndPositionsEnum.StartOffset];
                                 Assert.IsNotNull(indexes);
                             }
                             if (terms.HasPositions())
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
                                 bool foundOffset = false;
                                 foreach (int index in indexes)
                                 {
-                                    if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset() && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset())
+                                    if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset)
                                     {
                                         foundOffset = true;
                                         break;

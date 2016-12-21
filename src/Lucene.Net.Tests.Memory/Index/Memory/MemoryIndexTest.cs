@@ -173,8 +173,8 @@ namespace Lucene.Net.Index.Memory
                                     assertEquals("term: " + iwTermsIter.Term().Utf8ToString(), iwDocsAndPos.NextPosition(), memDocsAndPos.NextPosition());
                                     if (offsets)
                                     {
-                                        assertEquals(iwDocsAndPos.StartOffset(), memDocsAndPos.StartOffset());
-                                        assertEquals(iwDocsAndPos.EndOffset(), memDocsAndPos.EndOffset());
+                                        assertEquals(iwDocsAndPos.StartOffset, memDocsAndPos.StartOffset);
+                                        assertEquals(iwDocsAndPos.EndOffset, memDocsAndPos.EndOffset);
                                     }
                                 }
 
@@ -365,8 +365,8 @@ namespace Lucene.Net.Index.Memory
                 assertEquals(-1, docid);
                 assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(0, disi.NextPosition());
-                assertEquals(0, disi.StartOffset());
-                assertEquals(3, disi.EndOffset());
+                assertEquals(0, disi.StartOffset);
+                assertEquals(3, disi.EndOffset);
 
                 // now reuse and check again
                 TermsEnum te = reader.Terms("foo").Iterator(null);
@@ -573,8 +573,8 @@ namespace Lucene.Net.Index.Memory
                     int memPos = memDocsPosEnum.NextPosition();
                     int pos = docsPosEnum.NextPosition();
                     assertEquals("Position test failed" + failDesc, memPos, pos);
-                    assertEquals("Start offset test failed" + failDesc, memDocsPosEnum.StartOffset(), docsPosEnum.StartOffset());
-                    assertEquals("End offset test failed" + failDesc, memDocsPosEnum.EndOffset(), docsPosEnum.EndOffset());
+                    assertEquals("Start offset test failed" + failDesc, memDocsPosEnum.StartOffset, docsPosEnum.StartOffset);
+                    assertEquals("End offset test failed" + failDesc, memDocsPosEnum.EndOffset, docsPosEnum.EndOffset);
                     assertEquals("Missing payload test failed" + failDesc, docsPosEnum.Payload, null);
                 }
             }

@@ -167,8 +167,8 @@ namespace Lucene.Net.Search
             for (int i = 0; i < 5; i++)
             {
                 dpEnum.NextPosition();
-                Assert.AreEqual(4 * i, dpEnum.StartOffset());
-                Assert.AreEqual(4 * i + 3, dpEnum.EndOffset());
+                Assert.AreEqual(4 * i, dpEnum.StartOffset);
+                Assert.AreEqual(4 * i + 3, dpEnum.EndOffset);
             }
             reader.Dispose();
         }

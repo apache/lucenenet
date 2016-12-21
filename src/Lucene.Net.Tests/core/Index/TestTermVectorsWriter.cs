@@ -79,8 +79,8 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(8, dpEnum.StartOffset());
-            Assert.AreEqual(8, dpEnum.EndOffset());
+            Assert.AreEqual(8, dpEnum.StartOffset);
+            Assert.AreEqual(8, dpEnum.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             // Token "abcd" occurred three times
@@ -90,16 +90,16 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(4, dpEnum.StartOffset());
-            Assert.AreEqual(8, dpEnum.EndOffset());
+            Assert.AreEqual(4, dpEnum.StartOffset);
+            Assert.AreEqual(8, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(8, dpEnum.StartOffset());
-            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(8, dpEnum.StartOffset);
+            Assert.AreEqual(12, dpEnum.EndOffset);
 
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             Assert.IsNull(termsEnum.Next());
@@ -132,12 +132,12 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(5, dpEnum.StartOffset());
-            Assert.AreEqual(9, dpEnum.EndOffset());
+            Assert.AreEqual(5, dpEnum.StartOffset);
+            Assert.AreEqual(9, dpEnum.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             r.Dispose();
@@ -169,12 +169,12 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(8, dpEnum.StartOffset());
-            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(8, dpEnum.StartOffset);
+            Assert.AreEqual(12, dpEnum.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             r.Dispose();
@@ -222,12 +222,12 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(8, dpEnum.StartOffset());
-            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(8, dpEnum.StartOffset);
+            Assert.AreEqual(12, dpEnum.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             r.Dispose();
@@ -259,12 +259,12 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             dpEnum.NextPosition();
-            Assert.AreEqual(9, dpEnum.StartOffset());
-            Assert.AreEqual(13, dpEnum.EndOffset());
+            Assert.AreEqual(9, dpEnum.StartOffset);
+            Assert.AreEqual(13, dpEnum.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             r.Dispose();
@@ -296,22 +296,22 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             Assert.IsNotNull(termsEnum.Next());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(11, dpEnum.StartOffset());
-            Assert.AreEqual(17, dpEnum.EndOffset());
+            Assert.AreEqual(11, dpEnum.StartOffset);
+            Assert.AreEqual(17, dpEnum.EndOffset);
 
             Assert.IsNotNull(termsEnum.Next());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(18, dpEnum.StartOffset());
-            Assert.AreEqual(21, dpEnum.EndOffset());
+            Assert.AreEqual(18, dpEnum.StartOffset);
+            Assert.AreEqual(21, dpEnum.EndOffset);
 
             r.Dispose();
             dir.Dispose();
@@ -343,15 +343,15 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, (int)termsEnum.TotalTermFreq());
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(1, dpEnum.StartOffset());
-            Assert.AreEqual(7, dpEnum.EndOffset());
+            Assert.AreEqual(1, dpEnum.StartOffset);
+            Assert.AreEqual(7, dpEnum.EndOffset);
 
             Assert.IsNotNull(termsEnum.Next());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(8, dpEnum.StartOffset());
-            Assert.AreEqual(11, dpEnum.EndOffset());
+            Assert.AreEqual(8, dpEnum.StartOffset);
+            Assert.AreEqual(11, dpEnum.EndOffset);
 
             r.Dispose();
             dir.Dispose();
@@ -387,15 +387,15 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, (int)termsEnum.TotalTermFreq());
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(0, dpEnum.StartOffset());
-            Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(0, dpEnum.StartOffset);
+            Assert.AreEqual(4, dpEnum.EndOffset);
 
             Assert.IsNotNull(termsEnum.Next());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
-            Assert.AreEqual(6, dpEnum.StartOffset());
-            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(6, dpEnum.StartOffset);
+            Assert.AreEqual(12, dpEnum.EndOffset);
 
             r.Dispose();
             dir.Dispose();

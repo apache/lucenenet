@@ -1036,14 +1036,14 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return -1;
+                get { return -1; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return -1;
+                get { return -1; }
             }
 
             public override BytesRef Payload
@@ -1687,14 +1687,14 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return StartOffset_Renamed;
+                get { return StartOffset_Renamed; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return EndOffset_Renamed;
+                get { return EndOffset_Renamed; }
             }
 
             public override BytesRef Payload

@@ -658,16 +658,16 @@ namespace Lucene.Net.Search.PostingsHighlight
             while ((off = pq.Poll()) != null)
             {
                 DocsAndPositionsEnum dp = off.dp;
-                int start = dp.StartOffset();
+                int start = dp.StartOffset;
                 if (start == -1)
                 {
                     throw new ArgumentException("field '" + field + "' was indexed without offsets, cannot highlight");
                 }
-                int end = dp.EndOffset();
+                int end = dp.EndOffset;
                 // LUCENE-5166: this hit would span the content limit... however more valid 
                 // hits may exist (they are sorted by start). so we pretend like we never 
                 // saw this term, it won't cause a passage to be added to passageQueue or anything.
-                Debug.Assert(EMPTY.StartOffset() == int.MaxValue);
+                Debug.Assert(EMPTY.StartOffset == int.MaxValue);
                 if (start < contentLength && end > contentLength)
                 {
                     continue;
@@ -734,8 +734,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                     {
                         off.pos++;
                         dp.NextPosition();
-                        start = dp.StartOffset();
-                        end = dp.EndOffset();
+                        start = dp.StartOffset;
+                        end = dp.EndOffset;
                     }
                     if (start >= current.endOffset || end > contentLength)
                     {
@@ -798,8 +798,8 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 try
                 {
-                    int off = dp.StartOffset();
-                    int otherOff = other.dp.StartOffset();
+                    int off = dp.StartOffset;
+                    int otherOff = other.dp.StartOffset;
                     if (off == otherOff)
                     {
                         return id - other.id;
@@ -829,14 +829,14 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return 0;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return int.MaxValue;
+                get { return int.MaxValue; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return int.MaxValue;
+                get { return int.MaxValue; }
             }
 
             public override BytesRef Payload

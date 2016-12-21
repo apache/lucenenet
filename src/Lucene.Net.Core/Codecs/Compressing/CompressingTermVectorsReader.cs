@@ -1115,29 +1115,35 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                CheckPosition();
-                if (StartOffsets == null)
+                get
                 {
-                    return -1;
-                }
-                else
-                {
-                    return StartOffsets[PositionIndex + i];
+                    CheckPosition();
+                    if (StartOffsets == null)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return StartOffsets[PositionIndex + i];
+                    }
                 }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                CheckPosition();
-                if (StartOffsets == null)
+                get
                 {
-                    return -1;
-                }
-                else
-                {
-                    return StartOffsets[PositionIndex + i] + Lengths[PositionIndex + i];
+                    CheckPosition();
+                    if (StartOffsets == null)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return StartOffsets[PositionIndex + i] + Lengths[PositionIndex + i];
+                    }
                 }
             }
 

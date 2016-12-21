@@ -700,8 +700,8 @@ namespace Lucene.Net.Index.Sorter
                     previousPosition = pos;
                     if (storeOffsets) // don't encode offsets if they are not stored
                     {
-                        int startOffset = @in.StartOffset();
-                        int endOffset = @in.EndOffset();
+                        int startOffset = @in.StartOffset;
+                        int endOffset = @in.EndOffset;
                         @out.WriteVInt(startOffset - previousEndOffset);
                         @out.WriteVInt(endOffset - startOffset);
                         previousEndOffset = endOffset;
@@ -726,9 +726,9 @@ namespace Lucene.Net.Index.Sorter
                 return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return endOffset;
+                get { return endOffset; }
             }
 
             public override int Freq()
@@ -784,9 +784,9 @@ namespace Lucene.Net.Index.Sorter
                 return pos;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return startOffset;
+                get { return startOffset; }
             }
 
             /// <summary>

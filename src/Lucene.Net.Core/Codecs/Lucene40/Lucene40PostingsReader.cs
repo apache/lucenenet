@@ -945,14 +945,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 return Position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return -1;
+                get { return -1; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return -1;
+                get { return -1; }
             }
 
             /// <summary>
@@ -1253,14 +1253,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 return Position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return StoreOffsets ? StartOffset_Renamed : -1;
+                get { return StoreOffsets ? StartOffset_Renamed : -1; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return StoreOffsets ? StartOffset_Renamed + OffsetLength : -1;
+                get { return StoreOffsets ? StartOffset_Renamed + OffsetLength : -1; }
             }
 
             /// <summary>

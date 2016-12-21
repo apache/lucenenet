@@ -420,20 +420,26 @@ namespace Lucene.Net.Index
                 return position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                Debug.Assert(State != DocsEnumState.START, "StartOffset() called before nextDoc()/advance()");
-                Debug.Assert(State != DocsEnumState.FINISHED, "StartOffset() called after NO_MORE_DOCS");
-                Debug.Assert(PositionCount > 0, "StartOffset() called before nextPosition()!");
-                return base.StartOffset();
+                get
+                {
+                    Debug.Assert(State != DocsEnumState.START, "StartOffset() called before nextDoc()/advance()");
+                    Debug.Assert(State != DocsEnumState.FINISHED, "StartOffset() called after NO_MORE_DOCS");
+                    Debug.Assert(PositionCount > 0, "StartOffset() called before nextPosition()!");
+                    return base.StartOffset;
+                }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                Debug.Assert(State != DocsEnumState.START, "EndOffset() called before nextDoc()/advance()");
-                Debug.Assert(State != DocsEnumState.FINISHED, "EndOffset() called after NO_MORE_DOCS");
-                Debug.Assert(PositionCount > 0, "EndOffset() called before nextPosition()!");
-                return base.EndOffset();
+                get
+                {
+                    Debug.Assert(State != DocsEnumState.START, "EndOffset() called before nextDoc()/advance()");
+                    Debug.Assert(State != DocsEnumState.FINISHED, "EndOffset() called after NO_MORE_DOCS");
+                    Debug.Assert(PositionCount > 0, "EndOffset() called before nextPosition()!");
+                    return base.EndOffset;
+                }
             }
 
             public override BytesRef Payload

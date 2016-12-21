@@ -120,11 +120,11 @@ namespace Lucene.Net.Search.VectorHighlight
                 for (int i = 0; i < freq; i++)
                 {
                     int pos = dpEnum.NextPosition();
-                    if (dpEnum.StartOffset() < 0)
+                    if (dpEnum.StartOffset < 0)
                     {
                         return; // no offsets, null snippet
                     }
-                    termList.Add(new TermInfo(term, dpEnum.StartOffset(), dpEnum.EndOffset(), pos, weight));
+                    termList.Add(new TermInfo(term, dpEnum.StartOffset, dpEnum.EndOffset, pos, weight));
                 }
             }
 

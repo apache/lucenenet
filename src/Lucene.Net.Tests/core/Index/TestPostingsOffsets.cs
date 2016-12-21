@@ -91,11 +91,11 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dp.NextDoc());
             Assert.AreEqual(2, dp.Freq());
             Assert.AreEqual(0, dp.NextPosition());
-            Assert.AreEqual(0, dp.StartOffset());
-            Assert.AreEqual(6, dp.EndOffset());
+            Assert.AreEqual(0, dp.StartOffset);
+            Assert.AreEqual(6, dp.EndOffset);
             Assert.AreEqual(2, dp.NextPosition());
-            Assert.AreEqual(9, dp.StartOffset());
-            Assert.AreEqual(17, dp.EndOffset());
+            Assert.AreEqual(9, dp.StartOffset);
+            Assert.AreEqual(17, dp.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dp.NextDoc());
 
             dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("b"));
@@ -103,8 +103,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dp.NextDoc());
             Assert.AreEqual(1, dp.Freq());
             Assert.AreEqual(1, dp.NextPosition());
-            Assert.AreEqual(8, dp.StartOffset());
-            Assert.AreEqual(9, dp.EndOffset());
+            Assert.AreEqual(8, dp.StartOffset);
+            Assert.AreEqual(9, dp.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dp.NextDoc());
 
             dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("c"));
@@ -112,8 +112,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dp.NextDoc());
             Assert.AreEqual(1, dp.Freq());
             Assert.AreEqual(3, dp.NextPosition());
-            Assert.AreEqual(19, dp.StartOffset());
-            Assert.AreEqual(50, dp.EndOffset());
+            Assert.AreEqual(19, dp.StartOffset);
+            Assert.AreEqual(50, dp.EndOffset);
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dp.NextDoc());
 
             r.Dispose();
@@ -175,9 +175,9 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < freq; i++)
                     {
                         dp.NextPosition();
-                        int start = dp.StartOffset();
+                        int start = dp.StartOffset;
                         Debug.Assert(start >= 0);
-                        int end = dp.EndOffset();
+                        int end = dp.EndOffset;
                         Debug.Assert(end >= 0 && end >= start);
                         // check that the offsets correspond to the term in the src text
                         Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals(term));
@@ -206,9 +206,9 @@ namespace Lucene.Net.Index
                 {
                     string storedNumbers = reader.Document(doc).Get("numbers");
                     dp.NextPosition();
-                    int start = dp.StartOffset();
+                    int start = dp.StartOffset;
                     Debug.Assert(start >= 0);
-                    int end = dp.EndOffset();
+                    int end = dp.EndOffset;
                     Debug.Assert(end >= 0 && end >= start);
                     // check that the offsets correspond to the term in the src text
                     Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals("hundred"));
@@ -381,8 +381,8 @@ namespace Lucene.Net.Index
                                 int pos = Convert.ToInt32(token.Type);
                                 //System.out.println("        pos=" + pos);
                                 Assert.AreEqual(pos, docsAndPositionsAndOffsets.NextPosition());
-                                Assert.AreEqual(token.StartOffset, docsAndPositionsAndOffsets.StartOffset());
-                                Assert.AreEqual(token.EndOffset, docsAndPositionsAndOffsets.EndOffset());
+                                Assert.AreEqual(token.StartOffset, docsAndPositionsAndOffsets.StartOffset);
+                                Assert.AreEqual(token.EndOffset, docsAndPositionsAndOffsets.EndOffset);
                             }
                         }
                     }

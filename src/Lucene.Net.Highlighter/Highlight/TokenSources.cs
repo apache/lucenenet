@@ -231,11 +231,11 @@ namespace Lucene.Net.Search.Highlight
                 for (int posUpto = 0; posUpto < freq; posUpto++)
                 {
                     int pos = dpEnum.NextPosition();
-                    if (dpEnum.StartOffset() < 0)
+                    if (dpEnum.StartOffset < 0)
                     {
                         throw new ArgumentException("Required TermVector Offset information was not found");
                     }
-                    Token token = new Token(term,dpEnum.StartOffset(), dpEnum.EndOffset());
+                    Token token = new Token(term,dpEnum.StartOffset, dpEnum.EndOffset);
                     if (hasPayloads)
                     {
                         // Must make a deep copy of the returned payload,

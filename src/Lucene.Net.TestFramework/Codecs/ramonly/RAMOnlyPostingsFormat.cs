@@ -612,14 +612,14 @@ namespace Lucene.Net.Codecs.ramonly
                 return Current.Positions[PosUpto++];
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return -1;
+                get { return -1; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return -1;
+                get { return -1; }
             }
 
             public override BytesRef Payload

@@ -146,14 +146,14 @@ namespace Lucene.Net.Codecs
             return Current.NextPosition();
         }
 
-        public override int StartOffset()
+        public override int StartOffset
         {
-            return Current.StartOffset();
+            get { return Current.StartOffset; }
         }
 
-        public override int EndOffset()
+        public override int EndOffset
         {
-            return Current.EndOffset();
+            get { return Current.EndOffset; }
         }
 
         public override BytesRef Payload

@@ -541,14 +541,14 @@ namespace Lucene.Net.Codecs.SimpleText
                 return pos;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return _startOffset;
+                get { return _startOffset; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return _endOffset;
+                get { return _endOffset; }
             }
 
             public override BytesRef Payload

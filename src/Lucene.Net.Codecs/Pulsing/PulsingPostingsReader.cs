@@ -641,14 +641,14 @@ namespace Lucene.Net.Codecs.Pulsing
                 return _position;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return _startOffset;
+                get { return _startOffset; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return _startOffset + _offsetLength;
+                get { return _startOffset + _offsetLength; }
             }
 
             public override BytesRef Payload

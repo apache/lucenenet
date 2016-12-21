@@ -70,8 +70,8 @@ namespace Lucene.Net.Search.Highlight
                     if (hasOffsets)
                     {
                         token = new Token(text.Utf8ToString(),
-                            dpEnum.StartOffset(),
-                            dpEnum.EndOffset());
+                            dpEnum.StartOffset,
+                            dpEnum.EndOffset);
                     }
                     else
                     {

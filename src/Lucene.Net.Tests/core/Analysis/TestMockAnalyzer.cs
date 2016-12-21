@@ -374,10 +374,10 @@ namespace Lucene.Net.Analysis
             Assert.AreEqual(0, dpe.NextDoc());
             Assert.AreEqual(2, dpe.Freq());
             Assert.AreEqual(0, dpe.NextPosition());
-            Assert.AreEqual(0, dpe.StartOffset());
-            int endOffset = dpe.EndOffset();
+            Assert.AreEqual(0, dpe.StartOffset);
+            int endOffset = dpe.EndOffset;
             Assert.AreEqual(1 + positionGap, dpe.NextPosition());
-            Assert.AreEqual(1 + endOffset + offsetGap, dpe.EndOffset());
+            Assert.AreEqual(1 + endOffset + offsetGap, dpe.EndOffset);
             Assert.AreEqual(null, te.Next());
             reader.Dispose();
             writer.Dispose();

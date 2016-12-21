@@ -657,14 +657,14 @@ namespace Lucene.Net.Search
             return _posList.Next();
         }
 
-        public override int StartOffset()
+        public override int StartOffset
         {
-            return -1;
+            get { return -1; }
         }
 
-        public override int EndOffset()
+        public override int EndOffset
         {
-            return -1;
+            get { return -1; }
         }
 
         public override BytesRef Payload

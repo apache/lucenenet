@@ -829,27 +829,33 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                if (StartOffsets != null)
+                get
                 {
-                    return StartOffsets[NextPos - 1];
-                }
-                else
-                {
-                    return -1;
+                    if (StartOffsets != null)
+                    {
+                        return StartOffsets[NextPos - 1];
+                    }
+                    else
+                    {
+                        return -1;
+                    }
                 }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                if (EndOffsets != null)
+                get
                 {
-                    return EndOffsets[NextPos - 1];
-                }
-                else
-                {
-                    return -1;
+                    if (EndOffsets != null)
+                    {
+                        return EndOffsets[NextPos - 1];
+                    }
+                    else
+                    {
+                        return -1;
+                    }
                 }
             }
 

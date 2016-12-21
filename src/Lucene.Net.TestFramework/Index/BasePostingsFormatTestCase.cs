@@ -289,14 +289,14 @@ namespace Lucene.Net.Index
                 return Pos;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return StartOffset_Renamed;
+                get { return StartOffset_Renamed; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return EndOffset_Renamed;
+                get { return EndOffset_Renamed; }
             }
 
             public override BytesRef Payload
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
                                         Console.WriteLine("      pos=" + pos);
                                     }
                                 }
-                                postingsConsumer.AddPosition(pos, doPayloads ? payload : null, doOffsets ? postings.StartOffset() : -1, doOffsets ? postings.EndOffset() : -1);
+                                postingsConsumer.AddPosition(pos, doPayloads ? payload : null, doOffsets ? postings.StartOffset : -1, doOffsets ? postings.EndOffset : -1);
                             }
                         }
                         else if (doFreq)
@@ -1020,10 +1020,10 @@ namespace Lucene.Net.Index
                             {
                                 if (VERBOSE)
                                 {
-                                    Console.WriteLine("      now check offsets: startOff=" + expected.StartOffset() + " endOffset=" + expected.EndOffset());
+                                    Console.WriteLine("      now check offsets: startOff=" + expected.StartOffset + " endOffset=" + expected.EndOffset);
                                 }
-                                Assert.AreEqual(expected.StartOffset(), docsAndPositionsEnum.StartOffset(), "startOffset is wrong");
-                                Assert.AreEqual(expected.EndOffset(), docsAndPositionsEnum.EndOffset(), "endOffset is wrong");
+                                Assert.AreEqual(expected.StartOffset, docsAndPositionsEnum.StartOffset, "startOffset is wrong");
+                                Assert.AreEqual(expected.EndOffset, docsAndPositionsEnum.EndOffset, "endOffset is wrong");
                             }
                             else
                             {
@@ -1039,8 +1039,8 @@ namespace Lucene.Net.Index
                             {
                                 Console.WriteLine("      now check offsets are -1");
                             }
-                            Assert.AreEqual(-1, docsAndPositionsEnum.StartOffset(), "startOffset isn't -1");
-                            Assert.AreEqual(-1, docsAndPositionsEnum.EndOffset(), "endOffset isn't -1");
+                            Assert.AreEqual(-1, docsAndPositionsEnum.StartOffset, "startOffset isn't -1");
+                            Assert.AreEqual(-1, docsAndPositionsEnum.EndOffset, "endOffset isn't -1");
                         }
                     }
                 }

@@ -123,11 +123,11 @@ namespace Lucene.Net.Analysis.Sinks
             assertTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             assertEquals(2, positions.Freq());
             positions.NextPosition();
-            assertEquals(0, positions.StartOffset());
-            assertEquals(4, positions.EndOffset());
+            assertEquals(0, positions.StartOffset);
+            assertEquals(4, positions.EndOffset);
             positions.NextPosition();
-            assertEquals(8, positions.StartOffset());
-            assertEquals(12, positions.EndOffset());
+            assertEquals(8, positions.StartOffset);
+            assertEquals(12, positions.EndOffset);
             assertEquals(DocIdSetIterator.NO_MORE_DOCS, positions.NextDoc());
             r.Dispose();
             dir.Dispose();

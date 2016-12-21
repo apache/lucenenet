@@ -294,16 +294,22 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return int.MaxValue; // lie
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                Debug.Assert(currentStartOffset >= 0);
-                return currentStartOffset;
+                get
+                {
+                    Debug.Assert(currentStartOffset >= 0);
+                    return currentStartOffset;
+                }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                Debug.Assert(currentEndOffset >= 0);
-                return currentEndOffset;
+                get
+                {
+                    Debug.Assert(currentEndOffset >= 0);
+                    return currentEndOffset;
+                }
             }
 
 

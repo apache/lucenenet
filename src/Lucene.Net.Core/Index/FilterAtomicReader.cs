@@ -345,14 +345,14 @@ namespace Lucene.Net.Index
                 return input.NextPosition();
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return input.StartOffset();
+                get { return input.StartOffset; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return input.EndOffset();
+                get { return input.EndOffset; }
             }
 
             public override BytesRef Payload

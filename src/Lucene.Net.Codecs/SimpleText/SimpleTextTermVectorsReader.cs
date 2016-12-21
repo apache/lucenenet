@@ -603,24 +603,30 @@ namespace Lucene.Net.Codecs.SimpleText
                 return -1;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                if (_startOffsets == null)
+                get
                 {
-                    return -1;
-                }
+                    if (_startOffsets == null)
+                    {
+                        return -1;
+                    }
 
-                return _startOffsets[_nextPos - 1];
+                    return _startOffsets[_nextPos - 1];
+                }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                if (_endOffsets == null)
+                get
                 {
-                    return -1;
-                }
+                    if (_endOffsets == null)
+                    {
+                        return -1;
+                    }
 
-                return _endOffsets[_nextPos - 1];
+                    return _endOffsets[_nextPos - 1];
+                }
             }
 
             public override long Cost()

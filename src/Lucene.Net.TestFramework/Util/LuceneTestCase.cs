@@ -2058,8 +2058,8 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
                     Assert.AreEqual(leftDocs.Payload, rightDocs.Payload, info);
-                    Assert.AreEqual(leftDocs.StartOffset(), rightDocs.StartOffset(), info);
-                    Assert.AreEqual(leftDocs.EndOffset(), rightDocs.EndOffset(), info);
+                    Assert.AreEqual(leftDocs.StartOffset, rightDocs.StartOffset, info);
+                    Assert.AreEqual(leftDocs.EndOffset, rightDocs.EndOffset, info);
                 }
             }
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc(), info);

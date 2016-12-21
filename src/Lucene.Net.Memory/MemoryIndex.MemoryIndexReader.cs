@@ -544,14 +544,14 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override int StartOffset()
+                public override int StartOffset
                 {
-                    return startOffset_Renamed;
+                    get { return startOffset_Renamed; }
                 }
 
-                public override int EndOffset()
+                public override int EndOffset
                 {
-                    return endOffset_Renamed;
+                    get { return endOffset_Renamed; }
                 }
 
                 public override BytesRef Payload

@@ -1238,8 +1238,8 @@ namespace Lucene.Net.Index
                                 }
                                 if (hasOffsets)
                                 {
-                                    int startOffset = postings.StartOffset();
-                                    int endOffset = postings.EndOffset();
+                                    int startOffset = postings.StartOffset;
+                                    int endOffset = postings.EndOffset;
                                     // NOTE: we cannot enforce any bounds whatsoever on vectors... they were a free-for-all before?
                                     // but for offsets in the postings lists these checks are fine: they were always enforced by IndexWriter
                                     if (!isVectors)
@@ -1364,8 +1364,8 @@ namespace Lucene.Net.Index
                                     lastPosition = pos;
                                     if (hasOffsets)
                                     {
-                                        int startOffset = postings.StartOffset();
-                                        int endOffset = postings.EndOffset();
+                                        int startOffset = postings.StartOffset;
+                                        int endOffset = postings.EndOffset;
                                         // NOTE: we cannot enforce any bounds whatsoever on vectors... they were a free-for-all before?
                                         // but for offsets in the postings lists these checks are fine: they were always enforced by IndexWriter
                                         if (!isVectors)
@@ -2225,8 +2225,8 @@ namespace Lucene.Net.Index
 
                                                 // Call the methods to at least make
                                                 // sure they don't throw exc:
-                                                int startOffset = postings.StartOffset();
-                                                int endOffset = postings.EndOffset();
+                                                int startOffset = postings.StartOffset;
+                                                int endOffset = postings.EndOffset;
                                                 // TODO: these are too anal...?
                                                 /*
                                                   if (endOffset < startOffset) {
@@ -2240,9 +2240,9 @@ namespace Lucene.Net.Index
 
                                                 if (postingsPostings != null)
                                                 {
-                                                    int postingsStartOffset = postingsPostings.StartOffset();
+                                                    int postingsStartOffset = postingsPostings.StartOffset;
 
-                                                    int postingsEndOffset = postingsPostings.EndOffset();
+                                                    int postingsEndOffset = postingsPostings.EndOffset;
                                                     if (startOffset != -1 && postingsStartOffset != -1 && startOffset != postingsStartOffset)
                                                     {
                                                         throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": startOffset=" + startOffset + " differs from postings startOffset=" + postingsStartOffset);

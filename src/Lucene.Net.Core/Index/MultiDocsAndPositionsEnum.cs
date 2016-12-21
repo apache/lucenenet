@@ -181,14 +181,14 @@ namespace Lucene.Net.Index
             return current.NextPosition();
         }
 
-        public override int StartOffset()
+        public override int StartOffset
         {
-            return current.StartOffset();
+            get { return current.StartOffset; }
         }
 
-        public override int EndOffset()
+        public override int EndOffset
         {
-            return current.EndOffset();
+            get { return current.EndOffset; }
         }
 
         public override BytesRef Payload

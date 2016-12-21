@@ -260,8 +260,8 @@ namespace Lucene.Net.Index.Sorter
                     assertEquals("incorrect position for doc=" + doc, i, sortedPositions.NextPosition());
                     if (!DoesntSupportOffsets.contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
                     {
-                        assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset());
-                        assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset());
+                        assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset);
+                        assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset);
                     }
                     assertEquals("incorrect payload for doc=" + doc, freq - i, int.Parse(sortedPositions.Payload.Utf8ToString(), CultureInfo.InvariantCulture));
                 }
@@ -284,8 +284,8 @@ namespace Lucene.Net.Index.Sorter
                     assertEquals("incorrect position for doc=" + doc, i, sortedPositions.NextPosition());
                     if (!DoesntSupportOffsets.contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
                     {
-                        assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset());
-                        assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset());
+                        assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset);
+                        assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset);
                     }
                     assertEquals("incorrect payload for doc=" + doc, freq - i, int.Parse(sortedPositions.Payload.Utf8ToString(), CultureInfo.InvariantCulture));
                 }

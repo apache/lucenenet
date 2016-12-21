@@ -413,8 +413,8 @@ namespace Lucene.Net.Codecs.Memory
                                         scratch.Add(docsAndPositionsEnum.NextPosition());
                                         if (hasOffsets_Renamed)
                                         {
-                                            scratch.Add(docsAndPositionsEnum.StartOffset());
-                                            scratch.Add(docsAndPositionsEnum.EndOffset());
+                                            scratch.Add(docsAndPositionsEnum.StartOffset);
+                                            scratch.Add(docsAndPositionsEnum.EndOffset);
                                         }
                                         if (hasPayloads_Renamed)
                                         {
@@ -530,8 +530,8 @@ namespace Lucene.Net.Codecs.Memory
                                         posUpto++;
                                         if (hasOffsets_Renamed)
                                         {
-                                            positions[upto][posUpto++] = docsAndPositionsEnum.StartOffset();
-                                            positions[upto][posUpto++] = docsAndPositionsEnum.EndOffset();
+                                            positions[upto][posUpto++] = docsAndPositionsEnum.StartOffset;
+                                            positions[upto][posUpto++] = docsAndPositionsEnum.EndOffset;
                                         }
                                     }
                                 }
@@ -2196,14 +2196,14 @@ namespace Lucene.Net.Codecs.Memory
                 return pos;
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                return startOffset_Renamed;
+                get { return startOffset_Renamed; }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                return endOffset_Renamed;
+                get { return endOffset_Renamed; }
             }
 
             public override int Advance(int target)
@@ -2523,20 +2523,26 @@ namespace Lucene.Net.Codecs.Memory
                 return curPositions[posUpto];
             }
 
-            public override int StartOffset()
+            public override int StartOffset
             {
-                if (hasOffsets)
-                    return curPositions[posUpto + 1];
-                
-                return -1;
+                get
+                {
+                    if (hasOffsets)
+                        return curPositions[posUpto + 1];
+
+                    return -1;
+                }
             }
 
-            public override int EndOffset()
+            public override int EndOffset
             {
-                if (hasOffsets)
-                    return curPositions[posUpto + 2];
-                
-                return -1;
+                get
+                {
+                    if (hasOffsets)
+                        return curPositions[posUpto + 2];
+
+                    return -1;
+                }
             }
 
             public override int Advance(int target)

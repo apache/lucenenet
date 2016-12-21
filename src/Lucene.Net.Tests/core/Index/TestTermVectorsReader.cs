@@ -334,8 +334,8 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
-                    Assert.AreEqual(j * 10, dpEnum.StartOffset());
-                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset());
+                    Assert.AreEqual(j * 10, dpEnum.StartOffset);
+                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset);
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             }
@@ -392,8 +392,8 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < Positions[i].Length; j++)
                 {
                     Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
-                    Assert.AreEqual(j * 10, dpEnum.StartOffset());
-                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset());
+                    Assert.AreEqual(j * 10, dpEnum.StartOffset);
+                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset);
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             }
