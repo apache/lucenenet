@@ -54,13 +54,13 @@ namespace Lucene.Net.Index
         public class TermsEnumIndex
         {
             public static readonly TermsEnumIndex[] EMPTY_ARRAY = new TermsEnumIndex[0];
-            internal readonly int subIndex; // LUCENENET TODO: Make property
-            internal readonly TermsEnum termsEnum; // LUCENENET TODO: Make property
+            internal int SubIndex { get; private set; }
+            internal TermsEnum TermsEnum { get; private set; }
 
             public TermsEnumIndex(TermsEnum termsEnum, int subIndex)
             {
-                this.termsEnum = termsEnum;
-                this.subIndex = subIndex;
+                this.TermsEnum = termsEnum;
+                this.SubIndex = subIndex;
             }
         }
 
@@ -139,24 +139,24 @@ namespace Lucene.Net.Index
                 // init our term comp
                 if (termComp == null)
                 {
-                    queue.TermComp = termComp = termsEnumIndex.termsEnum.Comparator;
+                    queue.termComp = termComp = termsEnumIndex.TermsEnum.Comparator;
                 }
                 else
                 {
                     // We cannot merge sub-readers that have
                     // different TermComps
-                    IComparer<BytesRef> subTermComp = termsEnumIndex.termsEnum.Comparator;
+                    IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparator;
                     if (subTermComp != null && !subTermComp.Equals(termComp))
                     {
                         throw new InvalidOperationException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
                 }
 
-                BytesRef term = termsEnumIndex.termsEnum.Next();
+                BytesRef term = termsEnumIndex.TermsEnum.Next();
                 if (term != null)
                 {
-                    TermsEnumWithSlice entry = subs[termsEnumIndex.subIndex];
-                    entry.Reset(termsEnumIndex.termsEnum, term);
+                    TermsEnumWithSlice entry = subs[termsEnumIndex.SubIndex];
+                    entry.Reset(termsEnumIndex.TermsEnum, term);
                     queue.Add(entry);
                     currentSubs[numSubs++] = entry;
                 }
@@ -626,10 +626,10 @@ namespace Lucene.Net.Index
 
         public sealed class TermsEnumWithSlice
         {
-            internal readonly ReaderSlice SubSlice; // LUCENENET TODO: Make property
-            internal TermsEnum Terms; // LUCENENET TODO: Make property
-            public BytesRef Current; // LUCENENET TODO: Make property
-            internal readonly int Index; // LUCENENET TODO: Make property
+            internal ReaderSlice SubSlice { get; private set; }
+            internal TermsEnum Terms { get; set; }
+            public BytesRef Current { get; set; }
+            internal int Index { get; private set; }
 
             public TermsEnumWithSlice(int index, ReaderSlice subSlice)
             {
@@ -652,7 +652,7 @@ namespace Lucene.Net.Index
 
         private sealed class TermMergeQueue : Util.PriorityQueue<TermsEnumWithSlice>
         {
-            internal IComparer<BytesRef> TermComp;
+            internal IComparer<BytesRef> termComp;
 
             internal TermMergeQueue(int size)
                 : base(size)
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
 
             public override bool LessThan(TermsEnumWithSlice termsA, TermsEnumWithSlice termsB)
             {
-                int cmp = TermComp.Compare(termsA.Current, termsB.Current);
+                int cmp = termComp.Compare(termsA.Current, termsB.Current);
                 if (cmp != 0)
                 {
                     return cmp < 0;
