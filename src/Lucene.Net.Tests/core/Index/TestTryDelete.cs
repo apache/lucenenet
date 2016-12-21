@@ -104,14 +104,14 @@ namespace Lucene.Net.Index
             // The tryDeleteDocument should have succeeded:
             Assert.IsTrue(result != -1);
 
-            Assert.IsTrue(writer.HasDeletions());
+            Assert.IsTrue(writer.HasDeletions);
 
             if (Random().NextBoolean())
             {
                 writer.Commit();
             }
 
-            Assert.IsTrue(writer.HasDeletions());
+            Assert.IsTrue(writer.HasDeletions);
 
             mgr.MaybeRefresh();
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 
             writer.Commit();
 
-            Assert.IsTrue(writer.HasDeletions());
+            Assert.IsTrue(writer.HasDeletions);
 
             mgr.MaybeRefresh();
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 
             // writer.Commit();
 
-            Assert.IsTrue(writer.HasDeletions());
+            Assert.IsTrue(writer.HasDeletions);
 
             mgr.MaybeRefresh();
 

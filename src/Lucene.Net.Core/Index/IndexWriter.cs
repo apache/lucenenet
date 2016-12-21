@@ -1348,31 +1348,34 @@ namespace Lucene.Net.Index
         /// turns out those buffered deletions don't match any
         /// documents.
         /// </summary>
-        public virtual bool HasDeletions() // LUCENENET TODO: Make property ?
+        public virtual bool HasDeletions
         {
-            lock (this)
+            get
             {
-                EnsureOpen();
-                if (bufferedUpdatesStream.Any())
+                lock (this)
                 {
-                    return true;
-                }
-                if (docWriter.AnyDeletions())
-                {
-                    return true;
-                }
-                if (readerPool.AnyPendingDeletes())
-                {
-                    return true;
-                }
-                foreach (SegmentCommitInfo info in segmentInfos.Segments)
-                {
-                    if (info.HasDeletions())
+                    EnsureOpen();
+                    if (bufferedUpdatesStream.Any())
                     {
                         return true;
                     }
+                    if (docWriter.AnyDeletions())
+                    {
+                        return true;
+                    }
+                    if (readerPool.AnyPendingDeletes())
+                    {
+                        return true;
+                    }
+                    foreach (SegmentCommitInfo info in segmentInfos.Segments)
+                    {
+                        if (info.HasDeletions())
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
-                return false;
             }
         }
 
