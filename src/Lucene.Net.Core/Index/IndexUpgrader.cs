@@ -130,9 +130,9 @@ namespace Lucene.Net.Index
             return new IndexUpgrader(dir, LuceneVersion.LUCENE_CURRENT, @out, deletePriorCommits);
         }
 
-        private readonly Directory Dir;
-        private readonly IndexWriterConfig Iwc;
-        private readonly bool DeletePriorCommits;
+        private readonly Directory dir;
+        private readonly IndexWriterConfig iwc;
+        private readonly bool deletePriorCommits;
 
         /// <summary>
         /// Creates index upgrader on the given directory, using an <seealso cref="IndexWriter"/> using the given
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
         {
             if (null != infoStream)
             {
-                this.Iwc.SetInfoStream(infoStream);
+                this.iwc.SetInfoStream(infoStream);
             }
         }
 
@@ -164,40 +164,40 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexUpgrader(Directory dir, IndexWriterConfig iwc, bool deletePriorCommits)
         {
-            this.Dir = dir;
-            this.Iwc = iwc;
-            this.DeletePriorCommits = deletePriorCommits;
+            this.dir = dir;
+            this.iwc = iwc;
+            this.deletePriorCommits = deletePriorCommits;
         }
 
         /// <summary>
         /// Perform the upgrade. </summary>
         public void Upgrade()
         {
-            if (!DirectoryReader.IndexExists(Dir))
+            if (!DirectoryReader.IndexExists(dir))
             {
-                throw new IndexNotFoundException(Dir.ToString());
+                throw new IndexNotFoundException(dir.ToString());
             }
 
-            if (!DeletePriorCommits)
+            if (!deletePriorCommits)
             {
-                ICollection<IndexCommit> commits = DirectoryReader.ListCommits(Dir);
+                ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
                 if (commits.Count > 1)
                 {
                     throw new System.ArgumentException("this tool was invoked to not delete prior commit points, but the following commits were found: " + commits);
                 }
             }
 
-            IndexWriterConfig c = (IndexWriterConfig)Iwc.Clone();
+            IndexWriterConfig c = (IndexWriterConfig)iwc.Clone();
             c.SetMergePolicy(new UpgradeIndexMergePolicy(c.MergePolicy));
             c.SetIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 
-            IndexWriter w = new IndexWriter(Dir, c);
+            IndexWriter w = new IndexWriter(dir, c);
             try
             {
                 InfoStream infoStream = c.InfoStream;
                 if (infoStream.IsEnabled("IndexUpgrader"))
                 {
-                    infoStream.Message("IndexUpgrader", "Upgrading all pre-" + Constants.LUCENE_MAIN_VERSION + " segments of index directory '" + Dir + "' to version " + Constants.LUCENE_MAIN_VERSION + "...");
+                    infoStream.Message("IndexUpgrader", "Upgrading all pre-" + Constants.LUCENE_MAIN_VERSION + " segments of index directory '" + dir + "' to version " + Constants.LUCENE_MAIN_VERSION + "...");
                 }
                 w.ForceMerge(1);
                 if (infoStream.IsEnabled("IndexUpgrader"))
