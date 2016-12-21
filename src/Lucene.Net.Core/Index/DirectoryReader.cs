@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The index directory. </summary>
-        protected internal readonly Directory Directory_Renamed;
+        protected internal readonly Directory directory;
 
         /// <summary>
         /// Returns a IndexReader reading the index in the given
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
         protected DirectoryReader(Directory directory, AtomicReader[] segmentReaders)
             : base(segmentReaders)
         {
-            this.Directory_Renamed = directory;
+            this.directory = directory;
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace Lucene.Net.Index
                 // Don't ensureOpen here -- in certain cases, when a
                 // cloned/reopened reader needs to commit, it may call
                 // this method on the closed original reader
-                return Directory_Renamed;
+                return directory;
             }
         }
 
