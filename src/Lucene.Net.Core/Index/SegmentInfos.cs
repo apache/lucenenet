@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     
-    public sealed class SegmentInfos /*: List<SegmentCommitInfo>*/
+    public sealed class SegmentInfos /*: List<SegmentCommitInfo>*/ // LUCENENET TODO: Original implemented IEnumerable<SegmentCommitInfo>
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
@@ -139,18 +139,18 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Used to name new segments. </summary>
-        public int Counter; // LUCENENET TODO: Make property
+        public int Counter { get; set; }
 
         // LUCENENET specific: Version made into property (see below)
 
-        private long _generation; // generation of the "segments_N" for the next commit
-        private long _lastGeneration; // generation of the "segments_N" file we last successfully read
+        private long generation; // generation of the "segments_N" for the next commit
+        private long lastGeneration; // generation of the "segments_N" file we last successfully read
         // or wrote; this is normally the same as generation except if
         // there was an IOException that had interrupted a commit
 
         /// <summary>
         /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
-        private IDictionary<string, string> _userData = CollectionsHelper.EmptyMap<string, string>();
+        private IDictionary<string, string> userData = CollectionsHelper.EmptyMap<string, string>();
 
         private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _lastGeneration);
+                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", lastGeneration);
             }
         }
 
@@ -328,13 +328,13 @@ namespace Lucene.Net.Index
             {
                 long nextGeneration;
 
-                if (_generation == -1)
+                if (generation == -1)
                 {
                     nextGeneration = 1;
                 }
                 else
                 {
-                    nextGeneration = _generation + 1;
+                    nextGeneration = generation + 1;
                 }
                 return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", nextGeneration);
             }
@@ -355,9 +355,9 @@ namespace Lucene.Net.Index
             // Clear any previous segments:
             this.Clear();
 
-            _generation = GenerationFromSegmentsFileName(segmentFileName);
+            generation = GenerationFromSegmentsFileName(segmentFileName);
 
-            _lastGeneration = _generation;
+            lastGeneration = generation;
 
             var input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
             try
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                         }
                         Add(siPerCommit);
                     }
-                    _userData = input.ReadStringStringMap();
+                    userData = input.ReadStringStringMap();
                 }
                 else
                 {
@@ -466,27 +466,24 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Read(Directory directory)
         {
-            _generation = _lastGeneration = -1;
+            generation = lastGeneration = -1;
 
             new FindSegmentsFileAnonymousInnerClassHelper(this, directory).Run();
         }
 
         private class FindSegmentsFileAnonymousInnerClassHelper : FindSegmentsFile
         {
-            private readonly SegmentInfos OuterInstance;
-
-            private new readonly Directory Directory;
+            private readonly SegmentInfos outerInstance;
 
             public FindSegmentsFileAnonymousInnerClassHelper(SegmentInfos outerInstance, Directory directory)
                 : base(directory)
             {
-                this.OuterInstance = outerInstance;
-                this.Directory = directory;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override object DoBody(string segmentFileName)
             {
-                OuterInstance.Read(Directory, segmentFileName);
+                outerInstance.Read(directory, segmentFileName);
                 return null;
             }
         }
@@ -503,13 +500,13 @@ namespace Lucene.Net.Index
             string segmentsFileName = NextSegmentFileName;
 
             // Always advance the generation on write:
-            if (_generation == -1)
+            if (generation == -1)
             {
-                _generation = 1;
+                generation = 1;
             }
             else
             {
-                _generation++;
+                generation++;
             }
 
             IndexOutput segnOutput = null;
@@ -579,7 +576,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                segnOutput.WriteStringStringMap(_userData);
+                segnOutput.WriteStringStringMap(userData);
                 pendingSegnOutput = segnOutput;
                 success = true;
             }
@@ -714,7 +711,7 @@ namespace Lucene.Net.Index
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
-            sis._userData = new Dictionary<string, string>(_userData);
+            sis.userData = new Dictionary<string, string>(userData);
             return sis;
         }
 
@@ -736,7 +733,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return _generation;
+                return generation;
             }
         }
 
@@ -746,7 +743,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return _lastGeneration;
+                return lastGeneration;
             }
         }
 
@@ -1104,8 +1101,8 @@ namespace Lucene.Net.Index
         // Carry over generation numbers from another SegmentInfos
         internal void UpdateGeneration(SegmentInfos other)
         {
-            _lastGeneration = other._lastGeneration;
-            _generation = other._generation;
+            lastGeneration = other.lastGeneration;
+            generation = other.generation;
         }
 
         internal void RollbackCommit(Directory dir)
@@ -1119,7 +1116,7 @@ namespace Lucene.Net.Index
 
                 // Must carefully compute fileName from "generation"
                 // since lastGeneration isn't incremented:
-                string segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _generation);
+                string segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
                 // Suppress so we keep throwing the original exception
                 // in our caller
                 IOUtils.DeleteFilesIgnoringExceptions(dir, segmentFileName);
@@ -1231,7 +1228,7 @@ namespace Lucene.Net.Index
             // logic in SegmentInfos to kick in and load the last
             // good (previous) segments_N-1 file.
 
-            var fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _generation);
+            var fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
             success = false;
             try
             {
@@ -1253,8 +1250,8 @@ namespace Lucene.Net.Index
                 }
             }
 
-            _lastGeneration = _generation;
-            WriteSegmentsGen(dir, _generation);
+            lastGeneration = generation;
+            WriteSegmentsGen(dir, generation);
         }
 
         /// <summary>
@@ -1299,17 +1296,17 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return _userData;
+                return userData;
             }
             set
             {
                 if (value == null)
                 {
-                    _userData = CollectionsHelper.EmptyMap<string, string>();
+                    userData = CollectionsHelper.EmptyMap<string, string>();
                 }
                 else
                 {
-                    _userData = value;
+                    userData = value;
                 }
             }
         }
@@ -1322,7 +1319,7 @@ namespace Lucene.Net.Index
         internal void Replace(SegmentInfos other)
         {
             RollbackSegmentInfos(other.AsList());
-            _lastGeneration = other._lastGeneration;
+            lastGeneration = other.lastGeneration;
         }
 
         /// <summary>
