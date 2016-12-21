@@ -291,15 +291,15 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of terms in this field
         /// </summary>
-        public virtual int NumTerms() // LUCENENET TODO: Make property
+        public virtual int NumTerms
         {
-            return numTermsInField;
+            get { return numTermsInField; }
         }
 
         /// <summary>
         /// Returns {@code true} if no terms were indexed.
         /// </summary>
-        public virtual bool Empty // LUCENENET TODO: Rename IsEmpty
+        public virtual bool IsEmpty
         {
             get
             {
@@ -930,7 +930,7 @@ namespace Lucene.Net.Index
         /// Returns a SortedSetDocValues view of this instance </summary>
         public virtual SortedSetDocValues GetIterator(AtomicReader reader)
         {
-            if (Empty)
+            if (IsEmpty)
             {
                 return DocValues.EMPTY_SORTED_SET;
             }
@@ -1091,7 +1091,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return OuterInstance.NumTerms();
+                    return OuterInstance.NumTerms;
                 }
             }
 

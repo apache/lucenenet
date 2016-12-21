@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
 
             //final TermsEnum te = subR.Fields.Terms("field").iterator();
             TermsEnum te = dto.GetOrdTermsEnum(r);
-            if (dto.NumTerms() == 0)
+            if (dto.NumTerms == 0)
             {
                 if (prefixRef == null)
                 {
