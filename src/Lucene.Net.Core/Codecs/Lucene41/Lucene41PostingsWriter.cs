@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene41
             FieldHasFreqs = indexOptions >= IndexOptions.DOCS_AND_FREQS;
             FieldHasPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             FieldHasOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            FieldHasPayloads = fieldInfo.HasPayloads();
+            FieldHasPayloads = fieldInfo.HasPayloads;
             SkipWriter.SetField(FieldHasPositions, FieldHasOffsets, FieldHasPayloads);
             LastState = EmptyState;
             if (FieldHasPositions)

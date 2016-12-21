@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 long nextNormSeek = NORMS_HEADER.Length; //skip header (header unused for now)
                 foreach (FieldInfo fi in fields)
                 {
-                    if (fi.HasNorms())
+                    if (fi.HasNorms)
                     {
                         string fileName = GetNormFilename(info, fi.Number);
                         Directory d = HasSeparateNorms(info, fi.Number) ? separateNormsDir : dir;

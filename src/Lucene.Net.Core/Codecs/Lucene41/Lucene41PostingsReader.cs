@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Lucene41PostingsWriter.IntBlockTermState termState = (Lucene41PostingsWriter.IntBlockTermState)_termState;
             bool fieldHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            bool fieldHasPayloads = fieldInfo.HasPayloads();
+            bool fieldHasPayloads = fieldInfo.HasPayloads;
 
             if (absolute)
             {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             bool fieldHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            bool fieldHasPayloads = fieldInfo.HasPayloads();
+            bool fieldHasPayloads = fieldInfo.HasPayloads;
             if (termState.DocFreq == 1)
             {
                 termState.SingletonDocID = @in.ReadVInt();
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             bool indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            bool indexHasPayloads = fieldInfo.HasPayloads();
+            bool indexHasPayloads = fieldInfo.HasPayloads;
 
             if ((!indexHasOffsets || (flags & DocsAndPositionsEnum.FLAG_OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) == 0))
             {
@@ -344,13 +344,13 @@ namespace Lucene.Net.Codecs.Lucene41
                 IndexHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
                 IndexHasPos = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                 IndexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                IndexHasPayloads = fieldInfo.HasPayloads();
+                IndexHasPayloads = fieldInfo.HasPayloads;
                 Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && IndexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && IndexHasPayloads == fieldInfo.HasPayloads();
+                return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && IndexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public DocsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
@@ -667,12 +667,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
                 Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
                 IndexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                IndexHasPayloads = fieldInfo.HasPayloads();
+                IndexHasPayloads = fieldInfo.HasPayloads;
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads();
+                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public DocsAndPositionsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
@@ -1169,7 +1169,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     EndOffset_Renamed = -1;
                 }
 
-                IndexHasPayloads = fieldInfo.HasPayloads();
+                IndexHasPayloads = fieldInfo.HasPayloads;
                 if (IndexHasPayloads)
                 {
                     PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads();
+                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public EverythingEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)

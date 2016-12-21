@@ -945,7 +945,7 @@ namespace Lucene.Net.Index
                 }
                 foreach (FieldInfo info in reader.FieldInfos)
                 {
-                    if (info.HasNorms())
+                    if (info.HasNorms)
                     {
                         Debug.Assert(reader.HasNorms(info.Name)); // deprecated path
                         CheckNorms(info, reader, infoStream);
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Index
                 {
                     throw new Exception("fieldsEnum inconsistent with fieldInfos, no fieldInfos for: " + field);
                 }
-                if (!fieldInfo.Indexed)
+                if (!fieldInfo.IsIndexed)
                 {
                     throw new Exception("fieldsEnum inconsistent with fieldInfos, isIndexed == false for: " + field);
                 }
@@ -1064,7 +1064,7 @@ namespace Lucene.Net.Index
                         throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
                     }
 
-                    bool expectedHasPayloads = fieldInfo.HasPayloads();
+                    bool expectedHasPayloads = fieldInfo.HasPayloads;
                     if (hasPayloads != expectedHasPayloads)
                     {
                         throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
@@ -1759,7 +1759,7 @@ namespace Lucene.Net.Index
                 }
                 foreach (FieldInfo fieldInfo in reader.FieldInfos)
                 {
-                    if (fieldInfo.HasDocValues())
+                    if (fieldInfo.HasDocValues)
                     {
                         status.TotalValueFields++;
                         CheckDocValues(fieldInfo, reader, /*infoStream,*/ status);
@@ -2114,7 +2114,7 @@ namespace Lucene.Net.Index
 
                             // Make sure FieldInfo thinks this field is vector'd:
                             FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                            if (!fieldInfo.HasVectors())
+                            if (!fieldInfo.HasVectors)
                             {
                                 throw new Exception("docID=" + j + " has term vectors for field=" + field + " but FieldInfo has storeTermVector=false");
                             }
@@ -2124,7 +2124,7 @@ namespace Lucene.Net.Index
                                 Terms terms = tfv.Terms(field);
                                 termsEnum = terms.Iterator(termsEnum);
                                 bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
-                                bool postingsHasPayload = fieldInfo.HasPayloads();
+                                bool postingsHasPayload = fieldInfo.HasPayloads;
                                 bool vectorsHasPayload = terms.HasPayloads();
 
                                 Terms postingsTerms = postingsFields.Terms(field);

@@ -192,9 +192,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if this field has any docValues.
         /// </summary>
-        public bool HasDocValues() // LUCENENET TODO: Make property
+        public bool HasDocValues
         {
-            return docValueType != null;
+            get { return docValueType != null; }
         }
 
         /// <summary>
@@ -249,23 +249,23 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if norms are explicitly omitted for this field
         /// </summary>
-        public bool OmitsNorms() // LUCENENET TODO: Make property
+        public bool OmitsNorms
         {
-            return omitNorms;
+            get { return omitNorms; }
         }
 
         /// <summary>
         /// Returns true if this field actually has any norms.
         /// </summary>
-        public bool HasNorms() // LUCENENET TODO: Make property
+        public bool HasNorms
         {
-            return normTypeValue != null;
+            get { return normTypeValue != null; }
         }
 
         /// <summary>
         /// Returns true if this field is indexed.
         /// </summary>
-        public bool Indexed // LUCENENET TODO: Rename IsIndexed
+        public bool IsIndexed
         {
             get
             {
@@ -276,17 +276,17 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if any payloads exist for this field.
         /// </summary>
-        public bool HasPayloads() // LUCENENET TODO: Make property
+        public bool HasPayloads
         {
-            return storePayloads;
+            get { return storePayloads; }
         }
 
         /// <summary>
         /// Returns true if any term vectors exist for this field.
         /// </summary>
-        public bool HasVectors() // LUCENENET TODO: Make property
+        public bool HasVectors
         {
-            return storeTermVector;
+            get { return storeTermVector; }
         }
 
         /// <summary>
@@ -337,9 +337,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns internal codec attributes map. May be null if no mappings exist.
         /// </summary>
-        public IDictionary<string, string> Attributes() // LUCENENET TODO: Make property
+        public IDictionary<string, string> Attributes
         {
-            return attributes;
+            get { return attributes; }
         }
     }
 

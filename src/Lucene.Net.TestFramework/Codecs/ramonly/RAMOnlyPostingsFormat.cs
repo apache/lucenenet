@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.ramonly
 
             public override bool HasPayloads()
             {
-                return Info.HasPayloads();
+                return Info.HasPayloads;
             }
         }
 

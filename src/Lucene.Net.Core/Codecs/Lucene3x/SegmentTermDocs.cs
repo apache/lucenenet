@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Count = 0;
             FieldInfo fi = FieldInfos.FieldInfo(term.Field);
             this.indexOptions = (fi != null) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            CurrentFieldStoresPayloads = (fi != null) && fi.HasPayloads();
+            CurrentFieldStoresPayloads = (fi != null) && fi.HasPayloads;
             if (ti == null)
             {
                 Df = 0;

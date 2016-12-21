@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
             ICollection<string> fields = new HashSet<string>();
             foreach (FieldInfo fieldInfo in GetMergedFieldInfos(reader))
             {
-                if (fieldInfo.Indexed)
+                if (fieldInfo.IsIndexed)
                 {
                     fields.Add(fieldInfo.Name);
                 }

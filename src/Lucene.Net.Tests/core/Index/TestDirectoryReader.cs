@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
             {
                 string name = fieldInfo.Name;
                 allFieldNames.Add(name);
-                if (fieldInfo.Indexed)
+                if (fieldInfo.IsIndexed)
                 {
                     indexedFieldNames.Add(name);
                 }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
                 {
                     notIndexedFieldNames.Add(name);
                 }
-                if (fieldInfo.HasVectors())
+                if (fieldInfo.HasVectors)
                 {
                     tvFieldNames.Add(name);
                 }

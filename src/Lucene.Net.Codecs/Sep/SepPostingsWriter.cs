@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Sep
             }
             SKIP_LIST_WRITER.IndexOptions = INDEX_OPTIONS;
             STORE_PAYLOADS = INDEX_OPTIONS == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
-                            FIELD_INFO.HasPayloads();
+                            FIELD_INFO.HasPayloads;
             LAST_PAYLOAD_FP = 0;
             LAST_SKIP_FP = 0;
             _lastState = SetEmptyState();

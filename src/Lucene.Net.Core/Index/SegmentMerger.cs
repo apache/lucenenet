@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
             {
                 foreach (FieldInfo field in MergeState.FieldInfos)
                 {
-                    if (field.HasNorms())
+                    if (field.HasNorms)
                     {
                         IList<NumericDocValues> toMerge = new List<NumericDocValues>();
                         IList<Bits> docsWithField = new List<Bits>();

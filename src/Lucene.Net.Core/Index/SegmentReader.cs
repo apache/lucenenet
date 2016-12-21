@@ -654,7 +654,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null || !fi.HasNorms())
+            if (fi == null || !fi.HasNorms)
             {
                 // Field does not exist or does not index norms
                 return null;

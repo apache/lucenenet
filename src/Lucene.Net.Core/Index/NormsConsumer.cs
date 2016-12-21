@@ -55,14 +55,14 @@ namespace Lucene.Net.Index
                         NormsConsumerPerField toWrite = (NormsConsumerPerField)fieldsToFlush[fi.Name];
                         // we must check the final value of omitNorms for the fieldinfo, it could have
                         // changed for this field since the first time we added it.
-                        if (!fi.OmitsNorms())
+                        if (!fi.OmitsNorms)
                         {
                             if (toWrite != null && !toWrite.Empty)
                             {
                                 toWrite.Flush(state, normsConsumer);
                                 Debug.Assert(fi.NormType == DocValuesType.NUMERIC);
                             }
-                            else if (fi.Indexed)
+                            else if (fi.IsIndexed)
                             {
                                 Debug.Assert(fi.NormType == null, "got " + fi.NormType + "; field=" + fi.Name);
                             }

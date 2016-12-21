@@ -704,12 +704,12 @@ namespace Lucene.Net.Index
             if (dv != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.HasNorms());
+                Debug.Assert(fi.HasNorms);
                 return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
-                Debug.Assert(fi == null || fi.HasNorms() == false);
+                Debug.Assert(fi == null || fi.HasNorms == false);
                 return null;
             }
         }
@@ -763,13 +763,13 @@ namespace Lucene.Net.Index
             if (docsWithField != null)
             {
                 Debug.Assert(fi != null);
-                Debug.Assert(fi.HasDocValues());
+                Debug.Assert(fi.HasDocValues);
                 Debug.Assert(MaxDoc == docsWithField.Length());
                 docsWithField = new AssertingBits(docsWithField);
             }
             else
             {
-                Debug.Assert(fi == null || fi.HasDocValues() == false);
+                Debug.Assert(fi == null || fi.HasDocValues == false);
             }
             return docsWithField;
         }

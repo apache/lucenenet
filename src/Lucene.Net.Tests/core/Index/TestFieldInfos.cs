@@ -82,22 +82,22 @@ namespace Lucene.Net.Index
             Assert.IsTrue(fieldInfos.Size() == readIn.Size());
             FieldInfo info = readIn.FieldInfo("textField1");
             Assert.IsTrue(info != null);
-            Assert.IsTrue(info.HasVectors() == false);
-            Assert.IsTrue(info.OmitsNorms() == false);
+            Assert.IsTrue(info.HasVectors == false);
+            Assert.IsTrue(info.OmitsNorms == false);
 
             info = readIn.FieldInfo("textField2");
             Assert.IsTrue(info != null);
-            Assert.IsTrue(info.OmitsNorms() == false);
+            Assert.IsTrue(info.OmitsNorms == false);
 
             info = readIn.FieldInfo("textField3");
             Assert.IsTrue(info != null);
-            Assert.IsTrue(info.HasVectors() == false);
-            Assert.IsTrue(info.OmitsNorms() == true);
+            Assert.IsTrue(info.HasVectors == false);
+            Assert.IsTrue(info.OmitsNorms == true);
 
             info = readIn.FieldInfo("omitNorms");
             Assert.IsTrue(info != null);
-            Assert.IsTrue(info.HasVectors() == false);
-            Assert.IsTrue(info.OmitsNorms() == true);
+            Assert.IsTrue(info.HasVectors == false);
+            Assert.IsTrue(info.OmitsNorms == true);
 
             dir.Dispose();
         }

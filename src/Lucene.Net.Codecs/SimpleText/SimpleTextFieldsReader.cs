@@ -725,7 +725,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool HasPayloads()
             {
-                return _fieldInfo.HasPayloads();
+                return _fieldInfo.HasPayloads;
             }
         }
 

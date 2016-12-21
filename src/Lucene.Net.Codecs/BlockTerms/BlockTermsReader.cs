@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override bool HasPayloads()
             {
-                return _fieldInfo.HasPayloads();
+                return _fieldInfo.HasPayloads;
             }
 
             public override long Size()

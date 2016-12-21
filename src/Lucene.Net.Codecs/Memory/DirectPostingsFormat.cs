@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.Memory
                 hasFreq = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_ONLY) > 0;
                 hasPos = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
                 hasOffsets_Renamed = fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
-                hasPayloads_Renamed = fieldInfo.HasPayloads();
+                hasPayloads_Renamed = fieldInfo.HasPayloads;
 
                 BytesRef term;
                 DocsEnum docsEnum = null;

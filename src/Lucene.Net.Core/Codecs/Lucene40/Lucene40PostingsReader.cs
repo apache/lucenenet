@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene40
             // isn't passed?
 
             // TODO: refactor
-            if (fieldInfo.HasPayloads() || hasOffsets)
+            if (fieldInfo.HasPayloads || hasOffsets)
             {
                 SegmentFullPositionsEnum docsEnum;
                 if (reuse == null || !(reuse is SegmentFullPositionsEnum))
@@ -345,7 +345,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal virtual DocsEnum Reset(FieldInfo fieldInfo, StandardTermState termState)
             {
                 IndexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
-                StorePayloads = fieldInfo.HasPayloads();
+                StorePayloads = fieldInfo.HasPayloads;
                 StoreOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 FreqOffset = termState.FreqOffset;
                 SkipOffset = termState.SkipOffset;
@@ -789,7 +789,7 @@ namespace Lucene.Net.Codecs.Lucene40
             public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
             {
                 Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-                Debug.Assert(!fieldInfo.HasPayloads());
+                Debug.Assert(!fieldInfo.HasPayloads);
 
                 this.LiveDocs = liveDocs;
 
@@ -1022,7 +1022,7 @@ namespace Lucene.Net.Codecs.Lucene40
             public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
             {
                 StoreOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                StorePayloads = fieldInfo.HasPayloads();
+                StorePayloads = fieldInfo.HasPayloads;
                 Debug.Assert(fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
                 Debug.Assert(StorePayloads || StoreOffsets);
                 if (Payload_Renamed == null)

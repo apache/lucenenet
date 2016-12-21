@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.VectorHighlight
             public override void StringField(FieldInfo fieldInfo, string value)
             {
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
-                ft.StoreTermVectors = fieldInfo.HasVectors();
+                ft.StoreTermVectors = fieldInfo.HasVectors;
                 fields.Add(new Field(fieldInfo.Name, value, ft));
             }
 

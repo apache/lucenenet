@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
 
         internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
         {
-            if (!fieldInfo.Indexed)
+            if (!fieldInfo.IsIndexed)
             {
                 return; // nothing to flush, don't bother the codec with the unindexed field
             }

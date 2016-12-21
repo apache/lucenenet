@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Perfield
                     // Read field name -> format name
                     foreach (FieldInfo fi in readState.FieldInfos)
                     {
-                        if (fi.HasDocValues())
+                        if (fi.HasDocValues)
                         {
                             string fieldName = fi.Name;
                             string formatName = fi.GetAttribute(PER_FIELD_FORMAT_KEY);

@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene40
             IndexOptions = fieldInfo.IndexOptions;
 
             StoreOffsets = IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            StorePayloads = fieldInfo.HasPayloads();
+            StorePayloads = fieldInfo.HasPayloads;
             LastState = EmptyState;
             //System.out.println("  set init blockFreqStart=" + freqStart);
             //System.out.println("  set init blockProxStart=" + proxStart);

@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.Pulsing
         public override int SetField(FieldInfo fieldInfo)
         {
             _indexOptions = fieldInfo.IndexOptions;
-            _storePayloads = fieldInfo.HasPayloads();
+            _storePayloads = fieldInfo.HasPayloads;
             _absolute = false;
             _longsSize = _wrappedPostingsWriter.SetField(fieldInfo);
             _longs = new long[_longsSize];

@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
                     {
                         builder.Add(fieldInfo);
                         fieldToReader[fieldInfo.Name] = reader;
-                        if (fieldInfo.HasVectors())
+                        if (fieldInfo.HasVectors)
                         {
                             tvFieldToReader[fieldInfo.Name] = reader;
                         }

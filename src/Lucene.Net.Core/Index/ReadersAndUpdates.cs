@@ -487,9 +487,9 @@ namespace Lucene.Net.Index
                         {
                             FieldInfo clone = builder.Add(fi);
                             // copy the stuff FieldInfos.Builder doesn't copy
-                            if (fi.Attributes() != null)
+                            if (fi.Attributes != null)
                             {
-                                foreach (KeyValuePair<string, string> e in fi.Attributes())
+                                foreach (KeyValuePair<string, string> e in fi.Attributes)
                                 {
                                     clone.PutAttribute(e.Key, e.Value);
                                 }

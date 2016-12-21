@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
             int tvCount = 0;
             foreach (FieldInfo fieldInfo in mergedReader.FieldInfos)
             {
-                if (fieldInfo.HasVectors())
+                if (fieldInfo.HasVectors)
                 {
                     tvCount++;
                 }

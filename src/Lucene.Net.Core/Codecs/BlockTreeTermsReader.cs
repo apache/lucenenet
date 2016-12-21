@@ -637,7 +637,7 @@ namespace Lucene.Net.Codecs
 
             public override bool HasPayloads()
             {
-                return fieldInfo.HasPayloads();
+                return fieldInfo.HasPayloads;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)

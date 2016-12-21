@@ -708,7 +708,7 @@ namespace Lucene.Net.Index
             bool allowOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random().Next(3) <= 2);
 
-            bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads() && (alwaysTestMax || Random().Next(3) <= 2);
+            bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads && (alwaysTestMax || Random().Next(3) <= 2);
 
             DocsEnum prevDocsEnum = null;
 

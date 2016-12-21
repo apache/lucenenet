@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasPayloads()
             {
-                return fieldInfo.HasPayloads();
+                return fieldInfo.HasPayloads;
             }
 
             public override long Size()

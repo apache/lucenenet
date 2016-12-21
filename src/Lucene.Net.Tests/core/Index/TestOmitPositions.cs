@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
             DirectoryReader ir = iw.Reader;
             FieldInfos fis = MultiFields.GetMergedFieldInfos(ir);
             Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fis.FieldInfo("foo").IndexOptions);
-            Assert.IsFalse(fis.FieldInfo("foo").HasPayloads());
+            Assert.IsFalse(fis.FieldInfo("foo").HasPayloads);
             iw.Dispose();
             ir.Dispose();
             dir.Dispose(); // checkindex

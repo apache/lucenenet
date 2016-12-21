@@ -71,22 +71,22 @@ namespace Lucene.Net.Codecs.Lucene3x
                 foreach (FieldInfo fi in infos)
                 {
                     sbyte bits = 0x0;
-                    if (fi.HasVectors())
+                    if (fi.HasVectors)
                     {
                         bits |= STORE_TERMVECTOR;
                     }
-                    if (fi.OmitsNorms())
+                    if (fi.OmitsNorms)
                     {
                         bits |= OMIT_NORMS;
                     }
-                    if (fi.HasPayloads())
+                    if (fi.HasPayloads)
                     {
                         bits |= STORE_PAYLOADS;
                     }
-                    if (fi.Indexed)
+                    if (fi.IsIndexed)
                     {
                         bits |= IS_INDEXED;
-                        Debug.Assert(fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        Debug.Assert(fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
                         if (fi.IndexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= OMIT_TERM_FREQ_AND_POSITIONS;
@@ -104,13 +104,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                      */
                     output.WriteInt(fi.Number);
                     output.WriteByte((byte)bits);
-                    if (fi.Indexed && !fi.OmitsNorms())
+                    if (fi.IsIndexed && !fi.OmitsNorms)
                     {
                         // to allow null norm types we need to indicate if norms are written
                         // only in RW case
                         output.WriteByte((byte)(sbyte)(fi.NormType == null ? 0 : 1));
                     }
-                    Debug.Assert(fi.Attributes() == null); // not used or supported
+                    Debug.Assert(fi.Attributes == null); // not used or supported
                 }
                 success = true;
             }

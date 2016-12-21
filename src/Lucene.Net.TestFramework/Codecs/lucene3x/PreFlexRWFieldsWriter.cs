@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 InitializeInstanceFields();
                 this.FieldInfo = fieldInfo;
                 OmitTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
-                StorePayloads = fieldInfo.HasPayloads();
+                StorePayloads = fieldInfo.HasPayloads;
             }
 
             internal class PostingsWriter : PostingsConsumer

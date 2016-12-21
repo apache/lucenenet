@@ -233,9 +233,9 @@ namespace Lucene.Net.Documents
             public override void StringField(FieldInfo fieldInfo, string value)
             {
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
-                ft.StoreTermVectors = fieldInfo.HasVectors();
-                ft.IsIndexed = fieldInfo.Indexed;
-                ft.OmitNorms = fieldInfo.OmitsNorms();
+                ft.StoreTermVectors = fieldInfo.HasVectors;
+                ft.IsIndexed = fieldInfo.IsIndexed;
+                ft.OmitNorms = fieldInfo.OmitsNorms;
                 ft.IndexOptions = fieldInfo.IndexOptions;
                 doc.Add(new Field(fieldInfo.Name, value, ft));
             }

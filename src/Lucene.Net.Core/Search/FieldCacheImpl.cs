@@ -499,11 +499,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Bytes.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Bytes.EMPTY;
                 }
@@ -631,11 +631,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Shorts.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Shorts.EMPTY;
                 }
@@ -763,11 +763,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Ints.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Ints.EMPTY;
                 }
@@ -954,11 +954,11 @@ namespace Lucene.Net.Search
                 // field does not exist or has no value
                 return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
             }
-            else if (fieldInfo.HasDocValues())
+            else if (fieldInfo.HasDocValues)
             {
                 return reader.GetDocsWithField(field);
             }
-            else if (!fieldInfo.Indexed)
+            else if (!fieldInfo.IsIndexed)
             {
                 return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
             }
@@ -1053,11 +1053,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Floats.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Floats.EMPTY;
                 }
@@ -1210,11 +1210,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Longs.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Longs.EMPTY;
                 }
@@ -1385,11 +1385,11 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Doubles.EMPTY;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return FieldCache.Doubles.EMPTY;
                 }
@@ -1582,13 +1582,13 @@ namespace Lucene.Net.Search
                 {
                     return DocValues.EMPTY_SORTED;
                 }
-                else if (info.HasDocValues())
+                else if (info.HasDocValues)
                 {
                     // we don't try to build a sorted instance from numeric/binary doc
                     // values because dedup can be very costly
                     throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
-                else if (!info.Indexed)
+                else if (!info.IsIndexed)
                 {
                     return DocValues.EMPTY_SORTED;
                 }
@@ -1754,11 +1754,11 @@ namespace Lucene.Net.Search
             {
                 return DocValues.EMPTY_BINARY;
             }
-            else if (info.HasDocValues())
+            else if (info.HasDocValues)
             {
                 throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
-            else if (!info.Indexed)
+            else if (!info.IsIndexed)
             {
                 return DocValues.EMPTY_BINARY;
             }
@@ -1910,11 +1910,11 @@ namespace Lucene.Net.Search
             {
                 return DocValues.EMPTY_SORTED_SET;
             }
-            else if (info.HasDocValues())
+            else if (info.HasDocValues)
             {
                 throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
-            else if (!info.Indexed)
+            else if (!info.IsIndexed)
             {
                 return DocValues.EMPTY_SORTED_SET;
             }

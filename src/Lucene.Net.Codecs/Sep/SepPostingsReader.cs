@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     termState.POS_INDEX.Read(input, absolute);
                     
-                    if (fieldInfo.HasPayloads())
+                    if (fieldInfo.HasPayloads)
                     {
                         if (absolute)
                         {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Codecs.Sep
                     _indexOptions = fieldInfo.IndexOptions.Value;
 
                 _omitTf = _indexOptions == IndexOptions.DOCS_ONLY;
-                _storePayloads = fieldInfo.HasPayloads();
+                _storePayloads = fieldInfo.HasPayloads;
 
                 // TODO: can't we only do this if consumer
                 // skipped consuming the previous docs?
@@ -543,7 +543,7 @@ namespace Lucene.Net.Codecs.Sep
             internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
             {
                 _liveDocs = liveDocs;
-                _storePayloads = fieldInfo.HasPayloads();
+                _storePayloads = fieldInfo.HasPayloads;
 
                 // TODO: can't we only do this if consumer skipped consuming the previous docs?
                 _docIndex.CopyFrom(termState.DOC_INDEX);

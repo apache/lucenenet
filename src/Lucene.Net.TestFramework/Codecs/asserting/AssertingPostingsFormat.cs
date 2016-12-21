@@ -291,7 +291,7 @@ namespace Lucene.Net.Codecs.asserting
                 }
                 if (payload != null)
                 {
-                    Debug.Assert(fieldInfo.HasPayloads());
+                    Debug.Assert(fieldInfo.HasPayloads);
                 }
                 @in.AddPosition(position, payload, startOffset, endOffset);
             }

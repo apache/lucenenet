@@ -89,27 +89,27 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, ISINDEXED);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.Indexed.ToString()), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.IsIndexed.ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
-                    if (fi.Indexed)
+                    if (fi.IsIndexed)
                     {
-                        Debug.Assert(fi.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        Debug.Assert(fi.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
                         SimpleTextUtil.Write(output, INDEXOPTIONS);
                         SimpleTextUtil.Write(output, fi.IndexOptions.ToString(), scratch);
                         SimpleTextUtil.WriteNewline(output);
                     }
 
                     SimpleTextUtil.Write(output, STORETV);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasVectors().ToString()), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasVectors.ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, PAYLOADS);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasPayloads().ToString()), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasPayloads.ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower((!fi.OmitsNorms()).ToString()), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower((!fi.OmitsNorms).ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS_TYPE);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.Write(output, fi.DocValuesGen.ToString(CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
-                    IDictionary<string, string> atts = fi.Attributes();
+                    IDictionary<string, string> atts = fi.Attributes;
                     int numAtts = atts == null ? 0 : atts.Count;
                     SimpleTextUtil.Write(output, NUM_ATTS);
                     SimpleTextUtil.Write(output, numAtts.ToString(CultureInfo.InvariantCulture), scratch);

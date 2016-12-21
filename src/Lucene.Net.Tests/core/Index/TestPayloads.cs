@@ -86,9 +86,9 @@ namespace Lucene.Net.Index
 
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
             FieldInfos fi = reader.FieldInfos;
-            Assert.IsFalse(fi.FieldInfo("f1").HasPayloads(), "Payload field bit should not be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").HasPayloads(), "Payload field bit should be set.");
-            Assert.IsFalse(fi.FieldInfo("f3").HasPayloads(), "Payload field bit should not be set.");
+            Assert.IsFalse(fi.FieldInfo("f1").HasPayloads, "Payload field bit should not be set.");
+            Assert.IsTrue(fi.FieldInfo("f2").HasPayloads, "Payload field bit should be set.");
+            Assert.IsFalse(fi.FieldInfo("f3").HasPayloads, "Payload field bit should not be set.");
             reader.Dispose();
 
             // now we add another document which has payloads for field f3 and verify if the SegmentMerger
@@ -112,9 +112,9 @@ namespace Lucene.Net.Index
 
             reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
             fi = reader.FieldInfos;
-            Assert.IsFalse(fi.FieldInfo("f1").HasPayloads(), "Payload field bit should not be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").HasPayloads(), "Payload field bit should be set.");
-            Assert.IsTrue(fi.FieldInfo("f3").HasPayloads(), "Payload field bit should be set.");
+            Assert.IsFalse(fi.FieldInfo("f1").HasPayloads, "Payload field bit should not be set.");
+            Assert.IsTrue(fi.FieldInfo("f2").HasPayloads, "Payload field bit should be set.");
+            Assert.IsTrue(fi.FieldInfo("f3").HasPayloads, "Payload field bit should be set.");
             reader.Dispose();
             ram.Dispose();
         }

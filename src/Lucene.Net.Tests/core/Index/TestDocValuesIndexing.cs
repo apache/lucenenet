@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(r);
             FieldInfos fi = slow.FieldInfos;
             FieldInfo dvInfo = fi.FieldInfo("dv");
-            Assert.IsTrue(dvInfo.HasDocValues());
+            Assert.IsTrue(dvInfo.HasDocValues);
             NumericDocValues dv = slow.GetNumericDocValues("dv");
             for (int i = 0; i < 50; i++)
             {

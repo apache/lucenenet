@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 return leaves[0].AtomicReader.GetNormValues(field);
             }
             FieldInfo fi = MultiFields.GetMergedFieldInfos(r).FieldInfo(field);
-            if (fi == null || fi.HasNorms() == false)
+            if (fi == null || fi.HasNorms == false)
             {
                 return null;
             }

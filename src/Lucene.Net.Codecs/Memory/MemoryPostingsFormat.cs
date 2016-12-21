@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void AddPosition(int pos, BytesRef payload, int startOffset, int endOffset)
                 {
-                    Debug.Assert(payload == null || outerInstance.field.HasPayloads());
+                    Debug.Assert(payload == null || outerInstance.field.HasPayloads);
 
                     //System.out.println("      addPos pos=" + pos + " payload=" + payload);
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     int payloadLen = 0;
 
-                    if (outerInstance.field.HasPayloads())
+                    if (outerInstance.field.HasPayloads)
                     {
                         payloadLen = payload == null ? 0 : payload.Length;
                         if (payloadLen != lastPayloadLen)
@@ -847,14 +847,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 if (reuse == null || !(reuse is FSTDocsEnum))
                 {
-                    docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads());
+                    docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads);
                 }
                 else
                 {
                     docsEnum = (FSTDocsEnum)reuse;
-                    if (!docsEnum.CanReuse(field.IndexOptions.Value, field.HasPayloads()))
+                    if (!docsEnum.CanReuse(field.IndexOptions.Value, field.HasPayloads))
                     {
-                        docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads());
+                        docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads);
                     }
                 }
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
@@ -872,14 +872,14 @@ namespace Lucene.Net.Codecs.Memory
                 FSTDocsAndPositionsEnum docsAndPositionsEnum;
                 if (reuse == null || !(reuse is FSTDocsAndPositionsEnum))
                 {
-                    docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads(), hasOffsets);
+                    docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
                 }
                 else
                 {
                     docsAndPositionsEnum = (FSTDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(field.HasPayloads(), hasOffsets))
+                    if (!docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
                     {
-                        docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads(), hasOffsets);
+                        docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
                     }
                 }
                 //System.out.println("D&P reset this=" + this);
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasPayloads()
             {
-                return field.HasPayloads();
+                return field.HasPayloads;
             }
 
             public long RamBytesUsed()

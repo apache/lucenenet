@@ -103,9 +103,9 @@ namespace Lucene.Net.Index
             // omitNorms is true
             foreach (FieldInfo fi in reader.FieldInfos)
             {
-                if (fi.Indexed)
+                if (fi.IsIndexed)
                 {
-                    Assert.IsTrue(fi.OmitsNorms() == (reader.GetNormValues(fi.Name) == null));
+                    Assert.IsTrue(fi.OmitsNorms == (reader.GetNormValues(fi.Name) == null));
                 }
             }
             reader.Dispose();
@@ -398,10 +398,10 @@ namespace Lucene.Net.Index
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
             FieldInfos fi = reader.FieldInfos;
             // f1
-            Assert.IsFalse(fi.FieldInfo("f1").HasNorms(), "f1 should have no norms");
+            Assert.IsFalse(fi.FieldInfo("f1").HasNorms, "f1 should have no norms");
             Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.FieldInfo("f1").IndexOptions, "omitTermFreqAndPositions field bit should not be set for f1");
             // f2
-            Assert.IsTrue(fi.FieldInfo("f2").HasNorms(), "f2 should have norms");
+            Assert.IsTrue(fi.FieldInfo("f2").HasNorms, "f2 should have norms");
             Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f2").IndexOptions, "omitTermFreqAndPositions field bit should be set for f2");
             reader.Dispose();
         }

@@ -58,22 +58,22 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     IndexOptions? indexOptions = fi.IndexOptions;
                     sbyte bits = 0x0;
-                    if (fi.HasVectors())
+                    if (fi.HasVectors)
                     {
                         bits |= Lucene42FieldInfosFormat.STORE_TERMVECTOR;
                     }
-                    if (fi.OmitsNorms())
+                    if (fi.OmitsNorms)
                     {
                         bits |= Lucene42FieldInfosFormat.OMIT_NORMS;
                     }
-                    if (fi.HasPayloads())
+                    if (fi.HasPayloads)
                     {
                         bits |= Lucene42FieldInfosFormat.STORE_PAYLOADS;
                     }
-                    if (fi.Indexed)
+                    if (fi.IsIndexed)
                     {
                         bits |= Lucene42FieldInfosFormat.IS_INDEXED;
-                        Debug.Assert(indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+                        Debug.Assert(indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
                         if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene42FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
                     output.WriteByte((byte)val);
-                    output.WriteStringStringMap(fi.Attributes());
+                    output.WriteStringStringMap(fi.Attributes);
                 }
                 success = true;
             }

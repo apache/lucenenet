@@ -283,8 +283,8 @@ namespace Lucene.Net.Index
                 foreach (FieldInfo fi in fis)
                 {
                     Field expected = GetField(Convert.ToInt32(fi.Name));
-                    Assert.AreEqual(expected.FieldType.IsIndexed, fi.Indexed);
-                    Assert.AreEqual(expected.FieldType.StoreTermVectors, fi.HasVectors());
+                    Assert.AreEqual(expected.FieldType.IsIndexed, fi.IsIndexed);
+                    Assert.AreEqual(expected.FieldType.StoreTermVectors, fi.HasVectors);
                 }
             }
 

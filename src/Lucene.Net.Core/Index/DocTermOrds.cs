@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         protected virtual void Uninvert(AtomicReader reader, Bits liveDocs, BytesRef termPrefix)
         {
             FieldInfo info = reader.FieldInfos.FieldInfo(field);
-            if (info != null && info.HasDocValues())
+            if (info != null && info.HasDocValues)
             {
                 throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }

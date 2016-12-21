@@ -77,13 +77,13 @@ namespace Lucene.Net.Index
 
                 byName[info.Name] = info;
 
-                hasVectors |= info.HasVectors();
-                hasProx |= info.Indexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                hasFreq |= info.Indexed && info.IndexOptions != IndexOptions.DOCS_ONLY;
-                hasOffsets |= info.Indexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                hasNorms |= info.HasNorms();
-                hasDocValues |= info.HasDocValues();
-                hasPayloads |= info.HasPayloads();
+                hasVectors |= info.HasVectors;
+                hasProx |= info.IsIndexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                hasFreq |= info.IsIndexed && info.IndexOptions != IndexOptions.DOCS_ONLY;
+                hasOffsets |= info.IsIndexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                hasNorms |= info.HasNorms;
+                hasDocValues |= info.HasDocValues;
+                hasPayloads |= info.HasPayloads;
             }
 
             this.hasVectors = hasVectors;
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
                     if (docValues != null)
                     {
                         // only pay the synchronization cost if fi does not already have a DVType
-                        bool updateGlobal = !fi.HasDocValues();
+                        bool updateGlobal = !fi.HasDocValues;
                         fi.DocValuesType = docValues; // this will also perform the consistency check.
                         if (updateGlobal)
                         {
@@ -407,7 +407,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (!fi.OmitsNorms() && normType != null)
+                    if (!fi.OmitsNorms && normType != null)
                     {
                         fi.NormType = normType;
                     }
@@ -418,7 +418,7 @@ namespace Lucene.Net.Index
             public FieldInfo Add(FieldInfo fi)
             {
                 // IMPORTANT - reuse the field number if possible for consistent field numbers across segments
-                return AddOrUpdateInternal(fi.Name, fi.Number, fi.Indexed, fi.HasVectors(), fi.OmitsNorms(), fi.HasPayloads(), fi.IndexOptions, fi.DocValuesType, fi.NormType);
+                return AddOrUpdateInternal(fi.Name, fi.Number, fi.IsIndexed, fi.HasVectors, fi.OmitsNorms, fi.HasPayloads, fi.IndexOptions, fi.DocValuesType, fi.NormType);
             }
 
             public FieldInfo FieldInfo(string fieldName)

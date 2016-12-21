@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 bool anyProx = false;
                 foreach (FieldInfo fi in fieldInfos)
                 {
-                    if (fi.Indexed)
+                    if (fi.IsIndexed)
                     {
                         Fields[fi.Name] = fi;
                         PreTerms_[fi.Name] = new PreTerms(this, fi);
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override bool HasPayloads()
             {
-                return fieldInfo.HasPayloads();
+                return fieldInfo.HasPayloads;
             }
         }
 

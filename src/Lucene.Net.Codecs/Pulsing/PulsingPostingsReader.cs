@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.Pulsing
             public PulsingDocsEnum(FieldInfo fieldInfo)
             {
                 _indexOptions = fieldInfo.IndexOptions;
-                _storePayloads = fieldInfo.HasPayloads();
+                _storePayloads = fieldInfo.HasPayloads;
                 _storeOffsets = _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
@@ -414,7 +414,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public bool CanReuse(FieldInfo fieldInfo)
             {
-                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads();
+                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
             }
 
             public override int DocID()
@@ -526,7 +526,7 @@ namespace Lucene.Net.Codecs.Pulsing
             public PulsingDocsAndPositionsEnum(FieldInfo fieldInfo)
             {
                 _indexOptions = fieldInfo.IndexOptions;
-                _storePayloads = fieldInfo.HasPayloads();
+                _storePayloads = fieldInfo.HasPayloads;
                 _storeOffsets =
                     _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
@@ -560,7 +560,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public bool CanReuse(FieldInfo fieldInfo)
             {
-                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads();
+                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
             }
 
             public override int NextDoc()

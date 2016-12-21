@@ -1403,7 +1403,7 @@ namespace Lucene.Net.Util
             // the time we set the same value for a given field but
             // sometimes (rarely) we change it up:
             /*
-		        if (newType.OmitsNorms()) {
+		        if (newType.OmitNorms) {
 		          newType.setOmitNorms(random.NextBoolean());
 		        }
 		    */
@@ -2381,7 +2381,7 @@ namespace Lucene.Net.Util
             HashSet<string> fields = new HashSet<string>();
             foreach (FieldInfo fi in MultiFields.GetMergedFieldInfos(reader))
             {
-                if (fi.HasDocValues())
+                if (fi.HasDocValues)
                 {
                     fields.Add(fi.Name);
                 }

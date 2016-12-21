@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 
         internal override void Finish()
         {
-            if (fieldInfo.Indexed && !fieldInfo.OmitsNorms())
+            if (fieldInfo.IsIndexed && !fieldInfo.OmitsNorms)
             {
                 if (consumer == null)
                 {

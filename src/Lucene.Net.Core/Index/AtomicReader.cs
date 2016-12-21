@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             EnsureOpen();
             // note: using normValues(field) != null would potentially cause i/o
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            return fi != null && fi.HasNorms();
+            return fi != null && fi.HasNorms;
         }
 
         /// <summary>

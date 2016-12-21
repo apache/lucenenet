@@ -75,8 +75,8 @@ namespace Lucene.Net.Index
 
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
             FieldInfos fi = reader.FieldInfos;
-            Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms(), "OmitNorms field bit should be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
+            Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms, "OmitNorms field bit should be set.");
+            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms, "OmitNorms field bit should be set.");
 
             reader.Dispose();
             ram.Dispose();
@@ -128,8 +128,8 @@ namespace Lucene.Net.Index
 
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
             FieldInfos fi = reader.FieldInfos;
-            Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms(), "OmitNorms field bit should be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
+            Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms, "OmitNorms field bit should be set.");
+            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms, "OmitNorms field bit should be set.");
 
             reader.Dispose();
             ram.Dispose();
@@ -175,8 +175,8 @@ namespace Lucene.Net.Index
 
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
             FieldInfos fi = reader.FieldInfos;
-            Assert.IsTrue(!fi.FieldInfo("f1").OmitsNorms(), "OmitNorms field bit should not be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
+            Assert.IsTrue(!fi.FieldInfo("f1").OmitsNorms, "OmitNorms field bit should not be set.");
+            Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms, "OmitNorms field bit should be set.");
 
             reader.Dispose();
             ram.Dispose();

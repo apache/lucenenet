@@ -48,19 +48,19 @@ namespace Lucene.Net.Index
             int normsCount = 0;
             foreach (FieldInfo info in reader.FieldInfos)
             {
-                if (info.Indexed)
+                if (info.IsIndexed)
                 {
                     reader.Terms(info.Name);
                     indexedCount++;
 
-                    if (info.HasNorms())
+                    if (info.HasNorms)
                     {
                         reader.GetNormValues(info.Name);
                         normsCount++;
                     }
                 }
 
-                if (info.HasDocValues())
+                if (info.HasDocValues)
                 {
                     switch (info.DocValuesType)
                     {
