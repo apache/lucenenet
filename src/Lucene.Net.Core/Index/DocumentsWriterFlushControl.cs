@@ -81,34 +81,46 @@ namespace Lucene.Net.Index
             this.BufferedUpdatesStream = bufferedUpdatesStream;
         }
 
-        public long ActiveBytes() // LUCENENET TODO: make property
+        public long ActiveBytes
         {
-            lock (this)
+            get
             {
-                return ActiveBytes_Renamed;
+                lock (this)
+                {
+                    return ActiveBytes_Renamed;
+                }
             }
         }
 
-        public long FlushBytes() // LUCENENET TODO: make property
+        public long FlushBytes
         {
-            lock (this)
+            get
             {
-                return FlushBytes_Renamed;
+                lock (this)
+                {
+                    return FlushBytes_Renamed;
+                }
             }
         }
 
-        public long NetBytes() // LUCENENET TODO: make property
+        public long NetBytes
         {
-            lock (this)
+            get
             {
-                return FlushBytes_Renamed + ActiveBytes_Renamed;
+                lock (this)
+                {
+                    return FlushBytes_Renamed + ActiveBytes_Renamed;
+                }
             }
         }
 
-        private long StallLimitBytes() // LUCENENET TODO: make property
+        private long StallLimitBytes
         {
-            double maxRamMB = Config.RAMBufferSizeMB;
-            return maxRamMB != IndexWriterConfig.DISABLE_AUTO_FLUSH ? (long)(2 * (maxRamMB * 1024 * 1024)) : long.MaxValue;
+            get
+            {
+                double maxRamMB = Config.RAMBufferSizeMB;
+                return maxRamMB != IndexWriterConfig.DISABLE_AUTO_FLUSH ? (long)(2 * (maxRamMB * 1024 * 1024)) : long.MaxValue;
+            }
         }
 
         private bool AssertMemory()
@@ -126,7 +138,7 @@ namespace Lucene.Net.Index
                 // (numPending + numFlushingDWPT() + numBlockedFlushes()) * peakDelta) -> those are the total number of DWPT that are not active but not yet fully fluhsed
                 // all of them could theoretically be taken out of the loop once they crossed the RAM buffer and the last document was the peak delta
                 // (numDocsSinceStalled * peakDelta) -> at any given time there could be n threads in flight that crossed the stall control before we reached the limit and each of them could hold a peak document
-                long expected = (2 * (ramBufferBytes)) + ((NumPending + NumFlushingDWPT() + NumBlockedFlushes()) * PeakDelta) + (NumDocsSinceStalled * PeakDelta);
+                long expected = (2 * (ramBufferBytes)) + ((NumPending + NumFlushingDWPT + NumBlockedFlushes) * PeakDelta) + (NumDocsSinceStalled * PeakDelta);
                 // the expected ram consumption is an upper bound at this point and not really the expected consumption
                 if (PeakDelta < (ramBufferBytes >> 1))
                 {
@@ -139,7 +151,7 @@ namespace Lucene.Net.Index
                      * fail. To prevent this we only assert if the the largest document seen
                      * is smaller than the 1/2 of the maxRamBufferMB
                      */
-                    Debug.Assert(ram <= expected, "actual mem: " + ram + " byte, expected mem: " + expected + " byte, flush mem: " + FlushBytes_Renamed + ", active mem: " + ActiveBytes_Renamed + ", pending DWPT: " + NumPending + ", flushing DWPT: " + NumFlushingDWPT() + ", blocked DWPT: " + NumBlockedFlushes() + ", peakDelta mem: " + PeakDelta + " byte");
+                    Debug.Assert(ram <= expected, "actual mem: " + ram + " byte, expected mem: " + expected + " byte, flush mem: " + FlushBytes_Renamed + ", active mem: " + ActiveBytes_Renamed + ", pending DWPT: " + NumPending + ", flushing DWPT: " + NumFlushingDWPT + ", blocked DWPT: " + NumBlockedFlushes + ", peakDelta mem: " + PeakDelta + " byte");
                 }
             }
             return true;
@@ -170,7 +182,7 @@ namespace Lucene.Net.Index
         {
             PeakActiveBytes = Math.Max(PeakActiveBytes, ActiveBytes_Renamed);
             PeakFlushBytes = Math.Max(PeakFlushBytes, FlushBytes_Renamed);
-            PeakNetBytes = Math.Max(PeakNetBytes, NetBytes());
+            PeakNetBytes = Math.Max(PeakNetBytes, NetBytes);
             PeakDelta = Math.Max(PeakDelta, delta);
 
             return true;
@@ -197,7 +209,7 @@ namespace Lucene.Net.Index
                         {
                             // Safety check to prevent a single DWPT exceeding its RAM limit. this
                             // is super important since we can not address more than 2048 MB per DWPT
-                            FlushPending = perThread;
+                            SetFlushPending(perThread);
                         }
                     }
                     DocumentsWriterPerThread flushingDWPT;
@@ -277,7 +289,7 @@ namespace Lucene.Net.Index
         private bool UpdateStallState()
         {
             //Debug.Assert(Thread.holdsLock(this));
-            long limit = StallLimitBytes();
+            long limit = StallLimitBytes;
             /*
              * we block indexing threads if net byte grows due to slow flushes
              * yet, for small ram buffers and large documents we can easily
@@ -317,23 +329,20 @@ namespace Lucene.Net.Index
         /// <seealso cref="ThreadState"/> must have indexed at least on Document and must not be
         /// already pending.
         /// </summary>
-        public ThreadState FlushPending // LUCENENET TODO: Make SetFlushPending(ThreadState perThread)
+        public void SetFlushPending(ThreadState perThread)
         {
-            set
+            lock (this)
             {
-                lock (this)
+                Debug.Assert(!perThread.FlushPending_Renamed);
+                if (perThread.Dwpt.NumDocsInRAM > 0)
                 {
-                    Debug.Assert(!value.FlushPending_Renamed);
-                    if (value.Dwpt.NumDocsInRAM > 0)
-                    {
-                        value.FlushPending_Renamed = true; // write access synced
-                        long bytes = value.BytesUsed;
-                        FlushBytes_Renamed += bytes;
-                        ActiveBytes_Renamed -= bytes;
-                        NumPending++; // write access synced
-                        Debug.Assert(AssertMemory());
-                    } // don't assert on numDocs since we could hit an abort excp. while selecting that dwpt for flushing
-                }
+                    perThread.FlushPending_Renamed = true; // write access synced
+                    long bytes = perThread.BytesUsed;
+                    FlushBytes_Renamed += bytes;
+                    ActiveBytes_Renamed -= bytes;
+                    NumPending++; // write access synced
+                    Debug.Assert(AssertMemory());
+                } // don't assert on numDocs since we could hit an abort excp. while selecting that dwpt for flushing
             }
         }
 
@@ -565,20 +574,20 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal int NumFlushingDWPT() // LUCENENET TODO: Make property
-        {
-            lock (this)
-            {
-                return FlushingWriters.Count;
-            }
-        }
-
-        public bool AndResetApplyAllDeletes // LUCENENET TODO: Make GetAndResetApplyAllDeletes() (non-deterministic)
+        internal int NumFlushingDWPT
         {
             get
             {
-                return FlushDeletes.GetAndSet(false);
+                lock (this)
+                {
+                    return FlushingWriters.Count;
+                }
             }
+        }
+
+        public bool GetAndResetApplyAllDeletes() 
+        {
+            return FlushDeletes.GetAndSet(false);
         }
 
         public void SetApplyAllDeletes()
@@ -586,9 +595,9 @@ namespace Lucene.Net.Index
             FlushDeletes.Set(true);
         }
 
-        internal int NumActiveDWPT() // LUCENENET TODO: Make property
+        internal int NumActiveDWPT
         {
-            return this.PerThreadPool.ActiveThreadState;
+            get { return this.PerThreadPool.ActiveThreadState; }
         }
 
         internal ThreadState ObtainAndLock()
@@ -716,7 +725,7 @@ namespace Lucene.Net.Index
                 {
                     if (!perThread.FlushPending_Renamed)
                     {
-                        FlushPending = perThread;
+                        SetFlushPending(perThread);
                     }
                     DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
                     Debug.Assert(flushingDWPT != null, "DWPT must never be null here since we hold the lock and it holds documents");
@@ -853,7 +862,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <code>true</code> if a full flush is currently running
         /// </summary>
-        internal bool FullFlush // LUCENENET TODO: Rename IsFullFlush
+        internal bool IsFullFlush
         {
             get
             {
@@ -868,11 +877,14 @@ namespace Lucene.Net.Index
         /// Returns the number of flushes that are already checked out but not yet
         /// actively flushing
         /// </summary>
-        internal int NumQueuedFlushes() // LUCENENET TODO: Make property
+        internal int NumQueuedFlushes
         {
-            lock (this)
+            get
             {
-                return FlushQueue.Count;
+                lock (this)
+                {
+                    return FlushQueue.Count;
+                }
             }
         }
 
@@ -881,11 +893,14 @@ namespace Lucene.Net.Index
         /// for flushing. this only applies during a full flush if a DWPT needs
         /// flushing but must not be flushed until the full flush has finished.
         /// </summary>
-        internal int NumBlockedFlushes() // LUCENENET TODO: Make property
+        internal int NumBlockedFlushes
         {
-            lock (this)
+            get
             {
-                return BlockedFlushes.Count;
+                lock (this)
+                {
+                    return BlockedFlushes.Count;
+                }
             }
         }
 
@@ -910,7 +925,7 @@ namespace Lucene.Net.Index
         {
             if (InfoStream_Renamed.IsEnabled("DWFC"))
             {
-                InfoStream_Renamed.Message("DWFC", "waitIfStalled: numFlushesPending: " + FlushQueue.Count + " netBytes: " + NetBytes() + " flushBytes: " + FlushBytes() + " fullFlush: " + FullFlush_Renamed);
+                InfoStream_Renamed.Message("DWFC", "waitIfStalled: numFlushesPending: " + FlushQueue.Count + " netBytes: " + NetBytes + " flushBytes: " + FlushBytes + " fullFlush: " + FullFlush_Renamed);
             }
             StallControl.WaitIfStalled();
         }
@@ -918,7 +933,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <code>true</code> iff stalled
         /// </summary>
-        internal bool AnyStalledThreads() // LUCENENET TODO: Make property
+        internal bool AnyStalledThreads() // LUCENENET TODO: Make property ?
         {
             return StallControl.AnyStalledThreads();
         }

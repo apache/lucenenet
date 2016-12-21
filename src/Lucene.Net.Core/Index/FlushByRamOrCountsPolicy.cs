@@ -84,17 +84,17 @@ namespace Lucene.Net.Index
             if (FlushOnDocCount() && state.Dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
             {
                 // Flush this state by num docs
-                control.FlushPending = state;
+                control.SetFlushPending(state);
             } // flush by RAM
             else if (FlushOnRAM())
             {
                 long limit = (long)(IWConfig.RAMBufferSizeMB * 1024d * 1024d);
-                long totalRam = control.ActiveBytes() + control.DeleteBytesUsed;
+                long totalRam = control.ActiveBytes + control.DeleteBytesUsed;
                 if (totalRam >= limit)
                 {
                     if (InfoStream.IsEnabled("FP"))
                     {
-                        InfoStream.Message("FP", "flush: activeBytes=" + control.ActiveBytes() + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
+                        InfoStream.Message("FP", "flush: activeBytes=" + control.ActiveBytes + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
                     }
                     MarkLargestWriterPending(control, state, totalRam);
                 }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void MarkLargestWriterPending(DocumentsWriterFlushControl control, ThreadState perThreadState, long currentBytesPerThread)
         {
-            control.FlushPending = FindLargestNonPendingWriter(control, perThreadState);
+            control.SetFlushPending(FindLargestNonPendingWriter(control, perThreadState));
         }
 
         /// <summary>

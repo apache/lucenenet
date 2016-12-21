@@ -3968,7 +3968,7 @@ namespace Lucene.Net.Index
         public long RamSizeInBytes() // LUCENENET TODO: Make property ?
         {
             EnsureOpen();
-            return docWriter.FlushControl.NetBytes() + bufferedUpdatesStream.BytesUsed;
+            return docWriter.FlushControl.NetBytes + bufferedUpdatesStream.BytesUsed;
         }
 
         // for testing only

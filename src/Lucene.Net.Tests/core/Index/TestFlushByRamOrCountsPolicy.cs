@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
             DocumentsWriter docsWriter = writer.DocsWriter;
             Assert.IsNotNull(docsWriter);
             DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
-            Assert.AreEqual(0, flushControl.FlushBytes(), " bytes must be 0 after init");
+            Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
                 threads[x].Join();
             }
             long maxRAMBytes = (long)(iwc.RAMBufferSizeMB * 1024.0 * 1024.0);
-            Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due numThreads=" + numThreads);
+            Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due numThreads=" + numThreads);
             Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
             Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             Assert.IsTrue(flushPolicy.PeakBytesWithoutFlush <= maxRAMBytes, "peak bytes without flush exceeded watermark");
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
                 Assert.IsFalse(docsWriter.FlushControl.StallControl.WasStalled());
             }
             writer.Dispose();
-            Assert.AreEqual(0, flushControl.ActiveBytes());
+            Assert.AreEqual(0, flushControl.ActiveBytes);
             dir.Dispose();
         }
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
                 DocumentsWriter docsWriter = writer.DocsWriter;
                 Assert.IsNotNull(docsWriter);
                 DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
-                Assert.AreEqual(0, flushControl.FlushBytes(), " bytes must be 0 after init");
+                Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
                 IndexThread[] threads = new IndexThread[numThreads[i]];
                 for (int x = 0; x < threads.Length; x++)
@@ -163,13 +163,13 @@ namespace Lucene.Net.Index
                     threads[x].Join();
                 }
 
-                Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due numThreads=" + numThreads[i]);
+                Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due numThreads=" + numThreads[i]);
                 Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 Assert.IsTrue(flushPolicy.PeakDocCountWithoutFlush <= iwc.MaxBufferedDocs, "peak bytes without flush exceeded watermark");
                 AssertActiveBytesAfter(flushControl);
                 writer.Dispose();
-                Assert.AreEqual(0, flushControl.ActiveBytes());
+                Assert.AreEqual(0, flushControl.ActiveBytes);
                 dir.Dispose();
             }
         }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(docsWriter);
             DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
 
-            Assert.AreEqual(0, flushControl.FlushBytes(), " bytes must be 0 after init");
+            Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             {
                 threads[x].Join();
             }
-            Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due");
+            Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
             Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
             Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             if (flushPolicy.FlushOnRAM() && !flushPolicy.FlushOnDocCount() && !flushPolicy.FlushOnDeleteTerms())
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             }
             AssertActiveBytesAfter(flushControl);
             writer.Commit();
-            Assert.AreEqual(0, flushControl.ActiveBytes());
+            Assert.AreEqual(0, flushControl.ActiveBytes);
             IndexReader r = DirectoryReader.Open(dir);
             Assert.AreEqual(numDocumentsToIndex, r.NumDocs);
             Assert.AreEqual(numDocumentsToIndex, r.MaxDoc);
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                 DocumentsWriter docsWriter = writer.DocsWriter;
                 Assert.IsNotNull(docsWriter);
                 DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
-                Assert.AreEqual(0, flushControl.FlushBytes(), " all flushes must be due");
+                Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
                 Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 if (numThreads[i] == 1)
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
                     bytesUsed += next.DocumentsWriterPerThread.BytesUsed();
                 }
             }
-            Assert.AreEqual(bytesUsed, flushControl.ActiveBytes());
+            Assert.AreEqual(bytesUsed, flushControl.ActiveBytes);
         }
 
         public class IndexThread : ThreadClass
@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
                 List<ThreadState> notPending = new List<ThreadState>();
                 FindPending(control, pending, notPending);
                 bool flushCurrent = state.FlushPending;
-                long activeBytes = control.ActiveBytes();
+                long activeBytes = control.ActiveBytes;
                 ThreadState toFlush;
                 if (state.FlushPending)
                 {

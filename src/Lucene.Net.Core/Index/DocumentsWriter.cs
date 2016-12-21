@@ -199,9 +199,9 @@ namespace Lucene.Net.Index
 
         private bool ApplyAllDeletes(DocumentsWriterDeleteQueue deleteQueue)
         {
-            if (FlushControl.AndResetApplyAllDeletes)
+            if (FlushControl.GetAndResetApplyAllDeletes())
             {
-                if (deleteQueue != null && !FlushControl.FullFlush)
+                if (deleteQueue != null && !FlushControl.IsFullFlush)
                 {
                     TicketQueue.AddDeletes(deleteQueue);
                 }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             bool hasEvents = false;
-            if (FlushControl.AnyStalledThreads() || FlushControl.NumQueuedFlushes() > 0)
+            if (FlushControl.AnyStalledThreads() || FlushControl.NumQueuedFlushes > 0)
             {
                 // Help out flushing any queued DWPTs so we can un-stall:
                 if (InfoStream.IsEnabled("DW"))
@@ -467,7 +467,7 @@ namespace Lucene.Net.Index
                     }
 
                     FlushControl.WaitIfStalled(); // block if stalled
-                } while (FlushControl.NumQueuedFlushes() != 0); // still queued DWPTs try help flushing
+                } while (FlushControl.NumQueuedFlushes != 0); // still queued DWPTs try help flushing
 
                 if (InfoStream.IsEnabled("DW"))
                 {
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    Debug.Assert(CurrentFullFlushDelQueue == null || flushingDWPT.DeleteQueue == CurrentFullFlushDelQueue, "expected: " + CurrentFullFlushDelQueue + "but was: " + flushingDWPT.DeleteQueue + " " + FlushControl.FullFlush);
+                    Debug.Assert(CurrentFullFlushDelQueue == null || flushingDWPT.DeleteQueue == CurrentFullFlushDelQueue, "expected: " + CurrentFullFlushDelQueue + "but was: " + flushingDWPT.DeleteQueue + " " + FlushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the
