@@ -48,15 +48,15 @@ namespace Lucene.Net.Index
     {
         // Not final because we replace (clone) when we need to
         // change it and it's been shared:
-        public readonly SegmentCommitInfo Info; // LUCENENET TODO: Make property
+        public SegmentCommitInfo Info { get; private set; }
 
         // Tracks how many consumers are using this instance:
-        private readonly AtomicInteger RefCount_Renamed = new AtomicInteger(1);
+        private readonly AtomicInteger refCount = new AtomicInteger(1);
 
-        private readonly IndexWriter Writer;
+        private readonly IndexWriter writer;
 
         // Set once (null, and then maybe set, and never set again):
-        private SegmentReader Reader;
+        private SegmentReader reader;
 
         // TODO: it's sometimes wasteful that we hold open two
         // separate SRs (one for merging one for
@@ -66,22 +66,22 @@ namespace Lucene.Net.Index
         // any deletes it'll open real readers anyway.
 
         // Set once (null, and then maybe set, and never set again):
-        private SegmentReader MergeReader;
+        private SegmentReader mergeReader;
 
         // Holds the current shared (readable and writable)
         // liveDocs.  this is null when there are no deleted
         // docs, and it's copy-on-write (cloned whenever we need
         // to change it but it's been shared to an external NRT
         // reader).
-        private Bits LiveDocs_Renamed;
+        private Bits liveDocs;
 
         // How many further deletions we've done against
         // liveDocs vs when we loaded it or last wrote it:
-        private int PendingDeleteCount_Renamed;
+        private int pendingDeleteCount;
 
         // True if the current liveDocs is referenced by an
         // external NRT reader:
-        private bool LiveDocsShared;
+        private bool liveDocsShared;
 
         // Indicates whether this segment is currently being merged. While a segment
         // is merging, all field updates are also registered in the
@@ -89,32 +89,32 @@ namespace Lucene.Net.Index
         // updates with mergingNumericUpdates.
         // That way, when the segment is done merging, IndexWriter can apply the
         // updates on the merged segment too.
-        private bool IsMerging = false;
+        private bool isMerging = false;
 
-        private readonly IDictionary<string, AbstractDocValuesFieldUpdates> MergingDVUpdates = new Dictionary<string, AbstractDocValuesFieldUpdates>();
+        private readonly IDictionary<string, AbstractDocValuesFieldUpdates> mergingDVUpdates = new Dictionary<string, AbstractDocValuesFieldUpdates>();
 
         public ReadersAndUpdates(IndexWriter writer, SegmentCommitInfo info)
         {
             this.Info = info;
-            this.Writer = writer;
-            LiveDocsShared = true;
+            this.writer = writer;
+            liveDocsShared = true;
         }
 
         public virtual void IncRef()
         {
-            int rc = RefCount_Renamed.IncrementAndGet();
+            int rc = refCount.IncrementAndGet();
             Debug.Assert(rc > 1);
         }
 
         public virtual void DecRef()
         {
-            int rc = RefCount_Renamed.DecrementAndGet();
+            int rc = refCount.DecrementAndGet();
             Debug.Assert(rc >= 0);
         }
 
         public virtual int RefCount()
         {
-            int rc = RefCount_Renamed.Get();
+            int rc = refCount.Get();
             Debug.Assert(rc >= 0);
             return rc;
         }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return PendingDeleteCount_Renamed;
+                    return pendingDeleteCount;
                 }
             }
         }
@@ -136,12 +136,12 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 int count;
-                if (LiveDocs_Renamed != null)
+                if (liveDocs != null)
                 {
                     count = 0;
                     for (int docID = 0; docID < Info.Info.DocCount; docID++)
                     {
-                        if (LiveDocs_Renamed.Get(docID))
+                        if (liveDocs.Get(docID))
                         {
                             count++;
                         }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                     count = Info.Info.DocCount;
                 }
 
-                Debug.Assert(Info.Info.DocCount - Info.DelCount - PendingDeleteCount_Renamed == count, "info.docCount=" + Info.Info.DocCount + " info.getDelCount()=" + Info.DelCount + " pendingDeleteCount=" + PendingDeleteCount_Renamed + " count=" + count);
+                Debug.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, "info.docCount=" + Info.Info.DocCount + " info.getDelCount()=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
                 return true;
             }
         }
@@ -161,19 +161,19 @@ namespace Lucene.Net.Index
         /// Returns a <seealso cref="SegmentReader"/>. </summary>
         public virtual SegmentReader GetReader(IOContext context)
         {
-            if (Reader == null)
+            if (reader == null)
             {
                 // We steal returned ref:
-                Reader = new SegmentReader(Info, Writer.Config.ReaderTermsIndexDivisor, context);
-                if (LiveDocs_Renamed == null)
+                reader = new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, context);
+                if (liveDocs == null)
                 {
-                    LiveDocs_Renamed = Reader.LiveDocs;
+                    liveDocs = reader.LiveDocs;
                 }
             }
 
             // Ref for caller
-            Reader.IncRef();
-            return Reader;
+            reader.IncRef();
+            return reader;
         }
 
         // Get reader for merging (does not load the terms
@@ -184,34 +184,34 @@ namespace Lucene.Net.Index
             {
                 //System.out.println("  livedocs=" + rld.liveDocs);
 
-                if (MergeReader == null)
+                if (mergeReader == null)
                 {
-                    if (Reader != null)
+                    if (reader != null)
                     {
                         // Just use the already opened non-merge reader
                         // for merging.  In the NRT case this saves us
                         // pointless double-open:
                         //System.out.println("PROMOTE non-merge reader seg=" + rld.info);
                         // Ref for us:
-                        Reader.IncRef();
-                        MergeReader = Reader;
+                        reader.IncRef();
+                        mergeReader = reader;
                         //System.out.println(Thread.currentThread().getName() + ": getMergeReader share seg=" + info.name);
                     }
                     else
                     {
                         //System.out.println(Thread.currentThread().getName() + ": getMergeReader seg=" + info.name);
                         // We steal returned ref:
-                        MergeReader = new SegmentReader(Info, -1, context);
-                        if (LiveDocs_Renamed == null)
+                        mergeReader = new SegmentReader(Info, -1, context);
+                        if (liveDocs == null)
                         {
-                            LiveDocs_Renamed = MergeReader.LiveDocs;
+                            liveDocs = mergeReader.LiveDocs;
                         }
                     }
                 }
 
                 // Ref for caller
-                MergeReader.IncRef();
-                return MergeReader;
+                mergeReader.IncRef();
+                return mergeReader;
             }
         }
 
@@ -228,15 +228,15 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(LiveDocs_Renamed != null);
+                Debug.Assert(liveDocs != null);
                 //Debug.Assert(Thread.holdsLock(Writer));
-                Debug.Assert(docID >= 0 && docID < LiveDocs_Renamed.Length(), "out of bounds: docid=" + docID + " liveDocsLength=" + LiveDocs_Renamed.Length() + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
-                Debug.Assert(!LiveDocsShared);
-                bool didDelete = LiveDocs_Renamed.Get(docID);
+                Debug.Assert(docID >= 0 && docID < liveDocs.Length(), "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length() + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
+                Debug.Assert(!liveDocsShared);
+                bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
                 {
-                    ((MutableBits)LiveDocs_Renamed).Clear(docID);
-                    PendingDeleteCount_Renamed++;
+                    ((MutableBits)liveDocs).Clear(docID);
+                    pendingDeleteCount++;
                     //System.out.println("  new del seg=" + info + " docID=" + docID + " pendingDelCount=" + pendingDeleteCount + " totDelCount=" + (info.docCount-liveDocs.count()));
                 }
                 return didDelete;
@@ -252,31 +252,31 @@ namespace Lucene.Net.Index
                 // we are calling .decRef not .close)...
                 try
                 {
-                    if (Reader != null)
+                    if (reader != null)
                     {
                         //System.out.println("  pool.drop info=" + info + " rc=" + reader.getRefCount());
                         try
                         {
-                            Reader.DecRef();
+                            reader.DecRef();
                         }
                         finally
                         {
-                            Reader = null;
+                            reader = null;
                         }
                     }
                 }
                 finally
                 {
-                    if (MergeReader != null)
+                    if (mergeReader != null)
                     {
                         //System.out.println("  pool.drop info=" + info + " merge rc=" + mergeReader.getRefCount());
                         try
                         {
-                            MergeReader.DecRef();
+                            mergeReader.DecRef();
                         }
                         finally
                         {
-                            MergeReader = null;
+                            mergeReader = null;
                         }
                     }
                 }
@@ -293,21 +293,21 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Reader == null)
+                if (reader == null)
                 {
                     GetReader(context).DecRef();
-                    Debug.Assert(Reader != null);
+                    Debug.Assert(reader != null);
                 }
-                LiveDocsShared = true;
-                if (LiveDocs_Renamed != null)
+                liveDocsShared = true;
+                if (liveDocs != null)
                 {
-                    return new SegmentReader(Reader.SegmentInfo, Reader, LiveDocs_Renamed, Info.Info.DocCount - Info.DelCount - PendingDeleteCount_Renamed);
+                    return new SegmentReader(reader.SegmentInfo, reader, liveDocs, Info.Info.DocCount - Info.DelCount - pendingDeleteCount);
                 }
                 else
                 {
-                    Debug.Assert(Reader.LiveDocs == LiveDocs_Renamed);
-                    Reader.IncRef();
-                    return Reader;
+                    Debug.Assert(reader.LiveDocs == liveDocs);
+                    reader.IncRef();
+                    return reader;
                 }
             }
         }
@@ -319,23 +319,23 @@ namespace Lucene.Net.Index
                 //Debug.Assert(Thread.holdsLock(Writer));
                 Debug.Assert(Info.Info.DocCount > 0);
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
-                if (LiveDocsShared)
+                if (liveDocsShared)
                 {
                     // Copy on write: this means we've cloned a
                     // SegmentReader sharing the current liveDocs
                     // instance; must now make a private clone so we can
                     // change it:
                     LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat;
-                    if (LiveDocs_Renamed == null)
+                    if (liveDocs == null)
                     {
                         //System.out.println("create BV seg=" + info);
-                        LiveDocs_Renamed = liveDocsFormat.NewLiveDocs(Info.Info.DocCount);
+                        liveDocs = liveDocsFormat.NewLiveDocs(Info.Info.DocCount);
                     }
                     else
                     {
-                        LiveDocs_Renamed = liveDocsFormat.NewLiveDocs(LiveDocs_Renamed);
+                        liveDocs = liveDocsFormat.NewLiveDocs(liveDocs);
                     }
-                    LiveDocsShared = false;
+                    liveDocsShared = false;
                 }
             }
         }
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     //Debug.Assert(Thread.holdsLock(Writer));
-                    return LiveDocs_Renamed;
+                    return liveDocs;
                 }
             }
         }
@@ -360,11 +360,11 @@ namespace Lucene.Net.Index
                 {
                     //System.out.println("getROLiveDocs seg=" + info);
                     //Debug.Assert(Thread.holdsLock(Writer));
-                    LiveDocsShared = true;
+                    liveDocsShared = true;
                     //if (liveDocs != null) {
                     //System.out.println("  liveCount=" + liveDocs.count());
                     //}
-                    return LiveDocs_Renamed;
+                    return liveDocs;
                 }
             }
         }
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
                 // is running, by now we have carried forward those
                 // deletes onto the newly merged segment, so we can
                 // discard them on the sub-readers:
-                PendingDeleteCount_Renamed = 0;
+                pendingDeleteCount = 0;
                 DropMergingUpdates();
             }
         }
@@ -395,13 +395,13 @@ namespace Lucene.Net.Index
             {
                 //Debug.Assert(Thread.holdsLock(Writer));
                 //System.out.println("rld.writeLiveDocs seg=" + info + " pendingDelCount=" + pendingDeleteCount + " numericUpdates=" + numericUpdates);
-                if (PendingDeleteCount_Renamed == 0)
+                if (pendingDeleteCount == 0)
                 {
                     return false;
                 }
 
                 // We have new deletes
-                Debug.Assert(LiveDocs_Renamed.Length() == Info.Info.DocCount);
+                Debug.Assert(liveDocs.Length() == Info.Info.DocCount);
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Codec codec = Info.Info.Codec;
-                    codec.LiveDocsFormat.WriteLiveDocs((MutableBits)LiveDocs_Renamed, trackingDir, Info, PendingDeleteCount_Renamed, IOContext.DEFAULT);
+                    codec.LiveDocsFormat.WriteLiveDocs((MutableBits)liveDocs, trackingDir, Info, pendingDeleteCount, IOContext.DEFAULT);
                     success = true;
                 }
                 finally
@@ -445,8 +445,8 @@ namespace Lucene.Net.Index
                 // then info's delGen remains pointing to the previous
                 // (successfully written) del docs:
                 Info.AdvanceDelGen();
-                Info.DelCount = Info.DelCount + PendingDeleteCount_Renamed;
-                PendingDeleteCount_Renamed = 0;
+                Info.DelCount = Info.DelCount + pendingDeleteCount;
+                pendingDeleteCount = 0;
 
                 return true;
             }
@@ -475,12 +475,12 @@ namespace Lucene.Net.Index
 
                     // reader could be null e.g. for a just merged segment (from
                     // IndexWriter.commitMergedDeletes).
-                    SegmentReader reader = this.Reader == null ? new SegmentReader(Info, Writer.Config.ReaderTermsIndexDivisor, IOContext.READONCE) : this.Reader;
+                    SegmentReader reader = this.reader == null ? new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, IOContext.READONCE) : this.reader;
                     try
                     {
                         // clone FieldInfos so that we can update their dvGen separately from
                         // the reader's infos and write them to a new fieldInfos_gen file
-                        FieldInfos.Builder builder = new FieldInfos.Builder(Writer.globalFieldNumberMap);
+                        FieldInfos.Builder builder = new FieldInfos.Builder(writer.globalFieldNumberMap);
                         // cannot use builder.add(reader.getFieldInfos()) because it does not
                         // clone FI.attributes as well FI.dvGen
                         foreach (FieldInfo fi in reader.FieldInfos)
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
                         fieldInfos = builder.Finish();
                         long nextFieldInfosGen = Info.NextFieldInfosGen;
                         string segmentSuffix = nextFieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX));
-                        SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, Writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
+                        SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
                         DocValuesFormat docValuesFormat = codec.DocValuesFormat;
                         DocValuesConsumer fieldsConsumer = docValuesFormat.FieldsConsumer(state);
                         bool fieldsConsumerSuccess = false;
@@ -561,7 +561,7 @@ namespace Lucene.Net.Index
                     }
                     finally
                     {
-                        if (reader != this.Reader)
+                        if (reader != this.reader)
                         {
                             //          System.out.println("[" + Thread.currentThread().getName() + "] RLD.writeLiveDocs: closeReader " + reader);
                             reader.Dispose();
@@ -595,14 +595,14 @@ namespace Lucene.Net.Index
 
                 Info.AdvanceFieldInfosGen();
                 // copy all the updates to mergingUpdates, so they can later be applied to the merged segment
-                if (IsMerging)
+                if (isMerging)
                 {
                     foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.NumericDVUpdates)
                     {
                         AbstractDocValuesFieldUpdates updates;
-                        if (!MergingDVUpdates.TryGetValue(e.Key, out updates))
+                        if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
-                            MergingDVUpdates[e.Key] = e.Value;
+                            mergingDVUpdates[e.Key] = e.Value;
                         }
                         else
                         {
@@ -612,9 +612,9 @@ namespace Lucene.Net.Index
                     foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.BinaryDVUpdates)
                     {
                         AbstractDocValuesFieldUpdates updates;
-                        if (!MergingDVUpdates.TryGetValue(e.Key, out updates))
+                        if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
-                            MergingDVUpdates[e.Key] = e.Value;
+                            mergingDVUpdates[e.Key] = e.Value;
                         }
                         else
                         {
@@ -646,17 +646,17 @@ namespace Lucene.Net.Index
                 Info.GenUpdatesFiles = newGenUpdatesFiles;
 
                 // wrote new files, should checkpoint()
-                Writer.Checkpoint();
+                writer.Checkpoint();
 
                 // if there is a reader open, reopen it to reflect the updates
-                if (Reader != null)
+                if (reader != null)
                 {
-                    SegmentReader newReader = new SegmentReader(Info, Reader, LiveDocs_Renamed, Info.Info.DocCount - Info.DelCount - PendingDeleteCount_Renamed);
+                    SegmentReader newReader = new SegmentReader(Info, reader, liveDocs, Info.Info.DocCount - Info.DelCount - pendingDeleteCount);
                     bool reopened = false;
                     try
                     {
-                        Reader.DecRef();
-                        Reader = newReader;
+                        reader.DecRef();
+                        reader = newReader;
                         reopened = true;
                     }
                     finally
@@ -920,7 +920,7 @@ namespace Lucene.Net.Index
                 // between, or the updates are applied to the obtained reader, but then
                 // re-applied in IW.commitMergedDeletes (unnecessary work and potential
                 // bugs).
-                IsMerging = true;
+                isMerging = true;
                 return GetReader(context);
             }
         }
@@ -933,8 +933,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                MergingDVUpdates.Clear();
-                IsMerging = false;
+                mergingDVUpdates.Clear();
+                isMerging = false;
             }
         }
 
@@ -946,7 +946,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return MergingDVUpdates;
+                    return mergingDVUpdates;
                 }
             }
         }
@@ -955,8 +955,8 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("ReadersAndLiveDocs(seg=").Append(Info);
-            sb.Append(" pendingDeleteCount=").Append(PendingDeleteCount_Renamed);
-            sb.Append(" liveDocsShared=").Append(LiveDocsShared);
+            sb.Append(" pendingDeleteCount=").Append(pendingDeleteCount);
+            sb.Append(" liveDocsShared=").Append(liveDocsShared);
             return sb.ToString();
         }
     }
