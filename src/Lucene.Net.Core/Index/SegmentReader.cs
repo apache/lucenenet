@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return FieldInfos;
+                return fieldInfos;
             }
         }
 
