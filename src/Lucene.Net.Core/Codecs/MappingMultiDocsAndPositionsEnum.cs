@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs
         internal MappingMultiDocsAndPositionsEnum Reset(MultiDocsAndPositionsEnum postingsEnum)
         {
             this.NumSubs_Renamed = postingsEnum.NumSubs;
-            this.Subs_Renamed = postingsEnum.Subs;
+            this.Subs_Renamed = postingsEnum.GetSubs();
             Upto = -1;
             Current = null;
             return this;

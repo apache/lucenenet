@@ -88,12 +88,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
-        public EnumWithSlice[] Subs // LUCENENET TODO: Make method GetSubs() (arrays should not be returned)
+        public EnumWithSlice[] GetSubs() // LUCENENET NOTE: Per MSDN arrays should not be returned from properties
         {
-            get
-            {
-                return subs;
-            }
+            return subs;
         }
 
         public override int Freq
@@ -241,7 +238,7 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            return "MultiDocsAndPositionsEnum(" + Arrays.ToString(Subs) + ")";
+            return "MultiDocsAndPositionsEnum(" + Arrays.ToString(GetSubs()) + ")";
         }
     }
 }

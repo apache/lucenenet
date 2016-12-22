@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
         internal MappingMultiDocsEnum Reset(MultiDocsEnum docsEnum)
         {
             this.NumSubs_Renamed = docsEnum.NumSubs;
-            this.Subs_Renamed = docsEnum.Subs;
+            this.Subs_Renamed = docsEnum.GetSubs();
             Upto = -1;
             Current = null;
             return this;
