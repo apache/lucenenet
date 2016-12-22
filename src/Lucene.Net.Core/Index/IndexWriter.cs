@@ -4979,7 +4979,7 @@ namespace Lucene.Net.Index
                         // Must sync to ensure BufferedDeletesStream cannot change liveDocs,
                         // pendingDeleteCount and field updates while we pull a copy:
                         reader = rld.GetReaderForMerge(context);
-                        liveDocs = rld.ReadOnlyLiveDocs;
+                        liveDocs = rld.GetReadOnlyLiveDocs();
                         delCount = rld.PendingDeleteCount + info.DelCount;
 
                         Debug.Assert(reader != null);

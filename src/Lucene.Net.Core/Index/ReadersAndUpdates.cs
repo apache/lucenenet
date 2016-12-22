@@ -352,20 +352,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual Bits ReadOnlyLiveDocs // LUCENENET TODO: Make GetReadOnlyLiveDocs() (has side-effect)
+        public virtual Bits GetReadOnlyLiveDocs()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    //System.out.println("getROLiveDocs seg=" + info);
-                    //Debug.Assert(Thread.holdsLock(Writer));
-                    liveDocsShared = true;
-                    //if (liveDocs != null) {
-                    //System.out.println("  liveCount=" + liveDocs.count());
-                    //}
-                    return liveDocs;
-                }
+                //System.out.println("getROLiveDocs seg=" + info);
+                //Debug.Assert(Thread.holdsLock(Writer));
+                liveDocsShared = true;
+                //if (liveDocs != null) {
+                //System.out.println("  liveCount=" + liveDocs.count());
+                //}
+                return liveDocs;
             }
         }
 
