@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        protected internal bool DiscountOverlaps_Renamed = true;
+        private bool DiscountOverlaps_Renamed = true; // LUCENENET Specific: made private, since it can be get/set through property
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 // a multi term query (e.g. phrase). return the summation,
                 // scoring almost as if it were boolean query
-                SimWeight[] subStats = ((MultiSimilarity.MultiStats)stats).SubStats;
+                SimWeight[] subStats = ((MultiSimilarity.MultiStats)stats).subStats;
                 SimScorer[] subScorers = new SimScorer[subStats.Length];
                 for (int i = 0; i < subScorers.Length; i++)
                 {
@@ -259,14 +259,14 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Decodes a normalization factor (document length) stored in an index. </summary>
         /// <seealso cref= #encodeNormValue(float,float) </seealso>
-        protected internal virtual float DecodeNormValue(sbyte norm)
+        protected internal virtual float DecodeNormValue(sbyte norm) // LUCENENET TODO: Can this be byte?
         {
             return NORM_TABLE[norm & 0xFF]; // & 0xFF maps negative bytes to positive above 127
         }
 
         /// <summary>
         /// Encodes the length to a byte via SmallFloat. </summary>
-        protected internal virtual sbyte EncodeNormValue(float boost, float length)
+        protected internal virtual sbyte EncodeNormValue(float boost, float length) // LUCENENET TODO: Can this be byte?
         {
             return SmallFloat.FloatToByte315((boost / (float)Math.Sqrt(length)));
         }
@@ -292,27 +292,27 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         private class BasicSimScorer : SimScorer
         {
-            private readonly SimilarityBase OuterInstance;
+            private readonly SimilarityBase outerInstance;
 
-            internal readonly BasicStats Stats;
-            internal readonly NumericDocValues Norms;
+            private readonly BasicStats stats;
+            private readonly NumericDocValues norms;
 
             internal BasicSimScorer(SimilarityBase outerInstance, BasicStats stats, NumericDocValues norms)
             {
-                this.OuterInstance = outerInstance;
-                this.Stats = stats;
-                this.Norms = norms;
+                this.outerInstance = outerInstance;
+                this.stats = stats;
+                this.norms = norms;
             }
 
             public override float Score(int doc, float freq)
             {
                 // We have to supply something in case norms are omitted
-                return OuterInstance.Score(Stats, freq, Norms == null ? 1F : OuterInstance.DecodeNormValue((sbyte)Norms.Get(doc)));
+                return outerInstance.Score(stats, freq, norms == null ? 1F : outerInstance.DecodeNormValue((sbyte)norms.Get(doc)));
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return OuterInstance.Explain(Stats, doc, freq, Norms == null ? 1F : OuterInstance.DecodeNormValue((sbyte)Norms.Get(doc)));
+                return outerInstance.Explain(stats, doc, freq, norms == null ? 1F : outerInstance.DecodeNormValue((sbyte)norms.Get(doc)));
             }
 
             public override float ComputeSlopFactor(int distance)

@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        protected internal bool DiscountOverlaps_Renamed = true;
+        protected bool DiscountOverlaps_Renamed = true; // LUCENENET TODO: rename
 
         /// <summary>
         /// Determines whether overlap tokens (Tokens with

@@ -690,40 +690,40 @@ namespace Lucene.Net.Search.Similarities
 
         private sealed class TFIDFSimScorer : SimScorer
         {
-            private readonly TFIDFSimilarity OuterInstance;
+            private readonly TFIDFSimilarity outerInstance;
 
-            internal readonly IDFStats Stats;
-            internal readonly float WeightValue;
-            internal readonly NumericDocValues Norms;
+            private readonly IDFStats stats;
+            private readonly float weightValue;
+            private readonly NumericDocValues norms;
 
             internal TFIDFSimScorer(TFIDFSimilarity outerInstance, IDFStats stats, NumericDocValues norms)
             {
-                this.OuterInstance = outerInstance;
-                this.Stats = stats;
-                this.WeightValue = stats.Value;
-                this.Norms = norms;
+                this.outerInstance = outerInstance;
+                this.stats = stats;
+                this.weightValue = stats.Value;
+                this.norms = norms;
             }
 
             public override float Score(int doc, float freq)
             {
-                float raw = OuterInstance.Tf(freq) * WeightValue; // compute tf(f)*weight
+                float raw = outerInstance.Tf(freq) * weightValue; // compute tf(f)*weight
 
-                return Norms == null ? raw : raw * OuterInstance.DecodeNormValue(Norms.Get(doc)); // normalize for field
+                return norms == null ? raw : raw * outerInstance.DecodeNormValue(norms.Get(doc)); // normalize for field
             }
 
             public override float ComputeSlopFactor(int distance)
             {
-                return OuterInstance.SloppyFreq(distance);
+                return outerInstance.SloppyFreq(distance);
             }
 
             public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
             {
-                return OuterInstance.ScorePayload(doc, start, end, payload);
+                return outerInstance.ScorePayload(doc, start, end, payload);
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return OuterInstance.ExplainScore(doc, freq, Stats, Norms);
+                return outerInstance.ExplainScore(doc, freq, stats, norms);
             }
         }
 
@@ -733,16 +733,16 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         private class IDFStats : SimWeight
         {
-            internal readonly string Field;
+            internal readonly string Field; // LUCENENET TODO: Make property
 
             /// <summary>
             /// The idf and its explanation </summary>
-            internal readonly Explanation Idf;
+            internal readonly Explanation Idf; // LUCENENET TODO: Make property
 
-            internal float QueryNorm;
-            internal float QueryWeight;
-            internal readonly float QueryBoost;
-            internal float Value;
+            internal float QueryNorm; // LUCENENET TODO: Make property
+            internal float QueryWeight; // LUCENENET TODO: Make property
+            internal readonly float QueryBoost; // LUCENENET TODO: Make property
+            internal float Value; // LUCENENET TODO: Make property
 
             public IDFStats(string field, Explanation idf, float queryBoost)
             {

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The &lambda; parameter. </summary>
-        private readonly float Lambda_Renamed;
+        private readonly float Lambda_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// Instantiates with the specified collectionModel and &lambda; parameter. </summary>
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda);
+                return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda); // LUCENENET TODO: Formatting problem
             }
         }
     }

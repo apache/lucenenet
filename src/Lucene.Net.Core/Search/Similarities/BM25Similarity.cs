@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Similarities
         /// Lucene's default implementation.  If you change this, then you should
         /// change <seealso cref="#decodeNormValue(byte)"/> to match.
         /// </summary>
-        protected internal virtual sbyte EncodeNormValue(float boost, int fieldLength)
+        protected internal virtual sbyte EncodeNormValue(float boost, int fieldLength) // LUCENENET TODO: Can we use byte?
         {
             return SmallFloat.FloatToByte315(boost / (float)Math.Sqrt(fieldLength));
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Similarities
         /// The default implementation returns <code>1 / f<sup>2</sup></code>
         /// where <code>f</code> is <seealso cref="SmallFloat#byte315ToFloat(byte)"/>.
         /// </summary>
-        protected internal virtual float DecodeNormValue(sbyte b)
+        protected internal virtual float DecodeNormValue(sbyte b) // LUCENENET TODO: Can we use byte?
         {
             return NORM_TABLE[b & 0xFF];
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        protected internal bool DiscountOverlaps_Renamed = true;
+        private bool DiscountOverlaps_Renamed = true; // LUCENENET specific: made private, since value can be set/get through propery
 
         /// <summary>
         /// Sets whether overlap tokens (Tokens with 0 position increment) are
@@ -247,10 +247,10 @@ namespace Lucene.Net.Search.Similarities
         {
             private readonly BM25Similarity OuterInstance;
 
-            internal readonly BM25Stats Stats;
-            internal readonly float WeightValue; // boost * idf * (k1 + 1)
-            internal readonly NumericDocValues Norms;
-            internal readonly float[] Cache;
+            private readonly BM25Stats Stats;
+            private readonly float WeightValue; // boost * idf * (k1 + 1)
+            private readonly NumericDocValues Norms;
+            private readonly float[] Cache;
 
             internal BM25DocScorer(BM25Similarity outerInstance, BM25Stats stats, NumericDocValues norms)
             {
@@ -290,31 +290,31 @@ namespace Lucene.Net.Search.Similarities
         {
             /// <summary>
             /// BM25's idf </summary>
-            internal readonly Explanation Idf;
+            internal readonly Explanation Idf; // LUCENENET TODO: Make property
 
             /// <summary>
             /// The average document length. </summary>
-            internal readonly float Avgdl;
+            internal readonly float Avgdl; // LUCENENET TODO: Make property
 
             /// <summary>
             /// query's inner boost </summary>
-            internal readonly float QueryBoost;
+            internal readonly float QueryBoost; // LUCENENET TODO: Make property
 
             /// <summary>
             /// query's outer boost (only for explain) </summary>
-            internal float TopLevelBoost;
+            internal float TopLevelBoost; // LUCENENET TODO: Make property
 
             /// <summary>
             /// weight (idf * boost) </summary>
-            internal float Weight;
+            internal float Weight; // LUCENENET TODO: Make property
 
             /// <summary>
             /// field name, for pulling norms </summary>
-            internal readonly string Field;
+            internal readonly string Field; // LUCENENET TODO: Make property
 
             /// <summary>
             /// precomputed norm[256] with k1 * ((1 - b) + b * dl / avgdl) </summary>
-            internal readonly float[] Cache;
+            internal readonly float[] Cache; // LUCENENET TODO: Make property
 
             internal BM25Stats(string field, Explanation idf, float queryBoost, float avgdl, float[] cache)
             {
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Similarities
                 this.Cache = cache;
             }
 
-            public override float ValueForNormalization
+            public override float ValueForNormalization // LUCENENET TODO: Rename GetValueForNormalization() (conversion)
             {
                 get
                 {

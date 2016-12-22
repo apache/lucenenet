@@ -47,14 +47,14 @@ namespace Lucene.Net.Search.Similarities
         {
             PerFieldSimWeight weight = new PerFieldSimWeight();
             weight.@delegate = Get(collectionStats.Field());
-            weight.DelegateWeight = weight.@delegate.ComputeWeight(queryBoost, collectionStats, termStats);
+            weight.delegateWeight = weight.@delegate.ComputeWeight(queryBoost, collectionStats, termStats);
             return weight;
         }
 
         public override sealed SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
         {
             PerFieldSimWeight perFieldWeight = (PerFieldSimWeight)weight;
-            return perFieldWeight.@delegate.DoSimScorer(perFieldWeight.DelegateWeight, context);
+            return perFieldWeight.@delegate.DoSimScorer(perFieldWeight.delegateWeight, context);
         }
 
         /// <summary>
@@ -65,19 +65,19 @@ namespace Lucene.Net.Search.Similarities
         internal class PerFieldSimWeight : SimWeight
         {
             internal Similarity @delegate;
-            internal SimWeight DelegateWeight;
+            internal SimWeight delegateWeight;
 
             public override float ValueForNormalization
             {
                 get
                 {
-                    return DelegateWeight.ValueForNormalization;
+                    return delegateWeight.ValueForNormalization;
                 }
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                DelegateWeight.Normalize(queryNorm, topLevelBoost);
+                delegateWeight.Normalize(queryNorm, topLevelBoost);
             }
         }
     }

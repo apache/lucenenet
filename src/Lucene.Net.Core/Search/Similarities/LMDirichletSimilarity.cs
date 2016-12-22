@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The &mu; parameter. </summary>
-        private readonly float Mu_Renamed;
+        private readonly float Mu_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// Instantiates the similarity with the provided &mu; parameter. </summary>
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return string.Format(CultureInfo.InvariantCulture, "Dirichlet(%f)", Mu);
+                return string.Format(CultureInfo.InvariantCulture, "Dirichlet(%f)", Mu);// LUCENENET TODO: Formatting issue
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// the sub-similarities used to create the combined score </summary>
-        protected internal readonly Similarity[] Sims;
+        protected internal readonly Similarity[] Sims; // LUCENENET TODO: Rename camelCase
 
         /// <summary>
         /// Creates a MultiSimilarity which will sum the scores
@@ -62,24 +62,24 @@ namespace Lucene.Net.Search.Similarities
             SimScorer[] subScorers = new SimScorer[Sims.Length];
             for (int i = 0; i < subScorers.Length; i++)
             {
-                subScorers[i] = Sims[i].DoSimScorer(((MultiStats)stats).SubStats[i], context);
+                subScorers[i] = Sims[i].DoSimScorer(((MultiStats)stats).subStats[i], context);
             }
             return new MultiSimScorer(subScorers);
         }
 
         internal class MultiSimScorer : SimScorer
         {
-            internal readonly SimScorer[] SubScorers;
+            private readonly SimScorer[] subScorers;
 
             internal MultiSimScorer(SimScorer[] subScorers)
             {
-                this.SubScorers = subScorers;
+                this.subScorers = subScorers;
             }
 
             public override float Score(int doc, float freq)
             {
                 float sum = 0.0f;
-                foreach (SimScorer subScorer in SubScorers)
+                foreach (SimScorer subScorer in subScorers)
                 {
                     sum += subScorer.Score(doc, freq);
                 }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Similarities
             public override Explanation Explain(int doc, Explanation freq)
             {
                 Explanation expl = new Explanation(Score(doc, freq.Value), "sum of:");
-                foreach (SimScorer subScorer in SubScorers)
+                foreach (SimScorer subScorer in subScorers)
                 {
                     expl.AddDetail(subScorer.Explain(doc, freq));
                 }
@@ -98,22 +98,22 @@ namespace Lucene.Net.Search.Similarities
 
             public override float ComputeSlopFactor(int distance)
             {
-                return SubScorers[0].ComputeSlopFactor(distance);
+                return subScorers[0].ComputeSlopFactor(distance);
             }
 
             public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
             {
-                return SubScorers[0].ComputePayloadFactor(doc, start, end, payload);
+                return subScorers[0].ComputePayloadFactor(doc, start, end, payload);
             }
         }
 
         internal class MultiStats : SimWeight
         {
-            internal readonly SimWeight[] SubStats;
+            internal readonly SimWeight[] subStats;
 
             internal MultiStats(SimWeight[] subStats)
             {
-                this.SubStats = subStats;
+                this.subStats = subStats;
             }
 
             public override float ValueForNormalization
@@ -121,17 +121,17 @@ namespace Lucene.Net.Search.Similarities
                 get
                 {
                     float sum = 0.0f;
-                    foreach (SimWeight stat in SubStats)
+                    foreach (SimWeight stat in subStats)
                     {
                         sum += stat.ValueForNormalization;
                     }
-                    return sum / SubStats.Length;
+                    return sum / subStats.Length;
                 }
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                foreach (SimWeight stat in SubStats)
+                foreach (SimWeight stat in subStats)
                 {
                     stat.Normalize(queryNorm, topLevelBoost);
                 }

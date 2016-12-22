@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public class NormalizationH3 : Normalization
     {
-        private readonly float Mu_Renamed;
+        private readonly float mu;
 
         /// <summary>
         /// Calls <seealso cref="#NormalizationH3(float) NormalizationH3(800)"/>
@@ -38,17 +38,17 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="mu"> smoothing parameter <code>&mu;</code> </param>
         public NormalizationH3(float mu)
         {
-            this.Mu_Renamed = mu;
+            this.mu = mu;
         }
 
         public override float Tfn(BasicStats stats, float tf, float len)
         {
-            return (tf + Mu_Renamed * ((stats.TotalTermFreq + 1F) / (stats.NumberOfFieldTokens + 1F))) / (len + Mu_Renamed) * Mu_Renamed;
+            return (tf + mu * ((stats.TotalTermFreq + 1F) / (stats.NumberOfFieldTokens + 1F))) / (len + mu) * mu;
         }
 
         public override string ToString()
         {
-            return "3(" + Mu_Renamed + ")";
+            return "3(" + mu + ")";
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Mu_Renamed;
+                return mu;
             }
         }
     }

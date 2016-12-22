@@ -74,15 +74,15 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The basic model for information content. </summary>
-        protected internal readonly BasicModel BasicModel_Renamed;
+        protected internal readonly BasicModel BasicModel_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// The first normalization of the information content. </summary>
-        protected internal readonly AfterEffect AfterEffect_Renamed;
+        protected internal readonly AfterEffect AfterEffect_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// The term frequency normalization. </summary>
-        protected internal readonly Normalization Normalization_Renamed;
+        protected internal readonly Normalization Normalization_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// Creates DFRSimilarity from the three components.

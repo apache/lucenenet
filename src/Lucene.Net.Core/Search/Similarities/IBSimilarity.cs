@@ -68,15 +68,15 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The probabilistic distribution used to model term occurrence. </summary>
-        protected internal readonly Distribution Distribution_Renamed;
+        protected internal readonly Distribution Distribution_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// The <em>lambda (&lambda;<sub>w</sub>)</em> parameter. </summary>
-        protected internal readonly Lambda Lambda_Renamed;
+        protected internal readonly Lambda Lambda_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// The term frequency normalization. </summary>
-        protected internal readonly Normalization Normalization_Renamed;
+        protected internal readonly Normalization Normalization_Renamed; // LUCENENET TODO: Rename
 
         /// <summary>
         /// Creates IBSimilarity from the three components.

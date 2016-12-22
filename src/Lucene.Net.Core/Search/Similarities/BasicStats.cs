@@ -23,6 +23,7 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public class BasicStats : Similarity.SimWeight
     {
+        // LUCENENET TODO: These fields should probably be made private/internal since they can be accessed through properties
         protected internal readonly string field;
 
         /// <summary>
