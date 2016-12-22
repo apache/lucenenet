@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
      * keeps track of the last non commit checkpoint.
      */
 
-    public class IndexWriter : IDisposable, TwoPhaseCommit
+    public class IndexWriter : IDisposable, ITwoPhaseCommit
     {
         private const int UNBOUNDED_MAX_MERGE_SEGMENTS = -1;
 

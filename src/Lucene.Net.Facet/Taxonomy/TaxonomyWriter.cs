@@ -20,7 +20,7 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using TwoPhaseCommit = Lucene.Net.Index.TwoPhaseCommit;
+    using ITwoPhaseCommit = Lucene.Net.Index.ITwoPhaseCommit;
 
     /// <summary>
     /// <see cref="ITaxonomyWriter"/> is the interface which the faceted-search library uses
@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     /// @lucene.experimental
     /// </summary>
-    public interface ITaxonomyWriter : IDisposable, TwoPhaseCommit
+    public interface ITaxonomyWriter : IDisposable, ITwoPhaseCommit
     {
         /// <summary>
         /// <see cref="AddCategory"/> adds a category with a given path name to the taxonomy,

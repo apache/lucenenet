@@ -20,11 +20,11 @@ namespace Lucene.Net.Index
     /// <summary>
     /// An interface for implementations that support 2-phase commit. You can use
     /// <seealso cref="TwoPhaseCommitTool"/> to execute a 2-phase commit algorithm over several
-    /// <seealso cref="TwoPhaseCommit"/>s.
+    /// <seealso cref="ITwoPhaseCommit"/>s.
     ///
     /// @lucene.experimental
     /// </summary>
-    public interface TwoPhaseCommit // LUCENENET TODO: Rename with "I"
+    public interface ITwoPhaseCommit
     {
         /// <summary>
         /// The first stage of a 2-phase commit. Implementations should do as much work

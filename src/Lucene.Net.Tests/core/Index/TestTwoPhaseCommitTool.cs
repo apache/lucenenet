@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTwoPhaseCommitTool : LuceneTestCase
     {
-        private class TwoPhaseCommitImpl : TwoPhaseCommit
+        private class TwoPhaseCommitImpl : ITwoPhaseCommit
         {
             internal static bool CommitCalled = false;
             internal readonly bool FailOnPrepare;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
         public virtual void TestNullTPCs()
         {
             int numObjects = Random().Next(4) + 3; // between [3, 6]
-            TwoPhaseCommit[] tpcs = new TwoPhaseCommit[numObjects];
+            ITwoPhaseCommit[] tpcs = new ITwoPhaseCommit[numObjects];
             bool setNull = false;
             for (int i = 0; i < tpcs.Length; i++)
             {

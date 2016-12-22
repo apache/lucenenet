@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A utility for executing 2-phase commit on several objects.
     /// </summary>
-    /// <seealso cref= TwoPhaseCommit
+    /// <seealso cref= ITwoPhaseCommit
     /// @lucene.experimental </seealso>
     public sealed class TwoPhaseCommitTool
     {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// Sole constructor. </summary>
-            public PrepareCommitFailException(Exception cause, TwoPhaseCommit obj)
+            public PrepareCommitFailException(Exception cause, ITwoPhaseCommit obj)
                 : base("prepareCommit() failed on " + obj, cause)
             {
             }
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// Sole constructor. </summary>
-            public CommitFailException(Exception cause, TwoPhaseCommit obj)
+            public CommitFailException(Exception cause, ITwoPhaseCommit obj)
                 : base("commit() failed on " + obj, cause)
             {
             }
@@ -71,9 +71,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// rollback all objects, discarding any exceptions that occur. </summary>
-        private static void Rollback(params TwoPhaseCommit[] objects)
+        private static void Rollback(params ITwoPhaseCommit[] objects)
         {
-            foreach (TwoPhaseCommit tpc in objects)
+            foreach (ITwoPhaseCommit tpc in objects)
             {
                 // ignore any exception that occurs during rollback - we want to ensure
                 // all objects are rolled-back.
@@ -92,10 +92,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Executes a 2-phase commit algorithm by first
-        /// <seealso cref="TwoPhaseCommit#prepareCommit()"/> all objects and only if all succeed,
-        /// it proceeds with <seealso cref="TwoPhaseCommit#commit()"/>. If any of the objects
+        /// <seealso cref="ITwoPhaseCommit#prepareCommit()"/> all objects and only if all succeed,
+        /// it proceeds with <seealso cref="ITwoPhaseCommit#commit()"/>. If any of the objects
         /// fail on either the preparation or actual commit, it terminates and
-        /// <seealso cref="TwoPhaseCommit#rollback()"/> all of them.
+        /// <seealso cref="ITwoPhaseCommit#rollback()"/> all of them.
         /// <p>
         /// <b>NOTE:</b> it may happen that an object fails to commit, after few have
         /// already successfully committed. this tool will still issue a rollback
@@ -107,12 +107,12 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <exception cref="PrepareCommitFailException">
         ///           if any of the objects fail to
-        ///           <seealso cref="TwoPhaseCommit#prepareCommit()"/> </exception>
+        ///           <seealso cref="ITwoPhaseCommit#prepareCommit()"/> </exception>
         /// <exception cref="CommitFailException">
-        ///           if any of the objects fail to <seealso cref="TwoPhaseCommit#commit()"/> </exception>
-        public static void Execute(params TwoPhaseCommit[] objects)
+        ///           if any of the objects fail to <seealso cref="ITwoPhaseCommit#commit()"/> </exception>
+        public static void Execute(params ITwoPhaseCommit[] objects)
         {
-            TwoPhaseCommit tpc = null;
+            ITwoPhaseCommit tpc = null;
             try
             {
                 // first, all should successfully prepareCommit()
