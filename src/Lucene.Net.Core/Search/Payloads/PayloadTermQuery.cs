@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Payloads
     ///  </seealso>
     public class PayloadTermQuery : SpanTermQuery
     {
-        protected internal PayloadFunction Function;
+        protected PayloadFunction Function;
         private bool IncludeSpanScore;
 
         public PayloadTermQuery(Term term, PayloadFunction function)
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadTermWeight(this, this, searcher);
         }
 
-        protected internal class PayloadTermWeight : SpanWeight
+        protected class PayloadTermWeight : SpanWeight
         {
             private readonly PayloadTermQuery OuterInstance;
 
@@ -83,11 +83,11 @@ namespace Lucene.Net.Search.Payloads
                 return new PayloadTermSpanScorer(this, (TermSpans)query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.DoSimScorer(Stats, context));
             }
 
-            protected internal class PayloadTermSpanScorer : SpanScorer
+            protected class PayloadTermSpanScorer : SpanScorer
             {
                 private readonly PayloadTermQuery.PayloadTermWeight OuterInstance;
 
-                protected internal BytesRef Payload;
+                protected BytesRef Payload;
                 protected internal float PayloadScore_Renamed;
                 protected internal int PayloadsSeen;
                 internal readonly TermSpans TermSpans;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Payloads
                 /// <exception cref="IOException"> if there is a low-level I/O error </exception>
                 public override float Score()
                 {
-                    return OuterInstance.OuterInstance.IncludeSpanScore ? SpanScore * PayloadScore : PayloadScore;
+                    return OuterInstance.OuterInstance.IncludeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
 
                 /// <summary>
@@ -163,12 +163,9 @@ namespace Lucene.Net.Search.Payloads
                 /// <exception cref="IOException"> if there is a low-level I/O error
                 /// </exception>
                 /// <seealso cref= #score() </seealso>
-                protected internal virtual float SpanScore
+                protected internal virtual float GetSpanScore()
                 {
-                    get
-                    {
-                        return base.Score();
-                    }
+                    return base.Score();
                 }
 
                 /// <summary>
@@ -176,12 +173,9 @@ namespace Lucene.Net.Search.Payloads
                 /// </summary>
                 /// <returns> The score, as calculated by
                 ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
-                protected internal virtual float PayloadScore
+                protected internal virtual float GetPayloadScore()
                 {
-                    get
-                    {
-                        return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
-                    }
+                    return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
                 }
             }
 
@@ -207,7 +201,7 @@ namespace Lucene.Net.Search.Payloads
                         // would be a good idea
                         string field = ((SpanQuery)Query).Field;
                         Explanation payloadExpl = OuterInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
-                        payloadExpl.Value = scorer.PayloadScore;
+                        payloadExpl.Value = scorer.GetPayloadScore();
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
                         if (OuterInstance.IncludeSpanScore)
