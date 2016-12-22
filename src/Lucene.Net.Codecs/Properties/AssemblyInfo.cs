@@ -5,13 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Codecs")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Lucene.Net.Codecs")]
+[assembly: AssemblyDescription("The Apache Software Foundation Codecs Component of the Lucene.Net full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Codecs")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("Lucene.Net")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Codecs")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

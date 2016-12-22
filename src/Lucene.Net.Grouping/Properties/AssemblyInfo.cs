@@ -6,12 +6,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Lucene.Net.Grouping")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("The Apache Software Foundation Grouping Grouping of the Lucene.Net full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Lucene.Net.Grouping")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("Lucene.Net")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Grouping")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
