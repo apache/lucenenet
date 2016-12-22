@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
             ByteStarts = new int[size];
         }
 
-        internal virtual int BytesPerPosting() // LUCENENET TODO: Make property
+        internal virtual int BytesPerPosting()
         {
             return BYTES_PER_POSTING;
         }
