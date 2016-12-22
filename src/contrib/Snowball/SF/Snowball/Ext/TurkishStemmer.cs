@@ -2730,6 +2730,7 @@ namespace SF.Snowball.Ext
             }
         lab6:
             cursor = limit - v_4;
+			bra = cursor;
             // <+, line 432
             {
                 int c = cursor;
@@ -2780,6 +2781,7 @@ namespace SF.Snowball.Ext
             }
         lab11:
             cursor = limit - v_7;
+			bra = cursor;
             // <+, line 434
             {
                 int c = cursor;
@@ -2830,6 +2832,7 @@ namespace SF.Snowball.Ext
             }
         lab16:
             cursor = limit - v_10;
+			bra = cursor;
             // <+, line 436
             {
                 int c = cursor;
@@ -2880,6 +2883,7 @@ namespace SF.Snowball.Ext
             }
         lab20:
             cursor = limit - v_13;
+			bra = cursor;
             // <+, line 438
             {
                 int c = cursor;
