@@ -204,14 +204,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns all IndexCommits held by at least one snapshot. </summary>
-        public virtual IList<IndexCommit> Snapshots // LUCENENET TODO: Make method (conversion)
+        public virtual IList<IndexCommit> GetSnapshots()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return new List<IndexCommit>(indexCommits.Values);
-                }
+                return new List<IndexCommit>(indexCommits.Values);
             }
         }
 

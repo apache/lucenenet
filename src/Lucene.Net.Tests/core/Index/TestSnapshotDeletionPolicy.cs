@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
             PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
             writer.Dispose();
 
-            Assert.AreEqual(numSnapshots, sdp.Snapshots.Count);
+            Assert.AreEqual(numSnapshots, sdp.GetSnapshots().Count);
             Assert.AreEqual(numSnapshots, sdp.SnapshotCount);
             AssertSnapshotExists(dir, sdp, numSnapshots, true);
 

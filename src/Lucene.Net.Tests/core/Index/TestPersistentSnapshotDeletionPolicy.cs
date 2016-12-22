@@ -81,14 +81,14 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, GetConfig(Random(), psdp));
             psdp = (PersistentSnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
-            Assert.AreEqual(numSnapshots, psdp.Snapshots.Count);
+            Assert.AreEqual(numSnapshots, psdp.GetSnapshots().Count);
             Assert.AreEqual(numSnapshots, psdp.SnapshotCount);
             AssertSnapshotExists(dir, psdp, numSnapshots, false);
 
             writer.AddDocument(new Document());
             writer.Commit();
             Snapshots.Add(psdp.Snapshot());
-            Assert.AreEqual(numSnapshots + 1, psdp.Snapshots.Count);
+            Assert.AreEqual(numSnapshots + 1, psdp.GetSnapshots().Count);
             Assert.AreEqual(numSnapshots + 1, psdp.SnapshotCount);
             AssertSnapshotExists(dir, psdp, numSnapshots + 1, false);
 
