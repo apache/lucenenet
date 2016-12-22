@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using CoreClosedListener = Lucene.Net.Index.SegmentReader.CoreClosedListener;
+    using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private readonly ISet<CoreClosedListener> CoreClosedListeners = new ConcurrentHashSet<CoreClosedListener>(new IdentityComparer<CoreClosedListener>());
+        private readonly ISet<ICoreClosedListener> CoreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {
@@ -262,7 +262,7 @@ namespace Lucene.Net.Index
         {
             lock (CoreClosedListeners)
             {
-                foreach (CoreClosedListener listener in CoreClosedListeners)
+                foreach (ICoreClosedListener listener in CoreClosedListeners)
                 {
                     // SegmentReader uses our instance as its
                     // coreCacheKey:
@@ -278,12 +278,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void AddCoreClosedListener(CoreClosedListener listener)
+        internal void AddCoreClosedListener(ICoreClosedListener listener)
         {
             CoreClosedListeners.Add(listener);
         }
 
-        internal void RemoveCoreClosedListener(CoreClosedListener listener)
+        internal void RemoveCoreClosedListener(ICoreClosedListener listener)
         {
             CoreClosedListeners.Remove(listener);
         }

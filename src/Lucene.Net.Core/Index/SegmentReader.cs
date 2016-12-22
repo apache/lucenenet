@@ -675,7 +675,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public interface CoreClosedListener // LUCENENET TODO: Rename with "I"
+        public interface ICoreClosedListener
         {
             /// <summary>
             /// Invoked when the shared core of the original {@code
@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: adds a CoreClosedListener to this reader's shared core </summary>
-        public void AddCoreClosedListener(CoreClosedListener listener)
+        public void AddCoreClosedListener(ICoreClosedListener listener)
         {
             EnsureOpen();
             core.AddCoreClosedListener(listener);
@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: removes a CoreClosedListener from this reader's shared core </summary>
-        public void RemoveCoreClosedListener(CoreClosedListener listener)
+        public void RemoveCoreClosedListener(ICoreClosedListener listener)
         {
             EnsureOpen();
             core.RemoveCoreClosedListener(listener);

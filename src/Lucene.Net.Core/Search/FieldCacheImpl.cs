@@ -138,9 +138,9 @@ namespace Lucene.Net.Search
         }
 
         // per-segment fieldcaches don't purge until the shared core closes.
-        internal readonly SegmentReader.CoreClosedListener purgeCore;
+        internal readonly SegmentReader.ICoreClosedListener purgeCore;
 
-        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.CoreClosedListener
+        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreClosedListener
         {
             private FieldCacheImpl OuterInstance;
 
