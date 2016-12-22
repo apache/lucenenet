@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Payloads
     /// </summary>
     public class PayloadSpanUtil
     {
-        private IndexReaderContext Context;
+        private IndexReaderContext context;
 
         /// <param name="context">
         ///          that contains doc with payloads to extract
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Payloads
         /// <seealso cref= IndexReader#getContext() </seealso>
         public PayloadSpanUtil(IndexReaderContext context)
         {
-            this.Context = context;
+            this.context = context;
         }
 
         /// <summary>
@@ -191,9 +191,9 @@ namespace Lucene.Net.Search.Payloads
             query.ExtractTerms(terms);
             foreach (Term term in terms)
             {
-                termContexts[term] = TermContext.Build(Context, term);
+                termContexts[term] = TermContext.Build(context, term);
             }
-            foreach (AtomicReaderContext atomicReaderContext in Context.Leaves)
+            foreach (AtomicReaderContext atomicReaderContext in context.Leaves)
             {
                 Spans spans = query.GetSpans(atomicReaderContext, atomicReaderContext.AtomicReader.LiveDocs, termContexts);
                 while (spans.Next() == true)

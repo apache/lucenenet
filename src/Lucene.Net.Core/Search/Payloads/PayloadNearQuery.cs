@@ -50,8 +50,8 @@ namespace Lucene.Net.Search.Payloads
     /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef) </seealso>
     public class PayloadNearQuery : SpanNearQuery
     {
-        protected internal string FieldName;
-        protected internal PayloadFunction Function;
+        protected string fieldName;
+        protected PayloadFunction function;
 
         public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder)
             : this(clauses, slop, inOrder, new AveragePayloadFunction())
@@ -61,8 +61,8 @@ namespace Lucene.Net.Search.Payloads
         public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder, PayloadFunction function)
             : base(clauses, slop, inOrder)
         {
-            FieldName = clauses[0].Field; // all clauses must have same field
-            this.Function = function;
+            fieldName = clauses[0].Field; // all clauses must have same field
+            this.function = function;
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Payloads
             {
                 newClauses[i] = (SpanQuery)clauses[i].Clone();
             }
-            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder, Function);
+            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder, function);
             boostingNearQuery.Boost = Boost;
             return boostingNearQuery;
         }
@@ -114,8 +114,8 @@ namespace Lucene.Net.Search.Payloads
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((FieldName == null) ? 0 : FieldName.GetHashCode());
-            result = prime * result + ((Function == null) ? 0 : Function.GetHashCode());
+            result = prime * result + ((fieldName == null) ? 0 : fieldName.GetHashCode());
+            result = prime * result + ((function == null) ? 0 : function.GetHashCode());
             return result;
         }
 
@@ -134,25 +134,25 @@ namespace Lucene.Net.Search.Payloads
                 return false;
             }
             PayloadNearQuery other = (PayloadNearQuery)obj;
-            if (FieldName == null)
+            if (fieldName == null)
             {
-                if (other.FieldName != null)
+                if (other.fieldName != null)
                 {
                     return false;
                 }
             }
-            else if (!FieldName.Equals(other.FieldName))
+            else if (!fieldName.Equals(other.fieldName))
             {
                 return false;
             }
-            if (Function == null)
+            if (function == null)
             {
-                if (other.Function != null)
+                if (other.function != null)
                 {
                     return false;
                 }
             }
-            else if (!Function.Equals(other.Function))
+            else if (!function.Equals(other.function))
             {
                 return false;
             }
@@ -161,17 +161,17 @@ namespace Lucene.Net.Search.Payloads
 
         public class PayloadNearSpanWeight : SpanWeight
         {
-            private readonly PayloadNearQuery OuterInstance;
+            private readonly PayloadNearQuery outerInstance;
 
             public PayloadNearSpanWeight(PayloadNearQuery outerInstance, SpanQuery query, IndexSearcher searcher)
                 : base(query, searcher)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new PayloadNearSpanScorer(OuterInstance, query.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.DoSimScorer(Stats, context));
+                return new PayloadNearSpanScorer(outerInstance, query.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.DoSimScorer(Stats, context));
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Payloads
                         expl.Value = scoreExplanation.Value;
                         string field = ((SpanQuery)Query).Field;
                         // now the payloads part
-                        Explanation payloadExpl = OuterInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore);
+                        Explanation payloadExpl = outerInstance.function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
                         result.AddDetail(expl);
@@ -208,17 +208,17 @@ namespace Lucene.Net.Search.Payloads
 
         public class PayloadNearSpanScorer : SpanScorer
         {
-            private readonly PayloadNearQuery OuterInstance;
+            private readonly PayloadNearQuery outerInstance;
 
-            internal new Spans Spans;
-            protected internal float PayloadScore;
-            internal int PayloadsSeen;
+            internal new Spans spans;
+            protected internal float payloadScore;
+            internal int payloadsSeen;
 
             protected internal PayloadNearSpanScorer(PayloadNearQuery outerInstance, Spans spans, Weight weight, Similarity similarity, Similarity.SimScorer docScorer)
                 : base(spans, weight, docScorer)
             {
-                this.OuterInstance = outerInstance;
-                this.Spans = spans;
+                this.outerInstance = outerInstance;
+                this.spans = spans;
             }
 
             // Get the payloads associated with all underlying subspans
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Payloads
             }
 
             // TODO change the whole spans api to use bytesRef, or nuke spans
-            internal BytesRef Scratch = new BytesRef();
+            internal BytesRef scratch = new BytesRef();
 
             /// <summary>
             /// By default, uses the <seealso cref="PayloadFunction"/> to score the payloads, but
@@ -261,16 +261,16 @@ namespace Lucene.Net.Search.Payloads
             /// <param name="start"> The start position of the span being scored </param>
             /// <param name="end"> The end position of the span being scored
             /// </param>
-            /// <seealso cref= Spans </seealso>
-            protected internal virtual void ProcessPayloads(ICollection<byte[]> payLoads, int start, int end)
+            /// <seealso cref= spans </seealso>
+            protected virtual void ProcessPayloads(ICollection<byte[]> payLoads, int start, int end)
             {
                 foreach (var thePayload in payLoads)
                 {
-                    Scratch.Bytes = thePayload;
-                    Scratch.Offset = 0;
-                    Scratch.Length = thePayload.Length;
-                    PayloadScore = OuterInstance.Function.CurrentScore(Doc, OuterInstance.FieldName, start, end, PayloadsSeen, PayloadScore, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Scratch));
-                    ++PayloadsSeen;
+                    scratch.Bytes = thePayload;
+                    scratch.Offset = 0;
+                    scratch.Length = thePayload.Length;
+                    payloadScore = outerInstance.function.CurrentScore(Doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, DocScorer.ComputePayloadFactor(Doc, spans.Start(), spans.End(), scratch));
+                    ++payloadsSeen;
                 }
             }
 
@@ -281,25 +281,25 @@ namespace Lucene.Net.Search.Payloads
                 {
                     return false;
                 }
-                Doc = Spans.Doc();
+                Doc = spans.Doc();
                 Freq_Renamed = 0.0f;
-                PayloadScore = 0;
-                PayloadsSeen = 0;
+                payloadScore = 0;
+                payloadsSeen = 0;
                 do
                 {
-                    int matchLength = Spans.End() - Spans.Start();
+                    int matchLength = spans.End() - spans.Start();
                     Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
                     Spans[] spansArr = new Spans[1];
-                    spansArr[0] = Spans;
+                    spansArr[0] = spans;
                     GetPayloads(spansArr);
-                    More = Spans.Next();
-                } while (More && (Doc == Spans.Doc()));
+                    More = spans.Next();
+                } while (More && (Doc == spans.Doc()));
                 return true;
             }
 
             public override float Score()
             {
-                return base.Score() * OuterInstance.Function.DocScore(Doc, OuterInstance.FieldName, PayloadsSeen, PayloadScore);
+                return base.Score() * outerInstance.function.DocScore(Doc, outerInstance.fieldName, payloadsSeen, payloadScore);
             }
         }
     }
