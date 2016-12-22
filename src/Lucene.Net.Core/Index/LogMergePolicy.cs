@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
-            int numSegments = infos.Size();
+            int numSegments = infos.Size;
             int numToMerge = 0;
             SegmentCommitInfo mergeInfo = null;
             bool segmentIsOriginal = false;
@@ -405,7 +405,7 @@ namespace Lucene.Net.Index
             // Find the newest (rightmost) segment that needs to
             // be merged (other segments may have been flushed
             // since merging started):
-            int last = infos.Size();
+            int last = infos.Size;
             while (last > 0)
             {
                 SegmentCommitInfo info = infos.Info(--last);
@@ -559,7 +559,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
         {
-            int numSegments = infos.Size();
+            int numSegments = infos.Size;
             if (Verbose())
             {
                 Message("findMerges: " + numSegments + " segments");

@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
             sis.Read(dir);
             // Since we flushed w/o allowing merging we should now
             // have 10 segments
-            Assert.AreEqual(10, sis.Size());
+            Assert.AreEqual(10, sis.Size);
             dir.Dispose();
         }
 

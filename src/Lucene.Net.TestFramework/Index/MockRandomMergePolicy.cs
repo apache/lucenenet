@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
             MergeSpecification mergeSpec = null;
             //System.out.println("MRMP: findMerges sis=" + segmentInfos);
 
-            int numSegments = segmentInfos.Size();
+            int numSegments = segmentInfos.Size;
 
             IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
             ICollection<SegmentCommitInfo> merging = base.writer.Get().MergingSegments;

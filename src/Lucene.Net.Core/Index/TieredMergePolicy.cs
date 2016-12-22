@@ -400,9 +400,9 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findMerges: " + infos.Size() + " segments");
+                Message("findMerges: " + infos.Size + " segments");
             }
-            if (infos.Size() == 0)
+            if (infos.Size == 0)
             {
                 return null;
             }

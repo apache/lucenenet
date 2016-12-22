@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            int numSegments = sis.Size();
+            int numSegments = sis.Size;
             string segmentsFileName = sis.GetSegmentsFileName();
             // note: we only read the format byte (required preamble) here!
             IndexInput input = null;

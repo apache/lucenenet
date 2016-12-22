@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
             {
                 var sis = new SegmentInfos();
                 sis.Read(directory, segmentFileName);
-                var readers = new SegmentReader[sis.Size()];
-                for (int i = sis.Size() - 1; i >= 0; i--)
+                var readers = new SegmentReader[sis.Size];
+                for (int i = sis.Size - 1; i >= 0; i--)
                 {
                     System.IO.IOException prior = null;
                     bool success = false;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
             // IndexWriter synchronizes externally before calling
             // us, which ensures infos will not change; so there's
             // no need to process segments in reverse order
-            int numSegments = infos.Size();
+            int numSegments = infos.Size;
 
             IList<SegmentReader> readers = new List<SegmentReader>();
             Directory dir = writer.Directory;
@@ -184,13 +184,13 @@ namespace Lucene.Net.Index
                 }
             }
 
-            SegmentReader[] newReaders = new SegmentReader[infos.Size()];
+            SegmentReader[] newReaders = new SegmentReader[infos.Size];
 
             // remember which readers are shared between the old and the re-opened
             // DirectoryReader - we have to incRef those readers
-            bool[] readerShared = new bool[infos.Size()];
+            bool[] readerShared = new bool[infos.Size];
 
-            for (int i = infos.Size() - 1; i >= 0; i--)
+            for (int i = infos.Size - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
                 int? oldReaderIndex;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                 {
                     if (!success)
                     {
-                        for (i++; i < infos.Size(); i++)
+                        for (i++; i < infos.Size; i++)
                         {
                             if (newReaders[i] != null)
                             {
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
                 UserData_Renamed = infos.UserData;
                 Files = infos.Files(dir, true);
                 Generation_Renamed = infos.Generation;
-                SegmentCount_Renamed = infos.Size();
+                SegmentCount_Renamed = infos.Size;
             }
 
             public override string ToString()

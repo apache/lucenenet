@@ -1933,7 +1933,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return segmentInfos.Size();
+                    return segmentInfos.Size;
                 }
             }
         }
@@ -1967,7 +1967,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (i >= 0 && i < segmentInfos.Size())
+                if (i >= 0 && i < segmentInfos.Size)
                 {
                     return segmentInfos.Info(i).Info.DocCount;
                 }
@@ -5285,7 +5285,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return segmentInfos.Size() > 0 ? segmentInfos.Info(segmentInfos.Size() - 1) : null;
+                return segmentInfos.Size > 0 ? segmentInfos.Info(segmentInfos.Size - 1) : null;
             }
         }
 

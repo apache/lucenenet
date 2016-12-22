@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         public virtual void ListSegments()
         {
-            for (int x = 0; x < infos.Size(); x++)
+            for (int x = 0; x < infos.Size; x++)
             {
                 SegmentCommitInfo info = infos.Info(x);
                 string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.SizeInBytes());
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 
         private int GetIdx(string name)
         {
-            for (int x = 0; x < infos.Size(); x++)
+            for (int x = 0; x < infos.Size; x++)
             {
                 if (name.Equals(infos.Info(x).Info.Name))
                 {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 
         private SegmentCommitInfo GetInfo(string name)
         {
-            for (int x = 0; x < infos.Size(); x++)
+            for (int x = 0; x < infos.Size; x++)
             {
                 if (name.Equals(infos.Info(x).Info.Name))
                 {
