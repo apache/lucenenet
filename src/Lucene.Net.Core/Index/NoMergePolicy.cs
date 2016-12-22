@@ -75,11 +75,8 @@ namespace Lucene.Net.Index
             return useCompoundFile;
         }
 
-        public override IndexWriter IndexWriter
+        public override void SetIndexWriter(IndexWriter writer)
         {
-            set
-            {
-            }
         }
 
         protected override long Size(SegmentCommitInfo info)

@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
             analyzer = config.Analyzer;
             infoStream = config.InfoStream;
             mergePolicy = config.MergePolicy;
-            mergePolicy.IndexWriter = this;
+            mergePolicy.SetIndexWriter(this);
             mergeScheduler = config.MergeScheduler;
             codec = config.Codec;
 

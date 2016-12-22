@@ -599,12 +599,9 @@ namespace Lucene.Net.Index
         /// called more than once, <seealso cref="AlreadySetException"/> is thrown.
         /// </summary>
         /// <seealso cref= SetOnce </seealso>
-        public virtual IndexWriter IndexWriter // LUCENENET TODO: Make SetIndexWriter(IndexWriter writer)
+        public virtual void SetIndexWriter(IndexWriter writer)
         {
-            set
-            {
-                this.writer.Set(value);
-            }
+            this.writer.Set(writer);
         }
 
         /// <summary>

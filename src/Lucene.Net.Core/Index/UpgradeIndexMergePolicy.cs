@@ -70,13 +70,10 @@ namespace Lucene.Net.Index
             return !Constants.LUCENE_MAIN_VERSION.Equals(si.Info.Version);
         }
 
-        public override IndexWriter IndexWriter
+        public override void SetIndexWriter(IndexWriter writer)
         {
-            set
-            {
-                base.IndexWriter = value;
-                @base.IndexWriter = value;
-            }
+            base.SetIndexWriter(writer);
+            @base.SetIndexWriter(writer);
         }
 
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)

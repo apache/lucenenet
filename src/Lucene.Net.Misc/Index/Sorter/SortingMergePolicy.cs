@@ -261,12 +261,9 @@ namespace Lucene.Net.Index.Sorter
             return @in.UseCompoundFile(segments, newSegment);
         }
 
-        public override IndexWriter IndexWriter
+        public override void SetIndexWriter(IndexWriter writer)
         {
-            set
-            {
-                @in.IndexWriter = value;
-            }
+            @in.SetIndexWriter(writer);
         }
 
         public override string ToString()
