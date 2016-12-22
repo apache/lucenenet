@@ -191,7 +191,9 @@ namespace Lucene.Net.Index
             Type superClazz = clazz.GetTypeInfo().BaseType;
             foreach (MethodInfo m in superClazz.GetMethods())
             {
-                if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("Attributes"))
+                // LUCENENET specific - since we changed to using a property for Attributes rather than a method,
+                // we need to reflect that as get_Attributes here.
+                if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("get_Attributes"))
                 {
                     continue;
                 }
