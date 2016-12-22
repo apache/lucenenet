@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = core.CfsReader != null ? core.CfsReader : si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
-            IDictionary<long?, IList<FieldInfo>> genInfos = GenInfos;
+            IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
 
             //      System.out.println("[" + Thread.currentThread().getName() + "] SR.initDocValuesProducers: segInfo=" + si + "; gens=" + genInfos.keySet());
 
@@ -269,29 +269,26 @@ namespace Lucene.Net.Index
         }
 
         // returns a gen->List<FieldInfo> mapping. Fields without DV updates have gen=-1
-        private IDictionary<long?, IList<FieldInfo>> GenInfos // LUCENENET TODO: Make method GetGenInfos() (complexity)
+        private IDictionary<long?, IList<FieldInfo>> GetGenInfos()
         {
-            get
+            IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
+            foreach (FieldInfo fi in FieldInfos)
             {
-                IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
-                foreach (FieldInfo fi in FieldInfos)
+                if (fi.DocValuesType == null)
                 {
-                    if (fi.DocValuesType == null)
-                    {
-                        continue;
-                    }
-                    long gen = fi.DocValuesGen;
-                    IList<FieldInfo> infos;
-                    genInfos.TryGetValue(gen, out infos);
-                    if (infos == null)
-                    {
-                        infos = new List<FieldInfo>();
-                        genInfos[gen] = infos;
-                    }
-                    infos.Add(fi);
+                    continue;
                 }
-                return genInfos;
+                long gen = fi.DocValuesGen;
+                IList<FieldInfo> infos;
+                genInfos.TryGetValue(gen, out infos);
+                if (infos == null)
+                {
+                    infos = new List<FieldInfo>();
+                    genInfos[gen] = infos;
+                }
+                infos.Add(fi);
             }
+            return genInfos;
         }
 
         public override Bits LiveDocs
