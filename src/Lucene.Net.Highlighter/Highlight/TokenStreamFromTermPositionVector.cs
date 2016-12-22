@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Highlight
             offsetAttribute = AddAttribute<IOffsetAttribute>();
             payloadAttribute = AddAttribute<IPayloadAttribute>();
 
-            bool hasOffsets = vector.HasOffsets();
-            bool hasPayloads = vector.HasPayloads();
+            bool hasOffsets = vector.HasOffsets;
+            bool hasPayloads = vector.HasPayloads;
             TermsEnum termsEnum = vector.Iterator(null);
             BytesRef text;
             DocsAndPositionsEnum dpEnum = null;

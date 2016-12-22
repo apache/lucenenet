@@ -177,29 +177,29 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                public override long Size()
+                public override long Size
                 {
-                    return -1;
+                    get { return -1; }
                 }
 
-                public override bool HasFreqs()
+                public override bool HasFreqs
                 {
-                    return false;
+                    get { return false; }
                 }
 
-                public override bool HasOffsets()
+                public override bool HasOffsets
                 {
-                    return false;
+                    get { return false; }
                 }
 
-                public override bool HasPositions()
+                public override bool HasPositions
                 {
-                    return false;
+                    get { return false; }
                 }
 
-                public override bool HasPayloads()
+                public override bool HasPayloads
                 {
-                    return false;
+                    get { return false; }
                 }
             }
 

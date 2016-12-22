@@ -687,9 +687,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return _termCount;
+                get { return _termCount; }
             }
 
             public override long SumTotalTermFreq
@@ -707,25 +707,27 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _docCount; }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return
-                    _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                get
+                {
+                    return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return _fieldInfo.HasPayloads;
+                get { return _fieldInfo.HasPayloads; }
             }
         }
 

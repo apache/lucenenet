@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
             Terms terms = air.Terms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
-            Assert.AreEqual(numTerms - 1, terms.Size());
+            Assert.AreEqual(numTerms - 1, terms.Size);
             TermsEnum termsEnum = terms.Iterator(null);
             BytesRef termBR;
             while ((termBR = termsEnum.Next()) != null)

@@ -324,9 +324,9 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 Assert.AreEqual(leftTerms.SumTotalTermFreq, rightTerms.SumTotalTermFreq);
             }
-            if (leftTerms.Size() != -1 && rightTerms.Size() != -1)
+            if (leftTerms.Size != -1 && rightTerms.Size != -1)
             {
-                Assert.AreEqual(leftTerms.Size(), rightTerms.Size());
+                Assert.AreEqual(leftTerms.Size, rightTerms.Size);
             }
         }
 

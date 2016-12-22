@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                     Terms terms = Terms(field);
                     if (terms != null)
                     {
-                        long termCount = terms.Size();
+                        long termCount = terms.Size;
                         if (termCount == -1)
                         {
                             return -1;

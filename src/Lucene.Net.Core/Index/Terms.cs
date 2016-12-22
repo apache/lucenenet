@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
         ///  other term measures, this measure does not take deleted
         ///  documents into account.
         /// </summary>
-        public abstract long Size(); // LUCENENET TODO: Rename to Count property
+        public abstract long Size { get; } // LUCENENET TODO: Rename to Count
 
         /// <summary>
         /// Returns the sum of <seealso cref="TermsEnum#totalTermFreq"/> for
@@ -150,19 +150,19 @@ namespace Lucene.Net.Index
         /// Returns true if documents in this field store
         ///  per-document term frequency (<seealso cref="DocsEnum#freq"/>).
         /// </summary>
-        public abstract bool HasFreqs(); // LUCENENET TODO: make property
+        public abstract bool HasFreqs { get; }
 
         /// <summary>
         /// Returns true if documents in this field store offsets. </summary>
-        public abstract bool HasOffsets(); // LUCENENET TODO: make property
+        public abstract bool HasOffsets { get; }
 
         /// <summary>
         /// Returns true if documents in this field store positions. </summary>
-        public abstract bool HasPositions(); // LUCENENET TODO: make property
+        public abstract bool HasPositions { get; }
 
         /// <summary>
         /// Returns true if documents in this field store payloads. </summary>
-        public abstract bool HasPayloads(); // LUCENENET TODO: make property
+        public abstract bool HasPayloads { get; }
 
         /// <summary>
         /// Zero-length array of <seealso cref="Terms"/>. </summary>

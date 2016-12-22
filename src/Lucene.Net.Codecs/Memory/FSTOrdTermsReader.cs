@@ -248,29 +248,29 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return fieldInfo.HasPayloads;
+                get { return fieldInfo.HasPayloads; }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return numTerms;
+                get { return numTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.totalTermFreq_Renamed = new long[INTERVAL];
                     this.statsBlockOrd = -1;
                     this.metaBlockOrd = -1;
-                    if (!outerInstance.HasFreqs())
+                    if (!outerInstance.HasFreqs)
                     {
                         Arrays.Fill(totalTermFreq_Renamed, -1);
                     }
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.Memory
                     for (int i = 0; i < INTERVAL && !statsReader.Eof(); i++)
                     {
                         int code = statsReader.ReadVInt();
-                        if (outerInstance.HasFreqs())
+                        if (outerInstance.HasFreqs)
                         {
                             docFreq_Renamed[i] = ((int)((uint)code >> 1));
                             if ((code & 1) == 1)
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
-                    if (!outerInstance.HasPositions())
+                    if (!outerInstance.HasPositions)
                     {
                         return null;
                     }

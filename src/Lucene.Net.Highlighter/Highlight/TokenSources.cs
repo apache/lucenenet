@@ -193,17 +193,17 @@ namespace Lucene.Net.Search.Highlight
         public static TokenStream GetTokenStream(Terms tpv,
               bool tokenPositionsGuaranteedContiguous)
         {
-            if (!tpv.HasOffsets())
+            if (!tpv.HasOffsets)
             {
                 throw new ArgumentException("Cannot create TokenStream from Terms without offsets");
             }
 
-            if (!tokenPositionsGuaranteedContiguous && tpv.HasPositions())
+            if (!tokenPositionsGuaranteedContiguous && tpv.HasPositions)
             {
                 return new TokenStreamFromTermPositionVector(tpv);
             }
 
-            bool hasPayloads = tpv.HasPayloads();
+            bool hasPayloads = tpv.HasPayloads;
 
             // code to reconstruct the original sequence of Tokens
             TermsEnum termsEnum = tpv.Iterator(null);
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search.Highlight
                 return null;
             }
 
-            if (!vector.HasPositions() || !vector.HasOffsets()) {
+            if (!vector.HasPositions || !vector.HasOffsets) {
                 return null;
             }
     

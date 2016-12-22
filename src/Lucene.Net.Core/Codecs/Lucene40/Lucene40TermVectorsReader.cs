@@ -376,9 +376,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return termsEnum;
             }
 
-            public override long Size()
+            public override long Size
             {
-                return NumTerms;
+                get { return NumTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -416,24 +416,24 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return true;
+                get { return true; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return StoreOffsets;
+                get { return StoreOffsets; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return StorePositions;
+                get { return StorePositions; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return StorePayloads;
+                get { return StorePayloads; }
             }
         }
 

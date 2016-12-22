@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, vectors.Size);
             Terms vector = vectors.Terms("field");
             Assert.IsNotNull(vector);
-            Assert.AreEqual(1, vector.Size());
+            Assert.AreEqual(1, vector.Size);
             TermsEnum termsEnum = vector.Iterator(null);
             Assert.IsNotNull(termsEnum.Next());
             Assert.AreEqual("one", termsEnum.Term().Utf8ToString());

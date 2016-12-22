@@ -334,9 +334,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return TERMS.Count;
+                get { return TERMS.Count; }
             }
 
             public override long SumTotalTermFreq
@@ -354,24 +354,24 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return 1; }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return true;
+                get { return true; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return _hasOffsetsRenamed;
+                get { return _hasOffsetsRenamed; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return _hasPositionsRenamed;
+                get { return _hasPositionsRenamed; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return _hasPayloadsRenamed;
+                get { return _hasPayloadsRenamed; }
             }
         }
 

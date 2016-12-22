@@ -1911,9 +1911,9 @@ namespace Lucene.Net.Util
                 return;
             }
             AssertTermsStatisticsEquals(info, leftTerms, rightTerms);
-            Assert.AreEqual(leftTerms.HasOffsets(), rightTerms.HasOffsets());
-            Assert.AreEqual(leftTerms.HasPositions(), rightTerms.HasPositions());
-            Assert.AreEqual(leftTerms.HasPayloads(), rightTerms.HasPayloads());
+            Assert.AreEqual(leftTerms.HasOffsets, rightTerms.HasOffsets);
+            Assert.AreEqual(leftTerms.HasPositions, rightTerms.HasPositions);
+            Assert.AreEqual(leftTerms.HasPayloads, rightTerms.HasPayloads);
 
             TermsEnum leftTermsEnum = leftTerms.Iterator(null);
             TermsEnum rightTermsEnum = rightTerms.Iterator(null);
@@ -1957,9 +1957,9 @@ namespace Lucene.Net.Util
             {
                 Assert.AreEqual(leftTerms.SumTotalTermFreq, rightTerms.SumTotalTermFreq, info);
             }
-            if (leftTerms.Size() != -1 && rightTerms.Size() != -1)
+            if (leftTerms.Size != -1 && rightTerms.Size != -1)
             {
-                Assert.AreEqual(leftTerms.Size(), rightTerms.Size(), info);
+                Assert.AreEqual(leftTerms.Size, rightTerms.Size, info);
             }
         }
 

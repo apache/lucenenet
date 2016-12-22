@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Memory
                 sumDocFreq = termsIn.SumDocFreq;
                 docCount = termsIn.DocCount;
 
-                int numTerms = (int) termsIn.Size();
+                int numTerms = (int) termsIn.Size;
                 if (numTerms == -1)
                 {
                     throw new System.ArgumentException("codec does not provide Terms.size()");
@@ -764,9 +764,9 @@ namespace Lucene.Net.Codecs.Memory
                 return new DirectIntersectTermsEnum(this, compiled, startTerm);
             }
 
-            public override long Size()
+            public override long Size
             {
-                return terms.Length;
+                get { return terms.Length; }
             }
 
             public override long SumTotalTermFreq
@@ -789,24 +789,24 @@ namespace Lucene.Net.Codecs.Memory
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return hasFreq;
+                get { return hasFreq; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return hasOffsets_Renamed;
+                get { return hasOffsets_Renamed; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return hasPos;
+                get { return hasPos; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return hasPayloads_Renamed;
+                get { return hasPayloads_Renamed; }
             }
 
             private sealed class DirectTermsEnum : TermsEnum

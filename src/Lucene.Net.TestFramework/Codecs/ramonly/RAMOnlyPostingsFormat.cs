@@ -168,9 +168,9 @@ namespace Lucene.Net.Codecs.ramonly
                 return sizeInBytes;
             }
 
-            public override long Size()
+            public override long Size
             {
-                return TermToDocs.Count;
+                get { return TermToDocs.Count; }
             }
 
             public override long SumTotalTermFreq
@@ -210,24 +210,24 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return Info.HasPayloads;
+                get { return Info.HasPayloads; }
             }
         }
 

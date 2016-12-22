@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
         {
             Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Size());
+            Assert.AreEqual(3, result.Size);
             TermsEnum termsEnum = result.Iterator(null);
             while (termsEnum.Next() != null)
             {

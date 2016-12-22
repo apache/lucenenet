@@ -321,29 +321,29 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return new SegmentTermsEnum(this, _blockTermsReader);
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return _fieldInfo.HasPayloads;
+                get { return _fieldInfo.HasPayloads; }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return _numTerms;
+                get { return _numTerms; }
             }
 
             public override long SumTotalTermFreq

@@ -992,9 +992,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return termCount;
+                get { return termCount; }
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
@@ -1010,24 +1010,24 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return field.HasPayloads;
+                get { return field.HasPayloads; }
             }
 
             public long RamBytesUsed()

@@ -1035,10 +1035,10 @@ namespace Lucene.Net.Index
                     continue;
                 }
 
-                bool hasFreqs = terms.HasFreqs();
-                bool hasPositions = terms.HasPositions();
-                bool hasPayloads = terms.HasPayloads();
-                bool hasOffsets = terms.HasOffsets();
+                bool hasFreqs = terms.HasFreqs;
+                bool hasPositions = terms.HasPositions;
+                bool hasPayloads = terms.HasPayloads;
+                bool hasOffsets = terms.HasOffsets;
 
                 // term vectors cannot omit TF:
                 bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS);
@@ -1509,7 +1509,7 @@ namespace Lucene.Net.Index
 
                     if ((status.DelTermCount + status.TermCount) - termCountStart > 0)
                     {
-                        termCount = fields.Terms(field).Size();
+                        termCount = fields.Terms(field).Size;
 
                         if (termCount != -1 && termCount != status.DelTermCount + status.TermCount - termCountStart)
                         {
@@ -2125,7 +2125,7 @@ namespace Lucene.Net.Index
                                 termsEnum = terms.Iterator(termsEnum);
                                 bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
                                 bool postingsHasPayload = fieldInfo.HasPayloads;
-                                bool vectorsHasPayload = terms.HasPayloads();
+                                bool vectorsHasPayload = terms.HasPayloads;
 
                                 Terms postingsTerms = postingsFields.Terms(field);
                                 if (postingsTerms == null)
@@ -2134,7 +2134,7 @@ namespace Lucene.Net.Index
                                 }
                                 postingsTermsEnum = postingsTerms.Iterator(postingsTermsEnum);
 
-                                bool hasProx = terms.HasOffsets() || terms.HasPositions();
+                                bool hasProx = terms.HasOffsets || terms.HasPositions;
                                 BytesRef term = null;
                                 while ((term = termsEnum.Next()) != null)
                                 {
@@ -2217,7 +2217,7 @@ namespace Lucene.Net.Index
                                                 if (postingsPostings != null)
                                                 {
                                                     int postingsPos = postingsPostings.NextPosition();
-                                                    if (terms.HasPositions() && pos != postingsPos)
+                                                    if (terms.HasPositions && pos != postingsPos)
                                                     {
                                                         throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": pos=" + pos + " differs from postings pos=" + postingsPos);
                                                     }

@@ -289,12 +289,12 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                bool hasPositions = terms.HasPositions();
-                bool hasOffsets = terms.HasOffsets();
-                bool hasPayloads = terms.HasPayloads();
+                bool hasPositions = terms.HasPositions;
+                bool hasOffsets = terms.HasOffsets;
+                bool hasPayloads = terms.HasPayloads;
                 Debug.Assert(!hasPayloads || hasPositions);
 
-                int numTerms = (int)terms.Size();
+                int numTerms = (int)terms.Size;
                 if (numTerms == -1)
                 {
                     // count manually. It is stupid, but needed, as Terms.size() is not a mandatory statistics function

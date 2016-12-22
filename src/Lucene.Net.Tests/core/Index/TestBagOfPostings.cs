@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(numTerms - 1, air.Fields.UniqueTermCount);
             if (iwc.Codec is Lucene3xCodec == false)
             {
-                Assert.AreEqual(numTerms - 1, terms.Size());
+                Assert.AreEqual(numTerms - 1, terms.Size);
             }
             TermsEnum termsEnum = terms.Iterator(null);
             BytesRef term_;

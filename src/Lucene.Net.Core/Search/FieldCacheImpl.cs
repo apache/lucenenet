@@ -1631,7 +1631,7 @@ namespace Lucene.Net.Search
                     // Try for coarse estimate for number of bits; this
                     // should be an underestimate most of the time, which
                     // is fine -- GrowableWriter will reallocate as needed
-                    long numUniqueTerms = terms.Size();
+                    long numUniqueTerms = terms.Size;
                     if (numUniqueTerms != -1L)
                     {
                         if (numUniqueTerms > termCountHardLimit)
@@ -1796,7 +1796,7 @@ namespace Lucene.Net.Search
                     // Try for coarse estimate for number of bits; this
                     // should be an underestimate most of the time, which
                     // is fine -- GrowableWriter will reallocate as needed
-                    long numUniqueTerms = terms.Size();
+                    long numUniqueTerms = terms.Size;
                     if (numUniqueTerms != -1L)
                     {
                         if (numUniqueTerms > termCountHardLimit)

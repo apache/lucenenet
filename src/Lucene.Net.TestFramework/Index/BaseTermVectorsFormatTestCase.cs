@@ -523,11 +523,11 @@ namespace Lucene.Net.Index
         {
             Assert.AreEqual(1, terms.DocCount);
             int termCount = (new HashSet<string>(Arrays.AsList(tk.Terms))).Count;
-            Assert.AreEqual(termCount, terms.Size());
+            Assert.AreEqual(termCount, terms.Size);
             Assert.AreEqual(termCount, terms.SumDocFreq);
-            Assert.AreEqual(ft.StoreTermVectorPositions, terms.HasPositions());
-            Assert.AreEqual(ft.StoreTermVectorOffsets, terms.HasOffsets());
-            Assert.AreEqual(ft.StoreTermVectorPayloads && tk.HasPayloads(), terms.HasPayloads());
+            Assert.AreEqual(ft.StoreTermVectorPositions, terms.HasPositions);
+            Assert.AreEqual(ft.StoreTermVectorOffsets, terms.HasOffsets);
+            Assert.AreEqual(ft.StoreTermVectorPayloads && tk.HasPayloads(), terms.HasPayloads);
             HashSet<BytesRef> uniqueTerms = new HashSet<BytesRef>();
             foreach (string term in tk.Freqs.Keys)
             {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
 
                 docsAndPositionsEnum = termsEnum.DocsAndPositions(Random().NextBoolean() ? bits : null, Random().NextBoolean() ? null : docsAndPositionsEnum);
                 Assert.AreEqual(ft.StoreTermVectorOffsets || ft.StoreTermVectorPositions, docsAndPositionsEnum != null);
-                if (terms.HasPositions() || terms.HasOffsets())
+                if (terms.HasPositions || terms.HasOffsets)
                 {
                     Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
                     int freq = docsAndPositionsEnum.Freq;
@@ -579,7 +579,7 @@ namespace Lucene.Net.Index
                         {
                             int position = docsAndPositionsEnum.NextPosition();
                             ISet<int?> indexes;
-                            if (terms.HasPositions())
+                            if (terms.HasPositions)
                             {
                                 indexes = tk.PositionToTerms[position];
                                 Assert.IsNotNull(indexes);
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
                                 indexes = tk.StartOffsetToTerms[docsAndPositionsEnum.StartOffset];
                                 Assert.IsNotNull(indexes);
                             }
-                            if (terms.HasPositions())
+                            if (terms.HasPositions)
                             {
                                 bool foundPosition = false;
                                 foreach (int index in indexes)
@@ -602,7 +602,7 @@ namespace Lucene.Net.Index
                                 }
                                 Assert.IsTrue(foundPosition);
                             }
-                            if (terms.HasOffsets())
+                            if (terms.HasOffsets)
                             {
                                 bool foundOffset = false;
                                 foreach (int index in indexes)
@@ -615,7 +615,7 @@ namespace Lucene.Net.Index
                                 }
                                 Assert.IsTrue(foundOffset);
                             }
-                            if (terms.HasPayloads())
+                            if (terms.HasPayloads)
                             {
                                 bool foundPayload = false;
                                 foreach (int index in indexes)

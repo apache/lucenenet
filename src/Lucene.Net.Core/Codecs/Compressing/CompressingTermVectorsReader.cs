@@ -821,9 +821,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return NumTerms;
+                get { return NumTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -850,24 +850,24 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return true;
+                get { return true; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return (Flags & CompressingTermVectorsWriter.OFFSETS) != 0;
+                get { return (Flags & CompressingTermVectorsWriter.OFFSETS) != 0; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return (Flags & CompressingTermVectorsWriter.POSITIONS) != 0;
+                get { return (Flags & CompressingTermVectorsWriter.POSITIONS) != 0; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return (Flags & CompressingTermVectorsWriter.PAYLOADS) != 0;
+                get { return (Flags & CompressingTermVectorsWriter.PAYLOADS) != 0; }
             }
         }
 

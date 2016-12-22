@@ -620,24 +620,24 @@ namespace Lucene.Net.Codecs
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return fieldInfo.HasPayloads;
+                get { return fieldInfo.HasPayloads; }
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
@@ -645,9 +645,9 @@ namespace Lucene.Net.Codecs
                 return new SegmentTermsEnum(this);
             }
 
-            public override long Size()
+            public override long Size
             {
-                return NumTerms;
+                get { return NumTerms; }
             }
 
             public override long SumTotalTermFreq

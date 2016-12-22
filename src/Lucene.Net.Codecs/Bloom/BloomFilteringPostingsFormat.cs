@@ -268,9 +268,9 @@ namespace Lucene.Net.Codecs.Bloom
                     get { return _delegateTerms.Comparator; }
                 }
 
-                public override long Size()
+                public override long Size
                 {
-                    return _delegateTerms.Size();
+                    get { return _delegateTerms.Size; }
                 }
 
                 public override long SumTotalTermFreq
@@ -288,24 +288,24 @@ namespace Lucene.Net.Codecs.Bloom
                     get { return _delegateTerms.DocCount; }
                 }
 
-                public override bool HasFreqs()
+                public override bool HasFreqs
                 {
-                    return _delegateTerms.HasFreqs();
+                    get { return _delegateTerms.HasFreqs; }
                 }
 
-                public override bool HasOffsets()
+                public override bool HasOffsets
                 {
-                    return _delegateTerms.HasOffsets();
+                    get { return _delegateTerms.HasOffsets; }
                 }
 
-                public override bool HasPositions()
+                public override bool HasPositions
                 {
-                    return _delegateTerms.HasPositions();
+                    get { return _delegateTerms.HasPositions; }
                 }
 
-                public override bool HasPayloads()
+                public override bool HasPayloads
                 {
-                    return _delegateTerms.HasPayloads();
+                    get { return _delegateTerms.HasPayloads; }
                 }
             }
 

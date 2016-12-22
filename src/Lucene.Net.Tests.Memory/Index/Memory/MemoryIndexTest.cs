@@ -154,9 +154,9 @@ namespace Lucene.Net.Index.Memory
                     assertEquals(iwTerms.SumTotalTermFreq, memTerms.SumTotalTermFreq);
                     TermsEnum iwTermsIter = iwTerms.Iterator(null);
                     TermsEnum memTermsIter = memTerms.Iterator(null);
-                    if (iwTerms.HasPositions())
+                    if (iwTerms.HasPositions)
                     {
-                        bool offsets = iwTerms.HasOffsets() && memTerms.HasOffsets();
+                        bool offsets = iwTerms.HasOffsets && memTerms.HasOffsets;
 
                         while (iwTermsIter.Next() != null)
                         {

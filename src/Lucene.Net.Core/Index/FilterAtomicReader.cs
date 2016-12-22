@@ -126,9 +126,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return input.Size();
+                get { return input.Size; }
             }
 
             public override long SumTotalTermFreq
@@ -155,24 +155,24 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return input.HasFreqs();
+                get { return input.HasFreqs; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                return input.HasOffsets();
+                get { return input.HasOffsets; }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return input.HasPositions();
+                get { return input.HasPositions; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return input.HasPayloads();
+                get { return input.HasPayloads; }
             }
         }
 

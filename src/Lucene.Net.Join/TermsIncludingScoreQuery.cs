@@ -169,7 +169,7 @@ namespace Lucene.Net.Join
                 }
 
                 // what is the runtime...seems ok?
-                long cost = context.AtomicReader.MaxDoc * terms.Size();
+                long cost = context.AtomicReader.MaxDoc * terms.Size;
 
                 segmentTermsEnum = terms.Iterator(segmentTermsEnum);
                 if (outerInstance._multipleValuesPerDocument)
@@ -193,7 +193,7 @@ namespace Lucene.Net.Join
                     return null;
                 }
                 // what is the runtime...seems ok?
-                long cost = context.AtomicReader.MaxDoc * terms.Size();
+                long cost = context.AtomicReader.MaxDoc * terms.Size;
 
                 segmentTermsEnum = terms.Iterator(segmentTermsEnum);
                 // Optimized impls that take advantage of docs

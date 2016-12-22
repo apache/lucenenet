@@ -231,9 +231,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override long Size()
+            public override long Size
             {
-                return -1;
+                get { return -1; }
             }
 
             public override long SumTotalTermFreq
@@ -260,26 +260,29 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override bool HasFreqs()
+            public override bool HasFreqs
             {
-                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
             }
 
-            public override bool HasOffsets()
+            public override bool HasOffsets
             {
-                // preflex doesn't support this
-                Debug.Assert(fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-                return false;
+                get
+                {
+                    // preflex doesn't support this
+                    Debug.Assert(fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                    return false;
+                }
             }
 
-            public override bool HasPositions()
+            public override bool HasPositions
             {
-                return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
             }
 
-            public override bool HasPayloads()
+            public override bool HasPayloads
             {
-                return fieldInfo.HasPayloads;
+                get { return fieldInfo.HasPayloads; }
             }
         }
 

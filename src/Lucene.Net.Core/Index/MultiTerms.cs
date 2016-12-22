@@ -76,10 +76,10 @@ namespace Lucene.Net.Index
                         throw new InvalidOperationException("sub-readers have different BytesRef.Comparators; cannot merge");
                     }
                 }
-                _hasFreqs &= subs[i].HasFreqs();
-                _hasOffsets &= subs[i].HasOffsets();
-                _hasPositions &= subs[i].HasPositions();
-                _hasPayloads |= subs[i].HasPayloads();
+                _hasFreqs &= subs[i].HasFreqs;
+                _hasOffsets &= subs[i].HasOffsets;
+                _hasPositions &= subs[i].HasPositions;
+                _hasPayloads |= subs[i].HasPayloads;
             }
 
             termComp = _termComp;
@@ -133,9 +133,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override long Size()
+        public override long Size
         {
-            return -1;
+            get { return -1; }
         }
 
         public override long SumTotalTermFreq
@@ -200,24 +200,24 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool HasFreqs()
+        public override bool HasFreqs
         {
-            return hasFreqs;
+            get { return hasFreqs; }
         }
 
-        public override bool HasOffsets()
+        public override bool HasOffsets
         {
-            return hasOffsets;
+            get { return hasOffsets; }
         }
 
-        public override bool HasPositions()
+        public override bool HasPositions
         {
-            return hasPositions;
+            get { return hasPositions; }
         }
 
-        public override bool HasPayloads()
+        public override bool HasPayloads
         {
-            return hasPayloads;
+            get { return hasPayloads; }
         }
     }
 }
