@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
                         // changed for this field since the first time we added it.
                         if (!fi.OmitsNorms)
                         {
-                            if (toWrite != null && !toWrite.Empty)
+                            if (toWrite != null && !toWrite.IsEmpty)
                             {
                                 toWrite.Flush(state, normsConsumer);
                                 Debug.Assert(fi.NormType == DocValuesType.NUMERIC);

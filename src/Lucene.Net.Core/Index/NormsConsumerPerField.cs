@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             consumer.Flush(state, normsWriter);
         }
 
-        internal bool Empty // LUCENENET TODO: Rename IsEmpty
+        internal bool IsEmpty
         {
             get
             {
