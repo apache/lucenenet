@@ -47,9 +47,15 @@ namespace Lucene.Net.Index
         ///  </param>
         public abstract void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Close this MergeScheduler. </summary>
-        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
+        protected abstract void Dispose(bool disposing);
 
         public virtual IMergeScheduler Clone()
         {

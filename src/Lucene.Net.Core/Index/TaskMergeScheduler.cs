@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
             _writer.infoStream.Message(COMPONENT_NAME, message);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             Sync();
             _manualResetEvent.Dispose();

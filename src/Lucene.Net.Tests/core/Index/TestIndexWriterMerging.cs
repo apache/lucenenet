@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
         }
