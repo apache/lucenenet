@@ -555,7 +555,7 @@ namespace Lucene.Net.Index
             {
                 Consumer.Flush(flushState);
                 PendingUpdates.Terms.Clear();
-                SegmentInfo_Renamed.Files = new HashSet<string>(Directory.CreatedFiles);
+                SegmentInfo_Renamed.SetFiles(new HashSet<string>(Directory.CreatedFiles));
 
                 SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(SegmentInfo_Renamed, 0, -1L, -1L);
                 if (InfoStream.IsEnabled("DWPT"))

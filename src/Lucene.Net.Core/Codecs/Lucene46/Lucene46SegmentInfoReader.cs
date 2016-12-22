@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 }
 
                 SegmentInfo si = new SegmentInfo(dir, version, segment, docCount, isCompoundFile, null, diagnostics);
-                si.Files = files;
+                si.SetFiles(files);
 
                 success = true;
 

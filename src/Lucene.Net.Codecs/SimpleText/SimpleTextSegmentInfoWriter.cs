@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                 }
 
-                var files = si.Files;
+                var files = si.GetFiles();
                 var numFiles = files == null ? 0 : files.Count;
                 SimpleTextUtil.Write(output, SI_NUM_FILES);
                 SimpleTextUtil.Write(output, Convert.ToString(numFiles, CultureInfo.InvariantCulture), scratch);

@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         /// Returns number of documents in this segment (deletions
         ///  are not taken into account).
         /// </summary>
-        public int DocCount // LUCENENET TODO: Make method ? throws exception
+        public int DocCount
         {
             get
             {
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                 }
                 return docCount;
             }
-            set
+            internal set // NOTE: leave package private
             {
                 if (this.docCount != -1)
                 {
@@ -184,10 +184,16 @@ namespace Lucene.Net.Index
             }
         }
 
-        // NOTE: leave package private
-
         /// <summary>
         /// Return all files referenced by this SegmentInfo. </summary>
+        public ISet<string> GetFiles()
+        {
+            if (setFiles == null)
+            {
+                throw new InvalidOperationException("files were not computed yet");
+            }
+            return Collections.UnmodifiableSet(setFiles);
+        }
 
         public override string ToString()
         {
@@ -277,26 +283,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        private ISet<string> SetFiles;
+        private ISet<string> setFiles;
 
         /// <summary>
         /// Sets the files written for this segment. </summary>
-        public ISet<string> Files // LUCENENET TODO: Make method ? throws exception
+        public void SetFiles(ISet<string> files)
         {
-            get
-            {
-                if (SetFiles == null)
-                {
-                    throw new InvalidOperationException("files were not computed yet");
-                }
-                return Collections.UnmodifiableSet(SetFiles);
-            }
-
-            set
-            {
-                CheckFileNames(value);
-                SetFiles = value;
-            }
+            CheckFileNames(files);
+            setFiles = files;
         }
 
         /// <summary>
@@ -307,7 +301,7 @@ namespace Lucene.Net.Index
         {
             CheckFileNames(files);
             //SetFiles.AddAll(files);
-            SetFiles.UnionWith(files);
+            setFiles.UnionWith(files);
         }
 
         /// <summary>
@@ -318,7 +312,7 @@ namespace Lucene.Net.Index
         {
             //CheckFileNames(Collections.Singleton(file));
             CheckFileNames(new[] { file });
-            SetFiles.Add(file);
+            setFiles.Add(file);
         }
 
         private void CheckFileNames(ICollection<string> files)

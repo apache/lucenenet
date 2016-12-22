@@ -3253,7 +3253,7 @@ namespace Lucene.Net.Index
 
                 SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, 0, -1L, -1L);
 
-                info.Files = new HashSet<string>(trackingDir.CreatedFiles);
+                info.SetFiles(new HashSet<string>(trackingDir.CreatedFiles));
                 trackingDir.CreatedFiles.Clear();
 
                 SetDiagnostics(info, SOURCE_ADDINDEXES_READERS);
@@ -3318,7 +3318,7 @@ namespace Lucene.Net.Index
                 {
                     if (stopMerges)
                     {
-                        deleter.DeleteNewFiles(info.Files);
+                        deleter.DeleteNewFiles(info.GetFiles());
                         return;
                     }
                     EnsureOpen();
@@ -3400,7 +3400,7 @@ namespace Lucene.Net.Index
                 }
                 segFiles.Add(newFileName);
             }
-            newInfo.Files = segFiles;
+            newInfo.SetFiles(segFiles);
 
             // We must rewrite the SI file because it references
             // segment name (its own name, if its 3.x, and doc
@@ -3464,7 +3464,7 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    foreach (string file in newInfo.Files)
+                    foreach (string file in newInfo.GetFiles())
                     {
                         try
                         {
@@ -5069,7 +5069,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 Debug.Assert(mergeState.SegmentInfo == merge.info.Info);
-                merge.info.Info.Files = new HashSet<string>(dirWrapper.CreatedFiles);
+                merge.info.Info.SetFiles(new HashSet<string>(dirWrapper.CreatedFiles));
 
                 // Record which codec was used to write the segment
 
@@ -5730,7 +5730,7 @@ namespace Lucene.Net.Index
             }
             Debug.Assert(Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) == -1);
             // Now merge all added files
-            ICollection<string> files = info.Files;
+            ICollection<string> files = info.GetFiles();
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
             IOException prior = null;
             try
@@ -5779,7 +5779,7 @@ namespace Lucene.Net.Index
             HashSet<string> siFiles = new HashSet<string>();
             siFiles.Add(fileName);
             siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-            info.Files = siFiles;
+            info.SetFiles(siFiles);
 
             return files;
         }

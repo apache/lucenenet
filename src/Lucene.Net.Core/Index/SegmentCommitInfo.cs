@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         public virtual ICollection<string> Files()
         {
             // Start from the wrapped info's files:
-            ISet<string> files = new HashSet<string>(Info.Files);
+            ISet<string> files = new HashSet<string>(Info.GetFiles());
 
             // TODO we could rely on TrackingDir.getCreatedFiles() (like we do for
             // updates) and then maybe even be able to remove LiveDocsFormat.files().

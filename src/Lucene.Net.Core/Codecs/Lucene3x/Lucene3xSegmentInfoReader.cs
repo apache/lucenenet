@@ -285,7 +285,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, CollectionsHelper.UnmodifiableMap(attributes));
-            info.Files = files;
+            info.SetFiles(files);
 
             SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, delCount, delGen, -1);
             return infoPerCommit;
@@ -307,7 +307,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             ISet<string> files = input.ReadStringSet();
 
             SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, CollectionsHelper.UnmodifiableMap(attributes));
-            info.Files = files;
+            info.SetFiles(files);
             return info;
         }
     }

@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
             r1.Dispose();
             r2.Dispose();
             SegmentInfo info = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, si1.Info.DocCount + si2.Info.DocCount, false, codec, null);
-            info.Files = new HashSet<string>(trackingDir.CreatedFiles);
+            info.SetFiles(new HashSet<string>(trackingDir.CreatedFiles));
 
             if (useCompoundFile)
             {

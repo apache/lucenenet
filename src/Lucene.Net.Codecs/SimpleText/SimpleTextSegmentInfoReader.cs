@@ -98,7 +98,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.CheckFooter(input);
 
                 var info = new SegmentInfo(directory, version, segmentName, docCount, isCompoundFile, null,
-                    diagnostics) {Files = files};
+                    diagnostics);
+                info.SetFiles(files);
                 success = true;
                 return info;
             }
