@@ -608,14 +608,11 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    docToOrds.Get(value, @ref);
-                    input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
-                    currentOrd = 0;
-                }
+                docToOrds.Get(docID, @ref);
+                input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
+                currentOrd = 0;
             }
 
             public override void LookupOrd(long ord, BytesRef result)

@@ -65,13 +65,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int Document
+        public override void SetDocument(int docID)
         {
-            set
-            {
-                this.docID = value;
-                set = false;
-            }
+            this.docID = docID;
+            set = false;
         }
 
         public override void LookupOrd(long ord, BytesRef result)

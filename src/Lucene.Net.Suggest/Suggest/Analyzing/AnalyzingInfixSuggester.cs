@@ -581,7 +581,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 if (contextsDV != null)
                 {
                     contexts = new HashSet<BytesRef>();
-                    contextsDV.Document = fd.Doc - leaves[segment].DocBase;
+                    contextsDV.SetDocument(fd.Doc - leaves[segment].DocBase);
                     long ord;
                     while ((ord = contextsDV.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {

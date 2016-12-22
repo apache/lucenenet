@@ -536,7 +536,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(id, dvShort.Get(i));
                     if (is42Index)
                     {
-                        dvSortedSet.Document = i;
+                        dvSortedSet.SetDocument(i);
                         long ord = dvSortedSet.NextOrd();
                         Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dvSortedSet.NextOrd());
                         dvSortedSet.LookupOrd(ord, scratch);

@@ -216,7 +216,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             public override int GetOrd(int docID)
             {
-                @in.Document = (docID);
+                @in.SetDocument(docID);
                 return (int)@in.NextOrd();
             }
 
@@ -248,7 +248,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             public override int GetOrd(int docID)
             {
-                @in.Document = (docID);
+                @in.SetDocument(docID);
                 int count = @in.Cardinality();
                 if (count == 0)
                 {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             public override int GetOrd(int docID)
             {
-                @in.Document = (docID);
+                @in.SetDocument(docID);
                 int count = @in.Cardinality();
                 if (count == 0)
                 {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             public override int GetOrd(int docID)
             {
-                @in.Document = (docID);
+                @in.SetDocument(docID);
                 int count = @in.Cardinality();
                 if (count == 0)
                 {

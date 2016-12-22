@@ -515,7 +515,7 @@ namespace Lucene.Net.Codecs
                     {
                         if (liveDocs.Get(i))
                         {
-                            dv.Document = i;
+                            dv.SetDocument(i);
                             long ord;
                             while ((ord = dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                             {
@@ -583,7 +583,7 @@ namespace Lucene.Net.Codecs
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
                     SortedSetDocValues dv = dvs[readerUpto];
-                    dv.Document = docIDUpto;
+                    dv.SetDocument(docIDUpto);
                     long value = 0;
                     while (dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS)
                     {
@@ -639,7 +639,7 @@ namespace Lucene.Net.Codecs
                 {
                     Debug.Assert(docIDUpto < currentReader.MaxDoc);
                     SortedSetDocValues dv = dvs[readerUpto];
-                    dv.Document = docIDUpto;
+                    dv.SetDocument(docIDUpto);
                     ordUpto = ordLength = 0;
                     long ord;
                     while ((ord = dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)

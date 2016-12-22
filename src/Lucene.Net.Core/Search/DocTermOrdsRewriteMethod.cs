@@ -216,7 +216,7 @@ namespace Lucene.Net.Search
 
                 protected internal override sealed bool MatchDoc(int doc)
                 {
-                    DocTermOrds.Document = doc;
+                    DocTermOrds.SetDocument(doc);
                     long ord;
                     // TODO: we could track max bit set and early terminate (since they come in sorted order)
                     while ((ord = DocTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)

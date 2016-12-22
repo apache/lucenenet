@@ -263,7 +263,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     return;
                 }
 
-                facetFieldDocTermOrds.Document = doc;
+                facetFieldDocTermOrds.SetDocument(doc);
                 long ord;
                 bool empty = true;
                 while ((ord = facetFieldDocTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)

@@ -312,12 +312,9 @@ namespace Lucene.Net.Index.Sorter
                 return @in.NextOrd();
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    @in.Document = docMap.NewToOld(value);
-                }
+                @in.SetDocument(docMap.NewToOld(docID));
             }
 
             public override void LookupOrd(long ord, BytesRef result)

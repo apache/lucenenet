@@ -160,7 +160,7 @@ namespace Lucene.Net.Search
 
                 protected internal override sealed bool MatchDoc(int doc)
                 {
-                    DocTermOrds.Document = doc;
+                    DocTermOrds.SetDocument(doc);
                     long ord;
                     while ((ord = DocTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {

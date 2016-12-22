@@ -591,14 +591,11 @@ namespace Lucene.Net.Index
                 return ord;
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    Debug.Assert(value >= 0 && value < MaxDoc, "docid=" + value + ",maxDoc=" + MaxDoc);
-                    @in.Document = value;
-                    LastOrd = -2;
-                }
+                Debug.Assert(docID >= 0 && docID < MaxDoc, "docid=" + docID + ",maxDoc=" + MaxDoc);
+                @in.SetDocument(docID);
+                LastOrd = -2;
             }
 
             public override void LookupOrd(long ord, BytesRef result)

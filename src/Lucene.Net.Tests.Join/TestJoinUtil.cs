@@ -791,7 +791,7 @@ namespace Lucene.Net.Tests.Join
             
             public override void Collect(int doc)
             {
-                docTermOrds.Document = doc;
+                docTermOrds.SetDocument(doc);
                 long ord;
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
@@ -907,7 +907,7 @@ namespace Lucene.Net.Tests.Join
 
             public override void Collect(int doc)
             {
-                docTermOrds.Document = doc;
+                docTermOrds.SetDocument(doc);
                 long ord;
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {

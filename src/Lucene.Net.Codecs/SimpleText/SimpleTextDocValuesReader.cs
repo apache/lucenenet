@@ -459,22 +459,19 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _currentIndex == _currentOrds.Length ? NO_MORE_ORDS : Convert.ToInt64(_currentOrds[_currentIndex++]);
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    if (value < 0 || value >= _outerInstance.MAX_DOC)
-                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
-                                                           value);
+                if (docID < 0 || docID >= _outerInstance.MAX_DOC)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
+                                                        docID);
 
 
-                    _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
-                             value * (1 + _field.OrdPattern.Length));
-                    SimpleTextUtil.ReadLine(_input, _scratch);
-                    var ordList = _scratch.Utf8ToString().Trim();
-                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(",", true);
-                    _currentIndex = 0;
-                }
+                _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
+                            docID * (1 + _field.OrdPattern.Length));
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                var ordList = _scratch.Utf8ToString().Trim();
+                _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(",", true);
+                _currentIndex = 0;
             }
 
             public override void LookupOrd(long ord, BytesRef result)

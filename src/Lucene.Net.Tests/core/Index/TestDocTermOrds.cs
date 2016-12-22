@@ -73,19 +73,19 @@ namespace Lucene.Net.Index
             DocTermOrds dto = new DocTermOrds(ar, ar.LiveDocs, "field");
             SortedSetDocValues iter = dto.GetIterator(ar);
 
-            iter.Document = 0;
+            iter.SetDocument(0);
             Assert.AreEqual(0, iter.NextOrd());
             Assert.AreEqual(1, iter.NextOrd());
             Assert.AreEqual(2, iter.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, iter.NextOrd());
 
-            iter.Document = 1;
+            iter.SetDocument(1);
             Assert.AreEqual(3, iter.NextOrd());
             Assert.AreEqual(4, iter.NextOrd());
             Assert.AreEqual(5, iter.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, iter.NextOrd());
 
-            iter.Document = 2;
+            iter.SetDocument(2);
             Assert.AreEqual(0, iter.NextOrd());
             Assert.AreEqual(5, iter.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, iter.NextOrd());
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: docID=" + docID + " of " + r.MaxDoc + " (id=" + docIDToID.Get(docID) + ")");
                 }
-                iter.Document = docID;
+                iter.SetDocument(docID);
                 int[] answers = idToOrds[docIDToID.Get(docID)];
                 int upto = 0;
                 long ord;
@@ -455,7 +455,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues v = FieldCache.DEFAULT.GetDocTermOrds(GetOnlySegmentReader(r1), "foo");
             Assert.AreEqual(2, v.ValueCount);
-            v.Document = 1;
+            v.SetDocument(1);
             Assert.AreEqual(1, v.NextOrd());
 
             iw.Dispose();

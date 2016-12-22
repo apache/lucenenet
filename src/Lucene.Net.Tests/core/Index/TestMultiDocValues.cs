@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                 // check ord list
                 for (int i = 0; i < numDocs; i++)
                 {
-                    single.Document = i;
+                    single.SetDocument(i);
                     List<long> expectedList = new List<long>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
                         expectedList.Add(ord);
                     }
 
-                    multi.Document = i;
+                    multi.SetDocument(i);
                     int upto = 0;
                     while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
                 // check ord list
                 for (int i = 0; i < numDocs; i++)
                 {
-                    single.Document = i;
+                    single.SetDocument(i);
                     List<long?> expectedList = new List<long?>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
                         expectedList.Add(ord);
                     }
 
-                    multi.Document = i;
+                    multi.SetDocument(i);
                     int upto = 0;
                     while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {

@@ -115,11 +115,8 @@ namespace Lucene.Net.Index
                 return NO_MORE_ORDS;
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                }
             }
 
             public override void LookupOrd(long ord, BytesRef result)
@@ -221,7 +218,7 @@ namespace Lucene.Net.Index
 
             public virtual bool Get(int index)
             {
-                Dv.Document = index;
+                Dv.SetDocument(index);
                 return Dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
             }
 

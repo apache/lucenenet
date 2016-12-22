@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
                 {
                     CurrentMatched = 0;
                     Score_Renamed = 0;
-                    Dv.Document = CurrentDoc;
+                    Dv.SetDocument(CurrentDoc);
                     long ord;
                     while ((ord = Dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {

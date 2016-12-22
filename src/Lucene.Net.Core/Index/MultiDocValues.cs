@@ -659,13 +659,10 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    CurrentSubIndex = ReaderUtil.SubIndex(value, DocStarts);
-                    Values[CurrentSubIndex].Document = value - DocStarts[CurrentSubIndex];
-                }
+                CurrentSubIndex = ReaderUtil.SubIndex(docID, DocStarts);
+                Values[CurrentSubIndex].SetDocument(docID - DocStarts[CurrentSubIndex]);
             }
 
             public override void LookupOrd(long ord, BytesRef result)

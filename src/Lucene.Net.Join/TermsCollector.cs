@@ -77,7 +77,7 @@ namespace Lucene.Net.Join
             
             public override void Collect(int doc)
             {
-                _docTermOrds.Document = doc;
+                _docTermOrds.SetDocument(doc);
                 long ord;
                 while ((ord = _docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {

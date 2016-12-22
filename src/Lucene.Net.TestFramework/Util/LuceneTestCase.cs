@@ -2487,8 +2487,8 @@ namespace Lucene.Net.Util
                         // ord lists
                         for (int docID = 0; docID < leftReader.MaxDoc; docID++)
                         {
-                            leftValues.Document = docID;
-                            rightValues.Document = docID;
+                            leftValues.SetDocument(docID);
+                            rightValues.SetDocument(docID);
                             long ord;
                             while ((ord = leftValues.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                             {

@@ -1046,29 +1046,26 @@ namespace Lucene.Net.Index
                 return bufferUpto;
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
+                Tnum = 0;
+                int code = OuterInstance.index[docID];
+                if ((code & 0xff) == 1)
                 {
-                    Tnum = 0;
-                    int code = OuterInstance.index[value];
-                    if ((code & 0xff) == 1)
-                    {
-                        // a pointer
-                        Upto = (int)((uint)code >> 8);
-                        //System.out.println("    pointer!  upto=" + upto);
-                        int whichArray = ((int)((uint)value >> 16)) & 0xff;
-                        Arr = OuterInstance.tnums[whichArray];
-                    }
-                    else
-                    {
-                        //System.out.println("    inline!");
-                        Arr = null;
-                        Upto = code;
-                    }
-                    BufferUpto = 0;
-                    BufferLength = Read(Buffer);
+                    // a pointer
+                    Upto = (int)((uint)code >> 8);
+                    //System.out.println("    pointer!  upto=" + upto);
+                    int whichArray = ((int)((uint)docID >> 16)) & 0xff;
+                    Arr = OuterInstance.tnums[whichArray];
                 }
+                else
+                {
+                    //System.out.println("    inline!");
+                    Arr = null;
+                    Upto = code;
+                }
+                BufferUpto = 0;
+                BufferLength = Read(Buffer);
             }
 
             public override void LookupOrd(long ord, BytesRef result)

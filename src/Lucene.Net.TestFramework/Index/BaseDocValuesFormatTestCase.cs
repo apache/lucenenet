@@ -1846,7 +1846,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -1875,7 +1875,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -1885,7 +1885,7 @@ namespace Lucene.Net.Index
 
             dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field2");
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -1922,7 +1922,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(2, dv.ValueCount);
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -1930,7 +1930,7 @@ namespace Lucene.Net.Index
             dv.LookupOrd(0, bytes);
             Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            dv.Document = 1;
+            dv.SetDocument(1);
             Assert.AreEqual(1, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -1958,7 +1958,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(1, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
@@ -1991,7 +1991,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(1, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
@@ -2035,12 +2035,12 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(3, dv.ValueCount);
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(1, dv.NextOrd());
             Assert.AreEqual(2, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            dv.Document = 1;
+            dv.SetDocument(1);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(1, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
@@ -2082,7 +2082,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(1, dv.ValueCount);
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -2119,7 +2119,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(1, dv.ValueCount);
 
-            dv.Document = 0;
+            dv.SetDocument(0);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -2155,7 +2155,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(1, dv.ValueCount);
 
-            dv.Document = 1;
+            dv.SetDocument(1);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -2192,7 +2192,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(1, dv.ValueCount);
 
-            dv.Document = 1;
+            dv.SetDocument(1);
             Assert.AreEqual(0, dv.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
@@ -2374,7 +2374,7 @@ namespace Lucene.Net.Index
                     string[] stringValues = r.Document(i).GetValues("stored");
                     if (docValues != null)
                     {
-                        docValues.Document = i;
+                        docValues.SetDocument(i);
                     }
                     for (int j = 0; j < stringValues.Length; j++)
                     {
@@ -2464,8 +2464,8 @@ namespace Lucene.Net.Index
             // compare ord lists
             for (int i = 0; i < maxDoc; i++)
             {
-                expected.Document = i;
-                actual.Document = i;
+                expected.SetDocument(i);
+                actual.SetDocument(i);
                 long expectedOrd;
                 while ((expectedOrd = expected.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
@@ -3436,7 +3436,7 @@ namespace Lucene.Net.Index
                             if (values.Length > 0)
                             {
                                 Assert.IsNotNull(sortedSet);
-                                sortedSet.Document = j;
+                                sortedSet.SetDocument(j);
                                 for (int k = 0; k < values.Length; k++)
                                 {
                                     long ord = sortedSet.NextOrd();
@@ -3450,7 +3450,7 @@ namespace Lucene.Net.Index
                             }
                             else if (sortedSet != null)
                             {
-                                sortedSet.Document = j;
+                                sortedSet.SetDocument(j);
                                 Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
                                 Assert.IsFalse(sortedSetBits.Get(j));
                             }

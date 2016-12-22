@@ -215,7 +215,7 @@ namespace Lucene.Net.Facet.SortedSet
                         while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                         {
                             //System.out.println("    doc=" + doc);
-                            segValues.Document = doc;
+                            segValues.SetDocument(doc);
                             int term = (int)segValues.NextOrd();
                             while (term != SortedSetDocValues.NO_MORE_ORDS)
                             {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Facet.SortedSet
                         while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                         {
                             //System.out.println("    doc=" + doc);
-                            segValues.Document = doc;
+                            segValues.SetDocument(doc);
                             int term = (int)segValues.NextOrd();
                             while (term != SortedSetDocValues.NO_MORE_ORDS)
                             {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Facet.SortedSet
                     int doc;
                     while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        segValues.Document = doc;
+                        segValues.SetDocument(doc);
                         int term = (int)segValues.NextOrd();
                         while (term != SortedSetDocValues.NO_MORE_ORDS)
                         {

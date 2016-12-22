@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < NUM_DOCS; i++)
             {
-                termOrds.Document = i;
+                termOrds.SetDocument(i);
                 // this will remove identical terms. A DocTermOrds doesn't return duplicate ords for a docId
                 IList<BytesRef> values = new List<BytesRef>(new /*Linked*/HashSet<BytesRef>(Arrays.AsList(MultiValued[i])));
                 foreach (BytesRef v in values)
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual("sorted value", scratch.Utf8ToString());
 
             SortedSetDocValues sortedSet = FieldCache.DEFAULT.GetDocTermOrds(ar, "sorted");
-            sortedSet.Document = 0;
+            sortedSet.SetDocument(0);
             Assert.AreEqual(0, sortedSet.NextOrd());
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
             Assert.AreEqual(1, sortedSet.ValueCount);
@@ -773,7 +773,7 @@ namespace Lucene.Net.Search
                 }
 
                 sortedSet = FieldCache.DEFAULT.GetDocTermOrds(ar, "sortedset");
-                sortedSet.Document = 0;
+                sortedSet.SetDocument(0);
                 Assert.AreEqual(0, sortedSet.NextOrd());
                 Assert.AreEqual(1, sortedSet.NextOrd());
                 Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
@@ -832,7 +832,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, scratch.Length);
 
             SortedSetDocValues sortedSet = cache.GetDocTermOrds(ar, "bogusmultivalued");
-            sortedSet.Document = 0;
+            sortedSet.SetDocument(0);
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 
             Bits bits = cache.GetDocsWithField(ar, "bogusbits");
@@ -899,7 +899,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, scratch.Length);
 
             SortedSetDocValues sortedSet = cache.GetDocTermOrds(ar, "bogusmultivalued");
-            sortedSet.Document = 0;
+            sortedSet.SetDocument(0);
             Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 
             Bits bits = cache.GetDocsWithField(ar, "bogusbits");

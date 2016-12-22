@@ -762,13 +762,10 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    startOffset = offset = (value == 0 ? 0 : OrdIndex.Get(value - 1));
-                    endOffset = OrdIndex.Get(value);
-                }
+                startOffset = offset = (docID == 0 ? 0 : OrdIndex.Get(docID - 1));
+                endOffset = OrdIndex.Get(docID);
             }
 
             public override void LookupOrd(long ord, BytesRef result)

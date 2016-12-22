@@ -1867,7 +1867,7 @@ namespace Lucene.Net.Index
             long maxOrd2 = -1;
             for (int i = 0; i < reader.MaxDoc; i++)
             {
-                dv.Document = i;
+                dv.SetDocument(i);
                 long lastOrd = -1;
                 long ord;
                 if (docsWithField.Get(i))

@@ -597,14 +597,11 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    DocToOrds.Get(value, @ref);
-                    Input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
-                    currentOrd = 0;
-                }
+                DocToOrds.Get(docID, @ref);
+                Input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
+                currentOrd = 0;
             }
 
             public override void LookupOrd(long ord, BytesRef result)

@@ -413,7 +413,7 @@ namespace Lucene.Net.Index.Sorter
             BytesRef bytes = new BytesRef();
             for (int i = 0; i < maxDoc; i++)
             {
-                dv.Document = (i);
+                dv.SetDocument(i);
                 dv.LookupOrd(dv.NextOrd(), bytes);
                 int value = sortedValues[i];
                 assertEquals("incorrect sorted-set DocValues for doc " + i, value.toString(), bytes.Utf8ToString());

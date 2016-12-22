@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(17, GetValue(bdv, i, scratch));
                 sdv.Get(i, scratch);
                 Assert.AreEqual(new BytesRef(Convert.ToString(i)), scratch);
-                ssdv.Document = i;
+                ssdv.SetDocument(i);
                 long ord = ssdv.NextOrd();
                 ssdv.LookupOrd(ord, scratch);
                 Assert.AreEqual(i, Convert.ToInt32(scratch.Utf8ToString()));

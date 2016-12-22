@@ -508,13 +508,10 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Document
+            public override void SetDocument(int docID)
             {
-                set
-                {
-                    ordStart = ordUpto = (int)docToOrdAddress.Get(value);
-                    ordLimit = (int)docToOrdAddress.Get(value + 1);
-                }
+                ordStart = ordUpto = (int)docToOrdAddress.Get(docID);
+                ordLimit = (int)docToOrdAddress.Get(docID + 1);
             }
 
             public override void LookupOrd(long ord, BytesRef result)
