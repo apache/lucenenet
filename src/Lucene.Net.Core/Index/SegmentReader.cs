@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
                 if (si.HasDeletions)
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
-                    liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory(), si, IOContext.READONCE);
+                    liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory, si, IOContext.READONCE);
                 }
                 else
                 {
@@ -441,12 +441,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the directory this index resides in. </summary>
-        public Directory Directory() // LUCENENET TODO: Make property
+        public Directory Directory
         {
-            // Don't ensureOpen here -- in certain cases, when a
-            // cloned/reopened reader needs to commit, it may call
-            // this method on the closed original reader
-            return si.Info.Dir;
+            get
+            {
+                // Don't ensureOpen here -- in certain cases, when a
+                // cloned/reopened reader needs to commit, it may call
+                // this method on the closed original reader
+                return si.Info.Dir;
+            }
         }
 
         // this is necessary so that cloned SegmentReaders (which
