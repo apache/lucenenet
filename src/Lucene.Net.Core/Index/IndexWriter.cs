@@ -4350,7 +4350,7 @@ namespace Lucene.Net.Index
                 // deleter.refresh() call that will remove any index
                 // file that current segments does not reference), we
                 // abort this merge
-                if (merge.Aborted)
+                if (merge.IsAborted)
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
@@ -4577,7 +4577,7 @@ namespace Lucene.Net.Index
                         // this merge (and, generally, any change to the
                         // segments) may now enable new merges, so we call
                         // merge policy & update pending merges.
-                        if (success && !merge.Aborted && (merge.maxNumSegments != -1 || (!closed && !closing)))
+                        if (success && !merge.IsAborted && (merge.maxNumSegments != -1 || (!closed && !closing)))
                         {
                             UpdatePendingMerges(MergeTrigger.MERGE_FINISHED, merge.maxNumSegments);
                         }
@@ -4588,7 +4588,7 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "merge");
             }
-            if (merge.info != null && !merge.Aborted)
+            if (merge.info != null && !merge.IsAborted)
             {
                 if (infoStream.IsEnabled("IW"))
                 {
@@ -4766,7 +4766,7 @@ namespace Lucene.Net.Index
                     return;
                 }
 
-                if (merge.Aborted)
+                if (merge.IsAborted)
                 {
                     return;
                 }
@@ -5038,7 +5038,7 @@ namespace Lucene.Net.Index
 
                 // we pass merge.getMergeReaders() instead of merge.readers to allow the
                 // OneMerge to return a view over the actual segments to merge
-                SegmentMerger merger = new SegmentMerger(merge.MergeReaders, merge.info.Info, infoStream, dirWrapper, config.TermIndexInterval, checkAbort, globalFieldNumberMap, context, config.CheckIntegrityAtMerge);
+                SegmentMerger merger = new SegmentMerger(merge.GetMergeReaders(), merge.info.Info, infoStream, dirWrapper, config.TermIndexInterval, checkAbort, globalFieldNumberMap, context, config.CheckIntegrityAtMerge);
 
                 merge.CheckAborted(directory);
 
@@ -5110,7 +5110,7 @@ namespace Lucene.Net.Index
                     {
                         lock (this)
                         {
-                            if (merge.Aborted)
+                            if (merge.IsAborted)
                             {
                                 // this can happen if rollback or close(false)
                                 // is called -- fall through to logic below to
@@ -5155,7 +5155,7 @@ namespace Lucene.Net.Index
                         // registered with IFD
                         deleter.DeleteNewFiles(filesToRemove);
 
-                        if (merge.Aborted)
+                        if (merge.IsAborted)
                         {
                             if (infoStream.IsEnabled("IW"))
                             {

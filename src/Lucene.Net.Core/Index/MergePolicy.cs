@@ -116,20 +116,21 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Estimated size in bytes of the merged segment. </summary>
-            public long EstimatedMergeBytes; // used by IndexWriter // LUCENENET TODO: Make property, original was volatile
+            public long EstimatedMergeBytes { get; internal set; } // used by IndexWriter // LUCENENET NOTE: original was volatile, but long cannot be in .NET
+
 
             // Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
-            internal long totalMergeBytes; // LUCENENET TODO: original was volatile
+            internal long totalMergeBytes; // LUCENENET NOTE: original was volatile, but long cannot be in .NET
 
             internal IList<SegmentReader> readers; // used by IndexWriter
 
             /// <summary>
             /// Segments to be merged. </summary>
-            public readonly IList<SegmentCommitInfo> Segments; // LUCENENET TODO: Make property
+            public IList<SegmentCommitInfo> Segments { get; private set; }
 
             /// <summary>
             /// Number of documents in the merged segment. </summary>
-            public readonly int TotalDocCount; // LUCENENET TODO: Make property
+            public int TotalDocCount { get; private set; }
 
             internal bool aborted;
             internal Exception error;
@@ -163,24 +164,22 @@ namespace Lucene.Net.Index
             ///  deletes that happened during the merge can be applied to the newly
             ///  merged segment.
             /// </summary>
-            public virtual IList<AtomicReader> MergeReaders // LUCENENET TODO: Make method?
+            public virtual IList<AtomicReader> GetMergeReaders()
             {
-                get
+                if (this.readers == null)
                 {
-                    if (this.readers == null)
-                    {
-                        throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
-                    }
-                    IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
-                    foreach (AtomicReader reader in this.readers)
-                    {
-                        if (reader.NumDocs > 0)
-                        {
-                            readers.Add(reader);
-                        }
-                    }
-                    return readers; // LUCENENET TODO: Collections.UnmodifiableList(readers)
+                    throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
                 }
+                IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
+                foreach (AtomicReader reader in this.readers)
+                {
+                    if (reader.NumDocs > 0)
+                    {
+                        readers.Add(reader);
+                    }
+                }
+                //return readers; // LUCENENET TODO: Collections.UnmodifiableList(readers)
+                return Collections.UnmodifiableList(readers);
             }
 
             /// <summary>
@@ -264,7 +263,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns true if this merge was aborted. </summary>
-            internal virtual bool Aborted // LUCENENET TODO: Rename IsAborted
+            internal virtual bool IsAborted
             {
                 get
                 {
@@ -317,20 +316,25 @@ namespace Lucene.Net.Index
             ///  <seealso cref="ConcurrentMergeScheduler"/> will pause merges
             ///  if too many are running).
             /// </summary>
-            internal virtual bool Pause // LUCENENET TODO: Rename IsPaused
+            internal virtual void SetPause(bool paused)
             {
-                set // LUCENENET TODO: Make SetPause(bool paused)
+                lock (this)
                 {
-                    lock (this)
+                    this.paused = paused;
+                    if (!paused)
                     {
-                        this.paused = value;
-                        if (!value)
-                        {
-                            // Wakeup merge thread, if it's waiting
-                            Monitor.PulseAll(this);
-                        }
+                        // Wakeup merge thread, if it's waiting
+                        Monitor.PulseAll(this);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Returns true if this merge is paused.
+            /// </summary>
+            /// <seealso cref="SetPause(bool)"/>
+            internal virtual bool IsPaused
+            {
                 get
                 {
                     lock (this)
@@ -377,9 +381,9 @@ namespace Lucene.Net.Index
             /// input total size. this is only set once the merge is
             /// initialized by IndexWriter.
             /// </summary>
-            public virtual long TotalBytesSize() // LUCENENET TODO: Make property
+            public virtual long TotalBytesSize
             {
-                return totalMergeBytes;
+                get { return totalMergeBytes; }
             }
 
             /// <summary>
@@ -387,14 +391,17 @@ namespace Lucene.Net.Index
             /// Note that this does not indicate the number of documents after the merge.
             ///
             /// </summary>
-            public virtual int TotalNumDocs() // LUCENENET TODO: Make property
+            public virtual int TotalNumDocs
             {
-                int total = 0;
-                foreach (SegmentCommitInfo info in Segments)
+                get
                 {
-                    total += info.Info.DocCount;
+                    int total = 0;
+                    foreach (SegmentCommitInfo info in Segments)
+                    {
+                        total += info.Info.DocCount;
+                    }
+                    return total;
                 }
-                return total;
             }
 
             /// <summary>
@@ -420,7 +427,7 @@ namespace Lucene.Net.Index
             /// The subset of segments to be included in the primitive merge.
             /// </summary>
 
-            public readonly IList<OneMerge> Merges = new List<OneMerge>(); // LUCENENET TODO: Make property
+            public IList<OneMerge> Merges { get; private set; }
 
             /// <summary>
             /// Sole constructor.  Use {@link
@@ -428,6 +435,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public MergeSpecification()
             {
+                Merges = new List<OneMerge>();
             }
 
             /// <summary>

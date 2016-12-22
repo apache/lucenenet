@@ -67,29 +67,26 @@ namespace Lucene.Net.Index.Sorter
                 this.outerInstance = outerInstance;
             }
 
-            public override IList<AtomicReader> MergeReaders
+            public override IList<AtomicReader> GetMergeReaders()
             {
-                get
+                if (unsortedReaders == null)
                 {
-                    if (unsortedReaders == null)
+                    unsortedReaders = base.GetMergeReaders();
+                    AtomicReader atomicView;
+                    if (unsortedReaders.Count == 1)
                     {
-                        unsortedReaders = base.MergeReaders;
-                        AtomicReader atomicView;
-                        if (unsortedReaders.Count == 1)
-                        {
-                            atomicView = unsortedReaders[0];
-                        }
-                        else
-                        {
-                            IndexReader multiReader = new MultiReader(unsortedReaders.ToArray());
-                            atomicView = SlowCompositeReaderWrapper.Wrap(multiReader);
-                        }
-                        docMap = outerInstance.sorter.Sort(atomicView);
-                        sortedView = SortingAtomicReader.Wrap(atomicView, docMap);
+                        atomicView = unsortedReaders[0];
                     }
-                    // a null doc map means that the readers are already sorted
-                    return docMap == null ? unsortedReaders : new List<AtomicReader>(new AtomicReader[] { sortedView });
+                    else
+                    {
+                        IndexReader multiReader = new MultiReader(unsortedReaders.ToArray());
+                        atomicView = SlowCompositeReaderWrapper.Wrap(multiReader);
+                    }
+                    docMap = outerInstance.sorter.Sort(atomicView);
+                    sortedView = SortingAtomicReader.Wrap(atomicView, docMap);
                 }
+                // a null doc map means that the readers are already sorted
+                return docMap == null ? unsortedReaders : new List<AtomicReader>(new AtomicReader[] { sortedView });
             }
 
             public override SegmentCommitInfo Info

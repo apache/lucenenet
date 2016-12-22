@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
 
             protected override void DoMerge(MergePolicy.OneMerge merge)
             {
-                TotMergedBytes += merge.TotalBytesSize();
+                TotMergedBytes += merge.TotalBytesSize;
                 base.DoMerge(merge);
             }
         }

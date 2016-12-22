@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 
                     if (IsVerbose)
                     {
-                        if (doPause != merge.Pause)
+                        if (doPause != merge.IsPaused)
                         {
                             if (doPause)
                             {
@@ -272,9 +272,9 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    if (doPause != merge.Pause)
+                    if (doPause != merge.IsPaused)
                     {
-                        merge.Pause = doPause;
+                        merge.SetPause(doPause);
                     }
 
                     if (!doPause)
