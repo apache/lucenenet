@@ -31,13 +31,13 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class TermSpans : Spans
     {
-        protected internal readonly DocsAndPositionsEnum Postings_Renamed;
-        protected internal readonly Term Term;
-        protected internal int Doc_Renamed;
-        protected internal int Freq;
-        protected internal int Count;
-        protected internal int Position;
-        protected internal bool ReadPayload;
+        protected readonly DocsAndPositionsEnum Postings_Renamed; // LUCENENET TODO: rename
+        protected readonly Term Term; // LUCENENET TODO: rename
+        protected int Doc_Renamed; // LUCENENET TODO: rename
+        protected int Freq; // LUCENENET TODO: rename
+        protected int Count; // LUCENENET TODO: rename
+        protected int Position; // LUCENENET TODO: rename
+        protected bool ReadPayload; // LUCENENET TODO: rename
 
         public TermSpans(DocsAndPositionsEnum postings, Term term)
         {

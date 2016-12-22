@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanPayloadCheckQuery : SpanPositionCheckQuery
     {
-        protected internal readonly ICollection<byte[]> PayloadToMatch;
+        protected readonly ICollection<byte[]> PayloadToMatch; // LUCENENET TODO: rename
 
         ///
         /// <param name="match"> The underlying <seealso cref="Lucene.Net.Search.Spans.SpanQuery"/> to check </param>
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Spans
             this.PayloadToMatch = payloadToMatch;
         }
 
-        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(Spans spans)
         {
             bool result = spans.PayloadAvailable;
             if (result == true)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spans
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
             h ^= PayloadToMatch.GetHashCode();
-            h ^= Number.FloatToIntBits(Boost);
+            h ^= Number.FloatToIntBits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

@@ -38,8 +38,8 @@ namespace Lucene.Net.Search.Spans
     {
         private SpanQuery include;
         private SpanQuery exclude;
-        private readonly int Pre;
-        private readonly int Post;
+        private readonly int Pre; // LUCENENET TODO: rename
+        private readonly int Post; // LUCENENET TODO: rename
 
         /// <summary>
         /// Construct a SpanNotQuery matching spans from <code>include</code> which

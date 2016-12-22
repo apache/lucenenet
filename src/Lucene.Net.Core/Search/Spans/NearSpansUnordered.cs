@@ -82,10 +82,10 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly NearSpansUnordered OuterInstance;
 
-            internal Spans Spans;
-            internal SpansCell Next_Renamed;
-            internal int Length = -1;
-            internal int Index;
+            internal Spans Spans; // LUCENENET TODO: Make property
+            internal SpansCell Next_Renamed; // LUCENENET TODO: Make property
+            private int Length = -1;
+            private int Index;
 
             public SpansCell(NearSpansUnordered outerInstance, Spans spans, int index)
             {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Spans
                 return Adjust(Spans.SkipTo(target));
             }
 
-            internal virtual bool Adjust(bool condition)
+            private bool Adjust(bool condition)
             {
                 if (Length != -1)
                 {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public virtual Spans[] SubSpans
+        public virtual Spans[] SubSpans // LUCENENET TODO: Change to GetSubSpans (array)
         {
             get
             {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        private bool AtMatch()
+        private bool AtMatch()  // LUCENENET TODO: Make property
         {
             return (Min().Doc() == Max.Doc()) && ((Max.End() - Min().Start() - TotalLength) <= Slop);
         }

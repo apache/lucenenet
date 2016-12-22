@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
         {
         }
 
-        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(Spans spans)
         {
             Debug.Assert(spans.Start() != spans.End(), "start equals end: " + spans.Start());
             if (spans.Start() >= end)
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Spans
         {
             int h = match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-            h ^= Number.FloatToIntBits(Boost) ^ end;
+            h ^= Number.FloatToIntBits(Boost) ^ end; // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Spans
     /// Matches spans containing a term. </summary>
     public class SpanTermQuery : SpanQuery
     {
-        protected internal Term term;
+        protected Term term; // LUCENENET TODO: rename
 
         /// <summary>
         /// Construct a SpanTermQuery matching the named term's spans. </summary>

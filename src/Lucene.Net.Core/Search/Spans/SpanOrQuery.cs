@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return the clauses whose spans are matched. </summary>
-        public virtual SpanQuery[] Clauses
+        public virtual SpanQuery[] Clauses // LUCENENET TODO: Change to GetClauses (array, conversion)
         {
             get
             {

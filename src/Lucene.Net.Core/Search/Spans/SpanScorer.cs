@@ -24,14 +24,14 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanScorer : Scorer
     {
-        protected internal Spans Spans;
+        protected Spans Spans; // LUCENENET TODO: rename
 
-        protected internal bool More = true;
+        protected bool More = true; // LUCENENET TODO: rename
 
-        protected internal int Doc;
-        protected internal float Freq_Renamed;
-        protected internal int NumMatches;
-        protected internal readonly Similarity.SimScorer DocScorer;
+        protected int Doc; // LUCENENET TODO: rename
+        protected float Freq_Renamed; // LUCENENET TODO: rename
+        protected int NumMatches; // LUCENENET TODO: rename
+        protected readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: rename
 
         protected internal SpanScorer(Spans spans, Weight weight, Similarity.SimScorer docScorer)
             : base(weight)
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Spans
             return Doc;
         }
 
-        protected internal virtual bool SetFreqCurrentDoc()
+        protected virtual bool SetFreqCurrentDoc()
         {
             if (!More)
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Spans
         ///  @lucene.internal
         /// </summary>
         // only public so .payloads can see it.
-        public virtual float SloppyFreq()
+        public virtual float SloppyFreq() // LUCENENET TODO: make property
         {
             return Freq_Renamed;
         }

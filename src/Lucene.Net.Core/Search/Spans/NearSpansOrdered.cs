@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Spans
             return MatchEnd;
         }
 
-        public virtual Spans[] SubSpans
+        public virtual Spans[] SubSpans // LUCENENET TODO: Make GetSubSpans() (properties shouldn't return array)
         {
             get
             {

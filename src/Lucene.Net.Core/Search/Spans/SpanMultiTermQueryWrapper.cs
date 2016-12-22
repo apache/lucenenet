@@ -46,9 +46,9 @@ namespace Lucene.Net.Search.Spans
     /// }
     /// </pre></blockquote>
     /// </summary>
-    public class SpanMultiTermQueryWrapper<Q> : SpanQuery, ISpanMultiTermQueryWrapper where Q : Lucene.Net.Search.MultiTermQuery
+    public class SpanMultiTermQueryWrapper<Q> : SpanQuery, ISpanMultiTermQueryWrapper where Q : MultiTermQuery
     {
-        protected internal readonly Q query;
+        protected readonly Q query;
 
         /// <summary>
         /// Create a new SpanMultiTermQueryWrapper.
@@ -59,11 +59,11 @@ namespace Lucene.Net.Search.Spans
         /// on the wrapped <code>query</code>, changing its rewrite method to a suitable one for spans.
         /// Be sure to not change the rewrite method on the wrapped query afterwards! Doing so will
         /// throw <seealso cref="UnsupportedOperationException"/> on rewriting this query! </param>
-        public SpanMultiTermQueryWrapper(Q query_)
+        public SpanMultiTermQueryWrapper(Q query)
         {
-            this.query = query_;
+            this.query = query;
 
-            MultiTermQuery.RewriteMethod method = query.GetRewriteMethod();
+            MultiTermQuery.RewriteMethod method = this.query.GetRewriteMethod();
             if (method is ITopTermsRewrite)
             {
                 int pqsize = ((ITopTermsRewrite)method).Size;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Spans
         /// <summary>
         /// Expert: returns the rewriteMethod
         /// </summary>
-        public SpanRewriteMethod RewriteMethod
+        public SpanRewriteMethod RewriteMethod // LUCENENET TODO: Change to GetRewriteMethod() and SetRewriteMethod() (consistency and error)
         {
             get
             {
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search.Spans
         /// <seealso cref= #setRewriteMethod </seealso>
         public sealed class TopTermsSpanBooleanQueryRewrite : SpanRewriteMethod
         {
-            internal readonly TopTermsRewrite<SpanOrQuery> @delegate;
+            private readonly TopTermsRewrite<SpanOrQuery> @delegate;
 
             /// <summary>
             /// Create a TopTermsSpanBooleanQueryRewrite for
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spans
 
             /// <summary>
             /// return the maximum priority queue size </summary>
-            public int Size
+            public int Size // LUCENENET TODO: Rename Count (or Length?)
             {
                 get
                 {

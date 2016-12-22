@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public abstract class SpanPositionCheckQuery : SpanQuery
     {
-        protected internal SpanQuery match;
+        protected SpanQuery match; // LUCENENET TODO: rename
 
         public SpanPositionCheckQuery(SpanQuery match)
         {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Spans
         /// </returns>
         /// <seealso cref= Lucene.Net.Search.Spans.Spans#next()
         ///  </seealso>
-        protected internal abstract AcceptStatus AcceptPosition(Spans spans);
+        protected abstract AcceptStatus AcceptPosition(Spans spans);
 
         public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
@@ -124,11 +124,11 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        protected internal class PositionCheckSpan : Spans
+        protected class PositionCheckSpan : Spans
         {
-            private readonly SpanPositionCheckQuery OuterInstance;
+            private readonly SpanPositionCheckQuery OuterInstance; // LUCENENET TODO: rename
 
-            internal Spans Spans;
+            private Spans Spans; // LUCENENET TODO: rename
 
             public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {

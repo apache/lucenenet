@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Payloads
                     TermSpans = spans;
                 }
 
-                protected internal override bool SetFreqCurrentDoc()
+                protected override bool SetFreqCurrentDoc()
                 {
                     if (!More)
                     {

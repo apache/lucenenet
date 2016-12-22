@@ -33,10 +33,10 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanWeight : Weight
     {
-        protected internal Similarity Similarity;
-        protected internal IDictionary<Term, TermContext> TermContexts;
-        protected internal SpanQuery query;
-        protected internal Similarity.SimWeight Stats;
+        protected Similarity Similarity; // LUCENENET TODO: rename
+        protected IDictionary<Term, TermContext> TermContexts; // LUCENENET TODO: rename
+        protected SpanQuery query; // LUCENENET TODO: rename
+        protected Similarity.SimWeight Stats; // LUCENENET TODO: rename
 
         public SpanWeight(SpanQuery query, IndexSearcher searcher)
         {

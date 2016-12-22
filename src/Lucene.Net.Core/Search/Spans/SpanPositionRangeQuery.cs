@@ -30,8 +30,8 @@ namespace Lucene.Net.Search.Spans
     /// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
     public class SpanPositionRangeQuery : SpanPositionCheckQuery
     {
-        protected internal int start = 0;
-        protected internal int end;
+        protected int start = 0; // LUCENENET TODO: rename
+        protected int end; // LUCENENET TODO: rename
 
         public SpanPositionRangeQuery(SpanQuery match, int start, int end)
             : base(match)
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
             this.end = end;
         }
 
-        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(Spans spans)
         {
             Debug.Assert(spans.Start() != spans.End());
             if (spans.Start() >= end)
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spans
         {
             int h = match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-            h ^= Number.FloatToIntBits(Boost) ^ end ^ start;
+            h ^= Number.FloatToIntBits(Boost) ^ end ^ start; // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

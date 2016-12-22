@@ -54,15 +54,15 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the document number of the current match.  Initially invalid. </summary>
-        public abstract int Doc();
+        public abstract int Doc(); // LUCENENET TODO: Make property
 
         /// <summary>
         /// Returns the start position of the current match.  Initially invalid. </summary>
-        public abstract int Start();
+        public abstract int Start(); // LUCENENET TODO: Make property
 
         /// <summary>
         /// Returns the end position of the current match.  Initially invalid. </summary>
-        public abstract int End();
+        public abstract int End(); // LUCENENET TODO: Make property
 
         /// <summary>
         /// Returns the payload data for the current span.
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Spans
         /// <returns> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         // TODO: Remove warning after API has been finalized
-        public abstract ICollection<byte[]> Payload { get; }
+        public abstract ICollection<byte[]> Payload { get; } // LUCENENET TODO: Change to GetPayload() (and ensure consistency across API)
 
         /// <summary>
         /// Checks if a payload can be loaded at this position.
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Spans
         /// <seealso cref="#next()"/>.
         /// </summary>
         /// <returns> true if there is a payload available at this position that can be loaded </returns>
-        public abstract bool PayloadAvailable { get; }
+        public abstract bool PayloadAvailable { get; } // LUCENENET TODO: Rename IsPayloadAvailable
 
         /// <summary>
         /// Returns the estimated cost of this spans.

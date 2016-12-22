@@ -37,12 +37,12 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
-        protected internal readonly IList<SpanQuery> clauses;
-        protected internal int slop;
-        protected internal bool inOrder;
+        protected internal readonly IList<SpanQuery> clauses; // LUCENENET TODO: rename
+        protected internal int slop; // LUCENENET TODO: rename
+        protected internal bool inOrder; // LUCENENET TODO: rename
 
-        protected internal string field;
-        private bool CollectPayloads;
+        protected internal string field; // LUCENENET TODO: rename
+        private bool CollectPayloads; // LUCENENET TODO: rename camelCase
 
         /// <summary>
         /// Construct a SpanNearQuery.  Matches spans matching a span from each
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return the clauses whose spans are matched. </summary>
-        public virtual SpanQuery[] Clauses
+        public virtual SpanQuery[] Clauses // LUCENENET TODO: Change to GetClauses() (array, conversion)
         {
             get
             {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return true if matches are required to be in-order. </summary>
-        public virtual bool InOrder
+        public virtual bool InOrder // LUCENENET TODO: Change to IsInOrder
         {
             get
             {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Spans
                 buffer.Append(clause.ToString(field));
                 buffer.Append(", ");
             }
-            //LUCENE TO-DO
+            //LUCENENET TODO: Change logic above to skip this instead of removing it
             if (clauses.Count > 0)
                 buffer.Remove(buffer.Length - 2, 2);
             buffer.Append("], ");
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Spans
             return Boost == spanNearQuery.Boost;
         }
 
-        public override int GetHashCode()
+        public override int GetHashCode() // LUCENENET TODO: Check whether this hash code algorithm is close enough to the original to work
         {
             int result;
             //If this doesn't work, hash all elements together. This version was used to improve the speed of hashing
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search.Spans
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
             result ^= (result << 14) | ((int)((uint)result >> 19)); // reversible
-            result += Number.FloatToIntBits(Boost);
+            result += Number.FloatToIntBits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
             result += slop;
             result ^= (inOrder ? unchecked((int)0x99AFD3BD) : 0);
             return result;

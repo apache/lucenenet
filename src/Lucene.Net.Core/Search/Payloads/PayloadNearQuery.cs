@@ -273,7 +273,7 @@ namespace Lucene.Net.Search.Payloads
             }
 
             //
-            protected internal override bool SetFreqCurrentDoc()
+            protected override bool SetFreqCurrentDoc()
             {
                 if (!More)
                 {
