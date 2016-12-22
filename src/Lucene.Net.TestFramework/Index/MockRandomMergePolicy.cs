@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 
             //System.out.println("MRMP: findMerges sis=" + segmentInfos + " eligible=" + eligibleSegments);
             MergeSpecification mergeSpec = null;
-            if (eligibleSegments.Count > 1 || (eligibleSegments.Count == 1 && eligibleSegments[0].HasDeletions()))
+            if (eligibleSegments.Count > 1 || (eligibleSegments.Count == 1 && eligibleSegments[0].HasDeletions))
             {
                 mergeSpec = new MergeSpecification();
                 // Already shuffled having come out of a set but

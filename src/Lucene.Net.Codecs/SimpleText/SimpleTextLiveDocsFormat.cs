@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
-            Debug.Assert(info.HasDeletions());
+            Debug.Assert(info.HasDeletions);
             var scratch = new BytesRef();
             var scratchUtf16 = new CharsRef();
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void Files(SegmentCommitInfo info, ICollection<string> files)
         {
-            if (info.HasDeletions())
+            if (info.HasDeletions)
             {
                 files.Add(IndexFileNames.FileNameFromGeneration(info.Info.Name, LIVEDOCS_EXTENSION, info.DelGen));
             }

@@ -1368,7 +1368,7 @@ namespace Lucene.Net.Index
                     }
                     foreach (SegmentCommitInfo info in segmentInfos.Segments)
                     {
-                        if (info.HasDeletions())
+                        if (info.HasDeletions)
                         {
                             return true;
                         }

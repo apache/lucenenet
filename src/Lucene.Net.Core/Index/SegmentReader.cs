@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             Codec codec = si.Info.Codec;
             try
             {
-                if (si.HasDeletions())
+                if (si.HasDeletions)
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
                     liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory(), si, IOContext.READONCE);

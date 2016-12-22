@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
                             readerShared[i] = false;
                             // Steal the ref returned by SegmentReader ctor:
                             Debug.Assert(infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
-                            Debug.Assert(infos.Info(i).HasDeletions() || infos.Info(i).HasFieldUpdates());
+                            Debug.Assert(infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
                             if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
                             {
                                 // only DV updates

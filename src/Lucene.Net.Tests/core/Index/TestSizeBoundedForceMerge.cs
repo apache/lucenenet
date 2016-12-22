@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
             Assert.AreEqual(3, sis.Size());
-            Assert.IsFalse(sis.Info(2).HasDeletions());
+            Assert.IsFalse(sis.Info(2).HasDeletions);
         }
 
         [Test]
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
             Assert.AreEqual(1, sis.Size());
-            Assert.IsTrue(sis.Info(0).HasDeletions());
+            Assert.IsTrue(sis.Info(0).HasDeletions);
         }
     }
 }

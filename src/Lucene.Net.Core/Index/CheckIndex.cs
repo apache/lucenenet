@@ -729,7 +729,7 @@ namespace Lucene.Net.Index
                         Msg(infoStream, "    diagnostics = " + diagnostics);
                     }
 
-                    if (!info.HasDeletions())
+                    if (!info.HasDeletions)
                     {
                         Msg(infoStream, "    no deletions");
                         segInfoStat.HasDeletions = false;

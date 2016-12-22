@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void Files(SegmentCommitInfo info, ICollection<string> files)
         {
-            if (info.HasDeletions())
+            if (info.HasDeletions)
             {
                 files.Add(IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen));
             }

@@ -218,16 +218,16 @@ namespace Lucene.Net.Index
         /// Returns true if there are any deletions for the
         /// segment at this commit.
         /// </summary>
-        public virtual bool HasDeletions() // LUCENENET TODO: Make property ?
+        public virtual bool HasDeletions
         {
-            return delGen != -1;
+            get { return delGen != -1; }
         }
 
         /// <summary>
         /// Returns true if there are any field updates for the segment in this commit. </summary>
-        public virtual bool HasFieldUpdates() // LUCENENET TODO: Make property ?
+        public virtual bool HasFieldUpdates
         {
-            return fieldInfosGen != -1;
+            get { return fieldInfosGen != -1; }
         }
 
         /// <summary>
