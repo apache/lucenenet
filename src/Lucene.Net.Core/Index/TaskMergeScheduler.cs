@@ -158,9 +158,9 @@ namespace Lucene.Net.Index
         /// }
         /// </pre>
         /// </summary>
-        protected internal bool Verbose() // LUCENENET TODO: Make property
+        protected internal bool Verbose
         {
-            return _writer != null && _writer.infoStream.IsEnabled(COMPONENT_NAME);
+            get { return _writer != null && _writer.infoStream.IsEnabled(COMPONENT_NAME); }
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
                 _writer = writer;
                 _directory = writer.Directory;
 
-                if (Verbose())
+                if (Verbose)
                 {
                     Message("now merge");
                     Message("  index: " + writer.SegString());
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                         // thread to prevent creation of new segments,
                         // until merging has caught up:
                         startStallTime = Environment.TickCount;
-                        if (Verbose())
+                        if (Verbose)
                         {
                             Message("    too many merges; stalling...");
                         }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
                         _manualResetEvent.Wait();
                     }
 
-                    if (Verbose())
+                    if (Verbose)
                     {
                         if (startStallTime != 0)
                         {
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                     MergePolicy.OneMerge merge = writer.GetNextMerge();
                     if (merge == null)
                     {
-                        if (Verbose())
+                        if (Verbose)
                         {
                             Message("  no more merges pending; now return");
                         }
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
                     bool success = false;
                     try
                     {
-                        if (Verbose())
+                        if (Verbose)
                         {
                             Message("  consider merge " + writer.SegString(merge.Segments));
                         }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
 
                         _mergeThreads.Add(merger);
 
-                        if (Verbose())
+                        if (Verbose)
                         {
                             Message("    launch new thread [" + merger.Name + "]");
                         }
@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
             var count = Interlocked.Increment(ref _mergeThreadCount);
             var name = string.Format("Lucene Merge Task #{0}", count);
 
-            return new MergeThread(name, writer, merge, writer.infoStream, Verbose(), _manualResetEvent, HandleMergeException);
+            return new MergeThread(name, writer, merge, writer.infoStream, Verbose, _manualResetEvent, HandleMergeException);
         }
 
         /// <summary>
