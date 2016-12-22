@@ -21,7 +21,6 @@ namespace Lucene.Net.Index
      */
 
     using Bits = Lucene.Net.Util.Bits;
-
     using MultiSortedDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedDocValues;
     using MultiSortedSetDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedSetDocValues;
     using OrdinalMap = Lucene.Net.Index.MultiDocValues.OrdinalMap;

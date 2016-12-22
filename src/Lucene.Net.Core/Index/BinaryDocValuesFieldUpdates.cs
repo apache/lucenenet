@@ -3,16 +3,6 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using BinaryDocValuesField = BinaryDocValuesField;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
-    using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,6 +19,16 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using BinaryDocValuesField = BinaryDocValuesField;
+    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
+    using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
 
     /// <summary>
     /// A <seealso cref="AbstractDocValuesFieldUpdates"/> which holds updates of documents, of a single

@@ -3,8 +3,6 @@ using System.Text;
 
 namespace Lucene.Net.Index
 {
-    using Bits = Lucene.Net.Util.Bits;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +19,8 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Bits = Lucene.Net.Util.Bits;
 
     /// <summary>
     /// Concatenates multiple Bits together, on every lookup.

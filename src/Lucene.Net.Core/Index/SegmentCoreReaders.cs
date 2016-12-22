@@ -1,37 +1,36 @@
 using Lucene.Net.Codecs;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
+    using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;

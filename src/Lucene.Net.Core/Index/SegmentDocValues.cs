@@ -1,3 +1,4 @@
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,14 +7,6 @@ using System.Linq;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using Directory = Lucene.Net.Store.Directory;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,6 +23,12 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Directory = Lucene.Net.Store.Directory;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// Manages the <seealso cref="DocValuesProducer"/> held by <seealso cref="SegmentReader"/> and

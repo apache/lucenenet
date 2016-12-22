@@ -1,4 +1,16 @@
-﻿/*
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Directory = Lucene.Net.Store.Directory;
+
+namespace Lucene.Net.Index
+{
+    /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
      * this work for additional information regarding copyright ownership.
@@ -14,18 +26,7 @@
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Directory = Lucene.Net.Store.Directory;
 
-namespace Lucene.Net.Index
-{
     /// <summary>
     ///  A <seealso cref="MergeScheduler"/> that runs each merge using
     ///  Tasks on the default TaskScheduler.

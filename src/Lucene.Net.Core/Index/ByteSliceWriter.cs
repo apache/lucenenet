@@ -2,9 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-    using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
-    using DataOutput = Lucene.Net.Store.DataOutput;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +18,9 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
+    using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
     /// Class to write byte streams into slices of shared

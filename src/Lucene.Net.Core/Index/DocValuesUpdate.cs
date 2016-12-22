@@ -2,10 +2,6 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using NumericDocValuesField = NumericDocValuesField;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +18,10 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using NumericDocValuesField = NumericDocValuesField;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
     /// An in-place update to a DocValues field. </summary>
