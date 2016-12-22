@@ -303,7 +303,7 @@ namespace Lucene.Net.Search
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
-                RefreshStartGen = Writer.AndIncrementGeneration;
+                RefreshStartGen = Writer.GetAndIncrementGeneration();
                 try
                 {
                     Manager.MaybeRefreshBlocking();

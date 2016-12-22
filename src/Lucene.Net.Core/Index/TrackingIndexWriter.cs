@@ -250,12 +250,9 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.internal
         /// </summary>
-        public virtual long AndIncrementGeneration // LUCENENET TODO: Make method GetAndIncrementGeneration()
+        public virtual long GetAndIncrementGeneration()
         {
-            get
-            {
-                return indexingGen.IncrementAndGet();
-            }
+            return indexingGen.IncrementAndGet();
         }
 
         /// <summary>
