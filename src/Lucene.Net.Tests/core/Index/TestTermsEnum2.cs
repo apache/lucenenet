@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
                         {
                             // seek ceil
                             Assert.AreEqual(SeekStatus.FOUND, te.SeekCeil(term));
-                            Assert.AreEqual(term, te.Term());
+                            Assert.AreEqual(term, te.Term);
                         }
                     }
                 }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
                     else if (c == 1)
                     {
                         Assert.AreEqual(SeekStatus.FOUND, te.SeekCeil(term));
-                        Assert.AreEqual(term, te.Term());
+                        Assert.AreEqual(term, te.Term);
                     }
                     else
                     {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
                 SortedSet<BytesRef> found = new SortedSet<BytesRef>();
                 while (te.Next() != null)
                 {
-                    found.Add(BytesRef.DeepCopyOf(te.Term()));
+                    found.Add(BytesRef.DeepCopyOf(te.Term));
                 }
 
                 Automaton actual = BasicAutomata.MakeStringUnion(found);

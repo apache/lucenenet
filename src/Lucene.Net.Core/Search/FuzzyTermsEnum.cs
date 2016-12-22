@@ -357,9 +357,9 @@ namespace Lucene.Net.Search
             ActualEnum.SeekExact(ord);
         }
 
-        public override BytesRef Term()
+        public override BytesRef Term
         {
-            return ActualEnum.Term();
+            get { return ActualEnum.Term; }
         }
 
         /// <summary>

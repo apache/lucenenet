@@ -307,14 +307,14 @@ namespace Lucene.Net.Search
                 int k = Random().Next(nTerms);
                 termsIndex.LookupOrd(k, val);
                 Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.SeekCeil(val));
-                Assert.AreEqual(val, tenum.Term());
+                Assert.AreEqual(val, tenum.Term);
             }
 
             for (int i = 0; i < nTerms; i++)
             {
                 termsIndex.LookupOrd(i, val);
                 Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.SeekCeil(val));
-                Assert.AreEqual(val, tenum.Term());
+                Assert.AreEqual(val, tenum.Term);
             }
 
             // test bad field

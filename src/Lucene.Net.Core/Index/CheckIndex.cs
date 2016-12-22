@@ -1530,7 +1530,7 @@ namespace Lucene.Net.Index
                             {
                                 long ord = i * (termCount / seekCount);
                                 termsEnum.SeekExact(ord);
-                                seekTerms[i] = BytesRef.DeepCopyOf(termsEnum.Term());
+                                seekTerms[i] = BytesRef.DeepCopyOf(termsEnum.Term);
                             }
 
                             // Seek by term

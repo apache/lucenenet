@@ -171,9 +171,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return result.Input;
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return _fstEnum.Current().Input;
+                get { return _fstEnum.Current().Input; }
             }
 
             public override long Ord()

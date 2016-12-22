@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             {
                 if (Random().NextDouble() <= chance)
                 {
-                    BytesRef term = BytesRef.DeepCopyOf(termsEnum.Term());
+                    BytesRef term = BytesRef.DeepCopyOf(termsEnum.Term);
                     answers[term] = s.Search(new TermQuery(new Term("body", term)), 100);
                 }
             }

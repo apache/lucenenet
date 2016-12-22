@@ -161,7 +161,7 @@ namespace Lucene.Net.Index.Memory
                         while (iwTermsIter.Next() != null)
                         {
                             assertNotNull(memTermsIter.Next());
-                            assertEquals(iwTermsIter.Term(), memTermsIter.Term());
+                            assertEquals(iwTermsIter.Term, memTermsIter.Term);
                             DocsAndPositionsEnum iwDocsAndPos = iwTermsIter.DocsAndPositions(null, null);
                             DocsAndPositionsEnum memDocsAndPos = memTermsIter.DocsAndPositions(null, null);
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index.Memory
                                 assertEquals(iwDocsAndPos.Freq, memDocsAndPos.Freq);
                                 for (int i = 0; i < iwDocsAndPos.Freq; i++)
                                 {
-                                    assertEquals("term: " + iwTermsIter.Term().Utf8ToString(), iwDocsAndPos.NextPosition(), memDocsAndPos.NextPosition());
+                                    assertEquals("term: " + iwTermsIter.Term.Utf8ToString(), iwDocsAndPos.NextPosition(), memDocsAndPos.NextPosition());
                                     if (offsets)
                                     {
                                         assertEquals(iwDocsAndPos.StartOffset, memDocsAndPos.StartOffset);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index.Memory
                     {
                         while (iwTermsIter.Next() != null)
                         {
-                            assertEquals(iwTermsIter.Term(), memTermsIter.Term());
+                            assertEquals(iwTermsIter.Term, memTermsIter.Term);
                             DocsEnum iwDocsAndPos = iwTermsIter.Docs(null, null);
                             DocsEnum memDocsAndPos = memTermsIter.Docs(null, null);
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
@@ -557,10 +557,10 @@ namespace Lucene.Net.Index.Memory
 
                 DocsAndPositionsEnum docsPosEnum = termEnum.DocsAndPositions(null, null, 0);
                 DocsAndPositionsEnum memDocsPosEnum = memTermEnum.DocsAndPositions(null, null, 0);
-                String currentTerm = termEnum.Term().Utf8ToString();
+                String currentTerm = termEnum.Term.Utf8ToString();
 
 
-                assertEquals("Token mismatch for field: " + field_name, currentTerm, memTermEnum.Term().Utf8ToString());
+                assertEquals("Token mismatch for field: " + field_name, currentTerm, memTermEnum.Term.Utf8ToString());
 
                 docsPosEnum.NextDoc();
                 memDocsPosEnum.NextDoc();

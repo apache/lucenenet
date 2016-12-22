@@ -610,12 +610,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return null;
                 }
-                return Term();
+                return Term;
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return TermAndPostings[CurrentTerm].Term;
+                get { return TermAndPostings[CurrentTerm].Term; }
             }
 
             public override long Ord()

@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
             TermsEnum terms = reader.Fields.Terms("content").Iterator(null);
             Assert.IsNotNull(terms.Next());
-            Assert.AreEqual("aaa", terms.Term().Utf8ToString());
+            Assert.AreEqual("aaa", terms.Term.Utf8ToString());
             Assert.IsNotNull(terms.Next());
             long ordB;
             try
@@ -101,11 +101,11 @@ namespace Lucene.Net.Index
                 reader.Dispose();
                 return;
             }
-            Assert.AreEqual("bbb", terms.Term().Utf8ToString());
+            Assert.AreEqual("bbb", terms.Term.Utf8ToString());
             Assert.IsNull(terms.Next());
 
             terms.SeekExact(ordB);
-            Assert.AreEqual("bbb", terms.Term().Utf8ToString());
+            Assert.AreEqual("bbb", terms.Term.Utf8ToString());
             reader.Dispose();
         }
 
@@ -118,24 +118,24 @@ namespace Lucene.Net.Index
             // go to the first term (aaa)
             termEnum.Next();
             // assert that term is 'aaa'
-            Assert.AreEqual("aaa", termEnum.Term().Utf8ToString());
+            Assert.AreEqual("aaa", termEnum.Term.Utf8ToString());
             Assert.AreEqual(200, termEnum.DocFreq());
             // go to the second term (bbb)
             termEnum.Next();
             // assert that term is 'bbb'
-            Assert.AreEqual("bbb", termEnum.Term().Utf8ToString());
+            Assert.AreEqual("bbb", termEnum.Term.Utf8ToString());
             Assert.AreEqual(100, termEnum.DocFreq());
 
             // create enumeration of terms after term 'aaa',
             // including 'aaa'
             termEnum.SeekCeil(new BytesRef("aaa"));
             // assert that term is 'aaa'
-            Assert.AreEqual("aaa", termEnum.Term().Utf8ToString());
+            Assert.AreEqual("aaa", termEnum.Term.Utf8ToString());
             Assert.AreEqual(200, termEnum.DocFreq());
             // go to term 'bbb'
             termEnum.Next();
             // assert that term is 'bbb'
-            Assert.AreEqual("bbb", termEnum.Term().Utf8ToString());
+            Assert.AreEqual("bbb", termEnum.Term.Utf8ToString());
             Assert.AreEqual(100, termEnum.DocFreq());
             reader.Dispose();
         }

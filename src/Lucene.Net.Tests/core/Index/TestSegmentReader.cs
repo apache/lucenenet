@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
                 TermsEnum termsEnum = terms.Iterator(null);
                 while (termsEnum.Next() != null)
                 {
-                    BytesRef term = termsEnum.Term();
+                    BytesRef term = termsEnum.Term;
                     Assert.IsTrue(term != null);
                     string fieldValue = (string)DocHelper.NameValues[field];
                     Assert.IsTrue(fieldValue.IndexOf(term.Utf8ToString()) != -1);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             TermsEnum termsEnum = result.Iterator(null);
             while (termsEnum.Next() != null)
             {
-                string term = termsEnum.Term().Utf8ToString();
+                string term = termsEnum.Term.Utf8ToString();
                 int freq = (int)termsEnum.TotalTermFreq();
                 Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term) != -1);
                 Assert.IsTrue(freq > 0);

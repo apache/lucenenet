@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
                 return input.Next();
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return input.Term();
+                get { return input.Term; }
             }
 
             public override long Ord()

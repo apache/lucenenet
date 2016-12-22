@@ -599,9 +599,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return Term_Renamed;
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return Term_Renamed;
+                get { return Term_Renamed; }
             }
 
             public override long Ord()

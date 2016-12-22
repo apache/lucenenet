@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, vector.Size);
             TermsEnum termsEnum = vector.Iterator(null);
             Assert.IsNotNull(termsEnum.Next());
-            Assert.AreEqual("one", termsEnum.Term().Utf8ToString());
+            Assert.AreEqual("one", termsEnum.Term.Utf8ToString());
             Assert.AreEqual(5, termsEnum.TotalTermFreq());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.IsNotNull(dpEnum);

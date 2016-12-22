@@ -293,7 +293,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 Assert.AreEqual(leftStatus, rightStatus);
                 if (leftStatus != SeekStatus.END)
                 {
-                    Assert.AreEqual(leftEnum.Term(), rightEnum.Term());
+                    Assert.AreEqual(leftEnum.Term, rightEnum.Term);
                 }
 
                 leftStatus = leftEnum.SeekCeil(b);
@@ -301,7 +301,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 Assert.AreEqual(leftStatus, rightStatus);
                 if (leftStatus != SeekStatus.END)
                 {
-                    Assert.AreEqual(leftEnum.Term(), rightEnum.Term());
+                    Assert.AreEqual(leftEnum.Term, rightEnum.Term);
                 }
             }
         }

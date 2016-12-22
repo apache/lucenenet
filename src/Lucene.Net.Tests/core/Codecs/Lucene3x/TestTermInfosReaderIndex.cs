@@ -176,11 +176,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (sample.Count >= size)
                     {
                         int pos = random.Next(size);
-                        sample[pos] = new Term(field, termsEnum.Term());
+                        sample[pos] = new Term(field, termsEnum.Term);
                     }
                     else
                     {
-                        sample.Add(new Term(field, termsEnum.Term()));
+                        sample.Add(new Term(field, termsEnum.Term));
                     }
                 }
             }

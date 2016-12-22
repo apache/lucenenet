@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
         /// Returns current term. Do not call this when the enum
         ///  is unpositioned.
         /// </summary>
-        public abstract BytesRef Term(); // LUCENENET TODO: make property
+        public abstract BytesRef Term { get; }
 
         /// <summary>
         /// Returns ordinal position for current term.  this is an
@@ -293,9 +293,9 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                throw new InvalidOperationException("this method should never be called");
+                get { throw new InvalidOperationException("this method should never be called"); }
             }
 
             public override IComparer<BytesRef> Comparator

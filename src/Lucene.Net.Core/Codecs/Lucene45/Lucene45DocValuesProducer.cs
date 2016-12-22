@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 try
                 {
                     TermsEnum_Renamed.SeekExact(id);
-                    BytesRef term = TermsEnum_Renamed.Term();
+                    BytesRef term = TermsEnum_Renamed.Term;
                     result.Bytes = term.Bytes;
                     result.Offset = term.Offset;
                     result.Length = term.Length;
@@ -1214,9 +1214,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     term.CopyBytes(termBuffer);
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return term;
+                    get { return term; }
                 }
 
                 public override long Ord()

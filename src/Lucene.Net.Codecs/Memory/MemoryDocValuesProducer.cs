@@ -789,7 +789,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     return SeekStatus.END;
                 }
-                else if (Term().Equals(text))
+                else if (Term.Equals(text))
                 {
                     // TODO: add SeekStatus to FSTEnum like in https://issues.apache.org/jira/browse/LUCENE-3729
                     // to remove this comparision?
@@ -821,9 +821,9 @@ namespace Lucene.Net.Codecs.Memory
                 input.SeekExact(scratchBytes);
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return input.Current().Input;
+                get { return input.Current().Input; }
             }
 
             public override long Ord()

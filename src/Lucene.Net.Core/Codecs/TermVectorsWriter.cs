@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs
 
                     int freq = (int)termsEnum.TotalTermFreq();
 
-                    StartTerm(termsEnum.Term(), freq);
+                    StartTerm(termsEnum.Term, freq);
 
                     if (hasPositions || hasOffsets)
                     {

@@ -463,7 +463,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     if (VERBOSE)
                                     {
-                                        Console.WriteLine("  term=" + termsEnum.Term().Utf8ToString());
+                                        Console.WriteLine("  term=" + termsEnum.Term.Utf8ToString());
                                     }
                                     Assert.IsNotNull(fstEnum.Next());
                                     AssertSame(termsEnum, fstEnum, storeOrd);
@@ -495,23 +495,23 @@ namespace Lucene.Net.Util.Fst
 
         private void AssertSame<T1>(TermsEnum termsEnum, BytesRefFSTEnum<T1> fstEnum, bool storeOrd)
         {
-            if (termsEnum.Term() == null)
+            if (termsEnum.Term == null)
             {
                 Assert.IsNull(fstEnum.Current());
             }
             else
             {
                 Assert.IsNotNull(fstEnum.Current());
-                Assert.AreEqual(termsEnum.Term(), fstEnum.Current().Input, termsEnum.Term().Utf8ToString() + " != " + fstEnum.Current().Input.Utf8ToString());
+                Assert.AreEqual(termsEnum.Term, fstEnum.Current().Input, termsEnum.Term.Utf8ToString() + " != " + fstEnum.Current().Input.Utf8ToString());
                 if (storeOrd)
                 {
                     // fst stored the ord
-                    Assert.AreEqual(termsEnum.Ord(), fstEnum.Current().Output, "term=" + termsEnum.Term().Utf8ToString() + " " + termsEnum.Term());
+                    Assert.AreEqual(termsEnum.Ord(), fstEnum.Current().Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
                 else
                 {
                     // fst stored the docFreq
-                    Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current().Output, "term=" + termsEnum.Term().Utf8ToString() + " " + termsEnum.Term());
+                    Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current().Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
             }
         }
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Util.Fst
                     if (nextID != null)
                     {
                         Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, status);
-                        Assert.AreEqual(new BytesRef(nextID), termsEnum.Term(), "expected=" + nextID + " actual=" + termsEnum.Term().Utf8ToString());
+                        Assert.AreEqual(new BytesRef(nextID), termsEnum.Term, "expected=" + nextID + " actual=" + termsEnum.Term.Utf8ToString());
                     }
                     else if (!exists)
                     {

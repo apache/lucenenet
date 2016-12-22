@@ -680,7 +680,7 @@ namespace Lucene.Net.Index
                     if (success)
                     {
                         Assert.AreEqual(status, TermsEnum.SeekStatus.FOUND);
-                        Assert.IsTrue(termsEnum.Term().BytesEquals(new BytesRef(term2.Text2)));
+                        Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(term2.Text2)));
                         Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq());
                         if (field.OmitTF)
                         {
@@ -722,7 +722,7 @@ namespace Lucene.Net.Index
                         {
                             termsEnum.SeekExact(i);
                             Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq());
-                            Assert.IsTrue(termsEnum.Term().BytesEquals(new BytesRef(field.Terms[i].Text2)));
+                            Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.Terms[i].Text2)));
                         }
                         catch (System.NotSupportedException uoe)
                         {
@@ -735,7 +735,7 @@ namespace Lucene.Net.Index
                     //Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, status);
 
                     // Make sure we're now pointing to first term
-                    Assert.IsTrue(termsEnum.Term().BytesEquals(new BytesRef(field.Terms[0].Text2)));
+                    Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.Terms[0].Text2)));
 
                     // Test docs enum
                     termsEnum.SeekCeil(new BytesRef(""));

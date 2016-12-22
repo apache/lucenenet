@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
 
             // Make sure TermsEnum really is positioned on the
             // expected term:
-            Assert.AreEqual(term, termsEnum.Term());
+            Assert.AreEqual(term, termsEnum.Term);
 
             // 50% of the time time pass liveDocs:
             bool useLiveDocs = options.Contains(Option.LIVE_DOCS) && Random().NextBoolean();

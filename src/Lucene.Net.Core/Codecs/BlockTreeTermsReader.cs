@@ -1155,9 +1155,9 @@ namespace Lucene.Net.Codecs
                     return f;
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return Term_Renamed;
+                    get { return Term_Renamed; }
                 }
 
                 public override int DocFreq()
@@ -2560,10 +2560,13 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    Debug.Assert(!Eof);
-                    return Term_Renamed;
+                    get
+                    {
+                        Debug.Assert(!Eof);
+                        return Term_Renamed;
+                    }
                 }
 
                 public override int DocFreq()

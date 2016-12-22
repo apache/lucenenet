@@ -434,9 +434,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return _current.Key;
+                get { return _current.Key; }
             }
 
             public override long Ord()

@@ -216,7 +216,7 @@ namespace Lucene.Net.Spatial.Prefix
                             {
                                 break;// all done
                             }
-                            thisTerm = termsEnum.Term();
+                            thisTerm = termsEnum.Term;
                             if (seekStatus == TermsEnum.SeekStatus.NOT_FOUND)
                             {
                                 continue; // leap frog

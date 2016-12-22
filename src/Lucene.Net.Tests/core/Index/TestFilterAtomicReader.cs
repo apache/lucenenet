@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             TermsEnum terms = MultiFields.GetTerms(reader, "default").Iterator(null);
             while (terms.Next() != null)
             {
-                Assert.IsTrue(terms.Term().Utf8ToString().IndexOf('e') != -1);
+                Assert.IsTrue(terms.Term.Utf8ToString().IndexOf('e') != -1);
             }
 
             Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(new BytesRef("one")));

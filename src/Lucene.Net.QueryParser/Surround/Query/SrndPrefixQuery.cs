@@ -72,9 +72,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 }
                 else if (status == TermsEnum.SeekStatus.NOT_FOUND)
                 {
-                    if (StringHelper.StartsWith(termsEnum.Term(), prefixRef))
+                    if (StringHelper.StartsWith(termsEnum.Term, prefixRef))
                     {
-                        mtv.VisitMatchingTerm(new Term(fieldName, termsEnum.Term().Utf8ToString()));
+                        mtv.VisitMatchingTerm(new Term(fieldName, termsEnum.Term.Utf8ToString()));
                     }
                     else
                     {

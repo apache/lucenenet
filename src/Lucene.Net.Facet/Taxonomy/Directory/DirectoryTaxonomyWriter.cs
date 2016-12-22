@@ -801,7 +801,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             {
                                 if (!cache.IsFull)
                                 {
-                                    BytesRef t = termsEnum.Term();
+                                    BytesRef t = termsEnum.Term;
                                     // Since we guarantee uniqueness of categories, each term has exactly
                                     // one document. Also, since we do not allow removing categories (and
                                     // hence documents), there are no deletions in the index. Therefore, it
@@ -919,7 +919,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     te = terms.Iterator(te);
                     while (te.Next() != null)
                     {
-                        FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(te.Term().Utf8ToString()));
+                        FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(te.Term.Utf8ToString()));
                         int ordinal = AddCategory(cp);
                         docs = te.Docs(null, docs, DocsEnum.FLAG_NONE);
                         ordinalMap.AddMapping(docs.NextDoc() + @base, ordinal);

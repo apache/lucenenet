@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
             StringBuilder temp = new StringBuilder();
             while (vector.Next() != null)
             {
-                temp.Append(vector.Term().Utf8ToString());
+                temp.Append(vector.Term.Utf8ToString());
             }
             if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim()))
             {

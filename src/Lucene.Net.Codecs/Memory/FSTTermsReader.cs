@@ -310,9 +310,9 @@ namespace Lucene.Net.Codecs.Memory
                     return (TermState) state.Clone();
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return term_Renamed;
+                    get { return term_Renamed; }
                 }
 
                 public override int DocFreq()

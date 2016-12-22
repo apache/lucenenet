@@ -102,10 +102,10 @@ namespace Lucene.Net.Index
                     {
                         if (VERBOSE)
                         {
-                            Console.WriteLine("  got term=" + termsEnum.Term().Utf8ToString() + " expected=" + terms[upto].Utf8ToString());
+                            Console.WriteLine("  got term=" + termsEnum.Term.Utf8ToString() + " expected=" + terms[upto].Utf8ToString());
                         }
                         Assert.IsTrue(upto < terms.Count);
-                        Assert.AreEqual(terms[upto], termsEnum.Term());
+                        Assert.AreEqual(terms[upto], termsEnum.Term);
                     }
                 }
                 else
@@ -158,13 +158,13 @@ namespace Lucene.Net.Index
                             else
                             {
                                 Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, status);
-                                Assert.AreEqual(terms[upto], termsEnum.Term());
+                                Assert.AreEqual(terms[upto], termsEnum.Term);
                             }
                         }
                         else
                         {
                             Assert.AreEqual(TermsEnum.SeekStatus.FOUND, status);
-                            Assert.AreEqual(terms[upto], termsEnum.Term());
+                            Assert.AreEqual(terms[upto], termsEnum.Term);
                         }
                     }
                     else
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             Assert.IsTrue(result);
-                            Assert.AreEqual(target, termsEnum.Term());
+                            Assert.AreEqual(target, termsEnum.Term);
                         }
                     }
                 }
@@ -831,7 +831,7 @@ namespace Lucene.Net.Index
 
                 if (loc >= 0)
                 {
-                    Assert.AreEqual(t, te.Term());
+                    Assert.AreEqual(t, te.Term);
                 }
                 else if (doSeekExact)
                 {
@@ -845,7 +845,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     loc = -loc - 1;
-                    Assert.AreEqual(validTerms[loc], te.Term());
+                    Assert.AreEqual(validTerms[loc], te.Term);
                 }
 
                 // Do a bunch of next's after the seek

@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             te.SeekCeil(new BytesRef(prefix));
             do
             {
-                string s = te.Term().Utf8ToString();
+                string s = te.Term.Utf8ToString();
                 if (s.StartsWith(prefix))
                 {
                     termsWithPrefix.AddLast(new Term("body", s));
@@ -112,9 +112,9 @@ namespace Lucene.Net.Search
 
             do
             {
-                if (te.Term().Utf8ToString().StartsWith(prefix))
+                if (te.Term.Utf8ToString().StartsWith(prefix))
                 {
-                    termsWithPrefix.AddLast(new Term("body", te.Term().Utf8ToString()));
+                    termsWithPrefix.AddLast(new Term("body", te.Term.Utf8ToString()));
                 }
             } while (te.Next() != null);
 

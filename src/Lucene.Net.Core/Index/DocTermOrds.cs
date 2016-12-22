@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
             // seek above):
             for (; ; )
             {
-                BytesRef t = te.Term();
+                BytesRef t = te.Term;
                 if (t == null || (termPrefix != null && !StringHelper.StartsWith(t, termPrefix)))
                 {
                     break;
@@ -764,9 +764,9 @@ namespace Lucene.Net.Index
                 return TermsEnum.DocsAndPositions(liveDocs, reuse, flags);
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return Term_Renamed;
+                get { return Term_Renamed; }
             }
 
             public override BytesRef Next()
@@ -906,7 +906,7 @@ namespace Lucene.Net.Index
 
             private BytesRef SetTerm()
             {
-                Term_Renamed = TermsEnum.Term();
+                Term_Renamed = TermsEnum.Term;
                 //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));
                 if (OuterInstance.prefix != null && !StringHelper.StartsWith(Term_Renamed, OuterInstance.prefix))
                 {
@@ -923,7 +923,7 @@ namespace Lucene.Net.Index
         public virtual BytesRef LookupTerm(TermsEnum termsEnum, int ord)
         {
             termsEnum.SeekExact(ord);
-            return termsEnum.Term();
+            return termsEnum.Term;
         }
 
         /// <summary>

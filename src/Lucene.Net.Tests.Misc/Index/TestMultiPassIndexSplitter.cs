@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                     assertEquals("0", doc.Get("id"));
                     te = MultiFields.GetTerms(ir, "id").Iterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("1")));
-                    assertNotSame("1", te.Term().Utf8ToString());
+                    assertNotSame("1", te.Term.Utf8ToString());
                 }
                 using (ir = DirectoryReader.Open(dirs[1]))
                 {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     te = MultiFields.GetTerms(ir, "id").Iterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("0")));
 
-                    assertNotSame("0", te.Term().Utf8ToString());
+                    assertNotSame("0", te.Term.Utf8ToString());
                 }
                 using (ir = DirectoryReader.Open(dirs[2]))
                 {
@@ -103,10 +103,10 @@ namespace Lucene.Net.Index
 
                     te = MultiFields.GetTerms(ir, "id").Iterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("1")));
-                    assertNotSame("1", te.Term());
+                    assertNotSame("1", te.Term);
 
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("0")));
-                    assertNotSame("0", te.Term().Utf8ToString());
+                    assertNotSame("0", te.Term.Utf8ToString());
                 }
             }
             finally
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                     TermsEnum te = MultiFields.GetTerms(ir, "id").Iterator(null);
                     Term t = new Term("id", (NUM_DOCS - 1) + "");
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef(t.Text())));
-                    assertNotSame(t.Text(), te.Term().Utf8ToString());
+                    assertNotSame(t.Text(), te.Term.Utf8ToString());
                 }
             }
             finally

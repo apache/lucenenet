@@ -207,7 +207,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     {
                         Debug.Assert(tenum != null);
                         tenum.SeekExact(startFacetOrd == -1 ? 0 : startFacetOrd);
-                        mergeTerm = tenum.Term();
+                        mergeTerm = tenum.Term;
                     }
                 }
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     if (tenum != null)
                     {
                         tenum.SeekExact(mergePos);
-                        mergeTerm = tenum.Term();
+                        mergeTerm = tenum.Term;
                     }
                 }
 

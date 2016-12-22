@@ -373,9 +373,9 @@ namespace Lucene.Net.Codecs.Bloom
                     Delegate().SeekExact(ord);
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return Delegate().Term();
+                    get { return Delegate().Term; }
                 }
 
                 public override long Ord()

@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.Iterator(null);
             Assert.IsNotNull(termsEnum.Next());
-            Assert.AreEqual("", termsEnum.Term().Utf8ToString());
+            Assert.AreEqual("", termsEnum.Term.Utf8ToString());
 
             // Token "" occurred once
             Assert.AreEqual(1, termsEnum.TotalTermFreq());

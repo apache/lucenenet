@@ -2268,7 +2268,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(leftStatus, rightStatus, info);
                     if (leftStatus != TermsEnum.SeekStatus.END)
                     {
-                        Assert.AreEqual(leftEnum.Term(), rightEnum.Term(), info);
+                        Assert.AreEqual(leftEnum.Term, rightEnum.Term, info);
                         AssertTermStatsEquals(info, leftEnum, rightEnum);
                     }
                 }

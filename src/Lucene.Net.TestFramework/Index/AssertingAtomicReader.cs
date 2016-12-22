@@ -192,12 +192,15 @@ namespace Lucene.Net.Index
                 return base.TotalTermFreq();
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                Debug.Assert(State == State_e.POSITIONED, "term() called on unpositioned TermsEnum");
-                BytesRef ret = base.Term();
-                Debug.Assert(ret == null || ret.Valid);
-                return ret;
+                get
+                {
+                    Debug.Assert(State == State_e.POSITIONED, "term() called on unpositioned TermsEnum");
+                    BytesRef ret = base.Term;
+                    Debug.Assert(ret == null || ret.Valid);
+                    return ret;
+                }
             }
 
             public override void SeekExact(long ord)

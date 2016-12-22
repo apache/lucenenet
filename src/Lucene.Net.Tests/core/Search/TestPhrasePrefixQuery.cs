@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             te.SeekCeil(new BytesRef(prefix));
             do
             {
-                string s = te.Term().Utf8ToString();
+                string s = te.Term.Utf8ToString();
                 if (s.StartsWith(prefix))
                 {
                     termsWithPrefix.AddLast(new Term("body", s));

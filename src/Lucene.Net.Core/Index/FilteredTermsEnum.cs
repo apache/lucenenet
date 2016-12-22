@@ -146,9 +146,9 @@ namespace Lucene.Net.Index
             get { return tenum.Attributes; }
         }
 
-        public override BytesRef Term()
+        public override BytesRef Term
         {
-            return tenum.Term();
+            get { return tenum.Term; }
         }
 
         public override IComparer<BytesRef> Comparator
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                         //System.out.println("  return null");
                         return null;
                     }
-                    actualTerm = tenum.Term();
+                    actualTerm = tenum.Term;
                     //System.out.println("  got term=" + actualTerm.utf8ToString());
                 }
                 else

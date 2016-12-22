@@ -1062,9 +1062,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return Current;
+                get { return Current; }
             }
 
             public override int DocFreq()

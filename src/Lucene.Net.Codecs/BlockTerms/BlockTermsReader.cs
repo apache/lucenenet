@@ -748,9 +748,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                     return _term;
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return _term;
+                    get { return _term; }
                 }
 
                 public override int DocFreq()

@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             // test mixing up TermDocs and TermEnums from different readers.
             TermsEnum te2 = MultiFields.GetTerms(mr2, "body").Iterator(null);
             te2.SeekCeil(new BytesRef("wow"));
-            DocsEnum td = TestUtil.Docs(Random(), mr2, "body", te2.Term(), MultiFields.GetLiveDocs(mr2), null, 0);
+            DocsEnum td = TestUtil.Docs(Random(), mr2, "body", te2.Term, MultiFields.GetLiveDocs(mr2), null, 0);
 
             TermsEnum te3 = MultiFields.GetTerms(mr3, "body").Iterator(null);
             te3.SeekCeil(new BytesRef("wow"));
@@ -672,18 +672,18 @@ namespace Lucene.Net.Index
 
                 while (enum1.Next() != null)
                 {
-                    Assert.AreEqual(enum1.Term(), enum2.Next(), "Different terms");
+                    Assert.AreEqual(enum1.Term, enum2.Next(), "Different terms");
                     DocsAndPositionsEnum tp1 = enum1.DocsAndPositions(liveDocs, null);
                     DocsAndPositionsEnum tp2 = enum2.DocsAndPositions(liveDocs, null);
 
                     while (tp1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         Assert.IsTrue(tp2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                        Assert.AreEqual(tp1.DocID(), tp2.DocID(), "Different doc id in postinglist of term " + enum1.Term() + ".");
-                        Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term() + ".");
+                        Assert.AreEqual(tp1.DocID(), tp2.DocID(), "Different doc id in postinglist of term " + enum1.Term + ".");
+                        Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term + ".");
                         for (int i = 0; i < tp1.Freq; i++)
                         {
-                            Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term() + ".");
+                            Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term + ".");
                         }
                     }
                 }

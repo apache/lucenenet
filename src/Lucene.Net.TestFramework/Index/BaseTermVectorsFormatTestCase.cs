@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
             {
                 BytesRef nextTerm = termsEnum.Next();
                 Assert.AreEqual(sortedTerms[i], nextTerm);
-                Assert.AreEqual(sortedTerms[i], termsEnum.Term());
+                Assert.AreEqual(sortedTerms[i], termsEnum.Term);
                 Assert.AreEqual(1, termsEnum.DocFreq());
 
                 FixedBitSet bits = new FixedBitSet(1);
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(docsEnum);
                 Assert.AreEqual(0, docsEnum.NextDoc());
                 Assert.AreEqual(0, docsEnum.DocID());
-                Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?)docsEnum.Freq);
+                Assert.AreEqual(tk.Freqs[termsEnum.Term.Utf8ToString()], (int?)docsEnum.Freq);
                 Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
                 this.docsEnum.Value = docsEnum;
 
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
                     int freq = docsAndPositionsEnum.Freq;
-                    Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?)freq);
+                    Assert.AreEqual(tk.Freqs[termsEnum.Term.Utf8ToString()], (int?)freq);
                     if (docsAndPositionsEnum != null)
                     {
                         for (int k = 0; k < freq; ++k)
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
                                 bool foundPosition = false;
                                 foreach (int index in indexes)
                                 {
-                                    if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.Positions[index] == position)
+                                    if (tk.TermBytes[index].Equals(termsEnum.Term) && tk.Positions[index] == position)
                                     {
                                         foundPosition = true;
                                         break;
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
                                 bool foundOffset = false;
                                 foreach (int index in indexes)
                                 {
-                                    if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset)
+                                    if (tk.TermBytes[index].Equals(termsEnum.Term) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset)
                                     {
                                         foundOffset = true;
                                         break;
@@ -620,7 +620,7 @@ namespace Lucene.Net.Index
                                 bool foundPayload = false;
                                 foreach (int index in indexes)
                                 {
-                                    if (tk.TermBytes[index].Equals(termsEnum.Term()) && Equals(tk.Payloads[index], docsAndPositionsEnum.Payload))
+                                    if (tk.TermBytes[index].Equals(termsEnum.Term) && Equals(tk.Payloads[index], docsAndPositionsEnum.Payload))
                                     {
                                         foundPayload = true;
                                         break;

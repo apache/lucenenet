@@ -309,7 +309,7 @@ namespace Lucene.Net.Join
                 } while (docId != DocIdSetIterator.NO_MORE_DOCS);
 
                 return new ComplexExplanation(true, outerInstance._scores[outerInstance._ords[_scoreUpto]],
-                    "Score based on join value " + _termsEnum.Term().Utf8ToString());
+                    "Score based on join value " + _termsEnum.Term.Utf8ToString());
             }
         }
 

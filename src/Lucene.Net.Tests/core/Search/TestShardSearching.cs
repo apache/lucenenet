@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
                             terms = new List<BytesRef>();
                             while (termsEnum.Next() != null)
                             {
-                                terms.Add(BytesRef.DeepCopyOf(termsEnum.Term()));
+                                terms.Add(BytesRef.DeepCopyOf(termsEnum.Term));
                             }
                             if (VERBOSE)
                             {

@@ -350,9 +350,9 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return br;
+                    get { return br; }
                 }
 
                 public override long Ord()

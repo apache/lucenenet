@@ -955,9 +955,9 @@ namespace Lucene.Net.Codecs.Memory
                     Debug.Assert(term.Equals(scratch));
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return scratch;
+                    get { return scratch; }
                 }
 
                 public override long Ord()
@@ -1659,9 +1659,9 @@ namespace Lucene.Net.Codecs.Memory
                     return state;
                 }
 
-                public override BytesRef Term()
+                public override BytesRef Term
                 {
-                    return scratch;
+                    get { return scratch; }
                 }
 
                 public override long Ord()

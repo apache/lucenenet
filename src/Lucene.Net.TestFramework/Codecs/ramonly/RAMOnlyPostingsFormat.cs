@@ -473,10 +473,13 @@ namespace Lucene.Net.Codecs.ramonly
                 throw new System.NotSupportedException();
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                // TODO: reuse BytesRef
-                return new BytesRef(Current);
+                get
+                {
+                    // TODO: reuse BytesRef
+                    return new BytesRef(Current);
+                }
             }
 
             public override int DocFreq()

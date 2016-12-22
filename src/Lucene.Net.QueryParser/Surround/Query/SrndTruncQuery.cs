@@ -109,7 +109,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 }
                 else if (status == TermsEnum.SeekStatus.NOT_FOUND)
                 {
-                    text = termsEnum.Term();
+                    text = termsEnum.Term;
                 }
                 else
                 {

@@ -944,7 +944,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (Ord_Renamed < NumTerms && Ord_Renamed >= 0)
                 {
-                    int cmp = Term().CompareTo(text);
+                    int cmp = Term.CompareTo(text);
                     if (cmp == 0)
                     {
                         return TermsEnum.SeekStatus.FOUND;
@@ -979,9 +979,9 @@ namespace Lucene.Net.Codecs.Compressing
                 throw new System.NotSupportedException();
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return Term_Renamed;
+                get { return Term_Renamed; }
             }
 
             public override long Ord()

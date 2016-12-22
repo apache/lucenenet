@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Console.WriteLine("  FAILED: wrong term: got " + termsEnum.Term());
+                        Console.WriteLine("  FAILED: wrong term: got " + termsEnum.Term);
                     }
                     failed = true;
                 }

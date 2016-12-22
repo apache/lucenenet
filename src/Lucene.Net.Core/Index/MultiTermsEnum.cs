@@ -104,9 +104,9 @@ namespace Lucene.Net.Index
             currentSubs = new TermsEnumWithSlice[slices.Length];
         }
 
-        public override BytesRef Term()
+        public override BytesRef Term
         {
-            return current;
+            get { return current; }
         }
 
         public override IComparer<BytesRef> Comparator
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
                 if (status)
                 {
                     top[numTop++] = currentSubs[i];
-                    current = currentSubs[i].Current = currentSubs[i].Terms.Term();
+                    current = currentSubs[i].Current = currentSubs[i].Terms.Term;
                     Debug.Assert(term.Equals(currentSubs[i].Current));
                 }
             }
@@ -294,13 +294,13 @@ namespace Lucene.Net.Index
                 if (status == SeekStatus.FOUND)
                 {
                     top[numTop++] = currentSubs[i];
-                    current = currentSubs[i].Current = currentSubs[i].Terms.Term();
+                    current = currentSubs[i].Current = currentSubs[i].Terms.Term;
                 }
                 else
                 {
                     if (status == SeekStatus.NOT_FOUND)
                     {
-                        currentSubs[i].Current = currentSubs[i].Terms.Term();
+                        currentSubs[i].Current = currentSubs[i].Terms.Term;
                         Debug.Assert(currentSubs[i].Current != null);
                         queue.Add(currentSubs[i]);
                     }

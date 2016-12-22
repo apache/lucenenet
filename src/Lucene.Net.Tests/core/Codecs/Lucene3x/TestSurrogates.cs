@@ -297,11 +297,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                             if (VERBOSE)
                             {
-                                Console.WriteLine("  got term=" + UnicodeUtil.ToHexString(te.Term().Utf8ToString()));
+                                Console.WriteLine("  got term=" + UnicodeUtil.ToHexString(te.Term.Utf8ToString()));
                                 Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text()));
                             }
 
-                            Assert.AreEqual(fieldTerms[spot].Bytes, te.Term());
+                            Assert.AreEqual(fieldTerms[spot].Bytes, te.Term);
 
                             // now .next() this many times:
                             int ct = TestUtil.NextInt(r, 5, 100);

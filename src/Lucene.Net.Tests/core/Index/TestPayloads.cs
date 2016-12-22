@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum tp = null;
             while (terms.Next() != null)
             {
-                string termText = terms.Term().Utf8ToString();
+                string termText = terms.Term.Utf8ToString();
                 tp = terms.DocsAndPositions(liveDocs, tp);
                 while (tp.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {

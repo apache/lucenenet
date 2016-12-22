@@ -761,7 +761,7 @@ namespace Lucene.Net.Index
 
                 // should seek to aaa
                 Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, terms.SeekCeil(new BytesRef("a")));
-                Assert.IsTrue(terms.Term().BytesEquals(aaaTerm));
+                Assert.IsTrue(terms.Term.BytesEquals(aaaTerm));
                 Assert.AreEqual(35, CountDocs(TestUtil.Docs(Random(), terms, null, null, 0)));
                 Assert.IsNull(terms.Next());
 

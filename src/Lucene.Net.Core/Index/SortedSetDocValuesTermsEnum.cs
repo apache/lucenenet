@@ -109,9 +109,9 @@ namespace Lucene.Net.Index
             return term;
         }
 
-        public override BytesRef Term()
+        public override BytesRef Term
         {
-            return term;
+            get { return term; }
         }
 
         public override long Ord()

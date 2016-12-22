@@ -886,9 +886,9 @@ namespace Lucene.Net.Codecs.Memory
                 return docsAndPositionsEnum.reset(postingsSpare, liveDocs, docFreq_Renamed);
             }
 
-            public override BytesRef Term()
+            public override BytesRef Term
             {
-                return current.Input;
+                get { return current.Input; }
             }
 
             public override BytesRef Next()
