@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
                          */
                         delIDX--;
                         infosIDX--;
-                        info.BufferedDeletesGen = gen;
+                        info.SetBufferedDeletesGen(gen);
                     }
                     else
                     {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
                                 InfoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " coalesced deletes=[" + coalescedUpdates + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
                             }
                         }
-                        info.BufferedDeletesGen = gen;
+                        info.SetBufferedDeletesGen(gen);
 
                         infosIDX--;
                     }

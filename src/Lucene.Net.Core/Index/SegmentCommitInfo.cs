@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         // Track the per-generation updates files
         private readonly IDictionary<long, ISet<string>> genUpdatesFiles = new Dictionary<long, ISet<string>>();
 
-        private long sizeInBytes = -1; // LUCENENET TODO: This was volatile in the original
+        private long sizeInBytes = -1; // LUCENENET NOTE: This was volatile in the original, but long cannot be volatile in .NET
 
         /// <summary>
         /// Sole constructor.
@@ -206,11 +206,12 @@ namespace Lucene.Net.Index
             {
                 return bufferedDeletesGen;
             }
-            set // LUCENENET TODO: Make method (has side-effect)
-            {
-                bufferedDeletesGen = value;
-                sizeInBytes = -1;
-            }
+        }
+
+        internal void SetBufferedDeletesGen(long value)
+        {
+            bufferedDeletesGen = value;
+            sizeInBytes = -1;
         }
 
         /// <summary>

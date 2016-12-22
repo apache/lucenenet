@@ -2909,7 +2909,7 @@ namespace Lucene.Net.Index
                         {
                             infoStream.Message("IW", "publish sets newSegment delGen=" + nextGen + " seg=" + SegString(newSegment));
                         }
-                        newSegment.BufferedDeletesGen = nextGen;
+                        newSegment.SetBufferedDeletesGen(nextGen);
                         segmentInfos.Add(newSegment);
                         Checkpoint();
                     }
@@ -4319,7 +4319,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                merge.info.BufferedDeletesGen = minGen;
+                merge.info.SetBufferedDeletesGen(minGen);
 
                 return holder.mergedDeletesAndUpdates;
             }
