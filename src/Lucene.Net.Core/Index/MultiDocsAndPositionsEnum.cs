@@ -212,13 +212,13 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// <seealso cref="DocsAndPositionsEnum"/> for this sub-reader. </summary>
-            public DocsAndPositionsEnum DocsAndPositionsEnum; // LUCENENET TODO: Make property
+            public DocsAndPositionsEnum DocsAndPositionsEnum { get; internal set; } // LUCENENET NOTE: Made setter internal because ctor is internal
 
             /// <summary>
             /// <seealso cref="ReaderSlice"/> describing how this sub-reader
             ///  fits into the composite reader.
             /// </summary>
-            public ReaderSlice Slice; // LUCENENET TODO: Make property
+            public ReaderSlice Slice { get; internal set; } // LUCENENET NOTE: Made setter internal because ctor is internal
 
             public override string ToString()
             {
