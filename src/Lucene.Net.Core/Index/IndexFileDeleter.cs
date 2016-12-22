@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             this.InfoStream = infoStream;
             this.Writer = writer;
 
-            string currentSegmentsFile = segmentInfos.SegmentsFileName;
+            string currentSegmentsFile = segmentInfos.GetSegmentsFileName();
 
             if (infoStream.IsEnabled("IFD"))
             {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
                 }
                 if (infoStream.IsEnabled("IFD"))
                 {
-                    infoStream.Message("IFD", "forced open of current segments file " + segmentInfos.SegmentsFileName);
+                    infoStream.Message("IFD", "forced open of current segments file " + segmentInfos.GetSegmentsFileName());
                 }
                 currentCommitPoint = new CommitPoint(CommitsToDelete, directory, sis);
                 Commits.Add(currentCommitPoint);
@@ -771,7 +771,7 @@ namespace Lucene.Net.Index
                 this.Directory_Renamed = directory;
                 this.CommitsToDelete = commitsToDelete;
                 UserData_Renamed = segmentInfos.UserData;
-                SegmentsFileName_Renamed = segmentInfos.SegmentsFileName;
+                SegmentsFileName_Renamed = segmentInfos.GetSegmentsFileName();
                 Generation_Renamed = segmentInfos.Generation;
                 Files = segmentInfos.Files(directory, true);
                 SegmentCount_Renamed = segmentInfos.Size();

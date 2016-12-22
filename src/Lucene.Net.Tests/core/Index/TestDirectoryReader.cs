@@ -709,7 +709,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = DirectoryReader.Open(d);
             IndexCommit c = r.IndexCommit;
 
-            Assert.AreEqual(sis.SegmentsFileName, c.SegmentsFileName);
+            Assert.AreEqual(sis.GetSegmentsFileName(), c.SegmentsFileName);
 
             Assert.IsTrue(c.Equals(r.IndexCommit));
 

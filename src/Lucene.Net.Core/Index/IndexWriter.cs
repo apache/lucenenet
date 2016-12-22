@@ -3776,7 +3776,7 @@ namespace Lucene.Net.Index
                         pendingCommit.FinishCommit(directory);
                         if (infoStream.IsEnabled("IW"))
                         {
-                            infoStream.Message("IW", "commit: wrote segments file \"" + pendingCommit.SegmentsFileName + "\"");
+                            infoStream.Message("IW", "commit: wrote segments file \"" + pendingCommit.GetSegmentsFileName() + "\"");
                         }
                         segmentInfos.UpdateGeneration(pendingCommit);
                         lastCommitChangeCount = pendingCommitChangeCount;

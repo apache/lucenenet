@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
             StringBuilder buffer = new StringBuilder();
             buffer.Append(this.GetType().Name);
             buffer.Append('(');
-            string segmentsFile = SegmentInfos.SegmentsFileName;
+            string segmentsFile = SegmentInfos.GetSegmentsFileName();
             if (segmentsFile != null)
             {
                 buffer.Append(segmentsFile).Append(":").Append(SegmentInfos.Version);
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.IO.IOException("the specified commit does not match the specified Directory");
                 }
-                if (SegmentInfos != null && commit.SegmentsFileName.Equals(SegmentInfos.SegmentsFileName))
+                if (SegmentInfos != null && commit.SegmentsFileName.Equals(SegmentInfos.GetSegmentsFileName()))
                 {
                     return null;
                 }
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
 
             internal ReaderCommit(SegmentInfos infos, Directory dir)
             {
-                SegmentsFileName_Renamed = infos.SegmentsFileName;
+                SegmentsFileName_Renamed = infos.GetSegmentsFileName();
                 this.Dir = dir;
                 UserData_Renamed = infos.UserData;
                 Files = infos.Files(dir, true);

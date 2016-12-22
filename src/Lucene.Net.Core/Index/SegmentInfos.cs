@@ -246,12 +246,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Get the segments_N filename in use by this segment infos.
         /// </summary>
-        public string SegmentsFileName // LUCENENET TODO: Make method GetSegmentsFileName() (conversion)
+        public string GetSegmentsFileName()
         {
-            get
-            {
-                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", lastGeneration);
-            }
+            return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", lastGeneration);
         }
 
         /// <summary>
@@ -322,22 +319,19 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Get the next segments_N filename that will be written.
         /// </summary>
-        public string NextSegmentFileName // LUCENENET TODO: Make method GetNextSegmentFileName() (conversion)
+        public string GetNextSegmentFileName()
         {
-            get
-            {
-                long nextGeneration;
+            long nextGeneration;
 
-                if (generation == -1)
-                {
-                    nextGeneration = 1;
-                }
-                else
-                {
-                    nextGeneration = generation + 1;
-                }
-                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", nextGeneration);
+            if (generation == -1)
+            {
+                nextGeneration = 1;
             }
+            else
+            {
+                nextGeneration = generation + 1;
+            }
+            return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", nextGeneration);
         }
 
         /// <summary>
@@ -497,7 +491,7 @@ namespace Lucene.Net.Index
 
         private void Write(Directory directory)
         {
-            string segmentsFileName = NextSegmentFileName;
+            string segmentsFileName = GetNextSegmentFileName();
 
             // Always advance the generation on write:
             if (generation == -1)
@@ -1156,7 +1150,7 @@ namespace Lucene.Net.Index
             var files = new HashSet<string>();
             if (includeSegmentsFile)
             {
-                string segmentFileName = SegmentsFileName;
+                string segmentFileName = GetSegmentsFileName();
                 if (segmentFileName != null)
                 {
                     files.Add(segmentFileName);
@@ -1274,7 +1268,7 @@ namespace Lucene.Net.Index
         public string ToString(Directory directory)
         {
             var buffer = new StringBuilder();
-            buffer.Append(SegmentsFileName).Append(": ");
+            buffer.Append(GetSegmentsFileName()).Append(": ");
             int count = Size();
             for (int i = 0; i < count; i++)
             {
