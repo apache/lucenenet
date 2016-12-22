@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual TermStatistics TermStatistics(Term term, TermContext context)
         {
-            return new TermStatistics(term.Bytes, context.DocFreq, context.TotalTermFreq());
+            return new TermStatistics(term.Bytes, context.DocFreq, context.TotalTermFreq);
         }
 
         /// <summary>

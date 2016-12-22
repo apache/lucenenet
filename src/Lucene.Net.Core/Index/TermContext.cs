@@ -166,9 +166,9 @@ namespace Lucene.Net.Index
         ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </summary>
         /// <returns> the accumulated term frequency of all <seealso cref="TermState"/>
         ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </returns>
-        public long TotalTermFreq() // LUCENENET TODO: Make property
+        public long TotalTermFreq
         {
-            return totalTermFreq;
+            get { return totalTermFreq; }
         }
 
         /// <summary>
