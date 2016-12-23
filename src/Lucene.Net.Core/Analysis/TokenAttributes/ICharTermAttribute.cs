@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// the valid <see cref="Length"/>.
         /// </para>
         /// </summary>
-        char[] Buffer();
+        char[] Buffer(); // LUCENENET TODO: Rename GetBuffer() (confusing - one might interpret this as a method that buffers something)
 
         /// <summary>
         /// Grows the termBuffer to at least size newSize, preserving the
