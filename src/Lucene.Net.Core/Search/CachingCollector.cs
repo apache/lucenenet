@@ -57,8 +57,8 @@ namespace Lucene.Net.Search
 
         private class SegStart
         {
-            public readonly AtomicReaderContext ReaderContext;
-            public readonly int End;
+            public readonly AtomicReaderContext ReaderContext; // LUCENENET TODO: Make property
+            public readonly int End; // LUCENENET TODO: Make property
 
             public SegStart(AtomicReaderContext readerContext, int end)
             {
@@ -73,16 +73,16 @@ namespace Lucene.Net.Search
             // the outer class does not incur access check by the JVM. The same
             // situation would be if they were defined in the outer class as private
             // members.
-            internal int Doc;
+            internal int Doc; // LUCENENET TODO: Make private, rename
 
-            internal float Score_Renamed;
+            internal float Score_Renamed; // LUCENENET TODO: make private, rename
 
             internal CachedScorer()
                 : base(null)
             {
             }
 
-            public override float Score()
+            public override float Score() // LUCENENET TODO: Make property, add internal set
             {
                 return Score_Renamed;
             }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException();
             }
 
-            public override int DocID()
+            public override int DocID() // LUCENENET TODO: Make property, add internal set
             {
                 return Doc;
             }
@@ -116,11 +116,11 @@ namespace Lucene.Net.Search
         // A CachingCollector which caches scores
         private sealed class ScoreCachingCollector : CachingCollector
         {
-            internal readonly CachedScorer CachedScorer;
-            internal readonly IList<float[]> CachedScores;
+            private new readonly CachedScorer CachedScorer; // LUCENENET TODO: rename (private)
+            private readonly IList<float[]> CachedScores; // LUCENENET TODO: rename (private)
 
-            internal Scorer Scorer_Renamed;
-            internal float[] CurScores;
+            private Scorer Scorer_Renamed; // LUCENENET TODO: rename (private)
+            private float[] CurScores; // LUCENENET TODO: rename (private)
 
             internal ScoreCachingCollector(Collector other, double maxRAMMB)
                 : base(other, maxRAMMB, true)
@@ -357,18 +357,18 @@ namespace Lucene.Net.Search
         // up front. this is only relevant for the ScoreCaching
         // version -- if the wrapped Collector does not need
         // scores, it can avoid cachedScorer entirely.
-        protected readonly Collector Other;
+        protected readonly Collector Other; // LUCENENET TODO: rename
 
-        protected readonly int MaxDocsToCache;
-        private readonly IList<SegStart> CachedSegs = new List<SegStart>();
-        protected readonly IList<int[]> CachedDocs;
+        protected readonly int MaxDocsToCache; // LUCENENET TODO: rename
+        private readonly IList<SegStart> CachedSegs = new List<SegStart>(); // LUCENENET TODO: rename (private)
+        protected readonly IList<int[]> CachedDocs; // LUCENENET TODO: rename
 
-        private AtomicReaderContext LastReaderContext;
+        private AtomicReaderContext LastReaderContext; // LUCENENET TODO: rename (private)
 
-        protected int[] CurDocs;
-        protected int Upto;
-        protected int @base;
-        protected int LastDocBase;
+        protected int[] CurDocs; // LUCENENET TODO: rename
+        protected int Upto; // LUCENENET TODO: rename
+        protected int @base; // LUCENENET TODO: rename
+        protected int LastDocBase; // LUCENENET TODO: rename
 
         /// <summary>
         /// Creates a <seealso cref="CachingCollector"/> which does not wrap another collector.

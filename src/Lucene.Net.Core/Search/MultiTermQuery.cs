@@ -322,7 +322,7 @@ namespace Lucene.Net.Search
         /// provide attributes, the rewrite method uses to inform about e.g. maximum competitive boosts.
         /// this is currently only used by <seealso cref="TopTermsRewrite"/>
         /// </summary>
-        public abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
+        protected abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
 
         /// <summary>
         /// Convenience method, if no attributes are needed:

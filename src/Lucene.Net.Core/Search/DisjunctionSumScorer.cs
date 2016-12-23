@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The number of subscorers that provide the current match. </summary>
-        protected internal int NrMatchers = -1;
+        protected internal int NrMatchers = -1; // LUCENENET TODO: Rename (private)
 
         protected internal double score = float.NaN;
-        private readonly float[] Coord;
+        private readonly float[] Coord; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Construct a <code>DisjunctionScorer</code>. </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
             this.Coord = coord;
         }
 
-        protected internal override void AfterNext()
+        protected override void AfterNext()
         {
             Scorer sub = SubScorers[0];
             Doc = sub.DocID();

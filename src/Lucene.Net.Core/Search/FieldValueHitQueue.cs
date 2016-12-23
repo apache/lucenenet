@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
         public class Entry : ScoreDoc
         {
-            public int Slot;
+            public int Slot; // LUCENENET TODO: make property
 
             public Entry(int slot, int doc, float score)
                 : base(doc, score)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
             reverseMul = new int[numComparators];
         }
 
-        public virtual FieldComparator[] Comparators
+        public virtual FieldComparator[] Comparators // LUCENENET TODO: Make GetComparators() (array)
         {
             get
             {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual int[] ReverseMul
+        public virtual int[] ReverseMul // LUCENENET TODO: Make GetReverseMul() (array)
         {
             get
             {
@@ -221,11 +221,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Stores the sort criteria being used. </summary>
-        protected internal readonly SortField[] fields;
+        protected readonly SortField[] fields;
 
-        protected internal readonly FieldComparator[] comparators; // use setComparator to change this array
-        protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
-        protected internal readonly int[] reverseMul;
+        protected readonly FieldComparator[] comparators; // use setComparator to change this array // LUCENENET TODO: Rename
+        protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0] // LUCENENET TODO: Make property
+        protected readonly int[] reverseMul; // LUCENENET TODO: Rename
 
         public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the SortFields being used by this hit queue. </summary>
-        internal virtual SortField[] Fields
+        internal virtual SortField[] Fields // LUCENENET TODO: Make GetFields() (array)
         {
             get
             {

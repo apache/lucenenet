@@ -38,11 +38,11 @@ namespace Lucene.Net.Search
 
     public abstract class DocTermOrdsRangeFilter : Filter
     {
-        internal readonly string Field_Renamed;
-        internal readonly BytesRef LowerVal_Renamed;
-        internal readonly BytesRef UpperVal_Renamed;
-        internal readonly bool IncludeLower;
-        internal readonly bool IncludeUpper;
+        internal readonly string Field_Renamed; // LUCENENET TODO: rename (private)
+        internal readonly BytesRef LowerVal_Renamed; // LUCENENET TODO: rename (private)
+        internal readonly BytesRef UpperVal_Renamed; // LUCENENET TODO: rename (private)
+        internal readonly bool IncludeLower; // LUCENENET TODO: rename (private)
+        internal readonly bool IncludeUpper; // LUCENENET TODO: rename (private)
 
         private DocTermOrdsRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
@@ -69,6 +69,7 @@ namespace Lucene.Net.Search
 
         private class DocTermOrdsRangeFilterAnonymousInnerClassHelper : DocTermOrdsRangeFilter
         {
+            // LUCENENET TODO: should rely on base class for these variables
             private new string Field;
             private new BytesRef LowerVal;
             private new BytesRef UpperVal;
@@ -143,11 +144,11 @@ namespace Lucene.Net.Search
 
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
-                private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper OuterInstance;
+                private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper OuterInstance; // LUCENENET TODO: rename (private)
 
-                private readonly SortedSetDocValues DocTermOrds;
-                private readonly long InclusiveLowerPoint;
-                private readonly long InclusiveUpperPoint;
+                private readonly SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
+                private readonly long InclusiveLowerPoint; // LUCENENET TODO: rename (private)
+                private readonly long InclusiveUpperPoint; // LUCENENET TODO: rename (private)
 
                 public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
                     : base(maxDoc, acceptDocs)
@@ -181,7 +182,12 @@ namespace Lucene.Net.Search
         public override sealed string ToString()
         {
             StringBuilder sb = (new StringBuilder(Field_Renamed)).Append(":");
-            return sb.Append(IncludeLower ? '[' : '{').Append((LowerVal_Renamed == null) ? "*" : LowerVal_Renamed.ToString()).Append(" TO ").Append((UpperVal_Renamed == null) ? "*" : UpperVal_Renamed.ToString()).Append(IncludeUpper ? ']' : '}').ToString();
+            return sb.Append(IncludeLower ? '[' : '{')
+                .Append((LowerVal_Renamed == null) ? "*" : LowerVal_Renamed.ToString())
+                .Append(" TO ")
+                .Append((UpperVal_Renamed == null) ? "*" : UpperVal_Renamed.ToString())
+                .Append(IncludeUpper ? ']' : '}')
+                .ToString();
         }
 
         public override sealed bool Equals(object o)
@@ -233,14 +239,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower()
+        public virtual bool IncludesLower() // LUCENENET TODO: make property
         {
             return IncludeLower;
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper()
+        public virtual bool IncludesUpper() // LUCENENET TODO: make property
         {
             return IncludeUpper;
         }

@@ -114,8 +114,8 @@ namespace Lucene.Net.Search
                 Debug.Assert(doc == -1);
                 doc = 3000;
                 FakeScorer fs = new FakeScorer();
-                fs.SetDoc(doc);
-                fs.SetScore(1.0f);
+                fs.doc = doc;
+                fs.score = 1.0f;
                 c.Scorer = fs;
                 c.Collect(3000);
                 return false;

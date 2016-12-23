@@ -27,6 +27,10 @@ namespace Lucene.Net.Search
     ///  <seealso cref="IndexSearcher#search"/> as it is unnecessary and might hide misuse
     ///  of this exception.
     /// </summary>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class CollectionTerminatedException : Exception
     {
         /// <summary>

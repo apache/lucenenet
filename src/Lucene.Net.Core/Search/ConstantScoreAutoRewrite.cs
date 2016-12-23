@@ -32,8 +32,12 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
 
+    // LUCENENET NOTE: made this class public, since a derived class with the same name is public
     public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
+        // LUCENENET specific - making constructor internal since the class was meant to be internal
+        internal ConstantScoreAutoRewrite() { }
+
         // Defaults derived from rough tests with a 20.0 million
         // doc Wikipedia index.  With more than 350 terms in the
         // query, the filter method is fastest:
@@ -43,8 +47,8 @@ namespace Lucene.Net.Search
         // in the index (0.1%), the filter method is fastest:
         public static double DEFAULT_DOC_COUNT_PERCENT = 0.1;
 
-        private int TermCountCutoff_Renamed = DEFAULT_TERM_COUNT_CUTOFF;
-        private double DocCountPercent_Renamed = DEFAULT_DOC_COUNT_PERCENT;
+        private int TermCountCutoff_Renamed = DEFAULT_TERM_COUNT_CUTOFF; // LUCENENET TODO: rename (private)
+        private double DocCountPercent_Renamed = DEFAULT_DOC_COUNT_PERCENT; // LUCENENET TODO: rename (private)
 
         /// <summary>
         /// If the number of terms in this query is equal to or
@@ -134,7 +138,7 @@ namespace Lucene.Net.Search
 
         internal sealed class CutOffTermCollector : TermCollector
         {
-            internal void InitializeInstanceFields()
+            private void InitializeInstanceFields()
             {
                 PendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
             }
@@ -226,7 +230,7 @@ namespace Lucene.Net.Search
         /// Special implementation of BytesStartArray that keeps parallel arrays for <seealso cref="TermContext"/> </summary>
         internal sealed class TermStateByteStart : BytesRefHash.DirectBytesStartArray
         {
-            internal TermContext[] TermState;
+            internal TermContext[] TermState; // LUCENENET TODO: rename (private)
 
             public TermStateByteStart(int initSize)
                 : base(initSize)

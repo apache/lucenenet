@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// An empty {@code DocIdSetIterator} instance </summary>
-        public static DocIdSetIterator Empty()
+        public static DocIdSetIterator Empty() // LUCENENET TODO: Rename GetEmpty() ? Empty() is a verb that makes it confusing
         {
             return new DocIdSetIteratorAnonymousInnerClassHelper();
         }
@@ -156,6 +156,6 @@ namespace Lucene.Net.Search
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>
-        public abstract long Cost(); // LUCENENET TODO: make property
+        public abstract long Cost(); // LUCENENET TODO: Change to GetCost() ? Should be consistent with Scorer.GetScore()
     }
 }

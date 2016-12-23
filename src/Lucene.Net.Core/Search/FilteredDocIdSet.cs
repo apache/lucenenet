@@ -67,9 +67,9 @@ namespace Lucene.Net.Search
 
         private class BitsAnonymousInnerClassHelper : Bits
         {
-            private readonly FilteredDocIdSet OuterInstance;
+            private readonly FilteredDocIdSet OuterInstance; // LUCENENET TODO: Rename (private)
 
-            private Bits Bits;
+            private Bits Bits; // LUCENENET TODO: Rename (private)
 
             public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, Bits bits)
             {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool Match(int docid)
+            protected override bool Match(int docid)
             {
                 return OuterInstance.Match(docid);
             }

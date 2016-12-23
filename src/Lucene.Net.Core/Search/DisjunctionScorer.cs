@@ -26,15 +26,15 @@ namespace Lucene.Net.Search
     /// </summary>
     internal abstract class DisjunctionScorer : Scorer
     {
-        protected internal readonly Scorer[] SubScorers;
+        protected readonly Scorer[] SubScorers; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// The document number of the current match. </summary>
-        protected internal int Doc = -1;
+        protected int Doc = -1; // LUCENENET TODO: Rename (private)
 
-        protected internal int NumScorers;
+        protected int NumScorers; // LUCENENET TODO: Rename (private)
 
-        protected internal DisjunctionScorer(Weight weight, Scorer[] subScorers)
+        protected DisjunctionScorer(Weight weight, Scorer[] subScorers)
             : base(weight)
         {
             this.SubScorers = subScorers;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Organize subScorers into a min heap with scorers generating the earliest document on top.
         /// </summary>
-        protected internal void Heapify()
+        protected void Heapify()
         {
             for (int i = (NumScorers >> 1) - 1; i >= 0; i--)
             {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         /// The subtree of subScorers at root is a min heap except possibly for its root element.
         /// Bubble the root down as required to make the subtree a heap.
         /// </summary>
-        protected internal void HeapAdjust(int root)
+        protected void HeapAdjust(int root)
         {
             Scorer scorer = SubScorers[root];
             int doc = scorer.DocID();
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Remove the root Scorer from subScorers and re-establish it as a heap
         /// </summary>
-        protected internal void HeapRemoveRoot()
+        protected void HeapRemoveRoot()
         {
             if (NumScorers == 1)
             {
@@ -209,6 +209,6 @@ namespace Lucene.Net.Search
         /// other work necessary to implement {@code score()} and {@code freq()}
         /// </summary>
         // TODO: make this less horrible
-        protected internal abstract void AfterNext();
+        protected abstract void AfterNext();
     }
 }

@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
             this.MaxInclusive = maxInclusive;
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             // very strange: java.lang.Number itself is not Comparable, but all subclasses used here are
             if (min.HasValue && max.HasValue && (min.Value).CompareTo(max.Value) > 0)

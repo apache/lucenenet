@@ -73,6 +73,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
+        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
@@ -88,6 +89,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
+        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Bytes GetBytes(AtomicReader reader, string field, FieldCache.IByteParser parser, bool setDocsWithField);
 
         /// <summary>
@@ -102,6 +104,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
+        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
@@ -117,14 +120,15 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        FieldCache.Shorts GetShorts(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField);
+        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
+        FieldCache.Shorts GetShorts(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField); // LUCENENET TODO: Rename GetInt16s
 
         /// <summary>
         /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>
-        FieldCache.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField); // LUCENENET TODO: Rename GetInt32s
 
         /// <summary>
         /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
@@ -149,14 +153,14 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Ints GetInts(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField);
+        FieldCache.Ints GetInts(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField); // LUCENENET TODO: Rename GetInt32s
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getFloats(AtomicReader, String, FloatParser, boolean) </seealso>
-        FieldCache.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField); // LUCENENET TODO: Rename GetSingles
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
@@ -181,14 +185,14 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Floats GetFloats(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField);
+        FieldCache.Floats GetFloats(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField); // LUCENENET TODO: Rename GetSingles
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getLongs(AtomicReader, String, LongParser, boolean) </seealso>
-        FieldCache.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField); // LUCENENET TODO: Rename GetInt64s
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
@@ -213,7 +217,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Longs GetLongs(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField);
+        FieldCache.Longs GetLongs(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField); // LUCENENET TODO: Rename GetInt64s
 
         /// <summary>
         /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
@@ -319,7 +323,7 @@ namespace Lucene.Net.Search
         /// </p>
         /// @lucene.experimental
         /// </summary>
-        FieldCache.CacheEntry[] CacheEntries { get; }
+        FieldCache.CacheEntry[] CacheEntries { get; } // LUCENENET TODO: Change to GetCacheEntries() (array)
 
         /// <summary>
         /// <p>
@@ -352,17 +356,19 @@ namespace Lucene.Net.Search
         TextWriter InfoStream { set; get; }
     }
 
+    // LUCENENET TODO: Copy documentation from Lucene
+
     public static class FieldCache
     {
         public abstract class Bytes
         {
-            public abstract sbyte Get(int docID);
+            public abstract sbyte Get(int docID); // LUCENENET TODO: can this be byte?
 
             public static readonly Bytes EMPTY = new EmptyBytes();
 
             public sealed class EmptyBytes : Bytes
             {
-                public override sbyte Get(int docID)
+                public override sbyte Get(int docID) // LUCENENET TODO: can this be byte?
                 {
                     return 0;
                 }
@@ -446,7 +452,7 @@ namespace Lucene.Net.Search
 
         public sealed class CreationPlaceholder
         {
-            internal object Value;
+            internal object Value; // LUCENENET TODO: make property
         }
 
         public interface IParser
@@ -456,27 +462,27 @@ namespace Lucene.Net.Search
 
         public interface IByteParser : IParser
         {
-            sbyte ParseByte(BytesRef term);
+            sbyte ParseByte(BytesRef term); // LUCENENET TODO: can this be byte?
         }
 
         public interface IShortParser : IParser
         {
-            short ParseShort(BytesRef term);
+            short ParseShort(BytesRef term); // LUCENENET TODO: Rename ParseInt16
         }
 
         public interface IIntParser : IParser
         {
-            int ParseInt(BytesRef term);
+            int ParseInt(BytesRef term); // LUCENENET TODO: Rename ParseInt32
         }
 
         public interface IFloatParser : IParser
         {
-            float ParseFloat(BytesRef term);
+            float ParseFloat(BytesRef term); // LUCENENET TODO: Rename ParseSingle
         }
 
         public interface ILongParser : IParser
         {
-            long ParseLong(BytesRef term);
+            long ParseLong(BytesRef term); // LUCENENET TODO: Rename ParseInt64
         }
 
         public interface IDoubleParser : IParser

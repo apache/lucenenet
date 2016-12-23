@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The match status of this explanation node. </summary>
         /// <returns> May be null if match status is unknown </returns>
-        public virtual bool? Match
+        public virtual bool? Match // LUCENENET TODO: Can we elmininate the nullable?
         {
             get
             {

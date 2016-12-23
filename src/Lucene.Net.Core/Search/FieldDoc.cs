@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     /// @since   lucene 1.4 </summary>
     /// <seealso cref= ScoreDoc </seealso>
     /// <seealso cref= TopFieldDocs </seealso>
-    public class FieldDoc : ScoreDoc
+    public class FieldDoc : ScoreDoc // LUCENENET TODO: Is it possible to make this class generic so we don't have to deal with boxing?
     {
         /// <summary>
         /// Expert: The values which are used to sort the referenced document.
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         /// FieldComparator used to sort this field. </summary>
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-        public Object[] Fields;
+        public object[] Fields; // LUCENENET TODO: Make private, rename, and see instructions below for making properties to access
 
         /// <summary>
         /// Expert: Creates one of these objects with empty sort information. </summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Creates one of these objects with the given sort information. </summary>
-        public FieldDoc(int doc, float score, Object[] fields)
+        public FieldDoc(int doc, float score, object[] fields)
             : base(doc, score)
         {
             this.Fields = fields;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Creates one of these objects with the given sort information. </summary>
-        public FieldDoc(int doc, float score, Object[] fields, int shardIndex)
+        public FieldDoc(int doc, float score, object[] fields, int shardIndex)
             : base(doc, score, shardIndex)
         {
             this.Fields = fields;
@@ -84,5 +84,15 @@ namespace Lucene.Net.Search
             sb.Append(Arrays.ToString(Fields));
             return sb.ToString();
         }
+
+        // LUCENENET TODO: Make this[int index] to get a field value
+
+        // LUCENENET TODO: Make Count property to get number of fields
+
+        // LUCENENET TODO: Make HasFields property to determine if fields is null
+
+        // LUCENENET TODO: Make SetFields() method to set the value to a new array
+
+        // Goal: encapsulation of Fields[] array (.NET conventions)
     }
 }

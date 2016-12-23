@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
     /// Used by <seealso cref="BulkScorer"/>s that need to pass a {@link
     ///  Scorer} to <seealso cref="Collector#setScorer"/>.
     /// </summary>
-    public sealed class FakeScorer : Scorer
+    internal sealed class FakeScorer : Scorer
     {
         internal float score;
         internal int doc = -1;
@@ -47,21 +47,6 @@ namespace Lucene.Net.Search
         public override int Freq
         {
             get { return freq; }
-        }
-
-        public void SetFreq(int value)
-        {
-            freq = value;
-        }
-
-        public void SetDoc(int value)
-        {
-            doc = value;
-        }
-
-        public void SetScore(float value)
-        {
-            score = value;
         }
 
         public override int NextDoc()

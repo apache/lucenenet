@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
     /// Scorer for conjunctions, sets of queries, all of which are required. </summary>
     internal class ConjunctionScorer : Scorer
     {
-        protected internal int LastDoc = -1;
-        protected internal readonly DocsAndFreqs[] docsAndFreqs;
-        private readonly DocsAndFreqs Lead;
-        private readonly float Coord;
+        protected int LastDoc = -1; // LUCENENET TODO: rename
+        protected readonly DocsAndFreqs[] docsAndFreqs;
+        private readonly DocsAndFreqs Lead; // LUCENENET TODO: rename (private)
+        private readonly float Coord; // LUCENENET TODO: rename (private)
 
         internal ConjunctionScorer(Weight weight, Scorer[] scorers)
             : this(weight, scorers, 1f)
@@ -167,9 +167,9 @@ namespace Lucene.Net.Search
 
         internal sealed class DocsAndFreqs
         {
-            internal readonly long Cost;
-            internal readonly Scorer Scorer;
-            internal int Doc = -1;
+            internal readonly long Cost;  // LUCENENET TODO: make property
+            internal readonly Scorer Scorer;  // LUCENENET TODO: make property
+            internal int Doc = -1;  // LUCENENET TODO: make property
 
             internal DocsAndFreqs(Scorer scorer)
             {

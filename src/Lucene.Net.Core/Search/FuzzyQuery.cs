@@ -61,10 +61,10 @@ namespace Lucene.Net.Search
         public const int DefaultMaxExpansions = 50;
         public const bool DefaultTranspositions = true;
 
-        private readonly int MaxEdits_Renamed;
-        private readonly int MaxExpansions;
-        private readonly bool Transpositions_Renamed;
-        private readonly int PrefixLength_Renamed;
+        private readonly int MaxEdits_Renamed; // LUCENENET TODO: Rename (private)
+        private readonly int MaxExpansions; // LUCENENET TODO: Rename (private)
+        private readonly bool Transpositions_Renamed; // LUCENENET TODO: Rename (private)
+        private readonly int PrefixLength_Renamed; // LUCENENET TODO: Rename (private)
         private readonly Term _term;
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             if (MaxEdits_Renamed == 0 || PrefixLength_Renamed >= _term.Text().Length) // can only match if it's exact
             {

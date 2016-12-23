@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
                 Automaton = re.ToAutomaton();
             }
 
-            public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+            protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
                 return new SimpleAutomatonTermsEnum(this, terms.Iterator(null));
             }

@@ -40,8 +40,8 @@ namespace Lucene.Net.Search
     /// <seealso cref=     CachingWrapperFilter </seealso>
     public class FilteredQuery : Query
     {
-        private readonly Query Query_Renamed;
-        private readonly Filter Filter_Renamed;
+        private readonly Query Query_Renamed; // LUCENENET TODO: Rename (private)
+        private readonly Filter Filter_Renamed; // LUCENENET TODO: Rename (private)
         private readonly FilterStrategy strategy;
 
         /// <summary>
@@ -187,9 +187,9 @@ namespace Lucene.Net.Search
         /// </summary>
         private sealed class QueryFirstScorer : Scorer
         {
-            internal readonly Scorer Scorer;
-            internal int ScorerDoc = -1;
-            internal readonly Bits FilterBits;
+            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
+            private int ScorerDoc = -1; // LUCENENET TODO: Rename (private)
+            private readonly Bits FilterBits; // LUCENENET TODO: Rename (private)
 
             internal QueryFirstScorer(Weight weight, Bits filterBits, Scorer other)
                 : base(weight)
@@ -255,8 +255,8 @@ namespace Lucene.Net.Search
 
         private class QueryFirstBulkScorer : BulkScorer
         {
-            internal readonly Scorer Scorer;
-            internal readonly Bits FilterBits;
+            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
+            private readonly Bits FilterBits; // LUCENENET TODO: Rename (private)
 
             public QueryFirstBulkScorer(Scorer scorer, Bits filterBits)
             {
@@ -302,11 +302,11 @@ namespace Lucene.Net.Search
         /// </summary>
         private class LeapFrogScorer : Scorer
         {
-            internal readonly DocIdSetIterator Secondary;
-            internal readonly DocIdSetIterator Primary;
-            internal readonly Scorer Scorer;
-            protected internal int PrimaryDoc = -1;
-            protected internal int SecondaryDoc = -1;
+            private readonly DocIdSetIterator Secondary; // LUCENENET TODO: Rename (private)
+            private readonly DocIdSetIterator Primary; // LUCENENET TODO: Rename (private)
+            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
+            protected int PrimaryDoc = -1;  // LUCENENET TODO: Rename (private)
+            protected int SecondaryDoc = -1; // LUCENENET TODO: Rename (private)
 
             protected internal LeapFrogScorer(Weight weight, DocIdSetIterator primary, DocIdSetIterator secondary, Scorer scorer)
                 : base(weight)
@@ -316,7 +316,7 @@ namespace Lucene.Net.Search
                 this.Scorer = scorer;
             }
 
-            internal int AdvanceToNextCommonDoc()
+            private int AdvanceToNextCommonDoc()
             {
                 for (; ; )
                 {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search
                 return AdvanceToNextCommonDoc();
             }
 
-            protected internal virtual int PrimaryNext()
+            protected virtual int PrimaryNext()
             {
                 return Primary.NextDoc();
             }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
         // TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
         private sealed class PrimaryAdvancedLeapFrogScorer : LeapFrogScorer
         {
-            internal readonly int FirstFilteredDoc;
+            private readonly int FirstFilteredDoc; // LUCENENET TODO: Rename (private)
 
             internal PrimaryAdvancedLeapFrogScorer(Weight weight, int firstFilteredDoc, DocIdSetIterator filterIter, Scorer other)
                 : base(weight, filterIter, other, other)
@@ -396,7 +396,7 @@ namespace Lucene.Net.Search
                 this.PrimaryDoc = firstFilteredDoc; // initialize to prevent and advance call to move it further
             }
 
-            protected internal override int PrimaryNext()
+            protected override int PrimaryNext()
             {
                 if (SecondaryDoc != -1)
                 {
@@ -658,7 +658,7 @@ namespace Lucene.Net.Search
             ///
             /// @lucene.internal
             /// </summary>
-            protected internal virtual bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected virtual bool UseRandomAccess(Bits bits, int firstFilterDoc)
             {
                 //TODO once we have a cost API on filters and scorers we should rethink this heuristic
                 return firstFilterDoc < 100;
@@ -667,7 +667,7 @@ namespace Lucene.Net.Search
 
         private sealed class LeapFrogFilterStrategy : FilterStrategy
         {
-            internal readonly bool ScorerFirst;
+            private readonly bool ScorerFirst; // LUCENENET TODO: Rename (private)
 
             internal LeapFrogFilterStrategy(bool scorerFirst)
             {

@@ -32,8 +32,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class FieldCacheDocIdSet : DocIdSet
     {
-        protected internal readonly int MaxDoc;
-        protected internal readonly Bits AcceptDocs;
+        protected readonly int MaxDoc; // LUCENENET TODO: Rename
+        protected readonly Bits AcceptDocs; // LUCENENET TODO: Rename
 
         public FieldCacheDocIdSet(int maxDoc, Bits acceptDocs)
         {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool Match(int doc)
+            protected override bool Match(int doc)
             {
                 return OuterInstance.MatchDoc(doc);
             }

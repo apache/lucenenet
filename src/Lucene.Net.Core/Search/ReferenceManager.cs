@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
         /// Use to receive notification when a refresh has
         ///  finished.  See <seealso cref="#addListener"/>.
         /// </summary>
-        public interface RefreshListener
+        public interface RefreshListener // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Called right before a refresh attempt starts. </summary>

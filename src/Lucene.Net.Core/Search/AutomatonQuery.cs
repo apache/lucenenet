@@ -50,13 +50,13 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// the automaton to match index terms against </summary>
-        protected internal readonly Automaton Automaton_Renamed;
+        protected readonly Automaton Automaton_Renamed; // LUCENENET TODO: rename
 
-        protected internal readonly CompiledAutomaton Compiled;
+        protected readonly CompiledAutomaton Compiled; // LUCENENET TODO: rename
 
         /// <summary>
         /// term containing the field, and possibly some pattern structure </summary>
-        protected internal readonly Term Term;
+        protected readonly Term Term; // LUCENENET TODO: rename
 
         /// <summary>
         /// Create a new AutomatonQuery from an <seealso cref="Automaton"/>.
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
             this.Compiled = new CompiledAutomaton(automaton);
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             return Compiled.GetTermsEnum(terms);
         }

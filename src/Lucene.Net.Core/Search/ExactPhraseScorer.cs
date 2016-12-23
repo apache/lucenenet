@@ -25,26 +25,26 @@ namespace Lucene.Net.Search
 
     internal sealed class ExactPhraseScorer : Scorer
     {
-        private readonly int EndMinus1;
+        private readonly int EndMinus1; // LUCENENET TODO: rename (private)
 
         private const int CHUNK = 4096;
 
-        private int Gen;
-        private readonly int[] Counts = new int[CHUNK];
-        private readonly int[] Gens = new int[CHUNK];
+        private int Gen; // LUCENENET TODO: rename (private)
+        private readonly int[] Counts = new int[CHUNK]; // LUCENENET TODO: rename (private)
+        private readonly int[] Gens = new int[CHUNK]; // LUCENENET TODO: rename (private)
 
-        internal bool NoDocs;
-        private readonly long Cost_Renamed;
+        internal bool NoDocs; // LUCENENET TODO: rename (private)
+        private readonly long Cost_Renamed; // LUCENENET TODO: rename (private)
 
         private sealed class ChunkState
         {
-            internal readonly DocsAndPositionsEnum PosEnum;
-            internal readonly int Offset;
-            internal readonly bool UseAdvance;
-            internal int PosUpto;
-            internal int PosLimit;
-            internal int Pos;
-            internal int LastPos;
+            internal readonly DocsAndPositionsEnum PosEnum; // LUCENENET TODO: Make property
+            internal readonly int Offset; // LUCENENET TODO: Make property
+            internal readonly bool UseAdvance; // LUCENENET TODO: Make property
+            internal int PosUpto; // LUCENENET TODO: Make property
+            internal int PosLimit; // LUCENENET TODO: Make property
+            internal int Pos; // LUCENENET TODO: Make property
+            internal int LastPos; // LUCENENET TODO: Make property
 
             public ChunkState(DocsAndPositionsEnum posEnum, int offset, bool useAdvance)
             {
@@ -54,12 +54,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        private readonly ChunkState[] ChunkStates;
+        private readonly ChunkState[] ChunkStates; // LUCENENET TODO: rename (private)
 
-        private int DocID_Renamed = -1;
-        private int Freq_Renamed;
+        private int DocID_Renamed = -1; // LUCENENET TODO: rename (private)
+        private int Freq_Renamed; // LUCENENET TODO: rename (private)
 
-        private readonly Similarity.SimScorer DocScorer;
+        private readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: rename (private)
 
         internal ExactPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings, Similarity.SimScorer docScorer)
             : base(weight)
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
 
         private int PhraseFreq()
         {
-            Freq_Renamed = 0;
+            Freq_Renamed = 0; // LUCENENET TODO: rename (private)
 
             // init chunks
             for (int i = 0; i < ChunkStates.Length; i++)

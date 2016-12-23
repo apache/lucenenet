@@ -28,11 +28,11 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CollectionStatistics
     {
-        private readonly string Field_Renamed;
-        private readonly long MaxDoc_Renamed;
-        private readonly long DocCount_Renamed;
-        private readonly long SumTotalTermFreq_Renamed;
-        private readonly long SumDocFreq_Renamed;
+        private readonly string Field_Renamed; // LUCENENET TODO: rename (private)
+        private readonly long MaxDoc_Renamed; // LUCENENET TODO: rename (private)
+        private readonly long DocCount_Renamed; // LUCENENET TODO: rename (private)
+        private readonly long SumTotalTermFreq_Renamed; // LUCENENET TODO: rename (private)
+        private readonly long SumDocFreq_Renamed; // LUCENENET TODO: rename (private)
 
         public CollectionStatistics(string field, long maxDoc, long docCount, long sumTotalTermFreq, long sumDocFreq)
         {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// returns the field name </summary>
-        public string Field()
+        public string Field() // LUCENENET TODO: make property
         {
             return Field_Renamed;
         }
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
         /// returns the total number of documents that
         /// have at least one term for this field. </summary>
         /// <seealso cref= Terms#getDocCount()  </seealso>
-        public long DocCount()
+        public long DocCount() // LUCENENET TODO: make property
         {
             return DocCount_Renamed;
         }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// returns the total number of tokens for this field </summary>
         /// <seealso cref= Terms#getSumTotalTermFreq()  </seealso>
-        public long SumTotalTermFreq()
+        public long SumTotalTermFreq() // LUCENENET TODO: make property
         {
             return SumTotalTermFreq_Renamed;
         }
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// returns the total number of postings for this field </summary>
         /// <seealso cref= Terms#getSumDocFreq()  </seealso>
-        public long SumDocFreq()
+        public long SumDocFreq() // LUCENENET TODO: make property
         {
             return SumDocFreq_Renamed;
         }

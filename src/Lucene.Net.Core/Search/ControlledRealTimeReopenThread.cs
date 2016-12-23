@@ -49,17 +49,17 @@ namespace Lucene.Net.Search
             ReopenCond = ReopenLock.NewCondition();
         }*/
 
-        private readonly ReferenceManager<T> Manager;
-        private readonly long TargetMaxStaleNS;
-        private readonly long TargetMinStaleNS;
-        private readonly TrackingIndexWriter Writer;
-        private volatile bool Finish;
-        private long WaitingGen;
-        private long SearchingGen;
-        private long RefreshStartGen;
+        private readonly ReferenceManager<T> Manager; // LUCENENET TODO: Rename (private)
+        private readonly long TargetMaxStaleNS; // LUCENENET TODO: Rename (private)
+        private readonly long TargetMinStaleNS; // LUCENENET TODO: Rename (private)
+        private readonly TrackingIndexWriter Writer; // LUCENENET TODO: Rename (private)
+        private volatile bool Finish; // LUCENENET TODO: Rename (private)
+        private long WaitingGen; // LUCENENET TODO: Rename (private)
+        private long SearchingGen; // LUCENENET TODO: Rename (private)
+        private long RefreshStartGen; // LUCENENET TODO: Rename (private)
 
-        private readonly ReentrantLock ReopenLock = new ReentrantLock();
-        private ManualResetEvent ReopenCond = new ManualResetEvent(false);
+        private readonly ReentrantLock ReopenLock = new ReentrantLock(); // LUCENENET TODO: Rename (private)
+        private ManualResetEvent ReopenCond = new ManualResetEvent(false); // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Create ControlledRealTimeReopenThread, to periodically
@@ -99,11 +99,11 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public void BeforeRefresh()
+            public virtual void BeforeRefresh()
             {
             }
 
-            public void AfterRefresh(bool didRefresh)
+            public virtual void AfterRefresh(bool didRefresh)
             {
                 OuterInstance.RefreshDone();
             }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public void Dispose()
+        public void Dispose() // LUCENENET TODO: Implement disposable pattern
         {
             lock (this)
             {

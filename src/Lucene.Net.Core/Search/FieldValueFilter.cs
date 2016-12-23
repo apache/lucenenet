@@ -31,8 +31,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public class FieldValueFilter : Filter
     {
-        private readonly string Field_Renamed;
-        private readonly bool Negate_Renamed;
+        private readonly string Field_Renamed; // LUCENENET TODO: rename (private)
+        private readonly bool Negate_Renamed; // LUCENENET TODO: rename (private)
 
         /// <summary>
         /// Creates a new <seealso cref="FieldValueFilter"/>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
         /// <returns> the field this filter is applied on. </returns>
-        public virtual string Field()
+        public virtual string Field() // LUCENENET TODO: make property
         {
             return Field_Renamed;
         }
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns <code>true</code> iff this filter is negated, otherwise <code>false</code> </summary>
         /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
-        public virtual bool Negate()
+        public virtual bool Negate() // LUCENENET TODO: make property (confusing)
         {
             return Negate_Renamed;
         }
@@ -104,9 +104,9 @@ namespace Lucene.Net.Search
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
         {
-            private readonly FieldValueFilter OuterInstance;
+            private readonly FieldValueFilter OuterInstance; // LUCENENET TODO: rename (private)
 
-            private Bits DocsWithField;
+            private Bits DocsWithField; // LUCENENET TODO: rename (private)
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
                 : base(maxDoc, acceptDocs)
@@ -123,9 +123,9 @@ namespace Lucene.Net.Search
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
         {
-            private readonly FieldValueFilter OuterInstance;
+            private readonly FieldValueFilter OuterInstance; // LUCENENET TODO: rename (private)
 
-            private readonly Bits DocsWithField;
+            private readonly Bits DocsWithField; // LUCENENET TODO: rename (private)
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
                 : base(maxDoc, acceptDocs)

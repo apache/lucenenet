@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         ///  UnsupportedOperationException}).  Do not call this
         ///  when the enum is unpositioned.
         /// </summary>
-        public abstract long Ord(); // LUCENENET TODO: make property ?
+        public abstract long Ord(); // LUCENENET TODO: make property ? Or rename GetOrd() ?
 
         /// <summary>
         /// Returns the number of documents containing the current

@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             this.occur = occur;
         }
 
-        public Occur Occur_
+        public Occur Occur_ // LUCENENET TODO: rename Occur
         {
             get
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns true if <code>o</code> is equal to this. </summary>
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             BooleanClause bc = o as BooleanClause;
             return this.Equals(bc);
@@ -133,11 +133,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             return query.GetHashCode() ^ (Occur.MUST == occur ? 1 : 0) ^ (Occur.MUST_NOT == occur ? 2 : 0);
         }
 
+        // LUCENENET specific
         public bool Equals(BooleanClause other)
         {
             bool success = true;
@@ -152,7 +153,7 @@ namespace Lucene.Net.Search
             return success && this.query.Equals(other.query) && this.occur == other.occur;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return ToString(occur) + query.ToString();
         }

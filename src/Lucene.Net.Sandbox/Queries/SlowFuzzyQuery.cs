@@ -146,7 +146,7 @@ namespace Lucene.Net.Sandbox.Queries
             get { return prefixLength; }
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             if (!termLongEnough)
             {  // can only match if it's exact

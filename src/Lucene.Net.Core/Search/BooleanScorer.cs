@@ -56,13 +56,13 @@ namespace Lucene.Net.Search
      * conjunction can reduce the number of priority queue
      * updates for the optional terms. */
 
-    public sealed class BooleanScorer : BulkScorer
+    internal sealed class BooleanScorer : BulkScorer
     {
         private sealed class BooleanScorerCollector : Collector
         {
-            internal BucketTable BucketTable;
-            internal int Mask;
-            internal Scorer Scorer_Renamed;
+            private BucketTable BucketTable; // LUCENENET TODO: Rename (private)
+            private int Mask; // LUCENENET TODO: Rename (private)
+            private Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
             public BooleanScorerCollector(int mask, BucketTable bucketTable)
             {
@@ -118,16 +118,16 @@ namespace Lucene.Net.Search
 
         internal sealed class Bucket
         {
-            internal int Doc = -1; // tells if bucket is valid
-            internal double Score; // incremental score
+            internal int Doc = -1; // tells if bucket is valid // LUCENENET TODO: Make property
+            internal double Score; // incremental score // LUCENENET TODO: Make property
 
             // TODO: break out bool anyProhibited, int
             // numRequiredMatched; then we can remove 32 limit on
             // required clauses
-            internal int Bits; // used for bool constraints
+            internal int Bits; // used for bool constraints // LUCENENET TODO: Make property
 
-            internal int Coord; // count of terms in score
-            internal Bucket Next; // next valid bucket
+            internal int Coord; // count of terms in score // LUCENENET TODO: Make property
+            internal Bucket Next; // next valid bucket // LUCENENET TODO: Make property
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Size()
+            public int Size() // LUCENENET TODO: Rename Count (or Length?)
             {
                 return SIZE;
             }
@@ -163,15 +163,15 @@ namespace Lucene.Net.Search
 
         internal sealed class SubScorer
         {
-            public BulkScorer Scorer;
+            public BulkScorer Scorer; // LUCENENET TODO: Make property
 
             // TODO: re-enable this if BQ ever sends us required clauses
             //public boolean required = false;
-            public bool Prohibited;
+            public bool Prohibited; // LUCENENET TODO: Make property
 
-            public Collector Collector;
-            public SubScorer Next;
-            public bool More;
+            public Collector Collector; // LUCENENET TODO: Make property
+            public SubScorer Next; // LUCENENET TODO: Make property
+            public bool More; // LUCENENET TODO: Make property
 
             public SubScorer(BulkScorer scorer, bool required, bool prohibited, Collector collector, SubScorer next)
             {
@@ -189,23 +189,23 @@ namespace Lucene.Net.Search
             }
         }
 
-        private SubScorer Scorers = null;
+        private SubScorer Scorers = null; // LUCENENET TODO: Rename (private)
         private BucketTable bucketTable = new BucketTable();
-        private readonly float[] CoordFactors;
+        private readonly float[] CoordFactors; // LUCENENET TODO: Rename (private)
 
         // TODO: re-enable this if BQ ever sends us required clauses
         //private int requiredMask = 0;
-        private readonly int MinNrShouldMatch;
+        private readonly int MinNrShouldMatch; // LUCENENET TODO: Rename (private)
 
-        private int End;
-        private Bucket Current;
+        private int End; // LUCENENET TODO: Rename (private)
+        private Bucket Current; // LUCENENET TODO: Rename (private)
 
         // Any time a prohibited clause matches we set bit 0:
         private const int PROHIBITED_MASK = 1;
 
-        private readonly Weight Weight;
+        private readonly Weight Weight; // LUCENENET TODO: Rename (private)
 
-        public BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
+        internal BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
         {
             this.MinNrShouldMatch = minNrShouldMatch;
             this.Weight = weight;

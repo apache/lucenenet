@@ -53,9 +53,9 @@ namespace Lucene.Net.Search
     ///
     /// @since   lucene 1.4
     /// </summary>
-    internal class FieldCacheImpl : IFieldCache
+    internal class FieldCacheImpl : IFieldCache // LUCENENET TODO: Rename FieldCache (.NET convention)
     {
-        private IDictionary<Type, Cache> Caches;
+        private IDictionary<Type, Cache> Caches; // LUCENENET TODO: Rename (private)
 
         internal FieldCacheImpl()
         {
@@ -206,11 +206,12 @@ namespace Lucene.Net.Search
                 this.Wrapper = wrapper;
             }
 
-            internal readonly FieldCacheImpl Wrapper;
+            internal readonly FieldCacheImpl Wrapper; // LUCENENET TODO: Rename (private)
 
+            // LUCENENET TODO: Rename (private)
             internal IDictionary<object, IDictionary<CacheKey, object>> ReaderCache = new WeakDictionary<object, IDictionary<CacheKey, object>>();
 
-            protected internal abstract object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField);
+            protected abstract object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField);
 
             /// <summary>
             /// Remove this reader from the cache, if present. </summary>
@@ -313,7 +314,7 @@ namespace Lucene.Net.Search
                 return value;
             }
 
-            internal virtual void PrintNewInsanity(TextWriter infoStream, object value)
+            private void PrintNewInsanity(TextWriter infoStream, object value)
             {
                 FieldCacheSanityChecker.Insanity[] insanities = FieldCacheSanityChecker.CheckSanity(Wrapper);
                 for (int i = 0; i < insanities.Length; i++)
@@ -339,8 +340,8 @@ namespace Lucene.Net.Search
         /// Expert: Every composite-key in the internal cache is of this type. </summary>
         internal class CacheKey
         {
-            internal readonly string Field; // which Field
-            internal readonly object Custom; // which custom comparator or parser
+            internal readonly string Field; // which Field // LUCENENET TODO: Rename (private)
+            internal readonly object Custom; // which custom comparator or parser // LUCENENET TODO: Rename (private)
 
             /// <summary>
             /// Creates one of these objects for a custom comparator/parser. </summary>
@@ -385,7 +386,7 @@ namespace Lucene.Net.Search
 
         private abstract class Uninvert
         {
-            public Bits DocsWithField;
+            public Bits DocsWithField; // LUCENENET TODO: Rename (private)
 
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
             {
@@ -531,7 +532,7 @@ namespace Lucene.Net.Search
 
         internal class BytesFromArray : FieldCache.Bytes
         {
-            internal readonly sbyte[] Values;
+            private readonly sbyte[] Values; // LUCENENET TODO: Rename (private)
 
             public BytesFromArray(sbyte[] values)
             {
@@ -551,7 +552,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 int maxDoc = reader.MaxDoc;
                 sbyte[] values;
@@ -580,8 +581,8 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly sbyte[] Values;
-                private readonly FieldCache.IByteParser Parser;
+                private readonly sbyte[] Values;// LUCENENET TODO: Rename (private)
+                private readonly FieldCache.IByteParser Parser;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(sbyte[] values, FieldCache.IByteParser parser)
                 {
@@ -645,9 +646,9 @@ namespace Lucene.Net.Search
 
         private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache.Shorts
         {
-            private readonly FieldCacheImpl OuterInstance;
+            private readonly FieldCacheImpl OuterInstance;// LUCENENET TODO: Rename (private)
 
-            private NumericDocValues ValuesIn;
+            private NumericDocValues ValuesIn;// LUCENENET TODO: Rename (private)
 
             public FieldCache_ShortsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
@@ -663,7 +664,7 @@ namespace Lucene.Net.Search
 
         internal class ShortsFromArray : FieldCache.Shorts
         {
-            internal readonly short[] Values;
+            private readonly short[] Values;// LUCENENET TODO: Rename (private)
 
             public ShortsFromArray(short[] values)
             {
@@ -683,7 +684,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 int maxDoc = reader.MaxDoc;
                 short[] values;
@@ -710,10 +711,10 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly ShortCache OuterInstance;
+                private readonly ShortCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private short[] Values;
-                private FieldCache.IShortParser Parser;
+                private short[] Values;// LUCENENET TODO: Rename (private)
+                private FieldCache.IShortParser Parser;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(ShortCache outerInstance, short[] values, FieldCache.IShortParser parser)
                 {
@@ -777,9 +778,9 @@ namespace Lucene.Net.Search
 
         private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache.Ints
         {
-            private readonly FieldCacheImpl OuterInstance;
+            private readonly FieldCacheImpl OuterInstance;// LUCENENET TODO: Rename (private)
 
-            private NumericDocValues ValuesIn;
+            private NumericDocValues ValuesIn;// LUCENENET TODO: Rename (private)
 
             public FieldCache_IntsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
@@ -795,8 +796,8 @@ namespace Lucene.Net.Search
 
         internal class IntsFromArray : FieldCache.Ints
         {
-            internal readonly PackedInts.Reader Values;
-            internal readonly int MinValue;
+            private readonly PackedInts.Reader Values;// LUCENENET TODO: Rename (private)
+            private readonly int MinValue;// LUCENENET TODO: Rename (private)
 
             public IntsFromArray(PackedInts.Reader values, int minValue)
             {
@@ -814,7 +815,7 @@ namespace Lucene.Net.Search
 
         private class HoldsOneThing<T>
         {
-            internal T It;
+            private T It;// LUCENENET TODO: Rename (private)
 
             public virtual void Set(T it)
             {
@@ -835,8 +836,8 @@ namespace Lucene.Net.Search
                 this.MinValue = minValue;
             }
 
-            public GrowableWriter Writer;
-            public long MinValue;
+            public GrowableWriter Writer;// LUCENENET TODO: make property
+            public long MinValue;// LUCENENET TODO: make property
         }
 
         internal sealed class IntCache : Cache
@@ -846,7 +847,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IIntParser parser = (FieldCache.IIntParser)key.Custom;
                 if (parser == null)
@@ -886,11 +887,11 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly IntCache OuterInstance;
+                private readonly IntCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private AtomicReader Reader;
-                private FieldCache.IIntParser Parser;
-                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> ValuesRef;
+                private AtomicReader Reader;// LUCENENET TODO: Rename (private)
+                private FieldCache.IIntParser Parser;// LUCENENET TODO: Rename (private)
+                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> ValuesRef;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(IntCache outerInstance, AtomicReader reader, FieldCache.IIntParser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
@@ -972,7 +973,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 string field = key.Field;
                 int maxDoc = reader.MaxDoc;
@@ -1067,9 +1068,9 @@ namespace Lucene.Net.Search
 
         private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache.Floats
         {
-            private readonly FieldCacheImpl OuterInstance;
+            private readonly FieldCacheImpl OuterInstance;// LUCENENET TODO: Rename (private)
 
-            private NumericDocValues ValuesIn;
+            private NumericDocValues ValuesIn;// LUCENENET TODO: Rename (private)
 
             public FieldCache_FloatsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
@@ -1085,7 +1086,7 @@ namespace Lucene.Net.Search
 
         internal class FloatsFromArray : FieldCache.Floats
         {
-            internal readonly float[] Values;
+            private readonly float[] Values;// LUCENENET TODO: Rename (private)
 
             public FloatsFromArray(float[] values)
             {
@@ -1105,7 +1106,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IFloatParser parser = (FieldCache.IFloatParser)key.Custom;
                 if (parser == null)
@@ -1146,11 +1147,11 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly FloatCache OuterInstance;
+                private readonly FloatCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private AtomicReader Reader;
-                private FieldCache.IFloatParser Parser;
-                private FieldCacheImpl.HoldsOneThing<float[]> ValuesRef;
+                private AtomicReader Reader;// LUCENENET TODO: Rename (private)
+                private FieldCache.IFloatParser Parser;// LUCENENET TODO: Rename (private)
+                private FieldCacheImpl.HoldsOneThing<float[]> ValuesRef;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(FloatCache outerInstance, AtomicReader reader, FieldCache.IFloatParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
                 {
@@ -1224,9 +1225,9 @@ namespace Lucene.Net.Search
 
         private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache.Longs
         {
-            private readonly FieldCacheImpl OuterInstance;
+            private readonly FieldCacheImpl OuterInstance;// LUCENENET TODO: Rename (private)
 
-            private NumericDocValues ValuesIn;
+            private NumericDocValues ValuesIn;// LUCENENET TODO: Rename (private)
 
             public FieldCache_LongsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
@@ -1242,8 +1243,8 @@ namespace Lucene.Net.Search
 
         internal class LongsFromArray : FieldCache.Longs
         {
-            internal readonly PackedInts.Reader Values;
-            internal readonly long MinValue;
+            private readonly PackedInts.Reader Values;// LUCENENET TODO: Rename (private)
+            private readonly long MinValue;// LUCENENET TODO: Rename (private)
 
             public LongsFromArray(PackedInts.Reader values, long minValue)
             {
@@ -1264,7 +1265,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.ILongParser parser = (FieldCache.ILongParser)key.Custom;
                 if (parser == null)
@@ -1304,11 +1305,11 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly LongCache OuterInstance;
+                private readonly LongCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private AtomicReader Reader;
-                private FieldCache.ILongParser Parser;
-                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> ValuesRef;
+                private AtomicReader Reader;// LUCENENET TODO: Rename (private)
+                private FieldCache.ILongParser Parser;// LUCENENET TODO: Rename (private)
+                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> ValuesRef;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(LongCache outerInstance, AtomicReader reader, FieldCache.ILongParser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
@@ -1399,9 +1400,9 @@ namespace Lucene.Net.Search
 
         private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache.Doubles
         {
-            private readonly FieldCacheImpl OuterInstance;
+            private readonly FieldCacheImpl OuterInstance;// LUCENENET TODO: Rename (private)
 
-            private NumericDocValues ValuesIn;
+            private NumericDocValues ValuesIn;// LUCENENET TODO: Rename (private)
 
             public FieldCache_DoublesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
@@ -1417,7 +1418,7 @@ namespace Lucene.Net.Search
 
         internal class DoublesFromArray : FieldCache.Doubles
         {
-            internal readonly double[] Values;
+            private readonly double[] Values;// LUCENENET TODO: Rename (private)
 
             public DoublesFromArray(double[] values)
             {
@@ -1437,7 +1438,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IDoubleParser parser = (FieldCache.IDoubleParser)key.Custom;
                 if (parser == null)
@@ -1477,11 +1478,11 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly DoubleCache OuterInstance;
+                private readonly DoubleCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private AtomicReader Reader;
-                private FieldCache.IDoubleParser Parser;
-                private FieldCacheImpl.HoldsOneThing<double[]> ValuesRef;
+                private AtomicReader Reader;// LUCENENET TODO: Rename (private)
+                private FieldCache.IDoubleParser Parser;// LUCENENET TODO: Rename (private)
+                private FieldCacheImpl.HoldsOneThing<double[]> ValuesRef;// LUCENENET TODO: Rename (private)
 
                 public UninvertAnonymousInnerClassHelper(DoubleCache outerInstance, AtomicReader reader, FieldCache.IDoubleParser parser, FieldCacheImpl.HoldsOneThing<double[]> valuesRef)
                 {
@@ -1522,10 +1523,10 @@ namespace Lucene.Net.Search
 
         public class SortedDocValuesImpl : SortedDocValues
         {
-            internal readonly PagedBytes.Reader Bytes;
-            internal readonly MonotonicAppendingLongBuffer TermOrdToBytesOffset;
-            internal readonly PackedInts.Reader DocToTermOrd;
-            internal readonly int NumOrd;
+            private readonly PagedBytes.Reader Bytes;// LUCENENET TODO: Rename (private)
+            private readonly MonotonicAppendingLongBuffer TermOrdToBytesOffset;// LUCENENET TODO: Rename (private)
+            private readonly PackedInts.Reader DocToTermOrd;// LUCENENET TODO: Rename (private)
+            private readonly int NumOrd;// LUCENENET TODO: Rename (private)
 
             public SortedDocValuesImpl(PagedBytes.Reader bytes, MonotonicAppendingLongBuffer termOrdToBytesOffset, PackedInts.Reader docToTermOrd, int numOrd)
             {
@@ -1603,7 +1604,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 int maxDoc = reader.MaxDoc;
 
@@ -1702,8 +1703,8 @@ namespace Lucene.Net.Search
 
         private class BinaryDocValuesImpl : BinaryDocValues
         {
-            internal readonly PagedBytes.Reader Bytes;
-            internal readonly PackedInts.Reader DocToOffset;
+            private readonly PagedBytes.Reader Bytes;// LUCENENET TODO: Rename (private)
+            private readonly PackedInts.Reader DocToOffset;// LUCENENET TODO: Rename (private)
 
             public BinaryDocValuesImpl(PagedBytes.Reader bytes, PackedInts.Reader docToOffset)
             {
@@ -1773,7 +1774,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 // TODO: would be nice to first check if DocTermsIndex
                 // was already cached for this field and then return
@@ -1865,10 +1866,10 @@ namespace Lucene.Net.Search
 
             private class BitsAnonymousInnerClassHelper : Bits
             {
-                private readonly BinaryDocValuesCache OuterInstance;
+                private readonly BinaryDocValuesCache OuterInstance;// LUCENENET TODO: Rename (private)
 
-                private int MaxDoc;
-                private PackedInts.Reader OffsetReader;
+                private int MaxDoc;// LUCENENET TODO: Rename (private)
+                private PackedInts.Reader OffsetReader;// LUCENENET TODO: Rename (private)
 
                 public BitsAnonymousInnerClassHelper(BinaryDocValuesCache outerInstance, int maxDoc, PackedInts.Reader offsetReader)
                 {
@@ -1930,7 +1931,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
+            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 return new DocTermOrds(reader, null, key.Field);
             }
@@ -1940,7 +1941,7 @@ namespace Lucene.Net.Search
 
         public virtual TextWriter InfoStream
         {
-            set
+            set // LUCENENET TODO: make setter SetInfoStream() for consistency across API
             {
                 infoStream = value;
             }

@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class FilteredDocIdSetIterator : DocIdSetIterator
     {
-        protected internal DocIdSetIterator _innerIter;
+        protected DocIdSetIterator _innerIter; // LUCENENET TODO: Rename
         private int Doc;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         /// <param name="doc"> docid to be tested </param>
         /// <returns> true if input docid should be in the result set, false otherwise. </returns>
         /// <seealso cref= #FilteredDocIdSetIterator(DocIdSetIterator) </seealso>
-        protected internal abstract bool Match(int doc);
+        protected abstract bool Match(int doc);
 
         public override int DocID()
         {

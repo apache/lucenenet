@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 
     public sealed class BitsFilteredDocIdSet : FilteredDocIdSet
     {
-        private readonly Bits AcceptDocs;
+        private readonly Bits AcceptDocs; // LUCENENET TODO: rename
 
         /// <summary>
         /// Convenience wrapper method: If {@code acceptDocs == null} it returns the original set without wrapping. </summary>

@@ -88,9 +88,9 @@ namespace Lucene.Net.Search
             Shuffle();
             for (int i = 0; i < Buffered; ++i)
             {
-                fakeScorer.SetDoc(DocIDs[i]);
-                fakeScorer.SetFreq(Freqs[i]);
-                fakeScorer.SetScore(Scores[i]);
+                fakeScorer.doc = DocIDs[i];
+                fakeScorer.freq = Freqs[i];
+                fakeScorer.score = Scores[i];
                 @in.Collect(fakeScorer.DocID());
             }
             Buffered = 0;

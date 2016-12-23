@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract override object TopValue { set; }
+        public abstract override object TopValue { set; }// LUCENENET TODO: investigate whether we can use T instead of object
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
         /// will always be called before <seealso cref="#compareBottom"/>.
         /// </summary>
         /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
-        public abstract int Bottom { set; }
+        public abstract int Bottom { set; }// LUCENENET TODO: Change to SetBottom(int slot)
 
         /// <summary>
         /// Record the top value, for future calls to {@link
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract object TopValue { set; }
+        public abstract object TopValue { set; }// LUCENENET TODO: Change to SetTopValue(object value)
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="scorer"> Scorer instance that you should use to
         /// obtain the current hit's score, if necessary.  </param>
-        public virtual Scorer Scorer
+        public virtual Scorer Scorer // LUCENENET TODO: change to SetScorer(Scorer scorer)
         {
             set
             {
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="slot"> the value </param>
         /// <returns> value in this slot </returns>
-        public abstract IComparable Value(int slot);
+        public abstract IComparable Value(int slot); // LUCENENET TODO: Change to this[int slot] ? or GetValue(int slot) ?
 
         /// <summary>
         /// Base FieldComparator class for numeric types
@@ -327,9 +327,9 @@ namespace Lucene.Net.Search
         public abstract class NumericComparator<T> : FieldComparator<T>
             where T : struct
         {
-            protected internal readonly T? MissingValue;
-            protected internal readonly string Field;
-            protected internal Bits DocsWithField;
+            protected readonly T? MissingValue;// LUCENENET TODO: rename
+            protected readonly string Field;// LUCENENET TODO: rename
+            protected Bits DocsWithField;// LUCENENET TODO: rename
 
             public NumericComparator(string field, T? missingValue)
             {
@@ -360,14 +360,14 @@ namespace Lucene.Net.Search
         /// Parses field's values as byte (using {@link
         ///  FieldCache#getBytes} and sorts by ascending value
         /// </summary>
-        [Obsolete]
+        [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
         public sealed class ByteComparator : NumericComparator<sbyte>
         {
-            internal readonly sbyte[] Values;
-            internal readonly FieldCache.IByteParser Parser;
-            internal FieldCache.Bytes CurrentReaderValues;
-            internal sbyte bottom;
-            internal sbyte topValue;
+            private readonly sbyte[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.IByteParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Bytes CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private sbyte bottom;
+            private sbyte topValue;
 
             internal ByteComparator(int numHits, string field, FieldCache.IParser parser, sbyte? missingValue)
                 : base(field, missingValue)
@@ -456,11 +456,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class DoubleComparator : NumericComparator<double>
         {
-            internal readonly double[] Values;
-            internal readonly FieldCache.IDoubleParser Parser;
-            internal FieldCache.Doubles CurrentReaderValues;
-            internal double Bottom_Renamed;
-            internal double TopValue_Renamed;
+            private readonly double[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.IDoubleParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Doubles CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private double Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private double TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal DoubleComparator(int numHits, string field, FieldCache.IParser parser, double? missingValue)
                 : base(field, missingValue)
@@ -548,11 +548,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class FloatComparator : NumericComparator<float>
         {
-            internal readonly float[] Values;
-            internal readonly FieldCache.IFloatParser Parser;
-            internal FieldCache.Floats CurrentReaderValues;
-            internal float Bottom_Renamed;
-            internal float TopValue_Renamed;
+            private readonly float[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.IFloatParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Floats CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private float Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private float TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal FloatComparator(int numHits, string field, FieldCache.IParser parser, float? missingValue)
                 : base(field, missingValue)
@@ -642,11 +642,11 @@ namespace Lucene.Net.Search
         [Obsolete]
         public sealed class ShortComparator : NumericComparator<short>
         {
-            internal readonly short[] Values;
-            internal readonly FieldCache.IShortParser Parser;
-            internal FieldCache.Shorts CurrentReaderValues;
-            internal short Bottom_Renamed;
-            internal short TopValue_Renamed;
+            private readonly short[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.IShortParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Shorts CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private short Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private short TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal ShortComparator(int numHits, string field, FieldCache.IParser parser, short? missingValue)
                 : base(field, missingValue)
@@ -736,11 +736,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class IntComparator : NumericComparator<int>
         {
-            internal readonly int[] Values;
-            internal readonly FieldCache.IIntParser Parser;
-            internal FieldCache.Ints CurrentReaderValues;
-            internal int Bottom_Renamed; // Value of bottom of queue
-            internal int TopValue_Renamed;
+            private readonly int[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.IIntParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Ints CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private int Bottom_Renamed; // Value of bottom of queue // LUCENENET TODO: rename (private)
+            private int TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal IntComparator(int numHits, string field, FieldCache.IParser parser, int? missingValue)
                 : base(field, missingValue)
@@ -827,11 +827,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class LongComparator : NumericComparator<long>
         {
-            internal readonly long[] Values;
-            internal readonly FieldCache.ILongParser Parser;
-            internal FieldCache.Longs CurrentReaderValues;
-            internal long Bottom_Renamed;
-            internal long TopValue_Renamed;
+            private readonly long[] Values; // LUCENENET TODO: rename (private)
+            private readonly FieldCache.ILongParser Parser; // LUCENENET TODO: rename (private)
+            private FieldCache.Longs CurrentReaderValues; // LUCENENET TODO: rename (private)
+            private long Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private long TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal LongComparator(int numHits, string field, FieldCache.IParser parser, long? missingValue)
                 : base(field, missingValue)
@@ -925,10 +925,10 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class RelevanceComparator : FieldComparator<float>
         {
-            internal readonly float[] Scores;
-            internal float Bottom_Renamed;
-            internal Scorer Scorer_Renamed;
-            internal float TopValue_Renamed;
+            private readonly float[] Scores; // LUCENENET TODO: rename (private)
+            private float Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private Scorer Scorer_Renamed; // LUCENENET TODO: rename (private)
+            private float TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal RelevanceComparator(int numHits)
             {
@@ -1017,10 +1017,10 @@ namespace Lucene.Net.Search
         /// Sorts by ascending docID </summary>
         public sealed class DocComparator : FieldComparator<int?>
         {
-            internal readonly int[] DocIDs;
-            internal int DocBase;
-            internal int Bottom_Renamed;
-            internal int TopValue_Renamed;
+            private readonly int[] DocIDs; // LUCENENET TODO: rename (private)
+            private int DocBase; // LUCENENET TODO: rename (private)
+            private int Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private int TopValue_Renamed; // LUCENENET TODO: rename (private)
 
             internal DocComparator(int numHits)
             {
@@ -1096,66 +1096,66 @@ namespace Lucene.Net.Search
         {
             /* Ords for each slot.
 	            @lucene.internal */
-            internal readonly int[] Ords;
+            internal readonly int[] Ords; // LUCENENET TODO: rename (private)
 
             /* Values for each slot.
 	            @lucene.internal */
-            internal readonly BytesRef[] Values;
+            internal readonly BytesRef[] Values; // LUCENENET TODO: rename (private)
 
             /* Which reader last copied a value into the slot. When
 	            we compare two slots, we just compare-by-ord if the
 	            readerGen is the same; else we must compare the
 	            values (slower).
 	            @lucene.internal */
-            internal readonly int[] ReaderGen;
+            internal readonly int[] ReaderGen; // LUCENENET TODO: rename (private)
 
             /* Gen of current reader we are on.
 	            @lucene.internal */
-            internal int CurrentReaderGen = -1;
+            internal int CurrentReaderGen = -1; // LUCENENET TODO: rename (private)
 
             /* Current reader's doc ord/values.
 	            @lucene.internal */
-            internal SortedDocValues TermsIndex;
+            internal SortedDocValues TermsIndex; // LUCENENET TODO: rename (private)
 
-            internal readonly string Field;
+            internal readonly string Field; // LUCENENET TODO: rename (private)
 
             /* Bottom slot, or -1 if queue isn't full yet
 	            @lucene.internal */
-            internal int BottomSlot = -1;
+            internal int BottomSlot = -1; // LUCENENET TODO: rename (private)
 
             /* Bottom ord (same as ords[bottomSlot] once bottomSlot
 	            is set).  Cached for faster compares.
 	            @lucene.internal */
-            internal int BottomOrd;
+            internal int BottomOrd; // LUCENENET TODO: rename (private)
 
             /* True if current bottom slot matches the current
 	            reader.
 	            @lucene.internal */
-            internal bool BottomSameReader;
+            internal bool BottomSameReader; // LUCENENET TODO: rename (private)
 
             /* Bottom value (same as values[bottomSlot] once
 	            bottomSlot is set).  Cached for faster compares.
 	            @lucene.internal */
-            internal BytesRef BottomValue;
+            internal BytesRef BottomValue; // LUCENENET TODO: rename (private)
 
             /// <summary>
             /// Set by setTopValue. </summary>
-            internal BytesRef TopValue_Renamed;
+            internal BytesRef TopValue_Renamed; // LUCENENET TODO: rename (private)
 
-            internal bool TopSameReader;
-            internal int TopOrd;
+            internal bool TopSameReader; // LUCENENET TODO: rename (private)
+            internal int TopOrd; // LUCENENET TODO: rename (private)
 
-            internal readonly BytesRef TempBR = new BytesRef();
+            internal readonly BytesRef TempBR = new BytesRef(); // LUCENENET TODO: rename (private)
 
             /// <summary>
             /// -1 if missing values are sorted first, 1 if they are
             ///  sorted last
             /// </summary>
-            internal readonly int MissingSortCmp;
+            internal readonly int MissingSortCmp; // LUCENENET TODO: rename (private)
 
             /// <summary>
             /// Which ordinal to use for a missing value. </summary>
-            internal readonly int MissingOrd;
+            internal readonly int MissingOrd; // LUCENENET TODO: rename (private)
 
             /// <summary>
             /// Creates this, sorting missing values first. </summary>
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Retrieves the SortedDocValues for the field in this segment </summary>
-            protected internal virtual SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)
+            protected virtual SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)
             {
                 return FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), field);
             }
@@ -1415,17 +1415,17 @@ namespace Lucene.Net.Search
         public sealed class TermValComparator : FieldComparator<BytesRef>
         {
             // sentinels, just used internally in this comparator
-            internal static readonly byte[] MISSING_BYTES = new byte[0];
+            private static readonly byte[] MISSING_BYTES = new byte[0];
 
-            internal static readonly byte[] NON_MISSING_BYTES = new byte[0];
+            private static readonly byte[] NON_MISSING_BYTES = new byte[0];
 
-            internal BytesRef[] Values;
-            internal BinaryDocValues DocTerms;
-            internal Bits DocsWithField;
-            internal readonly string Field;
-            internal BytesRef Bottom_Renamed;
-            internal BytesRef TopValue_Renamed;
-            internal readonly BytesRef TempBR = new BytesRef();
+            private BytesRef[] Values; // LUCENENET TODO: rename (private)
+            private BinaryDocValues DocTerms; // LUCENENET TODO: rename (private)
+            private Bits DocsWithField; // LUCENENET TODO: rename (private)
+            private readonly string Field; // LUCENENET TODO: rename (private)
+            private BytesRef Bottom_Renamed; // LUCENENET TODO: rename (private)
+            private BytesRef TopValue_Renamed; // LUCENENET TODO: rename (private)
+            private readonly BytesRef TempBR = new BytesRef(); // LUCENENET TODO: rename (private)
 
             // TODO: add missing first/last support here?
 
@@ -1531,7 +1531,7 @@ namespace Lucene.Net.Search
                 return CompareValues(TopValue_Renamed, TempBR);
             }
 
-            internal void SetMissingBytes(int doc, BytesRef br)
+            private void SetMissingBytes(int doc, BytesRef br)
             {
                 if (br.Length == 0)
                 {

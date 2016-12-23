@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override bool Match(int doc)
+            protected override bool Match(int doc)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

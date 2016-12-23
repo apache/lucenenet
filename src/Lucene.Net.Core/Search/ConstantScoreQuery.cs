@@ -36,8 +36,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public class ConstantScoreQuery : Query
     {
-        protected internal readonly Filter filter;
-        protected internal readonly Query query;
+        protected readonly Filter filter; // LUCENENET TODO: rename
+        protected readonly Query query; // LUCENENET TODO: rename
 
         /// <summary>
         /// Strips off scores from the passed in Query. The hits will get a constant score
@@ -131,13 +131,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal class ConstantWeight : Weight
+        protected class ConstantWeight : Weight
         {
-            private readonly ConstantScoreQuery OuterInstance;
+            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
 
-            internal readonly Weight InnerWeight;
-            internal float QueryNorm;
-            internal float QueryWeight;
+            private readonly Weight InnerWeight; // LUCENENET TODO: rename (private)
+            private float QueryNorm; // LUCENENET TODO: rename (private)
+            private float QueryWeight; // LUCENENET TODO: rename (private)
 
             public ConstantWeight(ConstantScoreQuery outerInstance, IndexSearcher searcher)
             {
@@ -259,13 +259,13 @@ namespace Lucene.Net.Search
         ///  scorer (e.g. BooleanScorer) we can use that
         ///  top-level scorer.
         /// </summary>
-        protected internal class ConstantBulkScorer : BulkScorer
+        protected class ConstantBulkScorer : BulkScorer
         {
-            private readonly ConstantScoreQuery OuterInstance;
+            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
 
-            internal readonly BulkScorer BulkScorer;
-            internal readonly Weight Weight;
-            internal readonly float TheScore;
+            internal readonly BulkScorer BulkScorer; // LUCENENET TODO: rename (private)
+            internal readonly Weight Weight; // LUCENENET TODO: rename (private)
+            internal readonly float TheScore; // LUCENENET TODO: rename (private)
 
             public ConstantBulkScorer(ConstantScoreQuery outerInstance, BulkScorer bulkScorer, Weight weight, float theScore)
             {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
                 return BulkScorer.Score(WrapCollector(collector), max);
             }
 
-            internal virtual Collector WrapCollector(Collector collector)
+            private Collector WrapCollector(Collector collector)
             {
                 return new CollectorAnonymousInnerClassHelper(this, collector);
             }
@@ -326,12 +326,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        public class ConstantScorer : Scorer
+        // LUCENENET NOTE: Marked internal for testing
+        protected internal class ConstantScorer : Scorer
         {
-            private readonly ConstantScoreQuery OuterInstance;
+            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
 
-            internal readonly DocIdSetIterator DocIdSetIterator;
-            internal readonly float TheScore;
+            internal readonly DocIdSetIterator DocIdSetIterator; // LUCENENET TODO: rename (private)
+            internal readonly float TheScore; // LUCENENET TODO: rename (private)
 
             public ConstantScorer(ConstantScoreQuery outerInstance, DocIdSetIterator docIdSetIterator, Weight w, float theScore)
                 : base(w)
@@ -339,11 +340,6 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
                 this.TheScore = theScore;
                 this.DocIdSetIterator = docIdSetIterator;
-            }
-
-            public string GetDocIDIteratorTypeName()
-            {
-                return DocIdSetIterator.GetType().Name;
             }
 
             public override int NextDoc()

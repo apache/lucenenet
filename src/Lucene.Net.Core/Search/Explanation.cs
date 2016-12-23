@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
         /// A short one line summary which should contain all high level
         /// information about this Explanation, without the "Details"
         /// </summary>
-        protected internal virtual string Summary
+        protected internal virtual string Summary // LUCENENET TODO: Change to GetSummary() (conversion)
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The sub-nodes of this explanation node. </summary>
-        public virtual Explanation[] Details
+        public virtual Explanation[] Details // LUCENENET TODO: Change to GetDetails() (array, conversion)
         {
             get
             {

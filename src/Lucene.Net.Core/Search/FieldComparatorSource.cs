@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
     /// @lucene.experimental
     ///
     /// </summary>
-    public abstract class FieldComparatorSource
+    public abstract class FieldComparatorSource // LUCENENET TODO: Rename FieldComparerSource ?
     {
         /// <summary>
         /// Creates a comparator for the field in the given index.
@@ -33,6 +33,6 @@ namespace Lucene.Net.Search
         /// <returns> FieldComparator. </returns>
         /// <exception cref="IOException">
         ///           If an error occurs reading the index. </exception>
-        public abstract FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed);
+        public abstract FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed); // LUCENENET TODO: Rename NewComparer ?
     }
 }

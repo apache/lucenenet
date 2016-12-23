@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 
         internal class MultiTermQueryDocTermOrdsWrapperFilter : Filter
         {
-            protected internal readonly MultiTermQuery Query;
+            protected readonly MultiTermQuery Query; // LUCENENET TODO: rename (private)
 
             /// <summary>
             /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.
@@ -126,9 +126,9 @@ namespace Lucene.Net.Search
 
             private class TermsAnonymousInnerClassHelper : Terms
             {
-                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance;
+                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance; // LUCENENET TODO: rename (private)
 
-                private SortedSetDocValues DocTermOrds;
+                private SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
 
                 public TermsAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, SortedSetDocValues docTermOrds)
                 {
@@ -201,10 +201,10 @@ namespace Lucene.Net.Search
 
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
-                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance;
+                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance; // LUCENENET TODO: rename (private)
 
-                private SortedSetDocValues DocTermOrds;
-                private LongBitSet TermSet;
+                private SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
+                private LongBitSet TermSet; // LUCENENET TODO: rename (private)
 
                 public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, LongBitSet termSet)
                     : base(maxDoc, acceptDocs)

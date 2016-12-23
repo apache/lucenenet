@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
     ///
     /// @since 2.9
     /// </summary>
-    public abstract class Collector
+    public abstract class Collector // LUCENENET TODO: Make interface, or back by interface? We need an interface for Grouping
     {
         /// <summary>
         /// Called before successive calls to <seealso cref="#collect(int)"/>. Implementations
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="#collect(int)"/>), should save the passed-in Scorer and call
         /// scorer.score() when needed.
         /// </summary>
-        public abstract Scorer Scorer { set; }
+        public abstract Scorer Scorer { set; } // LUCENENET TODO: Change to SetScorer(Scorer scorer)
 
         /// <summary>
         /// Called once for every document matching a query, with the unbased document
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="context">
         ///          next atomic reader context </param>
-        public abstract AtomicReaderContext NextReader { set; }
+        public abstract AtomicReaderContext NextReader { set; } // LUCENENET TODO: Change to SetNextReader(AtomicReaderContext context)
 
         /// <summary>
         /// Return <code>true</code> if this collector does not

@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+            protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
                 return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.Iterator(null), new BytesRef("2"), new BytesRef("7"));
             }

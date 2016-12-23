@@ -60,34 +60,34 @@ namespace Lucene.Net.Search
             BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
         }
 
-        private TermsEnum ActualEnum;
-        private IBoostAttribute ActualBoostAtt;
+        private TermsEnum ActualEnum; // LUCENENET TODO: Rename (private)
+        private IBoostAttribute ActualBoostAtt; // LUCENENET TODO: Rename (private)
 
-        private IBoostAttribute BoostAtt;
+        private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
 
-        private readonly IMaxNonCompetitiveBoostAttribute MaxBoostAtt;
-        private readonly ILevenshteinAutomataAttribute DfaAtt;
+        private readonly IMaxNonCompetitiveBoostAttribute MaxBoostAtt; // LUCENENET TODO: Rename (private)
+        private readonly ILevenshteinAutomataAttribute DfaAtt; // LUCENENET TODO: Rename (private)
 
-        private float Bottom;
-        private BytesRef BottomTerm;
+        private float Bottom; // LUCENENET TODO: Rename (private)
+        private BytesRef BottomTerm; // LUCENENET TODO: Rename (private)
 
         // TODO: chicken-and-egg
-        private readonly IComparer<BytesRef> TermComparator = BytesRef.UTF8SortedAsUnicodeComparer;
+        private readonly IComparer<BytesRef> TermComparator = BytesRef.UTF8SortedAsUnicodeComparer; // LUCENENET TODO: Rename (private)
 
-        protected internal readonly float MinSimilarity_Renamed;
-        protected internal readonly float Scale_factor;
+        protected readonly float MinSimilarity_Renamed; // LUCENENET TODO: Rename
+        protected readonly float Scale_factor; // LUCENENET TODO: Rename
 
-        protected internal readonly int TermLength;
+        protected readonly int TermLength; // LUCENENET TODO: Rename 
 
-        protected internal int MaxEdits;
-        protected internal readonly bool Raw;
+        protected int MaxEdits; // LUCENENET TODO: Rename 
+        protected readonly bool Raw; // LUCENENET TODO: Rename 
 
-        protected internal readonly Terms Terms;
-        private readonly Term Term_Renamed;
-        protected internal readonly int[] TermText;
-        protected internal readonly int RealPrefixLength;
+        protected readonly Terms Terms; // LUCENENET TODO: Rename 
+        private readonly Term Term_Renamed; // LUCENENET TODO: Rename (private)
+        protected readonly int[] TermText; // LUCENENET TODO: Rename
+        protected readonly int RealPrefixLength; // LUCENENET TODO: Rename
 
-        private readonly bool Transpositions;
+        private readonly bool Transpositions; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
         /// return an automata-based enum for matching up to editDistance from
         /// lastTerm, if possible
         /// </summary>
-        protected internal virtual TermsEnum GetAutomatonEnum(int editDistance, BytesRef lastTerm)
+        protected virtual TermsEnum GetAutomatonEnum(int editDistance, BytesRef lastTerm)
         {
             IList<CompiledAutomaton> runAutomata = InitAutomata(editDistance);
             if (editDistance < runAutomata.Count)
@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// swap in a new actual enum to proxy to </summary>
-        protected internal virtual TermsEnum Enum
+        protected virtual TermsEnum Enum // LUCENENET TODO: Change to SetEnum(TermsEnum actualEnum)
         {
             set
             {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal virtual void MaxEditDistanceChanged(BytesRef lastTerm, int maxEdits, bool init)
+        protected virtual void MaxEditDistanceChanged(BytesRef lastTerm, int maxEdits, bool init)
         {
             TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
             // instead of assert, we do a hard check in case someone uses our enum directly
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
             return (similarity - MinSimilarity_Renamed) * Scale_factor;
         }
 
-        private BytesRef QueuedBottom = null;
+        private BytesRef QueuedBottom = null; // LUCENENET TODO: Rename (private)
 
         public override BytesRef Next()
         {
@@ -376,13 +376,13 @@ namespace Lucene.Net.Search
                 BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
             }
 
-            private readonly FuzzyTermsEnum OuterInstance;
+            private readonly FuzzyTermsEnum OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal readonly ByteRunAutomaton[] Matchers;
+            private readonly ByteRunAutomaton[] Matchers; // LUCENENET TODO: Rename (private)
 
-            internal readonly BytesRef TermRef;
+            private readonly BytesRef TermRef; // LUCENENET TODO: Rename (private)
 
-            internal IBoostAttribute BoostAtt;
+            private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
 
             public AutomatonFuzzyTermsEnum(FuzzyTermsEnum outerInstance, TermsEnum tenum, CompiledAutomaton[] compiled)
                 : base(tenum, false)
@@ -489,7 +489,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class LevenshteinAutomataAttribute : Attribute, ILevenshteinAutomataAttribute
         {
-            internal readonly IList<CompiledAutomaton> automata = new List<CompiledAutomaton>();
+            private readonly IList<CompiledAutomaton> automata = new List<CompiledAutomaton>();
 
             public IList<CompiledAutomaton> Automata()
             {

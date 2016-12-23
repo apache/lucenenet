@@ -47,7 +47,7 @@ namespace Lucene.Net.Join
             _ords = terms.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             if (_terms.Size() == 0)
             {

@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             return IncludeUpper;
         }
 
-        public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             if (LowerTerm_Renamed != null && UpperTerm_Renamed != null && LowerTerm_Renamed.CompareTo(UpperTerm_Renamed) > 0)
             {

@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
         }
 
         private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
-        private readonly bool DisableCoord;
+        private readonly bool DisableCoord; // LUCENENET TODO: rename
 
         /// <summary>
         /// Constructs an empty boolean query. </summary>
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal int MinNrShouldMatch = 0;
+        protected int MinNrShouldMatch = 0; // LUCENENET TODO: rename
 
         /// <summary>
         /// Adds a clause to a boolean query.
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the set of clauses in this query. </summary>
-        public virtual BooleanClause[] Clauses
+        public virtual BooleanClause[] Clauses // LUCENENET TODO: Change to GetClauses() (array, conversion)
         {
             get
             {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the list of clauses in this query. </summary>
-        public virtual IList<BooleanClause> GetClauses()
+        public virtual IList<BooleanClause> GetClauses() // LUCENENET TODO: Make property
         {
             return clauses;
         }
@@ -212,11 +212,11 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// The Similarity implementation. </summary>
-            protected internal Similarity similarity;
+            protected Similarity similarity; // LUCENENET TODO: rename
 
-            protected internal List<Weight> Weights;
-            protected internal int maxCoord; // num optional + num required
-            internal readonly bool DisableCoord;
+            protected List<Weight> Weights; // LUCENENET TODO: rename
+            protected int maxCoord; // num optional + num required // LUCENENET TODO: rename
+            private readonly bool DisableCoord; // LUCENENET TODO: rename
 
             public BooleanWeight(BooleanQuery outerInstance, IndexSearcher searcher, bool disableCoord)
             {
@@ -666,7 +666,10 @@ namespace Lucene.Net.Search
                 return false;
             }
             BooleanQuery other = (BooleanQuery)o;
-            return this.Boost == other.Boost && this.clauses.SequenceEqual(other.clauses) && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch && this.DisableCoord == other.DisableCoord;
+            return this.Boost == other.Boost 
+                && this.clauses.SequenceEqual(other.clauses) 
+                && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch 
+                && this.DisableCoord == other.DisableCoord;
         }
 
         /// <summary>

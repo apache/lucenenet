@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Return a suitable top-level Query for holding all expanded terms. </summary>
-        protected internal abstract Q TopLevelQuery { get; }
+        protected internal abstract Q TopLevelQuery { get; } // LUCENENET TODO: Make GetTopLevelQuery() (returns new instance)
 
         /// <summary>
         /// Add a MultiTermQuery term to the top-level query </summary>

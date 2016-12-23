@@ -27,12 +27,12 @@ namespace Lucene.Net.Search
     internal class DisjunctionMaxScorer : DisjunctionScorer
     {
         /* Multiplier applied to non-maximum-scoring subqueries for a document as they are summed into the result. */
-        private readonly float TieBreakerMultiplier;
-        private int Freq_Renamed = -1;
+        private readonly float TieBreakerMultiplier; // LUCENENET TODO: Rename (private)
+        private int Freq_Renamed = -1; // LUCENENET TODO: Rename (private)
 
         /* Used when scoring currently matching doc. */
-        private float ScoreSum;
-        private float ScoreMax;
+        private float ScoreSum; // LUCENENET TODO: Rename (private)
+        private float ScoreMax; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Creates a new instance of DisjunctionMaxScorer
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
             return ScoreMax + (ScoreSum - ScoreMax) * TieBreakerMultiplier;
         }
 
-        protected internal override void AfterNext()
+        protected override void AfterNext()
         {
             Doc = SubScorers[0].DocID();
             if (Doc != NO_MORE_DOCS)

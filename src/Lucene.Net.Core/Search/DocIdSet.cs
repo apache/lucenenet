@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
         /// this implementation can return <code>null</code> if there
         /// are no docs that match.
         /// </summary>
-        public abstract DocIdSetIterator GetIterator();
+        public abstract DocIdSetIterator GetIterator(); // LUCENENET TODO: Consistency GetIterator() vs Iterator()
 
         // TODO: somehow this class should express the cost of
         // iteration vs the cost of random access Bits; for
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         /// that does its iteration very effective and fast without doing disk I/O,
         /// override this method and return <code>true</code>.
         /// </summary>
-        public virtual bool Cacheable
+        public virtual bool Cacheable // LUCENENET TODO: Rename IsCacheable
         {
             get
             {

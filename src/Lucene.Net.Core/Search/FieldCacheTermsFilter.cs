@@ -99,8 +99,8 @@ namespace Lucene.Net.Search
 
     public class FieldCacheTermsFilter : Filter
     {
-        private string Field;
-        private BytesRef[] Terms;
+        private string Field;// LUCENENET TODO: Rename (private)
+        private BytesRef[] Terms;// LUCENENET TODO: Rename (private)
 
         public FieldCacheTermsFilter(string field, params BytesRef[] terms)
         {

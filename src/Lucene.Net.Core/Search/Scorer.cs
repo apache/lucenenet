@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// the Scorer's parent Weight. in some cases this may be null </summary>
         // TODO can we clean this up?
-        protected internal readonly Weight weight;
+        protected internal readonly Weight weight; // LUCENENET TODO: rename
 
         /// <summary>
         /// Constructs a Scorer </summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
         /// is called the first time, or when called from within
         /// <seealso cref="Collector#collect"/>.
         /// </summary>
-        public abstract float Score();
+        public abstract float Score(); // LUCENENET NOTE: Often makes a calculation, so not a good candidate for a property, change to GetScore() to make this more clear
 
         /// <summary>
         /// returns parent Weight
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
         /// Returns child sub-scorers
         /// @lucene.experimental
         /// </summary>
-        public virtual ICollection<ChildScorer> Children
+        public virtual ICollection<ChildScorer> Children // LUCENENET TODO: Make GetChildren() (conversion) (check consistency across API)
         {
             get
             {
@@ -97,12 +97,12 @@ namespace Lucene.Net.Search
             /// Child Scorer. (note this is typically a direct child, and may
             /// itself also have children).
             /// </summary>
-            public readonly Scorer Child;
+            public readonly Scorer Child; // LUCENENET TODO: make property
 
             /// <summary>
             /// An arbitrary string relating this scorer to the parent.
             /// </summary>
-            public readonly string Relationship;
+            public readonly string Relationship; // LUCENENET TODO: make property
 
             /// <summary>
             /// Creates a new ChildScorer node with the specified relationship.

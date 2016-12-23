@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
                 Prefix = term.Bytes;
             }
 
-            public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+            protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
                 return new SimplePrefixTermsEnum(this, terms.Iterator(null), Prefix);
             }

@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 
         internal class MultiTermQueryFieldCacheWrapperFilter : Filter
         {
-            protected internal readonly MultiTermQuery Query;
+            protected internal readonly MultiTermQuery Query;// LUCENENET TODO: Rename (private)
 
             /// <summary>
             /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.

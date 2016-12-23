@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
     /// to itself in its constructor and consumed by the <seealso cref="MultiTermQuery.RewriteMethod"/>.
     /// @lucene.internal
     /// </summary>
+    // LUCENENET TODO: Move IBoostAttribute here, put this implementation in BoostAttributeImpl (since that is what it is)
     public sealed class BoostAttribute : Util.Attribute, IBoostAttribute
     {
         /*/// <summary>

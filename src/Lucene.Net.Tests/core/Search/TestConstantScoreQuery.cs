@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
                     if (InnerScorerClassName != null && value is ConstantScoreQuery.ConstantScorer)
                     {
                         ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer)value;
-                        Assert.AreEqual(InnerScorerClassName, innerScorer.GetDocIDIteratorTypeName(), "inner Scorer is implemented by wrong class");
+                        Assert.AreEqual(InnerScorerClassName, innerScorer.DocIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
                     }
                 }
             }

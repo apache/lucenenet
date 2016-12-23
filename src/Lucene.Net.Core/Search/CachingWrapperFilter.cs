@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
         ///  is <code>null</code> or if <seealso cref="DocIdSet#iterator()"/> return <code>null</code>. The empty
         ///  instance is use as a placeholder in the cache instead of the <code>null</code> value.
         /// </summary>
-        protected internal virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
+        protected virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
         {
             if (docIdSet == null)
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
         }
 
         // for testing
-        public int HitCount, MissCount;
+        internal int HitCount, MissCount; // LUCENENET TODO: rename (private), make internal properties
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// An empty {@code DocIdSet} instance </summary>
-        protected internal static readonly DocIdSet EMPTY_DOCIDSET = new DocIdSetAnonymousInnerClassHelper();
+        protected static readonly DocIdSet EMPTY_DOCIDSET = new DocIdSetAnonymousInnerClassHelper();
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {

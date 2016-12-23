@@ -125,13 +125,14 @@ namespace Lucene.Net.Search
         /// <p>NOTE: this API and implementation is subject to
         /// change suddenly in the next release.</p>
         /// </summary>
-        protected internal class DisjunctionMaxWeight : Weight
+        protected class DisjunctionMaxWeight : Weight
         {
-            private readonly DisjunctionMaxQuery OuterInstance;
+            private readonly DisjunctionMaxQuery OuterInstance; // LUCENENET TODO: Rename (private)
 
             /// <summary>
             /// The Weights for our subqueries, in 1-1 correspondence with disjuncts </summary>
-            protected internal List<Weight> Weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+             // LUCENENET TODO: Rename
+            protected List<Weight> Weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 
             /// <summary>
             /// Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights. </summary>
@@ -356,7 +357,9 @@ namespace Lucene.Net.Search
                 return false;
             }
             DisjunctionMaxQuery other = (DisjunctionMaxQuery)o;
-            return this.Boost == other.Boost && this.tieBreakerMultiplier == other.tieBreakerMultiplier && this.disjuncts.Equals(other.disjuncts);
+            return this.Boost == other.Boost 
+                && this.tieBreakerMultiplier == other.tieBreakerMultiplier 
+                && this.disjuncts.Equals(other.disjuncts);
         }
 
         /// <summary>
@@ -364,7 +367,9 @@ namespace Lucene.Net.Search
         /// <returns> the hash code </returns>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) + Number.FloatToIntBits(tieBreakerMultiplier) + disjuncts.GetHashCode();
+            return Number.FloatToIntBits(Boost) 
+                + Number.FloatToIntBits(tieBreakerMultiplier) 
+                + disjuncts.GetHashCode();
         }
     }
 }

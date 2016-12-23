@@ -39,9 +39,9 @@ namespace Lucene.Net.Search
 
         private class Coordinator
         {
-            private readonly BooleanScorer2 OuterInstance;
+            private readonly BooleanScorer2 OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal readonly float[] CoordFactors;
+            internal readonly float[] CoordFactors; // LUCENENET TODO: Rename (private)
 
             internal Coordinator(BooleanScorer2 outerInstance, int maxCoord, bool disableCoord)
             {
@@ -62,13 +62,13 @@ namespace Lucene.Net.Search
         /// The scorer to which all scoring will be delegated,
         /// except for computing and using the coordination factor.
         /// </summary>
-        private readonly Scorer CountingSumScorer;
+        private readonly Scorer CountingSumScorer; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// The number of optionalScorers that need to match (if there are any) </summary>
-        private readonly int MinNrShouldMatch;
+        private readonly int MinNrShouldMatch; // LUCENENET TODO: Rename (private)
 
-        private int Doc = -1;
+        private int Doc = -1; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Creates a <seealso cref="Scorer"/> with the given similarity and lists of required,
@@ -111,14 +111,14 @@ namespace Lucene.Net.Search
         /// Count a scorer as a single match. </summary>
         private class SingleMatchScorer : Scorer
         {
-            private readonly BooleanScorer2 OuterInstance;
+            private readonly BooleanScorer2 OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal Scorer Scorer;
-            internal int LastScoredDoc = -1;
+            internal Scorer Scorer; // LUCENENET TODO: Rename (private)
+            internal int LastScoredDoc = -1; // LUCENENET TODO: Rename (private)
 
             // Save the score of lastScoredDoc, so that we don't compute it more than
             // once in score().
-            internal float LastDocScore = float.NaN;
+            internal float LastDocScore = float.NaN; // LUCENENET TODO: Rename (private)
 
             internal SingleMatchScorer(BooleanScorer2 outerInstance, Scorer scorer)
                 : base(scorer.weight)
@@ -279,7 +279,9 @@ namespace Lucene.Net.Search
         /// </summary>
         private Scorer MakeCountingSumScorer(bool disableCoord) // each scorer counted as a single matcher
         {
-            return (RequiredScorers.Count == 0) ? MakeCountingSumScorerNoReq(disableCoord) : MakeCountingSumScorerSomeReq(disableCoord);
+            return (RequiredScorers.Count == 0) 
+                ? MakeCountingSumScorerNoReq(disableCoord) 
+                : MakeCountingSumScorerSomeReq(disableCoord);
         }
 
         private Scorer MakeCountingSumScorerNoReq(bool disableCoord) // No required scorers
