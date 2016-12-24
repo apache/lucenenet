@@ -46,8 +46,8 @@ namespace Lucene.Net.Search
         // in the index (0.1%), the filter method is fastest:
         public static double DEFAULT_DOC_COUNT_PERCENT = 0.1;
 
-        private int TermCountCutoff_Renamed = DEFAULT_TERM_COUNT_CUTOFF; // LUCENENET TODO: rename (private)
-        private double DocCountPercent_Renamed = DEFAULT_DOC_COUNT_PERCENT; // LUCENENET TODO: rename (private)
+        private int termCountCutoff = DEFAULT_TERM_COUNT_CUTOFF;
+        private double docCountPercent = DEFAULT_DOC_COUNT_PERCENT;
 
         /// <summary>
         /// If the number of terms in this query is equal to or
@@ -58,11 +58,11 @@ namespace Lucene.Net.Search
         {
             set
             {
-                TermCountCutoff_Renamed = value;
+                termCountCutoff = value;
             }
             get
             {
-                return TermCountCutoff_Renamed;
+                return termCountCutoff;
             }
         }
 
@@ -76,11 +76,11 @@ namespace Lucene.Net.Search
         {
             set
             {
-                DocCountPercent_Renamed = value;
+                docCountPercent = value;
             }
             get
             {
-                return DocCountPercent_Renamed;
+                return docCountPercent;
             }
         }
 
@@ -100,8 +100,8 @@ namespace Lucene.Net.Search
             // exhaust the enum before hitting either of the
             // cutoffs, we use ConstantBooleanQueryRewrite; else,
             // ConstantFilterRewrite:
-            int docCountCutoff = (int)((DocCountPercent_Renamed / 100.0) * reader.MaxDoc);
-            int termCountLimit = Math.Min(BooleanQuery.MaxClauseCount, TermCountCutoff_Renamed);
+            int docCountCutoff = (int)((docCountPercent / 100.0) * reader.MaxDoc);
+            int termCountLimit = Math.Min(BooleanQuery.MaxClauseCount, termCountCutoff);
 
             CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);
             CollectTerms(reader, query, col);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
                         int pos = sort[i];
                         // docFreq is not used for constant score here, we pass 1
                         // to explicitely set a fake value, so it's not calculated
-                        AddClause(bq, new Term(query.field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.TermState[pos]);
+                        AddClause(bq, new Term(query.field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.termState[pos]);
                     }
                 }
                 // Strip scores
@@ -166,11 +166,11 @@ namespace Lucene.Net.Search
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
-                    Array.TermState[pos].Register(termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos].Register(termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
                 }
                 else
                 {
-                    Array.TermState[pos] = new TermContext(TopReaderContext, termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos] = new TermContext(TopReaderContext, termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
                 }
                 return true;
             }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
         public override int GetHashCode()
         {
             const int prime = 1279;
-            return (int)(prime * TermCountCutoff_Renamed + BitConverter.DoubleToInt64Bits(DocCountPercent_Renamed));
+            return (int)(prime * termCountCutoff + BitConverter.DoubleToInt64Bits(docCountPercent));
         }
 
         public override bool Equals(object obj)
@@ -206,12 +206,12 @@ namespace Lucene.Net.Search
             }
 
             ConstantScoreAutoRewrite other = (ConstantScoreAutoRewrite)obj;
-            if (other.TermCountCutoff_Renamed != TermCountCutoff_Renamed)
+            if (other.termCountCutoff != termCountCutoff)
             {
                 return false;
             }
 
-            if (BitConverter.DoubleToInt64Bits(other.DocCountPercent_Renamed) != BitConverter.DoubleToInt64Bits(DocCountPercent_Renamed))
+            if (BitConverter.DoubleToInt64Bits(other.docCountPercent) != BitConverter.DoubleToInt64Bits(docCountPercent))
             {
                 return false;
             }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
         /// Special implementation of BytesStartArray that keeps parallel arrays for <seealso cref="TermContext"/> </summary>
         internal sealed class TermStateByteStart : BytesRefHash.DirectBytesStartArray
         {
-            internal TermContext[] TermState; // LUCENENET TODO: rename (private)
+            internal TermContext[] termState;
 
             public TermStateByteStart(int initSize)
                 : base(initSize)
@@ -233,27 +233,27 @@ namespace Lucene.Net.Search
             public override int[] Init()
             {
                 int[] ord = base.Init();
-                TermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Debug.Assert(TermState.Length >= ord.Length);
+                termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                Debug.Assert(termState.Length >= ord.Length);
                 return ord;
             }
 
             public override int[] Grow()
             {
                 int[] ord = base.Grow();
-                if (TermState.Length < ord.Length)
+                if (termState.Length < ord.Length)
                 {
                     TermContext[] tmpTermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(TermState, 0, tmpTermState, 0, TermState.Length);
-                    TermState = tmpTermState;
+                    Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
+                    termState = tmpTermState;
                 }
-                Debug.Assert(TermState.Length >= ord.Length);
+                Debug.Assert(termState.Length >= ord.Length);
                 return ord;
             }
 
             public override int[] Clear()
             {
-                TermState = null;
+                termState = null;
                 return base.Clear();
             }
         }
