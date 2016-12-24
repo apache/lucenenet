@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool IsHealthy // LUCENENET TODO: Rename IsHealthy
+        internal bool IsHealthy
         {
             get
             {
