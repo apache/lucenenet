@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
                 // then, scorer is a FakeScorer in that case, so any
                 // Collector doing something "interesting" in
                 // setScorer will be forced to use BS2 anyways:
-                collector.Scorer = Scorer;
+                collector.SetScorer(Scorer);
                 if (max == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     ScoreAll(collector, Scorer);

@@ -105,13 +105,11 @@ namespace Lucene.Net.Search
                     comparator = Queue.FirstComparator;
                 }
             }
-
-            public override Scorer Scorer
+            
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    comparator.Scorer = value;
-                }
+                //comparator.SetScorer(scorer);
+                comparator.Scorer = scorer;
             }
         }
 
@@ -224,13 +222,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                    comparator.Scorer = value;
-                }
+                this.Scorer_Renamed = scorer;
+                comparator.Scorer = scorer;
             }
         }
 
@@ -350,13 +345,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                    base.Scorer = value;
-                }
+                this.scorer = scorer;
+                base.SetScorer(scorer);
             }
         }
 
@@ -514,15 +506,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
+                // set the value on all comparators
+                for (int i = 0; i < comparators.Length; i++)
                 {
-                    // set the value on all comparators
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Scorer = value;
-                    }
+                    comparators[i].Scorer = scorer;
                 }
             }
         }
@@ -699,13 +688,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                    base.Scorer = value;
-                }
+                this.Scorer_Renamed = scorer;
+                base.SetScorer(scorer);
             }
         }
 
@@ -884,13 +870,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                    base.Scorer = value;
-                }
+                this.Scorer_Renamed = scorer;
+                base.SetScorer(scorer);
             }
         }
 
@@ -976,13 +959,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                    base.Scorer = value;
-                }
+                this.Scorer_Renamed = scorer;
+                base.SetScorer(scorer);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -1163,15 +1143,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
+                this.Scorer_Renamed = scorer;
+                for (int i = 0; i < comparators.Length; i++)
                 {
-                    this.Scorer_Renamed = value;
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Scorer = value;
-                    }
+                    comparators[i].Scorer = scorer;
                 }
             }
 

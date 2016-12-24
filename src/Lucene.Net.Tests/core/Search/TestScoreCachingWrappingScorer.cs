@@ -108,12 +108,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = new ScoreCachingWrappingScorer(value);
-                }
+                this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -136,7 +133,7 @@ namespace Lucene.Net.Search
             Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
             Scorer s = new SimpleScorer(fake);
             ScoreCachingCollector scc = new ScoreCachingCollector(Scores.Length);
-            scc.Scorer = s;
+            scc.SetScorer(s);
 
             // We need to iterate on the scorer so that its doc() advances.
             int doc;

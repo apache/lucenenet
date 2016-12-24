@@ -294,14 +294,11 @@ namespace Lucene.Net.Search
                     this.OuterInstance = outerInstance;
                     this.Collector = collector;
                 }
-
-                public override Scorer Scorer
+                
+                public override void SetScorer(Scorer scorer)
                 {
-                    set
-                    {
-                        // we must wrap again here, but using the value passed in as parameter:
-                        Collector.Scorer = new ConstantScorer(OuterInstance.OuterInstance, value, OuterInstance.Weight, OuterInstance.TheScore);
-                    }
+                    // we must wrap again here, but using the value passed in as parameter:
+                    Collector.SetScorer(new ConstantScorer(OuterInstance.OuterInstance, scorer, OuterInstance.Weight, OuterInstance.TheScore));
                 }
 
                 public override void Collect(int doc)

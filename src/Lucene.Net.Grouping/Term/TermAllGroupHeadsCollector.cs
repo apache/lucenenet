@@ -207,17 +207,14 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            this.scorer = scorer;
+            foreach (GroupHead groupHead in groups.Values)
             {
-                this.scorer = value;
-                foreach (GroupHead groupHead in groups.Values)
+                foreach (FieldComparator comparator in groupHead.comparators)
                 {
-                    foreach (FieldComparator comparator in groupHead.comparators)
-                    {
-                        comparator.Scorer = value;
-                    }
+                    comparator.Scorer = scorer;
                 }
             }
         }
@@ -300,12 +297,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             get { return collectedGroups; }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                this.scorer = value;
-            }
+            this.scorer = scorer;
         }
 
 
@@ -532,11 +526,8 @@ namespace Lucene.Net.Search.Grouping.Terms
             get { return collectedGroups; }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-            }
         }
 
 
@@ -721,12 +712,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             get { return collectedGroups; }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                this.scorer = value;
-            }
+            this.scorer = scorer;
         }
 
         protected override void RetrieveGroupHeadAndAddIfNotExist(int doc)

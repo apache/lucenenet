@@ -137,11 +137,8 @@ namespace Lucene.Net.Search
 
             internal int @base = 0;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)
@@ -524,12 +521,9 @@ namespace Lucene.Net.Search
                 this.Deep = deep;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                }
+                this.Scorer_Renamed = scorer;
             }
 
             public override void Collect(int doc)

@@ -190,13 +190,10 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
-        public override Scorer Scorer
+        
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                collector.Scorer = value;
-            }
+            collector.SetScorer(scorer);
         }
 
         public override bool AcceptsDocsOutOfOrder()

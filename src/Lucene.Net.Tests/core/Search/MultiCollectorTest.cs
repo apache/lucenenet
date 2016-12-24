@@ -51,12 +51,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    SetScorerCalled = true;
-                }
+                SetScorerCalled = true;
             }
         }
 
@@ -81,7 +78,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(c.AcceptsDocsOutOfOrder());
             c.Collect(1);
             c.NextReader = null;
-            c.Scorer = null;
+            c.SetScorer(null);
         }
 
         [Test]
@@ -105,7 +102,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(c.AcceptsDocsOutOfOrder());
             c.Collect(1);
             c.NextReader = null;
-            c.Scorer = null;
+            c.SetScorer(null);
 
             foreach (DummyCollector dc in dcs)
             {

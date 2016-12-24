@@ -83,17 +83,14 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
+                this.scorer = scorer;
+                Assert.AreEqual(ScorerClassName, scorer.GetType().Name, "Scorer is implemented by wrong class");
+                if (InnerScorerClassName != null && scorer is ConstantScoreQuery.ConstantScorer)
                 {
-                    this.scorer = value;
-                    Assert.AreEqual(ScorerClassName, value.GetType().Name, "Scorer is implemented by wrong class");
-                    if (InnerScorerClassName != null && value is ConstantScoreQuery.ConstantScorer)
-                    {
-                        ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer)value;
-                        Assert.AreEqual(InnerScorerClassName, innerScorer.DocIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
-                    }
+                    ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer)scorer;
+                    Assert.AreEqual(InnerScorerClassName, innerScorer.DocIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
                 }
             }
 

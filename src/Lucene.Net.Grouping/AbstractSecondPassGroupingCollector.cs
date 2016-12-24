@@ -82,14 +82,11 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
             {
-                foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
-                {
-                    group.collector.Scorer = value;
-                }
+                group.collector.SetScorer(scorer);
             }
         }
 

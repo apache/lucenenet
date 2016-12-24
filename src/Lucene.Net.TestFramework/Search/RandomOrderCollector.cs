@@ -53,14 +53,11 @@ namespace Lucene.Net.Search
             Buffered = 0;
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                this.Scorer_Renamed = value;
-                fakeScorer = new FakeScorer();
-                @in.Scorer = fakeScorer;
-            }
+            this.Scorer_Renamed = scorer;
+            fakeScorer = new FakeScorer();
+            @in.SetScorer(fakeScorer);
         }
 
         private void Shuffle()

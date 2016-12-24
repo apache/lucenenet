@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
             {
                 // the normalization trick already applies the boost of this query,
                 // so we can use the wrapped scorer directly:
-                collector.Scorer = Scorer;
+                collector.SetScorer(Scorer);
                 if (Scorer.DocID() == -1)
                 {
                     Scorer.NextDoc();

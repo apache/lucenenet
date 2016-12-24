@@ -98,12 +98,9 @@ namespace Lucene.Net.Index.Sorter
             this.numDocsToCollect = numDocsToCollect;
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                @in.Scorer = value;
-            }
+            @in.SetScorer(scorer);
         }
 
         public override void Collect(int doc)

@@ -77,12 +77,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    // Don't do anything. Assign scores in random
-                }
+                // Don't do anything. Assign scores in random
             }
 
             public override bool AcceptsDocsOutOfOrder()

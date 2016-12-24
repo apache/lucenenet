@@ -49,16 +49,13 @@ namespace Lucene.Net.Search
                 c.NextReader = value;
             }
         }
-
-        public override Scorer Scorer
+        
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call
-                // score() also.
-                this.Scorer_Renamed = new ScoreCachingWrappingScorer(value);
-                c.Scorer = this.Scorer_Renamed;
-            }
+            // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call
+            // score() also.
+            this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
+            c.SetScorer(this.Scorer_Renamed);
         }
 
         public override bool AcceptsDocsOutOfOrder()

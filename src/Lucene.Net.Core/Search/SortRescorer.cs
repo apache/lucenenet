@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
                 {
                     // We advanced to another segment:
                     collector.NextReader = readerContext;
-                    collector.Scorer = fakeScorer;
+                    collector.SetScorer(fakeScorer);
                     docBase = readerContext.DocBase;
                 }
 

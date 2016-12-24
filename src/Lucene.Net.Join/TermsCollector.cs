@@ -44,9 +44,8 @@ namespace Lucene.Net.Join
             }
         }
         
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set {}
         }
 
         public override bool AcceptsDocsOutOfOrder()

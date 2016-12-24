@@ -69,9 +69,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 this.parent = parent;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { this.scorer = value; }
+                this.scorer = scorer;
             }
 
             public override bool AcceptsDocsOutOfOrder()

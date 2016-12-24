@@ -116,11 +116,8 @@ namespace Lucene.Net.Search
             internal int Sum_Renamed = 0;
             protected internal int DocBase = 0;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

@@ -75,11 +75,8 @@ namespace Lucene.Net.Search
                 this.AcceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)
@@ -105,7 +102,7 @@ namespace Lucene.Net.Search
             foreach (bool cacheScores in new bool[] { false, true })
             {
                 CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, 1.0);
-                cc.Scorer = new MockScorer();
+                cc.SetScorer(new MockScorer());
 
                 // collect 1000 docs
                 for (int i = 0; i < 1000; i++)
@@ -130,11 +127,8 @@ namespace Lucene.Net.Search
 
             internal int prevDocID;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override AtomicReaderContext NextReader
@@ -160,7 +154,7 @@ namespace Lucene.Net.Search
         public virtual void TestIllegalStateOnReplay()
         {
             CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
-            cc.Scorer = new MockScorer();
+            cc.SetScorer(new MockScorer());
 
             // collect 130 docs, this should be enough for triggering cache abort.
             for (int i = 0; i < 130; i++)
@@ -189,7 +183,7 @@ namespace Lucene.Net.Search
 
             // 'src' Collector does not support out-of-order
             CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
-            cc.Scorer = new MockScorer();
+            cc.SetScorer(new MockScorer());
             for (int i = 0; i < 10; i++)
             {
                 cc.Collect(i);
@@ -199,7 +193,7 @@ namespace Lucene.Net.Search
 
             // 'src' Collector supports out-of-order
             cc = CachingCollector.Create(new NoOpCollector(true), true, 50 * ONE_BYTE);
-            cc.Scorer = new MockScorer();
+            cc.SetScorer(new MockScorer());
             for (int i = 0; i < 10; i++)
             {
                 cc.Collect(i);
@@ -228,7 +222,7 @@ namespace Lucene.Net.Search
             {
                 int bytesPerDoc = cacheScores ? 8 : 4;
                 CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, bytesPerDoc * ONE_BYTE * numDocs);
-                cc.Scorer = new MockScorer();
+                cc.SetScorer(new MockScorer());
                 for (int i = 0; i < numDocs; i++)
                 {
                     cc.Collect(i);
@@ -249,7 +243,7 @@ namespace Lucene.Net.Search
                 // create w/ null wrapped collector, and test that the methods work
                 CachingCollector cc = CachingCollector.Create(true, cacheScores, 50 * ONE_BYTE);
                 cc.NextReader = null;
-                cc.Scorer = new MockScorer();
+                cc.SetScorer(new MockScorer());
                 cc.Collect(0);
 
                 Assert.IsTrue(cc.Cached);

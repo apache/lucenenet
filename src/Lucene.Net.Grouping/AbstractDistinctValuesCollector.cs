@@ -39,11 +39,8 @@ namespace Lucene.Net.Search.Grouping
             return true;
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-            }
         } 
     }
 

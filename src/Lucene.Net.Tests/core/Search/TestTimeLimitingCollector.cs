@@ -393,12 +393,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    // scorer is not needed
-                }
+                // scorer is not needed
             }
 
             public override void Collect(int doc)

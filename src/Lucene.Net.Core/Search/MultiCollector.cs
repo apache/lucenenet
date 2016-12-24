@@ -130,15 +130,12 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
-        public override Scorer Scorer
+        
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            foreach (Collector c in Collectors)
             {
-                foreach (Collector c in Collectors)
-                {
-                    c.Scorer = value;
-                }
+                c.SetScorer(scorer);
             }
         }
     }

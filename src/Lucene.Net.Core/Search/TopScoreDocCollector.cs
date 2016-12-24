@@ -341,12 +341,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                this.Scorer_Renamed = value;
-            }
+            this.Scorer_Renamed = scorer;
         }
     }
 }

@@ -165,12 +165,9 @@ namespace Lucene.Net.Search.Highlight
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    // Do Nothing
-                }
+                // Do Nothing
             }
         }
 

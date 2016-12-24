@@ -285,9 +285,8 @@ namespace Lucene.Net.Tests.Join
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { }
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -563,9 +562,9 @@ namespace Lucene.Net.Tests.Join
                 }
             }
             
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { TopScoreDocCollector.Scorer = value; }
+                TopScoreDocCollector.SetScorer(scorer);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -810,9 +809,9 @@ namespace Lucene.Net.Tests.Join
                 set { docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, FromField); }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { scorer = value; }
+                this.scorer = scorer;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -872,9 +871,9 @@ namespace Lucene.Net.Tests.Join
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { scorer = value; }
+                this.scorer = scorer;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -941,9 +940,8 @@ namespace Lucene.Net.Tests.Join
                 return false;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { }
             }
         }
 
@@ -996,9 +994,8 @@ namespace Lucene.Net.Tests.Join
                 return false;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set { }
             }
         }
 

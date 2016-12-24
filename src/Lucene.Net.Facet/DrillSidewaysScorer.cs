@@ -73,15 +73,15 @@ namespace Lucene.Net.Facet
             //}
             //System.out.println("score r=" + context.reader());
             FakeScorer scorer = new FakeScorer(this);
-            collector.Scorer = scorer;
+            collector.SetScorer(scorer);
             if (drillDownCollector != null)
             {
-                drillDownCollector.Scorer = scorer;
+                drillDownCollector.SetScorer(scorer);
                 drillDownCollector.NextReader = context;
             }
             foreach (DocsAndCost dim in dims)
             {
-                dim.sidewaysCollector.Scorer = scorer;
+                dim.sidewaysCollector.SetScorer(scorer);
                 dim.sidewaysCollector.NextReader = context;
             }
 

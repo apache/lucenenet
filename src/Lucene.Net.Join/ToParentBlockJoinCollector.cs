@@ -340,24 +340,22 @@ namespace Lucene.Net.Join
             }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            //System.out.println("C.setScorer scorer=" + value);
+            // Since we invoke .score(), and the comparators likely
+            // do as well, cache it so it's only "really" computed
+            // once:
+            scorer = new ScoreCachingWrappingScorer(scorer);
+            for (int compIdx = 0; compIdx < comparators.Length; compIdx++)
             {
-                //System.out.println("C.setScorer scorer=" + value);
-                // Since we invoke .score(), and the comparators likely
-                // do as well, cache it so it's only "really" computed
-                // once:
-                scorer = new ScoreCachingWrappingScorer(value);
-                for (int compIdx = 0; compIdx < comparators.Length; compIdx++)
-                {
-                    comparators[compIdx].Scorer = scorer;
-                }
-                Arrays.Fill(joinScorers, null);
+                comparators[compIdx].Scorer = scorer;
+            }
+            Arrays.Fill(joinScorers, null);
 
-                var queue2 = new ConcurrentQueue<Scorer>();
-                //System.out.println("\nqueue: add top scorer=" + value);
-                queue2.Enqueue(value);
+            var queue2 = new ConcurrentQueue<Scorer>();
+            //System.out.println("\nqueue: add top scorer=" + value);
+            queue2.Enqueue(scorer);
 //                while ((queue.Count > 0 && (queue.Dequeue()) != null))
 //                {
 //                    //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
@@ -373,19 +371,18 @@ namespace Lucene.Net.Join
 //                    }
 //                }
 
-                while (queue2.TryDequeue(out value))
+            while (queue2.TryDequeue(out scorer))
+            {
+                //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
+                if (scorer is ToParentBlockJoinQuery.BlockJoinScorer)
                 {
-                    //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
-                    if (value is ToParentBlockJoinQuery.BlockJoinScorer)
-                    {
-                        Enroll((ToParentBlockJoinQuery)value.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)value);
-                    }
+                    Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)scorer);
+                }
 
-                    foreach (Scorer.ChildScorer sub in value.Children)
-                    {
-                        //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
-                        queue2.Enqueue(sub.Child);
-                    }
+                foreach (Scorer.ChildScorer sub in scorer.Children)
+                {
+                    //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
+                    queue2.Enqueue(sub.Child);
                 }
             }
         }
@@ -498,7 +495,7 @@ namespace Lucene.Net.Join
                     collector = TopFieldCollector.Create(withinGroupSort, numDocsInGroup, fillSortFields, trackScores, trackMaxScore, true);
                 }
 
-                collector.Scorer = fakeScorer;
+                collector.SetScorer(fakeScorer);
                 collector.NextReader = og.readerContext;
                 for (int docIdx = 0; docIdx < numChildDocs; docIdx++)
                 {

@@ -836,7 +836,7 @@ namespace Lucene.Net.Search
                     AtomicReaderContext ctx = Slice.Leaves[0];
                     int @base = ctx.DocBase;
                     Hq.NextReader = ctx;
-                    Hq.Scorer = FakeScorer;
+                    Hq.SetScorer(FakeScorer);
                     foreach (ScoreDoc scoreDoc in docs.ScoreDocs)
                     {
                         FakeScorer.doc = scoreDoc.Doc - @base;

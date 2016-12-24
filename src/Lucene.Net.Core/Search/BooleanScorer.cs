@@ -102,12 +102,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -240,7 +237,7 @@ namespace Lucene.Net.Search
             FakeScorer fs = new FakeScorer();
 
             // The internal loop will set the score and doc before calling collect.
-            collector.Scorer = fs;
+            collector.SetScorer(fs);
             do
             {
                 bucketTable.First = null;

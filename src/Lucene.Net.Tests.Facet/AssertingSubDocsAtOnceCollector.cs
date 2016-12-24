@@ -37,21 +37,18 @@ namespace Lucene.Net.Facet
 
         internal IList<Scorer> allScorers;
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            // Gathers all scorers, including value and "under":
+            allScorers = new List<Scorer>();
+            allScorers.Add(scorer);
+            int upto = 0;
+            while (upto < allScorers.Count)
             {
-                // Gathers all scorers, including value and "under":
-                allScorers = new List<Scorer>();
-                allScorers.Add(value);
-                int upto = 0;
-                while (upto < allScorers.Count)
+                scorer = allScorers[upto++];
+                foreach (ChildScorer sub in scorer.Children)
                 {
-                    value = allScorers[upto++];
-                    foreach (ChildScorer sub in value.Children)
-                    {
-                        allScorers.Add(sub.Child);
-                    }
+                    allScorers.Add(sub.Child);
                 }
             }
         }

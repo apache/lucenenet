@@ -297,12 +297,9 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override void Collect(int doc)

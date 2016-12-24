@@ -235,7 +235,7 @@ namespace Lucene.Net.Join
             public override bool Score(Collector collector, int max)
             {
                 FakeScorer fakeScorer = new FakeScorer();
-                collector.Scorer = fakeScorer;
+                collector.SetScorer(fakeScorer);
                 if (_doc == -1)
                 {
                     _doc = NextDocOutOfOrder();

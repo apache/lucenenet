@@ -149,14 +149,11 @@ namespace Lucene.Net.Search.Grouping
             return result;
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            foreach (FieldComparator comparator in comparators)
             {
-                foreach (FieldComparator comparator in comparators)
-                {
-                    comparator.Scorer = value;
-                }
+                comparator.Scorer = scorer;
             }
         }
 

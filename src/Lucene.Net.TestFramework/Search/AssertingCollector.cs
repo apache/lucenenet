@@ -47,12 +47,9 @@ namespace Lucene.Net.Search
             LastCollected = -1;
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                @in.Scorer = AssertingScorer.GetAssertingScorer(Random, value);
-            }
+            @in.SetScorer(AssertingScorer.GetAssertingScorer(Random, scorer));
         }
 
         public override void Collect(int doc)

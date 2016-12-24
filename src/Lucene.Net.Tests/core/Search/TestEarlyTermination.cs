@@ -88,11 +88,8 @@ namespace Lucene.Net.Search
             internal readonly bool outOfOrder;
             internal bool collectionTerminated;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

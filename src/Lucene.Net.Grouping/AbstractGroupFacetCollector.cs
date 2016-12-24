@@ -111,11 +111,8 @@ namespace Lucene.Net.Search.Grouping
 
         protected abstract AbstractSegmentResult CreateSegmentResult();
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-            }
         }
 
         public override bool AcceptsDocsOutOfOrder()

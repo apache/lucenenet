@@ -407,12 +407,9 @@ namespace Lucene.Net.Index
 
             private Scorer scorer;
 
-            public override sealed Scorer Scorer
+            public override sealed void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override sealed void Collect(int doc)
@@ -435,12 +432,9 @@ namespace Lucene.Net.Index
 
             private Scorer scorer;
 
-            public override sealed Scorer Scorer
+            public override sealed void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override sealed void Collect(int doc)
@@ -463,12 +457,9 @@ namespace Lucene.Net.Index
 
             private Scorer scorer;
 
-            public override sealed Scorer Scorer
+            public override sealed void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override sealed void Collect(int doc)
@@ -492,12 +483,9 @@ namespace Lucene.Net.Index
 
             private Scorer scorer;
 
-            public override sealed Scorer Scorer
+            public override sealed void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override sealed void Collect(int doc)
@@ -538,11 +526,8 @@ namespace Lucene.Net.Index
                 Sum_Renamed = 0;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

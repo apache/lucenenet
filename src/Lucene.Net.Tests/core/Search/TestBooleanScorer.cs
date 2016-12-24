@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 FakeScorer fs = new FakeScorer();
                 fs.doc = doc;
                 fs.score = 1.0f;
-                c.Scorer = fs;
+                c.SetScorer(fs);
                 c.Collect(3000);
                 return false;
             }
@@ -136,11 +136,8 @@ namespace Lucene.Net.Search
 
             internal int docBase;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)
@@ -208,14 +205,11 @@ namespace Lucene.Net.Search
                 this.Count = count;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    // Make sure we got BooleanScorer:
-                    Type clazz = value.GetType();
-                    Assert.AreEqual(typeof(FakeScorer).Name, clazz.Name, "Scorer is implemented by wrong class");
-                }
+                // Make sure we got BooleanScorer:
+                Type clazz = scorer.GetType();
+                Assert.AreEqual(typeof(FakeScorer).Name, clazz.Name, "Scorer is implemented by wrong class");
             }
 
             public override void Collect(int doc)
@@ -305,7 +299,7 @@ namespace Lucene.Net.Search
 
                     public override bool Score(Collector collector, int max)
                     {
-                        collector.Scorer = new FakeScorer();
+                        collector.SetScorer(new FakeScorer());
                         collector.Collect(0);
                         return false;
                     }

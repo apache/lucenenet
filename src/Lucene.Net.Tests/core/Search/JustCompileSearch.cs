@@ -55,12 +55,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -309,12 +306,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override bool AcceptsDocsOutOfOrder()

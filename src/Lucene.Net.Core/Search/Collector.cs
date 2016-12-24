@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="#collect(int)"/>), should save the passed-in Scorer and call
         /// scorer.score() when needed.
         /// </summary>
-        public abstract Scorer Scorer { set; } // LUCENENET TODO: Change to SetScorer(Scorer scorer)
+        public abstract void SetScorer(Scorer scorer);
 
         /// <summary>
         /// Called once for every document matching a query, with the unbased document

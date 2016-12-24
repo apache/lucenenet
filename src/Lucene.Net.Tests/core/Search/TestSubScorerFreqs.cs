@@ -88,14 +88,11 @@ namespace Lucene.Net.Search
                 this.Relationships = relationships;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    Other.Scorer = value;
-                    SubScorers.Clear();
-                    SetSubScorers(value, "TOP");
-                }
+                Other.SetScorer(scorer);
+                SubScorers.Clear();
+                SetSubScorers(scorer, "TOP");
             }
 
             public virtual void SetSubScorers(Scorer scorer, string relationship)

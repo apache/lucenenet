@@ -209,12 +209,9 @@ namespace Lucene.Net.Facet
             totalHits++;
         }
 
-        public override sealed Scorer Scorer
+        public override sealed void SetScorer(Scorer scorer)
         {
-            set
-            {
-                this.scorer = value;
-            }
+            this.scorer = scorer;
         }
 
         public override sealed AtomicReaderContext NextReader

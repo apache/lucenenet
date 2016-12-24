@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
                 foreach (SegStart seg in CachedSegs)
                 {
                     other.NextReader = seg.ReaderContext;
-                    other.Scorer = CachedScorer;
+                    other.SetScorer(CachedScorer);
                     while (curBase + curUpto < seg.End)
                     {
                         if (curUpto == CurDocs.Length)
@@ -224,13 +224,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                    Other.Scorer = CachedScorer;
-                }
+                this.Scorer_Renamed = scorer;
+                Other.SetScorer(CachedScorer);
             }
 
             public override string ToString()
@@ -330,12 +327,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    Other.Scorer = value;
-                }
+                Other.SetScorer(scorer);
             }
 
             public override string ToString()
@@ -396,11 +390,8 @@ namespace Lucene.Net.Search
                 return AcceptDocsOutOfOrder;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

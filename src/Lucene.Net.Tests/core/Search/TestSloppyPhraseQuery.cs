@@ -211,12 +211,9 @@ namespace Lucene.Net.Search
             internal int TotalHits;
             internal Scorer Scorer_Renamed;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.Scorer_Renamed = value;
-                }
+                this.Scorer_Renamed = scorer;
             }
 
             public override void Collect(int doc)
@@ -257,12 +254,9 @@ namespace Lucene.Net.Search
 
             internal Scorer scorer;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override void Collect(int doc)

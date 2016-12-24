@@ -85,17 +85,14 @@ namespace Lucene.Net.Search.Grouping.Function
             get { return groups.Values; }
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            this.scorer = scorer;
+            foreach (GroupHead groupHead in groups.Values)
             {
-                this.scorer = value;
-                foreach (GroupHead groupHead in groups.Values)
+                foreach (FieldComparator comparator in groupHead.comparators)
                 {
-                    foreach (FieldComparator comparator in groupHead.comparators)
-                    {
-                        comparator.Scorer = value;
-                    }
+                    comparator.Scorer = scorer;
                 }
             }
         }

@@ -843,11 +843,8 @@ namespace Lucene.Net.Facet
 
             internal int lastDocID;
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

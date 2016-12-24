@@ -576,12 +576,9 @@ namespace Lucene.Net.Index.Memory
                 scores[0] = scorer.Score();
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
-                {
-                    this.scorer = value;
-                }
+                this.scorer = scorer;
             }
 
             public override bool AcceptsDocsOutOfOrder()

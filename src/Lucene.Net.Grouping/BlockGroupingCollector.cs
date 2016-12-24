@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Grouping
                     collector = TopFieldCollector.Create(withinGroupSort, maxDocsPerGroup, fillSortFields, needsScores, needsScores, true);
                 }
 
-                collector.Scorer = fakeScorer;
+                collector.SetScorer(fakeScorer);
                 collector.NextReader = og.readerContext;
                 for (int docIDX = 0; docIDX < og.count; docIDX++)
                 {
@@ -486,15 +486,12 @@ namespace Lucene.Net.Search.Grouping
                                  totalGroupCount);
         }
 
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
+            this.scorer = scorer;
+            foreach (FieldComparator comparator in comparators)
             {
-                this.scorer = value;
-                foreach (FieldComparator comparator in comparators)
-                {
-                    comparator.Scorer = value;
-                }
+                comparator.Scorer = scorer;
             }
         }
 
