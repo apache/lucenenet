@@ -131,9 +131,9 @@ namespace Lucene.Net.Join
                 get { return JoinQuery; }
             }
             
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get { return ChildWeight.ValueForNormalization*JoinQuery.Boost*JoinQuery.Boost; }
+                return ChildWeight.GetValueForNormalization() * JoinQuery.Boost*JoinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

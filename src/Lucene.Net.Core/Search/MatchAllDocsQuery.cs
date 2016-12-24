@@ -117,13 +117,10 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    QueryWeight = OuterInstance.Boost;
-                    return QueryWeight * QueryWeight;
-                }
+                QueryWeight = OuterInstance.Boost;
+                return QueryWeight * QueryWeight;
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

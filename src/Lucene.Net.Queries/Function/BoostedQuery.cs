@@ -104,14 +104,11 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    float sum = qWeight.ValueForNormalization;
-                    sum *= outerInstance.Boost * outerInstance.Boost;
-                    return sum;
-                }
+                float sum = qWeight.GetValueForNormalization();
+                sum *= outerInstance.Boost * outerInstance.Boost;
+                return sum;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

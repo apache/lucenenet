@@ -340,12 +340,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)

@@ -155,13 +155,10 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// The square of the raw normalization value. </summary>
         /// <seealso cref= #rawNormalizationValue()  </seealso>
-        public override float ValueForNormalization
+        public override float GetValueForNormalization()
         {
-            get
-            {
-                float rawValue = RawNormalizationValue();
-                return rawValue * rawValue;
-            }
+            float rawValue = RawNormalizationValue();
+            return rawValue * rawValue;
         }
 
         /// <summary>

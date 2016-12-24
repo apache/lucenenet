@@ -150,9 +150,9 @@ namespace Lucene.Net.Join
                 get { return outerInstance; }
             }
             
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get { return originalWeight.ValueForNormalization*outerInstance.Boost*outerInstance.Boost; }
+                return originalWeight.GetValueForNormalization() * outerInstance.Boost*outerInstance.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

@@ -751,13 +751,10 @@ namespace Lucene.Net.Search.Similarities
                 this.QueryWeight = idf.Value * queryBoost; // compute query weight
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    // TODO: (sorta LUCENE-1907) make non-static class and expose this squaring via a nice method to subclasses?
-                    return QueryWeight * QueryWeight; // sum of squared weights
-                }
+                // TODO: (sorta LUCENE-1907) make non-static class and expose this squaring via a nice method to subclasses?
+                return QueryWeight * QueryWeight; // sum of squared weights
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

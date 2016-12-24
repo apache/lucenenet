@@ -102,12 +102,9 @@ namespace Lucene.Net.Search
                 return true;
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    return Weight.ValueForNormalization * OuterInstance.Boost * OuterInstance.Boost; // boost sub-weight
-                }
+                return Weight.GetValueForNormalization() * OuterInstance.Boost * OuterInstance.Boost; // boost sub-weight
             }
 
             public override void Normalize(float norm, float topLevelBoost)

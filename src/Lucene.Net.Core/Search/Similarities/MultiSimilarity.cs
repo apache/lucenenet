@@ -116,17 +116,14 @@ namespace Lucene.Net.Search.Similarities
                 this.subStats = subStats;
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
+                float sum = 0.0f;
+                foreach (SimWeight stat in subStats)
                 {
-                    float sum = 0.0f;
-                    foreach (SimWeight stat in subStats)
-                    {
-                        sum += stat.ValueForNormalization;
-                    }
-                    return sum / subStats.Length;
+                    sum += stat.GetValueForNormalization();
                 }
+                return sum / subStats.Length;
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

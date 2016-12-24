@@ -69,12 +69,9 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override float ValueForNormalization
+        public override float GetValueForNormalization()
         {
-            get
-            {
-                return Stats == null ? 1.0f : Stats.ValueForNormalization;
-            }
+            return Stats == null ? 1.0f : Stats.GetValueForNormalization();
         }
 
         public override void Normalize(float queryNorm, float topLevelBoost)

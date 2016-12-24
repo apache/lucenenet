@@ -216,25 +216,22 @@ namespace Lucene.Net.Queries
                 get { return outerInstance; }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
+                float sum = subQueryWeight.GetValueForNormalization();
+                foreach (Weight valSrcWeight in valSrcWeights)
                 {
-                    float sum = subQueryWeight.ValueForNormalization;
-                    foreach (Weight valSrcWeight in valSrcWeights)
+                    if (qStrict)
                     {
-                        if (qStrict)
-                        {
-                            var _ = valSrcWeight.ValueForNormalization;
-                            // do not include ValueSource part in the query normalization
-                        }
-                        else
-                        {
-                            sum += valSrcWeight.ValueForNormalization;
-                        }
+                        var _ = valSrcWeight.GetValueForNormalization();
+                        // do not include ValueSource part in the query normalization
                     }
-                    return sum;
+                    else
+                    {
+                        sum += valSrcWeight.GetValueForNormalization();
+                    }
                 }
+                return sum;
             }
 
             /*(non-Javadoc) @see org.apache.lucene.search.Weight#normalize(float) */

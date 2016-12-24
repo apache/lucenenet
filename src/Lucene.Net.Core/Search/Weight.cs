@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The value for normalization of contained query clauses (e.g. sum of squared weights). </summary>
-        public abstract float ValueForNormalization { get; } // LUCENENET TODO: Change to GetValueForNormalization() (calculation)
+        public abstract float GetValueForNormalization();
 
         /// <summary>
         /// Assigns the query normalization factor and boost from parent queries to this. </summary>

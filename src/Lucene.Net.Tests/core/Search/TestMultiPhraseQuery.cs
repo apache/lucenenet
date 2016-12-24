@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
             query.Add(new Term[] { new Term("body", "this"), new Term("body", "that") });
             query.Add(new Term("body", "is"));
             Weight weight = query.CreateWeight(searcher);
-            Assert.AreEqual(10f * 10f, weight.ValueForNormalization, 0.001f);
+            Assert.AreEqual(10f * 10f, weight.GetValueForNormalization(), 0.001f);
 
             writer.Dispose();
             reader.Dispose();

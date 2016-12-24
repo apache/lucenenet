@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
                         Debug.Assert(success); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
-                        var dummy = w.ValueForNormalization; // ignored
+                        var dummy = w.GetValueForNormalization(); // ignored
                         w.Normalize(1F, 1F);
                         Sims[(int)ord] = weight.Similarity.DoSimScorer(w, (AtomicReaderContext)reader.Context);
                     }

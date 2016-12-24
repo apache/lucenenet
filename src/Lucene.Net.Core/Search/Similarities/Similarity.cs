@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Similarities
             /// its not required. However, if it wants to participate in query normalization,
             /// it can return a value here.
             /// </summary>
-            public abstract float ValueForNormalization { get; } // LUCENENET TODO: Change to GetValueForNormalization() (calculation)
+            public abstract float GetValueForNormalization();
 
             /// <summary>
             /// Assigns the query normalization factor and boost from parent queries to this.

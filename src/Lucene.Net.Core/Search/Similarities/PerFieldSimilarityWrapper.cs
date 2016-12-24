@@ -67,12 +67,9 @@ namespace Lucene.Net.Search.Similarities
             internal Similarity @delegate;
             internal SimWeight delegateWeight;
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    return delegateWeight.ValueForNormalization;
-                }
+                return delegateWeight.GetValueForNormalization();
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

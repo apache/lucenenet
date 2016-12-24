@@ -260,12 +260,9 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                public override float ValueForNormalization
+                public override float GetValueForNormalization()
                 {
-                    get
-                    {
-                        return 1.0f;
-                    }
+                    return 1.0f;
                 }
 
                 public override void Normalize(float norm, float topLevelBoost)

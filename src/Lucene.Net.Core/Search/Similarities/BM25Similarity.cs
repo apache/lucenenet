@@ -323,14 +323,11 @@ namespace Lucene.Net.Search.Similarities
                 this.Cache = cache;
             }
 
-            public override float ValueForNormalization // LUCENENET TODO: Rename GetValueForNormalization() (conversion)
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
-                    float queryWeight = Idf.Value * QueryBoost;
-                    return queryWeight * queryWeight;
-                }
+                // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
+                float queryWeight = Idf.Value * QueryBoost;
+                return queryWeight * queryWeight;
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

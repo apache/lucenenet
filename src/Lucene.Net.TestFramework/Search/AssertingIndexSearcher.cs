@@ -83,12 +83,9 @@ namespace Lucene.Net.Search
                 throw new InvalidOperationException("Weight already normalized.");
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    throw new InvalidOperationException("Weight already normalized.");
-                }
+                throw new InvalidOperationException("Weight already normalized.");
             }
         }
 

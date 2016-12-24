@@ -151,18 +151,15 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
+                // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
+                /*if (InnerWeight != null)
                 {
-                    // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
-                    /*if (InnerWeight != null)
-                    {
-                        InnerWeight.ValueForNormalization;
-                    }*/
-                    QueryWeight = OuterInstance.Boost;
-                    return QueryWeight * QueryWeight;
-                }
+                    InnerWeight.ValueForNormalization;
+                }*/
+                QueryWeight = OuterInstance.Boost;
+                return QueryWeight * QueryWeight;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

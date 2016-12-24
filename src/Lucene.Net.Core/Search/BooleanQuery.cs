@@ -253,26 +253,23 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
+                float sum = 0.0f;
+                for (int i = 0; i < m_weights.Count; i++)
                 {
-                    float sum = 0.0f;
-                    for (int i = 0; i < m_weights.Count; i++)
+                    // call sumOfSquaredWeights for all clauses in case of side effects
+                    float s = m_weights[i].GetValueForNormalization(); // sum sub weights
+                    if (!OuterInstance.clauses[i].IsProhibited)
                     {
-                        // call sumOfSquaredWeights for all clauses in case of side effects
-                        float s = m_weights[i].ValueForNormalization; // sum sub weights
-                        if (!OuterInstance.clauses[i].IsProhibited)
-                        {
-                            // only add to sum for non-prohibited clauses
-                            sum += s;
-                        }
+                        // only add to sum for non-prohibited clauses
+                        sum += s;
                     }
-
-                    sum *= OuterInstance.Boost * OuterInstance.Boost; // boost each sub-weight
-
-                    return sum;
                 }
+
+                sum *= OuterInstance.Boost * OuterInstance.Boost; // boost each sub-weight
+
+                return sum;
             }
 
             public virtual float Coord(int overlap, int maxOverlap)

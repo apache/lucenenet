@@ -722,7 +722,7 @@ namespace Lucene.Net.Search
         {
             query = Rewrite(query);
             Weight weight = query.CreateWeight(this);
-            float v = weight.ValueForNormalization;
+            float v = weight.GetValueForNormalization();
             float norm = Similarity.QueryNorm(v);
             if (float.IsInfinity(norm) || float.IsNaN(norm))
             {

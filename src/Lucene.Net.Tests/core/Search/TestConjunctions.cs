@@ -116,12 +116,9 @@ namespace Lucene.Net.Search
                     this.OuterInstance = outerInstance;
                 }
 
-                public override float ValueForNormalization
+                public override float GetValueForNormalization()
                 {
-                    get
-                    {
-                        return 1; // we don't care
-                    }
+                    return 1; // we don't care
                 }
 
                 public override void Normalize(float queryNorm, float topLevelBoost)

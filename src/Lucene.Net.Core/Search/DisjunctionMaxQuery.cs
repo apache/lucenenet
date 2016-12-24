@@ -157,20 +157,17 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
+                float max = 0.0f, sum = 0.0f;
+                foreach (Weight currentWeight in Weights)
                 {
-                    float max = 0.0f, sum = 0.0f;
-                    foreach (Weight currentWeight in Weights)
-                    {
-                        float sub = currentWeight.ValueForNormalization;
-                        sum += sub;
-                        max = Math.Max(max, sub);
-                    }
-                    float boost = OuterInstance.Boost;
-                    return (((sum - max) * OuterInstance.tieBreakerMultiplier * OuterInstance.tieBreakerMultiplier) + max) * boost * boost;
+                    float sub = currentWeight.GetValueForNormalization();
+                    sum += sub;
+                    max = Math.Max(max, sub);
                 }
+                float boost = OuterInstance.Boost;
+                return (((sum - max) * OuterInstance.tieBreakerMultiplier * OuterInstance.tieBreakerMultiplier) + max) * boost * boost;
             }
 
             /// <summary>

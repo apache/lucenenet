@@ -85,13 +85,10 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    queryWeight = outerInstance.Boost;
-                    return queryWeight * queryWeight;
-                }
+                queryWeight = outerInstance.Boost;
+                return queryWeight * queryWeight;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

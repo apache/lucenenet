@@ -133,12 +133,9 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            public override float ValueForNormalization
+            public override float GetValueForNormalization()
             {
-                get
-                {
-                    return baseWeight.ValueForNormalization;
-                }
+                return baseWeight.GetValueForNormalization();
             }
 
             public override void Normalize(float norm, float topLevelBoost)
