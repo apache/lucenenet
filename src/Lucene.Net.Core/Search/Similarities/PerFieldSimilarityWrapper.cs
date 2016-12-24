@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Similarities
         public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
             PerFieldSimWeight weight = new PerFieldSimWeight();
-            weight.@delegate = Get(collectionStats.Field());
+            weight.@delegate = Get(collectionStats.Field);
             weight.delegateWeight = weight.@delegate.ComputeWeight(queryBoost, collectionStats, termStats);
             return weight;
         }

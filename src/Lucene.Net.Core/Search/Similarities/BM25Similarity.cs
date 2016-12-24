@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         protected internal virtual float AvgFieldLength(CollectionStatistics collectionStats)
         {
-            long sumTotalTermFreq = collectionStats.SumTotalTermFreq();
+            long sumTotalTermFreq = collectionStats.SumTotalTermFreq;
             if (sumTotalTermFreq <= 0)
             {
                 return 1f; // field does not exist, or stat is unsupported
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 cache[i] = K1_Renamed * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
             }
-            return new BM25Stats(collectionStats.Field(), idf, queryBoost, avgdl, cache);
+            return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
 
         public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)

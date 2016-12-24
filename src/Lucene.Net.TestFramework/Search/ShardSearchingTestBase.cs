@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
                         // we better not have a cache miss:
                         Debug.Assert(nodeStats != null, "myNodeID=" + MyNodeID + " nodeID=" + nodeID + " version=" + NodeVersions[nodeID] + " field=" + field);
 
-                        long nodeDocCount = nodeStats.DocCount();
+                        long nodeDocCount = nodeStats.DocCount;
                         if (docCount >= 0 && nodeDocCount >= 0)
                         {
                             docCount += nodeDocCount;
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
                             docCount = -1;
                         }
 
-                        long nodeSumTotalTermFreq = nodeStats.SumTotalTermFreq();
+                        long nodeSumTotalTermFreq = nodeStats.SumTotalTermFreq;
                         if (sumTotalTermFreq >= 0 && nodeSumTotalTermFreq >= 0)
                         {
                             sumTotalTermFreq += nodeSumTotalTermFreq;
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search
                             sumTotalTermFreq = -1;
                         }
 
-                        long nodeSumDocFreq = nodeStats.SumDocFreq();
+                        long nodeSumDocFreq = nodeStats.SumDocFreq;
                         if (sumDocFreq >= 0 && nodeSumDocFreq >= 0)
                         {
                             sumDocFreq += nodeSumDocFreq;

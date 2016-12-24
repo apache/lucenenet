@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Similarities
             BasicStats[] stats = new BasicStats[termStats.Length];
             for (int i = 0; i < termStats.Length; i++)
             {
-                stats[i] = NewStats(collectionStats.Field(), queryBoost);
+                stats[i] = NewStats(collectionStats.Field, queryBoost);
                 FillBasicStats(stats[i], collectionStats, termStats[i]);
             }
             return stats.Length == 1 ? stats[0] : new MultiSimilarity.MultiStats(stats) as SimWeight;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Similarities
         protected internal virtual void FillBasicStats(BasicStats stats, CollectionStatistics collectionStats, TermStatistics termStats)
         {
             // #positions(field) must be >= #positions(term)
-            Debug.Assert(collectionStats.SumTotalTermFreq() == -1 || collectionStats.SumTotalTermFreq() >= termStats.TotalTermFreq());
+            Debug.Assert(collectionStats.SumTotalTermFreq == -1 || collectionStats.SumTotalTermFreq >= termStats.TotalTermFreq());
             long numberOfDocuments = collectionStats.MaxDoc;
 
             long docFreq = termStats.DocFreq();
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Similarities
             long numberOfFieldTokens;
             float avgFieldLength;
 
-            long sumTotalTermFreq = collectionStats.SumTotalTermFreq();
+            long sumTotalTermFreq = collectionStats.SumTotalTermFreq;
 
             if (sumTotalTermFreq <= 0)
             {

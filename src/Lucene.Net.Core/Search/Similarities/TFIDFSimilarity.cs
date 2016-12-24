@@ -677,7 +677,7 @@ namespace Lucene.Net.Search.Similarities
         public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
             Explanation idf = termStats.Length == 1 ? IdfExplain(collectionStats, termStats[0]) : IdfExplain(collectionStats, termStats);
-            return new IDFStats(collectionStats.Field(), idf, queryBoost);
+            return new IDFStats(collectionStats.Field, idf, queryBoost);
         }
 
         public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)

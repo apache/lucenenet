@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CollectionStatistics
     {
-        private readonly string Field_Renamed; // LUCENENET TODO: rename (private)
-        private readonly long MaxDoc_Renamed; // LUCENENET TODO: rename (private)
-        private readonly long DocCount_Renamed; // LUCENENET TODO: rename (private)
-        private readonly long SumTotalTermFreq_Renamed; // LUCENENET TODO: rename (private)
-        private readonly long SumDocFreq_Renamed; // LUCENENET TODO: rename (private)
+        private readonly string field;
+        private readonly long maxDoc;
+        private readonly long docCount;
+        private readonly long sumTotalTermFreq;
+        private readonly long sumDocFreq;
 
         public CollectionStatistics(string field, long maxDoc, long docCount, long sumTotalTermFreq, long sumDocFreq)
         {
@@ -37,18 +37,18 @@ namespace Lucene.Net.Search
             Debug.Assert(docCount >= -1 && docCount <= maxDoc); // #docs with field must be <= #docs
             Debug.Assert(sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
             Debug.Assert(sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
-            this.Field_Renamed = field;
-            this.MaxDoc_Renamed = maxDoc;
-            this.DocCount_Renamed = docCount;
-            this.SumTotalTermFreq_Renamed = sumTotalTermFreq;
-            this.SumDocFreq_Renamed = sumDocFreq;
+            this.field = field;
+            this.maxDoc = maxDoc;
+            this.docCount = docCount;
+            this.sumTotalTermFreq = sumTotalTermFreq;
+            this.sumDocFreq = sumDocFreq;
         }
 
         /// <summary>
         /// returns the field name </summary>
-        public string Field() // LUCENENET TODO: make property
+        public string Field
         {
-            return Field_Renamed;
+            get { return field; }
         }
 
         /// <summary>
@@ -57,32 +57,32 @@ namespace Lucene.Net.Search
         /// <seealso cref= IndexReader#maxDoc()  </seealso>
         public long MaxDoc
         {
-            get { return MaxDoc_Renamed; }
+            get { return maxDoc; }
         }
 
         /// <summary>
         /// returns the total number of documents that
         /// have at least one term for this field. </summary>
         /// <seealso cref= Terms#getDocCount()  </seealso>
-        public long DocCount() // LUCENENET TODO: make property
+        public long DocCount
         {
-            return DocCount_Renamed;
+            get { return docCount; }
         }
 
         /// <summary>
         /// returns the total number of tokens for this field </summary>
         /// <seealso cref= Terms#getSumTotalTermFreq()  </seealso>
-        public long SumTotalTermFreq() // LUCENENET TODO: make property
+        public long SumTotalTermFreq
         {
-            return SumTotalTermFreq_Renamed;
+            get { return sumTotalTermFreq; }
         }
 
         /// <summary>
         /// returns the total number of postings for this field </summary>
         /// <seealso cref= Terms#getSumDocFreq()  </seealso>
-        public long SumDocFreq() // LUCENENET TODO: make property
+        public long SumDocFreq
         {
-            return SumDocFreq_Renamed;
+            get { return sumDocFreq; }
         }
     }
 }
