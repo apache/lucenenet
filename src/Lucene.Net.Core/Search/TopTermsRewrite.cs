@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             PriorityQueue<ScoreTerm> stQueue = new ScoreTermPQ(); // LUCENENET TODO: Change to Support.PriorityQueue<T> (like the original)
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
-            var q = TopLevelQuery;
+            var q = GetTopLevelQuery();
             ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.size()]*/);
             ArrayUtil.TimSort(scoreTerms, scoreTermSortByTermComp);
 

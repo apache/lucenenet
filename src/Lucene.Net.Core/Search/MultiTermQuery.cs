@@ -170,12 +170,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected override BooleanQuery TopLevelQuery
+            protected override BooleanQuery GetTopLevelQuery()
             {
-                get
-                {
-                    return new BooleanQuery(true);
-                }
+                return new BooleanQuery(true);
             }
 
             protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
@@ -217,12 +214,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected override BooleanQuery TopLevelQuery
+            protected override BooleanQuery GetTopLevelQuery()
             {
-                get
-                {
-                    return new BooleanQuery(true);
-                }
+                return new BooleanQuery(true);
             }
 
             protected override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states)

@@ -84,12 +84,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override BooleanQuery TopLevelQuery
+        protected override BooleanQuery GetTopLevelQuery()
         {
-            get
-            {
-                return new BooleanQuery(true);
-            }
+            return new BooleanQuery(true);
         }
 
         protected override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states) //ignored
@@ -115,7 +112,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                BooleanQuery bq = TopLevelQuery;
+                BooleanQuery bq = GetTopLevelQuery();
                 if (size > 0)
                 {
                     BytesRefHash pendingTerms = col.PendingTerms;

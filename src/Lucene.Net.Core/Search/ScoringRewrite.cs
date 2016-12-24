@@ -62,12 +62,9 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override BooleanQuery TopLevelQuery
+            protected override BooleanQuery GetTopLevelQuery()
             {
-                get
-                {
-                    return new BooleanQuery(true);
-                }
+                return new BooleanQuery(true);
             }
 
             protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
@@ -123,7 +120,7 @@ namespace Lucene.Net.Search
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
-            var result = TopLevelQuery;
+            var result = GetTopLevelQuery();
             ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);
 

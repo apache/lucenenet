@@ -193,12 +193,9 @@ namespace Lucene.Net.Search.Spans
                 {
                 }
 
-                protected override SpanOrQuery TopLevelQuery
+                protected override SpanOrQuery GetTopLevelQuery()
                 {
-                    get
-                    {
-                        return new SpanOrQuery();
-                    }
+                    return new SpanOrQuery();
                 }
 
                 protected override void CheckMaxClauseCount(int count)
@@ -264,12 +261,9 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
 
-                protected override SpanOrQuery TopLevelQuery
+                protected override SpanOrQuery GetTopLevelQuery()
                 {
-                    get
-                    {
-                        return new SpanOrQuery();
-                    }
+                    return new SpanOrQuery();
                 }
 
                 protected override void AddClause(SpanOrQuery topLevel, Term term, int docFreq, float boost, TermContext states)
