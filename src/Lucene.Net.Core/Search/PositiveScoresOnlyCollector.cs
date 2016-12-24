@@ -55,9 +55,9 @@ namespace Lucene.Net.Search
             c.SetScorer(this.Scorer_Renamed);
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return c.AcceptsDocsOutOfOrder();
+            get { return c.AcceptsDocsOutOfOrder; }
         }
     }
 }

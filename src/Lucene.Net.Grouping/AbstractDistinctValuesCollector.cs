@@ -34,9 +34,9 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>all unique values for each top N group</returns>
         public abstract IEnumerable<GC> Groups { get; }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return true;
+            get { return true; }
         }
 
         public override void SetScorer(Scorer scorer)

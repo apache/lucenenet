@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 
         internal RandomOrderCollector(Random random, Collector @in)
         {
-            if (!@in.AcceptsDocsOutOfOrder())
+            if (!@in.AcceptsDocsOutOfOrder)
             {
                 throw new System.ArgumentException();
             }
@@ -111,9 +111,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return @in.AcceptsDocsOutOfOrder();
+            get { return @in.AcceptsDocsOutOfOrder; }
         }
 
         public override void SetNextReader(AtomicReaderContext context)

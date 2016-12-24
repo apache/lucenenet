@@ -104,9 +104,9 @@ namespace Lucene.Net.Search
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 

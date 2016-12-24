@@ -32,10 +32,13 @@ namespace Lucene.Net.Search
             internal bool SetNextReaderCalled = false;
             internal bool SetScorerCalled = false;
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                AcceptsDocsOutOfOrderCalled = true;
-                return true;
+                get
+                {
+                    AcceptsDocsOutOfOrderCalled = true;
+                    return true;
+                }
             }
 
             public override void Collect(int doc)
@@ -72,7 +75,7 @@ namespace Lucene.Net.Search
             // doesn't, an NPE would be thrown.
             Collector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
             Assert.IsTrue(c is MultiCollector);
-            Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+            Assert.IsTrue(c.AcceptsDocsOutOfOrder);
             c.Collect(1);
             c.SetNextReader(null);
             c.SetScorer(null);
@@ -96,7 +99,7 @@ namespace Lucene.Net.Search
             // doesn't, an NPE would be thrown.
             DummyCollector[] dcs = new DummyCollector[] { new DummyCollector(), new DummyCollector() };
             Collector c = MultiCollector.Wrap(dcs);
-            Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+            Assert.IsTrue(c.AcceptsDocsOutOfOrder);
             c.Collect(1);
             c.SetNextReader(null);
             c.SetScorer(null);

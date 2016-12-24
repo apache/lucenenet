@@ -557,9 +557,9 @@ namespace Lucene.Net.Index
                 DocBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 

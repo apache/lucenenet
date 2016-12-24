@@ -185,12 +185,15 @@ namespace Lucene.Net.Facet
             return matchingDocs;
         }
 
-        public override sealed bool AcceptsDocsOutOfOrder()
+        public override sealed bool AcceptsDocsOutOfOrder
         {
-            // If we are keeping scores then we require in-order
-            // because we append each score to the float[] and
-            // expect that they correlate in order to the hits:
-            return keepScores == false;
+            get
+            {
+                // If we are keeping scores then we require in-order
+                // because we append each score to the float[] and
+                // expect that they correlate in order to the hits:
+                return keepScores == false;
+            }
         }
 
         public override sealed void Collect(int doc)

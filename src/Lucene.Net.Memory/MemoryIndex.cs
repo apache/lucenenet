@@ -581,9 +581,9 @@ namespace Lucene.Net.Index.Memory
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
             public override void SetNextReader(AtomicReaderContext context)

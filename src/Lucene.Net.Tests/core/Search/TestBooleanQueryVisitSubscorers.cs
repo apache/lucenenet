@@ -145,9 +145,9 @@ namespace Lucene.Net.Search
                 Collector = TopScoreDocCollector.Create(10, true);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
             public override void Collect(int doc)

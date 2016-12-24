@@ -65,9 +65,9 @@ namespace Lucene.Net.Search
                 PqTop = Pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 
@@ -116,9 +116,9 @@ namespace Lucene.Net.Search
                 PqTop = Pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
             public override void SetNextReader(AtomicReaderContext context)
@@ -170,9 +170,9 @@ namespace Lucene.Net.Search
                 PqTop = Pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 
@@ -222,9 +222,9 @@ namespace Lucene.Net.Search
                 PqTop = Pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
             public override void SetNextReader(AtomicReaderContext context)

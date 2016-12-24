@@ -385,9 +385,9 @@ namespace Lucene.Net.Search
                 this.AcceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return AcceptDocsOutOfOrder;
+                get { return AcceptDocsOutOfOrder; }
             }
 
             public override void SetScorer(Scorer scorer)
@@ -466,9 +466,9 @@ namespace Lucene.Net.Search
             this.MaxDocsToCache = maxDocsToCache;
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return Other.AcceptsDocsOutOfOrder();
+            get { return Other.AcceptsDocsOutOfOrder; }
         }
 
         // LUCENENET TODO: Rename to IsCached
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search
                 throw new InvalidOperationException("cannot replay: cache was cleared because too much RAM was required");
             }
 
-            if (!other.AcceptsDocsOutOfOrder() && this.Other.AcceptsDocsOutOfOrder())
+            if (!other.AcceptsDocsOutOfOrder && this.Other.AcceptsDocsOutOfOrder)
             {
                 throw new System.ArgumentException("cannot replay: given collector does not support " + "out-of-order collection, while the wrapped collector does. " + "Therefore cached documents may be out-of-order.");
             }

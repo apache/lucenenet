@@ -61,9 +61,9 @@ namespace Lucene.Net.Join
             _scorer = scorer;
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return true;
+            get { return true; }
         }
 
         /// <summary>
@@ -148,9 +148,9 @@ namespace Lucene.Net.Join
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return base.AcceptsDocsOutOfOrder();
+                get { return base.AcceptsDocsOutOfOrder; }
             }
 
             internal class Avg : Sv

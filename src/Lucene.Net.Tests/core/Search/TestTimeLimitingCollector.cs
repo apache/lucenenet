@@ -429,9 +429,9 @@ namespace Lucene.Net.Search
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
         }

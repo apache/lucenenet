@@ -120,9 +120,9 @@ namespace Lucene.Net.Index.Sorter
             numCollected = 0;
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return !segmentSorted && @in.AcceptsDocsOutOfOrder();
+            get { return !segmentSorted && @in.AcceptsDocsOutOfOrder; }
         }
     }
 }

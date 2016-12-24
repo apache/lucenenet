@@ -858,9 +858,9 @@ namespace Lucene.Net.Facet
                 lastDocID = -1;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 

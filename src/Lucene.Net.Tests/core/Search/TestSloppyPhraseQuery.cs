@@ -226,9 +226,9 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 
@@ -267,9 +267,9 @@ namespace Lucene.Net.Search
                 // do nothing
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 

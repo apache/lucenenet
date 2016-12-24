@@ -193,9 +193,9 @@ namespace Lucene.Net.Search
             collector.SetScorer(scorer);
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return collector.AcceptsDocsOutOfOrder();
+            get { return collector.AcceptsDocsOutOfOrder; }
         }
 
         /// <summary>

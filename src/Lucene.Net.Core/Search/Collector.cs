@@ -170,6 +170,6 @@ namespace Lucene.Net.Search
         /// order, so it's important to return <code>true</code>
         /// here.
         /// </summary>
-        public abstract bool AcceptsDocsOutOfOrder(); // LUCENENET TODO: Change this to a property getter
+        public abstract bool AcceptsDocsOutOfOrder { get; }
     }
 }

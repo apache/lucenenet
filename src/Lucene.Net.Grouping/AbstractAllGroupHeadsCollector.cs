@@ -141,9 +141,9 @@ namespace Lucene.Net.Search.Grouping
             groupHead.UpdateDocHead(doc);
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return false;
+            get { return false; }
         }
 
         /// <summary>

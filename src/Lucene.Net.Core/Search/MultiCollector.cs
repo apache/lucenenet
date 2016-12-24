@@ -100,16 +100,19 @@ namespace Lucene.Net.Search
             this.Collectors = collectors;
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            foreach (Collector c in Collectors)
+            get
             {
-                if (!c.AcceptsDocsOutOfOrder())
+                foreach (Collector c in Collectors)
                 {
-                    return false;
+                    if (!c.AcceptsDocsOutOfOrder)
+                    {
+                        return false;
+                    }
                 }
+                return true;
             }
-            return true;
         }
 
         public override void Collect(int doc)

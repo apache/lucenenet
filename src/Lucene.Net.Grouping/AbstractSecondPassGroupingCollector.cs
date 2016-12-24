@@ -118,9 +118,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return false;
+            get { return false; }
         }
 
         public virtual ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)

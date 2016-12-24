@@ -197,10 +197,10 @@ namespace Lucene.Net.Search
         TopDocs TopDocs(int start);
         TopDocs TopDocs(int start, int howMany);
 
-        // From Collector
+        // From Collector // LUCENENET TODO: When Collector is made into/backed by an interface, this one should inherit it
         void SetScorer(Scorer scorer);
         void Collect(int doc);
         void SetNextReader(AtomicReaderContext context);
-        bool AcceptsDocsOutOfOrder();
+        bool AcceptsDocsOutOfOrder { get; }
     }
 }

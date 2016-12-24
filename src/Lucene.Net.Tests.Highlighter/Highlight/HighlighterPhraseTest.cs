@@ -147,9 +147,9 @@ namespace Lucene.Net.Search.Highlight
 
             private int baseDoc;
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
             public override void Collect(int i)

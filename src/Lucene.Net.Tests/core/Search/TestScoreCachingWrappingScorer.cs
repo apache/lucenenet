@@ -110,9 +110,9 @@ namespace Lucene.Net.Search
                 this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 

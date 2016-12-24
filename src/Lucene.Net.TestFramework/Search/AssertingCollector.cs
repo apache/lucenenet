@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 
         public override void Collect(int doc)
         {
-            if (InOrder || !AcceptsDocsOutOfOrder())
+            if (InOrder || !AcceptsDocsOutOfOrder)
             {
                 Debug.Assert(doc > LastCollected, "Out of order : " + LastCollected + " " + doc);
             }
@@ -67,9 +67,9 @@ namespace Lucene.Net.Search
             LastCollected = -1;
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return @in.AcceptsDocsOutOfOrder();
+            get { return @in.AcceptsDocsOutOfOrder; }
         }
     }
 }

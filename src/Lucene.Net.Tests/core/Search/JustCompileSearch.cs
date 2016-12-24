@@ -57,9 +57,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
         }
 
@@ -305,9 +305,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override TopDocs TopDocs()

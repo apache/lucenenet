@@ -115,9 +115,9 @@ namespace Lucene.Net.Search.Grouping
         {
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return true;
+            get { return true; }
         }
 
         private class OrderByCountAndValueComparer : IComparer<FacetEntry>

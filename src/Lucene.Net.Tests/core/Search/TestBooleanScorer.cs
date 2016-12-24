@@ -150,9 +150,9 @@ namespace Lucene.Net.Search
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 
@@ -218,9 +218,9 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 

@@ -313,9 +313,9 @@ namespace Lucene.Net.Join
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder()
+        public override bool AcceptsDocsOutOfOrder
         {
-            return false;
+            get { return false; }
         }
 
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)

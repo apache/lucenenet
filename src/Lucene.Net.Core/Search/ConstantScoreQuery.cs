@@ -311,9 +311,9 @@ namespace Lucene.Net.Search
                     Collector.SetNextReader(context);
                 }
 
-                public override bool AcceptsDocsOutOfOrder()
+                public override bool AcceptsDocsOutOfOrder
                 {
-                    return Collector.AcceptsDocsOutOfOrder();
+                    get { return Collector.AcceptsDocsOutOfOrder; }
                 }
             }
         }

@@ -288,9 +288,9 @@ namespace Lucene.Net.Tests.Join
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 
@@ -563,9 +563,9 @@ namespace Lucene.Net.Tests.Join
                 TopScoreDocCollector.SetScorer(scorer);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return ScoreDocsInOrder;
+                get { return ScoreDocsInOrder; }
             }
         }
         
@@ -810,9 +810,9 @@ namespace Lucene.Net.Tests.Join
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 
@@ -869,9 +869,9 @@ namespace Lucene.Net.Tests.Join
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 
@@ -925,9 +925,9 @@ namespace Lucene.Net.Tests.Join
                 docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _toField);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
             public override void SetScorer(Scorer scorer)
@@ -976,9 +976,9 @@ namespace Lucene.Net.Tests.Join
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
             public override void SetScorer(Scorer scorer)

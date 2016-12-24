@@ -126,9 +126,9 @@ namespace Lucene.Net.Search
                 Other.SetNextReader(context);
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return Other.AcceptsDocsOutOfOrder();
+                get { return Other.AcceptsDocsOutOfOrder; }
             }
         }
 

@@ -415,9 +415,9 @@ namespace Lucene.Net.Search
                 LastDoc[0] = -1;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 
@@ -538,9 +538,9 @@ namespace Lucene.Net.Search
                 liveDocs = ((AtomicReader)context.Reader).LiveDocs;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
     }
