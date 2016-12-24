@@ -3,7 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 

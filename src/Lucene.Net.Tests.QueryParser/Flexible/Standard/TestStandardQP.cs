@@ -224,9 +224,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser dumb = GetParser(new Analyzer1());
             BooleanQuery expanded = new BooleanQuery(true);
             expanded.Add(new TermQuery(new Term("field", "dogs")),
-                    BooleanClause.Occur.SHOULD);
+                    Occur.SHOULD);
             expanded.Add(new TermQuery(new Term("field", "dog")),
-                BooleanClause.Occur.SHOULD);
+                Occur.SHOULD);
             assertEquals(expanded, dumb.Parse("\"dogs\"", "field"));
             /** even with the phrase operator the behavior is the same */
             assertEquals(expanded, dumb.Parse("dogs", "field"));

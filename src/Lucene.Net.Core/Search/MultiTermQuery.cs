@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// A rewrite method that first translates each term into
-        ///  <seealso cref="BooleanClause.Occur#SHOULD"/> clause in a
+        ///  <seealso cref="Occur#SHOULD"/> clause in a
         ///  BooleanQuery, and keeps the scores as computed by the
         ///  query.  Note that typically such scores are
         ///  meaningless to the user, and require non-trivial CPU
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// A rewrite method that first translates each term into
-        /// <seealso cref="BooleanClause.Occur#SHOULD"/> clause in a BooleanQuery, and keeps the
+        /// <seealso cref="Occur#SHOULD"/> clause in a BooleanQuery, and keeps the
         /// scores as computed by the query.
         ///
         /// <p>
@@ -182,13 +182,13 @@ namespace Lucene.Net.Search
             {
                 TermQuery tq = new TermQuery(term, states);
                 tq.Boost = boost;
-                topLevel.Add(tq, BooleanClause.Occur.SHOULD);
+                topLevel.Add(tq, Occur.SHOULD);
             }
         }
 
         /// <summary>
         /// A rewrite method that first translates each term into
-        /// <seealso cref="BooleanClause.Occur#SHOULD"/> clause in a BooleanQuery, but the scores
+        /// <seealso cref="Occur#SHOULD"/> clause in a BooleanQuery, but the scores
         /// are only computed as the boost.
         /// <p>
         /// this rewrite method only uses the top scoring terms so it will not overflow
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
             {
                 Query q = new ConstantScoreQuery(new TermQuery(term, states));
                 q.Boost = boost;
-                topLevel.Add(q, BooleanClause.Occur.SHOULD);
+                topLevel.Add(q, Occur.SHOULD);
             }
         }
 

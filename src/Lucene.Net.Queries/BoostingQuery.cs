@@ -54,8 +54,8 @@ namespace Lucene.Net.Queries
         public override Query Rewrite(IndexReader reader)
         {
             BooleanQuery result = new BooleanQueryAnonymousInnerClassHelper(this);
-            result.Add(match, BooleanClause.Occur.MUST);
-            result.Add(context, BooleanClause.Occur.SHOULD);
+            result.Add(match, Occur.MUST);
+            result.Add(context, Occur.SHOULD);
             return result;
         }
 

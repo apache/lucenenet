@@ -40,7 +40,6 @@ namespace Lucene.Net.Search
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -276,9 +275,9 @@ namespace Lucene.Net.Search
         {
             BooleanQuery bq = new BooleanQuery();
             Query query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(0), RandomFilterStrategy(Random(), useRandomAccess));
-            bq.Add(query, BooleanClause.Occur.MUST);
+            bq.Add(query, Occur.MUST);
             query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(1), RandomFilterStrategy(Random(), useRandomAccess));
-            bq.Add(query, BooleanClause.Occur.MUST);
+            bq.Add(query, Occur.MUST);
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(Random(), query, Searcher, Similarity);
@@ -297,9 +296,9 @@ namespace Lucene.Net.Search
         {
             BooleanQuery bq = new BooleanQuery();
             Query query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(0), RandomFilterStrategy(Random(), useRandomAccess));
-            bq.Add(query, BooleanClause.Occur.SHOULD);
+            bq.Add(query, Occur.SHOULD);
             query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(1), RandomFilterStrategy(Random(), useRandomAccess));
-            bq.Add(query, BooleanClause.Occur.SHOULD);
+            bq.Add(query, Occur.SHOULD);
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(Random(), query, Searcher, Similarity);
@@ -320,8 +319,8 @@ namespace Lucene.Net.Search
         {
             BooleanQuery bq = new BooleanQuery();
             Query query = new FilteredQuery(bq, new SingleDocTestFilter(0), RandomFilterStrategy(Random(), useRandomAccess));
-            bq.Add(new TermQuery(new Term("field", "one")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "one")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "two")), Occur.SHOULD);
             ScoreDoc[] hits = Searcher.Search(query, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(Random(), query, Searcher, Similarity);

@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Classic
         private void AssertStopQueryEquals(string qtxt, string expectedRes)
         {
             string[] fields = { "b", "t" };
-            BooleanClause.Occur[] occur = new BooleanClause.Occur[] { BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD };
+            Occur[] occur = new Occur[] { Occur.SHOULD, Occur.SHOULD };
             TestQueryParser.QPTestAnalyzer a = new TestQueryParser.QPTestAnalyzer();
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, a);
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestStaticMethod2()
         {
             string[] fields = { "b", "t" };
-            BooleanClause.Occur[] flags = { BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT };
+            Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
             Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random()));
             assertEquals("+b:one -t:one", q.toString());
 
@@ -212,7 +212,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -227,7 +227,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             string[] fields = { "b", "t" };
             //int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
-            BooleanClause.Occur[] flags = { BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT };
+            Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
 
             Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random()));//, fields, flags, new MockAnalyzer(random));
             assertEquals("+b:one -t:one", q.toString());
@@ -237,7 +237,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -252,14 +252,14 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             string[] queries = { "one", "two", "three" };
             string[] fields = { "f1", "f2", "f3" };
-            BooleanClause.Occur[] flags = {BooleanClause.Occur.MUST,
-                BooleanClause.Occur.MUST_NOT, BooleanClause.Occur.SHOULD};
+            Occur[] flags = {Occur.MUST,
+                Occur.MUST_NOT, Occur.SHOULD};
             Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random()));
             assertEquals("+f1:one -f2:two f3:three", q.toString());
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -274,13 +274,13 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             string[] queries = { "one", "two" };
             string[] fields = { "b", "t" };
-            BooleanClause.Occur[] flags = { BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT };
+            Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
             Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random()));
             assertEquals("+b:one -t:two", q.toString());
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -368,8 +368,8 @@ namespace Lucene.Net.QueryParsers.Classic
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()));
 
             BooleanQuery bq = new BooleanQuery(true);
-            bq.Add(new RegexpQuery(new Term("a", "[a-z][123]")), BooleanClause.Occur.SHOULD);
-            bq.Add(new RegexpQuery(new Term("b", "[a-z][123]")), BooleanClause.Occur.SHOULD);
+            bq.Add(new RegexpQuery(new Term("a", "[a-z][123]")), Occur.SHOULD);
+            bq.Add(new RegexpQuery(new Term("b", "[a-z][123]")), Occur.SHOULD);
             assertEquals(bq, mfqp.Parse("/[a-z][123]/"));
         }
     }

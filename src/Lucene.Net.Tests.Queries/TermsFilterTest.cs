@@ -218,7 +218,7 @@ namespace Lucene.Net.Tests.Queries
                 BooleanQuery bq = new BooleanQuery();
                 for (int j = 0; j < numTerms; j++)
                 {
-                    bq.Add(new BooleanClause(new TermQuery(terms[j]), BooleanClause.Occur.SHOULD));
+                    bq.Add(new BooleanClause(new TermQuery(terms[j]), Occur.SHOULD));
                 }
                 TopDocs queryResult = searcher.Search(new ConstantScoreQuery(bq), reader.MaxDoc);
 

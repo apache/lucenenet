@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 if (node.LocalName.Equals("Clause", StringComparison.Ordinal))
                 {
                     XmlElement clauseElem = (XmlElement)node;
-                    BooleanClause.Occur occurs = BooleanQueryBuilder.GetOccursValue(clauseElem);
+                    Occur occurs = BooleanQueryBuilder.GetOccursValue(clauseElem);
 
                     XmlElement clauseFilter = DOMUtils.GetFirstChildOrFail(clauseElem);
                     Filter f = factory.GetFilter(clauseFilter);

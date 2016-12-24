@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Occur = Lucene.Net.Search.Occur;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -343,15 +344,15 @@ namespace Lucene.Net.Index
                         }
 
                         BooleanQuery bq = new BooleanQuery();
-                        bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur.MUST);
-                        bq.Add(new TermQuery(new Term(name, "text")), BooleanClause.Occur.MUST);
+                        bq.Add(new TermQuery(new Term("id", "" + id)), Occur.MUST);
+                        bq.Add(new TermQuery(new Term(name, "text")), Occur.MUST);
                         TopDocs hits2 = s.Search(bq, 1);
                         Assert.AreEqual(1, hits2.TotalHits);
                         Assert.AreEqual(docID, hits2.ScoreDocs[0].Doc);
 
                         bq = new BooleanQuery();
-                        bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur.MUST);
-                        bq.Add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur.MUST);
+                        bq.Add(new TermQuery(new Term("id", "" + id)), Occur.MUST);
+                        bq.Add(new TermQuery(new Term(name, "" + counter)), Occur.MUST);
                         TopDocs hits3 = s.Search(bq, 1);
                         Assert.AreEqual(1, hits3.TotalHits);
                         Assert.AreEqual(docID, hits3.ScoreDocs[0].Doc);

@@ -209,8 +209,8 @@ namespace Lucene.Net.Search
                 AssertQuery(new MatchAllDocsQuery(), odd);
                 AssertQuery(new TermQuery(new Term("english", "four")), odd);
                 BooleanQuery bq = new BooleanQuery();
-                bq.Add(new TermQuery(new Term("english", "one")), BooleanClause.Occur.SHOULD);
-                bq.Add(new TermQuery(new Term("oddeven", "even")), BooleanClause.Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("english", "one")), Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("oddeven", "even")), Occur.SHOULD);
                 AssertQuery(bq, null);
             }
         }

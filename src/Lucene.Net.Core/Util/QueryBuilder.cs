@@ -30,6 +30,7 @@ namespace Lucene.Net.Util
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
     using MultiPhraseQuery = Lucene.Net.Search.MultiPhraseQuery;
+    using Occur = Lucene.Net.Search.Occur;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using Query = Lucene.Net.Search.Query;
     using Term = Lucene.Net.Index.Term;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Util
         ///         of {@code queryText} </returns>
         public virtual Query CreateBooleanQuery(string field, string queryText)
         {
-            return CreateBooleanQuery(field, queryText, BooleanClause.Occur.SHOULD);
+            return CreateBooleanQuery(field, queryText, Occur.SHOULD);
         }
 
         /// <summary>
@@ -84,9 +85,9 @@ namespace Lucene.Net.Util
         /// <param name="operator"> operator used for clauses between analyzer tokens. </param>
         /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
         ///         of {@code queryText} </returns>
-        public virtual Query CreateBooleanQuery(string field, string queryText, BooleanClause.Occur @operator)
+        public virtual Query CreateBooleanQuery(string field, string queryText, Occur @operator)
         {
-            if (@operator != BooleanClause.Occur.SHOULD && @operator != BooleanClause.Occur.MUST)
+            if (@operator != Occur.SHOULD && @operator != Occur.MUST)
             {
                 throw new System.ArgumentException("invalid operator: only SHOULD or MUST are allowed");
             }
@@ -116,7 +117,7 @@ namespace Lucene.Net.Util
         ///         {@code MultiPhraseQuery}, based on the analysis of {@code queryText} </returns>
         public virtual Query CreatePhraseQuery(string field, string queryText, int phraseSlop)
         {
-            return CreateFieldQuery(Analyzer_Renamed, BooleanClause.Occur.MUST, field, queryText, true, phraseSlop);
+            return CreateFieldQuery(Analyzer_Renamed, Occur.MUST, field, queryText, true, phraseSlop);
         }
 
         /// <summary>
@@ -137,10 +138,10 @@ namespace Lucene.Net.Util
             // TODO: wierd that BQ equals/rewrite/scorer doesn't handle this?
             if (fraction == 1)
             {
-                return CreateBooleanQuery(field, queryText, BooleanClause.Occur.MUST);
+                return CreateBooleanQuery(field, queryText, Occur.MUST);
             }
 
-            Query query = CreateFieldQuery(Analyzer_Renamed, BooleanClause.Occur.SHOULD, field, queryText, false, 0);
+            Query query = CreateFieldQuery(Analyzer_Renamed, Occur.SHOULD, field, queryText, false, 0);
             if (query is BooleanQuery)
             {
                 BooleanQuery bq = (BooleanQuery)query;
@@ -191,9 +192,9 @@ namespace Lucene.Net.Util
         /// <param name="queryText"> text to be passed to the analysis chain </param>
         /// <param name="quoted"> true if phrases should be generated when terms occur at more than one position </param>
         /// <param name="phraseSlop"> slop factor for phrase/multiphrase queries </param>
-        protected internal Query CreateFieldQuery(Analyzer analyzer, BooleanClause.Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
+        protected internal Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
         {
-            Debug.Assert(@operator == BooleanClause.Occur.SHOULD || @operator == BooleanClause.Occur.MUST);
+            Debug.Assert(@operator == Occur.SHOULD || @operator == Occur.MUST);
             // Use the analyzer to get all the tokens, and then build a TermQuery,
             // PhraseQuery, or nothing based on the term count
             CachingTokenFilter buffer = null;
@@ -304,7 +305,7 @@ namespace Lucene.Net.Util
                                     // safe to ignore, because we know the number of tokens
                                 }
                                 Query currentQuery = NewTermQuery(new Term(field, BytesRef.DeepCopyOf(bytes)));
-                                q.Add(currentQuery, BooleanClause.Occur.SHOULD);
+                                q.Add(currentQuery, Occur.SHOULD);
                             }
                             return q;
                         }
@@ -331,9 +332,9 @@ namespace Lucene.Net.Util
                                     {
                                         Query t = currentQuery;
                                         currentQuery = NewBooleanQuery(true);
-                                        ((BooleanQuery)currentQuery).Add(t, BooleanClause.Occur.SHOULD);
+                                        ((BooleanQuery)currentQuery).Add(t, Occur.SHOULD);
                                     }
-                                    ((BooleanQuery)currentQuery).Add(NewTermQuery(new Term(field, BytesRef.DeepCopyOf(bytes))), BooleanClause.Occur.SHOULD);
+                                    ((BooleanQuery)currentQuery).Add(NewTermQuery(new Term(field, BytesRef.DeepCopyOf(bytes))), Occur.SHOULD);
                                 }
                                 else
                                 {

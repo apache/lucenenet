@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 BooleanQuery bq = (BooleanQuery)sourceQuery;
                 foreach (BooleanClause clause in bq)
                 {
-                    if (!clause.Prohibited)
+                    if (!clause.IsProhibited)
                     {
                         Flatten(ApplyParentBoost(clause.Query, bq), reader, flatQueries);
                     }

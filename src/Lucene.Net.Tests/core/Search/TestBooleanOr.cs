@@ -72,10 +72,10 @@ namespace Lucene.Net.Search
         public virtual void TestFlat()
         {
             BooleanQuery q = new BooleanQuery();
-            q.Add(new BooleanClause(T1, BooleanClause.Occur.SHOULD));
-            q.Add(new BooleanClause(T2, BooleanClause.Occur.SHOULD));
-            q.Add(new BooleanClause(C1, BooleanClause.Occur.SHOULD));
-            q.Add(new BooleanClause(C2, BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(T1, Occur.SHOULD));
+            q.Add(new BooleanClause(T2, Occur.SHOULD));
+            q.Add(new BooleanClause(C1, Occur.SHOULD));
+            q.Add(new BooleanClause(C2, Occur.SHOULD));
             Assert.AreEqual(1, Search(q));
         }
 
@@ -87,14 +87,14 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisMust()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, BooleanClause.Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, BooleanClause.Occur.SHOULD));
+            q3.Add(new BooleanClause(T1, Occur.SHOULD));
+            q3.Add(new BooleanClause(T2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, BooleanClause.Occur.MUST));
-            q4.Add(new BooleanClause(C2, BooleanClause.Occur.MUST));
+            q4.Add(new BooleanClause(C1, Occur.MUST));
+            q4.Add(new BooleanClause(C2, Occur.MUST));
             BooleanQuery q2 = new BooleanQuery();
-            q2.Add(q3, BooleanClause.Occur.SHOULD);
-            q2.Add(q4, BooleanClause.Occur.SHOULD);
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.SHOULD);
             Assert.AreEqual(1, Search(q2));
         }
 
@@ -106,14 +106,14 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisMust2()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, BooleanClause.Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, BooleanClause.Occur.SHOULD));
+            q3.Add(new BooleanClause(T1, Occur.SHOULD));
+            q3.Add(new BooleanClause(T2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, BooleanClause.Occur.SHOULD));
-            q4.Add(new BooleanClause(C2, BooleanClause.Occur.SHOULD));
+            q4.Add(new BooleanClause(C1, Occur.SHOULD));
+            q4.Add(new BooleanClause(C2, Occur.SHOULD));
             BooleanQuery q2 = new BooleanQuery();
-            q2.Add(q3, BooleanClause.Occur.SHOULD);
-            q2.Add(q4, BooleanClause.Occur.MUST);
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.MUST);
             Assert.AreEqual(1, Search(q2));
         }
 
@@ -125,14 +125,14 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisShould()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, BooleanClause.Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, BooleanClause.Occur.SHOULD));
+            q3.Add(new BooleanClause(T1, Occur.SHOULD));
+            q3.Add(new BooleanClause(T2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, BooleanClause.Occur.SHOULD));
-            q4.Add(new BooleanClause(C2, BooleanClause.Occur.SHOULD));
+            q4.Add(new BooleanClause(C1, Occur.SHOULD));
+            q4.Add(new BooleanClause(C2, Occur.SHOULD));
             BooleanQuery q2 = new BooleanQuery();
-            q2.Add(q3, BooleanClause.Occur.SHOULD);
-            q2.Add(q4, BooleanClause.Occur.SHOULD);
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.SHOULD);
             Assert.AreEqual(1, Search(q2));
         }
 
@@ -190,8 +190,8 @@ namespace Lucene.Net.Search
 
             IndexSearcher s = NewSearcher(r);
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "a")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "a")), Occur.SHOULD);
 
             Weight w = s.CreateNormalizedWeight(bq);
 

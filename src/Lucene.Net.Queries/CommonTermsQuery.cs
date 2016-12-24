@@ -64,8 +64,8 @@ namespace Lucene.Net.Queries
         protected internal readonly IList<Term> terms = new List<Term>();
         protected internal readonly bool disableCoord;
         protected internal readonly float maxTermFrequency;
-        protected internal readonly BooleanClause.Occur lowFreqOccur;
-        protected internal readonly BooleanClause.Occur highFreqOccur;
+        protected internal readonly Occur lowFreqOccur;
+        protected internal readonly Occur highFreqOccur;
         protected internal float lowFreqBoost = 1.0f;
         protected internal float highFreqBoost = 1.0f;
 
@@ -74,17 +74,17 @@ namespace Lucene.Net.Queries
         /// Creates a new <seealso cref="CommonTermsQuery"/>
         /// </summary>
         /// <param name="highFreqOccur">
-        ///          <seealso cref="BooleanClause.Occur"/> used for high frequency terms </param>
+        ///          <seealso cref="Occur"/> used for high frequency terms </param>
         /// <param name="lowFreqOccur">
-        ///          <seealso cref="BooleanClause.Occur"/> used for low frequency terms </param>
+        ///          <seealso cref="Occur"/> used for low frequency terms </param>
         /// <param name="maxTermFrequency">
         ///          a value in [0..1) (or absolute number >=1) representing the
         ///          maximum threshold of a terms document frequency to be considered a
         ///          low frequency term. </param>
         /// <exception cref="ArgumentException">
-        ///           if <seealso cref="BooleanClause.Occur#MUST_NOT"/> is pass as lowFreqOccur or
+        ///           if <seealso cref="Occur#MUST_NOT"/> is pass as lowFreqOccur or
         ///           highFreqOccur </exception>
-        public CommonTermsQuery(BooleanClause.Occur highFreqOccur, BooleanClause.Occur lowFreqOccur, float maxTermFrequency)
+        public CommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency)
             : this(highFreqOccur, lowFreqOccur, maxTermFrequency, false)
         {
         }
@@ -93,9 +93,9 @@ namespace Lucene.Net.Queries
         /// Creates a new <seealso cref="CommonTermsQuery"/>
         /// </summary>
         /// <param name="highFreqOccur">
-        ///          <seealso cref="BooleanClause.Occur"/> used for high frequency terms </param>
+        ///          <seealso cref="Occur"/> used for high frequency terms </param>
         /// <param name="lowFreqOccur">
-        ///          <seealso cref="BooleanClause.Occur"/> used for low frequency terms </param>
+        ///          <seealso cref="Occur"/> used for low frequency terms </param>
         /// <param name="maxTermFrequency">
         ///          a value in [0..1) (or absolute number >=1) representing the
         ///          maximum threshold of a terms document frequency to be considered a
@@ -104,16 +104,16 @@ namespace Lucene.Net.Queries
         ///          disables <seealso cref="Similarity#coord(int,int)"/> in scoring for the low
         ///          / high frequency sub-queries </param>
         /// <exception cref="ArgumentException">
-        ///           if <seealso cref="BooleanClause.Occur#MUST_NOT"/> is pass as lowFreqOccur or
+        ///           if <seealso cref="Occur#MUST_NOT"/> is pass as lowFreqOccur or
         ///           highFreqOccur </exception>
-        public CommonTermsQuery(BooleanClause.Occur highFreqOccur, BooleanClause.Occur lowFreqOccur,
+        public CommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur,
             float maxTermFrequency, bool disableCoord)
         {
-            if (highFreqOccur == BooleanClause.Occur.MUST_NOT)
+            if (highFreqOccur == Occur.MUST_NOT)
             {
                 throw new System.ArgumentException("highFreqOccur should be MUST or SHOULD but was MUST_NOT");
             }
-            if (lowFreqOccur == BooleanClause.Occur.MUST_NOT)
+            if (lowFreqOccur == Occur.MUST_NOT)
             {
                 throw new System.ArgumentException("lowFreqOccur should be MUST or SHOULD but was MUST_NOT");
             }
@@ -210,12 +210,12 @@ namespace Lucene.Net.Queries
             //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
             //ORIGINAL LINE: final int numHighFreqClauses = highFreq.clauses().size();
             int numHighFreqClauses = highFreq.Clauses.Length;
-            if (lowFreqOccur == BooleanClause.Occur.SHOULD && numLowFreqClauses > 0)
+            if (lowFreqOccur == Occur.SHOULD && numLowFreqClauses > 0)
             {
                 int minMustMatch = CalcLowFreqMinimumNumberShouldMatch(numLowFreqClauses);
                 lowFreq.MinimumNumberShouldMatch = minMustMatch;
             }
-            if (highFreqOccur == BooleanClause.Occur.SHOULD && numHighFreqClauses > 0)
+            if (highFreqOccur == Occur.SHOULD && numHighFreqClauses > 0)
             {
                 int minMustMatch = CalcHighFreqMinimumNumberShouldMatch(numHighFreqClauses);
                 highFreq.MinimumNumberShouldMatch = minMustMatch;
@@ -226,11 +226,11 @@ namespace Lucene.Net.Queries
                  * if lowFreq is empty we rewrite the high freq terms in a conjunction to
                  * prevent slow queries.
                  */
-                if (highFreq.MinimumNumberShouldMatch == 0 && highFreqOccur != BooleanClause.Occur.MUST)
+                if (highFreq.MinimumNumberShouldMatch == 0 && highFreqOccur != Occur.MUST)
                 {
                     foreach (BooleanClause booleanClause in highFreq)
                     {
-                        booleanClause.Occur_ = BooleanClause.Occur.MUST;
+                        booleanClause.Occur = Occur.MUST;
                     }
                 }
                 highFreq.Boost = Boost;
@@ -244,8 +244,8 @@ namespace Lucene.Net.Queries
             }
             else
             {
-                query.Add(highFreq, BooleanClause.Occur.SHOULD);
-                query.Add(lowFreq, BooleanClause.Occur.MUST);
+                query.Add(highFreq, Occur.SHOULD);
+                query.Add(lowFreq, Occur.MUST);
                 query.Boost = Boost;
                 return query;
             }

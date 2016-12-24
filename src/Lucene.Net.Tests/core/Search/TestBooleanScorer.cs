@@ -60,12 +60,12 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             BooleanQuery booleanQuery1 = new BooleanQuery();
-            booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
-            booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
+            booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), Occur.SHOULD);
+            booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), Occur.SHOULD);
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(booleanQuery1, BooleanClause.Occur.MUST);
-            query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
+            query.Add(booleanQuery1, Occur.MUST);
+            query.Add(new TermQuery(new Term(FIELD, "9")), Occur.MUST_NOT);
 
             IndexSearcher indexSearcher = NewSearcher(ir);
             ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).ScoreDocs;
@@ -181,9 +181,9 @@ namespace Lucene.Net.Search
             BooleanQuery q = new BooleanQuery();
             for (int term = 0; term < 33; term++)
             {
-                q.Add(new BooleanClause(new TermQuery(new Term("field", "" + term)), BooleanClause.Occur.MUST_NOT));
+                q.Add(new BooleanClause(new TermQuery(new Term("field", "" + term)), Occur.MUST_NOT));
             }
-            q.Add(new BooleanClause(new TermQuery(new Term("field", "33")), BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(new TermQuery(new Term("field", "33")), Occur.SHOULD));
 
             int[] count = new int[1];
             s.Search(q, new CollectorAnonymousInnerClassHelper2(this, doc, count));
@@ -330,12 +330,12 @@ namespace Lucene.Net.Search
 
             IndexSearcher s = NewSearcher(r);
             BooleanQuery q1 = new BooleanQuery();
-            q1.Add(new TermQuery(new Term("field", "little")), BooleanClause.Occur.SHOULD);
-            q1.Add(new TermQuery(new Term("field", "diseases")), BooleanClause.Occur.SHOULD);
+            q1.Add(new TermQuery(new Term("field", "little")), Occur.SHOULD);
+            q1.Add(new TermQuery(new Term("field", "diseases")), Occur.SHOULD);
 
             BooleanQuery q2 = new BooleanQuery();
-            q2.Add(q1, BooleanClause.Occur.SHOULD);
-            q2.Add(new CrazyMustUseBulkScorerQuery(), BooleanClause.Occur.SHOULD);
+            q2.Add(q1, Occur.SHOULD);
+            q2.Add(new CrazyMustUseBulkScorerQuery(), Occur.SHOULD);
 
             Assert.AreEqual(1, s.Search(q2, 10).TotalHits);
             r.Dispose();

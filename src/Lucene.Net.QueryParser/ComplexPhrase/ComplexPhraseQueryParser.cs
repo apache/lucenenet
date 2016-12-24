@@ -278,7 +278,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     Query qc = bclauses[i].Query;
                     // Rewrite this clause e.g one* becomes (one OR onerous)
                     qc = qc.Rewrite(reader);
-                    if (bclauses[i].Occur_.Equals(BooleanClause.Occur.MUST_NOT))
+                    if (bclauses[i].Occur.Equals(Occur.MUST_NOT))
                     {
                         numNegatives++;
                     }
@@ -328,7 +328,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 List<SpanQuery> positiveClauses = new List<SpanQuery>();
                 for (int j = 0; j < allSpanClauses.Length; j++)
                 {
-                    if (!bclauses[j].Occur_.Equals(BooleanClause.Occur.MUST_NOT))
+                    if (!bclauses[j].Occur.Equals(Occur.MUST_NOT))
                     {
                         positiveClauses.Add(allSpanClauses[j]);
                     }
@@ -369,7 +369,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
 
                     // select the list to which we will add these options
                     List<SpanQuery> chosenList = ors;
-                    if (bclauses[i].Occur_ == BooleanClause.Occur.MUST_NOT)
+                    if (bclauses[i].Occur == Occur.MUST_NOT)
                     {
                         chosenList = nots;
                     }

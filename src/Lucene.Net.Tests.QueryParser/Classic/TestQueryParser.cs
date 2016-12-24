@@ -320,9 +320,9 @@ namespace Lucene.Net.QueryParsers.Classic
                 new Analyzer1());
             BooleanQuery expanded = new BooleanQuery(true);
             expanded.Add(new TermQuery(new Index.Term("field", "dogs")),
-                BooleanClause.Occur.SHOULD);
+                Occur.SHOULD);
             expanded.Add(new TermQuery(new Index.Term("field", "dog")),
-                BooleanClause.Occur.SHOULD);
+                Occur.SHOULD);
             assertEquals(expanded, dumb.Parse("\"dogs\""));
             /** even with the phrase operator the behavior is the same */
             assertEquals(expanded, dumb.Parse("dogs"));
@@ -358,8 +358,8 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestSynonyms()
         {
             BooleanQuery expected = new BooleanQuery(true);
-            expected.Add(new TermQuery(new Index.Term("field", "dogs")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Index.Term("field", "dog")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "dogs")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "dog")), Occur.SHOULD);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockSynonymAnalyzer());
             assertEquals(expected, qp.Parse("dogs"));
             assertEquals(expected, qp.Parse("\"dogs\""));
@@ -445,8 +445,8 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestCJKSynonym()
         {
             BooleanQuery expected = new BooleanQuery(true);
-            expected.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             assertEquals(expected, qp.Parse("国"));
             qp.DefaultOperator = (QueryParserBase.Operator.AND);
@@ -462,11 +462,11 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestCJKSynonymsOR()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "中")), Occur.SHOULD);
             BooleanQuery inner = new BooleanQuery(true);
-            inner.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner, Occur.SHOULD);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             assertEquals(expected, qp.Parse("中国"));
             expected.Boost = (2.0f);
@@ -480,15 +480,15 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestCJKSynonymsOR2()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Index.Term("field", "中")), Occur.SHOULD);
             BooleanQuery inner = new BooleanQuery(true);
-            inner.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner, Occur.SHOULD);
             BooleanQuery inner2 = new BooleanQuery(true);
-            inner2.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner2.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner2, BooleanClause.Occur.SHOULD);
+            inner2.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner2.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner2, Occur.SHOULD);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             assertEquals(expected, qp.Parse("中国国"));
             expected.Boost = (2.0f);
@@ -502,11 +502,11 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestCJKSynonymsAND()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Index.Term("field", "中")), Occur.MUST);
             BooleanQuery inner = new BooleanQuery(true);
-            inner.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.MUST);
+            inner.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner, Occur.MUST);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             qp.DefaultOperator = (QueryParserBase.Operator.AND);
             assertEquals(expected, qp.Parse("中国"));
@@ -521,15 +521,15 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestCJKSynonymsAND2()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Index.Term("field", "中")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Index.Term("field", "中")), Occur.MUST);
             BooleanQuery inner = new BooleanQuery(true);
-            inner.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.MUST);
+            inner.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner, Occur.MUST);
             BooleanQuery inner2 = new BooleanQuery(true);
-            inner2.Add(new TermQuery(new Index.Term("field", "国")), BooleanClause.Occur.SHOULD);
-            inner2.Add(new TermQuery(new Index.Term("field", "國")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner2, BooleanClause.Occur.MUST);
+            inner2.Add(new TermQuery(new Index.Term("field", "国")), Occur.SHOULD);
+            inner2.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
+            expected.Add(inner2, Occur.MUST);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             qp.DefaultOperator = (QueryParserBase.Operator.AND);
             assertEquals(expected, qp.Parse("中国国"));

@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 if (node.LocalName.Equals("Clause", StringComparison.Ordinal))
                 {
                     XmlElement clauseElem = (XmlElement)node;
-                    BooleanClause.Occur occurs = GetOccursValue(clauseElem);
+                    Occur occurs = GetOccursValue(clauseElem);
 
                     XmlElement clauseQuery = DOMUtils.GetFirstChildOrFail(clauseElem);
                     Query q = factory.GetQuery(clauseQuery);
@@ -63,25 +63,25 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             return bq;
         }
 
-        internal static BooleanClause.Occur GetOccursValue(XmlElement clauseElem)
+        internal static Occur GetOccursValue(XmlElement clauseElem)
         {
             string occs = clauseElem.GetAttribute("occurs");
-            BooleanClause.Occur occurs = BooleanClause.Occur.SHOULD;
+            Occur occurs = Occur.SHOULD;
             if ("must".Equals(occs, StringComparison.OrdinalIgnoreCase))
             {
-                occurs = BooleanClause.Occur.MUST;
+                occurs = Occur.MUST;
             }
             else
             {
                 if ("mustNot".Equals(occs, StringComparison.OrdinalIgnoreCase))
                 {
-                    occurs = BooleanClause.Occur.MUST_NOT;
+                    occurs = Occur.MUST_NOT;
                 }
                 else
                 {
                     if (("should".Equals(occs, StringComparison.OrdinalIgnoreCase)) || ("".Equals(occs)))
                     {
-                        occurs = BooleanClause.Occur.SHOULD;
+                        occurs = Occur.SHOULD;
                     }
                     else
                     {

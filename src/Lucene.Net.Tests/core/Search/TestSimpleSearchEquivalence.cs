@@ -1,7 +1,6 @@
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using Term = Lucene.Net.Index.Term;
 
     /*

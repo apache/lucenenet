@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
         {
             BitArray rnd = Sets[Random().Next(Sets.Length)];
             Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
-            bq.Add(q, BooleanClause.Occur.MUST);
+            bq.Add(q, Occur.MUST);
             if (Validate)
             {
                 if (result == null)
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
                         result = AddClause(bq, result);
                     }
 
-                    oq.Add(bq, BooleanClause.Occur.MUST);
+                    oq.Add(bq, Occur.MUST);
                 } // outer
 
                 CountingHitCollector hc = Validate ? new MatchingHitCollector(result) : new CountingHitCollector();
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
                     }
                     termflag.SafeSet(tnum, true);
                     Query tq = new TermQuery(Terms[tnum]);
-                    bq.Add(tq, BooleanClause.Occur.MUST);
+                    bq.Add(tq, Occur.MUST);
                 }
 
                 CountingHitCollector hc = new CountingHitCollector();
@@ -355,10 +355,10 @@ namespace Lucene.Net.Search
                         }
                         termflag.SafeSet(tnum, true);
                         Query tq = new TermQuery(Terms[tnum]);
-                        bq.Add(tq, BooleanClause.Occur.MUST);
+                        bq.Add(tq, Occur.MUST);
                     } // inner
 
-                    oq.Add(bq, BooleanClause.Occur.MUST);
+                    oq.Add(bq, Occur.MUST);
                 } // outer
 
                 CountingHitCollector hc = new CountingHitCollector();

@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries
             bool hasShouldClauses = false;
             foreach (FilterClause fc in clauses)
             {
-                if (fc.Occur == BooleanClause.Occur.SHOULD)
+                if (fc.Occur == Occur.SHOULD)
                 {
                     hasShouldClauses = true;
                     DocIdSetIterator disi = GetDISI(fc.Filter, context);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Queries
 
             foreach (FilterClause fc in clauses)
             {
-                if (fc.Occur == BooleanClause.Occur.MUST_NOT)
+                if (fc.Occur == Occur.MUST_NOT)
                 {
                     if (res == null)
                     {
@@ -92,7 +92,7 @@ namespace Lucene.Net.Queries
 
             foreach (FilterClause fc in clauses)
             {
-                if (fc.Occur == BooleanClause.Occur.MUST)
+                if (fc.Occur == Occur.MUST)
                 {
                     DocIdSetIterator disi = GetDISI(fc.Filter, context);
                     if (disi == null)
@@ -129,7 +129,7 @@ namespace Lucene.Net.Queries
             clauses.Add(filterClause);
         }
 
-        public void Add(Filter filter, BooleanClause.Occur occur)
+        public void Add(Filter filter, Occur occur)
         {
             Add(new FilterClause(filter, occur));
         }

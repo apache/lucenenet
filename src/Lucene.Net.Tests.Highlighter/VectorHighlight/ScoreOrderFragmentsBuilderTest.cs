@@ -27,8 +27,8 @@ namespace Lucene.Net.Search.VectorHighlight
         public void Test3Frags()
         {
             BooleanQuery query = new BooleanQuery();
-            query.Add(new TermQuery(new Term(F, "a")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term(F, "c")), BooleanClause.Occur.SHOULD);
+            query.Add(new TermQuery(new Term(F, "a")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term(F, "c")), Occur.SHOULD);
 
             FieldFragList ffl = Ffl(query, "a b b b b b b b b b b b a b a b b b b b c a a b b");
             ScoreOrderFragmentsBuilder sofb = new ScoreOrderFragmentsBuilder();

@@ -219,9 +219,9 @@ namespace Lucene.Net.Tests.Queries
         public virtual void TestCustomExternalQuery()
         {
             BooleanQuery q1 = new BooleanQuery();
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "first")), BooleanClause.Occur.SHOULD);
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "aid")), BooleanClause.Occur.SHOULD);
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "text")), BooleanClause.Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "first")), Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "aid")), Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "text")), Occur.SHOULD);
 
             Query q = new CustomExternalQuery(this, q1);
             Log(q);
@@ -272,15 +272,15 @@ namespace Lucene.Net.Tests.Queries
 
             // regular (boolean) query.
             BooleanQuery q1 = new BooleanQuery();
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "first")), BooleanClause.Occur.SHOULD);
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "aid")), BooleanClause.Occur.SHOULD);
-            q1.Add(new TermQuery(new Term(TEXT_FIELD, "text")), BooleanClause.Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "first")), Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "aid")), Occur.SHOULD);
+            q1.Add(new TermQuery(new Term(TEXT_FIELD, "text")), Occur.SHOULD);
             Log(q1);
 
             // custom query, that should score the same as q1.
             BooleanQuery q2CustomNeutral = new BooleanQuery(true);
             Query q2CustomNeutralInner = new CustomScoreQuery(q1);
-            q2CustomNeutral.Add(q2CustomNeutralInner, BooleanClause.Occur.SHOULD);
+            q2CustomNeutral.Add(q2CustomNeutralInner, Occur.SHOULD);
             // a little tricky: we split the boost across an outer BQ and CustomScoreQuery
             // this ensures boosting is correct across all these functions (see LUCENE-4935)
             q2CustomNeutral.Boost = (float)Math.Sqrt(dboost);

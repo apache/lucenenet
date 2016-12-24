@@ -73,10 +73,10 @@ namespace Lucene.Net.Classification
             { // in case codec doesn't support getDocCount
                 TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();
                 BooleanQuery q = new BooleanQuery();
-                q.Add(new BooleanClause(new WildcardQuery(new Term(_classFieldName, WildcardQuery.WILDCARD_STRING.ToString())), BooleanClause.Occur.MUST));
+                q.Add(new BooleanClause(new WildcardQuery(new Term(_classFieldName, WildcardQuery.WILDCARD_STRING.ToString())), Occur.MUST));
                 if (_query != null) 
                 {
-                    q.Add(_query, BooleanClause.Occur.MUST);
+                    q.Add(_query, Occur.MUST);
                 }
                 _indexSearcher.Search(q, totalHitCountCollector);
                 docCount = totalHitCountCollector.TotalHits;
@@ -179,13 +179,13 @@ namespace Lucene.Net.Classification
             BooleanQuery subQuery = new BooleanQuery();
             foreach (String textFieldName in _textFieldNames) 
             {
-                subQuery.Add(new BooleanClause(new TermQuery(new Term(textFieldName, word)), BooleanClause.Occur.SHOULD));
+                subQuery.Add(new BooleanClause(new TermQuery(new Term(textFieldName, word)), Occur.SHOULD));
             }
-            booleanQuery.Add(new BooleanClause(subQuery, BooleanClause.Occur.MUST));
-            booleanQuery.Add(new BooleanClause(new TermQuery(new Term(_classFieldName, c)), BooleanClause.Occur.MUST));
+            booleanQuery.Add(new BooleanClause(subQuery, Occur.MUST));
+            booleanQuery.Add(new BooleanClause(new TermQuery(new Term(_classFieldName, c)), Occur.MUST));
             if (_query != null) 
             {
-                booleanQuery.Add(_query, BooleanClause.Occur.MUST);
+                booleanQuery.Add(_query, Occur.MUST);
             }
             TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();
             _indexSearcher.Search(booleanQuery, totalHitCountCollector);

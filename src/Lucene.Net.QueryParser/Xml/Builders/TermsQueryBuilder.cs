@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 {
                     termAtt.FillBytesRef();
                     term = new Term(fieldName, BytesRef.DeepCopyOf(bytes));
-                    bq.Add(new BooleanClause(new TermQuery(term), BooleanClause.Occur.SHOULD));
+                    bq.Add(new BooleanClause(new TermQuery(term), Occur.SHOULD));
                 }
                 ts.End();
             }

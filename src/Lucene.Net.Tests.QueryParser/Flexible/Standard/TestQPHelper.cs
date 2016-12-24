@@ -379,16 +379,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
 
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "中")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "国")), Occur.SHOULD);
             assertEquals(expected, GetQuery("中国", analyzer));
 
             expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "中")), Occur.MUST);
             BooleanQuery inner = new BooleanQuery();
-            inner.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.MUST);
+            inner.Add(new TermQuery(new Term("field", "中")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "国")), Occur.SHOULD);
+            expected.Add(inner, Occur.MUST);
             assertEquals(expected, GetQuery("中 AND 中国", new SimpleCJKAnalyzer()));
 
         }
@@ -400,8 +400,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             BooleanQuery expected = new BooleanQuery();
             expected.Boost = (0.5f);
-            expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "中")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "国")), Occur.SHOULD);
 
 
             assertEquals(expected, GetQuery("中国^0.5", analyzer));
@@ -1259,9 +1259,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(escaped2, qp.Parse("/[a-z]\\*[123]/", df));
 
             BooleanQuery complex = new BooleanQuery();
-            complex.Add(new RegexpQuery(new Term("field", "[a-z]\\/[123]")), BooleanClause.Occur.MUST);
-            complex.Add(new TermQuery(new Term("path", "/etc/init.d/")), BooleanClause.Occur.MUST);
-            complex.Add(new TermQuery(new Term("field", "/etc/init[.]d/lucene/")), BooleanClause.Occur.SHOULD);
+            complex.Add(new RegexpQuery(new Term("field", "[a-z]\\/[123]")), Occur.MUST);
+            complex.Add(new TermQuery(new Term("path", "/etc/init.d/")), Occur.MUST);
+            complex.Add(new TermQuery(new Term("field", "/etc/init[.]d/lucene/")), Occur.SHOULD);
             assertEquals(complex, qp.Parse("/[a-z]\\/[123]/ AND path:\"/etc/init.d/\" OR \"/etc\\/init\\[.\\]d/lucene/\" ", df));
 
             Query re = new RegexpQuery(new Term("field", "http.*"));
@@ -1281,8 +1281,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(new TermQuery(new Term("field", "/boo/")), qp.Parse("\\/boo\\/", df));
 
             BooleanQuery two = new BooleanQuery();
-            two.Add(new RegexpQuery(new Term("field", "foo")), BooleanClause.Occur.SHOULD);
-            two.Add(new RegexpQuery(new Term("field", "bar")), BooleanClause.Occur.SHOULD);
+            two.Add(new RegexpQuery(new Term("field", "foo")), Occur.SHOULD);
+            two.Add(new RegexpQuery(new Term("field", "bar")), Occur.SHOULD);
             assertEquals(two, qp.Parse("field:/foo/ field:/bar/", df));
             assertEquals(two, qp.Parse("/foo/ /bar/", df));
         }
@@ -1457,8 +1457,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             parser.Analyzer = (new MockAnalyzer(Random()));
 
             BooleanQuery exp = new BooleanQuery();
-            exp.Add(new BooleanClause(new RegexpQuery(new Term("b", "ab.+")), BooleanClause.Occur.SHOULD));//TODO spezification? was "MUST"
-            exp.Add(new BooleanClause(new RegexpQuery(new Term("t", "ab.+")), BooleanClause.Occur.SHOULD));//TODO spezification? was "MUST"
+            exp.Add(new BooleanClause(new RegexpQuery(new Term("b", "ab.+")), Occur.SHOULD));//TODO spezification? was "MUST"
+            exp.Add(new BooleanClause(new RegexpQuery(new Term("t", "ab.+")), Occur.SHOULD));//TODO spezification? was "MUST"
 
             assertEquals(exp, parser.Parse("/ab.+/", null));
 

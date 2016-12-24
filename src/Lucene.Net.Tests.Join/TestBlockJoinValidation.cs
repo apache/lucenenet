@@ -92,8 +92,8 @@ namespace Lucene.Net.Tests.Join
             // advance() method is used by ConjunctionScorer, so we need to create Boolean conjunction query
             BooleanQuery conjunctionQuery = new BooleanQuery();
             WildcardQuery childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
-            conjunctionQuery.Add(new BooleanClause(childQuery, BooleanClause.Occur.MUST));
-            conjunctionQuery.Add(new BooleanClause(blockJoinQuery, BooleanClause.Occur.MUST));
+            conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
+            conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
 
             var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains("child query must only match non-parent docs", ex.Message);
@@ -121,8 +121,8 @@ namespace Lucene.Net.Tests.Join
             // advance() method is used by ConjunctionScorer, so we need to create Boolean conjunction query
             var conjunctionQuery = new BooleanQuery();
             var childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
-            conjunctionQuery.Add(new BooleanClause(childQuery, BooleanClause.Occur.MUST));
-            conjunctionQuery.Add(new BooleanClause(blockJoinQuery, BooleanClause.Occur.MUST));
+            conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
+            conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
             
             var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains(ToChildBlockJoinQuery.InvalidQueryMessage, ex.Message);
@@ -189,8 +189,8 @@ namespace Lucene.Net.Tests.Join
             TermQuery childQuery = new TermQuery(new Term("child", CreateFieldValue(childNumber)));
             Query randomParentQuery = new TermQuery(new Term("id", CreateFieldValue(RandomParentId)));
             BooleanQuery childrenQueryWithRandomParent = new BooleanQuery();
-            childrenQueryWithRandomParent.Add(new BooleanClause(childQuery, BooleanClause.Occur.SHOULD));
-            childrenQueryWithRandomParent.Add(new BooleanClause(randomParentQuery, BooleanClause.Occur.SHOULD));
+            childrenQueryWithRandomParent.Add(new BooleanClause(childQuery, Occur.SHOULD));
+            childrenQueryWithRandomParent.Add(new BooleanClause(randomParentQuery, Occur.SHOULD));
             return childrenQueryWithRandomParent;
         }
 
@@ -198,8 +198,8 @@ namespace Lucene.Net.Tests.Join
         {
             BooleanQuery childQueryWithRandomParent = new BooleanQuery();
             Query parentsQuery = new TermQuery(new Term("parent", CreateFieldValue(RandomParentNumber)));
-            childQueryWithRandomParent.Add(new BooleanClause(parentsQuery, BooleanClause.Occur.SHOULD));
-            childQueryWithRandomParent.Add(new BooleanClause(RandomChildQuery(randomChildNumber), BooleanClause.Occur.SHOULD));
+            childQueryWithRandomParent.Add(new BooleanClause(parentsQuery, Occur.SHOULD));
+            childQueryWithRandomParent.Add(new BooleanClause(RandomChildQuery(randomChildNumber), Occur.SHOULD));
             return childQueryWithRandomParent;
         }
 

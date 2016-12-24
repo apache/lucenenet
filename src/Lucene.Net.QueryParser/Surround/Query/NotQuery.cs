@@ -35,13 +35,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             var luceneSubQueries = MakeLuceneSubQueriesField(fieldName, qf);
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(luceneSubQueries.FirstOrDefault(), BooleanClause.Occur.MUST);
+            bq.Add(luceneSubQueries.FirstOrDefault(), Occur.MUST);
             SrndBooleanQuery.AddQueriesToBoolean(bq,
                 // FIXME: do not allow weights on prohibited subqueries.
                     //luceneSubQueries.subList(1, luceneSubQueries.size()),
                     luceneSubQueries.Skip(1).ToList(),
                 // later subqueries: not required, prohibited
-                    BooleanClause.Occur.MUST_NOT);
+                    Occur.MUST_NOT);
             return bq;
         }
     }

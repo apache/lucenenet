@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Highlight
         public void TestHighlightingCommonTermsQuery()
         {
             Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
-            CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.MUST, BooleanClause.Occur.SHOULD, 3);
+            CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, 3);
             query.Add(new Term(FIELD_NAME, "this"));
             query.Add(new Term(FIELD_NAME, "long"));
             query.Add(new Term(FIELD_NAME, "very"));
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Highlight
         {
             public override Query Rewrite(IndexReader reader)
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.MUST, BooleanClause.Occur.SHOULD, 3);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, 3);
                 query.Add(new Term(FIELD_NAME, "this"));
                 query.Add(new Term(FIELD_NAME, "long"));
                 query.Add(new Term(FIELD_NAME, "very"));
@@ -300,14 +300,14 @@ namespace Lucene.Net.Search.Highlight
 
             BooleanQuery booleanQuery = new BooleanQuery();
             BooleanQuery leftChild = new BooleanQuery();
-            leftChild.Add(f1ph1, BooleanClause.Occur.SHOULD);
-            leftChild.Add(f2ph1, BooleanClause.Occur.SHOULD);
-            booleanQuery.Add(leftChild, BooleanClause.Occur.MUST);
+            leftChild.Add(f1ph1, Occur.SHOULD);
+            leftChild.Add(f2ph1, Occur.SHOULD);
+            booleanQuery.Add(leftChild, Occur.MUST);
 
             BooleanQuery rightChild = new BooleanQuery();
-            rightChild.Add(f1ph2, BooleanClause.Occur.SHOULD);
-            rightChild.Add(f2ph2, BooleanClause.Occur.SHOULD);
-            booleanQuery.Add(rightChild, BooleanClause.Occur.MUST);
+            rightChild.Add(f1ph2, Occur.SHOULD);
+            rightChild.Add(f2ph2, Occur.SHOULD);
+            booleanQuery.Add(rightChild, Occur.MUST);
 
             QueryScorer scorer = new QueryScorer(booleanQuery, f1);
             scorer.ExpandMultiTermQuery = (false);
@@ -640,13 +640,13 @@ namespace Lucene.Net.Search.Highlight
         public void TestPosTermStdTerm()
         {
             BooleanQuery booleanQuery = new BooleanQuery();
-            booleanQuery.Add(new TermQuery(new Term(FIELD_NAME, "y")), BooleanClause.Occur.SHOULD);
+            booleanQuery.Add(new TermQuery(new Term(FIELD_NAME, "y")), Occur.SHOULD);
 
             PhraseQuery phraseQuery = new PhraseQuery();
             phraseQuery.Add(new Term(FIELD_NAME, "x"));
             phraseQuery.Add(new Term(FIELD_NAME, "y"));
             phraseQuery.Add(new Term(FIELD_NAME, "z"));
-            booleanQuery.Add(phraseQuery, BooleanClause.Occur.SHOULD);
+            booleanQuery.Add(phraseQuery, Occur.SHOULD);
 
             doSearching(booleanQuery);
 
@@ -757,8 +757,8 @@ namespace Lucene.Net.Search.Highlight
                 new SpanTermQuery(new Term(FIELD_NAME, "wordy")),
                 new SpanTermQuery(new Term(FIELD_NAME, "wordc")) }, 1, false);
             BooleanQuery bquery = new BooleanQuery();
-            bquery.Add(query1, BooleanClause.Occur.SHOULD);
-            bquery.Add(query2, BooleanClause.Occur.SHOULD);
+            bquery.Add(query1, Occur.SHOULD);
+            bquery.Add(query2, Occur.SHOULD);
             doSearching(bquery);
 
             TestHighlightRunner helper = new TestHighlightRunner((instance) =>
@@ -820,8 +820,8 @@ namespace Lucene.Net.Search.Highlight
                 {
                     BooleanQuery bq = new BooleanQuery();
                     bq.Add(new ConstantScoreQuery(new QueryWrapperFilter(new TermQuery(
-                        new Term(FIELD_NAME, "kennedy")))), BooleanClause.Occur.MUST);
-                    bq.Add(new ConstantScoreQuery(new TermQuery(new Term(FIELD_NAME, "kennedy"))), BooleanClause.Occur.MUST);
+                        new Term(FIELD_NAME, "kennedy")))), Occur.MUST);
+                    bq.Add(new ConstantScoreQuery(new TermQuery(new Term(FIELD_NAME, "kennedy"))), Occur.MUST);
                     doSearching(bq);
                 }
                 else
@@ -1110,10 +1110,10 @@ namespace Lucene.Net.Search.Highlight
             {
                 numHighlights = 0;
                 BooleanQuery booleanQuery = new BooleanQuery();
-                booleanQuery.Add(new TermQuery(new Term(FIELD_NAME, "john")), BooleanClause.Occur.SHOULD);
+                booleanQuery.Add(new TermQuery(new Term(FIELD_NAME, "john")), Occur.SHOULD);
                 PrefixQuery prefixQuery = new PrefixQuery(new Term(FIELD_NAME, "kenn"));
                 prefixQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-                booleanQuery.Add(prefixQuery, BooleanClause.Occur.SHOULD);
+                booleanQuery.Add(prefixQuery, Occur.SHOULD);
 
                 doSearching(booleanQuery);
                 instance.DoStandardHighlights(analyzer, searcher, hits, query, this);
@@ -1132,8 +1132,8 @@ namespace Lucene.Net.Search.Highlight
                 numHighlights = 0;
 
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new TermQuery(new Term(FIELD_NAME, "jfk")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term(FIELD_NAME, "kennedy")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term(FIELD_NAME, "jfk")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term(FIELD_NAME, "kennedy")), Occur.SHOULD);
 
                 doSearching(query);
                 instance.DoStandardHighlights(analyzer, searcher, hits, query, this);
@@ -1250,9 +1250,9 @@ namespace Lucene.Net.Search.Highlight
                 String s = "football-soccer in the euro 2004 footie competition";
 
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new TermQuery(new Term("bookid", "football")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term("bookid", "soccer")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term("bookid", "footie")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("bookid", "football")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term("bookid", "soccer")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term("bookid", "footie")), Occur.SHOULD);
 
                 Highlighter highlighter = instance.GetHighlighter(query, null, this);
 
@@ -1439,8 +1439,8 @@ namespace Lucene.Net.Search.Highlight
                 Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
 
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new WildcardQuery(new Term(FIELD_NAME, "jf?")), BooleanClause.Occur.SHOULD);
-                query.Add(new WildcardQuery(new Term(FIELD_NAME, "kenned*")), BooleanClause.Occur.SHOULD);
+                query.Add(new WildcardQuery(new Term(FIELD_NAME, "jf?")), Occur.SHOULD);
+                query.Add(new WildcardQuery(new Term(FIELD_NAME, "kenned*")), Occur.SHOULD);
 
                 if (VERBOSE) Console.WriteLine("Searching with primitive query");
                 // forget to set this and...
@@ -1583,8 +1583,8 @@ namespace Lucene.Net.Search.Highlight
                 String docMainText = "fred is one of the people";
 
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new TermQuery(new Term(FIELD_NAME, "fred")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term("category", "people")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term(FIELD_NAME, "fred")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term("category", "people")), Occur.SHOULD);
 
                 // highlighting respects fieldnames used in query
 
@@ -1788,8 +1788,8 @@ namespace Lucene.Net.Search.Highlight
                 assertEquals("<B>Hi-Speed</B>10 foo", result);
 
                 BooleanQuery booleanQuery = new BooleanQuery();
-                booleanQuery.Add(new TermQuery(new Term("text", "hi")), BooleanClause.Occur.SHOULD);
-                booleanQuery.Add(new TermQuery(new Term("text", "speed")), BooleanClause.Occur.SHOULD);
+                booleanQuery.Add(new TermQuery(new Term("text", "hi")), Occur.SHOULD);
+                booleanQuery.Add(new TermQuery(new Term("text", "speed")), Occur.SHOULD);
 
                 query = booleanQuery;
                 highlighter = instance.GetHighlighter(query, "text", this);

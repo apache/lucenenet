@@ -115,8 +115,8 @@ namespace Lucene.Net
             hits = null;
 
             BooleanQuery booleanQuery = new BooleanQuery();
-            booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), BooleanClause.Occur.SHOULD);
-            booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), BooleanClause.Occur.SHOULD);
+            booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), Occur.SHOULD);
+            booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), Occur.SHOULD);
             @out.WriteLine("Query: " + booleanQuery.ToString(PRIORITY_FIELD));
 
             hits = searcher.Search(booleanQuery, null, MAX_DOCS, sort).ScoreDocs;

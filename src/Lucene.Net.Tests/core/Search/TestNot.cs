@@ -52,8 +52,8 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(reader);
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term("field", "b")), BooleanClause.Occur.MUST_NOT);
+            query.Add(new TermQuery(new Term("field", "a")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term("field", "b")), Occur.MUST_NOT);
 
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);

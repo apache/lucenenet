@@ -36,8 +36,8 @@ namespace Lucene.Net.Search.VectorHighlight
         public void Test2SubInfos()
         {
             BooleanQuery query = new BooleanQuery();
-            query.Add(pqF("the", "both"), BooleanClause.Occur.MUST);
-            query.Add(tq("examples"), BooleanClause.Occur.MUST);
+            query.Add(pqF("the", "both"), Occur.MUST);
+            query.Add(tq("examples"), Occur.MUST);
 
             TestCase(query, 1000,
                 "subInfos=(examples((19,27))examples((66,74))theboth((195,203)))/1.8411169(0,1000)",

@@ -299,8 +299,8 @@ namespace Lucene.Net.Search.Payloads
         {
             PayloadTermQuery q1 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "zero"), new MaxPayloadFunction());
             PayloadTermQuery q2 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "foo"), new MaxPayloadFunction());
-            BooleanClause c1 = new BooleanClause(q1, BooleanClause.Occur.MUST);
-            BooleanClause c2 = new BooleanClause(q2, BooleanClause.Occur.MUST_NOT);
+            BooleanClause c1 = new BooleanClause(q1, Occur.MUST);
+            BooleanClause c2 = new BooleanClause(q2, Occur.MUST_NOT);
             BooleanQuery query = new BooleanQuery();
             query.Add(c1);
             query.Add(c2);

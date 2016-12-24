@@ -68,8 +68,8 @@ namespace Lucene.Net.Search
             BooleanQuery newq = new BooleanQuery(false);
             TermQuery query = new TermQuery(new Term("title", "ipod"));
 
-            newq.Add(query, BooleanClause.Occur.SHOULD);
-            newq.Add(GetElevatedQuery(new string[] { "id", "a", "id", "x" }), BooleanClause.Occur.SHOULD);
+            newq.Add(query, Occur.SHOULD);
+            newq.Add(GetElevatedQuery(new string[] { "id", "a", "id", "x" }), Occur.SHOULD);
 
             Sort sort = new Sort(new SortField("id", new ElevationComparatorSource(Priority), false), new SortField(null, SortField.Type_e.SCORE, reversed)
              );
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             int max = (vals.Length / 2) + 5;
             for (int i = 0; i < vals.Length - 1; i += 2)
             {
-                q.Add(new TermQuery(new Term(vals[i], vals[i + 1])), BooleanClause.Occur.SHOULD);
+                q.Add(new TermQuery(new Term(vals[i], vals[i + 1])), Occur.SHOULD);
                 Priority[new BytesRef(vals[i + 1])] = Convert.ToInt32(max--);
                 // System.out.println(" pri doc=" + vals[i+1] + " pri=" + (1+max));
             }

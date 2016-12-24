@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Bits = Lucene.Net.Util.Bits;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using Occur_e = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur_e = Lucene.Net.Search.Occur;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -81,13 +81,13 @@ namespace Lucene.Net.Search
         }
 
         private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
-        private readonly bool DisableCoord; // LUCENENET TODO: rename
+        private readonly bool disableCoord;
 
         /// <summary>
         /// Constructs an empty boolean query. </summary>
         public BooleanQuery()
         {
-            DisableCoord = false;
+            disableCoord = false;
         }
 
         /// <summary>
@@ -101,18 +101,18 @@ namespace Lucene.Net.Search
         /// <param name="disableCoord"> disables <seealso cref="Similarity#coord(int,int)"/> in scoring. </param>
         public BooleanQuery(bool disableCoord)
         {
-            this.DisableCoord = disableCoord;
+            this.disableCoord = disableCoord;
         }
 
         /// <summary>
         /// Returns true iff <seealso cref="Similarity#coord(int,int)"/> is disabled in
         /// scoring for this query instance. </summary>
         /// <seealso cref= #BooleanQuery(boolean) </seealso>
-        public virtual bool CoordDisabled
+        public virtual bool CoordDisabled // LUCENENET TODO: Change to CoordEnabled? Per MSDN, properties should be in the affirmative.
         {
             get
             {
-                return DisableCoord;
+                return disableCoord;
             }
         }
 
@@ -136,22 +136,22 @@ namespace Lucene.Net.Search
         {
             set
             {
-                this.MinNrShouldMatch = value;
+                this.minNrShouldMatch = value;
             }
             get
             {
-                return MinNrShouldMatch;
+                return minNrShouldMatch;
             }
         }
 
-        protected int MinNrShouldMatch = 0; // LUCENENET TODO: rename
+        protected int minNrShouldMatch = 0;
 
         /// <summary>
         /// Adds a clause to a boolean query.
         /// </summary>
         /// <exception cref="TooManyClauses"> if the new number of clauses exceeds the maximum clause number </exception>
         /// <seealso cref= #getMaxClauseCount() </seealso>
-        public virtual void Add(Query query, BooleanClause.Occur occur)
+        public virtual void Add(Query query, Occur occur)
         {
             Add(new BooleanClause(query, occur));
         }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search
                     BooleanClause c = outerInstance.clauses[i];
                     Weight w = c.Query.CreateWeight(searcher);
                     Weights.Add(w);
-                    if (!c.Prohibited)
+                    if (!c.IsProhibited)
                     {
                         maxCoord++;
                     }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
                     {
                         // call sumOfSquaredWeights for all clauses in case of side effects
                         float s = Weights[i].ValueForNormalization; // sum sub weights
-                        if (!OuterInstance.clauses[i].Prohibited)
+                        if (!OuterInstance.clauses[i].IsProhibited)
                         {
                             // only add to sum for non-prohibited clauses
                             sum += s;
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search
                     BooleanClause c = cIter.Current;
                     if (w.Scorer(context, context.AtomicReader.LiveDocs) == null)
                     {
-                        if (c.Required)
+                        if (c.IsRequired)
                         {
                             fail = true;
                             Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search
                     Explanation e = w.Explain(context, doc);
                     if (e.IsMatch)
                     {
-                        if (!c.Prohibited)
+                        if (!c.IsProhibited)
                         {
                             sumExpl.AddDetail(e);
                             sum += e.Value;
@@ -338,12 +338,12 @@ namespace Lucene.Net.Search
                             sumExpl.AddDetail(r);
                             fail = true;
                         }
-                        if (c.Occur_ == Occur_e.SHOULD)
+                        if (c.Occur == Occur_e.SHOULD)
                         {
                             shouldMatchCount++;
                         }
                     }
-                    else if (c.Required)
+                    else if (c.IsRequired)
                     {
                         Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
                         r.AddDetail(e);
@@ -385,7 +385,7 @@ namespace Lucene.Net.Search
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
             {
-                if (scoreDocsInOrder || OuterInstance.MinNrShouldMatch > 1)
+                if (scoreDocsInOrder || OuterInstance.minNrShouldMatch > 1)
                 {
                     // TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
                     // but the same is even true of pure conjunctions...
@@ -402,19 +402,19 @@ namespace Lucene.Net.Search
                     BulkScorer subScorer = w.BulkScorer(context, false, acceptDocs);
                     if (subScorer == null)
                     {
-                        if (c.Required)
+                        if (c.IsRequired)
                         {
                             return null;
                         }
                     }
-                    else if (c.Required)
+                    else if (c.IsRequired)
                     {
                         // TODO: there are some cases where BooleanScorer
                         // would handle conjunctions faster than
                         // BooleanScorer2...
                         return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
                     }
-                    else if (c.Prohibited)
+                    else if (c.IsProhibited)
                     {
                         prohibited.Add(subScorer);
                     }
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Check if we can and should return a BooleanScorer
-                return new BooleanScorer(this, DisableCoord, OuterInstance.MinNrShouldMatch, optional, prohibited, maxCoord);
+                return new BooleanScorer(this, DisableCoord, OuterInstance.minNrShouldMatch, optional, prohibited, maxCoord);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
@@ -441,16 +441,16 @@ namespace Lucene.Net.Search
                     Scorer subScorer = w.Scorer(context, acceptDocs);
                     if (subScorer == null)
                     {
-                        if (c.Required)
+                        if (c.IsRequired)
                         {
                             return null;
                         }
                     }
-                    else if (c.Required)
+                    else if (c.IsRequired)
                     {
                         required.Add(subScorer);
                     }
-                    else if (c.Prohibited)
+                    else if (c.IsProhibited)
                     {
                         prohibited.Add(subScorer);
                     }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Search
                     // no required and optional clauses.
                     return null;
                 }
-                else if (optional.Count < OuterInstance.MinNrShouldMatch)
+                else if (optional.Count < OuterInstance.minNrShouldMatch)
                 {
                     // either >1 req scorer, or there are 0 req scorers and at least 1
                     // optional scorer. Therefore if there are not enough optional scorers
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search
                 }
 
                 // simple disjunction
-                if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.MinNrShouldMatch <= 1 && optional.Count > 1)
+                if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.minNrShouldMatch <= 1 && optional.Count > 1)
                 {
                     var coord = new float[optional.Count + 1];
                     for (int i = 0; i < coord.Length; i++)
@@ -492,19 +492,19 @@ namespace Lucene.Net.Search
                 }
 
                 // Return a BooleanScorer2
-                return new BooleanScorer2(this, DisableCoord, OuterInstance.MinNrShouldMatch, required, prohibited, optional, maxCoord);
+                return new BooleanScorer2(this, DisableCoord, OuterInstance.minNrShouldMatch, required, prohibited, optional, maxCoord);
             }
 
             public override bool ScoresDocsOutOfOrder()
             {
-                if (OuterInstance.MinNrShouldMatch > 1)
+                if (OuterInstance.minNrShouldMatch > 1)
                 {
                     // BS2 (in-order) will be used by scorer()
                     return false;
                 }
                 foreach (BooleanClause c in OuterInstance.clauses)
                 {
-                    if (c.Required)
+                    if (c.IsRequired)
                     {
                         // BS2 (in-order) will be used by scorer()
                         return false;
@@ -518,15 +518,15 @@ namespace Lucene.Net.Search
 
         public override Weight CreateWeight(IndexSearcher searcher)
         {
-            return new BooleanWeight(this, searcher, DisableCoord);
+            return new BooleanWeight(this, searcher, disableCoord);
         }
 
         public override Query Rewrite(IndexReader reader)
         {
-            if (MinNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
+            if (minNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
             {
                 BooleanClause c = clauses[0];
-                if (!c.Prohibited) // just return clause
+                if (!c.IsProhibited) // just return clause
                 {
                     Query query = c.Query.Rewrite(reader); // rewrite first
 
@@ -560,7 +560,7 @@ namespace Lucene.Net.Search
                         // initialized already).  If nothing differs, the clone isn't needlessly created
                         clone = (BooleanQuery)this.Clone();
                     }
-                    clone.clauses[i] = new BooleanClause(query, c.Occur_);
+                    clone.clauses[i] = new BooleanClause(query, c.Occur);
                 }
             }
             if (clone != null)
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search
         {
             foreach (BooleanClause clause in clauses)
             {
-                if (clause.Occur_ != Occur_e.MUST_NOT)
+                if (clause.Occur != Occur_e.MUST_NOT)
                 {
                     clause.Query.ExtractTerms(terms);
                 }
@@ -606,11 +606,11 @@ namespace Lucene.Net.Search
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause c = clauses[i];
-                if (c.Prohibited)
+                if (c.IsProhibited)
                 {
                     buffer.Append("-");
                 }
-                else if (c.Required)
+                else if (c.IsRequired)
                 {
                     buffer.Append("+");
                 }
@@ -671,14 +671,14 @@ namespace Lucene.Net.Search
             return this.Boost == other.Boost 
                 && this.clauses.SequenceEqual(other.clauses) 
                 && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch 
-                && this.DisableCoord == other.DisableCoord;
+                && this.disableCoord == other.disableCoord;
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (DisableCoord ? 17 : 0);
+            return Number.FloatToIntBits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
         }
     }
 }

@@ -24,7 +24,6 @@ namespace Lucene.Net.Search
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
     [TestFixture]

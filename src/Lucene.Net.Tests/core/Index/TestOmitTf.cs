@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur = Lucene.Net.Search.Occur;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using Scorer = Lucene.Net.Search.Scorer;
     using TermQuery = Lucene.Net.Search.TermQuery;

@@ -145,8 +145,8 @@ namespace Lucene.Net.Search
                 csq2.Boost = 5.0f;
 
                 BooleanQuery bq = new BooleanQuery();
-                bq.Add(csq1, BooleanClause.Occur.SHOULD);
-                bq.Add(csq2, BooleanClause.Occur.SHOULD);
+                bq.Add(csq1, Occur.SHOULD);
+                bq.Add(csq2, Occur.SHOULD);
 
                 Query csqbq = new ConstantScoreQuery(bq);
                 csqbq.Boost = 17.0f;

@@ -30,7 +30,7 @@ namespace Lucene.Net.Facet
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur = Lucene.Net.Search.Occur;
     using Query = Lucene.Net.Search.Query;
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;

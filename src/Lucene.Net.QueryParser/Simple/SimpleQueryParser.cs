@@ -126,7 +126,7 @@ namespace Lucene.Net.QueryParsers.Simple
             NEAR_OPERATOR = 1 << 9
         }
 
-        private BooleanClause.Occur defaultOperator = BooleanClause.Occur.SHOULD;
+        private Occur defaultOperator = Occur.SHOULD;
 
         /// <summary>Creates a new parser searching over a single field.</summary>
         public SimpleQueryParser(Analyzer analyzer, string field)
@@ -189,7 +189,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     // term (or phrase or subquery) to and with
                     if (!state.CurrentOperationIsSet && state.Top != null)
                     {
-                        state.CurrentOperation = BooleanClause.Occur.MUST;
+                        state.CurrentOperation = Occur.MUST;
                     }
 
                     ++state.Index;
@@ -203,7 +203,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     // term (or phrase or subquery) to or with
                     if (!state.CurrentOperationIsSet && state.Top != null)
                     {
-                        state.CurrentOperation = BooleanClause.Occur.SHOULD;
+                        state.CurrentOperation = Occur.SHOULD;
                     }
 
                     ++state.Index;
@@ -501,8 +501,8 @@ namespace Lucene.Net.QueryParsers.Simple
                 if (state.Not % 2 == 1)
                 {
                     BooleanQuery nq = new BooleanQuery();
-                    nq.Add(branch, BooleanClause.Occur.MUST_NOT);
-                    nq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
+                    nq.Add(branch, Occur.MUST_NOT);
+                    nq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
                     branch = nq;
                 }
 
@@ -613,7 +613,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 if (q != null)
                 {
                     q.Boost = entry.Value;
-                    bq.Add(q, BooleanClause.Occur.SHOULD);
+                    bq.Add(q, Occur.SHOULD);
                 }
             }
             return Simplify(bq);
@@ -631,7 +631,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 if (q != null)
                 {
                     q.Boost = entry.Value;
-                    bq.Add(q, BooleanClause.Occur.SHOULD);
+                    bq.Add(q, Occur.SHOULD);
                 }
             }
             return Simplify(bq);
@@ -649,7 +649,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 if (q != null)
                 {
                     q.Boost = entry.Value;
-                    bq.Add(q, BooleanClause.Occur.SHOULD);
+                    bq.Add(q, Occur.SHOULD);
                 }
             }
             return Simplify(bq);
@@ -665,7 +665,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 PrefixQuery prefix = new PrefixQuery(new Term(entry.Key, text));
                 prefix.Boost = entry.Value;
-                bq.Add(prefix, BooleanClause.Occur.SHOULD);
+                bq.Add(prefix, Occur.SHOULD);
             }
             return Simplify(bq);
         }
@@ -691,9 +691,9 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /// <summary>
         /// Gets or Sets the implicit operator setting, which will be
-        /// either <see cref="BooleanClause.Occur.SHOULD"/> or <see cref="BooleanClause.Occur.MUST"/>.
+        /// either <see cref="Occur.SHOULD"/> or <see cref="Occur.MUST"/>.
         /// </summary>
-        public virtual BooleanClause.Occur DefaultOperator
+        public virtual Occur DefaultOperator
         {
             get 
             { 
@@ -701,7 +701,7 @@ namespace Lucene.Net.QueryParsers.Simple
             }
             set 
             {
-                if (value != BooleanClause.Occur.SHOULD && value != BooleanClause.Occur.MUST)
+                if (value != Occur.SHOULD && value != Occur.MUST)
                 {
                     throw new ArgumentException("invalid operator: only SHOULD or MUST are allowed");
                 }
@@ -717,8 +717,8 @@ namespace Lucene.Net.QueryParsers.Simple
             //private int index;
             //private int length;
 
-            private BooleanClause.Occur currentOperation;
-            private BooleanClause.Occur previousOperation;
+            private Occur currentOperation;
+            private Occur previousOperation;
             //private int not;
 
             //private Query top;
@@ -736,7 +736,7 @@ namespace Lucene.Net.QueryParsers.Simple
             public int Index { get; set; }
             public int Length { get; protected set; }
 
-            public BooleanClause.Occur CurrentOperation 
+            public Occur CurrentOperation 
             {
                 get 
                 { 
@@ -749,7 +749,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 }
             }
 
-            public BooleanClause.Occur PreviousOperation
+            public Occur PreviousOperation
             {
                 get
                 {

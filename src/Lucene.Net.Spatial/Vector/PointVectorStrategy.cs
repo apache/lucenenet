@@ -225,8 +225,8 @@ namespace Lucene.Net.Spatial.Vector
             }
             Query spatialRankingQuery = new FunctionQuery(valueSource);
             var bq = new BooleanQuery();
-            bq.Add(spatial, BooleanClause.Occur.MUST);
-            bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
+            bq.Add(spatial, Occur.MUST);
+            bq.Add(spatialRankingQuery, Occur.MUST);
             return bq;
         }
 
@@ -236,12 +236,12 @@ namespace Lucene.Net.Spatial.Vector
         private Query MakeWithin(IRectangle bbox)
         {
             var bq = new BooleanQuery();
-            const BooleanClause.Occur MUST = BooleanClause.Occur.MUST;
+            const Occur MUST = Occur.MUST;
             if (bbox.CrossesDateLine)
             {
                 //use null as performance trick since no data will be beyond the world bounds
-                bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.MaxX), BooleanClause.Occur.SHOULD);
-                bq.Add(RangeQuery(fieldNameX, bbox.MinX, null /*+180*/), BooleanClause.Occur.SHOULD);
+                bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.MaxX), Occur.SHOULD);
+                bq.Add(RangeQuery(fieldNameX, bbox.MinX, null /*+180*/), Occur.SHOULD);
                 bq.MinimumNumberShouldMatch = 1; //must match at least one of the SHOULD
             }
             else
@@ -274,8 +274,8 @@ namespace Lucene.Net.Spatial.Vector
             Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
 
             var bq = new BooleanQuery();
-            bq.Add(qX, BooleanClause.Occur.MUST_NOT);
-            bq.Add(qY, BooleanClause.Occur.MUST_NOT);
+            bq.Add(qX, Occur.MUST_NOT);
+            bq.Add(qY, Occur.MUST_NOT);
             return bq;
         }
     }

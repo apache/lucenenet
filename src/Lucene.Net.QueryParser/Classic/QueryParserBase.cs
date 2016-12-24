@@ -352,8 +352,8 @@ namespace Lucene.Net.QueryParsers.Classic
             if (clauses.Count > 0 && conj == CONJ_AND)
             {
                 BooleanClause c = clauses[clauses.Count - 1];
-                if (!c.Prohibited)
-                    c.Occur_ = BooleanClause.Occur.MUST;
+                if (!c.IsProhibited)
+                    c.Occur = Occur.MUST;
             }
 
             if (clauses.Count > 0 && DefaultOperator == AND_OPERATOR && conj == CONJ_OR)
@@ -363,8 +363,8 @@ namespace Lucene.Net.QueryParsers.Classic
                 // notice if the input is a OR b, first term is parsed as required; without
                 // this modification a OR b would parsed as +a OR b
                 BooleanClause c = clauses[clauses.Count - 1];
-                if (!c.Prohibited)
-                    c.Occur_ = BooleanClause.Occur.SHOULD;
+                if (!c.IsProhibited)
+                    c.Occur = Occur.SHOULD;
             }
 
             // We might have been passed a null query; the term might have been
@@ -391,11 +391,11 @@ namespace Lucene.Net.QueryParsers.Classic
                 required = (!prohibited && conj != CONJ_OR);
             }
             if (required && !prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.MUST));
+                clauses.Add(NewBooleanClause(q, Occur.MUST));
             else if (!required && !prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.SHOULD));
+                clauses.Add(NewBooleanClause(q, Occur.SHOULD));
             else if (!required && prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.MUST_NOT));
+                clauses.Add(NewBooleanClause(q, Occur.MUST_NOT));
             else
                 throw new Exception("Clause cannot be both required and prohibited");
         }
@@ -409,7 +409,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
         protected internal virtual Query NewFieldQuery(Analyzer analyzer, string field, string queryText, bool quoted)
         {
-            BooleanClause.Occur occur = DefaultOperator == Operator.AND ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD;
+            Occur occur = DefaultOperator == Operator.AND ? Occur.MUST : Occur.SHOULD;
             return CreateFieldQuery(analyzer, occur, field, queryText, quoted || AutoGeneratePhraseQueries, PhraseSlop);
         }
 
@@ -501,7 +501,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <param name="q">sub query</param>
         /// <param name="occur">how this clause should occur when matching documents</param>
         /// <returns> new <see cref="BooleanClause"/> instance</returns>
-        protected internal virtual BooleanClause NewBooleanClause(Query q, BooleanClause.Occur occur)
+        protected internal virtual BooleanClause NewBooleanClause(Query q, Occur occur)
         {
             return new BooleanClause(q, occur);
         }

@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, "field");
-            parser.DefaultOperator = BooleanClause.Occur.MUST;
+            parser.DefaultOperator = Occur.MUST;
             return parser.Parse(text);
         }
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, new HashMap<string, float>() { { "field", 1f } }, flags);
-            parser.DefaultOperator = BooleanClause.Occur.MUST;
+            parser.DefaultOperator = Occur.MUST;
             return parser.Parse(text);
         }
 
@@ -85,8 +85,8 @@ namespace Lucene.Net.QueryParsers.Simple
 
             BooleanQuery @bool = new BooleanQuery();
             FuzzyQuery fuzzy = new FuzzyQuery(new Term("field", "foo"), LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
-            @bool.Add(fuzzy, BooleanClause.Occur.MUST);
-            @bool.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur.MUST);
+            @bool.Add(fuzzy, Occur.MUST);
+            @bool.Add(new TermQuery(new Term("field", "bar")), Occur.MUST);
 
             assertEquals(@bool, Parse("foo~" + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + 1 + " bar"));
         }
@@ -135,8 +135,8 @@ namespace Lucene.Net.QueryParsers.Simple
             pq.Slop = (12);
 
             BooleanQuery expectedBoolean = new BooleanQuery();
-            expectedBoolean.Add(pq, BooleanClause.Occur.MUST);
-            expectedBoolean.Add(new TermQuery(new Term("field", "baz")), BooleanClause.Occur.MUST);
+            expectedBoolean.Add(pq, Occur.MUST);
+            expectedBoolean.Add(new TermQuery(new Term("field", "baz")), Occur.MUST);
 
             assertEquals(expectedBoolean, Parse("\"foo bar\"~12 baz"));
         }
@@ -155,8 +155,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestAND()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "bar")), Occur.MUST);
 
             assertEquals(expected, Parse("foo+bar"));
         }
@@ -172,8 +172,8 @@ namespace Lucene.Net.QueryParsers.Simple
             phrase2.Add(new Term("field", "star"));
             phrase2.Add(new Term("field", "wars"));
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(phrase1, BooleanClause.Occur.MUST);
-            expected.Add(phrase2, BooleanClause.Occur.MUST);
+            expected.Add(phrase1, Occur.MUST);
+            expected.Add(phrase2, Occur.MUST);
 
             assertEquals(expected, Parse("\"foo bar\"+\"star wars\""));
         }
@@ -183,8 +183,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestANDImplicit()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "bar")), Occur.MUST);
 
             assertEquals(expected, Parse("foo bar"));
         }
@@ -194,8 +194,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestOR()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "foo")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "bar")), Occur.SHOULD);
 
             assertEquals(expected, Parse("foo|bar"));
             assertEquals(expected, Parse("foo||bar"));
@@ -206,8 +206,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestORImplicit()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "foo")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "bar")), Occur.SHOULD);
 
             SimpleQueryParser parser = new SimpleQueryParser(new MockAnalyzer(Random()), "field");
             assertEquals(expected, parser.Parse("foo bar"));
@@ -224,8 +224,8 @@ namespace Lucene.Net.QueryParsers.Simple
             phrase2.Add(new Term("field", "star"));
             phrase2.Add(new Term("field", "wars"));
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(phrase1, BooleanClause.Occur.SHOULD);
-            expected.Add(phrase2, BooleanClause.Occur.SHOULD);
+            expected.Add(phrase1, Occur.SHOULD);
+            expected.Add(phrase2, Occur.SHOULD);
 
             assertEquals(expected, Parse("\"foo bar\"|\"star wars\""));
         }
@@ -235,8 +235,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestNOT()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST_NOT);
-            expected.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "foo")), Occur.MUST_NOT);
+            expected.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 
             assertEquals(expected, Parse("-foo"));
             assertEquals(expected, Parse("-(foo)"));
@@ -311,8 +311,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestGarbageAND()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
 
             assertEquals(expected, Parse("star wars"));
             assertEquals(expected, Parse("star+wars"));
@@ -326,8 +326,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestGarbageOR()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "wars")), Occur.SHOULD);
 
             assertEquals(expected, Parse("star|wars"));
             assertEquals(expected, Parse("     star |    wars   "));
@@ -339,8 +339,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestGarbageNOT()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST_NOT);
-            expected.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.MUST_NOT);
+            expected.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 
             assertEquals(expected, Parse("-star"));
             assertEquals(expected, Parse("---star"));
@@ -376,9 +376,9 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestCompoundAnd()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.MUST);
 
             assertEquals(expected, Parse("star wars empire"));
             assertEquals(expected, Parse("star+wars + empire"));
@@ -389,9 +389,9 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestCompoundOr()
         {
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "wars")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
 
             assertEquals(expected, Parse("star|wars|empire"));
             assertEquals(expected, Parse("star|wars | empire"));
@@ -403,10 +403,10 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
-            inner.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.MUST);
+            inner.Add(new TermQuery(new Term("field", "star")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "wars")), Occur.SHOULD);
+            expected.Add(inner, Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.MUST);
 
             assertEquals(expected, Parse("star|wars empire"));
             assertEquals(expected, Parse("star|wars + empire"));
@@ -418,10 +418,10 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
-            inner.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            inner.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
-            expected.Add(inner, BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            inner.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
+            expected.Add(inner, Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
 
             assertEquals(expected, Parse("star wars | empire"));
             assertEquals(expected, Parse("star + wars|empire"));
@@ -433,11 +433,11 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
-            inner.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            inner.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
-            expected.Add(inner, BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "strikes")), BooleanClause.Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            inner.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
+            expected.Add(inner, Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "strikes")), Occur.SHOULD);
 
             assertEquals(expected, Parse("star wars | empire | strikes"));
             assertEquals(expected, Parse("star + wars|empire | strikes"));
@@ -450,13 +450,13 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
             BooleanQuery inner2 = new BooleanQuery();
-            inner2.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            inner2.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
-            inner.Add(inner2, BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
-            inner.Add(new TermQuery(new Term("field", "strikes")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner, BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "back")), BooleanClause.Occur.MUST);
+            inner2.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            inner2.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
+            inner.Add(inner2, Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "strikes")), Occur.SHOULD);
+            expected.Add(inner, Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "back")), Occur.MUST);
 
             assertEquals(expected, Parse("star wars | empire | strikes back"));
             assertEquals(expected, Parse("star + wars|empire | strikes + back"));
@@ -469,13 +469,13 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery expected = new BooleanQuery();
             BooleanQuery inner = new BooleanQuery();
             BooleanQuery inner2 = new BooleanQuery();
-            inner.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            inner.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
-            inner2.Add(new TermQuery(new Term("field", "strikes")), BooleanClause.Occur.MUST);
-            inner2.Add(new TermQuery(new Term("field", "back")), BooleanClause.Occur.MUST);
-            expected.Add(inner, BooleanClause.Occur.SHOULD);
-            expected.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
-            expected.Add(inner2, BooleanClause.Occur.SHOULD);
+            inner.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            inner.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
+            inner2.Add(new TermQuery(new Term("field", "strikes")), Occur.MUST);
+            inner2.Add(new TermQuery(new Term("field", "back")), Occur.MUST);
+            expected.Add(inner, Occur.SHOULD);
+            expected.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
+            expected.Add(inner2, Occur.SHOULD);
 
             assertEquals(expected, Parse("(star wars) | empire | (strikes back)"));
             assertEquals(expected, Parse("(star + wars) |empire | (strikes + back)"));
@@ -491,21 +491,21 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery inner3 = new BooleanQuery();
             BooleanQuery inner4 = new BooleanQuery();
 
-            expected.Add(inner1, BooleanClause.Occur.SHOULD);
-            expected.Add(inner2, BooleanClause.Occur.SHOULD);
+            expected.Add(inner1, Occur.SHOULD);
+            expected.Add(inner2, Occur.SHOULD);
 
-            inner1.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            inner1.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.MUST);
+            inner1.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            inner1.Add(new TermQuery(new Term("field", "wars")), Occur.MUST);
 
-            inner2.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
-            inner2.Add(inner3, BooleanClause.Occur.SHOULD);
+            inner2.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
+            inner2.Add(inner3, Occur.SHOULD);
 
-            inner3.Add(new TermQuery(new Term("field", "strikes")), BooleanClause.Occur.MUST);
-            inner3.Add(new TermQuery(new Term("field", "back")), BooleanClause.Occur.MUST);
-            inner3.Add(inner4, BooleanClause.Occur.MUST);
+            inner3.Add(new TermQuery(new Term("field", "strikes")), Occur.MUST);
+            inner3.Add(new TermQuery(new Term("field", "back")), Occur.MUST);
+            inner3.Add(inner4, Occur.MUST);
 
-            inner4.Add(new TermQuery(new Term("field", "jarjar")), BooleanClause.Occur.MUST_NOT);
-            inner4.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
+            inner4.Add(new TermQuery(new Term("field", "jarjar")), Occur.MUST_NOT);
+            inner4.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 
             assertEquals(expected, Parse("(star wars) | (empire | (strikes back -jarjar))"));
             assertEquals(expected, Parse("(star + wars) |(empire | (strikes + back -jarjar) () )"));
@@ -520,17 +520,17 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery inner2 = new BooleanQuery();
             BooleanQuery inner3 = new BooleanQuery();
 
-            expected.Add(new TermQuery(new Term("field", "star")), BooleanClause.Occur.MUST);
-            expected.Add(inner1, BooleanClause.Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "star")), Occur.MUST);
+            expected.Add(inner1, Occur.MUST);
 
-            inner1.Add(new TermQuery(new Term("field", "wars")), BooleanClause.Occur.SHOULD);
-            inner1.Add(inner2, BooleanClause.Occur.SHOULD);
+            inner1.Add(new TermQuery(new Term("field", "wars")), Occur.SHOULD);
+            inner1.Add(inner2, Occur.SHOULD);
 
-            inner2.Add(inner3, BooleanClause.Occur.MUST);
-            inner3.Add(new TermQuery(new Term("field", "empire")), BooleanClause.Occur.SHOULD);
-            inner3.Add(new TermQuery(new Term("field", "strikes")), BooleanClause.Occur.SHOULD);
-            inner2.Add(new TermQuery(new Term("field", "back")), BooleanClause.Occur.MUST);
-            inner2.Add(new TermQuery(new Term("field", "jar+|jar")), BooleanClause.Occur.MUST);
+            inner2.Add(inner3, Occur.MUST);
+            inner3.Add(new TermQuery(new Term("field", "empire")), Occur.SHOULD);
+            inner3.Add(new TermQuery(new Term("field", "strikes")), Occur.SHOULD);
+            inner2.Add(new TermQuery(new Term("field", "back")), Occur.MUST);
+            inner2.Add(new TermQuery(new Term("field", "jar+|jar")), Occur.MUST);
 
             assertEquals(expected, Parse("star (wars | (empire | strikes back jar\\+\\|jar))"));
             assertEquals(expected, Parse("star + (wars |(empire | strikes + back jar\\+\\|jar) () )"));
@@ -548,10 +548,10 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery expected = new BooleanQuery(true);
             Query field0 = new TermQuery(new Term("field0", "foo"));
             field0.Boost = (5f);
-            expected.Add(field0, BooleanClause.Occur.SHOULD);
+            expected.Add(field0, Occur.SHOULD);
             Query field1 = new TermQuery(new Term("field1", "foo"));
             field1.Boost = (10f);
-            expected.Add(field1, BooleanClause.Occur.SHOULD);
+            expected.Add(field1, Occur.SHOULD);
 
             Analyzer analyzer = new MockAnalyzer(Random());
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, weights);
@@ -570,20 +570,20 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery foo = new BooleanQuery(true);
             Query field0 = new TermQuery(new Term("field0", "foo"));
             field0.Boost = (5f);
-            foo.Add(field0, BooleanClause.Occur.SHOULD);
+            foo.Add(field0, Occur.SHOULD);
             Query field1 = new TermQuery(new Term("field1", "foo"));
             field1.Boost = (10f);
-            foo.Add(field1, BooleanClause.Occur.SHOULD);
-            expected.Add(foo, BooleanClause.Occur.SHOULD);
+            foo.Add(field1, Occur.SHOULD);
+            expected.Add(foo, Occur.SHOULD);
 
             BooleanQuery bar = new BooleanQuery(true);
             field0 = new TermQuery(new Term("field0", "bar"));
             field0.Boost = (5f);
-            bar.Add(field0, BooleanClause.Occur.SHOULD);
+            bar.Add(field0, Occur.SHOULD);
             field1 = new TermQuery(new Term("field1", "bar"));
             field1.Boost = (10f);
-            bar.Add(field1, BooleanClause.Occur.SHOULD);
-            expected.Add(bar, BooleanClause.Occur.SHOULD);
+            bar.Add(field1, Occur.SHOULD);
+            expected.Add(bar, Occur.SHOULD);
 
             Analyzer analyzer = new MockAnalyzer(Random());
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, weights);
@@ -690,8 +690,8 @@ namespace Lucene.Net.QueryParsers.Simple
             expectedPhrase.Add(new Term("field", "bar"));
 
             BooleanQuery expected = new BooleanQuery();
-            expected.Add(expectedPhrase, BooleanClause.Occur.MUST);
-            expected.Add(new TermQuery(new Term("field", "~2")), BooleanClause.Occur.MUST);
+            expected.Add(expectedPhrase, Occur.MUST);
+            expected.Add(new TermQuery(new Term("field", "~2")), Occur.MUST);
             assertEquals(expected, Parse("\"foo bar\"~2", ~SimpleQueryParser.Operator.NEAR_OPERATOR));
         }
 

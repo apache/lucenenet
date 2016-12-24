@@ -416,7 +416,7 @@ namespace Lucene.Net.Queries.Mlt
 
                 try
                 {
-                    query.Add(tq, BooleanClause.Occur.SHOULD);
+                    query.Add(tq, Occur.SHOULD);
                 }
                 catch (BooleanQuery.TooManyClauses)
                 {

@@ -315,7 +315,7 @@ namespace Lucene.Net.Sandbox.Queries
                     ScoreTerm st = variants[0];
                     Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.term)) : new TermQuery(st.term, 1);
                     tq.Boost = st.score; // set the boost to a mix of IDF and score
-                    bq.Add(tq, BooleanClause.Occur.SHOULD);
+                    bq.Add(tq, Occur.SHOULD);
                 }
                 else
                 {
@@ -327,9 +327,9 @@ namespace Lucene.Net.Sandbox.Queries
                         // found a match
                         Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.term)) : new TermQuery(st.term, 1);
                         tq.Boost = st.score; // set the boost using the ScoreTerm's score
-                        termVariants.Add(tq, BooleanClause.Occur.SHOULD);          // add to query                    
+                        termVariants.Add(tq, Occur.SHOULD);          // add to query                    
                     }
-                    bq.Add(termVariants, BooleanClause.Occur.SHOULD);          // add to query
+                    bq.Add(termVariants, Occur.SHOULD);          // add to query
                 }
             }
             //TODO possible alternative step 3 - organize above booleans into a new layer of field-based

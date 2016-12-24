@@ -73,13 +73,13 @@ namespace Lucene.Net.Classification
             BooleanQuery mltQuery = new BooleanQuery();
             foreach (String textFieldName in _textFieldNames)
             {
-                mltQuery.Add(new BooleanClause(_mlt.Like(new StringReader(text), textFieldName), BooleanClause.Occur.SHOULD));
+                mltQuery.Add(new BooleanClause(_mlt.Like(new StringReader(text), textFieldName), Occur.SHOULD));
             }
             Query classFieldQuery = new WildcardQuery(new Term(_classFieldName, "*"));
-            mltQuery.Add(new BooleanClause(classFieldQuery, BooleanClause.Occur.MUST));
+            mltQuery.Add(new BooleanClause(classFieldQuery, Occur.MUST));
             if (_query != null)
             {
-                mltQuery.Add(_query, BooleanClause.Occur.MUST);
+                mltQuery.Add(_query, Occur.MUST);
             }
             TopDocs topDocs = _indexSearcher.Search(mltQuery, _k);
             return SelectClassFromNeighbors(topDocs);

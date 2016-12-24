@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
             BooleanQuery bq = new BooleanQuery();
             foreach (string value in values)
             {
-                bq.Add(new TermQuery(new Term("field", value)), BooleanClause.Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("field", value)), Occur.SHOULD);
             }
             bq.MinimumNumberShouldMatch = minShouldMatch;
 
@@ -355,8 +355,8 @@ namespace Lucene.Net.Search
                 this.Sims = new SimScorer[(int)Dv.ValueCount];
                 foreach (BooleanClause clause in bq.Clauses)
                 {
-                    Debug.Assert(!clause.Prohibited);
-                    Debug.Assert(!clause.Required);
+                    Debug.Assert(!clause.IsProhibited);
+                    Debug.Assert(!clause.IsRequired);
                     Term term = ((TermQuery)clause.Query).Term;
                     long ord = Dv.LookupTerm(term.Bytes);
                     if (ord >= 0)

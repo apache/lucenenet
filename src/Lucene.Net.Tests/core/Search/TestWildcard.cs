@@ -171,11 +171,11 @@ namespace Lucene.Net.Search
             Query query5 = new WildcardQuery(new Term("body", "m*tals"));
 
             BooleanQuery query6 = new BooleanQuery();
-            query6.Add(query5, BooleanClause.Occur.SHOULD);
+            query6.Add(query5, Occur.SHOULD);
 
             BooleanQuery query7 = new BooleanQuery();
-            query7.Add(query3, BooleanClause.Occur.SHOULD);
-            query7.Add(query5, BooleanClause.Occur.SHOULD);
+            query7.Add(query3, Occur.SHOULD);
+            query7.Add(query5, Occur.SHOULD);
 
             // Queries do not automatically lower-case search terms:
             Query query8 = new WildcardQuery(new Term("body", "M*tal*"));

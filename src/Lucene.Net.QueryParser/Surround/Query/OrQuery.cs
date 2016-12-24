@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             return SrndBooleanQuery.MakeBooleanQuery(
                 /* subqueries can be individually boosted */
-                MakeLuceneSubQueriesField(fieldName, qf), BooleanClause.Occur.SHOULD);
+                MakeLuceneSubQueriesField(fieldName, qf), Occur.SHOULD);
         }
 
         public virtual string DistanceSubQueryNotAllowed()

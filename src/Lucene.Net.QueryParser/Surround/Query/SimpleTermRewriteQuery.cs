@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 : (luceneSubQueries.Count == 1) ? luceneSubQueries.First()
                 : SrndBooleanQuery.MakeBooleanQuery(
                 /* luceneSubQueries all have default weight */
-                luceneSubQueries, BooleanClause.Occur.SHOULD); /* OR the subquery terms */
+                luceneSubQueries, Occur.SHOULD); /* OR the subquery terms */
         }
 
         internal class SimpleTermRewriteMatchingTermVisitor : SimpleTerm.IMatchingTermVisitor

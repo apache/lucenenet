@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Highlight
 
                 for (int i = 0; i < queryClauses.Count; i++)
                 {
-                    if (!queryClauses[i].Prohibited)
+                    if (!queryClauses[i].IsProhibited)
                     {
                         Extract(queryClauses[i].Query, terms);
                     }

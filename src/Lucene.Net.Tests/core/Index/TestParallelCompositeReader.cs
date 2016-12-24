@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur = Lucene.Net.Search.Occur;
     using IReaderClosedListener = Lucene.Net.Index.IndexReader.IReaderClosedListener;
 
     [TestFixture]

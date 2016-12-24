@@ -408,14 +408,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new InvalidOperationException("suggester was not built");
             }
 
-            BooleanClause.Occur occur;
+            Occur occur;
             if (allTermsRequired)
             {
-                occur = BooleanClause.Occur.MUST;
+                occur = Occur.MUST;
             }
             else
             {
-                occur = BooleanClause.Occur.SHOULD;
+                occur = Occur.SHOULD;
             }
 
             TokenStream ts = null;
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 if (contexts != null)
                 {
                     BooleanQuery sub = new BooleanQuery();
-                    query.Add(sub, BooleanClause.Occur.MUST);
+                    query.Add(sub, Occur.MUST);
                     foreach (BytesRef context in contexts)
                     {
                         // NOTE: we "should" wrap this in
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         // TODO: if we had a BinaryTermField we could fix
                         // this "must be valid ut8f" limitation:
-                        sub.Add(new TermQuery(new Term(CONTEXTS_FIELD_NAME, context.Utf8ToString())), BooleanClause.Occur.SHOULD);
+                        sub.Add(new TermQuery(new Term(CONTEXTS_FIELD_NAME, context.Utf8ToString())), Occur.SHOULD);
                     }
                 }
             }

@@ -429,7 +429,7 @@ namespace Lucene.Net.Search.Spell
         {
             Query tq = new TermQuery(new Term(name, value));
             tq.Boost = boost;
-            q.Add(new BooleanClause(tq, BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(tq, Occur.SHOULD));
         }
 
         /// <summary>
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         private static void Add(BooleanQuery q, string name, string value)
         {
-            q.Add(new BooleanClause(new TermQuery(new Term(name, value)), BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(new TermQuery(new Term(name, value)), Occur.SHOULD));
         }
 
         /// <summary>

@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 throw new NotSupportedException();
             }
 
-            public override void Add(Search.Query query, BooleanClause.Occur occur)
+            public override void Add(Search.Query query, Occur occur)
             {
                 throw new NotSupportedException();
             }

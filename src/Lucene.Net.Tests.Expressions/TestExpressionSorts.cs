@@ -79,11 +79,11 @@ namespace Lucene.Net.Tests.Expressions
                 AssertQuery(new MatchAllDocsQuery(), odd);
                 AssertQuery(new TermQuery(new Term("english", "four")), odd);
                 BooleanQuery bq = new BooleanQuery();
-                bq.Add(new TermQuery(new Term("english", "one")), BooleanClause.Occur.SHOULD);
-                bq.Add(new TermQuery(new Term("oddeven", "even")), BooleanClause.Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("english", "one")), Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("oddeven", "even")), Occur.SHOULD);
                 AssertQuery(bq, null);
                 // force in order
-                bq.Add(new TermQuery(new Term("english", "two")), BooleanClause.Occur.SHOULD);
+                bq.Add(new TermQuery(new Term("english", "two")), Occur.SHOULD);
                 bq.MinimumNumberShouldMatch = 2;
                 AssertQuery(bq, null);
             }

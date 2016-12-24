@@ -37,7 +37,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = NumericDocValuesField;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SortedDocValuesField = SortedDocValuesField;
     using StoredField = StoredField;

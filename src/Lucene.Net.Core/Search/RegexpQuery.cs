@@ -99,13 +99,13 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Term.Field.Equals(field))
+            if (!m_term.Field.Equals(field))
             {
-                buffer.Append(Term.Field);
+                buffer.Append(m_term.Field);
                 buffer.Append(":");
             }
             buffer.Append('/');
-            buffer.Append(Term.Text());
+            buffer.Append(m_term.Text());
             buffer.Append('/');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

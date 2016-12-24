@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Highlight
             var queryClauses = query.GetClauses();
             for (int i = 0; i < queryClauses.Count; i++)
             {
-                if (prohibited || queryClauses[i].Occur_ != BooleanClause.Occur.MUST_NOT)
+                if (prohibited || queryClauses[i].Occur != Occur.MUST_NOT)
                     GetTerms(queryClauses[i].Query, terms, prohibited, fieldName);
             }
         }

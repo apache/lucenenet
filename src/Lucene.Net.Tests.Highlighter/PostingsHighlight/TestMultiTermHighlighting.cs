@@ -97,8 +97,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // wrong field
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(new WildcardQuery(new Term("bogus", "te*")), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(new WildcardQuery(new Term("bogus", "te*")), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -153,8 +153,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // wrong field
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(new PrefixQuery(new Term("bogus", "te")), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(new PrefixQuery(new Term("bogus", "te")), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -209,8 +209,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // wrong field
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(new RegexpQuery(new Term("bogus", "te.*")), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(new RegexpQuery(new Term("bogus", "te.*")), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -274,8 +274,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // wrong field
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(new FuzzyQuery(new Term("bogus", "tets"), 1), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(new FuzzyQuery(new Term("bogus", "tets"), 1), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -366,8 +366,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // exact start exclusive
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(TermRangeQuery.NewStringRange("body", "test", "tf", false, true), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(TermRangeQuery.NewStringRange("body", "test", "tf", false, true), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -377,8 +377,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // exact end exclusive
             bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(TermRangeQuery.NewStringRange("body", "ta", "test", true, false), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(TermRangeQuery.NewStringRange("body", "ta", "test", true, false), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -388,8 +388,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // wrong field
             bq = new BooleanQuery();
-            bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            bq.Add(TermRangeQuery.NewStringRange("bogus", "ta", "tf", true, true), BooleanClause.Occur.SHOULD);
+            bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            bq.Add(TermRangeQuery.NewStringRange("bogus", "ta", "tf", true, true), Occur.SHOULD);
             topDocs = searcher.Search(bq, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", bq, searcher, topDocs);
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             //}
             //    };
             BooleanQuery query = new BooleanQuery();
-            query.Add(new WildcardQuery(new Term("body", "te*")), BooleanClause.Occur.SHOULD);
+            query.Add(new WildcardQuery(new Term("body", "te*")), Occur.SHOULD);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs);
@@ -445,8 +445,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // must not
             query = new BooleanQuery();
-            query.Add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
-            query.Add(new WildcardQuery(new Term("bogus", "te*")), BooleanClause.Occur.MUST_NOT);
+            query.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+            query.Add(new WildcardQuery(new Term("bogus", "te*")), Occur.MUST_NOT);
             topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
             snippets = highlighter.Highlight("body", query, searcher, topDocs);
@@ -829,9 +829,9 @@ namespace Lucene.Net.Search.PostingsHighlight
             //}
             //    };
             BooleanQuery query = new BooleanQuery();
-            query.Add(new WildcardQuery(new Term("body", "te*")), BooleanClause.Occur.SHOULD);
-            query.Add(new WildcardQuery(new Term("body", "one")), BooleanClause.Occur.SHOULD);
-            query.Add(new WildcardQuery(new Term("body", "se*")), BooleanClause.Occur.SHOULD);
+            query.Add(new WildcardQuery(new Term("body", "te*")), Occur.SHOULD);
+            query.Add(new WildcardQuery(new Term("body", "one")), Occur.SHOULD);
+            query.Add(new WildcardQuery(new Term("body", "se*")), Occur.SHOULD);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs);

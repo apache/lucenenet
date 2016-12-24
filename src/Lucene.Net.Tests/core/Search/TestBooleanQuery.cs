@@ -52,20 +52,20 @@ namespace Lucene.Net.Search
         public virtual void TestEquality()
         {
             BooleanQuery bq1 = new BooleanQuery();
-            bq1.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur.SHOULD);
-            bq1.Add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur.SHOULD);
+            bq1.Add(new TermQuery(new Term("field", "value1")), Occur.SHOULD);
+            bq1.Add(new TermQuery(new Term("field", "value2")), Occur.SHOULD);
             BooleanQuery nested1 = new BooleanQuery();
-            nested1.Add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur.SHOULD);
-            nested1.Add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur.SHOULD);
-            bq1.Add(nested1, BooleanClause.Occur.SHOULD);
+            nested1.Add(new TermQuery(new Term("field", "nestedvalue1")), Occur.SHOULD);
+            nested1.Add(new TermQuery(new Term("field", "nestedvalue2")), Occur.SHOULD);
+            bq1.Add(nested1, Occur.SHOULD);
 
             BooleanQuery bq2 = new BooleanQuery();
-            bq2.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur.SHOULD);
-            bq2.Add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur.SHOULD);
+            bq2.Add(new TermQuery(new Term("field", "value1")), Occur.SHOULD);
+            bq2.Add(new TermQuery(new Term("field", "value2")), Occur.SHOULD);
             BooleanQuery nested2 = new BooleanQuery();
-            nested2.Add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur.SHOULD);
-            nested2.Add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur.SHOULD);
-            bq2.Add(nested2, BooleanClause.Occur.SHOULD);
+            nested2.Add(new TermQuery(new Term("field", "nestedvalue1")), Occur.SHOULD);
+            nested2.Add(new TermQuery(new Term("field", "nestedvalue2")), Occur.SHOULD);
+            bq2.Add(nested2, Occur.SHOULD);
 
             Assert.IsTrue(bq1.Equals(bq2));
             //Assert.AreEqual(bq1, bq2);
@@ -102,13 +102,13 @@ namespace Lucene.Net.Search
             s.Similarity = new DefaultSimilarity();
 
             BooleanQuery q = new BooleanQuery();
-            q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
+            q.Add(new TermQuery(new Term("field", "a")), Occur.SHOULD);
 
             // LUCENE-2617: make sure that a term not in the index still contributes to the score via coord factor
             float score = s.Search(q, 10).MaxScore;
             Query subQuery = new TermQuery(new Term("field", "not_in_index"));
             subQuery.Boost = 0;
-            q.Add(subQuery, BooleanClause.Occur.SHOULD);
+            q.Add(subQuery, Occur.SHOULD);
             float score2 = s.Search(q, 10).MaxScore;
             Assert.AreEqual(score * .5F, score2, 1e-6);
 
@@ -118,28 +118,28 @@ namespace Lucene.Net.Search
             phrase.Add(new Term("field", "not_in_index"));
             phrase.Add(new Term("field", "another_not_in_index"));
             phrase.Boost = 0;
-            qq.Add(phrase, BooleanClause.Occur.SHOULD);
+            qq.Add(phrase, Occur.SHOULD);
             score2 = s.Search(qq, 10).MaxScore;
             Assert.AreEqual(score * (1 / 3F), score2, 1e-6);
 
             // now test BooleanScorer2
             subQuery = new TermQuery(new Term("field", "b"));
             subQuery.Boost = 0;
-            q.Add(subQuery, BooleanClause.Occur.MUST);
+            q.Add(subQuery, Occur.MUST);
             score2 = s.Search(q, 10).MaxScore;
             Assert.AreEqual(score * (2 / 3F), score2, 1e-6);
 
             // PhraseQuery w/ no terms added returns a null scorer
             PhraseQuery pq = new PhraseQuery();
-            q.Add(pq, BooleanClause.Occur.SHOULD);
+            q.Add(pq, Occur.SHOULD);
             Assert.AreEqual(1, s.Search(q, 10).TotalHits);
 
             // A required clause which returns null scorer should return null scorer to
             // IndexSearcher.
             q = new BooleanQuery();
             pq = new PhraseQuery();
-            q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
-            q.Add(pq, BooleanClause.Occur.MUST);
+            q.Add(new TermQuery(new Term("field", "a")), Occur.SHOULD);
+            q.Add(pq, Occur.MUST);
             Assert.AreEqual(0, s.Search(q, 10).TotalHits);
 
             DisjunctionMaxQuery dmq = new DisjunctionMaxQuery(1.0f);
@@ -172,10 +172,10 @@ namespace Lucene.Net.Search
             iw2.Dispose();
 
             BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
-            query.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur.MUST);
+            query.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
             WildcardQuery wildcardQuery = new WildcardQuery(new Term("field", "ba*"));
             wildcardQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            query.Add(wildcardQuery, BooleanClause.Occur.MUST_NOT);
+            query.Add(wildcardQuery, Occur.MUST_NOT);
 
             MultiReader multireader = new MultiReader(reader1, reader2);
             IndexSearcher searcher = NewSearcher(multireader);
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
                 BooleanQuery q = new BooleanQuery();
                 foreach (string term in terms)
                 {
-                    q.Add(new BooleanClause(new TermQuery(new Term("field", term)), BooleanClause.Occur.SHOULD));
+                    q.Add(new BooleanClause(new TermQuery(new Term("field", term)), Occur.SHOULD));
                 }
 
                 Weight weight = s.CreateNormalizedWeight(q);
@@ -352,8 +352,8 @@ namespace Lucene.Net.Search
             BooleanQuery query = new BooleanQuery();
             SpanQuery sq1 = new SpanTermQuery(new Term(FIELD, "clockwork"));
             SpanQuery sq2 = new SpanTermQuery(new Term(FIELD, "clckwork"));
-            query.Add(sq1, BooleanClause.Occur.SHOULD);
-            query.Add(sq2, BooleanClause.Occur.SHOULD);
+            query.Add(sq1, Occur.SHOULD);
+            query.Add(sq2, Occur.SHOULD);
             TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, true);
             searcher.Search(query, collector);
             hits = collector.TopDocs().ScoreDocs.Length;
@@ -380,9 +380,9 @@ namespace Lucene.Net.Search
             w.Dispose();
             IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term("field", "some")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("field", "text")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("field", "here")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "some")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "text")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "here")), Occur.SHOULD);
             bq.MinimumNumberShouldMatch = 2;
             s.Search(bq, 10);
             r.Dispose();

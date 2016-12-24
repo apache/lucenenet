@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override Search.Query MakeLuceneQueryFieldNoBoost(string fieldName, BasicQueryFactory qf)
         {
             return SrndBooleanQuery.MakeBooleanQuery( /* subqueries can be individually boosted */
-              MakeLuceneSubQueriesField(fieldName, qf), BooleanClause.Occur.MUST);
+              MakeLuceneSubQueriesField(fieldName, qf), Occur.MUST);
         }
     }
 }

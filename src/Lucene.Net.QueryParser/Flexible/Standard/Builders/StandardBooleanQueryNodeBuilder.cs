@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             return bQuery;
         }
 
-        private static BooleanClause.Occur GetModifierValue(IQueryNode node)
+        private static Occur GetModifierValue(IQueryNode node)
         {
             if (node is ModifierQueryNode)
             {
@@ -86,19 +86,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
                 if (Modifier.MOD_NONE.Equals(modifier))
                 {
-                    return BooleanClause.Occur.SHOULD;
+                    return Occur.SHOULD;
                 }
                 else if (Modifier.MOD_NOT.Equals(modifier))
                 {
-                    return BooleanClause.Occur.MUST_NOT;
+                    return Occur.MUST_NOT;
                 }
                 else
                 {
-                    return BooleanClause.Occur.MUST;
+                    return Occur.MUST;
                 }
             }
 
-            return BooleanClause.Occur.SHOULD;
+            return Occur.SHOULD;
         }
     }
 }

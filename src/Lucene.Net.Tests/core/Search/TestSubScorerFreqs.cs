@@ -29,7 +29,6 @@ namespace Lucene.Net.Search
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
 
     [TestFixture]
     public class TestSubScorerFreqs : LuceneTestCase

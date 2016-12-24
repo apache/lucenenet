@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 BooleanClause[] clauses = ((BooleanQuery)query).Clauses;
                 foreach (BooleanClause clause in clauses)
                 {
-                    if (!clause.Prohibited)
+                    if (!clause.IsProhibited)
                     {
                         list.AddAll(Arrays.AsList(ExtractAutomata(clause.Query, field)));
                     }

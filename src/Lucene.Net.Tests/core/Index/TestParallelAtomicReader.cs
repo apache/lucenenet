@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur = Lucene.Net.Search.Occur;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]

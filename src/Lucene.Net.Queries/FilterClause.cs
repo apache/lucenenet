@@ -28,14 +28,14 @@ namespace Lucene.Net.Queries
     public sealed class FilterClause
     {
 
-        private readonly BooleanClause.Occur occur;
+        private readonly Occur occur;
         private readonly Filter filter;
 
         /// <summary>
         /// Create a new FilterClause </summary>
         /// <param name="filter"> A Filter object containing a BitSet </param>
         /// <param name="occur"> A parameter implementation indicating SHOULD, MUST or MUST NOT </param>
-        public FilterClause(Filter filter, BooleanClause.Occur occur)
+        public FilterClause(Filter filter, Occur occur)
         {
             this.occur = occur;
             this.filter = filter;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// Returns this FilterClause's occur parameter </summary>
         /// <returns> An Occur object </returns>
-        public BooleanClause.Occur Occur
+        public Occur Occur
         {
             get
             {

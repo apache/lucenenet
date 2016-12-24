@@ -79,8 +79,8 @@ namespace Lucene.Net.Search
         public virtual void TestTermConjunctionsWithOmitTF()
         {
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term(F1, "nutch")), BooleanClause.Occur.MUST);
-            bq.Add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur.MUST);
+            bq.Add(new TermQuery(new Term(F1, "nutch")), Occur.MUST);
+            bq.Add(new TermQuery(new Term(F2, "is")), Occur.MUST);
             TopDocs td = Searcher.Search(bq, 3);
             Assert.AreEqual(1, td.TotalHits);
             Assert.AreEqual(3F, td.ScoreDocs[0].Score, 0.001F); // f1:nutch + f2:is + f2:is

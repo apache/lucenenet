@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans
 {
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Occur = Lucene.Net.Search.Occur;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

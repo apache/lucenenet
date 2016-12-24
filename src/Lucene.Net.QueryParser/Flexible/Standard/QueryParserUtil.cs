@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 if (q != null && // q never null, just being defensive
                     (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Count > 0))
                 {
-                    bQuery.Add(q, BooleanClause.Occur.SHOULD);
+                    bQuery.Add(q, Occur.SHOULD);
                 }
             }
             return bQuery;
@@ -72,9 +72,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Usage:
         /// <code>
         /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-        /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-        ///     BooleanClause.Occur.MUST,
-        ///     BooleanClause.Occur.MUST_NOT};
+        /// Occur[] flags = {Occur.SHOULD,
+        ///     Occur.MUST,
+        ///     Occur.MUST_NOT};
         /// MultiFieldQueryParser.Parse(&quot;query&quot;, fields, flags, analyzer);
         /// </code>
         /// <para/>
@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// flags array
         /// </exception>
         public static Query Parse(string query, string[] fields,
-            BooleanClause.Occur[] flags, Analyzer analyzer)
+            Occur[] flags, Analyzer analyzer)
         {
             if (fields.Length != flags.Length)
                 throw new ArgumentException("fields.length != flags.length");
@@ -122,9 +122,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// <code>
         /// string[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
         /// string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-        /// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-        ///     BooleanClause.Occur.MUST,
-        ///     BooleanClause.Occur.MUST_NOT};
+        /// Occur[] flags = {Occur.SHOULD,
+        ///     Occur.MUST,
+        ///     Occur.MUST_NOT};
         /// MultiFieldQueryParser.Parse(query, fields, flags, analyzer);
         /// </code>
         /// <para/>
@@ -141,7 +141,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// if the length of the queries, fields, and flags array differ
         /// </exception>
         public static Query Parse(string[] queries, string[] fields,
-            BooleanClause.Occur[] flags, Analyzer analyzer)
+            Occur[] flags, Analyzer analyzer)
         {
             if (!(queries.Length == fields.Length && queries.Length == flags.Length))
                 throw new ArgumentException(

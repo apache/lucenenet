@@ -39,7 +39,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.Reader;
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -54,7 +54,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -65,7 +65,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.MUST, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -76,7 +76,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.MUST, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "restaurant"));
                 query.Add(new Term("field", "universe"));
                 TopDocs search = s.Search(query, 10);
@@ -127,9 +127,9 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private static BooleanClause.Occur RandomOccur(Random random)
+        private static Occur RandomOccur(Random random)
         {
-            return random.NextBoolean() ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD;
+            return random.NextBoolean() ? Occur.MUST : Occur.SHOULD;
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.Reader;
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -185,7 +185,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -199,7 +199,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -215,7 +215,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -232,7 +232,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -249,7 +249,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "the"));
@@ -260,7 +260,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.MUST, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "the"));
@@ -282,7 +282,7 @@ namespace Lucene.Net.Tests.Queries
             Random random = Random();
             try
             {
-                new CommonTermsQuery(BooleanClause.Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
+                new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
                 Fail(@"MUST_NOT is not supproted");
             }
             catch (ArgumentException ex)
@@ -291,7 +291,7 @@ namespace Lucene.Net.Tests.Queries
 
             try
             {
-                new CommonTermsQuery(RandomOccur(random), BooleanClause.Occur.MUST_NOT, Random().NextFloat());
+                new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random().NextFloat());
                 Fail(@"MUST_NOT is not supproted");
             }
             catch (ArgumentException ex)
@@ -323,7 +323,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.Reader;
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -338,7 +338,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new ExtendedCommonTermsQuery(BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new ExtendedCommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random().NextBoolean() ? 2F : 0.5F);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -407,7 +407,7 @@ namespace Lucene.Net.Tests.Queries
                 List<TermAndFreq> highTerms = QueueToList(highFreqQueue);
                 List<TermAndFreq> lowTerms = QueueToList(lowFreqQueue);
                 IndexSearcher searcher = NewSearcher(reader);
-                BooleanClause.Occur lowFreqOccur = RandomOccur(Random());
+                Occur lowFreqOccur = RandomOccur(Random());
                 BooleanQuery verifyQuery = new BooleanQuery();
                 CommonTermsQuery cq = new CommonTermsQuery(RandomOccur(Random()), lowFreqOccur, highFreq - 1, Random().NextBoolean());
                 foreach (TermAndFreq termAndFreq in lowTerms)
@@ -521,7 +521,7 @@ namespace Lucene.Net.Tests.Queries
 
         private sealed class ExtendedCommonTermsQuery : CommonTermsQuery
         {
-            public ExtendedCommonTermsQuery(BooleanClause.Occur highFreqOccur, BooleanClause.Occur lowFreqOccur, float maxTermFrequency)
+            public ExtendedCommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency)
                 : base(highFreqOccur, lowFreqOccur, maxTermFrequency)
             {
             }

@@ -28,7 +28,6 @@ namespace Lucene.Net.Search
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
 

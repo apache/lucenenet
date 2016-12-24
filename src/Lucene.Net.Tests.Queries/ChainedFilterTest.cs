@@ -49,8 +49,8 @@ namespace Lucene.Net.Tests.Queries
 
             // query for everything to make life easier
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term("owner", "bob")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("owner", "sue")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("owner", "bob")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("owner", "sue")), Occur.SHOULD);
             query = bq;
 
             // date filter matches everything too

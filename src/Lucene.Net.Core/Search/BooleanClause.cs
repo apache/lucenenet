@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 
 namespace Lucene.Net.Search
 {
@@ -24,30 +23,8 @@ namespace Lucene.Net.Search
     /// A clause in a BooleanQuery. </summary>
     public class BooleanClause : IEquatable<BooleanClause>
     {
-        /// <summary>
-        /// Specifies how clauses are to occur in matching documents. </summary>
-        public enum Occur // LUCENENET TODO: Move outside of BooleanClause class
-        {
-            /// <summary>
-            /// Use this operator for clauses that <i>must</i> appear in the matching documents.
-            /// </summary>
-            MUST,
-
-            /// <summary>
-            /// Use this operator for clauses that <i>should</i> appear in the
-            /// matching documents. For a BooleanQuery with no <code>MUST</code>
-            /// clauses one or more <code>SHOULD</code> clauses must match a document
-            /// for the BooleanQuery to match. </summary>
-            /// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch</seealso>
-            SHOULD,
-
-            /// <summary>
-            /// Use this operator for clauses that <i>must not</i> appear in the matching documents.
-            /// Note that it is not possible to search for queries that only consist
-            /// of a <code>MUST_NOT</code> clause.
-            /// </summary>
-            MUST_NOT
-        }
+        // LUCENENET specific - de-nested Occur from BooleanClause in order to prevent
+        // a naming conflict with the Occur property
 
         public static string ToString(Occur occur)
         {
@@ -83,7 +60,7 @@ namespace Lucene.Net.Search
             this.occur = occur;
         }
 
-        public Occur Occur_ // LUCENENET TODO: rename Occur
+        public virtual Occur Occur
         {
             get
             {
@@ -95,7 +72,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public Query Query
+        public virtual Query Query
         {
             get
             {
@@ -107,7 +84,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public bool Prohibited // LUCENENET TODO: Rename IsProhibited
+        public virtual bool IsProhibited
         {
             get
             {
@@ -115,7 +92,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public bool Required // LUCENENET TODO: Rename IsRequired
+        public virtual bool IsRequired
         {
             get
             {
@@ -135,7 +112,9 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return query.GetHashCode() ^ (Occur.MUST == occur ? 1 : 0) ^ (Occur.MUST_NOT == occur ? 2 : 0);
+            return query.GetHashCode() 
+                ^ (Occur.MUST == occur ? 1 : 0) 
+                ^ (Occur.MUST_NOT == occur ? 2 : 0);
         }
 
         // LUCENENET specific
@@ -157,5 +136,30 @@ namespace Lucene.Net.Search
         {
             return ToString(occur) + query.ToString();
         }
+    }
+
+    /// <summary>
+    /// Specifies how clauses are to occur in matching documents. </summary>
+    public enum Occur
+    {
+        /// <summary>
+        /// Use this operator for clauses that <i>must</i> appear in the matching documents.
+        /// </summary>
+        MUST,
+
+        /// <summary>
+        /// Use this operator for clauses that <i>should</i> appear in the
+        /// matching documents. For a BooleanQuery with no <code>MUST</code>
+        /// clauses one or more <code>SHOULD</code> clauses must match a document
+        /// for the BooleanQuery to match. </summary>
+        /// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch</seealso>
+        SHOULD,
+
+        /// <summary>
+        /// Use this operator for clauses that <i>must not</i> appear in the matching documents.
+        /// Note that it is not possible to search for queries that only consist
+        /// of a <code>MUST_NOT</code> clause.
+        /// </summary>
+        MUST_NOT
     }
 }

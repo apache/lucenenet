@@ -122,7 +122,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             q.Boost = boost;
                         }
                         ApplySlop(q, slop);
-                        clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
+                        clauses.Add(new BooleanClause(q, Occur.SHOULD));
                     }
                 }
                 if (clauses.Count == 0)
@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             float boost = boosts[fields[i]];
                             q.Boost = boost;
                         }
-                        clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
+                        clauses.Add(new BooleanClause(q, Occur.SHOULD));
                     }
                 }
                 if (clauses.Count == 0)  // happens for stopwords
@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -225,7 +225,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, startInclusive, endInclusive), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, startInclusive, endInclusive), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 for (int i = 0; i < fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetRegexpQuery(fields[i], termStr),
-                        BooleanClause.Occur.SHOULD));
+                        Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -278,7 +278,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 Query q = qp.Parse(queries[i]);
                 if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Count > 0))
                 {
-                    bQuery.Add(q, BooleanClause.Occur.SHOULD);
+                    bQuery.Add(q, Occur.SHOULD);
                 }
             }
             return bQuery;
@@ -291,9 +291,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Usage:
         /// <code>
         ///     string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-        ///     BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-        ///         BooleanClause.Occur.MUST,
-        ///         BooleanClause.Occur.MUST_NOT};
+        ///     Occur[] flags = {Occur.SHOULD,
+        ///         Occur.MUST,
+        ///         Occur.MUST_NOT};
         ///     MultiFieldQueryParser.Parse(&quot;query&quot;, fields, flags, analyzer);
         /// </code>
         /// <para/>
@@ -315,7 +315,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// if the length of the fields array differs from the length of
         /// the flags array
         /// </exception>
-        public static Query Parse(LuceneVersion matchVersion, string query, string[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+        public static Query Parse(LuceneVersion matchVersion, string query, string[] fields, Occur[] flags, Analyzer analyzer)
         {
             if (fields.Length != flags.Length)
                 throw new System.ArgumentException("fields.length != flags.length");
@@ -340,9 +340,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <code>
         ///     string[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
         ///     string[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
-        ///     BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
-        ///         BooleanClause.Occur.MUST,
-        ///         BooleanClause.Occur.MUST_NOT};
+        ///     Occur[] flags = {Occur.SHOULD,
+        ///         Occur.MUST,
+        ///         Occur.MUST_NOT};
         ///     MultiFieldQueryParser.Parse(query, fields, flags, analyzer);
         /// </code>
         /// <para/>
@@ -361,7 +361,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <param name="analyzer">Analyzer to use</param>
         /// <exception cref="ParseException">if query parsing fails</exception>
         /// <exception cref="System.ArgumentException">if the length of the queries, fields, and flags array differ</exception>
-        public static Query Parse(LuceneVersion matchVersion, string[] queries, string[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+        public static Query Parse(LuceneVersion matchVersion, string[] queries, string[] fields, Occur[] flags, Analyzer analyzer)
         {
             if (!(queries.Length == fields.Length && queries.Length == flags.Length))
                 throw new System.ArgumentException("queries, fields, and flags array have have different length");

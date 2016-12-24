@@ -102,14 +102,14 @@ namespace Lucene.Net.Tests.Join
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
 
             BooleanQuery childQuery = new BooleanQuery();
-            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), BooleanClause.Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), BooleanClause.Occur.MUST));
+            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
 
             ToParentBlockJoinQuery childJoinQuery = new ToParentBlockJoinQuery(childQuery, parentsFilter, ScoreMode.Avg);
 
             BooleanQuery fullQuery = new BooleanQuery();
-            fullQuery.Add(new BooleanClause(childJoinQuery, BooleanClause.Occur.MUST));
-            fullQuery.Add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.MUST));
+            fullQuery.Add(new BooleanClause(childJoinQuery, Occur.MUST));
+            fullQuery.Add(new BooleanClause(new MatchAllDocsQuery(), Occur.MUST));
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(Sort.RELEVANCE, 1, true, true);
             s.Search(fullQuery, c);
             TopGroups<int> results = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
@@ -155,8 +155,8 @@ namespace Lucene.Net.Tests.Join
 
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
-            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), BooleanClause.Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), BooleanClause.Occur.MUST));
+            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
 
             // Define parent document criteria (find a resident in the UK)
             Query parentQuery = new TermQuery(new Term("country", "United Kingdom"));
@@ -167,8 +167,8 @@ namespace Lucene.Net.Tests.Join
 
             // Combine the parent and nested child queries into a single query for a candidate
             BooleanQuery fullQuery = new BooleanQuery();
-            fullQuery.Add(new BooleanClause(parentQuery, BooleanClause.Occur.MUST));
-            fullQuery.Add(new BooleanClause(childJoinQuery, BooleanClause.Occur.MUST));
+            fullQuery.Add(new BooleanClause(parentQuery, Occur.MUST));
+            fullQuery.Add(new BooleanClause(childJoinQuery, Occur.MUST));
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(Sort.RELEVANCE, 1, true, true);
 
@@ -198,8 +198,8 @@ namespace Lucene.Net.Tests.Join
             // Now join "up" (map parent hits to child docs) instead...:
             ToChildBlockJoinQuery parentJoinQuery = new ToChildBlockJoinQuery(parentQuery, parentsFilter, Random().NextBoolean());
             BooleanQuery fullChildQuery = new BooleanQuery();
-            fullChildQuery.Add(new BooleanClause(parentJoinQuery, BooleanClause.Occur.MUST));
-            fullChildQuery.Add(new BooleanClause(childQuery, BooleanClause.Occur.MUST));
+            fullChildQuery.Add(new BooleanClause(parentJoinQuery, Occur.MUST));
+            fullChildQuery.Add(new BooleanClause(childQuery, Occur.MUST));
 
             //System.out.println("FULL: " + fullChildQuery);
             TopDocs hits = s.Search(fullChildQuery, 10);
@@ -311,8 +311,8 @@ namespace Lucene.Net.Tests.Join
 
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
-            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), BooleanClause.Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), BooleanClause.Occur.MUST));
+            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
 
             // Define parent document criteria (find a resident in the UK)
             Query parentQuery = new TermQuery(new Term("country", "United Kingdom"));
@@ -347,8 +347,8 @@ namespace Lucene.Net.Tests.Join
             assertEquals("java skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random().NextBoolean()), Skill("java"), 10).TotalHits);
 
             BooleanQuery rubyPython = new BooleanQuery();
-            rubyPython.Add(new TermQuery(new Term("skill", "ruby")), BooleanClause.Occur.SHOULD);
-            rubyPython.Add(new TermQuery(new Term("skill", "python")), BooleanClause.Occur.SHOULD);
+            rubyPython.Add(new TermQuery(new Term("skill", "ruby")), Occur.SHOULD);
+            rubyPython.Add(new TermQuery(new Term("skill", "python")), Occur.SHOULD);
             assertEquals("ruby skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random().NextBoolean()), new QueryWrapperFilter(rubyPython), 10).TotalHits);
 
             r.Dispose();
@@ -386,7 +386,7 @@ namespace Lucene.Net.Tests.Join
             s.Search(q, 10);
             BooleanQuery bq = new BooleanQuery();
             bq.Boost = 2f; // we boost the BQ
-            bq.Add(q, BooleanClause.Occur.MUST);
+            bq.Add(q, Occur.MUST);
             s.Search(bq, 10);
             r.Dispose();
             dir.Dispose();
@@ -675,16 +675,16 @@ namespace Lucene.Net.Tests.Join
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
                         Query clause;
-                        BooleanClause.Occur occur;
+                        Occur occur;
                         if (!didMust && Random().NextBoolean())
                         {
-                            occur = Random().NextBoolean() ? BooleanClause.Occur.MUST : BooleanClause.Occur.MUST_NOT;
+                            occur = Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
                             clause = new TermQuery(RandomChildTerm(childFields[0]));
                             didMust = true;
                         }
                         else
                         {
-                            occur = BooleanClause.Occur.SHOULD;
+                            occur = Occur.SHOULD;
                             int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
                             clause = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)]));
                         }
@@ -696,9 +696,9 @@ namespace Lucene.Net.Tests.Join
                     BooleanQuery bq = new BooleanQuery();
                     childQuery = bq;
 
-                    bq.Add(new TermQuery(RandomChildTerm(childFields[0])), BooleanClause.Occur.MUST);
+                    bq.Add(new TermQuery(RandomChildTerm(childFields[0])), Occur.MUST);
                     int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
-                    bq.Add(new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)])), Random().NextBoolean() ? BooleanClause.Occur.MUST : BooleanClause.Occur.MUST_NOT);
+                    bq.Add(new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
                 int x = Random().Next(4);
@@ -743,26 +743,26 @@ namespace Lucene.Net.Tests.Join
                     Term parentTerm = RandomParentTerm(parentFields[0]);
                     if (Random().NextBoolean())
                     {
-                        bq.Add(childJoinQuery, BooleanClause.Occur.MUST);
-                        bq.Add(new TermQuery(parentTerm), BooleanClause.Occur.MUST);
+                        bq.Add(childJoinQuery, Occur.MUST);
+                        bq.Add(new TermQuery(parentTerm), Occur.MUST);
                     }
                     else
                     {
-                        bq.Add(new TermQuery(parentTerm), BooleanClause.Occur.MUST);
-                        bq.Add(childJoinQuery, BooleanClause.Occur.MUST);
+                        bq.Add(new TermQuery(parentTerm), Occur.MUST);
+                        bq.Add(childJoinQuery, Occur.MUST);
                     }
 
                     BooleanQuery bq2 = new BooleanQuery();
                     parentQuery = bq2;
                     if (Random().NextBoolean())
                     {
-                        bq2.Add(childQuery, BooleanClause.Occur.MUST);
-                        bq2.Add(new TermQuery(parentTerm), BooleanClause.Occur.MUST);
+                        bq2.Add(childQuery, Occur.MUST);
+                        bq2.Add(new TermQuery(parentTerm), Occur.MUST);
                     }
                     else
                     {
-                        bq2.Add(new TermQuery(parentTerm), BooleanClause.Occur.MUST);
-                        bq2.Add(childQuery, BooleanClause.Occur.MUST);
+                        bq2.Add(new TermQuery(parentTerm), Occur.MUST);
+                        bq2.Add(childQuery, Occur.MUST);
                     }
                 }
 
@@ -907,16 +907,16 @@ namespace Lucene.Net.Tests.Join
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
                         Query clause;
-                        BooleanClause.Occur occur;
+                        Occur occur;
                         if (!didMust && Random().NextBoolean())
                         {
-                            occur = Random().NextBoolean() ? BooleanClause.Occur.MUST : BooleanClause.Occur.MUST_NOT;
+                            occur = Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
                             clause = new TermQuery(RandomParentTerm(parentFields[0]));
                             didMust = true;
                         }
                         else
                         {
-                            occur = BooleanClause.Occur.SHOULD;
+                            occur = Occur.SHOULD;
                             int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
                             clause = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)]));
                         }
@@ -928,9 +928,9 @@ namespace Lucene.Net.Tests.Join
                     BooleanQuery bq = new BooleanQuery();
                     parentQuery2 = bq;
 
-                    bq.Add(new TermQuery(RandomParentTerm(parentFields[0])), BooleanClause.Occur.MUST);
+                    bq.Add(new TermQuery(RandomParentTerm(parentFields[0])), Occur.MUST);
                     int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
-                    bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)])), Random().NextBoolean() ? BooleanClause.Occur.MUST : BooleanClause.Occur.MUST_NOT);
+                    bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
                 if (VERBOSE)
@@ -976,13 +976,13 @@ namespace Lucene.Net.Tests.Join
                         childJoinQuery2 = bq;
                         if (Random().NextBoolean())
                         {
-                            bq.Add(parentJoinQuery2, BooleanClause.Occur.MUST);
-                            bq.Add(new TermQuery(childTerm), BooleanClause.Occur.MUST);
+                            bq.Add(parentJoinQuery2, Occur.MUST);
+                            bq.Add(new TermQuery(childTerm), Occur.MUST);
                         }
                         else
                         {
-                            bq.Add(new TermQuery(childTerm), BooleanClause.Occur.MUST);
-                            bq.Add(parentJoinQuery2, BooleanClause.Occur.MUST);
+                            bq.Add(new TermQuery(childTerm), Occur.MUST);
+                            bq.Add(parentJoinQuery2, Occur.MUST);
                         }
                     }
 
@@ -999,13 +999,13 @@ namespace Lucene.Net.Tests.Join
                         childQuery2 = bq2;
                         if (Random().NextBoolean())
                         {
-                            bq2.Add(parentQuery2, BooleanClause.Occur.MUST);
-                            bq2.Add(new TermQuery(childTerm), BooleanClause.Occur.MUST);
+                            bq2.Add(parentQuery2, Occur.MUST);
+                            bq2.Add(new TermQuery(childTerm), Occur.MUST);
                         }
                         else
                         {
-                            bq2.Add(new TermQuery(childTerm), BooleanClause.Occur.MUST);
-                            bq2.Add(parentQuery2, BooleanClause.Occur.MUST);
+                            bq2.Add(new TermQuery(childTerm), Occur.MUST);
+                            bq2.Add(parentQuery2, Occur.MUST);
                         }
                     }
                 }
@@ -1144,12 +1144,12 @@ namespace Lucene.Net.Tests.Join
 
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childJobQuery = new BooleanQuery();
-            childJobQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), BooleanClause.Occur.MUST));
-            childJobQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), BooleanClause.Occur.MUST));
+            childJobQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
+            childJobQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
 
             BooleanQuery childQualificationQuery = new BooleanQuery();
-            childQualificationQuery.Add(new BooleanClause(new TermQuery(new Term("qualification", "maths")), BooleanClause.Occur.MUST));
-            childQualificationQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 1980, 2000, true, true), BooleanClause.Occur.MUST));
+            childQualificationQuery.Add(new BooleanClause(new TermQuery(new Term("qualification", "maths")), Occur.MUST));
+            childQualificationQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 1980, 2000, true, true), Occur.MUST));
 
 
             // Define parent document criteria (find a resident in the UK)
@@ -1162,9 +1162,9 @@ namespace Lucene.Net.Tests.Join
 
             // Combine the parent and nested child queries into a single query for a candidate
             BooleanQuery fullQuery = new BooleanQuery();
-            fullQuery.Add(new BooleanClause(parentQuery, BooleanClause.Occur.MUST));
-            fullQuery.Add(new BooleanClause(childJobJoinQuery, BooleanClause.Occur.MUST));
-            fullQuery.Add(new BooleanClause(childQualificationJoinQuery, BooleanClause.Occur.MUST));
+            fullQuery.Add(new BooleanClause(parentQuery, Occur.MUST));
+            fullQuery.Add(new BooleanClause(childJobJoinQuery, Occur.MUST));
+            fullQuery.Add(new BooleanClause(childQualificationJoinQuery, Occur.MUST));
 
             // Collects all job and qualification child docs for
             // each resume hit in the top N (sorted by score):
@@ -1294,8 +1294,8 @@ namespace Lucene.Net.Tests.Join
 
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
-            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), BooleanClause.Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), BooleanClause.Occur.MUST));
+            childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
 
             // Wrap the child document query to 'join' any matches
             // up to corresponding parent:
@@ -1400,8 +1400,8 @@ namespace Lucene.Net.Tests.Join
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("isParent", "yes"))));
             ToParentBlockJoinQuery childJoinQuery = new ToParentBlockJoinQuery(childQuery, parentsFilter, ScoreMode.Avg);
             BooleanQuery parentQuery = new BooleanQuery();
-            parentQuery.Add(childJoinQuery, BooleanClause.Occur.SHOULD);
-            parentQuery.Add(new TermQuery(new Term("parentText", "text")), BooleanClause.Occur.SHOULD);
+            parentQuery.Add(childJoinQuery, Occur.SHOULD);
+            parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
@@ -1466,8 +1466,8 @@ namespace Lucene.Net.Tests.Join
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("isParent", "yes"))));
             ToParentBlockJoinQuery childJoinQuery = new ToParentBlockJoinQuery(childQuery, parentsFilter, ScoreMode.Avg);
             BooleanQuery parentQuery = new BooleanQuery();
-            parentQuery.Add(childJoinQuery, BooleanClause.Occur.SHOULD);
-            parentQuery.Add(new TermQuery(new Term("parentText", "text")), BooleanClause.Occur.SHOULD);
+            parentQuery.Add(childJoinQuery, Occur.SHOULD);
+            parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
@@ -1532,8 +1532,8 @@ namespace Lucene.Net.Tests.Join
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("isParent", "yes"))));
             ToParentBlockJoinQuery childJoinQuery = new ToParentBlockJoinQuery(childQuery, parentsFilter, ScoreMode.Avg);
             BooleanQuery parentQuery = new BooleanQuery();
-            parentQuery.Add(childJoinQuery, BooleanClause.Occur.SHOULD);
-            parentQuery.Add(new TermQuery(new Term("parentText", "text")), BooleanClause.Occur.SHOULD);
+            parentQuery.Add(childJoinQuery, Occur.SHOULD);
+            parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
 

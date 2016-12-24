@@ -245,8 +245,8 @@ namespace Lucene.Net.Tests.Join
                 new TermQuery(new Term("description", "random")), indexSearcher, ScoreMode.Avg);
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(joinQuery, BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term("id", "3")), BooleanClause.Occur.SHOULD);
+            bq.Add(joinQuery, Occur.SHOULD);
+            bq.Add(new TermQuery(new Term("id", "3")), Occur.SHOULD);
 
             indexSearcher.Search(bq, new CollectorAnonymousInnerClassHelper(this));
 

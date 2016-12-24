@@ -78,9 +78,9 @@ namespace Lucene.Net.Search
         public virtual void TestDisjunctions()
         {
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur.SHOULD);
-            bq.Add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term(F1, "lucene")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term(F2, "lucene")), Occur.SHOULD);
+            bq.Add(new TermQuery(new Term(F2, "search")), Occur.SHOULD);
             IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
             Assert.AreEqual(3, tfs.Count); // 3 documents
             Assert.AreEqual(3, (int)tfs[0]); // f1:lucene + f2:lucene + f2:search
@@ -92,11 +92,11 @@ namespace Lucene.Net.Search
         public virtual void TestNestedDisjunctions()
         {
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur.SHOULD);
+            bq.Add(new TermQuery(new Term(F1, "lucene")), Occur.SHOULD);
             BooleanQuery bq2 = new BooleanQuery();
-            bq2.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur.SHOULD);
-            bq2.Add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur.SHOULD);
-            bq.Add(bq2, BooleanClause.Occur.SHOULD);
+            bq2.Add(new TermQuery(new Term(F2, "lucene")), Occur.SHOULD);
+            bq2.Add(new TermQuery(new Term(F2, "search")), Occur.SHOULD);
+            bq.Add(bq2, Occur.SHOULD);
             IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
             Assert.AreEqual(3, tfs.Count); // 3 documents
             Assert.AreEqual(3, (int)tfs[0]); // f1:lucene + f2:lucene + f2:search
@@ -108,8 +108,8 @@ namespace Lucene.Net.Search
         public virtual void TestConjunctions()
         {
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur.MUST);
-            bq.Add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur.MUST);
+            bq.Add(new TermQuery(new Term(F2, "lucene")), Occur.MUST);
+            bq.Add(new TermQuery(new Term(F2, "is")), Occur.MUST);
             IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
             Assert.AreEqual(3, tfs.Count); // 3 documents
             Assert.AreEqual(2, (int)tfs[0]); // f2:lucene + f2:is

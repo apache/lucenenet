@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return base.Term;
+                return base.m_term;
             }
         }
 

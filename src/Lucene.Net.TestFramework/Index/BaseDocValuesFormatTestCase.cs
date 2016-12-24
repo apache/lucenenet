@@ -1192,11 +1192,11 @@ namespace Lucene.Net.Index
             IndexSearcher searcher = new IndexSearcher(reader);
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(new TermQuery(new Term("docId", "0")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "1")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "2")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "3")), BooleanClause.Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "4")), BooleanClause.Occur.SHOULD);
+            query.Add(new TermQuery(new Term("docId", "0")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term("docId", "1")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term("docId", "2")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term("docId", "3")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term("docId", "4")), Occur.SHOULD);
 
             TopDocs search = searcher.Search(query, 10);
             Assert.AreEqual(5, search.TotalHits);

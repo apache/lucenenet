@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 
         protected override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states) //ignored
         {
-            topLevel.Add(new TermQuery(term, states), BooleanClause.Occur.SHOULD);
+            topLevel.Add(new TermQuery(term, states), Occur.SHOULD);
         }
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)

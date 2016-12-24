@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Occur = Lucene.Net.Search.Occur;
 
 namespace Lucene.Net
 {
@@ -168,8 +169,8 @@ namespace Lucene.Net
             IList<Query> queries = new List<Query>();
 
             BooleanQuery booleanAB = new BooleanQuery();
-            booleanAB.Add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
-            booleanAB.Add(new TermQuery(new Term("contents", "b")), BooleanClause.Occur.SHOULD);
+            booleanAB.Add(new TermQuery(new Term("contents", "a")), Occur.SHOULD);
+            booleanAB.Add(new TermQuery(new Term("contents", "b")), Occur.SHOULD);
             queries.Add(booleanAB);
 
             PhraseQuery phraseAB = new PhraseQuery();
@@ -184,8 +185,8 @@ namespace Lucene.Net
             queries.Add(phraseABC);
 
             BooleanQuery booleanAC = new BooleanQuery();
-            booleanAC.Add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
-            booleanAC.Add(new TermQuery(new Term("contents", "c")), BooleanClause.Occur.SHOULD);
+            booleanAC.Add(new TermQuery(new Term("contents", "a")), Occur.SHOULD);
+            booleanAC.Add(new TermQuery(new Term("contents", "c")), Occur.SHOULD);
             queries.Add(booleanAC);
 
             PhraseQuery phraseAC = new PhraseQuery();

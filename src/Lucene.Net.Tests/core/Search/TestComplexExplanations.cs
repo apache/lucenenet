@@ -4,7 +4,6 @@ namespace Lucene.Net.Search
 {
     using Lucene.Net.Search.Spans;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

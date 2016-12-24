@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public static void AddQueriesToBoolean(
             BooleanQuery bq,
             IEnumerable<Search.Query> queries,
-            BooleanClause.Occur occur)
+            Occur occur)
         {
             foreach (var query in queries)
             {
@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public static Search.Query MakeBooleanQuery(
             IEnumerable<Search.Query> queries,
-            BooleanClause.Occur occur)
+            Occur occur)
         {
             if (queries.Count() <= 1)
             {

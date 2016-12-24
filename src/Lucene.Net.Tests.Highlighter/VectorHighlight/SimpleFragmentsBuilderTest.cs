@@ -60,8 +60,8 @@ namespace Lucene.Net.Search.VectorHighlight
         public void Test3Frags()
         {
             BooleanQuery booleanQuery = new BooleanQuery();
-            booleanQuery.Add(new TermQuery(new Term(F, "a")), BooleanClause.Occur.SHOULD);
-            booleanQuery.Add(new TermQuery(new Term(F, "c")), BooleanClause.Occur.SHOULD);
+            booleanQuery.Add(new TermQuery(new Term(F, "a")), Occur.SHOULD);
+            booleanQuery.Add(new TermQuery(new Term(F, "c")), Occur.SHOULD);
 
             FieldFragList ffl = Ffl(booleanQuery, "a b b b b b b b b b b b a b a b b b b b c a a b b");
             SimpleFragmentsBuilder sfb = new SimpleFragmentsBuilder();

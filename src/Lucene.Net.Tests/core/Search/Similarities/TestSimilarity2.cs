@@ -116,8 +116,8 @@ namespace Lucene.Net.Search.Similarities
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
-                query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term("bar", "baz")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "bar")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term("bar", "baz")), Occur.SHOULD);
                 Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
             }
             ir.Dispose();
@@ -142,8 +142,8 @@ namespace Lucene.Net.Search.Similarities
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
-                query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
-                query.Add(new TermQuery(new Term("foo", "baz")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "bar")), Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "baz")), Occur.SHOULD);
                 Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
             }
             ir.Dispose();
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
-                query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "bar")), Occur.SHOULD);
                 Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
             }
             ir.Dispose();
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
-                query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "bar")), Occur.SHOULD);
                 Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
             }
             ir.Dispose();
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
-                query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+                query.Add(new TermQuery(new Term("foo", "bar")), Occur.SHOULD);
                 Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
             }
             ir.Dispose();

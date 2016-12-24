@@ -23,7 +23,6 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
     [TestFixture]

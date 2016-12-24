@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
                 BooleanQuery boq = new BooleanQuery(true);
                 for (int i = 0; i < terms.Length; i++)
                 {
-                    boq.Add(new TermQuery(terms[i]), BooleanClause.Occur.SHOULD);
+                    boq.Add(new TermQuery(terms[i]), Occur.SHOULD);
                 }
                 boq.Boost = Boost;
                 return boq;

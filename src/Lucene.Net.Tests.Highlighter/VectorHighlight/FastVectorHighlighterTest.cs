@@ -86,8 +86,8 @@ namespace Lucene.Net.Search.VectorHighlight
             String field = "text";
             {
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new TermQuery(new Term(field, "internet")), BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "explorer")), BooleanClause.Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "internet")), Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "explorer")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
                 String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 128, 1);
@@ -136,9 +136,9 @@ namespace Lucene.Net.Search.VectorHighlight
             String field = "no_long_term";
             {
                 BooleanQuery query = new BooleanQuery();
-                query.Add(new TermQuery(new Term(field, "test")), BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "foo")), BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "highlighed")), BooleanClause.Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "test")), Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
                 String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
@@ -153,9 +153,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 pq.Add(new Term(field, "foo"));
                 pq.Add(new Term(field, "highlighed"));
                 pq.Slop = (5);
-                query.Add(new TermQuery(new Term(field, "foo")), BooleanClause.Occur.MUST);
-                query.Add(pq, BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "highlighed")), BooleanClause.Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
+                query.Add(pq, Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
                 String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
@@ -205,11 +205,11 @@ namespace Lucene.Net.Search.VectorHighlight
                 pq.Add(new Term(field, "highlighed"));
                 pq.Slop = (5);
                 BooleanQuery inner = new BooleanQuery();
-                inner.Add(pq, BooleanClause.Occur.MUST);
-                inner.Add(new TermQuery(new Term(field, "foo")), BooleanClause.Occur.MUST);
-                query.Add(inner, BooleanClause.Occur.MUST);
-                query.Add(pq, BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "highlighed")), BooleanClause.Occur.MUST);
+                inner.Add(pq, Occur.MUST);
+                inner.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
+                query.Add(inner, Occur.MUST);
+                query.Add(pq, Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
                 String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
@@ -226,9 +226,9 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 BooleanQuery query = new BooleanQuery();
                 query.Add(new TermQuery(new Term(field,
-                          "thisisaverylongwordandmakessurethisfails")), BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "foo")), BooleanClause.Occur.MUST);
-                query.Add(new TermQuery(new Term(field, "highlighed")), BooleanClause.Occur.MUST);
+                          "thisisaverylongwordandmakessurethisfails")), Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
+                query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
                 String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
@@ -271,17 +271,17 @@ namespace Lucene.Net.Search.VectorHighlight
 
             // This mimics what some query parsers do to <highlight words together>
             BooleanQuery terms = new BooleanQuery();
-            terms.Add(clause("text", "highlight"), BooleanClause.Occur.MUST);
-            terms.Add(clause("text", "words"), BooleanClause.Occur.MUST);
-            terms.Add(clause("text", "together"), BooleanClause.Occur.MUST);
+            terms.Add(clause("text", "highlight"), Occur.MUST);
+            terms.Add(clause("text", "words"), Occur.MUST);
+            terms.Add(clause("text", "together"), Occur.MUST);
             // This mimics what some query parsers do to <"highlight words together">
             BooleanQuery phrase = new BooleanQuery();
-            phrase.Add(clause("text", "highlight", "words", "together"), BooleanClause.Occur.MUST);
+            phrase.Add(clause("text", "highlight", "words", "together"), Occur.MUST);
             phrase.Boost = (100);
             // Now combine those results in a boolean query which should pull the phrases to the front of the list of fragments 
             BooleanQuery query = new BooleanQuery();
-            query.Add(phrase, BooleanClause.Occur.MUST);
-            query.Add(phrase, BooleanClause.Occur.SHOULD);
+            query.Add(phrase, Occur.MUST);
+            query.Add(phrase, Occur.SHOULD);
             FieldQuery fieldQuery = new FieldQuery(query, reader, true, false);
             String fragment = highlighter.GetBestFragment(fieldQuery, reader, 0, "text", 100);
             assertEquals("junk junk junk junk junk junk junk junk <b>highlight words together</b> junk junk junk junk junk junk junk junk", fragment);
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 doc.Add(field);
                 writer.AddDocument(doc);
             }
-            CommonTermsQuery query = new CommonTermsQuery(BooleanClause.Occur.MUST, BooleanClause.Occur.SHOULD, 2);
+            CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, 2);
             query.Add(new Term("field", "text"));
             query.Add(new Term("field", "long"));
             query.Add(new Term("field", "very"));
@@ -476,9 +476,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IEncoder encoder = new DefaultEncoder();
             int docId = 0;
             BooleanQuery query = new BooleanQuery();
-            query.Add(clause("field", "hero"), BooleanClause.Occur.SHOULD);
-            query.Add(clause("field", "of"), BooleanClause.Occur.SHOULD);
-            query.Add(clause("field", "legend"), BooleanClause.Occur.SHOULD);
+            query.Add(clause("field", "hero"), Occur.SHOULD);
+            query.Add(clause("field", "of"), Occur.SHOULD);
+            query.Add(clause("field", "legend"), Occur.SHOULD);
             FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
 
             foreach (IFragListBuilder fragListBuilder in new IFragListBuilder[] {
@@ -554,8 +554,8 @@ namespace Lucene.Net.Search.VectorHighlight
 
             // query3: OR query1 and query2 together
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(pq, BooleanClause.Occur.SHOULD);
-            bq.Add(pq2, BooleanClause.Occur.SHOULD);
+            bq.Add(pq, Occur.SHOULD);
+            bq.Add(pq2, Occur.SHOULD);
             fieldQuery = highlighter.GetFieldQuery(bq, reader);
             bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 54, 1);
             assertEquals("<b>Test: http://www.facebook.com</b>", bestFragments[0]);
@@ -621,7 +621,7 @@ namespace Lucene.Net.Search.VectorHighlight
             BooleanQuery query = new BooleanQuery();
             foreach (Query clause in queryClauses)
             {
-                query.Add(clause, BooleanClause.Occur.MUST);
+                query.Add(clause, Occur.MUST);
             }
             FieldQuery fieldQuery = new FieldQuery(query, reader, true, fieldMatch);
             String[] bestFragments;

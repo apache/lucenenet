@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Shingle
                 while (ts.IncrementToken())
                 {
                     string termText = termAtt.ToString();
-                    q.Add(new TermQuery(new Term("content", termText)), BooleanClause.Occur.SHOULD);
+                    q.Add(new TermQuery(new Term("content", termText)), Occur.SHOULD);
                 }
                 ts.End();
             }

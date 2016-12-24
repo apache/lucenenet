@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 
 namespace Lucene.Net.Search.VectorHighlight
 {

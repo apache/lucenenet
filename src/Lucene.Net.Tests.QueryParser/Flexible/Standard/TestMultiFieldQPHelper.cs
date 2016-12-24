@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             String[]
             fields = { "b", "t" };
-            BooleanClause.Occur[] occur = { BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD }; // LUCENENET TODO: Make this Occur.Should instead of BooleanClause.Occur.Should
+            Occur[] occur = { Occur.SHOULD, Occur.SHOULD };
             TestQPHelper.QPTestAnalyzer a = new TestQPHelper.QPTestAnalyzer();
             StandardQueryParser mfqp = new StandardQueryParser();
             mfqp.SetMultiFields(fields);
@@ -228,10 +228,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             String[]
             fields = { "b", "t" };
-            BooleanClause.Occur[]
+            Occur[]
             flags = {
-        BooleanClause.Occur.MUST,
-        BooleanClause.Occur.MUST_NOT };
+                Occur.MUST,
+                Occur.MUST_NOT };
             Query q = QueryParserUtil.Parse("one", fields, flags,
                 new MockAnalyzer(Random()));
             assertEquals("+b:one -t:one", q.toString());
@@ -241,7 +241,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -258,10 +258,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             String[]
             fields = { "b", "t" };
-            BooleanClause.Occur[]
+            Occur[]
             flags = {
-        BooleanClause.Occur.MUST,
-        BooleanClause.Occur.MUST_NOT };
+        Occur.MUST,
+        Occur.MUST_NOT };
             StandardQueryParser parser = new StandardQueryParser();
             parser.SetMultiFields(fields);
             parser.Analyzer = (new MockAnalyzer(Random()));
@@ -276,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
                 fail();
             }
@@ -295,17 +295,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             queries = { "one", "two", "three" };
             String[]
             fields = { "f1", "f2", "f3" };
-            BooleanClause.Occur[]
+            Occur[]
             flags = {
-        BooleanClause.Occur.MUST,
-        BooleanClause.Occur.MUST_NOT, BooleanClause.Occur.SHOULD };
+                Occur.MUST,
+                Occur.MUST_NOT, Occur.SHOULD };
             Query q = QueryParserUtil.Parse(queries, fields, flags,
                 new MockAnalyzer(Random()));
             assertEquals("+f1:one -f2:two f3:three", q.toString());
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil
                     .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
@@ -325,17 +325,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             queries = { "one", "two" };
             String[]
             fields = { "b", "t" };
-            BooleanClause.Occur[]
+            Occur[]
             flags = {
-        BooleanClause.Occur.MUST,
-        BooleanClause.Occur.MUST_NOT };
+                Occur.MUST,
+                Occur.MUST_NOT };
             Query q = QueryParserUtil.Parse(queries, fields, flags,
                 new MockAnalyzer(Random()));
             assertEquals("+b:one -t:two", q.toString());
 
             try
             {
-                BooleanClause.Occur[] flags2 = { BooleanClause.Occur.MUST };
+                Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil
                     .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
                 fail();
