@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 
     public sealed class BitsFilteredDocIdSet : FilteredDocIdSet
     {
-        private readonly Bits AcceptDocs; // LUCENENET TODO: rename
+        private readonly Bits acceptDocs;
 
         /// <summary>
         /// Convenience wrapper method: If {@code acceptDocs == null} it returns the original set without wrapping. </summary>
@@ -53,12 +53,12 @@ namespace Lucene.Net.Search
             {
                 throw new System.NullReferenceException("acceptDocs is null");
             }
-            this.AcceptDocs = acceptDocs;
+            this.acceptDocs = acceptDocs;
         }
 
         protected override bool Match(int docid)
         {
-            return AcceptDocs.Get(docid);
+            return acceptDocs.Get(docid);
         }
     }
 }
