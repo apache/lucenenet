@@ -83,11 +83,8 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -131,11 +128,8 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)
@@ -242,7 +236,7 @@ namespace Lucene.Net.Search
             {
                 // create w/ null wrapped collector, and test that the methods work
                 CachingCollector cc = CachingCollector.Create(true, cacheScores, 50 * ONE_BYTE);
-                cc.NextReader = null;
+                cc.SetNextReader(null);
                 cc.SetScorer(new MockScorer());
                 cc.Collect(0);
 

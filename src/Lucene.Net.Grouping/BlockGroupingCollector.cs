@@ -431,7 +431,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 collector.SetScorer(fakeScorer);
-                collector.NextReader = og.readerContext;
+                collector.SetNextReader(og.readerContext);
                 for (int docIDX = 0; docIDX < og.count; docIDX++)
                 {
                     int doc = og.docs[docIDX];
@@ -629,25 +629,22 @@ namespace Lucene.Net.Search.Grouping
             return false;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            if (subDocUpto != 0)
             {
-                if (subDocUpto != 0)
-                {
-                    ProcessGroup();
-                }
-                subDocUpto = 0;
-                docBase = value.DocBase;
-                //System.out.println("setNextReader base=" + docBase + " r=" + readerContext.reader);
-                lastDocPerGroupBits = lastDocPerGroup.GetDocIdSet(value, value.AtomicReader.LiveDocs).GetIterator();
-                groupEndDocID = -1;
+                ProcessGroup();
+            }
+            subDocUpto = 0;
+            docBase = context.DocBase;
+            //System.out.println("setNextReader base=" + docBase + " r=" + readerContext.reader);
+            lastDocPerGroupBits = lastDocPerGroup.GetDocIdSet(context, context.AtomicReader.LiveDocs).GetIterator();
+            groupEndDocID = -1;
 
-                currentReaderContext = value;
-                for (int i = 0; i < comparators.Length; i++)
-                {
-                    comparators[i] = comparators[i].SetNextReader(value);
-                }
+            currentReaderContext = context;
+            for (int i = 0; i < comparators.Length; i++)
+            {
+                comparators[i] = comparators[i].SetNextReader(context);
             }
         }
     }

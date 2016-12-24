@@ -230,11 +230,8 @@ namespace Lucene.Net.Search
                 this.End = end;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override void Collect(int doc)

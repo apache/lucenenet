@@ -79,9 +79,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 return true;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set { docBase = value.DocBase; }
+                docBase = context.DocBase;
             }
 
             public override void Collect(int docNr)

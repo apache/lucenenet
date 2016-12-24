@@ -77,12 +77,12 @@ namespace Lucene.Net.Facet
             if (drillDownCollector != null)
             {
                 drillDownCollector.SetScorer(scorer);
-                drillDownCollector.NextReader = context;
+                drillDownCollector.SetNextReader(context);
             }
             foreach (DocsAndCost dim in dims)
             {
                 dim.sidewaysCollector.SetScorer(scorer);
-                dim.sidewaysCollector.NextReader = context;
+                dim.sidewaysCollector.SetNextReader(context);
             }
 
             // TODO: if we ever allow null baseScorer ... it will

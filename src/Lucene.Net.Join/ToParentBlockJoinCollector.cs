@@ -303,16 +303,13 @@ namespace Lucene.Net.Join
             }
         }
         
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            currentReaderContext = context;
+            docBase = context.DocBase;
+            for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
             {
-                currentReaderContext = value;
-                docBase = value.DocBase;
-                for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
-                {
-                    queue.SetComparator(compIDX, comparators[compIDX].SetNextReader(value));
-                }
+                queue.SetComparator(compIDX, comparators[compIDX].SetNextReader(context));
             }
         }
 
@@ -496,7 +493,7 @@ namespace Lucene.Net.Join
                 }
 
                 collector.SetScorer(fakeScorer);
-                collector.NextReader = og.readerContext;
+                collector.SetNextReader(og.readerContext);
                 for (int docIdx = 0; docIdx < numChildDocs; docIdx++)
                 {
                     //System.out.println("docIDX=" + docIDX + " vs " + og.docs[slot].length);

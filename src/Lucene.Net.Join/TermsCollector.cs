@@ -85,9 +85,9 @@ namespace Lucene.Net.Join
                 }
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set { _docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, _field); }
+                _docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -112,9 +112,9 @@ namespace Lucene.Net.Join
                 _collectorTerms.Add(_spare);
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set { _fromDocTerms = FieldCache.DEFAULT.GetTerms(value.AtomicReader, _field, false); }
+                _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
             }
 
             public override bool AcceptsDocsOutOfOrder()

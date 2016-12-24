@@ -120,14 +120,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            foreach (Collector c in Collectors)
             {
-                foreach (Collector c in Collectors)
-                {
-                    c.NextReader = value;
-                }
+                c.SetNextReader(context);
             }
         }
         

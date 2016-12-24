@@ -42,12 +42,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                c.NextReader = value;
-            }
+            c.SetNextReader(context);
         }
         
         public override void SetScorer(Scorer scorer)

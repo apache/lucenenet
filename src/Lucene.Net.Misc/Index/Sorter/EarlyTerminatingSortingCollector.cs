@@ -112,15 +112,12 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                @in.NextReader = value;
-                segmentSorted = SortingMergePolicy.IsSorted(value.AtomicReader, sort);
-                segmentTotalCollect = segmentSorted ? numDocsToCollect : int.MaxValue;
-                numCollected = 0;
-            }
+            @in.SetNextReader(context);
+            segmentSorted = SortingMergePolicy.IsSorted(context.AtomicReader, sort);
+            segmentTotalCollect = segmentSorted ? numDocsToCollect : int.MaxValue;
+            numCollected = 0;
         }
 
         public override bool AcceptsDocsOutOfOrder()

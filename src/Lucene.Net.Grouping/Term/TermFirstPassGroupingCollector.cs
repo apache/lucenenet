@@ -92,13 +92,10 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                base.NextReader = value;
-                index = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-            }
+            base.SetNextReader(context);
+            index = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
         }
     }
 }

@@ -853,12 +853,9 @@ namespace Lucene.Net.Facet
                 lastDocID = doc;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    lastDocID = -1;
-                }
+                lastDocID = -1;
             }
 
             public override bool AcceptsDocsOutOfOrder()

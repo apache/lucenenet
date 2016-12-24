@@ -96,14 +96,11 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    this.DocBase = value.DocBase;
-                    Queue.SetComparator(0, comparator.SetNextReader(value));
-                    comparator = Queue.FirstComparator;
-                }
+                this.DocBase = context.DocBase;
+                Queue.SetComparator(0, comparator.SetNextReader(context));
+                comparator = Queue.FirstComparator;
             }
             
             public override void SetScorer(Scorer scorer)
@@ -494,15 +491,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                DocBase = context.DocBase;
+                for (int i = 0; i < comparators.Length; i++)
                 {
-                    DocBase = value.DocBase;
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        Queue.SetComparator(i, comparators[i].SetNextReader(value));
-                    }
+                    Queue.SetComparator(i, comparators[i].SetNextReader(context));
                 }
             }
 
@@ -1157,16 +1151,13 @@ namespace Lucene.Net.Search
                 return true;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                DocBase = context.DocBase;
+                AfterDoc = After.Doc - DocBase;
+                for (int i = 0; i < comparators.Length; i++)
                 {
-                    DocBase = value.DocBase;
-                    AfterDoc = After.Doc - DocBase;
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        Queue.SetComparator(i, comparators[i].SetNextReader(value));
-                    }
+                    Queue.SetComparator(i, comparators[i].SetNextReader(context));
                 }
             }
         }

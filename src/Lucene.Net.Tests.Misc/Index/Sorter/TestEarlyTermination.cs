@@ -152,13 +152,10 @@ namespace Lucene.Net.Index.Sorter
                 : base(@in, sort, numDocsToCollect)
             {
             }
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    base.NextReader = value;
-                    assertFalse("segment should not be recognized as sorted as different sorter was used", segmentSorted);
-                }
+                base.SetNextReader(context);
+                assertFalse("segment should not be recognized as sorted as different sorter was used", segmentSorted);
             }
         }
 

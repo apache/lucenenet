@@ -102,19 +102,16 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                if (Random().NextBoolean())
                 {
-                    if (Random().NextBoolean())
-                    {
-                        collectionTerminated = true;
-                        throw new CollectionTerminatedException();
-                    }
-                    else
-                    {
-                        collectionTerminated = false;
-                    }
+                    collectionTerminated = true;
+                    throw new CollectionTerminatedException();
+                }
+                else
+                {
+                    collectionTerminated = false;
                 }
             }
 

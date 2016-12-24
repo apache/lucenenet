@@ -130,60 +130,57 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupedFacetHits.Add(new GroupedFacetHit(groupKey, facetKey));
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                if (segmentFacetCounts != null)
                 {
-                    if (segmentFacetCounts != null)
+                    segmentResults.Add(CreateSegmentResult());
+                }
+
+                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
+                facetFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, facetField);
+
+                // 1+ to allow for the -1 "not set":
+                segmentFacetCounts = new int[facetFieldTermsIndex.ValueCount + 1];
+                segmentTotalCount = 0;
+
+                segmentGroupedFacetHits.Clear();
+                foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
+                {
+                    int facetOrd = groupedFacetHit.facetValue == null ? -1 : facetFieldTermsIndex.LookupTerm(groupedFacetHit.facetValue);
+                    if (groupedFacetHit.facetValue != null && facetOrd < 0)
                     {
-                        segmentResults.Add(CreateSegmentResult());
+                        continue;
                     }
 
-                    groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-                    facetFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, facetField);
-
-                    // 1+ to allow for the -1 "not set":
-                    segmentFacetCounts = new int[facetFieldTermsIndex.ValueCount + 1];
-                    segmentTotalCount = 0;
-
-                    segmentGroupedFacetHits.Clear();
-                    foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
+                    int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
+                    if (groupedFacetHit.groupValue != null && groupOrd < 0)
                     {
-                        int facetOrd = groupedFacetHit.facetValue == null ? -1 : facetFieldTermsIndex.LookupTerm(groupedFacetHit.facetValue);
-                        if (groupedFacetHit.facetValue != null && facetOrd < 0)
-                        {
-                            continue;
-                        }
-
-                        int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
-                        if (groupedFacetHit.groupValue != null && groupOrd < 0)
-                        {
-                            continue;
-                        }
-
-                        int segmentGroupedFacetsIndex = groupOrd * (facetFieldTermsIndex.ValueCount + 1) + facetOrd;
-                        segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
+                        continue;
                     }
 
-                    if (facetPrefix != null)
+                    int segmentGroupedFacetsIndex = groupOrd * (facetFieldTermsIndex.ValueCount + 1) + facetOrd;
+                    segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
+                }
+
+                if (facetPrefix != null)
+                {
+                    startFacetOrd = facetFieldTermsIndex.LookupTerm(facetPrefix);
+                    if (startFacetOrd < 0)
                     {
-                        startFacetOrd = facetFieldTermsIndex.LookupTerm(facetPrefix);
-                        if (startFacetOrd < 0)
-                        {
-                            // Points to the ord one higher than facetPrefix
-                            startFacetOrd = -startFacetOrd - 1;
-                        }
-                        BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
-                        facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
-                        endFacetOrd = facetFieldTermsIndex.LookupTerm(facetEndPrefix);
-                        Debug.Assert(endFacetOrd < 0);
-                        endFacetOrd = -endFacetOrd - 1; // Points to the ord one higher than facetEndPrefix
+                        // Points to the ord one higher than facetPrefix
+                        startFacetOrd = -startFacetOrd - 1;
                     }
-                    else
-                    {
-                        startFacetOrd = -1;
-                        endFacetOrd = facetFieldTermsIndex.ValueCount;
-                    }
+                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
+                    facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
+                    endFacetOrd = facetFieldTermsIndex.LookupTerm(facetEndPrefix);
+                    Debug.Assert(endFacetOrd < 0);
+                    endFacetOrd = -endFacetOrd - 1; // Points to the ord one higher than facetEndPrefix
+                }
+                else
+                {
+                    startFacetOrd = -1;
+                    endFacetOrd = facetFieldTermsIndex.ValueCount;
                 }
             }
 
@@ -320,98 +317,95 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupedFacetHits.Add(new GroupedFacetHit(groupKey, facetValue));
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                if (segmentFacetCounts != null)
                 {
-                    if (segmentFacetCounts != null)
+                    segmentResults.Add(CreateSegmentResult());
+                }
+
+                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
+                facetFieldDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, facetField);
+                facetFieldNumTerms = (int)facetFieldDocTermOrds.ValueCount;
+                if (facetFieldNumTerms == 0)
+                {
+                    facetOrdTermsEnum = null;
+                }
+                else
+                {
+                    facetOrdTermsEnum = facetFieldDocTermOrds.TermsEnum();
+                }
+                // [facetFieldNumTerms() + 1] for all possible facet values and docs not containing facet field
+                segmentFacetCounts = new int[facetFieldNumTerms + 1];
+                segmentTotalCount = 0;
+
+                segmentGroupedFacetHits.Clear();
+                foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
+                {
+                    int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
+                    if (groupedFacetHit.groupValue != null && groupOrd < 0)
                     {
-                        segmentResults.Add(CreateSegmentResult());
+                        continue;
                     }
 
-                    groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-                    facetFieldDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, facetField);
-                    facetFieldNumTerms = (int)facetFieldDocTermOrds.ValueCount;
-                    if (facetFieldNumTerms == 0)
+                    int facetOrd;
+                    if (groupedFacetHit.facetValue != null)
                     {
-                        facetOrdTermsEnum = null;
-                    }
-                    else
-                    {
-                        facetOrdTermsEnum = facetFieldDocTermOrds.TermsEnum();
-                    }
-                    // [facetFieldNumTerms() + 1] for all possible facet values and docs not containing facet field
-                    segmentFacetCounts = new int[facetFieldNumTerms + 1];
-                    segmentTotalCount = 0;
-
-                    segmentGroupedFacetHits.Clear();
-                    foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
-                    {
-                        int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
-                        if (groupedFacetHit.groupValue != null && groupOrd < 0)
+                        if (facetOrdTermsEnum == null || !facetOrdTermsEnum.SeekExact(groupedFacetHit.facetValue))
                         {
                             continue;
                         }
-
-                        int facetOrd;
-                        if (groupedFacetHit.facetValue != null)
-                        {
-                            if (facetOrdTermsEnum == null || !facetOrdTermsEnum.SeekExact(groupedFacetHit.facetValue))
-                            {
-                                continue;
-                            }
-                            facetOrd = (int)facetOrdTermsEnum.Ord();
-                        }
-                        else
-                        {
-                            facetOrd = facetFieldNumTerms;
-                        }
-
-                        // (facetFieldDocTermOrds.numTerms() + 1) for all possible facet values and docs not containing facet field
-                        int segmentGroupedFacetsIndex = groupOrd * (facetFieldNumTerms + 1) + facetOrd;
-                        segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
+                        facetOrd = (int)facetOrdTermsEnum.Ord();
+                    }
+                    else
+                    {
+                        facetOrd = facetFieldNumTerms;
                     }
 
-                    if (facetPrefix != null)
+                    // (facetFieldDocTermOrds.numTerms() + 1) for all possible facet values and docs not containing facet field
+                    int segmentGroupedFacetsIndex = groupOrd * (facetFieldNumTerms + 1) + facetOrd;
+                    segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
+                }
+
+                if (facetPrefix != null)
+                {
+                    TermsEnum.SeekStatus seekStatus;
+                    if (facetOrdTermsEnum != null)
                     {
-                        TermsEnum.SeekStatus seekStatus;
-                        if (facetOrdTermsEnum != null)
-                        {
-                            seekStatus = facetOrdTermsEnum.SeekCeil(facetPrefix);
-                        }
-                        else
-                        {
-                            seekStatus = TermsEnum.SeekStatus.END;
-                        }
+                        seekStatus = facetOrdTermsEnum.SeekCeil(facetPrefix);
+                    }
+                    else
+                    {
+                        seekStatus = TermsEnum.SeekStatus.END;
+                    }
 
-                        if (seekStatus != TermsEnum.SeekStatus.END)
-                        {
-                            startFacetOrd = (int)facetOrdTermsEnum.Ord();
-                        }
-                        else
-                        {
-                            startFacetOrd = 0;
-                            endFacetOrd = 0;
-                            return;
-                        }
-
-                        BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
-                        facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
-                        seekStatus = facetOrdTermsEnum.SeekCeil(facetEndPrefix);
-                        if (seekStatus != TermsEnum.SeekStatus.END)
-                        {
-                            endFacetOrd = (int)facetOrdTermsEnum.Ord();
-                        }
-                        else
-                        {
-                            endFacetOrd = facetFieldNumTerms; // Don't include null...
-                        }
+                    if (seekStatus != TermsEnum.SeekStatus.END)
+                    {
+                        startFacetOrd = (int)facetOrdTermsEnum.Ord();
                     }
                     else
                     {
                         startFacetOrd = 0;
-                        endFacetOrd = facetFieldNumTerms + 1;
+                        endFacetOrd = 0;
+                        return;
                     }
+
+                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
+                    facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
+                    seekStatus = facetOrdTermsEnum.SeekCeil(facetEndPrefix);
+                    if (seekStatus != TermsEnum.SeekStatus.END)
+                    {
+                        endFacetOrd = (int)facetOrdTermsEnum.Ord();
+                    }
+                    else
+                    {
+                        endFacetOrd = facetFieldNumTerms; // Don't include null...
+                    }
+                }
+                else
+                {
+                    startFacetOrd = 0;
+                    endFacetOrd = facetFieldNumTerms + 1;
                 }
             }
 

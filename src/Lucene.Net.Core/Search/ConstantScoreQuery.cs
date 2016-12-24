@@ -306,12 +306,9 @@ namespace Lucene.Net.Search
                     Collector.Collect(doc);
                 }
 
-                public override AtomicReaderContext NextReader
+                public override void SetNextReader(AtomicReaderContext context)
                 {
-                    set
-                    {
-                        Collector.NextReader = value;
-                    }
+                    Collector.SetNextReader(context);
                 }
 
                 public override bool AcceptsDocsOutOfOrder()

@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
                 CurDocs = EMPTY_INT_ARRAY;
                 foreach (SegStart seg in CachedSegs)
                 {
-                    other.NextReader = seg.ReaderContext;
+                    other.SetNextReader(seg.ReaderContext);
                     other.SetScorer(CachedScorer);
                     while (curBase + curUpto < seg.End)
                     {
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
                 CurDocs = EMPTY_INT_ARRAY;
                 foreach (SegStart seg in CachedSegs)
                 {
-                    other.NextReader = seg.ReaderContext;
+                    other.SetNextReader(seg.ReaderContext);
                     while (curbase + curUpto < seg.End)
                     {
                         if (curUpto == CurDocs.Length)
@@ -398,11 +398,8 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
         }
 
@@ -483,17 +480,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            Other.SetNextReader(context);
+            if (LastReaderContext != null)
             {
-                Other.NextReader = value;
-                if (LastReaderContext != null)
-                {
-                    CachedSegs.Add(new SegStart(LastReaderContext, @base + Upto));
-                }
-                LastReaderContext = value;
+                CachedSegs.Add(new SegStart(LastReaderContext, @base + Upto));
             }
+            LastReaderContext = context;
         }
 
         /// <summary>

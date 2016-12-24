@@ -157,12 +157,9 @@ namespace Lucene.Net.Search.Highlight
                 bitset.Set(this.baseDoc + i);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    this.baseDoc = value.DocBase;
-                }
+                this.baseDoc = context.DocBase;
             }
 
             public override void SetScorer(Scorer scorer)

@@ -43,23 +43,20 @@ namespace Lucene.Net.Search.Grouping.Terms
             groupDocs = /*(SearchGroupDocs<BytesRef>[])*/ new AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef>[ordSet.Keys.Length];
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                base.NextReader = value;
-                index = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
+            base.SetNextReader(context);
+            index = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
 
-                // Rebuild ordSet
-                ordSet.Clear();
-                foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in groupMap.Values)
+            // Rebuild ordSet
+            ordSet.Clear();
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in groupMap.Values)
+            {
+                //      System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
+                int ord = group.groupValue == null ? -1 : index.LookupTerm(group.groupValue);
+                if (group.groupValue == null || ord >= 0)
                 {
-                    //      System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
-                    int ord = group.groupValue == null ? -1 : index.LookupTerm(group.groupValue);
-                    if (group.groupValue == null || ord >= 0)
-                    {
-                        groupDocs[ordSet.Put(ord)] = group;
-                    }
+                    groupDocs[ordSet.Put(ord)] = group;
                 }
             }
         }

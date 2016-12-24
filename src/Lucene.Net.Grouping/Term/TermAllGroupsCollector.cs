@@ -104,27 +104,24 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                index = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
+            index = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
 
-                // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
-                ordSet.Clear();
-                foreach (BytesRef countedGroup in groups)
+            // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
+            ordSet.Clear();
+            foreach (BytesRef countedGroup in groups)
+            {
+                if (countedGroup == null)
                 {
-                    if (countedGroup == null)
+                    ordSet.Put(-1);
+                }
+                else
+                {
+                    int ord = index.LookupTerm(countedGroup);
+                    if (ord >= 0)
                     {
-                        ordSet.Put(-1);
-                    }
-                    else
-                    {
-                        int ord = index.LookupTerm(countedGroup);
-                        if (ord >= 0)
-                        {
-                            ordSet.Put(ord);
-                        }
+                        ordSet.Put(ord);
                     }
                 }
             }

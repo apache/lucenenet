@@ -108,12 +108,9 @@ namespace Lucene.Net.Search
                 Scores[doc + @base] = scorer.Score();
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

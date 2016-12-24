@@ -69,12 +69,9 @@ namespace Lucene.Net.Search
                 Pq.InsertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override void SetScorer(Scorer scorer)

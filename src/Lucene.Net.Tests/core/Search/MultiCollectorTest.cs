@@ -43,12 +43,9 @@ namespace Lucene.Net.Search
                 CollectCalled = true;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    SetNextReaderCalled = true;
-                }
+                SetNextReaderCalled = true;
             }
 
             public override void SetScorer(Scorer scorer)
@@ -77,7 +74,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(c is MultiCollector);
             Assert.IsTrue(c.AcceptsDocsOutOfOrder());
             c.Collect(1);
-            c.NextReader = null;
+            c.SetNextReader(null);
             c.SetScorer(null);
         }
 
@@ -101,7 +98,7 @@ namespace Lucene.Net.Search
             Collector c = MultiCollector.Wrap(dcs);
             Assert.IsTrue(c.AcceptsDocsOutOfOrder());
             c.Collect(1);
-            c.NextReader = null;
+            c.SetNextReader(null);
             c.SetScorer(null);
 
             foreach (DummyCollector dc in dcs)

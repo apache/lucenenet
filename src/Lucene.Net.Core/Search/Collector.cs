@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="context">
         ///          next atomic reader context </param>
-        public abstract AtomicReaderContext NextReader { set; } // LUCENENET TODO: Change to SetNextReader(AtomicReaderContext context)
+        public abstract void SetNextReader(AtomicReaderContext context);
 
         /// <summary>
         /// Return <code>true</code> if this collector does not

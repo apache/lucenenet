@@ -164,13 +164,10 @@ namespace Lucene.Net.Search
                 Collector.Collect(doc);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    this.DocBase = value.DocBase;
-                    Collector.NextReader = value;
-                }
+                this.DocBase = context.DocBase;
+                Collector.SetNextReader(context);
             }
 
             public override void SetScorer(Scorer scorer)

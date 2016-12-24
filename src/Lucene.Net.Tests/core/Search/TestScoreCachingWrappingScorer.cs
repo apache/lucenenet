@@ -101,11 +101,8 @@ namespace Lucene.Net.Search
                 ++Idx;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override void SetScorer(Scorer scorer)

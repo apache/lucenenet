@@ -143,12 +143,9 @@ namespace Lucene.Net.Join
                 }
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    _fromDocTerms = FieldCache.DEFAULT.GetTerms(value.AtomicReader, _field, false);
-                }
+                _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -256,12 +253,9 @@ namespace Lucene.Net.Join
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    _fromDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, _field);
-                }
+                _fromDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
             }
 
             internal class Avg : Mv

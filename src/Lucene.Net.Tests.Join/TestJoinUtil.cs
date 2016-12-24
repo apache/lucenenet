@@ -265,9 +265,8 @@ namespace Lucene.Net.Tests.Join
 
             internal bool sawFive;
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set { }
             }
 
             public override void Collect(int docID)
@@ -553,13 +552,10 @@ namespace Lucene.Net.Tests.Join
                 TopScoreDocCollector.Collect(doc);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    _docBase = value.DocBase;
-                    TopScoreDocCollector.NextReader = value;
-                }
+                _docBase = context.DocBase;
+                TopScoreDocCollector.SetNextReader(context);
             }
             
             public override void SetScorer(Scorer scorer)
@@ -804,9 +800,9 @@ namespace Lucene.Net.Tests.Join
                 }
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set { docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, FromField); }
+                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, FromField);
             }
 
             public override void SetScorer(Scorer scorer)
@@ -862,13 +858,10 @@ namespace Lucene.Net.Tests.Join
                 joinScore.AddScore(scorer.Score());
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    terms = FieldCache.DEFAULT.GetTerms(value.AtomicReader, FromField, true);
-                    docsWithField = FieldCache.DEFAULT.GetDocsWithField(value.AtomicReader, FromField);
-                }
+                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, FromField, true);
+                docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, FromField);
             }
 
             public override void SetScorer(Scorer scorer)
@@ -926,13 +919,10 @@ namespace Lucene.Net.Tests.Join
                 }
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    docBase = value.DocBase;
-                    docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(value.AtomicReader, _toField);
-                }
+                docBase = context.DocBase;
+                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _toField);
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -980,13 +970,10 @@ namespace Lucene.Net.Tests.Join
                 DocToJoinScore[docBase + doc] = joinScore;
             }
             
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    terms = FieldCache.DEFAULT.GetTerms(value.AtomicReader, ToField, false);
-                    docBase = value.DocBase;
-                }
+                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, ToField, false);
+                docBase = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

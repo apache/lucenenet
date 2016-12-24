@@ -307,12 +307,9 @@ namespace Lucene.Net.Search
                 Assert.AreEqual(1.0f, scorer.Score(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

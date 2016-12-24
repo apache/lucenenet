@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
         // From Collector
         void SetScorer(Scorer scorer);
         void Collect(int doc);
-        AtomicReaderContext NextReader { set; } // LUCENENET TODO: Change to SetNextReader(AtomicReaderContext context)
+        void SetNextReader(AtomicReaderContext context);
         bool AcceptsDocsOutOfOrder();
     }
 }

@@ -111,32 +111,29 @@ namespace Lucene.Net.Search.Grouping.Terms
             get { return groups; }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            groupFieldTermIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
+            countFieldTermIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, countField);
+            ordSet.Clear();
+            foreach (GroupCount group in groups)
             {
-                groupFieldTermIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-                countFieldTermIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, countField);
-                ordSet.Clear();
-                foreach (GroupCount group in groups)
+                int groupOrd = group.GroupValue == null ? -1 : groupFieldTermIndex.LookupTerm(group.GroupValue);
+                if (group.GroupValue != null && groupOrd < 0)
                 {
-                    int groupOrd = group.GroupValue == null ? -1 : groupFieldTermIndex.LookupTerm(group.GroupValue);
-                    if (group.GroupValue != null && groupOrd < 0)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    groupCounts[ordSet.Put(groupOrd)] = group;
-                    group.ords = new int[group.UniqueValues.Count()];
-                    Arrays.Fill(group.ords, -2);
-                    int i = 0;
-                    foreach (BytesRef value2 in group.UniqueValues)
+                groupCounts[ordSet.Put(groupOrd)] = group;
+                group.ords = new int[group.UniqueValues.Count()];
+                Arrays.Fill(group.ords, -2);
+                int i = 0;
+                foreach (BytesRef value2 in group.UniqueValues)
+                {
+                    int countOrd = value2 == null ? -1 : countFieldTermIndex.LookupTerm(value2);
+                    if (value2 == null || countOrd >= 0)
                     {
-                        int countOrd = value2 == null ? -1 : countFieldTermIndex.LookupTerm(value2);
-                        if (value2 == null || countOrd >= 0)
-                        {
-                            group.ords[i++] = countOrd;
-                        }
+                        group.ords[i++] = countOrd;
                     }
                 }
             }

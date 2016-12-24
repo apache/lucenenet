@@ -47,12 +47,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override void SetScorer(Scorer scorer)
@@ -298,12 +295,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override void SetScorer(Scorer scorer)

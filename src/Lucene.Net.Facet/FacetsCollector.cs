@@ -214,22 +214,19 @@ namespace Lucene.Net.Facet
             this.scorer = scorer;
         }
 
-        public override sealed AtomicReaderContext NextReader
+        public override sealed void SetNextReader(AtomicReaderContext context)
         {
-            set
+            if (docs != null)
             {
-                if (docs != null)
-                {
-                    matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
-                }
-                docs = CreateDocs(value.Reader.MaxDoc);
-                totalHits = 0;
-                if (keepScores)
-                {
-                    scores = new float[64]; // some initial size
-                }
-                this.context = value;
+                matchingDocs.Add(new MatchingDocs(this.context, docs.DocIdSet, totalHits, scores));
             }
+            docs = CreateDocs(context.Reader.MaxDoc);
+            totalHits = 0;
+            if (keepScores)
+            {
+                scores = new float[64]; // some initial size
+            }
+            this.context = context;
         }
 
         /// <summary>

@@ -387,15 +387,12 @@ namespace Lucene.Net.Search.Grouping
             return false;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            docBase = context.DocBase;
+            for (int i = 0; i < comparators.Length; i++)
             {
-                docBase = value.DocBase;
-                for (int i = 0; i < comparators.Length; i++)
-                {
-                    comparators[i] = comparators[i].SetNextReader(value);
-                }
+                comparators[i] = comparators[i].SetNextReader(context);
             }
         }
 

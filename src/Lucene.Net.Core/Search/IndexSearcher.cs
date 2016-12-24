@@ -638,7 +638,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    collector.NextReader = ctx;
+                    collector.SetNextReader(ctx);
                 }
                 catch (CollectionTerminatedException)
                 {
@@ -835,7 +835,7 @@ namespace Lucene.Net.Search
                 {
                     AtomicReaderContext ctx = Slice.Leaves[0];
                     int @base = ctx.DocBase;
-                    Hq.NextReader = ctx;
+                    Hq.SetNextReader(ctx);
                     Hq.SetScorer(FakeScorer);
                     foreach (ScoreDoc scoreDoc in docs.ScoreDocs)
                     {

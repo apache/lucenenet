@@ -62,12 +62,9 @@ namespace Lucene.Net.Search
             LastCollected = doc;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                LastCollected = -1;
-            }
+            LastCollected = -1;
         }
 
         public override bool AcceptsDocsOutOfOrder()

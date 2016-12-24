@@ -121,13 +121,10 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    base.NextReader = value;
-                    AfterDoc = After.Doc - DocBase;
-                }
+                base.SetNextReader(context);
+                AfterDoc = After.Doc - DocBase;
             }
 
             protected override int TopDocsSize()
@@ -230,13 +227,10 @@ namespace Lucene.Net.Search
                 return true;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    base.NextReader = value;
-                    AfterDoc = After.Doc - DocBase;
-                }
+                base.SetNextReader(context);
+                AfterDoc = After.Doc - DocBase;
             }
 
             protected override int TopDocsSize()
@@ -333,12 +327,9 @@ namespace Lucene.Net.Search
             return new TopDocs(TotalHits_Renamed, results, maxScore);
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                DocBase = value.DocBase;
-            }
+            DocBase = context.DocBase;
         }
 
         public override void SetScorer(Scorer scorer)

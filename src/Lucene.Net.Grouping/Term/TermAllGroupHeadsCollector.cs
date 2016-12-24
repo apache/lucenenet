@@ -190,19 +190,16 @@ namespace Lucene.Net.Search.Grouping.Terms
             get { return groups.Values; }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                this.readerContext = value;
-                groupIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
+            this.readerContext = context;
+            groupIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
 
-                foreach (GroupHead groupHead in groups.Values)
+            foreach (GroupHead groupHead in groups.Values)
+            {
+                for (int i = 0; i < groupHead.comparators.Length; i++)
                 {
-                    for (int i = 0; i < groupHead.comparators.Length; i++)
-                    {
-                        groupHead.comparators[i] = groupHead.comparators[i].SetNextReader(value);
-                    }
+                    groupHead.comparators[i] = groupHead.comparators[i].SetNextReader(context);
                 }
             }
         }
@@ -333,58 +330,55 @@ namespace Lucene.Net.Search.Grouping.Terms
             temporalResult.groupHead = groupHead;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            this.readerContext = context;
+            groupIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
+            for (int i = 0; i < fields.Length; i++)
             {
-                this.readerContext = value;
-                groupIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-                for (int i = 0; i < fields.Length; i++)
+                if (fields[i].Type == SortField.Type_e.SCORE)
                 {
-                    if (fields[i].Type == SortField.Type_e.SCORE)
-                    {
-                        continue;
-                    }
-
-                    sortsIndex[i] = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, fields[i].Field);
+                    continue;
                 }
 
-                // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
-                ordSet.Clear();
-                segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
-                foreach (GroupHead collectedGroup in collectedGroups)
-                {
-                    int ord;
-                    if (collectedGroup.groupValue == null)
-                    {
-                        ord = -1;
-                    }
-                    else
-                    {
-                        ord = groupIndex.LookupTerm(collectedGroup.groupValue);
-                    }
-                    if (collectedGroup.groupValue == null || ord >= 0)
-                    {
-                        ordSet.Put(ord);
-                        segmentGroupHeads[ord + 1] = collectedGroup;
+                sortsIndex[i] = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, fields[i].Field);
+            }
 
-                        for (int i = 0; i < sortsIndex.Length; i++)
+            // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
+            ordSet.Clear();
+            segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
+            foreach (GroupHead collectedGroup in collectedGroups)
+            {
+                int ord;
+                if (collectedGroup.groupValue == null)
+                {
+                    ord = -1;
+                }
+                else
+                {
+                    ord = groupIndex.LookupTerm(collectedGroup.groupValue);
+                }
+                if (collectedGroup.groupValue == null || ord >= 0)
+                {
+                    ordSet.Put(ord);
+                    segmentGroupHeads[ord + 1] = collectedGroup;
+
+                    for (int i = 0; i < sortsIndex.Length; i++)
+                    {
+                        if (fields[i].Type == SortField.Type_e.SCORE)
                         {
-                            if (fields[i].Type == SortField.Type_e.SCORE)
-                            {
-                                continue;
-                            }
-                            int sortOrd;
-                            if (collectedGroup.sortValues[i] == null)
-                            {
-                                sortOrd = -1;
-                            }
-                            else
-                            {
-                                sortOrd = sortsIndex[i].LookupTerm(collectedGroup.sortValues[i]);
-                            }
-                            collectedGroup.sortOrds[i] = sortOrd;
+                            continue;
                         }
+                        int sortOrd;
+                        if (collectedGroup.sortValues[i] == null)
+                        {
+                            sortOrd = -1;
+                        }
+                        else
+                        {
+                            sortOrd = sortsIndex[i].LookupTerm(collectedGroup.sortValues[i]);
+                        }
+                        collectedGroup.sortOrds[i] = sortOrd;
                     }
                 }
             }
@@ -561,49 +555,46 @@ namespace Lucene.Net.Search.Grouping.Terms
             temporalResult.groupHead = groupHead;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            this.readerContext = context;
+            groupIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
+            for (int i = 0; i < fields.Length; i++)
             {
-                this.readerContext = value;
-                groupIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
-                for (int i = 0; i < fields.Length; i++)
+                sortsIndex[i] = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, fields[i].Field);
+            }
+
+            // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
+            ordSet.Clear();
+            segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
+            foreach (GroupHead collectedGroup in collectedGroups)
+            {
+                int groupOrd;
+                if (collectedGroup.groupValue == null)
                 {
-                    sortsIndex[i] = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, fields[i].Field);
+                    groupOrd = -1;
                 }
-
-                // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
-                ordSet.Clear();
-                segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
-                foreach (GroupHead collectedGroup in collectedGroups)
+                else
                 {
-                    int groupOrd;
-                    if (collectedGroup.groupValue == null)
-                    {
-                        groupOrd = -1;
-                    }
-                    else
-                    {
-                        groupOrd = groupIndex.LookupTerm(collectedGroup.groupValue);
-                    }
-                    if (collectedGroup.groupValue == null || groupOrd >= 0)
-                    {
-                        ordSet.Put(groupOrd);
-                        segmentGroupHeads[groupOrd + 1] = collectedGroup;
+                    groupOrd = groupIndex.LookupTerm(collectedGroup.groupValue);
+                }
+                if (collectedGroup.groupValue == null || groupOrd >= 0)
+                {
+                    ordSet.Put(groupOrd);
+                    segmentGroupHeads[groupOrd + 1] = collectedGroup;
 
-                        for (int i = 0; i < sortsIndex.Length; i++)
+                    for (int i = 0; i < sortsIndex.Length; i++)
+                    {
+                        int sortOrd;
+                        if (collectedGroup.sortOrds[i] == -1)
                         {
-                            int sortOrd;
-                            if (collectedGroup.sortOrds[i] == -1)
-                            {
-                                sortOrd = -1;
-                            }
-                            else
-                            {
-                                sortOrd = sortsIndex[i].LookupTerm(collectedGroup.sortValues[i]);
-                            }
-                            collectedGroup.sortOrds[i] = sortOrd;
+                            sortOrd = -1;
                         }
+                        else
+                        {
+                            sortOrd = sortsIndex[i].LookupTerm(collectedGroup.sortValues[i]);
+                        }
+                        collectedGroup.sortOrds[i] = sortOrd;
                     }
                 }
             }
@@ -746,32 +737,29 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
             temporalResult.groupHead = groupHead;
         }
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                this.readerContext = value;
-                groupIndex = FieldCache.DEFAULT.GetTermsIndex(value.AtomicReader, groupField);
+            this.readerContext = context;
+            groupIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
 
-                // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
-                ordSet.Clear();
-                segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
-                foreach (GroupHead collectedGroup in collectedGroups)
+            // Clear ordSet and fill it with previous encountered groups that can occur in the current segment.
+            ordSet.Clear();
+            segmentGroupHeads = new GroupHead[groupIndex.ValueCount + 1];
+            foreach (GroupHead collectedGroup in collectedGroups)
+            {
+                int ord;
+                if (collectedGroup.groupValue == null)
                 {
-                    int ord;
-                    if (collectedGroup.groupValue == null)
-                    {
-                        ord = -1;
-                    }
-                    else
-                    {
-                        ord = groupIndex.LookupTerm(collectedGroup.groupValue);
-                    }
-                    if (collectedGroup.groupValue == null || ord >= 0)
-                    {
-                        ordSet.Put(ord);
-                        segmentGroupHeads[ord + 1] = collectedGroup;
-                    }
+                    ord = -1;
+                }
+                else
+                {
+                    ord = groupIndex.LookupTerm(collectedGroup.groupValue);
+                }
+                if (collectedGroup.groupValue == null || ord >= 0)
+                {
+                    ordSet.Put(ord);
+                    segmentGroupHeads[ord + 1] = collectedGroup;
                 }
             }
         }

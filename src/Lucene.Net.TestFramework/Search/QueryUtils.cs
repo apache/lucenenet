@@ -390,32 +390,29 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                // confirm that skipping beyond the last doc, on the
+                // previous reader, hits NO_MORE_DOCS
+                if (LastReader[0] != null)
                 {
-                    // confirm that skipping beyond the last doc, on the
-                    // previous reader, hits NO_MORE_DOCS
-                    if (LastReader[0] != null)
+                    AtomicReader previousReader = LastReader[0];
+                    IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
+                    indexSearcher.Similarity = s.Similarity;
+                    Weight w = indexSearcher.CreateNormalizedWeight(q);
+                    AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
+                    Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
+                    if (scorer != null)
                     {
-                        AtomicReader previousReader = LastReader[0];
-                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
-                        indexSearcher.Similarity = s.Similarity;
-                        Weight w = indexSearcher.CreateNormalizedWeight(q);
-                        AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
-                        Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
-                        if (scorer != null)
-                        {
-                            bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                            Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
-                        }
-                        leafPtr++;
+                        bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
+                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
                     }
-                    LastReader[0] = (AtomicReader)value.Reader;
-                    Debug.Assert(ReaderContextArray[leafPtr].Reader == value.Reader);
-                    this.scorer = null;
-                    LastDoc[0] = -1;
+                    leafPtr++;
                 }
+                LastReader[0] = (AtomicReader)context.Reader;
+                Debug.Assert(ReaderContextArray[leafPtr].Reader == context.Reader);
+                this.scorer = null;
+                LastDoc[0] = -1;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -517,31 +514,28 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
+                // confirm that skipping beyond the last doc, on the
+                // previous reader, hits NO_MORE_DOCS
+                if (LastReader[0] != null)
                 {
-                    // confirm that skipping beyond the last doc, on the
-                    // previous reader, hits NO_MORE_DOCS
-                    if (LastReader[0] != null)
+                    AtomicReader previousReader = LastReader[0];
+                    IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
+                    indexSearcher.Similarity = s.Similarity;
+                    Weight w = indexSearcher.CreateNormalizedWeight(q);
+                    Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
+                    if (scorer != null)
                     {
-                        AtomicReader previousReader = LastReader[0];
-                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
-                        indexSearcher.Similarity = s.Similarity;
-                        Weight w = indexSearcher.CreateNormalizedWeight(q);
-                        Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
-                        if (scorer != null)
-                        {
-                            bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                            Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
-                        }
-                        leafPtr++;
+                        bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
+                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
                     }
-
-                    LastReader[0] = (AtomicReader)value.Reader;
-                    LastDoc[0] = -1;
-                    liveDocs = ((AtomicReader)value.Reader).LiveDocs;
+                    leafPtr++;
                 }
+
+                LastReader[0] = (AtomicReader)context.Reader;
+                LastDoc[0] = -1;
+                liveDocs = ((AtomicReader)context.Reader).LiveDocs;
             }
 
             public override bool AcceptsDocsOutOfOrder()

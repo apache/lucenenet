@@ -97,21 +97,18 @@ namespace Lucene.Net.Search.Grouping.Function
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                this.readerContext = value;
-                FunctionValues values = groupBy.GetValues(vsContext, value);
-                filler = values.ValueFiller;
-                mval = filler.Value;
+            this.readerContext = context;
+            FunctionValues values = groupBy.GetValues(vsContext, context);
+            filler = values.ValueFiller;
+            mval = filler.Value;
 
-                foreach (GroupHead groupHead in groups.Values)
+            foreach (GroupHead groupHead in groups.Values)
+            {
+                for (int i = 0; i < groupHead.comparators.Length; i++)
                 {
-                    for (int i = 0; i < groupHead.comparators.Length; i++)
-                    {
-                        groupHead.comparators[i] = groupHead.comparators[i].SetNextReader(value);
-                    }
+                    groupHead.comparators[i] = groupHead.comparators[i].SetNextReader(context);
                 }
             }
         }

@@ -145,12 +145,9 @@ namespace Lucene.Net.Search
                 Hits.Add(docBase + doc);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    docBase = value.DocBase;
-                }
+                docBase = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -217,11 +214,8 @@ namespace Lucene.Net.Search
                 Count[0]++;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()

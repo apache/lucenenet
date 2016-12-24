@@ -109,15 +109,12 @@ namespace Lucene.Net.Search.Grouping
         /// <exception cref="IOException">If an I/O related error occurred</exception>
         protected abstract AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> RetrieveGroup(int doc);
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
+            //System.out.println("SP.setNextReader");
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
             {
-                //System.out.println("SP.setNextReader");
-                foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
-                {
-                    group.collector.NextReader = value;
-                }
+                group.collector.SetNextReader(context);
             }
         }
 

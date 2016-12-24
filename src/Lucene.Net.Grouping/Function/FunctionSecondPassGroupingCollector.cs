@@ -67,15 +67,12 @@ namespace Lucene.Net.Search.Grouping.Function
             return result;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-                base.NextReader = value;
-                FunctionValues values = groupByVS.GetValues(vsContext, value);
-                filler = values.ValueFiller;
-                mval = filler.Value;
-            }
+            base.SetNextReader(context);
+            FunctionValues values = groupByVS.GetValues(vsContext, context);
+            filler = values.ValueFiller;
+            mval = filler.Value;
         }
     }
 }

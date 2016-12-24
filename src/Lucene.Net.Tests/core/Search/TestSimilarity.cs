@@ -146,11 +146,8 @@ namespace Lucene.Net.Search
                 Assert.AreEqual(1.0f, scorer.Score(), 0);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -183,12 +180,9 @@ namespace Lucene.Net.Search
                 Assert.AreEqual((float)doc + @base + 1, scorer.Score(), 0);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -219,11 +213,8 @@ namespace Lucene.Net.Search
                 Assert.AreEqual(1.0f, scorer.Score(), 0);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -254,11 +245,8 @@ namespace Lucene.Net.Search
                 Assert.AreEqual(2.0f, scorer.Score(), 0);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()

@@ -222,11 +222,8 @@ namespace Lucene.Net.Search
                 Max = Math.Max(Max, Scorer_Renamed.Freq);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -265,12 +262,9 @@ namespace Lucene.Net.Search
                 Assert.IsFalse(float.IsInfinity(scorer.Score()));
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    // do nothing
-                }
+                // do nothing
             }
 
             public override bool AcceptsDocsOutOfOrder()

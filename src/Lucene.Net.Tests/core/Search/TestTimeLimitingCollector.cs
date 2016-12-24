@@ -424,12 +424,9 @@ namespace Lucene.Net.Search
                 lastDocCollected = docId;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    docBase = value.DocBase;
-                }
+                docBase = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

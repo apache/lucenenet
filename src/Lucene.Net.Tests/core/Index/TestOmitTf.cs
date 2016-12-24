@@ -552,12 +552,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    DocBase = value.DocBase;
-                }
+                DocBase = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

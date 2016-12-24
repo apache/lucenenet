@@ -146,12 +146,9 @@ namespace Lucene.Net.Search
                 Bag.Add(Convert.ToInt32(doc + @base));
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()
@@ -544,12 +541,9 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    @base = value.DocBase;
-                }
+                @base = context.DocBase;
             }
 
             public override bool AcceptsDocsOutOfOrder()

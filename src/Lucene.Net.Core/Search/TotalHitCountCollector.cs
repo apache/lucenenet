@@ -46,11 +46,8 @@ namespace Lucene.Net.Search
             TotalHits_Renamed++;
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-            }
         }
 
         public override bool AcceptsDocsOutOfOrder()

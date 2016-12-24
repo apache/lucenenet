@@ -586,11 +586,8 @@ namespace Lucene.Net.Index.Memory
                 return true;
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                }
             }
         }
 

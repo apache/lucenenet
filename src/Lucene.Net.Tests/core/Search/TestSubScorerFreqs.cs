@@ -120,13 +120,10 @@ namespace Lucene.Net.Search
                 Other.Collect(doc);
             }
 
-            public override AtomicReaderContext NextReader
+            public override void SetNextReader(AtomicReaderContext context)
             {
-                set
-                {
-                    DocBase = value.DocBase;
-                    Other.NextReader = value;
-                }
+                DocBase = context.DocBase;
+                Other.SetNextReader(context);
             }
 
             public override bool AcceptsDocsOutOfOrder()

@@ -64,11 +64,8 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public override AtomicReaderContext NextReader
+        public override void SetNextReader(AtomicReaderContext context)
         {
-            set
-            {
-            }
         }
 
         public override bool AcceptsDocsOutOfOrder()
