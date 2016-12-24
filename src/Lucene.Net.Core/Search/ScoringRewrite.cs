@@ -166,13 +166,10 @@ namespace Lucene.Net.Search
 
             private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
 
-            public override TermsEnum NextEnum
+            public override void SetNextEnum(TermsEnum termsEnum)
             {
-                set
-                {
-                    this.TermsEnum = value;
-                    this.BoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
-                }
+                this.TermsEnum = termsEnum;
+                this.BoostAtt = termsEnum.Attributes.AddAttribute<IBoostAttribute>();
             }
 
             public override bool Collect(BytesRef bytes)

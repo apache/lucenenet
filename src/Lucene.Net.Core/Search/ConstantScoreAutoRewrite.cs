@@ -149,12 +149,9 @@ namespace Lucene.Net.Search
                 this.TermCountLimit = termCountLimit;
             }
 
-            public override TermsEnum NextEnum
+            public override void SetNextEnum(TermsEnum termsEnum)
             {
-                set
-                {
-                    this.TermsEnum = value;
-                }
+                this.TermsEnum = termsEnum;
             }
 
             public override bool Collect(BytesRef bytes)

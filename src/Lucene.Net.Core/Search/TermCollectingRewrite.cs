@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
                 }
                 lastTermComp = newTermComp;
                 collector.SetReaderContext(topReaderContext, context);
-                collector.NextEnum = termsEnum;
+                collector.SetNextEnum(termsEnum);
                 BytesRef bytes;
                 while ((bytes = termsEnum.Next()) != null)
                 {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// the next segment's <seealso cref="TermsEnum"/> that is used to collect terms </summary>
-            public abstract TermsEnum NextEnum { set; } // LUCENENET TODO: Make into SetNextEnum(TermsEnum)
+            public abstract void SetNextEnum(TermsEnum termsEnum);
         }
     }
 }

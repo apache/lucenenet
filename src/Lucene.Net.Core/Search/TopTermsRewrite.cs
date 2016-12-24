@@ -110,22 +110,19 @@ namespace Lucene.Net.Search
             private IBoostAttribute boostAtt;
             private ScoreTerm st;
 
-            public override TermsEnum NextEnum
+            public override void SetNextEnum(TermsEnum termsEnum)
             {
-                set
+                this.termsEnum = termsEnum;
+                this.termComp = termsEnum.Comparator;
+
+                Debug.Assert(CompareToLastTerm(null));
+
+                // lazy init the initial ScoreTerm because comparator is not known on ctor:
+                if (st == null)
                 {
-                    this.termsEnum = value;
-                    this.termComp = value.Comparator;
-
-                    Debug.Assert(CompareToLastTerm(null));
-
-                    // lazy init the initial ScoreTerm because comparator is not known on ctor:
-                    if (st == null)
-                    {
-                        st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
-                    }
-                    boostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
+                    st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
                 }
+                boostAtt = termsEnum.Attributes.AddAttribute<IBoostAttribute>();
             }
 
             // for assert:
