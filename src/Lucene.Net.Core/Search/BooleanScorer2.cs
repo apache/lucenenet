@@ -33,23 +33,23 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class BooleanScorer2 : Scorer
     {
-        private readonly IList<Scorer> RequiredScorers;
-        private readonly IList<Scorer> OptionalScorers;
-        private readonly IList<Scorer> ProhibitedScorers;
+        private readonly IList<Scorer> requiredScorers;
+        private readonly IList<Scorer> optionalScorers;
+        private readonly IList<Scorer> prohibitedScorers;
 
         private class Coordinator
         {
-            private readonly BooleanScorer2 OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly BooleanScorer2 outerInstance;
 
-            internal readonly float[] CoordFactors; // LUCENENET TODO: Rename (private)
+            internal readonly float[] coordFactors;
 
             internal Coordinator(BooleanScorer2 outerInstance, int maxCoord, bool disableCoord)
             {
-                this.OuterInstance = outerInstance;
-                CoordFactors = new float[outerInstance.OptionalScorers.Count + outerInstance.RequiredScorers.Count + 1];
-                for (int i = 0; i < CoordFactors.Length; i++)
+                this.outerInstance = outerInstance;
+                coordFactors = new float[outerInstance.optionalScorers.Count + outerInstance.requiredScorers.Count + 1];
+                for (int i = 0; i < coordFactors.Length; i++)
                 {
-                    CoordFactors[i] = disableCoord ? 1.0f : ((BooleanWeight)outerInstance.weight).Coord(i, maxCoord);
+                    coordFactors[i] = disableCoord ? 1.0f : ((BooleanWeight)outerInstance.weight).Coord(i, maxCoord);
                 }
             }
 
@@ -62,13 +62,13 @@ namespace Lucene.Net.Search
         /// The scorer to which all scoring will be delegated,
         /// except for computing and using the coordination factor.
         /// </summary>
-        private readonly Scorer CountingSumScorer; // LUCENENET TODO: Rename (private)
+        private readonly Scorer countingSumScorer;
 
         /// <summary>
         /// The number of optionalScorers that need to match (if there are any) </summary>
-        private readonly int MinNrShouldMatch; // LUCENENET TODO: Rename (private)
+        private readonly int minNrShouldMatch;
 
-        private int Doc = -1; // LUCENENET TODO: Rename (private)
+        private int doc = -1;
 
         /// <summary>
         /// Creates a <seealso cref="Scorer"/> with the given similarity and lists of required,
@@ -97,49 +97,49 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("Minimum number of optional scorers should not be negative");
             }
-            this.MinNrShouldMatch = minNrShouldMatch;
+            this.minNrShouldMatch = minNrShouldMatch;
 
-            OptionalScorers = optional;
-            RequiredScorers = required;
-            ProhibitedScorers = prohibited;
+            optionalScorers = optional;
+            requiredScorers = required;
+            prohibitedScorers = prohibited;
             coordinator = new Coordinator(this, maxCoord, disableCoord);
 
-            CountingSumScorer = MakeCountingSumScorer(disableCoord);
+            countingSumScorer = MakeCountingSumScorer(disableCoord);
         }
 
         /// <summary>
         /// Count a scorer as a single match. </summary>
         private class SingleMatchScorer : Scorer
         {
-            private readonly BooleanScorer2 OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly BooleanScorer2 outerInstance;
 
-            internal Scorer Scorer; // LUCENENET TODO: Rename (private)
-            internal int LastScoredDoc = -1; // LUCENENET TODO: Rename (private)
+            internal Scorer scorer;
+            internal int lastScoredDoc = -1;
 
             // Save the score of lastScoredDoc, so that we don't compute it more than
             // once in score().
-            internal float LastDocScore = float.NaN; // LUCENENET TODO: Rename (private)
+            internal float lastDocScore = float.NaN;
 
             internal SingleMatchScorer(BooleanScorer2 outerInstance, Scorer scorer)
                 : base(scorer.weight)
             {
-                this.OuterInstance = outerInstance;
-                this.Scorer = scorer;
+                this.outerInstance = outerInstance;
+                this.scorer = scorer;
             }
 
             public override float Score()
             {
                 int doc = DocID();
-                if (doc >= LastScoredDoc)
+                if (doc >= lastScoredDoc)
                 {
-                    if (doc > LastScoredDoc)
+                    if (doc > lastScoredDoc)
                     {
-                        LastDocScore = Scorer.Score();
-                        LastScoredDoc = doc;
+                        lastDocScore = scorer.Score();
+                        lastScoredDoc = doc;
                     }
-                    OuterInstance.coordinator.NrMatchers++;
+                    outerInstance.coordinator.NrMatchers++;
                 }
-                return LastDocScore;
+                return lastDocScore;
             }
 
             public override int Freq
@@ -149,22 +149,22 @@ namespace Lucene.Net.Search
 
             public override int DocID()
             {
-                return Scorer.DocID();
+                return scorer.DocID();
             }
 
             public override int NextDoc()
             {
-                return Scorer.NextDoc();
+                return scorer.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return Scorer.Advance(target);
+                return scorer.Advance(target);
             }
 
             public override long Cost()
             {
-                return Scorer.Cost();
+                return scorer.Cost();
             }
         }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
         /// </summary>
         private Scorer MakeCountingSumScorer(bool disableCoord) // each scorer counted as a single matcher
         {
-            return (RequiredScorers.Count == 0) 
+            return (requiredScorers.Count == 0) 
                 ? MakeCountingSumScorerNoReq(disableCoord) 
                 : MakeCountingSumScorerSomeReq(disableCoord);
         }
@@ -287,43 +287,43 @@ namespace Lucene.Net.Search
         private Scorer MakeCountingSumScorerNoReq(bool disableCoord) // No required scorers
         {
             // minNrShouldMatch optional scorers are required, but at least 1
-            int nrOptRequired = (MinNrShouldMatch < 1) ? 1 : MinNrShouldMatch;
+            int nrOptRequired = (minNrShouldMatch < 1) ? 1 : minNrShouldMatch;
             Scorer requiredCountingSumScorer;
-            if (OptionalScorers.Count > nrOptRequired)
+            if (optionalScorers.Count > nrOptRequired)
             {
-                requiredCountingSumScorer = CountingDisjunctionSumScorer(OptionalScorers, nrOptRequired);
+                requiredCountingSumScorer = CountingDisjunctionSumScorer(optionalScorers, nrOptRequired);
             }
-            else if (OptionalScorers.Count == 1)
+            else if (optionalScorers.Count == 1)
             {
-                requiredCountingSumScorer = new SingleMatchScorer(this, OptionalScorers[0]);
+                requiredCountingSumScorer = new SingleMatchScorer(this, optionalScorers[0]);
             }
             else
             {
-                requiredCountingSumScorer = CountingConjunctionSumScorer(disableCoord, OptionalScorers);
+                requiredCountingSumScorer = CountingConjunctionSumScorer(disableCoord, optionalScorers);
             }
             return AddProhibitedScorers(requiredCountingSumScorer);
         }
 
         private Scorer MakeCountingSumScorerSomeReq(bool disableCoord) // At least one required scorer.
         {
-            if (OptionalScorers.Count == MinNrShouldMatch) // all optional scorers also required.
+            if (optionalScorers.Count == minNrShouldMatch) // all optional scorers also required.
             {
-                List<Scorer> allReq = new List<Scorer>(RequiredScorers);
-                allReq.AddRange(OptionalScorers);
+                List<Scorer> allReq = new List<Scorer>(requiredScorers);
+                allReq.AddRange(optionalScorers);
                 return AddProhibitedScorers(CountingConjunctionSumScorer(disableCoord, allReq));
             } // optionalScorers.size() > minNrShouldMatch, and at least one required scorer
             else
             {
-                Scorer requiredCountingSumScorer = RequiredScorers.Count == 1 ? new SingleMatchScorer(this, RequiredScorers[0]) : CountingConjunctionSumScorer(disableCoord, RequiredScorers);
-                if (MinNrShouldMatch > 0) // use a required disjunction scorer over the optional scorers
+                Scorer requiredCountingSumScorer = requiredScorers.Count == 1 ? new SingleMatchScorer(this, requiredScorers[0]) : CountingConjunctionSumScorer(disableCoord, requiredScorers);
+                if (minNrShouldMatch > 0) // use a required disjunction scorer over the optional scorers
                 {
-                    return AddProhibitedScorers(DualConjunctionSumScorer(disableCoord, requiredCountingSumScorer, CountingDisjunctionSumScorer(OptionalScorers, MinNrShouldMatch))); // non counting
+                    return AddProhibitedScorers(DualConjunctionSumScorer(disableCoord, requiredCountingSumScorer, CountingDisjunctionSumScorer(optionalScorers, minNrShouldMatch))); // non counting
                 } // minNrShouldMatch == 0
                 else
                 {
-                    return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), OptionalScorers.Count == 1 ? new SingleMatchScorer(this, OptionalScorers[0])
+                    return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1 ? new SingleMatchScorer(this, optionalScorers[0])
                         // require 1 in combined, optional scorer.
-                                    : CountingDisjunctionSumScorer(OptionalScorers, 1));
+                                    : CountingDisjunctionSumScorer(optionalScorers, 1));
                 }
             }
         }
@@ -334,39 +334,39 @@ namespace Lucene.Net.Search
         /// <param name="requiredCountingSumScorer"> A required scorer already built. </param>
         private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
         {
-            return (ProhibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((ProhibitedScorers.Count == 1) ? ProhibitedScorers[0] : new MinShouldMatchSumScorer(weight, ProhibitedScorers))); // no prohibited
+            return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? prohibitedScorers[0] : new MinShouldMatchSumScorer(weight, prohibitedScorers))); // no prohibited
         }
 
         public override int DocID()
         {
-            return Doc;
+            return doc;
         }
 
         public override int NextDoc()
         {
-            return Doc = CountingSumScorer.NextDoc();
+            return doc = countingSumScorer.NextDoc();
         }
 
         public override float Score()
         {
             coordinator.NrMatchers = 0;
-            float sum = CountingSumScorer.Score();
-            return sum * coordinator.CoordFactors[coordinator.NrMatchers];
+            float sum = countingSumScorer.Score();
+            return sum * coordinator.coordFactors[coordinator.NrMatchers];
         }
 
         public override int Freq
         {
-            get { return CountingSumScorer.Freq; }
+            get { return countingSumScorer.Freq; }
         }
 
         public override int Advance(int target)
         {
-            return Doc = CountingSumScorer.Advance(target);
+            return doc = countingSumScorer.Advance(target);
         }
 
         public override long Cost()
         {
-            return CountingSumScorer.Cost();
+            return countingSumScorer.Cost();
         }
 
         public override ICollection<ChildScorer> Children
@@ -374,15 +374,15 @@ namespace Lucene.Net.Search
             get
             {
                 List<ChildScorer> children = new List<ChildScorer>();
-                foreach (Scorer s in OptionalScorers)
+                foreach (Scorer s in optionalScorers)
                 {
                     children.Add(new ChildScorer(s, "SHOULD"));
                 }
-                foreach (Scorer s in ProhibitedScorers)
+                foreach (Scorer s in prohibitedScorers)
                 {
                     children.Add(new ChildScorer(s, "MUST_NOT"));
                 }
-                foreach (Scorer s in RequiredScorers)
+                foreach (Scorer s in requiredScorers)
                 {
                     children.Add(new ChildScorer(s, "MUST"));
                 }
