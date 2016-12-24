@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public class ConstantScoreQuery : Query
     {
-        protected readonly Filter filter; // LUCENENET TODO: rename
-        protected readonly Query query; // LUCENENET TODO: rename
+        protected readonly Filter m_filter;
+        protected readonly Query m_query;
 
         /// <summary>
         /// Strips off scores from the passed in Query. The hits will get a constant score
@@ -47,8 +47,8 @@ namespace Lucene.Net.Search
             {
                 throw new System.NullReferenceException("Query may not be null");
             }
-            this.filter = null;
-            this.query = query;
+            this.m_filter = null;
+            this.m_query = query;
         }
 
         /// <summary>
@@ -64,8 +64,8 @@ namespace Lucene.Net.Search
             {
                 throw new System.NullReferenceException("Filter may not be null");
             }
-            this.filter = filter;
-            this.query = null;
+            this.m_filter = filter;
+            this.m_query = null;
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return filter;
+                return m_filter;
             }
         }
 
@@ -84,16 +84,16 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return query;
+                return m_query;
             }
         }
 
         public override Query Rewrite(IndexReader reader)
         {
-            if (query != null)
+            if (m_query != null)
             {
-                Query rewritten = query.Rewrite(reader);
-                if (rewritten != query)
+                Query rewritten = m_query.Rewrite(reader);
+                if (rewritten != m_query)
                 {
                     rewritten = new ConstantScoreQuery(rewritten);
                     rewritten.Boost = this.Boost;
@@ -102,13 +102,13 @@ namespace Lucene.Net.Search
             }
             else
             {
-                Debug.Assert(filter != null);
+                Debug.Assert(m_filter != null);
                 // Fix outdated usage pattern from Lucene 2.x/early-3.x:
                 // because ConstantScoreQuery only accepted filters,
                 // QueryWrapperFilter was used to wrap queries.
-                if (filter is QueryWrapperFilter)
+                if (m_filter is QueryWrapperFilter)
                 {
-                    QueryWrapperFilter qwf = (QueryWrapperFilter)filter;
+                    QueryWrapperFilter qwf = (QueryWrapperFilter)m_filter;
                     Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(reader));
                     rewritten.Boost = this.Boost;
                     return rewritten;
@@ -123,31 +123,31 @@ namespace Lucene.Net.Search
             // and used with MultiSearcher, but may not be OK for
             // highlighting.
             // If a query was wrapped, we delegate to query.
-            if (query != null)
+            if (m_query != null)
             {
-                query.ExtractTerms(terms);
+                m_query.ExtractTerms(terms);
             }
         }
 
         protected class ConstantWeight : Weight
         {
-            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
+            private readonly ConstantScoreQuery outerInstance;
 
-            private readonly Weight InnerWeight; // LUCENENET TODO: rename (private)
-            private float QueryNorm; // LUCENENET TODO: rename (private)
-            private float QueryWeight; // LUCENENET TODO: rename (private)
+            private readonly Weight innerWeight;
+            private float queryNorm;
+            private float queryWeight;
 
             public ConstantWeight(ConstantScoreQuery outerInstance, IndexSearcher searcher)
             {
-                this.OuterInstance = outerInstance;
-                this.InnerWeight = (outerInstance.query == null) ? null : outerInstance.query.CreateWeight(searcher);
+                this.outerInstance = outerInstance;
+                this.innerWeight = (outerInstance.m_query == null) ? null : outerInstance.m_query.CreateWeight(searcher);
             }
 
             public override Query Query
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
@@ -158,48 +158,48 @@ namespace Lucene.Net.Search
                 {
                     InnerWeight.ValueForNormalization;
                 }*/
-                QueryWeight = OuterInstance.Boost;
-                return QueryWeight * QueryWeight;
+                queryWeight = outerInstance.Boost;
+                return queryWeight * queryWeight;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                this.QueryNorm = norm * topLevelBoost;
-                QueryWeight *= this.QueryNorm;
+                this.queryNorm = norm * topLevelBoost;
+                queryWeight *= this.queryNorm;
                 // we normalize the inner weight, but ignore it (just to initialize everything)
-                if (InnerWeight != null)
+                if (innerWeight != null)
                 {
-                    InnerWeight.Normalize(norm, topLevelBoost);
+                    innerWeight.Normalize(norm, topLevelBoost);
                 }
             }
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
             {
                 //DocIdSetIterator disi;
-                if (OuterInstance.filter != null)
+                if (outerInstance.m_filter != null)
                 {
-                    Debug.Assert(OuterInstance.query == null);
+                    Debug.Assert(outerInstance.m_query == null);
                     return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
                 else
                 {
-                    Debug.Assert(OuterInstance.query != null && InnerWeight != null);
-                    BulkScorer bulkScorer = InnerWeight.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                    Debug.Assert(outerInstance.m_query != null && innerWeight != null);
+                    BulkScorer bulkScorer = innerWeight.BulkScorer(context, scoreDocsInOrder, acceptDocs);
                     if (bulkScorer == null)
                     {
                         return null;
                     }
-                    return new ConstantBulkScorer(OuterInstance, bulkScorer, this, QueryWeight);
+                    return new ConstantBulkScorer(outerInstance, bulkScorer, this, queryWeight);
                 }
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
                 DocIdSetIterator disi;
-                if (OuterInstance.filter != null)
+                if (outerInstance.m_filter != null)
                 {
-                    Debug.Assert(OuterInstance.query == null);
-                    DocIdSet dis = OuterInstance.filter.GetDocIdSet(context, acceptDocs);
+                    Debug.Assert(outerInstance.m_query == null);
+                    DocIdSet dis = outerInstance.m_filter.GetDocIdSet(context, acceptDocs);
                     if (dis == null)
                     {
                         return null;
@@ -208,20 +208,20 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    Debug.Assert(OuterInstance.query != null && InnerWeight != null);
-                    disi = InnerWeight.Scorer(context, acceptDocs);
+                    Debug.Assert(outerInstance.m_query != null && innerWeight != null);
+                    disi = innerWeight.Scorer(context, acceptDocs);
                 }
 
                 if (disi == null)
                 {
                     return null;
                 }
-                return new ConstantScorer(OuterInstance, disi, this, QueryWeight);
+                return new ConstantScorer(outerInstance, disi, this, queryWeight);
             }
 
             public override bool ScoresDocsOutOfOrder()
             {
-                return (InnerWeight != null) ? InnerWeight.ScoresDocsOutOfOrder() : false;
+                return (innerWeight != null) ? innerWeight.ScoresDocsOutOfOrder() : false;
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -232,15 +232,15 @@ namespace Lucene.Net.Search
                 ComplexExplanation result = new ComplexExplanation();
                 if (exists)
                 {
-                    result.Description = OuterInstance.ToString() + ", product of:";
-                    result.Value = QueryWeight;
+                    result.Description = outerInstance.ToString() + ", product of:";
+                    result.Value = queryWeight;
                     result.Match = true;
-                    result.AddDetail(new Explanation(OuterInstance.Boost, "boost"));
-                    result.AddDetail(new Explanation(QueryNorm, "queryNorm"));
+                    result.AddDetail(new Explanation(outerInstance.Boost, "boost"));
+                    result.AddDetail(new Explanation(queryNorm, "queryNorm"));
                 }
                 else
                 {
-                    result.Description = OuterInstance.ToString() + " doesn't match id " + doc;
+                    result.Description = outerInstance.ToString() + " doesn't match id " + doc;
                     result.Value = 0;
                     result.Match = false;
                 }
@@ -249,30 +249,30 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// We return this as our <seealso cref="BulkScorer"/> so that if the CSQ
+        /// We return this as our <seealso cref="bulkScorer"/> so that if the CSQ
         ///  wraps a query with its own optimized top-level
         ///  scorer (e.g. BooleanScorer) we can use that
         ///  top-level scorer.
         /// </summary>
         protected class ConstantBulkScorer : BulkScorer
         {
-            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
+            private readonly ConstantScoreQuery outerInstance;
 
-            internal readonly BulkScorer BulkScorer; // LUCENENET TODO: rename (private)
-            internal readonly Weight Weight; // LUCENENET TODO: rename (private)
-            internal readonly float TheScore; // LUCENENET TODO: rename (private)
+            internal readonly BulkScorer bulkScorer;
+            internal readonly Weight weight;
+            internal readonly float theScore;
 
             public ConstantBulkScorer(ConstantScoreQuery outerInstance, BulkScorer bulkScorer, Weight weight, float theScore)
             {
-                this.OuterInstance = outerInstance;
-                this.BulkScorer = bulkScorer;
-                this.Weight = weight;
-                this.TheScore = theScore;
+                this.outerInstance = outerInstance;
+                this.bulkScorer = bulkScorer;
+                this.weight = weight;
+                this.theScore = theScore;
             }
 
             public override bool Score(Collector collector, int max)
             {
-                return BulkScorer.Score(WrapCollector(collector), max);
+                return bulkScorer.Score(WrapCollector(collector), max);
             }
 
             private Collector WrapCollector(Collector collector)
@@ -282,35 +282,35 @@ namespace Lucene.Net.Search
 
             private class CollectorAnonymousInnerClassHelper : Collector
             {
-                private readonly ConstantBulkScorer OuterInstance;
+                private readonly ConstantBulkScorer outerInstance;
 
-                private Lucene.Net.Search.Collector Collector;
+                private Collector collector;
 
                 public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, Lucene.Net.Search.Collector collector)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.Collector = collector;
+                    this.outerInstance = outerInstance;
+                    this.collector = collector;
                 }
                 
                 public override void SetScorer(Scorer scorer)
                 {
                     // we must wrap again here, but using the value passed in as parameter:
-                    Collector.SetScorer(new ConstantScorer(OuterInstance.OuterInstance, scorer, OuterInstance.Weight, OuterInstance.TheScore));
+                    collector.SetScorer(new ConstantScorer(outerInstance.outerInstance, scorer, outerInstance.weight, outerInstance.theScore));
                 }
 
                 public override void Collect(int doc)
                 {
-                    Collector.Collect(doc);
+                    collector.Collect(doc);
                 }
 
                 public override void SetNextReader(AtomicReaderContext context)
                 {
-                    Collector.SetNextReader(context);
+                    collector.SetNextReader(context);
                 }
 
                 public override bool AcceptsDocsOutOfOrder
                 {
-                    get { return Collector.AcceptsDocsOutOfOrder; }
+                    get { return collector.AcceptsDocsOutOfOrder; }
                 }
             }
         }
@@ -318,33 +318,33 @@ namespace Lucene.Net.Search
         // LUCENENET NOTE: Marked internal for testing
         protected internal class ConstantScorer : Scorer
         {
-            private readonly ConstantScoreQuery OuterInstance; // LUCENENET TODO: rename (private)
+            private readonly ConstantScoreQuery outerInstance;
 
-            internal readonly DocIdSetIterator DocIdSetIterator; // LUCENENET TODO: rename (private)
-            internal readonly float TheScore; // LUCENENET TODO: rename (private)
+            internal readonly DocIdSetIterator docIdSetIterator;
+            internal readonly float theScore;
 
             public ConstantScorer(ConstantScoreQuery outerInstance, DocIdSetIterator docIdSetIterator, Weight w, float theScore)
                 : base(w)
             {
-                this.OuterInstance = outerInstance;
-                this.TheScore = theScore;
-                this.DocIdSetIterator = docIdSetIterator;
+                this.outerInstance = outerInstance;
+                this.theScore = theScore;
+                this.docIdSetIterator = docIdSetIterator;
             }
 
             public override int NextDoc()
             {
-                return DocIdSetIterator.NextDoc();
+                return docIdSetIterator.NextDoc();
             }
 
             public override int DocID()
             {
-                return DocIdSetIterator.DocID();
+                return docIdSetIterator.DocID();
             }
 
             public override float Score()
             {
-                Debug.Assert(DocIdSetIterator.DocID() != NO_MORE_DOCS);
-                return TheScore;
+                Debug.Assert(docIdSetIterator.DocID() != NO_MORE_DOCS);
+                return theScore;
             }
 
             public override int Freq
@@ -354,23 +354,23 @@ namespace Lucene.Net.Search
 
             public override int Advance(int target)
             {
-                return DocIdSetIterator.Advance(target);
+                return docIdSetIterator.Advance(target);
             }
 
             public override long Cost()
             {
-                return DocIdSetIterator.Cost();
+                return docIdSetIterator.Cost();
             }
 
             public override ICollection<ChildScorer> Children
             {
                 get
                 {
-                    if (OuterInstance.query != null)
+                    if (outerInstance.m_query != null)
                     {
                         //LUCENE TO-DO
                         //return Collections.singletonList(new ChildScorer((Scorer)DocIdSetIterator, "constant"));
-                        return new[] { new ChildScorer((Scorer)DocIdSetIterator, "constant") };
+                        return new[] { new ChildScorer((Scorer)docIdSetIterator, "constant") };
                     }
                     else
                     {
@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
 
         public override string ToString(string field)
         {
-            return (new StringBuilder("ConstantScore(")).Append((query == null) ? filter.ToString() : query.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
+            return (new StringBuilder("ConstantScore(")).Append((m_query == null) ? m_filter.ToString() : m_query.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 
         public override bool Equals(object o)
@@ -405,14 +405,14 @@ namespace Lucene.Net.Search
             if (o is ConstantScoreQuery)
             {
                 ConstantScoreQuery other = (ConstantScoreQuery)o;
-                return ((this.filter == null) ? other.filter == null : this.filter.Equals(other.filter)) && ((this.query == null) ? other.query == null : this.query.Equals(other.query));
+                return ((this.m_filter == null) ? other.m_filter == null : this.m_filter.Equals(other.m_filter)) && ((this.m_query == null) ? other.m_query == null : this.m_query.Equals(other.m_query));
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return 31 * base.GetHashCode() + ((query == null) ? (object)filter : query).GetHashCode();
+            return 31 * base.GetHashCode() + ((m_query == null) ? (object)m_filter : m_query).GetHashCode();
         }
     }
 }
