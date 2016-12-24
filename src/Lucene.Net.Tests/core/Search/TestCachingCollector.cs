@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
                 cc.Collect(i);
             }
 
-            Assert.IsFalse(cc.Cached, "CachingCollector should not be cached due to low memory limit");
+            Assert.IsFalse(cc.IsCached, "CachingCollector should not be cached due to low memory limit");
 
             try
             {
@@ -221,11 +221,11 @@ namespace Lucene.Net.Search
                 {
                     cc.Collect(i);
                 }
-                Assert.IsTrue(cc.Cached);
+                Assert.IsTrue(cc.IsCached);
 
                 // The 151's document should terminate caching
                 cc.Collect(numDocs);
-                Assert.IsFalse(cc.Cached);
+                Assert.IsFalse(cc.IsCached);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
                 cc.SetScorer(new MockScorer());
                 cc.Collect(0);
 
-                Assert.IsTrue(cc.Cached);
+                Assert.IsTrue(cc.IsCached);
                 cc.Replay(new NoOpCollector(true));
             }
         }

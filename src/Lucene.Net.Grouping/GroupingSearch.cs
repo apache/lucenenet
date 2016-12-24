@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Grouping
                     as IAbstractSecondPassGroupingCollector<TGroupValue>;
             }
 
-            if (cachedCollector != null && cachedCollector.Cached)
+            if (cachedCollector != null && cachedCollector.IsCached)
             {
                 // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                 // so this cast is not necessary. Consider eliminating the Collector abstract class.

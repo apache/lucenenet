@@ -1111,7 +1111,7 @@ namespace Lucene.Net.Search.Grouping
 
                         if (doCache && !useWrappingCollector)
                         {
-                            if (cCache.Cached)
+                            if (cCache.IsCached)
                             {
                                 // Replay for first-pass grouping
                                 // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
@@ -1182,7 +1182,7 @@ namespace Lucene.Net.Search.Grouping
                             c2 = CreateSecondPassCollector(c1, groupField, groupSort, docSort, groupOffset, docOffset + docsPerGroup, getScores, getMaxScores, fillFields);
                             if (doCache)
                             {
-                                if (cCache.Cached)
+                                if (cCache.IsCached)
                                 {
                                     if (VERBOSE)
                                     {
