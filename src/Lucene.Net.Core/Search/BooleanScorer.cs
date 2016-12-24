@@ -60,27 +60,27 @@ namespace Lucene.Net.Search
     {
         private sealed class BooleanScorerCollector : Collector
         {
-            private BucketTable BucketTable; // LUCENENET TODO: Rename (private)
-            private int Mask; // LUCENENET TODO: Rename (private)
-            private Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+            private BucketTable bucketTable;
+            private int mask;
+            private Scorer scorer;
 
             public BooleanScorerCollector(int mask, BucketTable bucketTable)
             {
-                this.Mask = mask;
-                this.BucketTable = bucketTable;
+                this.mask = mask;
+                this.bucketTable = bucketTable;
             }
 
             public override void Collect(int doc)
             {
-                BucketTable table = BucketTable;
+                BucketTable table = bucketTable;
                 int i = doc & BucketTable.MASK;
                 Bucket bucket = table.Buckets[i];
 
                 if (bucket.Doc != doc) // invalid bucket
                 {
                     bucket.Doc = doc; // set doc
-                    bucket.Score = Scorer_Renamed.Score(); // initialize score
-                    bucket.Bits = Mask; // initialize mask
+                    bucket.Score = scorer.Score(); // initialize score
+                    bucket.Bits = mask; // initialize mask
                     bucket.Coord = 1; // initialize coord
 
                     bucket.Next = table.First; // push onto valid list
@@ -88,8 +88,8 @@ namespace Lucene.Net.Search
                 } // valid bucket
                 else
                 {
-                    bucket.Score += Scorer_Renamed.Score(); // increment score
-                    bucket.Bits |= Mask; // add bits in mask
+                    bucket.Score += scorer.Score(); // increment score
+                    bucket.Bits |= mask; // add bits in mask
                     bucket.Coord++; // increment coord
                 }
             }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
             {
                 set
                 {
-                    this.Scorer_Renamed = value;
+                    this.scorer = value;
                 }
             }
 
@@ -118,16 +118,22 @@ namespace Lucene.Net.Search
 
         internal sealed class Bucket
         {
-            internal int Doc = -1; // tells if bucket is valid // LUCENENET TODO: Make property
-            internal double Score; // incremental score // LUCENENET TODO: Make property
+            internal int Doc { get; set; } // tells if bucket is valid
+            internal double Score { get; set; } // incremental score
 
             // TODO: break out bool anyProhibited, int
             // numRequiredMatched; then we can remove 32 limit on
             // required clauses
-            internal int Bits; // used for bool constraints // LUCENENET TODO: Make property
+            internal int Bits { get; set; } // used for bool constraints
 
-            internal int Coord; // count of terms in score // LUCENENET TODO: Make property
-            internal Bucket Next; // next valid bucket // LUCENENET TODO: Make property
+            internal int Coord { get; set; } // count of terms in score
+            internal Bucket Next { get; set; } // next valid bucket
+
+            public Bucket()
+            {
+                // Initialize properties
+                Doc = -1;
+            }
         }
 
         /// <summary>
@@ -155,23 +161,23 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Size() // LUCENENET TODO: Rename Count (or Length?)
+            public int Size // LUCENENET TODO: Rename Count (or Length?)
             {
-                return SIZE;
+                get { return SIZE; }
             }
         }
 
         internal sealed class SubScorer
         {
-            public BulkScorer Scorer; // LUCENENET TODO: Make property
+            public BulkScorer Scorer { get; set; }
 
             // TODO: re-enable this if BQ ever sends us required clauses
             //public boolean required = false;
-            public bool Prohibited; // LUCENENET TODO: Make property
+            public bool Prohibited { get; set; }
 
-            public Collector Collector; // LUCENENET TODO: Make property
-            public SubScorer Next; // LUCENENET TODO: Make property
-            public bool More; // LUCENENET TODO: Make property
+            public Collector Collector { get; set; }
+            public SubScorer Next { get; set; }
+            public bool More { get; set; }
 
             public SubScorer(BulkScorer scorer, bool required, bool prohibited, Collector collector, SubScorer next)
             {
@@ -189,41 +195,41 @@ namespace Lucene.Net.Search
             }
         }
 
-        private SubScorer Scorers = null; // LUCENENET TODO: Rename (private)
+        private SubScorer scorers = null;
         private BucketTable bucketTable = new BucketTable();
-        private readonly float[] CoordFactors; // LUCENENET TODO: Rename (private)
+        private readonly float[] coordFactors;
 
         // TODO: re-enable this if BQ ever sends us required clauses
         //private int requiredMask = 0;
-        private readonly int MinNrShouldMatch; // LUCENENET TODO: Rename (private)
+        private readonly int minNrShouldMatch;
 
-        private int End; // LUCENENET TODO: Rename (private)
-        private Bucket Current; // LUCENENET TODO: Rename (private)
+        private int end;
+        private Bucket current;
 
         // Any time a prohibited clause matches we set bit 0:
         private const int PROHIBITED_MASK = 1;
 
-        private readonly Weight Weight; // LUCENENET TODO: Rename (private)
+        private readonly Weight weight;
 
         internal BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
         {
-            this.MinNrShouldMatch = minNrShouldMatch;
-            this.Weight = weight;
+            this.minNrShouldMatch = minNrShouldMatch;
+            this.weight = weight;
 
             foreach (BulkScorer scorer in optionalScorers)
             {
-                Scorers = new SubScorer(scorer, false, false, bucketTable.NewCollector(0), Scorers);
+                scorers = new SubScorer(scorer, false, false, bucketTable.NewCollector(0), scorers);
             }
 
             foreach (BulkScorer scorer in prohibitedScorers)
             {
-                Scorers = new SubScorer(scorer, false, true, bucketTable.NewCollector(PROHIBITED_MASK), Scorers);
+                scorers = new SubScorer(scorer, false, true, bucketTable.NewCollector(PROHIBITED_MASK), scorers);
             }
 
-            CoordFactors = new float[optionalScorers.Count + 1];
-            for (int i = 0; i < CoordFactors.Length; i++)
+            coordFactors = new float[optionalScorers.Count + 1];
+            for (int i = 0; i < coordFactors.Length; i++)
             {
-                CoordFactors[i] = disableCoord ? 1.0f : weight.Coord(i, maxCoord);
+                coordFactors[i] = disableCoord ? 1.0f : weight.Coord(i, maxCoord);
             }
         }
 
@@ -239,10 +245,10 @@ namespace Lucene.Net.Search
             {
                 bucketTable.First = null;
 
-                while (Current != null) // more queued
+                while (current != null) // more queued
                 {
                     // check prohibited & required
-                    if ((Current.Bits & PROHIBITED_MASK) == 0)
+                    if ((current.Bits & PROHIBITED_MASK) == 0)
                     {
                         // TODO: re-enable this if BQ ever sends us required
                         // clauses
@@ -253,47 +259,47 @@ namespace Lucene.Net.Search
                         // that should work)... but in theory an outside
                         // app could pass a different max so we must check
                         // it:
-                        if (Current.Doc >= max)
+                        if (current.Doc >= max)
                         {
-                            tmp = Current;
-                            Current = Current.Next;
+                            tmp = current;
+                            current = current.Next;
                             tmp.Next = bucketTable.First;
                             bucketTable.First = tmp;
                             continue;
                         }
 
-                        if (Current.Coord >= MinNrShouldMatch)
+                        if (current.Coord >= minNrShouldMatch)
                         {
-                            fs.score = (float)(Current.Score * CoordFactors[Current.Coord]);
-                            fs.doc = Current.Doc;
-                            fs.freq = Current.Coord;
-                            collector.Collect(Current.Doc);
+                            fs.score = (float)(current.Score * coordFactors[current.Coord]);
+                            fs.doc = current.Doc;
+                            fs.freq = current.Coord;
+                            collector.Collect(current.Doc);
                         }
                     }
 
-                    Current = Current.Next; // pop the queue
+                    current = current.Next; // pop the queue
                 }
 
                 if (bucketTable.First != null)
                 {
-                    Current = bucketTable.First;
-                    bucketTable.First = Current.Next;
+                    current = bucketTable.First;
+                    bucketTable.First = current.Next;
                     return true;
                 }
 
                 // refill the queue
                 more = false;
-                End += BucketTable.SIZE;
-                for (SubScorer sub = Scorers; sub != null; sub = sub.Next)
+                end += BucketTable.SIZE;
+                for (SubScorer sub = scorers; sub != null; sub = sub.Next)
                 {
                     if (sub.More)
                     {
-                        sub.More = sub.Scorer.Score(sub.Collector, End);
+                        sub.More = sub.Scorer.Score(sub.Collector, end);
                         more |= sub.More;
                     }
                 }
-                Current = bucketTable.First;
-            } while (Current != null || more);
+                current = bucketTable.First;
+            } while (current != null || more);
 
             return false;
         }
@@ -302,7 +308,7 @@ namespace Lucene.Net.Search
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("boolean(");
-            for (SubScorer sub = Scorers; sub != null; sub = sub.Next)
+            for (SubScorer sub = scorers; sub != null; sub = sub.Next)
             {
                 buffer.Append(sub.Scorer.ToString());
                 buffer.Append(" ");
