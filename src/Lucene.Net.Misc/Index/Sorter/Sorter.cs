@@ -267,7 +267,7 @@ namespace Lucene.Net.Index.Sorter
                 reverseMul[i] = fields[i].Reverse ? -1 : 1;
                 comparators[i] = fields[i].GetComparator(1, i);
                 comparators[i].SetNextReader(reader.AtomicContext);
-                comparators[i].Scorer = FAKESCORER;
+                comparators[i].SetScorer(FAKESCORER);
             }
             DocComparator comparator = new DocComparatorAnonymousInnerClassHelper(this, reverseMul, comparators);
             return Sort(reader.MaxDoc, comparator);

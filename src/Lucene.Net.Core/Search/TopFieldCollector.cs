@@ -105,8 +105,7 @@ namespace Lucene.Net.Search
             
             public override void SetScorer(Scorer scorer)
             {
-                //comparator.SetScorer(scorer);
-                comparator.Scorer = scorer;
+                comparator.SetScorer(scorer);
             }
         }
 
@@ -222,7 +221,7 @@ namespace Lucene.Net.Search
             public override void SetScorer(Scorer scorer)
             {
                 this.Scorer_Renamed = scorer;
-                comparator.Scorer = scorer;
+                comparator.SetScorer(scorer);
             }
         }
 
@@ -505,7 +504,7 @@ namespace Lucene.Net.Search
                 // set the value on all comparators
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    comparators[i].Scorer = scorer;
+                    comparators[i].SetScorer(scorer);
                 }
             }
         }
@@ -1142,7 +1141,7 @@ namespace Lucene.Net.Search
                 this.Scorer_Renamed = scorer;
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    comparators[i].Scorer = scorer;
+                    comparators[i].SetScorer(scorer);
                 }
             }
 

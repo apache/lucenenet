@@ -346,7 +346,7 @@ namespace Lucene.Net.Join
             scorer = new ScoreCachingWrappingScorer(scorer);
             for (int compIdx = 0; compIdx < comparators.Length; compIdx++)
             {
-                comparators[compIdx].Scorer = scorer;
+                comparators[compIdx].SetScorer(scorer);
             }
             Arrays.Fill(joinScorers, null);
 

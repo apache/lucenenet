@@ -491,7 +491,7 @@ namespace Lucene.Net.Search.Grouping
             this.scorer = scorer;
             foreach (FieldComparator comparator in comparators)
             {
-                comparator.Scorer = scorer;
+                comparator.SetScorer(scorer);
             }
         }
 

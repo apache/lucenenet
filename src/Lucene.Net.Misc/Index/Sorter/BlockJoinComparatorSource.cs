@@ -198,19 +198,16 @@ namespace Lucene.Net.Index.Sorter
                 throw new System.NotSupportedException("filling sort field values is not yet supported");
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
+                base.SetScorer(scorer);
+                foreach (FieldComparator comp in parentComparators)
                 {
-                    base.Scorer = value;
-                    foreach (FieldComparator comp in parentComparators)
-                    {
-                        comp.Scorer = value;
-                    }
-                    foreach (FieldComparator comp in childComparators)
-                    {
-                        comp.Scorer = value;
-                    }
+                    comp.SetScorer(scorer);
+                }
+                foreach (FieldComparator comp in childComparators)
+                {
+                    comp.SetScorer(scorer);
                 }
             }
 

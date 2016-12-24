@@ -31,19 +31,16 @@ namespace Lucene.Net.Expressions
         }
 
         // TODO: change FieldComparator.setScorer to throw IOException and remove this try-catch
-        public override Scorer Scorer
+        public override void SetScorer(Scorer scorer)
         {
-            set
-            {
-                base.Scorer = value;
-                // TODO: might be cleaner to lazy-init 'source' and set scorer after?
+            base.SetScorer(scorer);
+            // TODO: might be cleaner to lazy-init 'source' and set scorer after?
 
-                Debug.Assert(readerContext != null);
-                var context = new Dictionary<string, object>();
-                Debug.Assert(value != null);
-                context["scorer"] = value;
-                scores = source.GetValues(context, readerContext);
-            }
+            Debug.Assert(readerContext != null);
+            var context = new Dictionary<string, object>();
+            Debug.Assert(scorer != null);
+            context["scorer"] = scorer;
+            scores = source.GetValues(context, readerContext);
         }
 
         public override int Compare(int slot1, int slot2)

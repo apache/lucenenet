@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Grouping
         {
             foreach (FieldComparator comparator in comparators)
             {
-                comparator.Scorer = scorer;
+                comparator.SetScorer(scorer);
             }
         }
 

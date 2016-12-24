@@ -305,13 +305,10 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="scorer"> Scorer instance that you should use to
         /// obtain the current hit's score, if necessary.  </param>
-        public virtual Scorer Scorer // LUCENENET TODO: change to SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
-            set
-            {
-                // Empty implementation since most comparators don't need the score. this
-                // can be overridden by those that need it.
-            }
+            // Empty implementation since most comparators don't need the score. this
+            // can be overridden by those that need it.
         }
 
         /// <summary>
@@ -940,21 +937,18 @@ namespace Lucene.Net.Search
                 TopValue_Renamed = (float)value;
             }
 
-            public override Scorer Scorer
+            public override void SetScorer(Scorer scorer)
             {
-                set
+                // wrap with a ScoreCachingWrappingScorer so that successive calls to
+                // score() will not incur score computation over and
+                // over again.
+                if (!(scorer is ScoreCachingWrappingScorer))
                 {
-                    // wrap with a ScoreCachingWrappingScorer so that successive calls to
-                    // score() will not incur score computation over and
-                    // over again.
-                    if (!(value is ScoreCachingWrappingScorer))
-                    {
-                        this.Scorer_Renamed = new ScoreCachingWrappingScorer(value);
-                    }
-                    else
-                    {
-                        this.Scorer_Renamed = value;
-                    }
+                    this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
+                }
+                else
+                {
+                    this.Scorer_Renamed = scorer;
                 }
             }
 

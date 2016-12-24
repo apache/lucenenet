@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Grouping.Function
             {
                 foreach (FieldComparator comparator in groupHead.comparators)
                 {
-                    comparator.Scorer = scorer;
+                    comparator.SetScorer(scorer);
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Grouping.Function
                 for (int i = 0; i < sortFields.Length; i++)
                 {
                     comparators[i] = sortFields[i].GetComparator(1, i).SetNextReader(outerInstance.readerContext);
-                    comparators[i].Scorer = outerInstance.scorer;
+                    comparators[i].SetScorer(outerInstance.scorer);
                     comparators[i].Copy(0, doc);
                     comparators[i].SetBottom(0);
                 }
