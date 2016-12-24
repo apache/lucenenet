@@ -23,6 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// A simple float function with a single argument
     /// </summary>
+     // LUCENENET TODO: Rename SimpleSingleFunction ?
     public abstract class SimpleFloatFunction : SingleFunction
     {
         protected SimpleFloatFunction(ValueSource source)

@@ -108,7 +108,11 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ Slop ^ Terms.GetHashCode() ^ Positions.GetHashCode() ^ n;
+            return Number.FloatToIntBits(Boost) 
+                ^ Slop 
+                ^ Terms.GetHashCode() 
+                ^ Positions.GetHashCode() 
+                ^ n;
         }
     }
 }

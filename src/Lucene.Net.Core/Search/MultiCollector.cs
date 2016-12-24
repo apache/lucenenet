@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private readonly Collector[] Collectors;
+        private readonly Collector[] Collectors; // LUCENENET TODO: Rename (private)
 
         private MultiCollector(params Collector[] collectors)
         {

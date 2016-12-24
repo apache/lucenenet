@@ -48,8 +48,8 @@ namespace Lucene.Net.Search
         private class OneComparatorNonScoringCollector : TopFieldCollector
         {
             internal FieldComparator comparator;
-            internal readonly int ReverseMul;
-            internal readonly FieldValueHitQueue<Entry> Queue;
+            internal readonly int ReverseMul; // LUCENENET TODO: Rename (private)
+            internal readonly FieldValueHitQueue<Entry> Queue; // LUCENENET TODO: Rename (private)
 
             public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 
         private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed;
+            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
             public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -425,8 +425,8 @@ namespace Lucene.Net.Search
         private class MultiComparatorNonScoringCollector : TopFieldCollector
         {
             internal readonly FieldComparator[] comparators;
-            internal readonly int[] ReverseMul;
-            internal readonly FieldValueHitQueue<Entry> Queue;
+            internal readonly int[] ReverseMul; // LUCENENET TODO: Rename (private)
+            internal readonly FieldValueHitQueue<Entry> Queue; // LUCENENET TODO: Rename (private)
 
             public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -619,7 +619,7 @@ namespace Lucene.Net.Search
 
         private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed;
+            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
             public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -806,7 +806,7 @@ namespace Lucene.Net.Search
 
         private class MultiComparatorScoringNoMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed;
+            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
             public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -999,6 +999,7 @@ namespace Lucene.Net.Search
 
         private sealed class PagingFieldCollector : TopFieldCollector
         {
+            // LUCENENET TODO: Rename (private)
             internal Scorer Scorer_Renamed;
             internal int CollectedHits;
             internal readonly FieldComparator[] comparators;
@@ -1197,18 +1198,18 @@ namespace Lucene.Net.Search
 
         private static readonly ScoreDoc[] EMPTY_SCOREDOCS = new ScoreDoc[0];
 
-        private readonly bool FillFields;
+        private readonly bool FillFields; // LUCENENET TODO: Rename (private)
 
         /*
          * Stores the maximum score value encountered, needed for normalizing. If
          * document scores are not tracked, this value is initialized to NaN.
          */
-        internal float MaxScore = float.NaN;
+        internal float MaxScore = float.NaN; // LUCENENET TODO: Rename (private)
 
-        internal readonly int NumHits;
-        internal FieldValueHitQueue.Entry Bottom = null;
-        internal bool QueueFull;
-        internal int DocBase;
+        internal readonly int NumHits; // LUCENENET TODO: Rename (private)
+        internal FieldValueHitQueue.Entry Bottom = null; // LUCENENET TODO: Rename (private)
+        internal bool QueueFull; // LUCENENET TODO: Rename (private)
+        internal int DocBase; // LUCENENET TODO: Rename (private)
 
         // Declaring the constructor private prevents extending this class by anyone
         // else. Note that the class cannot be final since it's extended by the
@@ -1408,7 +1409,7 @@ namespace Lucene.Net.Search
          * topDocs(int, int) calls them to return the results.
          */
 
-        protected internal override void PopulateResults(ScoreDoc[] results, int howMany)
+        protected override void PopulateResults(ScoreDoc[] results, int howMany)
         {
             if (FillFields)
             {
@@ -1429,7 +1430,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+        protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
             if (results == null)
             {

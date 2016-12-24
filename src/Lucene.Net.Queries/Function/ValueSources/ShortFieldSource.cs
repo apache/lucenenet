@@ -27,6 +27,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// and makes those values available as other numeric types, casting as needed.
     /// 
     /// </summary>
+     // LUCENENET TODO: Rename Int16FieldSource ?
     [Obsolete]
     public class ShortFieldSource : FieldCacheSource
     {

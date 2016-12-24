@@ -37,9 +37,9 @@ namespace Lucene.Net.Search
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
         public class TimeExceededException : Exception
         {
-            internal long timeAllowed;
-            internal long timeElapsed;
-            internal int lastDocCollected;
+            private long timeAllowed;
+            private long timeElapsed;
+            private int lastDocCollected;
 
             internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected)
                 : base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
@@ -80,6 +80,7 @@ namespace Lucene.Net.Search
             }
         }
 
+        // LUCENENET TODO: Rename (private)
         private long T0 = long.MinValue;
         private long Timeout = long.MinValue;
         private Collector collector;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Search
         /// </pre>
         /// </p> </summary>
         /// <seealso cref= #setBaseline()  </seealso>
-        public virtual long Baseline
+        public virtual long Baseline // LUCENENET TODO: Make SetBaseline(long clockTime)
         {
             set
             {
@@ -143,7 +144,7 @@ namespace Lucene.Net.Search
         /// first allow the wrapped hit collector to collect current doc and only then
         /// throw a <seealso cref="TimeExceededException"/>. </summary>
         /// <seealso cref= #setGreedy(boolean) </seealso>
-        public virtual bool Greedy
+        public virtual bool Greedy // LUCENENET TODO: Rename IsGreedy
         {
             get
             {
@@ -210,7 +211,7 @@ namespace Lucene.Net.Search
         /// reset the timer for each phase.  Once time is up subsequent phases need to timeout quickly.
         /// </summary>
         /// <param name="collector"> The actual collector performing search functionality </param>
-        public virtual Collector Collector
+        public virtual Collector Collector // LUCENENET TODO: Make SetCollector(Collector collector)
         {
             set
             {
@@ -228,7 +229,7 @@ namespace Lucene.Net.Search
         /// </p> </summary>
         /// <returns> the global TimerThreads <seealso cref="Counter"/>
         /// @lucene.experimental </returns>
-        public static Counter GlobalCounter
+        public static Counter GlobalCounter // LUCENENET TODO: Make GetGlobalCounter() (may spawn new thread)
         {
             get
             {
@@ -247,7 +248,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <returns> the global <seealso cref="TimerThread"/>
         /// @lucene.experimental </returns>
-        public static TimerThread GlobalTimerThread
+        public static TimerThread GlobalTimerThread // LUCENENET TODO: Make GetGlobalTimerThread() (may spawn new thread)
         {
             get
             {
@@ -286,11 +287,11 @@ namespace Lucene.Net.Search
             //   afford losing a tick or two.
             //
             // See section 17 of the Java Language Specification for details.
-            internal long Time = 0;
+            private long Time = 0; // LUCENENET TODO: Rename (private)
 
-            internal volatile bool Stop = false;
-            internal long resolution;
-            internal readonly Counter Counter;
+            private volatile bool Stop = false; // LUCENENET TODO: Rename (private)
+            private long resolution;
+            internal readonly Counter Counter; // LUCENENET TODO: Rename counter, make private, make property named Counter for access
 
             public TimerThread(long resolution, Counter counter)
                 : base(THREAD_NAME)

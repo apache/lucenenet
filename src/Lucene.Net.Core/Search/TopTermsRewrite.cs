@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// return the maximum priority queue size </summary>
-        public virtual int Size
+        public virtual int Size // LUCENENET TODO: Rename Count
         {
             get
             {
@@ -66,12 +66,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// return the maximum size of the priority queue (for boolean rewrites this is BooleanQuery#getMaxClauseCount). </summary>
-        protected internal abstract int MaxSize { get; }
+        protected abstract int MaxSize { get; } // LUCENENET TODO: Rename MaxCount ?
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             int maxSize = Math.Min(size, MaxSize);
-            PriorityQueue<ScoreTerm> stQueue = new ScoreTermPQ();
+            PriorityQueue<ScoreTerm> stQueue = new ScoreTermPQ(); // LUCENENET TODO: Change to Support.PriorityQueue<T> (like the original)
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
             var q = TopLevelQuery;
@@ -89,10 +89,10 @@ namespace Lucene.Net.Search
 
         private class TermCollectorAnonymousInnerClassHelper : TermCollector
         {
-            private readonly TopTermsRewrite<Q> OuterInstance;
+            private readonly TopTermsRewrite<Q> OuterInstance; // LUCENENET TODO: Rename (private)
 
-            private int MaxSize;
-            private PriorityQueue<ScoreTerm> StQueue;
+            private int MaxSize; // LUCENENET TODO: Rename (private)
+            private PriorityQueue<ScoreTerm> StQueue; // LUCENENET TODO: Rename (private)
 
             public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite<Q> outerInstance, int maxSize, PriorityQueue<ScoreTerm> stQueue)
             {
@@ -260,10 +260,10 @@ namespace Lucene.Net.Search
 
         internal sealed class ScoreTerm : IComparable<ScoreTerm>
         {
-            public readonly IComparer<BytesRef> TermComp;
-            public readonly BytesRef Bytes = new BytesRef();
-            public float Boost;
-            public readonly TermContext TermState;
+            public readonly IComparer<BytesRef> TermComp; // LUCENENET TODO: Make property
+            public readonly BytesRef Bytes = new BytesRef(); // LUCENENET TODO: Make property
+            public float Boost; // LUCENENET TODO: Make property
+            public readonly TermContext TermState; // LUCENENET TODO: Make property
 
             public ScoreTerm(IComparer<BytesRef> termComp, TermContext termState)
             {
@@ -284,9 +284,10 @@ namespace Lucene.Net.Search
             }
         }
 
+        // LUCENENET TODO: eliminate this unnecessary class
         private class ScoreTermPQ : PriorityQueue<ScoreTerm>
         {
-            public override bool LessThan(ScoreTerm a, ScoreTerm b)
+            protected internal override bool LessThan(ScoreTerm a, ScoreTerm b)
             {
                 return (a.CompareTo(b) < 0) ? true : false;
             }

@@ -27,8 +27,8 @@ namespace Lucene.Net.Search
     /// </summary>
     internal sealed class TermScorer : Scorer
     {
-        private readonly DocsEnum DocsEnum;
-        private readonly Similarity.SimScorer DocScorer;
+        private readonly DocsEnum DocsEnum; // LUCENENET TODO: Rename (private)
+        private readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Construct a <code>TermScorer</code>.

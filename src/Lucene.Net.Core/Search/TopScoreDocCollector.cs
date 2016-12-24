@@ -74,12 +74,12 @@ namespace Lucene.Net.Search
         // Assumes docs are scored in order.
         private class InOrderPagingScoreDocCollector : TopScoreDocCollector
         {
-            internal readonly ScoreDoc After;
+            internal readonly ScoreDoc After; // LUCENENET TODO: Rename (private)
 
             // this is always after.doc - docBase, to save an add when score == after.score
-            internal int AfterDoc;
+            internal int AfterDoc; // LUCENENET TODO: Rename (private)
 
-            internal int CollectedHits;
+            internal int CollectedHits; // LUCENENET TODO: Rename (private)
 
             internal InOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
@@ -130,12 +130,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override int TopDocsSize()
+            protected override int TopDocsSize()
             {
                 return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size();
             }
 
-            protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+            protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 return results == null ? new TopDocs(TotalHits_Renamed, new ScoreDoc[0], float.NaN) : new TopDocs(TotalHits_Renamed, results);
             }
@@ -182,12 +182,12 @@ namespace Lucene.Net.Search
         // Assumes docs are scored out of order.
         private class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector
         {
-            internal readonly ScoreDoc After;
+            internal readonly ScoreDoc After; // LUCENENET TODO: Rename (private)
 
             // this is always after.doc - docBase, to save an add when score == after.score
-            internal int AfterDoc;
+            internal int AfterDoc; // LUCENENET TODO: Rename (private)
 
-            internal int CollectedHits;
+            internal int CollectedHits; // LUCENENET TODO: Rename (private)
 
             internal OutOfOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
@@ -239,12 +239,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override int TopDocsSize()
+            protected override int TopDocsSize()
             {
                 return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size();
             }
 
-            protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+            protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 return results == null ? new TopDocs(TotalHits_Renamed, new ScoreDoc[0], float.NaN) : new TopDocs(TotalHits_Renamed, results);
             }
@@ -292,9 +292,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal ScoreDoc PqTop;
-        internal int DocBase = 0;
-        internal Scorer Scorer_Renamed;
+        internal ScoreDoc PqTop; // LUCENENET TODO: Rename (private)
+        internal int DocBase = 0; // LUCENENET TODO: Rename (private)
+        internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
         // prevents instantiation
         private TopScoreDocCollector(int numHits)
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
             PqTop = Pq.Top();
         }
 
-        protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+        protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
             if (results == null)
             {

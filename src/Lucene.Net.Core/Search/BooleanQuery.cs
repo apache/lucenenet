@@ -49,7 +49,11 @@ namespace Lucene.Net.Search
         /// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery
         /// is expanded to many terms during search.
         /// </summary>
-        public class TooManyClauses : Exception
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
+        public class TooManyClauses : Exception // LUCENENET TODO: Rename TooManyClausesException ? (.NET convention)
         {
             public TooManyClauses()
                 : base("maxClauseCount is set to " + maxClauseCount)

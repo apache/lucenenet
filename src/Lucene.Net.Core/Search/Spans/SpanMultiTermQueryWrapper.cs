@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Spans
                 {
                 }
 
-                protected internal override SpanOrQuery TopLevelQuery
+                protected override SpanOrQuery TopLevelQuery
                 {
                     get
                     {
@@ -201,12 +201,12 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
 
-                protected internal override void CheckMaxClauseCount(int count)
+                protected override void CheckMaxClauseCount(int count)
                 {
                     // we accept all terms as SpanOrQuery has no limits
                 }
 
-                protected internal override void AddClause(SpanOrQuery topLevel, Term term, int docCount, float boost, TermContext states)
+                protected override void AddClause(SpanOrQuery topLevel, Term term, int docCount, float boost, TermContext states)
                 {
                     // TODO: would be nice to not lose term-state here.
                     // we could add a hack option to SpanOrQuery, but the hack would only work if this is the top-level Span
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Spans
                     this.OuterInstance = outerInstance;
                 }
 
-                protected internal override int MaxSize
+                protected override int MaxSize
                 {
                     get
                     {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
 
-                protected internal override SpanOrQuery TopLevelQuery
+                protected override SpanOrQuery TopLevelQuery
                 {
                     get
                     {
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
 
-                protected internal override void AddClause(SpanOrQuery topLevel, Term term, int docFreq, float boost, TermContext states)
+                protected override void AddClause(SpanOrQuery topLevel, Term term, int docFreq, float boost, TermContext states)
                 {
                     SpanTermQuery q = new SpanTermQuery(term);
                     q.Boost = boost;

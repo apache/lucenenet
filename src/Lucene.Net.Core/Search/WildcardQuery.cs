@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the pattern term.
         /// </summary>
-        public virtual Term Term
+        public virtual Term Term // LUCENENET TODO: Ensure protected member is renamed in base class
         {
             get
             {

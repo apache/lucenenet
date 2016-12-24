@@ -93,6 +93,7 @@ namespace Lucene.Net.Search
     ///
     /// @lucene.experimental
     /// </summary>
+     // LUCENENET TODO: Rename FieldComparer ?
     public abstract class FieldComparator<T> : FieldComparator
     {
         /// <summary>
@@ -212,6 +213,7 @@ namespace Lucene.Net.Search
 
     // .NET Port: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
+    // LUCENENET TODO: Rename FieldComparer ?
     public abstract class FieldComparator
     {
         public abstract int CompareValues(object first, object second);
@@ -324,6 +326,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Base FieldComparator class for numeric types
         /// </summary>
+         // LUCENENET TODO: Rename NumericComparer ?
         public abstract class NumericComparator<T> : FieldComparator<T>
             where T : struct
         {
@@ -360,6 +363,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as byte (using {@link
         ///  FieldCache#getBytes} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename ByteComparer ?
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
         public sealed class ByteComparator : NumericComparator<sbyte>
         {
@@ -454,6 +458,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as double (using {@link
         ///  FieldCache#getDoubles} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename DoubleComparer ?
         public sealed class DoubleComparator : NumericComparator<double>
         {
             private readonly double[] Values; // LUCENENET TODO: rename (private)
@@ -546,6 +551,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as float (using {@link
         ///  FieldCache#getFloats} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename SingleComparator ? or SingleComparer ?
         public sealed class FloatComparator : NumericComparator<float>
         {
             private readonly float[] Values; // LUCENENET TODO: rename (private)
@@ -639,6 +645,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as short (using {@link
         ///  FieldCache#getShorts} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename Int16Comparator ? or Int16Comparer ?
         [Obsolete]
         public sealed class ShortComparator : NumericComparator<short>
         {
@@ -734,6 +741,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as int (using {@link
         ///  FieldCache#getInts} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename Int32Comparator ? or Int32Comparer ?
         public sealed class IntComparator : NumericComparator<int>
         {
             private readonly int[] Values; // LUCENENET TODO: rename (private)
@@ -825,6 +833,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as long (using {@link
         ///  FieldCache#getLongs} and sorts by ascending value
         /// </summary>
+         // LUCENENET TODO: Rename Int64Comparator ? Or Int64Comparer ?
         public sealed class LongComparator : NumericComparator<long>
         {
             private readonly long[] Values; // LUCENENET TODO: rename (private)
@@ -923,6 +932,7 @@ namespace Lucene.Net.Search
         ///  IndexSearcher#search} uses when no <seealso cref="Sort"/> is
         ///  specified).
         /// </summary>
+         // LUCENENET TODO: Rename RelevanceComparer ?
         public sealed class RelevanceComparator : FieldComparator<float>
         {
             private readonly float[] Scores; // LUCENENET TODO: rename (private)
@@ -1015,6 +1025,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by ascending docID </summary>
+         // LUCENENET TODO: Rename DocComparer ?
         public sealed class DocComparator : FieldComparator<int?>
         {
             private readonly int[] DocIDs; // LUCENENET TODO: rename (private)
@@ -1092,6 +1103,7 @@ namespace Lucene.Net.Search
         ///  than <seealso cref="Lucene.Net.Search.FieldComparator.TermValComparator"/>.  For very small
         ///  result sets it may be slower.
         /// </summary>
+         // LUCENENET TODO: Rename TermOrdValComparer ?
         public class TermOrdValComparator : FieldComparator<BytesRef>
         {
             /* Ords for each slot.
@@ -1412,6 +1424,7 @@ namespace Lucene.Net.Search
         ///  very fast for very small results sets.
         /// </summary>
         // TODO: should we remove this?  who really uses it?
+        // LUCENENET TODO: Rename TermValComparer ?
         public sealed class TermValComparator : FieldComparator<BytesRef>
         {
             // sentinels, just used internally in this comparator

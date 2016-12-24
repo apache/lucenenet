@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
         /// </param>
         /// <returns> a <seealso cref="Scorer"/> which scores documents in/out-of order. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public abstract Scorer Scorer(AtomicReaderContext context, Bits acceptDocs);
+        public abstract Scorer Scorer(AtomicReaderContext context, Bits acceptDocs); // LUCENENET TODO: Rename GetScorer() ?
 
         /// <summary>
         /// Optional method, to return a <seealso cref="BulkScorer"/> to
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
         /// <returns> a <seealso cref="BulkScorer"/> which scores documents and
         /// passes them to a collector. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+        public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs) // LUCENENET TODO: Rename GetBulkScorer ?
         {
             Scorer scorer = Scorer(context, acceptDocs);
             if (scorer == null)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
         /// Just wraps a Scorer and performs top scoring using it. </summary>
         internal class DefaultBulkScorer : BulkScorer
         {
-            internal readonly Scorer Scorer;
+            internal readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
 
             public DefaultBulkScorer(Scorer scorer)
             {

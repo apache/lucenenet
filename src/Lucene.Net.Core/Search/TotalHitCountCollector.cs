@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 
     public class TotalHitCountCollector : Collector
     {
-        private int TotalHits_Renamed;
+        private int TotalHits_Renamed; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Returns how many hits matched the search. </summary>

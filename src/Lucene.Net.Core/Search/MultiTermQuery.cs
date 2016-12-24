@@ -63,8 +63,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class MultiTermQuery : Query
     {
-        protected internal readonly string field;
-        protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+        protected internal readonly string field; // LUCENENET TODO: Rename
+        protected RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT; // LUCENENET TODO: Rename (or move RewriteMethod class)
 
         /// <summary>
         /// Abstract class that defines how the query is rewritten. </summary>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Returns the <seealso cref="MultiTermQuery"/>s <seealso cref="TermsEnum"/> </summary>
             /// <seealso cref= MultiTermQuery#getTermsEnum(Terms, AttributeSource) </seealso>
-            protected internal virtual TermsEnum GetTermsEnum(MultiTermQuery query, Terms terms, AttributeSource atts)
+            protected virtual TermsEnum GetTermsEnum(MultiTermQuery query, Terms terms, AttributeSource atts)
             {
                 return query.GetTermsEnum(terms, atts); // allow RewriteMethod subclasses to pull a TermsEnum from the MTQ
             }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override int MaxSize
+            protected override int MaxSize
             {
                 get
                 {
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override BooleanQuery TopLevelQuery
+            protected override BooleanQuery TopLevelQuery
             {
                 get
                 {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
+            protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
             {
                 TermQuery tq = new TermQuery(term, states);
                 tq.Boost = boost;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override int MaxSize
+            protected override int MaxSize
             {
                 get
                 {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override BooleanQuery TopLevelQuery
+            protected override BooleanQuery TopLevelQuery
             {
                 get
                 {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states)
+            protected override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states)
             {
                 Query q = new ConstantScoreQuery(new TermQuery(term, states));
                 q.Boost = boost;
@@ -359,12 +359,12 @@ namespace Lucene.Net.Search
               }
                 */
 
-        public virtual RewriteMethod GetRewriteMethod()
+        public virtual RewriteMethod GetRewriteMethod() // LUCENENET TODO: Make property ? Find out why the above was abandoned
         {
             return rewriteMethod;
         }
 
-        public virtual void SetRewriteMethod(RewriteMethod value)
+        public virtual void SetRewriteMethod(RewriteMethod value) // LUCENENET TODO: Make property ?
         {
             rewriteMethod = value;
         }

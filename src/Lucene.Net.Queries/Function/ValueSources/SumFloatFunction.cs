@@ -24,6 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// <code>SumFloatFunction</code> returns the sum of it's components.
     /// </summary>
+     // LUCENENET TODO: Rename (private)
     public class SumFloatFunction : MultiFloatFunction
     {
         public SumFloatFunction(ValueSource[] sources)

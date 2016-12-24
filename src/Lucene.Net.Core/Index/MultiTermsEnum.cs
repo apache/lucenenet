@@ -654,7 +654,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override bool LessThan(TermsEnumWithSlice termsA, TermsEnumWithSlice termsB)
+            protected internal override bool LessThan(TermsEnumWithSlice termsA, TermsEnumWithSlice termsB)
             {
                 int cmp = termComp.Compare(termsA.Current, termsB.Current);
                 if (cmp != 0)

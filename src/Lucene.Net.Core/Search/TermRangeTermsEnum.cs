@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermRangeTermsEnum : FilteredTermsEnum
     {
+        // LUCENENET TODO: Rename (private)
         private readonly bool IncludeLower;
         private readonly bool IncludeUpper;
         private readonly BytesRef LowerBytesRef;

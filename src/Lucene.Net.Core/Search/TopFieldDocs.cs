@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The fields which were used to sort results by. </summary>
-        public SortField[] Fields;
+        public SortField[] Fields; // LUCENENET TODO: work out what to do about public array fields
 
         /// <summary>
         /// Creates one of these objects. </summary>

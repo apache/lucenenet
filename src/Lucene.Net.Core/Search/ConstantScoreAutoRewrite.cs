@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override BooleanQuery TopLevelQuery
+        protected override BooleanQuery TopLevelQuery
         {
             get
             {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states) //ignored
+        protected override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states) //ignored
         {
             topLevel.Add(new TermQuery(term, states), BooleanClause.Occur.SHOULD);
         }

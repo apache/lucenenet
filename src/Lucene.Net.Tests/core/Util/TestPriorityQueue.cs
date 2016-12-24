@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override bool LessThan(int? a, int? b)
+            protected internal override bool LessThan(int? a, int? b)
             {
                 return (a <= b);
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override bool LessThan(MyType a, MyType b)
+            protected internal override bool LessThan(MyType a, MyType b)
             {
                 return (a.Field < b.Field);
             }

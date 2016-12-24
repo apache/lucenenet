@@ -43,6 +43,7 @@ namespace Lucene.Net.Search
 
     public class TermRangeQuery : MultiTermQuery
     {
+        // LUCENENET TODO: Rename (private)
         private BytesRef LowerTerm_Renamed;
         private BytesRef UpperTerm_Renamed;
         private bool IncludeLower;
@@ -110,14 +111,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower()
+        public virtual bool IncludesLower() // LUCENENET TODO: Make property
         {
             return IncludeLower;
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper()
+        public virtual bool IncludesUpper() // LUCENENET TODO: Make property
         {
             return IncludeUpper;
         }

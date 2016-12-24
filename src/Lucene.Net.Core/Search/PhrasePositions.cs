@@ -24,6 +24,7 @@ namespace Lucene.Net.Search
     /// </summary>
     internal sealed class PhrasePositions
     {
+        // LUCENENET TODO: Rename (private)
         internal int Doc; // current doc
         internal int Position; // position in doc
         internal int Count; // remaining pos in this doc

@@ -19,7 +19,7 @@ namespace Lucene.Net.Search
 
     using Lucene.Net.Util;
 
-    public sealed class HitQueue : PriorityQueue<ScoreDoc>
+    internal sealed class HitQueue : PriorityQueue<ScoreDoc>
     {
         /// <summary>
         /// Creates a new instance with <code>size</code> elements. If
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
         /// <param name="prePopulate">
         ///          specifies whether to pre-populate the queue with sentinel values. </param>
         /// <seealso cref= #getSentinelObject() </seealso>
-        public HitQueue(int size, bool prePopulate)
+        internal HitQueue(int size, bool prePopulate)
             : base(size, prePopulate)
         {
         }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
+        protected internal override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
         {
             if (hitA.Score == hitB.Score)
             {

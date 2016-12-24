@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 
     internal sealed class SloppyPhraseScorer : Scorer
     {
+        // LUCENENET TODO: Rename (private)
         private PhrasePositions Min, Max;
 
         private float SloppyFreq_Renamed; //phrase frequency in current doc as computed by phraseFreq().
@@ -440,7 +441,7 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<PhrasePositions>
         {
-            private readonly SloppyPhraseScorer OuterInstance;
+            private readonly SloppyPhraseScorer OuterInstance; // LUCENENET TODO: Rename (private)
 
             public ComparatorAnonymousInnerClassHelper(SloppyPhraseScorer outerInstance)
             {
@@ -641,7 +642,7 @@ namespace Lucene.Net.Search
             get { return NumMatches; }
         }
 
-        internal float SloppyFreq()
+        internal float SloppyFreq() // LUCENENET TODO: Make property
         {
             return SloppyFreq_Renamed;
         }

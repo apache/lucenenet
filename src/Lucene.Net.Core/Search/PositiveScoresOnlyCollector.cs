@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     public class PositiveScoresOnlyCollector : Collector
     {
         private readonly Collector c;
-        private Scorer Scorer_Renamed;
+        private Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
 
         public PositiveScoresOnlyCollector(Collector c)
         {

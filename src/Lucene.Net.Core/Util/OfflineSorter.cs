@@ -458,7 +458,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            public override bool LessThan(FileAndTop a, FileAndTop b)
+            protected internal override bool LessThan(FileAndTop a, FileAndTop b)
             {
                 return OuterInstance.comparator.Compare(a.Current, b.Current) < 0;
             }

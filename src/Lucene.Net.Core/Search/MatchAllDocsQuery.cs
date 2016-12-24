@@ -38,10 +38,10 @@ namespace Lucene.Net.Search
         {
             private readonly MatchAllDocsQuery OuterInstance;
 
-            internal readonly float Score_Renamed;
-            internal int Doc = -1;
-            internal readonly int MaxDoc;
-            internal readonly Bits LiveDocs;
+            internal readonly float Score_Renamed; // LUCENENET TODO: Rename (private)
+            private int Doc = -1; // LUCENENET TODO: Rename (private)
+            private readonly int MaxDoc; // LUCENENET TODO: Rename (private)
+            private readonly Bits LiveDocs; // LUCENENET TODO: Rename (private)
 
             internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, Bits liveDocs, Weight w, float score)
                 : base(w)
@@ -95,10 +95,10 @@ namespace Lucene.Net.Search
 
         private class MatchAllDocsWeight : Weight
         {
-            private readonly MatchAllDocsQuery OuterInstance;
+            private readonly MatchAllDocsQuery OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal float QueryWeight;
-            internal float QueryNorm;
+            private float QueryWeight; // LUCENENET TODO: Rename (private)
+            private float QueryNorm; // LUCENENET TODO: Rename (private)
 
             public MatchAllDocsWeight(MatchAllDocsQuery outerInstance, IndexSearcher searcher)
             {

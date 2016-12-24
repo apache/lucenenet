@@ -367,7 +367,7 @@ namespace Lucene.Net.Sandbox.Queries
             /// (non-Javadoc)
             /// <see cref="Util.PriorityQueue{T}.LessThan(T, T)"/>
             /// </summary>
-            public override bool LessThan(ScoreTerm termA, ScoreTerm termB)
+            protected override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
                 if (termA.score == termB.score)
                     return termA.term.CompareTo(termB.term) > 0;

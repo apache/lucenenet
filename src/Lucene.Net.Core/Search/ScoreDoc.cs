@@ -24,16 +24,16 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The score of this document for the query. </summary>
-        public float Score;
+        public float Score; // LUCENENET TODO: Make property
 
         /// <summary>
         /// A hit document's number. </summary>
         /// <seealso cref= IndexSearcher#doc(int)  </seealso>
-        public int Doc;
+        public int Doc; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Only set by <seealso cref="TopDocs#merge"/> </summary>
-        public int ShardIndex;
+        public int ShardIndex; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Constructs a ScoreDoc. </summary>

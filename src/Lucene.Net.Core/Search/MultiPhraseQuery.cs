@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class MultiPhraseQuery : Query
     {
-        private string Field;
+        private string Field; // LUCENENET TODO: Rename (private)
         private List<Term[]> termArrays = new List<Term[]>();
         private readonly List<int> positions = new List<int>();
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
         /// Returns a List of the terms in the multiphrase.
         /// Do not modify the List or its contents.
         /// </summary>
-        public virtual IList<Term[]> TermArrays
+        public virtual IList<Term[]> TermArrays // LUCENENET TODO: Change to GetTermArrays() (conversion)
         {
             get
             {
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the relative positions of terms in this phrase.
         /// </summary>
-        public virtual int[] Positions
+        public virtual int[] Positions // LUCENENET TODO: Change to GetPositions() (array)
         {
             get
             {
@@ -168,11 +168,11 @@ namespace Lucene.Net.Search
 
         private class MultiPhraseWeight : Weight
         {
-            private readonly MultiPhraseQuery OuterInstance;
+            private readonly MultiPhraseQuery OuterInstance; // LUCENENET TODO: Rename (private)
 
-            private readonly Similarity Similarity;
-            private readonly Similarity.SimWeight Stats;
-            private readonly IDictionary<Term, TermContext> TermContexts = new Dictionary<Term, TermContext>();
+            private readonly Similarity Similarity; // LUCENENET TODO: Rename (private)
+            private readonly Similarity.SimWeight Stats; // LUCENENET TODO: Rename (private)
+            private readonly IDictionary<Term, TermContext> TermContexts = new Dictionary<Term, TermContext>(); // LUCENENET TODO: Rename (private)
 
             public MultiPhraseWeight(MultiPhraseQuery outerInstance, IndexSearcher searcher)
             {
@@ -447,15 +447,22 @@ namespace Lucene.Net.Search
                 return false;
             }
             MultiPhraseQuery other = (MultiPhraseQuery)o;
-            return this.Boost == other.Boost && this.slop == other.slop && TermArraysEquals(this.termArrays, other.termArrays) && this.positions.SequenceEqual(other.positions);
+            return this.Boost == other.Boost 
+                && this.slop == other.slop 
+                && TermArraysEquals(this.termArrays, other.termArrays) 
+                && this.positions.SequenceEqual(other.positions);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
-        public override int GetHashCode()
+        public override int GetHashCode() // LUCENENET TODO: Check this algorithm - it may not be working correctly
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead
-            return Number.FloatToIntBits(Boost) ^ slop ^ TermArraysHashCode() ^ ((positions.Count == 0) ? 0 : HashHelpers.CombineHashCodes(positions.First().GetHashCode(), positions.Last().GetHashCode(), positions.Count) ^ 0x4AC65113);
+            return Number.FloatToIntBits(Boost) 
+                ^ slop 
+                ^ TermArraysHashCode() 
+                ^ ((positions.Count == 0) ? 0 : HashHelpers.CombineHashCodes(positions.First().GetHashCode(), positions.Last().GetHashCode(), positions.Count) 
+                ^ 0x4AC65113);
         }
 
         // Breakout calculation of the termArrays hashcode
@@ -464,7 +471,8 @@ namespace Lucene.Net.Search
             int hashCode = 1;
             foreach (Term[] termArray in termArrays)
             {
-                hashCode = 31 * hashCode + (termArray == null ? 0 : Arrays.GetHashCode(termArray));
+                hashCode = 31 * hashCode 
+                    + (termArray == null ? 0 : Arrays.GetHashCode(termArray));
             }
             return hashCode;
         }
@@ -515,7 +523,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool LessThan(DocsAndPositionsEnum a, DocsAndPositionsEnum b)
+            protected internal override bool LessThan(DocsAndPositionsEnum a, DocsAndPositionsEnum b)
             {
                 return a.DocID() < b.DocID();
             }
@@ -533,10 +541,10 @@ namespace Lucene.Net.Search
                 _array = new int[_arraySize];
             }
 
-            internal int _arraySize = 16;
-            internal int _index = 0;
-            internal int _lastIndex = 0;
-            internal int[] _array;
+            private int _arraySize = 16;
+            private int _index = 0;
+            private int _lastIndex = 0;
+            private int[] _array;
 
             internal void Add(int i)
             {
@@ -564,7 +572,7 @@ namespace Lucene.Net.Search
                 _lastIndex = 0;
             }
 
-            internal int Size()
+            internal int Size() // LUCENENET TODO: Make property and rename Count
             {
                 return (_lastIndex - _index);
             }

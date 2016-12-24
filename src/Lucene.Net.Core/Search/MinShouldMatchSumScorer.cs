@@ -38,39 +38,39 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The overall number of non-finalized scorers </summary>
-        private int NumScorers;
+        private int NumScorers; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// The minimum number of scorers that should match </summary>
-        private readonly int Mm;
+        private readonly int Mm; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// A static array of all subscorers sorted by decreasing cost </summary>
-        private readonly Scorer[] SortedSubScorers;
+        private readonly Scorer[] SortedSubScorers; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// A monotonically increasing index into the array pointing to the next subscorer that is to be excluded </summary>
-        private int SortedSubScorersIdx = 0;
+        private int SortedSubScorersIdx = 0; // LUCENENET TODO: Rename (private)
 
-        private readonly Scorer[] SubScorers; // the first numScorers-(mm-1) entries are valid
-        private int NrInHeap; // 0..(numScorers-(mm-1)-1)
+        private readonly Scorer[] SubScorers; // the first numScorers-(mm-1) entries are valid // LUCENENET TODO: Rename (private)
+        private int NrInHeap; // 0..(numScorers-(mm-1)-1) // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// mmStack is supposed to contain the most costly subScorers that still did
         ///  not run out of docs, sorted by increasing sparsity of docs returned by that subScorer.
         ///  For now, the cost of subscorers is assumed to be inversely correlated with sparsity.
         /// </summary>
-        private readonly Scorer[] MmStack; // of size mm-1: 0..mm-2, always full
+        private readonly Scorer[] MmStack; // of size mm-1: 0..mm-2, always full // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// The document number of the current match. </summary>
-        private int Doc = -1;
+        private int Doc = -1; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// The number of subscorers that provide the current match. </summary>
-        protected internal int NrMatchers = -1;
+        protected int NrMatchers = -1; // LUCENENET TODO: Rename (private)
 
-        private double Score_Renamed = float.NaN;
+        private double Score_Renamed = float.NaN; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Construct a <code>MinShouldMatchSumScorer</code>.
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Organize subScorers into a min heap with scorers generating the earliest document on top.
         /// </summary>
-        protected internal void MinheapHeapify()
+        protected void MinheapHeapify()
         {
             for (int i = (NrInHeap >> 1) - 1; i >= 0; i--)
             {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
         /// The subtree of subScorers at root is a min heap except possibly for its root element.
         /// Bubble the root down as required to make the subtree a heap.
         /// </summary>
-        protected internal void MinheapSiftDown(int root)
+        protected void MinheapSiftDown(int root)
         {
             // TODO could this implementation also move rather than swapping neighbours?
             Scorer scorer = SubScorers[root];
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal void MinheapSiftUp(int i)
+        protected void MinheapSiftUp(int i)
         {
             Scorer scorer = SubScorers[i];
             int doc = scorer.DocID();
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Remove the root Scorer from subScorers and re-establish it as a heap
         /// </summary>
-        protected internal void MinheapRemoveRoot()
+        protected void MinheapRemoveRoot()
         {
             if (NrInHeap == 1)
             {
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
         /// Removes a given Scorer from the heap by placing end of heap at that
         /// position and bubbling it either up or down
         /// </summary>
-        protected internal bool MinheapRemove(Scorer scorer)
+        protected bool MinheapRemove(Scorer scorer)
         {
             // find scorer: O(nrInHeap)
             for (int i = 0; i < NrInHeap; i++)

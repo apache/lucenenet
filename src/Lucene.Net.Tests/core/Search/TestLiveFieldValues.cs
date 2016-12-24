@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override int? LookupFromSearcher(IndexSearcher s, string id)
+            protected override int? LookupFromSearcher(IndexSearcher s, string id)
             {
                 TermQuery tq = new TermQuery(new Term("id", id));
                 TopDocs hits = s.Search(tq, 1);

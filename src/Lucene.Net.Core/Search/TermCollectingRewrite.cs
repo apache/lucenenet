@@ -36,16 +36,16 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Return a suitable top-level Query for holding all expanded terms. </summary>
-        protected internal abstract Q TopLevelQuery { get; } // LUCENENET TODO: Make GetTopLevelQuery() (returns new instance)
+        protected abstract Q TopLevelQuery { get; } // LUCENENET TODO: Make GetTopLevelQuery() (returns new instance)
 
         /// <summary>
         /// Add a MultiTermQuery term to the top-level query </summary>
-        protected internal void AddClause(Q topLevel, Term term, int docCount, float boost)
+        protected void AddClause(Q topLevel, Term term, int docCount, float boost)
         {
             AddClause(topLevel, term, docCount, boost, null);
         }
 
-        protected internal abstract void AddClause(Q topLevel, Term term, int docCount, float boost, TermContext states);
+        protected abstract void AddClause(Q topLevel, Term term, int docCount, float boost, TermContext states);
 
         internal void CollectTerms(IndexReader reader, MultiTermQuery query, TermCollector collector)
         {
@@ -97,8 +97,8 @@ namespace Lucene.Net.Search
 
         internal abstract class TermCollector
         {
-            protected internal AtomicReaderContext ReaderContext;
-            protected internal IndexReaderContext TopReaderContext;
+            protected internal AtomicReaderContext ReaderContext; // LUCENENET TODO: Rename (private)
+            protected internal IndexReaderContext TopReaderContext; // LUCENENET TODO: Rename (private)
 
             public virtual void SetReaderContext(IndexReaderContext topReaderContext, AtomicReaderContext readerContext)
             {

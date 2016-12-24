@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class QueryWrapperFilter : Filter
     {
-        private readonly Query Query_Renamed;
+        private readonly Query Query_Renamed; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Constructs a filter which only matches documents matching
@@ -66,11 +66,11 @@ namespace Lucene.Net.Search
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly QueryWrapperFilter OuterInstance;
+            private readonly QueryWrapperFilter OuterInstance; // LUCENENET TODO: Rename (private)
 
-            private Bits AcceptDocs;
-            private AtomicReaderContext PrivateContext;
-            private Lucene.Net.Search.Weight Weight;
+            private Bits AcceptDocs; // LUCENENET TODO: Rename (private)
+            private AtomicReaderContext PrivateContext; // LUCENENET TODO: Rename (private)
+            private Lucene.Net.Search.Weight Weight; // LUCENENET TODO: Rename (private)
 
             public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, Bits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
             {

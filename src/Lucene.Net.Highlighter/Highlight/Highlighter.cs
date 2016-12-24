@@ -463,7 +463,7 @@ namespace Lucene.Net.Search.Highlight
     {
         public FragmentQueue(int size) : base(size) { }
 
-        public override bool LessThan(TextFragment fragA, TextFragment fragB)
+        protected override bool LessThan(TextFragment fragA, TextFragment fragB)
         {
             if (fragA.Score == fragB.Score)
                 return fragA.FragNum > fragB.FragNum;

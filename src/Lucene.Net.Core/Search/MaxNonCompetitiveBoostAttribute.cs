@@ -26,8 +26,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
     {
-        private float MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity;
-        private BytesRef CompetitiveTerm_Renamed = null;
+        private float MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity; // LUCENENET TODO: Rename (private)
+        private BytesRef CompetitiveTerm_Renamed = null; // LUCENENET TODO: Rename (private)
 
         public float MaxNonCompetitiveBoost
         {

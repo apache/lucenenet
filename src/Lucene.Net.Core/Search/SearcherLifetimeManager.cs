@@ -100,9 +100,9 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherTracker : IComparable<SearcherTracker>, IDisposable
         {
-            public readonly IndexSearcher Searcher;
-            public readonly double RecordTimeSec;
-            public readonly long Version;
+            public readonly IndexSearcher Searcher; // LUCENENET TODO: Make property
+            public readonly double RecordTimeSec; // LUCENENET TODO: Make property
+            public readonly long Version; // LUCENENET TODO: Make property
 
             public SearcherTracker(IndexSearcher searcher)
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
         public virtual IndexSearcher Acquire(long version)
         {
             EnsureOpen();
-            SearcherTracker tracker = _searchers[version];
+            SearcherTracker tracker = _searchers[version]; // LUCENENET TODO: Throws exception when non-match instead of returning null
             if (tracker != null && tracker.Searcher.IndexReader.TryIncRef())
             {
                 return tracker.Searcher;
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// See <seealso cref="#prune"/>. </summary>
-        public interface Pruner
+        public interface Pruner // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Return true if this searcher should be removed. </summary>
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class PruneByAge : Pruner
         {
-            internal readonly double MaxAgeSec;
+            private readonly double MaxAgeSec; // LUCENENET TODO: Rename (private)
 
             public PruneByAge(double maxAgeSec)
             {
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
         ///  otherwise it's possible not all searcher references
         ///  will be freed.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             lock (this)
             {

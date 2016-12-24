@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override bool LessThan(Iterator a, Iterator b)
+            protected internal override bool LessThan(Iterator a, Iterator b)
             {
                 return a.WordNum < b.WordNum;
             }

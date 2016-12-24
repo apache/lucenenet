@@ -50,6 +50,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class PhraseQuery : Query
     {
+        // LUCENENET TODO: Rename (private)
         private string Field;
         private List<Term> Terms_Renamed = new ValueList<Term>(4);
         private List<int?> Positions_Renamed = new ValueList<int?>(4);
@@ -137,7 +138,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the set of terms in this phrase. </summary>
-        public virtual Term[] Terms
+        public virtual Term[] Terms // LUCENENET TODO: Make GetTerms() (array, conversion)
         {
             get
             {
@@ -148,7 +149,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the relative positions of terms in this phrase.
         /// </summary>
-        public virtual int[] Positions
+        public virtual int[] Positions // LUCENENET TODO: Make GetPositions() (array, conversion)
         {
             get
             {
@@ -183,6 +184,7 @@ namespace Lucene.Net.Search
 
         internal class PostingsAndFreq : IComparable<PostingsAndFreq>
         {
+            // LUCENENET TODO: Rename (private)
             internal readonly DocsAndPositionsEnum Postings;
             internal readonly int DocFreq;
             internal readonly int Position;
@@ -290,6 +292,7 @@ namespace Lucene.Net.Search
 
         private class PhraseWeight : Weight
         {
+            // LUCENENET TODO: Rename (private)
             private readonly PhraseQuery OuterInstance;
 
             internal readonly Similarity Similarity;
@@ -404,7 +407,7 @@ namespace Lucene.Net.Search
             }
 
             // only called from assert
-            internal virtual bool TermNotInReader(AtomicReader reader, Term term)
+            private bool TermNotInReader(AtomicReader reader, Term term)
             {
                 return reader.DocFreq(term) == 0;
             }
@@ -510,14 +513,20 @@ namespace Lucene.Net.Search
                 return false;
             }
             PhraseQuery other = (PhraseQuery)o;
-            return (this.Boost == other.Boost) && (this.slop == other.slop) && this.Terms_Renamed.SequenceEqual(other.Terms_Renamed) && this.Positions_Renamed.SequenceEqual(other.Positions_Renamed);
+            return (this.Boost == other.Boost) 
+                && (this.slop == other.slop) 
+                && this.Terms_Renamed.SequenceEqual(other.Terms_Renamed) 
+                && this.Positions_Renamed.SequenceEqual(other.Positions_Renamed);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ slop ^ Terms_Renamed.GetHashCode() ^ Positions_Renamed.GetHashCode();
+            return Number.FloatToIntBits(Boost) 
+                ^ slop 
+                ^ Terms_Renamed.GetHashCode() 
+                ^ Positions_Renamed.GetHashCode();
         }
     }
 }

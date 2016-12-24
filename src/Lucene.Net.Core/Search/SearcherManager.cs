@@ -60,8 +60,8 @@ namespace Lucene.Net.Search
     /// @lucene.experimental </seealso>
     public sealed class SearcherManager : ReferenceManager<IndexSearcher>
     {
-        private readonly SearcherFactory SearcherFactory;
-        
+        private readonly SearcherFactory SearcherFactory; // LUCENENET TODO: Rename (private)
+
         /// <summary>
         /// Creates and returns a new SearcherManager from the given
         /// <seealso cref="IndexWriter"/>.
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if no changes have occured since this searcher
         /// ie. reader was opened, otherwise <code>false</code>. </summary>
         /// <seealso cref= DirectoryReader#isCurrent()  </seealso>
-        public bool SearcherCurrent
+        public bool SearcherCurrent // LUCENENET TODO: Change to IsSearcherCurrent() - too complex to be a property (and increments a ref counter as a side effect)
         {
             get
             {
@@ -192,25 +192,26 @@ namespace Lucene.Net.Search
             return searcher;
         }
 
-        public delegate void SearchExecutor(IndexSearcher arg);
-        public void ExecuteSearch(SearchExecutor searchFunc, OnErrorDelegate onErrorFunc = null)
-        {
-            var s = Acquire();
-            try
-            {
-                searchFunc(s);
-            }
-            catch (Exception e)
-            {
-                if (onErrorFunc != null)
-                {
-                    onErrorFunc(e);
-                }
-            }
-            finally
-            {
-                Release(s);
-            }
-        }
+        // LUCENENET TODO: Not sure why this is here, but it doesn't seem necessary
+        //public delegate void SearchExecutor(IndexSearcher arg);
+        //public void ExecuteSearch(SearchExecutor searchFunc, OnErrorDelegate onErrorFunc = null)
+        //{
+        //    var s = Acquire();
+        //    try
+        //    {
+        //        searchFunc(s);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        if (onErrorFunc != null)
+        //        {
+        //            onErrorFunc(e);
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        Release(s);
+        //    }
+        //}
     }
 }

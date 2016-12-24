@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Specifies the type of the terms to be sorted, or special types such as CUSTOM
         /// </summary>
-        public enum Type_e
+        public enum Type_e // LUCENENET TODO: Rename to Type, de-nest from this class ? Perhaps rename to SortFieldType
         {
             /// <summary>
             /// Sort by document score (relevance).  Sort values are Float and higher
@@ -62,19 +62,19 @@ namespace Lucene.Net.Search
             /// Sort using term values as encoded Integers.  Sort values are Integer and
             /// lower values are at the front.
             /// </summary>
-            INT,
+            INT, // LUCENENET TODO: Rename to INT32 ?
 
             /// <summary>
             /// Sort using term values as encoded Floats.  Sort values are Float and
             /// lower values are at the front.
             /// </summary>
-            FLOAT,
+            FLOAT, // LUCENENET TODO: Rename to SINGLE ?
 
             /// <summary>
             /// Sort using term values as encoded Longs.  Sort values are Long and
             /// lower values are at the front.
             /// </summary>
-            LONG,
+            LONG,  // LUCENENET TODO: Rename to INT64 ?
 
             /// <summary>
             /// Sort using term values as encoded Doubles.  Sort values are Double and
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
             /// lower values are at the front.
             /// </summary>
             [System.Obsolete]
-            SHORT,
+            SHORT, // LUCENENET TODO: Rename to INT16 ?
 
             /// <summary>
             /// Sort using a custom Comparator.  Sort values are any Comparable and
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns whether the sort should be reversed. </summary>
         /// <returns>  True if natural order should be reversed. </returns>
-        public virtual bool Reverse
+        public virtual bool Reverse // LUCENENET TODO: Rename IsReverse (consistency)
         {
             get
             {
@@ -370,7 +370,7 @@ namespace Lucene.Net.Search
         /// Returns the <seealso cref="FieldComparatorSource"/> used for
         /// custom sorting
         /// </summary>
-        public virtual FieldComparatorSource ComparatorSource
+        public virtual FieldComparatorSource ComparatorSource // LUCENENET TODO: Rename ComparerSource ?
         {
             get
             {
@@ -490,8 +490,9 @@ namespace Lucene.Net.Search
             return hash;
         }
 
-        private IComparer<BytesRef> BytesComparator_Renamed = BytesRef.UTF8SortedAsUnicodeComparer;
+        private IComparer<BytesRef> BytesComparator_Renamed = BytesRef.UTF8SortedAsUnicodeComparer; // LUCENENET TODO: Rename (private)
 
+        // LUCENENET TODO: Rename BytesComparer ?
         public virtual IComparer<BytesRef> BytesComparator
         {
             set
@@ -516,6 +517,7 @@ namespace Lucene.Net.Search
         ///   secondary if sortPos==1, etc.  Some comparators can
         ///   optimize themselves when they are the primary sort. </param>
         /// <returns> <seealso cref="FieldComparator"/> to use when sorting </returns>
+         // LUCENENET TODO: Rename GetComparer ?
         public virtual FieldComparator GetComparator(int numHits, int sortPos)
         {
             switch (type)
@@ -579,7 +581,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Whether the relevance score is needed to sort documents. </summary>
-        public virtual bool NeedsScores()
+        public virtual bool NeedsScores() // LUCENENET TODO: make property
         {
             return type == Type_e.SCORE;
         }

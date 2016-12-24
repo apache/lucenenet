@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// term containing the field, and possibly some pattern structure </summary>
-        protected readonly Term Term; // LUCENENET TODO: rename
+        protected readonly Term Term; // LUCENENET TODO: rename (important for subclasses)
 
         /// <summary>
         /// Create a new AutomatonQuery from an <seealso cref="Automaton"/>.

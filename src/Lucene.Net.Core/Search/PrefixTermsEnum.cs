@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class PrefixTermsEnum : FilteredTermsEnum
     {
-        private readonly BytesRef PrefixRef;
+        private readonly BytesRef PrefixRef; // LUCENENET TODO: Rename (private)
 
         public PrefixTermsEnum(TermsEnum tenum, BytesRef prefixText)
             : base(tenum)

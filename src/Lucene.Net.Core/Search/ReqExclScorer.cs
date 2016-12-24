@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class ReqExclScorer : Scorer
     {
-        private Scorer ReqScorer;
-        private DocIdSetIterator ExclDisi;
+        private Scorer ReqScorer; // LUCENENET TODO: Rename (private)
+        private DocIdSetIterator ExclDisi; // LUCENENET TODO: Rename (private)
         private int Doc = -1;
 
         /// <summary>

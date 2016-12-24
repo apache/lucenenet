@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
             /// <param name="hitA">ScoreDoc</param>
             /// <param name="hitB">ScoreDoc</param>
             /// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
-            public override bool LessThan(T hitA, T hitB)
+            protected internal override bool LessThan(T hitA, T hitB)
             {
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool LessThan(T hitA, T hitB)
+            protected internal override bool LessThan(T hitA, T hitB)
             {
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);

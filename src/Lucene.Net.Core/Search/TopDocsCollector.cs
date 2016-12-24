@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         /// this is used in case topDocs() is called with illegal parameters, or there
         ///  simply aren't (enough) results.
         /// </summary>
-        protected internal static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], float.NaN);
+        protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], float.NaN);
 
         /// <summary>
         /// The priority queue which holds the top documents. Note that different
@@ -47,13 +47,13 @@ namespace Lucene.Net.Search
         /// HitQueue for example aggregates the top scoring documents, while other PQ
         /// implementations may hold documents sorted by other criteria.
         /// </summary>
-        protected internal PriorityQueue<T> Pq;
+        protected PriorityQueue<T> Pq; // LUCENENET TODO: Rename
 
         /// <summary>
         /// The total number of documents that the collector encountered. </summary>
-        protected internal int TotalHits_Renamed;
+        protected int TotalHits_Renamed; // LUCENENET TODO: Rename 
 
-        protected internal TopDocsCollector(PriorityQueue<T> pq)
+        protected TopDocsCollector(PriorityQueue<T> pq)
         {
             this.Pq = pq;
         }
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         /// Populates the results array with the ScoreDoc instances. this can be
         /// overridden in case a different ScoreDoc type should be returned.
         /// </summary>
-        protected internal virtual void PopulateResults(ScoreDoc[] results, int howMany)
+        protected virtual void PopulateResults(ScoreDoc[] results, int howMany)
         {
             for (int i = howMany - 1; i >= 0; i--)
             {
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
         /// either because there were 0 calls to collect() or because the arguments to
         /// topDocs were invalid.
         /// </summary>
-        protected internal virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
+        protected virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
             return results == null ? EMPTY_TOPDOCS : new TopDocs(TotalHits_Renamed, results);
         }
@@ -89,8 +89,7 @@ namespace Lucene.Net.Search
             {
                 return TotalHits_Renamed;
             }
-
-            set
+            internal set
             {
                 TotalHits_Renamed = value;
             }
@@ -98,7 +97,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The number of valid PQ entries </summary>
-        protected internal virtual int TopDocsSize()
+        protected virtual int TopDocsSize() // LUCENENET TODO: Make property, rename TopDocsCount
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
@@ -108,7 +107,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the top docs that were collected by this collector. </summary>
-        public virtual TopDocs TopDocs()
+        public virtual TopDocs TopDocs() // LUCENENET TODO: Rename GetTopDocs() ?
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
@@ -128,7 +127,7 @@ namespace Lucene.Net.Search
         /// with the returned <seealso cref="TopDocs"/> object, which will contain all the
         /// results this search execution collected.
         /// </summary>
-        public virtual TopDocs TopDocs(int start)
+        public virtual TopDocs TopDocs(int start) // LUCENENET TODO: Rename GetTopDocs() ?
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
@@ -150,7 +149,7 @@ namespace Lucene.Net.Search
         /// returned <seealso cref="TopDocs"/> object, which will contain all the results this
         /// search execution collected.
         /// </summary>
-        public virtual TopDocs TopDocs(int start, int howMany)
+        public virtual TopDocs TopDocs(int start, int howMany) // LUCENENET TODO: Rename GetTopDocs() ?
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
@@ -194,7 +193,7 @@ namespace Lucene.Net.Search
     public interface ITopDocsCollector
     {
         // From TopDocsCollector<T>
-        int TotalHits { get; set; }
+        int TotalHits { get; }
         TopDocs TopDocs();
         TopDocs TopDocs(int start);
         TopDocs TopDocs(int start, int howMany);

@@ -188,6 +188,8 @@ namespace Lucene.Net.Search
             this.MaxInclusive = maxInclusive;
         }
 
+        // LUCENENET NOTE: Static methods were moved into the NumericRangeQuery class
+
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             // very strange: java.lang.Number itself is not Comparable, but all subclasses used here are
@@ -200,14 +202,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public bool IncludesMin()
+        public bool IncludesMin() // LUCENENET TODO: Make property
         {
             return MinInclusive;
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public bool IncludesMax()
+        public bool IncludesMax() // LUCENENET TODO: make property
         {
             return MaxInclusive;
         }
@@ -288,9 +290,9 @@ namespace Lucene.Net.Search
         // members (package private, to be also fast accessible by NumericRangeTermEnum)
         internal readonly int precisionStep;
 
-        internal readonly NumericType DataType;
+        internal readonly NumericType DataType; // LUCENENET TODO: Rename (private)
         internal readonly T? min, max;
-        internal readonly bool MinInclusive, MaxInclusive;
+        internal readonly bool MinInclusive, MaxInclusive; // LUCENENET TODO: Rename (private)
 
         // used to handle float/double infinity correcty
         internal static readonly long LONG_NEGATIVE_INFINITY = NumericUtils.DoubleToSortableLong(double.NegativeInfinity);
@@ -311,12 +313,12 @@ namespace Lucene.Net.Search
         /// </summary>
         private sealed class NumericRangeTermsEnum : FilteredTermsEnum
         {
-            private readonly NumericRangeQuery<T> OuterInstance;
+            private readonly NumericRangeQuery<T> OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal BytesRef CurrentLowerBound, CurrentUpperBound;
+            internal BytesRef CurrentLowerBound, CurrentUpperBound; // LUCENENET TODO: Rename (private)
 
-            internal readonly LinkedList<BytesRef> RangeBounds = new LinkedList<BytesRef>();
-            internal readonly IComparer<BytesRef> TermComp;
+            internal readonly LinkedList<BytesRef> RangeBounds = new LinkedList<BytesRef>(); // LUCENENET TODO: Rename (private)
+            internal readonly IComparer<BytesRef> TermComp; // LUCENENET TODO: Rename (private)
 
             internal NumericRangeTermsEnum(NumericRangeQuery<T> outerInstance, TermsEnum tenum)
                 : base(tenum)
@@ -428,7 +430,7 @@ namespace Lucene.Net.Search
 
             private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.LongRangeBuilder
             {
-                private readonly NumericRangeTermsEnum OuterInstance;
+                private readonly NumericRangeTermsEnum OuterInstance; // LUCENENET TODO: Rename (private)
 
                 public LongRangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
                 {
@@ -444,7 +446,7 @@ namespace Lucene.Net.Search
 
             private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.IntRangeBuilder
             {
-                private readonly NumericRangeTermsEnum OuterInstance;
+                private readonly NumericRangeTermsEnum OuterInstance; // LUCENENET TODO: Rename (private)
 
                 public IntRangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
                 {
@@ -458,7 +460,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal void NextRange()
+            private void NextRange()
             {
                 Debug.Assert(RangeBounds.Count % 2 == 0);
 
@@ -470,7 +472,7 @@ namespace Lucene.Net.Search
                 RangeBounds.RemoveFirst();
             }
 
-            protected override BytesRef NextSeekTerm(BytesRef term)
+            protected override sealed BytesRef NextSeekTerm(BytesRef term)
             {
                 while (RangeBounds.Count >= 2)
                 {
@@ -491,7 +493,7 @@ namespace Lucene.Net.Search
                 return null;
             }
 
-            protected override AcceptStatus Accept(BytesRef term)
+            protected override sealed AcceptStatus Accept(BytesRef term)
             {
                 while (CurrentUpperBound == null || TermComp.Compare(term, CurrentUpperBound) > 0)
                 {
@@ -521,6 +523,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewInt64Range
         public static NumericRangeQuery<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<long>(field, precisionStep, NumericType.LONG, min, max, minInclusive, maxInclusive);
@@ -533,6 +536,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewInt64Range
         public static NumericRangeQuery<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.LONG, min, max, minInclusive, maxInclusive);
@@ -545,6 +549,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewInt32Range
         public static NumericRangeQuery<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<int>(field, precisionStep, NumericType.INT, min, max, minInclusive, maxInclusive);
@@ -557,6 +562,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewInt32Range
         public static NumericRangeQuery<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT, min, max, minInclusive, maxInclusive);
@@ -599,6 +605,7 @@ namespace Lucene.Net.Search
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewSingleRange
         public static NumericRangeQuery<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<float>(field, precisionStep, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
@@ -613,6 +620,7 @@ namespace Lucene.Net.Search
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
+         // LUCENENET TODO: Rename NewSingleRange
         public static NumericRangeQuery<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.FLOAT, min, max, minInclusive, maxInclusive);

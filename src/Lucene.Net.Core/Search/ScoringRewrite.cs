@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected internal override BooleanQuery TopLevelQuery
+            protected override BooleanQuery TopLevelQuery
             {
                 get
                 {
@@ -71,14 +71,14 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected internal override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
+            protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
             {
                 TermQuery tq = new TermQuery(term, states);
                 tq.Boost = boost;
                 topLevel.Add(tq, BooleanClause.Occur.SHOULD);
             }
 
-            protected internal override void CheckMaxClauseCount(int count)
+            protected override void CheckMaxClauseCount(int count)
             {
                 if (count > BooleanQuery.MaxClauseCount)
                 {
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         /// this method is called after every new term to check if the number of max clauses
         /// (e.g. in BooleanQuery) is not exceeded. Throws the corresponding <seealso cref="RuntimeException"/>.
         /// </summary>
-        protected internal abstract void CheckMaxClauseCount(int count);
+        protected abstract void CheckMaxClauseCount(int count);
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
                 Terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
             }
 
-            private readonly ScoringRewrite<Q> OuterInstance;
+            private readonly ScoringRewrite<Q> OuterInstance; // LUCENENET TODO: Rename (private)
 
             public ParallelArraysTermCollector(ScoringRewrite<Q> outerInstance)
             {
@@ -161,11 +161,11 @@ namespace Lucene.Net.Search
                 InitializeInstanceFields();
             }
 
-            internal readonly TermFreqBoostByteStart Array = new TermFreqBoostByteStart(16);
-            internal BytesRefHash Terms;
-            internal TermsEnum TermsEnum;
+            internal readonly TermFreqBoostByteStart Array = new TermFreqBoostByteStart(16); // LUCENENET TODO: Rename (private)
+            internal BytesRefHash Terms; // LUCENENET TODO: Rename (private)
+            internal TermsEnum TermsEnum; // LUCENENET TODO: Rename (private)
 
-            internal IBoostAttribute BoostAtt;
+            private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
 
             public override TermsEnum NextEnum
             {
@@ -203,8 +203,8 @@ namespace Lucene.Net.Search
         /// Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq </summary>
         internal sealed class TermFreqBoostByteStart : BytesRefHash.DirectBytesStartArray
         {
-            internal float[] Boost;
-            internal TermContext[] TermState;
+            internal float[] Boost; // LUCENENET TODO: Rename (private)
+            internal TermContext[] TermState; // LUCENENET TODO: Rename (private)
 
             public TermFreqBoostByteStart(int initSize)
                 : base(initSize)

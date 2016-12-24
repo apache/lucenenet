@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
         /// Determines the ordering of objects in this priority queue.  Subclasses
         ///  must define this one method. </summary>
         ///  <returns> <code>true</code> iff parameter <tt>a</tt> is less than parameter <tt>b</tt>. </returns>
-        public abstract bool LessThan(T a, T b);
+        protected internal abstract bool LessThan(T a, T b);
 
         /// <summary>
         /// this method can be overridden by extending classes to return a sentinel
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <returns> the sentinel object to use to pre-populate the queue, or null if
         ///         sentinel objects are not supported. </returns>
-        protected internal virtual T SentinelObject
+        protected internal virtual T SentinelObject // LUCENENET TODO: Change to GetSentinalObject() (returns new instance in some cases)
         {
             get
             {

@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class MultiTermQueryWrapperFilter<Q> : Filter where Q : MultiTermQuery
     {
-        protected internal readonly Q Query;
+        protected readonly Q Query; // LUCENENET TODO: Rename 
 
         /// <summary>
         /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.

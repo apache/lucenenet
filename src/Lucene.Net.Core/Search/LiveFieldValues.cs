@@ -37,10 +37,10 @@ namespace Lucene.Net.Search
     public abstract class LiveFieldValues<S, T> : ReferenceManager.RefreshListener, IDisposable
         where S : class
     {
-        private volatile IDictionary<string, T> Current = new ConcurrentDictionary<string, T>();
-        private volatile IDictionary<string, T> Old = new ConcurrentDictionary<string, T>();
-        private readonly ReferenceManager<S> Mgr;
-        private readonly T MissingValue;
+        private volatile IDictionary<string, T> Current = new ConcurrentDictionary<string, T>(); // LUCENENET TODO: Rename (private)
+        private volatile IDictionary<string, T> Old = new ConcurrentDictionary<string, T>(); // LUCENENET TODO: Rename (private)
+        private readonly ReferenceManager<S> Mgr; // LUCENENET TODO: Rename (private)
+        private readonly T MissingValue; // LUCENENET TODO: Rename (private)
 
         public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
         {
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             Mgr.RemoveListener(this);
         }
 
-        public void BeforeRefresh()
+        public virtual void BeforeRefresh()
         {
             Old = Current;
             // Start sending all updates after this point to the new
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             Current = new ConcurrentDictionary<string, T>();
         }
 
-        public void AfterRefresh(bool didRefresh)
+        public virtual void AfterRefresh(bool didRefresh)
         {
             // Now drop all the old values because they are now
             // visible via the searcher that was just opened; if
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
         /// Returns the [approximate] number of id/value pairs
         ///  buffered in RAM.
         /// </summary>
-        public virtual int Size()
+        public virtual int Size() // LUCENENET TODO: Change to Count property
         {
             return Current.Count + Old.Count;
         }
@@ -159,6 +159,6 @@ namespace Lucene.Net.Search
         ///  go look up the value (eg, via doc values, field cache,
         ///  stored fields, etc.).
         /// </summary>
-        protected internal abstract T LookupFromSearcher(S s, string id);
+        protected abstract T LookupFromSearcher(S s, string id);
     }
 }

@@ -42,10 +42,11 @@ namespace Lucene.Net.Search
     {
         private const string REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
 
-        protected internal volatile G Current;
+        protected internal volatile G Current; // LUCENENET TODO: Rename (private)
 
-        private readonly ReentrantLock RefreshLock = new ReentrantLock();
+        private readonly ReentrantLock RefreshLock = new ReentrantLock(); // LUCENENET TODO: Rename (private)
 
+        // LUCENENET TODO: Rename (private)
         private readonly ISet<ReferenceManager.RefreshListener> RefreshListeners = new ConcurrentHashSet<ReferenceManager.RefreshListener>();
 
         private void EnsureOpen()
@@ -291,7 +292,7 @@ namespace Lucene.Net.Search
         ///  whether a new reference was in fact created. </summary>
         ///  <exception cref="IOException"> if a low level I/O exception occurs
         ///  </exception>
-        protected internal virtual void AfterMaybeRefresh()
+        protected virtual void AfterMaybeRefresh()
         {
         }
 

@@ -32,9 +32,9 @@ namespace Lucene.Net.Search
         /// The scorers passed from the constructor.
         /// These are set to null as soon as their next() or skipTo() returns false.
         /// </summary>
-        private Scorer ReqScorer;
+        private Scorer ReqScorer; // LUCENENET TODO: Rename (private)
 
-        private Scorer OptScorer;
+        private Scorer OptScorer; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Construct a <code>ReqOptScorer</code>. </summary>

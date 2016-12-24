@@ -276,7 +276,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override bool LessThan(SubIterator<C> a, SubIterator<C> b)
+            protected internal override bool LessThan(SubIterator<C> a, SubIterator<C> b)
             {
                 int cmp = a.Current.CompareTo(b.Current);
                 if (cmp != 0)

@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class QueryRescorer : Rescorer
     {
-        private readonly Query Query;
+        private readonly Query Query; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Sole constructor, passing the 2nd pass query to
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         /// first pass query, and you should ignore the
         /// secondPassScore.
         /// </summary>
-        protected internal abstract float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore);
+        protected abstract float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore);
 
         public override TopDocs Rescore(IndexSearcher searcher, TopDocs firstPassTopDocs, int topN)
         {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
-            private readonly QueryRescorer OuterInstance;
+            private readonly QueryRescorer OuterInstance; // LUCENENET TODO: Rename (private)
 
             public ComparatorAnonymousInnerClassHelper(QueryRescorer outerInstance)
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
         {
-            private readonly QueryRescorer OuterInstance;
+            private readonly QueryRescorer OuterInstance; // LUCENENET TODO: Rename (private)
 
             public ComparatorAnonymousInnerClassHelper2(QueryRescorer outerInstance)
             {
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                 this.Weight = weight;
             }
 
-            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 float score = firstPassScore;
                 if (secondPassMatches)

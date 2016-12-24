@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -70,23 +71,23 @@ namespace Lucene.Net.Search
     /// </summary>
     public class IndexSearcher
     {
-        internal readonly IndexReader Reader; // package private for testing!
+        internal readonly IndexReader Reader; // package private for testing! // LUCENENET TODO: Rename (private)
 
         // NOTE: these members might change in incompatible ways
         // in the next release
-        protected internal readonly IndexReaderContext ReaderContext;
+        protected readonly IndexReaderContext ReaderContext; // LUCENENET TODO: Rename 
 
-        protected internal readonly IList<AtomicReaderContext> LeafContexts;
+        protected internal readonly IList<AtomicReaderContext> LeafContexts; // LUCENENET TODO: Rename, make internal property getter
 
         /// <summary>
         /// used with executor - each slice holds a set of leafs executed within one thread </summary>
-        protected internal readonly LeafSlice[] LeafSlices;
+        protected readonly LeafSlice[] LeafSlices; // LUCENENET TODO: Rename 
 
         // These are only used for multi-threaded search
-        private readonly TaskScheduler Executor;
+        private readonly TaskScheduler Executor; // LUCENENET TODO: Rename (private)
 
         // the default Similarity
-        private static readonly Similarity DefaultSimilarity_Renamed = new DefaultSimilarity();
+        private static readonly Similarity DefaultSimilarity_Renamed = new DefaultSimilarity(); // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Expert: returns a default Similarity instance.
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The Similarity implementation used by this searcher. </summary>
-        private Similarity Similarity_Renamed = DefaultSimilarity_Renamed;
+        private Similarity Similarity_Renamed = DefaultSimilarity_Renamed; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Creates a searcher searching the provided index. </summary>
@@ -173,7 +174,7 @@ namespace Lucene.Net.Search
         /// Each <seealso cref="LeafSlice"/> is executed in a single thread. By default there
         /// will be one <seealso cref="LeafSlice"/> per leaf (<seealso cref="AtomicReaderContext"/>).
         /// </summary>
-        protected internal virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
+        protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
         {
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)
@@ -242,7 +243,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// @lucene.internal </summary>
-        protected internal virtual Query WrapFilter(Query query, Filter filter)
+        protected virtual Query WrapFilter(Query query, Filter filter)
         {
             return (filter == null) ? query : new FilteredQuery(query, filter);
         }
@@ -456,7 +457,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected internal virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
+        protected virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
         {
             int limit = Reader.MaxDoc;
             if (limit == 0)
@@ -513,7 +514,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected internal virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
+        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
         {
             // single thread
             int limit = Reader.MaxDoc;
@@ -539,7 +540,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected internal virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
             return Search(weight, null, nDocs, sort, true, doDocScores, doMaxScore);
         }
@@ -549,7 +550,7 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <seealso cref="FieldDoc"/> instances should
         /// be set by specifying fillFields.
         /// </summary>
-        protected internal virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             if (sort == null)
             {
@@ -600,7 +601,7 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <seealso cref="FieldDoc"/> instances should
         /// be set by specifying fillFields.
         /// </summary>
-        protected internal virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             // single thread
             int limit = Reader.MaxDoc;
@@ -633,7 +634,7 @@ namespace Lucene.Net.Search
         ///          to receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected internal virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+        protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
         {
             // TODO: should we make this
             // threaded...?  the Collector could be sync'd?
@@ -706,7 +707,7 @@ namespace Lucene.Net.Search
         /// <p>Applications should call <seealso cref="IndexSearcher#explain(Query, int)"/>. </summary>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected internal virtual Explanation Explain(Weight weight, int doc)
+        protected virtual Explanation Explain(Weight weight, int doc)
         {
             int n = ReaderUtil.SubIndex(doc, LeafContexts);
             AtomicReaderContext ctx = LeafContexts[n];
@@ -754,13 +755,13 @@ namespace Lucene.Net.Search
         /// </summary>
         private sealed class SearcherCallableNoSort : ICallable<TopDocs>
         {
-            internal readonly ReentrantLock @lock;
-            internal readonly IndexSearcher Searcher;
-            internal readonly Weight Weight;
-            internal readonly ScoreDoc After;
-            internal readonly int NDocs;
-            internal readonly HitQueue Hq;
-            internal readonly LeafSlice Slice;
+            private readonly ReentrantLock @lock;
+            private readonly IndexSearcher Searcher; // LUCENENET TODO: Rename (private)
+            private readonly Weight Weight; // LUCENENET TODO: Rename (private)
+            private readonly ScoreDoc After; // LUCENENET TODO: Rename (private)
+            private readonly int NDocs; // LUCENENET TODO: Rename (private)
+            private readonly HitQueue Hq; // LUCENENET TODO: Rename (private)
+            private readonly LeafSlice Slice; // LUCENENET TODO: Rename (private)
 
             public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc after, int nDocs, HitQueue hq)
             {
@@ -803,16 +804,16 @@ namespace Lucene.Net.Search
         /// </summary>
         private sealed class SearcherCallableWithSort : ICallable<TopFieldDocs>
         {
-            internal readonly ReentrantLock @lock;
-            internal readonly IndexSearcher Searcher;
-            internal readonly Weight Weight;
-            internal readonly int NDocs;
-            internal readonly TopFieldCollector Hq;
-            internal readonly Sort Sort;
-            internal readonly LeafSlice Slice;
-            internal readonly FieldDoc After;
-            internal readonly bool DoDocScores;
-            internal readonly bool DoMaxScore;
+            private readonly ReentrantLock @lock;
+            private readonly IndexSearcher Searcher; // LUCENENET TODO: Rename (private)
+            private readonly Weight Weight; // LUCENENET TODO: Rename (private)
+            private readonly int NDocs; // LUCENENET TODO: Rename (private)
+            private readonly TopFieldCollector Hq; // LUCENENET TODO: Rename (private)
+            private readonly Sort Sort; // LUCENENET TODO: Rename (private)
+            private readonly LeafSlice Slice; // LUCENENET TODO: Rename (private)
+            private readonly FieldDoc After; // LUCENENET TODO: Rename (private)
+            private readonly bool DoDocScores; // LUCENENET TODO: Rename (private)
+            private readonly bool DoMaxScore; // LUCENENET TODO: Rename (private)
 
             public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
             {
@@ -828,7 +829,7 @@ namespace Lucene.Net.Search
                 this.DoMaxScore = doMaxScore;
             }
 
-            internal readonly FakeScorer FakeScorer = new FakeScorer();
+            private readonly FakeScorer FakeScorer = new FakeScorer(); // LUCENENET TODO: Rename (private)
 
             public TopFieldDocs Call()
             {
@@ -870,8 +871,8 @@ namespace Lucene.Net.Search
         ///          the type of the <seealso cref="Callable"/> return value </param>
         private sealed class ExecutionHelper<T> : IEnumerator<T>, IEnumerable<T>
         {
-            internal readonly ICompletionService<T> Service;
-            internal int NumTasks;
+            private readonly ICompletionService<T> Service; // LUCENENET TODO: Rename (private)
+            private int NumTasks; // LUCENENET TODO: Rename (private)
             private T current;
 
             internal ExecutionHelper(TaskScheduler executor)
@@ -887,7 +888,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            object System.Collections.IEnumerator.Current
+            object IEnumerator.Current
             {
                 get { return current; }
             }
@@ -909,7 +910,7 @@ namespace Lucene.Net.Search
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
 
             /*public override T Next()
@@ -964,7 +965,7 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return this;
             }
@@ -978,7 +979,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class LeafSlice
         {
-            internal readonly AtomicReaderContext[] Leaves;
+            internal readonly AtomicReaderContext[] Leaves; // LUCENENET TODO: Make property
 
             public LeafSlice(params AtomicReaderContext[] leaves)
             {

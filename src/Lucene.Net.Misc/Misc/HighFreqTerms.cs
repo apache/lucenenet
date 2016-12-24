@@ -198,7 +198,7 @@ namespace Lucene.Net.Misc
                 this.comparator = comparator;
             }
 
-            public override bool LessThan(TermStats termInfoA, TermStats termInfoB)
+            protected internal override bool LessThan(TermStats termInfoA, TermStats termInfoB)
             {
                 return comparator.Compare(termInfoA, termInfoB) < 0;
             }

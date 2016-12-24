@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 float score = firstPassScore;
                 if (secondPassMatches)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 float score = firstPassScore;
                 if (secondPassMatches)
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+            protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
             {
                 return secondPassScore;
             }

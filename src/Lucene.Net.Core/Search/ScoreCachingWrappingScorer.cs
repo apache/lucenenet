@@ -32,9 +32,9 @@ namespace Lucene.Net.Search
     /// </summary>
     public class ScoreCachingWrappingScorer : Scorer
     {
-        private readonly Scorer Scorer;
-        private int CurDoc = -1;
-        private float CurScore;
+        private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
+        private int CurDoc = -1; // LUCENENET TODO: Rename (private)
+        private float CurScore; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Creates a new instance by wrapping the given scorer. </summary>

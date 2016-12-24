@@ -31,15 +31,15 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The total number of hits for the query. </summary>
-        public int TotalHits;
+        public int TotalHits; // LUCENENET TODO: Make property
 
         /// <summary>
         /// The top hits for the query. </summary>
-        public ScoreDoc[] ScoreDocs;
+        public ScoreDoc[] ScoreDocs; // LUCENENET TODO: Work out what to do about public array fields
 
         /// <summary>
         /// Stores the maximum score value encountered, needed for normalizing. </summary>
-        private float MaxScore_Renamed;
+        private float MaxScore_Renamed; // LUCENENET TODO: Rename (private)
 
         /// <summary>
         /// Returns the maximum score value encountered. Note that in case
@@ -75,10 +75,10 @@ namespace Lucene.Net.Search
         private class ShardRef
         {
             // Which shard (index into shardHits[]):
-            internal readonly int ShardIndex;
+            internal readonly int ShardIndex; // LUCENENET TODO: Rename (private)
 
             // Which hit within the shard:
-            internal int HitIndex;
+            internal int HitIndex; // LUCENENET TODO: Rename (private)
 
             public ShardRef(int shardIndex)
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             }
 
             // Returns true if first is < second
-            public override bool LessThan(ShardRef first, ShardRef second)
+            protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
                 Debug.Assert(first != second);
                 float firstScore = ShardHits[first.ShardIndex][first.HitIndex].Score;
@@ -147,10 +147,10 @@ namespace Lucene.Net.Search
         private class MergeSortQueue : PriorityQueue<ShardRef>
         {
             // These are really FieldDoc instances:
-            internal readonly ScoreDoc[][] ShardHits;
+            internal readonly ScoreDoc[][] ShardHits; // LUCENENET TODO: Rename (private)
 
             internal readonly FieldComparator[] comparators;
-            internal readonly int[] ReverseMul;
+            internal readonly int[] ReverseMul; // LUCENENET TODO: Rename (private)
 
             public MergeSortQueue(Sort sort, TopDocs[] shardHits)
                 : base(shardHits.Length)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
             }
 
             // Returns true if first is < second
-            public override bool LessThan(ShardRef first, ShardRef second)
+            protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
                 Debug.Assert(first != second);
                 FieldDoc firstFD = (FieldDoc)ShardHits[first.ShardIndex][first.HitIndex];

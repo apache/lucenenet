@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest
             {
             }
 
-            public override bool LessThan(LookupResult a, LookupResult b)
+            protected override bool LessThan(LookupResult a, LookupResult b)
             {
                 return a.value < b.value;
             }

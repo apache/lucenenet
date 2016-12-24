@@ -28,6 +28,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermStatistics
     {
+        // LUCENENET TODO: Rename (private)
         private readonly BytesRef Term_Renamed;
         private readonly long DocFreq_Renamed;
         private readonly long TotalTermFreq_Renamed;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// returns the term text </summary>
-        public BytesRef Term()
+        public BytesRef Term() // LUCENENET TODO: Make property
         {
             return Term_Renamed;
         }
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// returns the number of documents this term occurs in </summary>
         /// <seealso cref= TermsEnum#docFreq()  </seealso>
-        public long DocFreq()
+        public long DocFreq() // LUCENENET TODO: Make property
         {
             return DocFreq_Renamed;
         }
@@ -59,7 +60,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// returns the total number of occurrences of this term </summary>
         /// <seealso cref= TermsEnum#totalTermFreq()  </seealso>
-        public long TotalTermFreq()
+        public long TotalTermFreq() // LUCENENET TODO: Make property
         {
             return TotalTermFreq_Renamed;
         }

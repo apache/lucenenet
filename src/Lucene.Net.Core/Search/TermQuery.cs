@@ -44,16 +44,16 @@ namespace Lucene.Net.Search
     public class TermQuery : Query
     {
         private readonly Term _term;
-        private readonly int DocFreq;
-        private readonly TermContext PerReaderTermState;
+        private readonly int DocFreq; // LUCENENET TODO: Rename (private)
+        private readonly TermContext PerReaderTermState; // LUCENENET TODO: Rename (private)
 
         internal sealed class TermWeight : Weight
         {
-            private readonly TermQuery OuterInstance;
+            private readonly TermQuery OuterInstance; // LUCENENET TODO: Rename (private)
 
-            internal readonly Similarity Similarity;
-            internal readonly Similarity.SimWeight Stats;
-            internal readonly TermContext TermStates;
+            internal readonly Similarity Similarity; // LUCENENET TODO: Rename (private)
+            internal readonly Similarity.SimWeight Stats; // LUCENENET TODO: Rename (private)
+            internal readonly TermContext TermStates; // LUCENENET TODO: Rename (private)
 
             public TermWeight(TermQuery outerInstance, IndexSearcher searcher, TermContext termStates)
             {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             /// Returns a <seealso cref="TermsEnum"/> positioned at this weights Term or null if
             /// the term does not exist in the given context
             /// </summary>
-            internal TermsEnum GetTermsEnum(AtomicReaderContext context)
+            private TermsEnum GetTermsEnum(AtomicReaderContext context)
             {
                 TermState state = TermStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
                 return termsEnum;
             }
 
-            internal bool TermNotInReader(AtomicReader reader, Term term)
+            private bool TermNotInReader(AtomicReader reader, Term term)
             {
                 // only called from assert
                 //System.out.println("TQ.termNotInReader reader=" + reader + " term=" + field + ":" + bytes.utf8ToString());
