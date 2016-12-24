@@ -570,11 +570,11 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method (properties shouldn't return array)
+            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method ? (properties shouldn't return array)
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedDocValues[] Values; // LUCENENET TODO: Make getter method
+            public readonly SortedDocValues[] Values; // LUCENENET TODO: Make getter method ?
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
@@ -622,11 +622,11 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method (properties should not return array)
+            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method ? (properties should not return array)
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedSetDocValues[] Values; // LUCENENET TODO: Make getter method
+            public readonly SortedSetDocValues[] Values; // LUCENENET TODO: Make getter method ?
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>

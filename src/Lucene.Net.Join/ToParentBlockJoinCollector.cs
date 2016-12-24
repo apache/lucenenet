@@ -392,7 +392,7 @@ namespace Lucene.Net.Join
 
         private OneGroup[] sortedGroups;
 
-        private void sortQueue()
+        private void sortQueue() // LUCENENET TODO: Make Pascal case
         {
             sortedGroups = new OneGroup[queue.Size()];
             for (int downTo = queue.Size() - 1; downTo >= 0; downTo--)

@@ -10,7 +10,7 @@ using Lucene.Net.Support;
 namespace Lucene.Net.Expressions
 {
     /// <summary>A custom comparator for sorting documents by an expression</summary>
-    internal class ExpressionComparator : FieldComparator<double>
+    internal class ExpressionComparator : FieldComparator<double> // LUCENENET TODO: Rename ExpressionComparer ?
     {
         private readonly double[] values;
 

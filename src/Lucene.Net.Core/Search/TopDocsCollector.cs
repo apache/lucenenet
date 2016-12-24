@@ -198,9 +198,9 @@ namespace Lucene.Net.Search
         TopDocs TopDocs(int start, int howMany);
 
         // From Collector
-        Scorer Scorer { set; }
+        Scorer Scorer { set; } // LUCENENET TODO: Change to SetScorer(Scorer scorer)
         void Collect(int doc);
-        AtomicReaderContext NextReader { set; }
+        AtomicReaderContext NextReader { set; } // LUCENENET TODO: Change to SetNextReader(AtomicReaderContext context)
         bool AcceptsDocsOutOfOrder();
     }
 }

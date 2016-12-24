@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// description of field, used in explain()
         /// </summary>
-        public abstract string Description { get; }
+        public abstract string Description { get; } // LUCENENET TODO: Make GetDescription() (makes a conversion)
 
         public override string ToString()
         {

@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
         /// will always be called before <seealso cref="#compareBottom"/>.
         /// </summary>
         /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
-        public abstract override int Bottom { set; }
+        public abstract override int Bottom { set; } // LUCENENET TODO: Change to SetBottom(int slot)
 
         /// <summary>
         /// Record the top value, for future calls to {@link
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract override object TopValue { set; }// LUCENENET TODO: investigate whether we can use T instead of object
+        public abstract override object TopValue { set; } // LUCENENET TODO: change to SetTopValue(object value), investigate whether we can use T instead of object
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract object TopValue { set; }// LUCENENET TODO: Change to SetTopValue(object value)
+        public abstract object TopValue { set; }// LUCENENET TODO: Change to SetTopValue(object value), investigate whether we can use T instead of object
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will

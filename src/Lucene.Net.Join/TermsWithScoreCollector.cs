@@ -48,7 +48,7 @@ namespace Lucene.Net.Join
             }
         }
 
-        public virtual float[] ScoresPerTerm
+        public virtual float[] ScoresPerTerm // LUCENENET TODO: Make GetScoresPerTerm() (array)
         {
             get
             {
