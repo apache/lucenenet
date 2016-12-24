@@ -178,12 +178,9 @@ namespace Lucene.Net.Queries.Function
                 this.bottom = values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    this.topValue = (double)value;
-                }
+                this.topValue = (double)value;
             }
 
             public override IComparable Value(int slot)

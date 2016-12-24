@@ -56,12 +56,9 @@ namespace Lucene.Net.Join
             _wrappedComparator.SetBottom(slot);
         }
 
-        public override object TopValue
+        public override void SetTopValue(object value)
         {
-            set
-            {
-                _wrappedComparator.TopValue = value;
-            }
+            _wrappedComparator.SetTopValue(value);
         }
         
         public override FieldComparator SetNextReader(AtomicReaderContext context)

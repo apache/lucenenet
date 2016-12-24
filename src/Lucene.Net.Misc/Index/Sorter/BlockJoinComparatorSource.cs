@@ -145,13 +145,10 @@ namespace Lucene.Net.Index.Sorter
                 bottomChild = childSlots[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    // we dont have enough information (the docid is needed)
-                    throw new System.NotSupportedException("this comparator cannot be used with deep paging");
-                }
+                // we dont have enough information (the docid is needed)
+                throw new System.NotSupportedException("this comparator cannot be used with deep paging");
             }
 
             public override int CompareBottom(int doc)

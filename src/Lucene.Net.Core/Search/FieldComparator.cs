@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract override object TopValue { set; } // LUCENENET TODO: change to SetTopValue(object value), investigate whether we can use T instead of object
+        public abstract override void SetTopValue(object value); // LUCENENET TODO: investigate whether we can use T instead of object
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract object TopValue { set; }// LUCENENET TODO: Change to SetTopValue(object value), investigate whether we can use T instead of object
+        public abstract void SetTopValue(object value); // LUCENENET TODO: investigate whether we can use T instead of object
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -422,12 +422,9 @@ namespace Lucene.Net.Search
                 this.bottom = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    topValue = (sbyte)value;
-                }
+                topValue = (sbyte)value;
             }
 
             public override IComparable Value(int slot)
@@ -513,12 +510,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (double)value;
-                }
+                TopValue_Renamed = (double)value;
             }
 
             public override IComparable Value(int slot)
@@ -604,12 +598,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (float)value;
-                }
+                TopValue_Renamed = (float)value;
             }
 
             public override IComparable Value(int slot)
@@ -697,12 +688,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (short)value;
-                }
+                TopValue_Renamed = (short)value;
             }
 
             public override IComparable Value(int slot)
@@ -786,12 +774,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (int)value;
-                }
+                TopValue_Renamed = (int)value;
             }
 
             public override IComparable Value(int slot)
@@ -878,12 +863,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (long)value;
-                }
+                TopValue_Renamed = (long)value;
             }
 
             public override IComparable Value(int slot)
@@ -953,12 +935,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Scores[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (float)value;
-                }
+                TopValue_Renamed = (float)value;
             }
 
             public override Scorer Scorer
@@ -1046,12 +1025,9 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = DocIDs[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    TopValue_Renamed = (int)value;
-                }
+                TopValue_Renamed = (int)value;
             }
 
             public override IComparable Value(int slot)
@@ -1327,15 +1303,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    // null is fine: it means the last doc of the prior
-                    // search was missing this value
-                    TopValue_Renamed = (BytesRef)value;
-                    //System.out.println("setTopValue " + topValue);
-                }
+                // null is fine: it means the last doc of the prior
+                // search was missing this value
+                TopValue_Renamed = (BytesRef)value;
+                //System.out.println("setTopValue " + topValue);
             }
 
             public override IComparable Value(int slot)
@@ -1470,16 +1443,13 @@ namespace Lucene.Net.Search
                 this.Bottom_Renamed = Values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
+                if (value == null)
                 {
-                    if (value == null)
-                    {
-                        throw new System.ArgumentException("value cannot be null");
-                    }
-                    TopValue_Renamed = (BytesRef)value;
+                    throw new System.ArgumentException("value cannot be null");
                 }
+                TopValue_Renamed = (BytesRef)value;
             }
 
             public override IComparable Value(int slot)

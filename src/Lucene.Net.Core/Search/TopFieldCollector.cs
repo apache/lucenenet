@@ -999,7 +999,7 @@ namespace Lucene.Net.Search
                 for (int i = 0; i < comparators.Length; i++)
                 {
                     FieldComparator comparator = comparators[i];
-                    comparator.TopValue = after.Fields[i];
+                    comparator.SetTopValue(after.Fields[i]);
                 }
             }
 

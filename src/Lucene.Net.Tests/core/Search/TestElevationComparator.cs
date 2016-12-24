@@ -185,12 +185,9 @@ namespace Lucene.Net.Search
                 bottomVal = values[slot];
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    throw new System.NotSupportedException();
-                }
+                throw new System.NotSupportedException();
             }
 
             private int DocVal(int doc)

@@ -142,12 +142,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override object TopValue
+            public override void SetTopValue(object value)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)

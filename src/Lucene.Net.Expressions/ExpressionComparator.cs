@@ -56,9 +56,9 @@ namespace Lucene.Net.Expressions
             bottom = values[slot];
         }
 
-        public override object TopValue
+        public override void SetTopValue(object value)
         {
-            set { topValue = (double)value; }
+            topValue = (double)value;
         }
 
 
