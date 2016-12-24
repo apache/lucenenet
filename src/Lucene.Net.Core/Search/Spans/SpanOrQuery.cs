@@ -190,20 +190,20 @@ namespace Lucene.Net.Search.Spans
 
             protected internal override bool LessThan(Spans spans1, Spans spans2)
             {
-                if (spans1.Doc() == spans2.Doc())
+                if (spans1.Doc == spans2.Doc)
                 {
-                    if (spans1.Start() == spans2.Start())
+                    if (spans1.Start == spans2.Start)
                     {
-                        return spans1.End() < spans2.End();
+                        return spans1.End < spans2.End;
                     }
                     else
                     {
-                        return spans1.Start() < spans2.Start();
+                        return spans1.Start < spans2.Start;
                     }
                 }
                 else
                 {
-                    return spans1.Doc() < spans2.Doc();
+                    return spans1.Doc < spans2.Doc;
                 }
             }
         }
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 bool skipCalled = false;
-                while (queue.Size() != 0 && Top().Doc() < target)
+                while (queue.Size() != 0 && Top().Doc < target)
                 {
                     if (Top().SkipTo(target))
                     {
@@ -309,19 +309,19 @@ namespace Lucene.Net.Search.Spans
                 return Next();
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return Top().Doc();
+                get { return Top().Doc; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return Top().Start();
+                get { return Top().Start; }
             }
 
-            public override int End()
+            public override int End
             {
-                return Top().End();
+                get { return Top().End; }
             }
 
             public override ICollection<byte[]> Payload
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     List<byte[]> result = null;
                     Spans theTop = Top();
-                    if (theTop != null && theTop.PayloadAvailable)
+                    if (theTop != null && theTop.IsPayloadAvailable)
                     {
                         result = new List<byte[]>(theTop.Payload);
                     }
@@ -338,18 +338,18 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
                     Spans top = Top();
-                    return top != null && top.PayloadAvailable;
+                    return top != null && top.IsPayloadAvailable;
                 }
             }
 
             public override string ToString()
             {
-                return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size() > 0 ? (Doc() + ":" + Start() + "-" + End()) : "END"));
+                return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size() > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
             public override long Cost()

@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
             {
                 return Doc = NO_MORE_DOCS;
             }
-            if (Spans.Doc() < target) // setFreqCurrentDoc() leaves spans.doc() ahead
+            if (Spans.Doc < target) // setFreqCurrentDoc() leaves spans.doc() ahead
             {
                 More = Spans.SkipTo(target);
             }
@@ -75,16 +75,16 @@ namespace Lucene.Net.Search.Spans
             {
                 return false;
             }
-            Doc = Spans.Doc();
+            Doc = Spans.Doc;
             Freq_Renamed = 0.0f;
             NumMatches = 0;
             do
             {
-                int matchLength = Spans.End() - Spans.Start();
+                int matchLength = Spans.End - Spans.Start;
                 Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
                 NumMatches++;
                 More = Spans.Next();
-            } while (More && (Doc == Spans.Doc()));
+            } while (More && (Doc == Spans.Doc));
             return true;
         }
 

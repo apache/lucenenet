@@ -577,9 +577,9 @@ namespace Lucene.Net.Search.Spans
 
             do
             {
-                hasMore = SkipToAccoringToJavaDocs(s1, s1.Doc() + 1);
-                Assert.AreEqual(hasMore, s2.SkipTo(s2.Doc() + 1));
-                Assert.AreEqual(s1.Doc(), s2.Doc());
+                hasMore = SkipToAccoringToJavaDocs(s1, s1.Doc + 1);
+                Assert.AreEqual(hasMore, s2.SkipTo(s2.Doc + 1));
+                Assert.AreEqual(s1.Doc, s2.Doc);
             } while (hasMore);
         }
 
@@ -604,7 +604,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     return false;
                 }
-            } while (target > s.Doc());
+            } while (target > s.Doc);
             return true;
         }
 

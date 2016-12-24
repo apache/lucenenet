@@ -41,12 +41,12 @@ namespace Lucene.Net.Search.Spans
 
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
-            Debug.Assert(spans.Start() != spans.End());
-            if (spans.Start() >= end)
+            Debug.Assert(spans.Start != spans.End);
+            if (spans.Start >= end)
             {
                 return AcceptStatus.NO_AND_ADVANCE;
             }
-            else if (spans.Start() >= start && spans.End() <= end)
+            else if (spans.Start >= start && spans.End <= end)
             {
                 return AcceptStatus.YES;
             }

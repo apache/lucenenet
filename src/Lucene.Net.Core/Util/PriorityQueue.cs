@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the least element of the PriorityQueue in constant time.
         /// Returns null if the queue is empty. </summary>
-        public T Top()
+        public T Top() // LUCENENET TODO: Change to property
         {
             // We don't need to check size here: if maxSize is 0,
             // then heap is length 2 array with both entries null.

@@ -271,10 +271,10 @@ namespace Lucene.Net.Search
             {
                 if (VERBOSE)
                 {
-                    Console.WriteLine("doc " + pspans.Doc() + ": span " + pspans.Start() + " to " + pspans.End());
+                    Console.WriteLine("doc " + pspans.Doc + ": span " + pspans.Start + " to " + pspans.End);
                 }
                 var payloads = pspans.Payload;
-                sawZero |= pspans.Start() == 0;
+                sawZero |= pspans.Start == 0;
                 foreach (var bytes in payloads)
                 {
                     count++;
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
             while (spans.Next())
             {
                 count++;
-                sawZero |= spans.Start() == 0;
+                sawZero |= spans.Start == 0;
                 // System.out.println(spans.Doc() + " - " + spans.Start() + " - " +
                 // spans.End());
             }

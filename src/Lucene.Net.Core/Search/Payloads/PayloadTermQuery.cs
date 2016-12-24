@@ -101,14 +101,14 @@ namespace Lucene.Net.Search.Payloads
                     {
                         return false;
                     }
-                    Doc = Spans.Doc();
+                    Doc = Spans.Doc;
                     Freq_Renamed = 0.0f;
                     NumMatches = 0;
                     PayloadScore_Renamed = 0;
                     PayloadsSeen = 0;
-                    while (More && Doc == Spans.Doc())
+                    while (More && Doc == Spans.Doc)
                     {
-                        int matchLength = Spans.End() - Spans.Start();
+                        int matchLength = Spans.End - Spans.Start;
 
                         Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
                         NumMatches++;
@@ -122,17 +122,17 @@ namespace Lucene.Net.Search.Payloads
 
                 protected internal virtual void ProcessPayload(Similarity similarity)
                 {
-                    if (TermSpans.PayloadAvailable)
+                    if (TermSpans.IsPayloadAvailable)
                     {
                         DocsAndPositionsEnum postings = TermSpans.Postings;
                         Payload = postings.Payload;
                         if (Payload != null)
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Payload));
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start, Spans.End, PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start, Spans.End, Payload));
                         }
                         else
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, 1F);
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start, Spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
                         }
                         PayloadsSeen++;
                     }

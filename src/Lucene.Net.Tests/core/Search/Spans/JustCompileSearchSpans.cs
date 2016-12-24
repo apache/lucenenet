@@ -38,14 +38,14 @@ namespace Lucene.Net.Search.Spans
 
         internal sealed class JustCompileSpans : Spans
         {
-            public override int Doc()
+            public override int Doc
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
-            public override int End()
+            public override int End
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override bool Next()
@@ -58,9 +58,9 @@ namespace Lucene.Net.Search.Spans
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Start()
+            public override int Start
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override ICollection<byte[]> Payload
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
@@ -124,14 +124,14 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
-            public override int End()
+            public override int End
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override bool Next()
@@ -144,9 +144,9 @@ namespace Lucene.Net.Search.Spans
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Start()
+            public override int Start
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override long Cost()

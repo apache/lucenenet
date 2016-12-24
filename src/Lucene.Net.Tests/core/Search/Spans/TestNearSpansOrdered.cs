@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Spans
 
         public virtual string s(Spans span)
         {
-            return s(span.Doc(), span.Start(), span.End());
+            return s(span.Doc, span.Start, span.End);
         }
 
         public virtual string s(int doc, int start, int end)

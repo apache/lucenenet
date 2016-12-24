@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.Highlight
                 // collect span positions
                 while (spans.Next())
                 {
-                    spanPositions.Add(new PositionSpan(spans.Start(), spans.End() - 1));
+                    spanPositions.Add(new PositionSpan(spans.Start, spans.End - 1));
                 }
             }
 

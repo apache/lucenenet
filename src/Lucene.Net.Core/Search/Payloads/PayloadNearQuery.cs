@@ -227,9 +227,9 @@ namespace Lucene.Net.Search.Payloads
                     var span = subSpans[i] as NearSpansOrdered;
                     if (span != null)
                     {
-                        if (span.PayloadAvailable)
+                        if (span.IsPayloadAvailable)
                         {
-                            ProcessPayloads(span.Payload, subSpans[i].Start(), subSpans[i].End());
+                            ProcessPayloads(span.Payload, subSpans[i].Start, subSpans[i].End);
                         }
                         GetPayloads(span.SubSpans);
                     }
@@ -238,9 +238,9 @@ namespace Lucene.Net.Search.Payloads
                         var unordered = subSpans[i] as NearSpansUnordered;
                         if (unordered != null)
                         {
-                            if (unordered.PayloadAvailable)
+                            if (unordered.IsPayloadAvailable)
                             {
-                                ProcessPayloads(unordered.Payload, subSpans[i].Start(), subSpans[i].End());
+                                ProcessPayloads(unordered.Payload, subSpans[i].Start, subSpans[i].End);
                             }
                             GetPayloads(unordered.SubSpans);
                         }
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.Bytes = thePayload;
                     scratch.Offset = 0;
                     scratch.Length = thePayload.Length;
-                    payloadScore = outerInstance.function.CurrentScore(Doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, DocScorer.ComputePayloadFactor(Doc, spans.Start(), spans.End(), scratch));
+                    payloadScore = outerInstance.function.CurrentScore(Doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, DocScorer.ComputePayloadFactor(Doc, spans.Start, spans.End, scratch));
                     ++payloadsSeen;
                 }
             }
@@ -279,19 +279,19 @@ namespace Lucene.Net.Search.Payloads
                 {
                     return false;
                 }
-                Doc = spans.Doc();
+                Doc = spans.Doc;
                 Freq_Renamed = 0.0f;
                 payloadScore = 0;
                 payloadsSeen = 0;
                 do
                 {
-                    int matchLength = spans.End() - spans.Start();
+                    int matchLength = spans.End - spans.Start;
                     Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
                     Spans[] spansArr = new Spans[1];
                     spansArr[0] = spans;
                     GetPayloads(spansArr);
                     More = spans.Next();
-                } while (More && (Doc == spans.Doc()));
+                } while (More && (Doc == spans.Doc));
                 return true;
             }
 

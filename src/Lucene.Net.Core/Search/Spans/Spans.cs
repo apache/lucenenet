@@ -53,15 +53,15 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the document number of the current match.  Initially invalid. </summary>
-        public abstract int Doc(); // LUCENENET TODO: Make property
+        public abstract int Doc { get; }
 
         /// <summary>
         /// Returns the start position of the current match.  Initially invalid. </summary>
-        public abstract int Start(); // LUCENENET TODO: Make property
+        public abstract int Start { get; }
 
         /// <summary>
         /// Returns the end position of the current match.  Initially invalid. </summary>
-        public abstract int End(); // LUCENENET TODO: Make property
+        public abstract int End { get; }
 
         /// <summary>
         /// Returns the payload data for the current span.
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Spans
         /// <seealso cref="#next()"/>.
         /// </summary>
         /// <returns> true if there is a payload available at this position that can be loaded </returns>
-        public abstract bool PayloadAvailable { get; } // LUCENENET TODO: Rename IsPayloadAvailable
+        public abstract bool IsPayloadAvailable { get; }
 
         /// <summary>
         /// Returns the estimated cost of this spans.
@@ -100,6 +100,6 @@ namespace Lucene.Net.Search.Spans
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>
-        public abstract long Cost();
+        public abstract long Cost(); // LUCENENET TODO: Change to GetCost() ?
     }
 }

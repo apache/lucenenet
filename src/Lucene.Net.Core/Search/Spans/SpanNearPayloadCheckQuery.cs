@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spans
 
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
-            bool result = spans.PayloadAvailable;
+            bool result = spans.IsPayloadAvailable;
             if (result == true)
             {
                 var candidate = spans.Payload;

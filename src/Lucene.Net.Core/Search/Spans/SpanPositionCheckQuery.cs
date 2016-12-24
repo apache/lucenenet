@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Spans
                             break;
 
                         case AcceptStatus.NO_AND_ADVANCE:
-                            if (!Spans.SkipTo(Spans.Doc() + 1))
+                            if (!Spans.SkipTo(Spans.Doc + 1))
                             {
                                 return false;
                             }
@@ -181,20 +181,20 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return Spans.Doc();
+                get { return Spans.Doc; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return Spans.Start();
+                get { return Spans.Start; }
             }
 
-            public override int End()
+            public override int End
             // TODO: Remove warning after API has been finalized
             {
-                return Spans.End();
+                get { return Spans.End; }
             }
 
             public override ICollection<byte[]> Payload
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search.Spans
                 get
                 {
                     List<byte[]> result = null;
-                    if (Spans.PayloadAvailable)
+                    if (Spans.IsPayloadAvailable)
                     {
                         result = new List<byte[]>(Spans.Payload);
                     }
@@ -212,11 +212,11 @@ namespace Lucene.Net.Search.Spans
 
             // TODO: Remove warning after API has been finalized
 
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
-                    return Spans.PayloadAvailable;
+                    return Spans.IsPayloadAvailable;
                 }
             }
 

@@ -63,13 +63,13 @@ namespace Lucene.Net.Search.Spans
 
             protected internal override bool LessThan(SpansCell spans1, SpansCell spans2)
             {
-                if (spans1.Doc() == spans2.Doc())
+                if (spans1.Doc == spans2.Doc)
                 {
                     return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
                 }
                 else
                 {
-                    return spans1.Doc() < spans2.Doc();
+                    return spans1.Doc < spans2.Doc;
                 }
             }
         }
@@ -110,10 +110,10 @@ namespace Lucene.Net.Search.Spans
                 }
                 if (condition)
                 {
-                    Length = End() - Start();
+                    Length = End - Start;
                     OuterInstance.TotalLength += Length; // add new length
 
-                    if (OuterInstance.Max == null || Doc() > OuterInstance.Max.Doc() || (Doc() == OuterInstance.Max.Doc()) && (End() > OuterInstance.Max.End()))
+                    if (OuterInstance.Max == null || Doc > OuterInstance.Max.Doc || (Doc == OuterInstance.Max.Doc) && (End > OuterInstance.Max.End))
                     {
                         OuterInstance.Max = this;
                     }
@@ -122,20 +122,20 @@ namespace Lucene.Net.Search.Spans
                 return condition;
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return Spans.Doc();
+                get { return Spans.Doc; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return Spans.Start();
+                get { return Spans.Start; }
             }
 
-            public override int End()
+            public override int End
             // TODO: Remove warning after API has been finalized
             {
-                return Spans.End();
+                get { return Spans.End; }
             }
 
             public override ICollection<byte[]> Payload
@@ -147,11 +147,11 @@ namespace Lucene.Net.Search.Spans
             }
 
             // TODO: Remove warning after API has been finalized
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
-                    return Spans.PayloadAvailable;
+                    return Spans.IsPayloadAvailable;
                 }
             }
 
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Spans
             {
                 bool queueStale = false;
 
-                if (Min().Doc() != Max.Doc()) // maintain list
+                if (Min().Doc != Max.Doc) // maintain list
                 {
                     QueueToList();
                     queueStale = true;
@@ -222,9 +222,9 @@ namespace Lucene.Net.Search.Spans
 
                 // skip to doc w/ all clauses
 
-                while (More && First.Doc() < Last.Doc())
+                while (More && First.Doc < Last.Doc)
                 {
-                    More = First.SkipTo(Last.Doc()); // skip first upto last
+                    More = First.SkipTo(Last.Doc); // skip first upto last
                     FirstToLast(); // and move it to the end
                     queueStale = true;
                 }
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search.Spans
             } // normal case
             else
             {
-                while (More && Min().Doc() < target) // skip as needed
+                while (More && Min().Doc < target) // skip as needed
                 {
                     if (Min().SkipTo(target))
                     {
@@ -288,29 +288,30 @@ namespace Lucene.Net.Search.Spans
             return More && (AtMatch() || Next());
         }
 
-        private SpansCell Min()
+        private SpansCell Min() // LUCENENET TODO: Make property
         {
             return Queue.Top();
         }
 
-        public override int Doc()
+        public override int Doc
         {
-            return Min().Doc();
+            get { return Min().Doc; }
         }
 
-        public override int Start()
+        public override int Start
         {
-            return Min().Start();
+            get { return Min().Start; }
         }
 
-        public override int End()
         // TODO: Remove warning after API has been finalized
         /// <summary>
         /// WARNING: The List is not necessarily in order of the the positions </summary>
         /// <returns> Collection of <code>byte[]</code> payloads </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public override int End
+        
         {
-            return Max.End();
+            get { return Max.End; }
         }
 
         public override ICollection<byte[]> Payload
@@ -320,7 +321,7 @@ namespace Lucene.Net.Search.Spans
                 var matchPayload = new HashSet<byte[]>();
                 for (var cell = First; cell != null; cell = cell.Next_Renamed)
                 {
-                    if (cell.PayloadAvailable)
+                    if (cell.IsPayloadAvailable)
                     {
                         matchPayload.UnionWith(cell.Payload);
                     }
@@ -330,14 +331,14 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool PayloadAvailable
+        public override bool IsPayloadAvailable
         {
             get
             {
                 SpansCell pointer = Min();
                 while (pointer != null)
                 {
-                    if (pointer.PayloadAvailable)
+                    if (pointer.IsPayloadAvailable)
                     {
                         return true;
                     }
@@ -360,7 +361,7 @@ namespace Lucene.Net.Search.Spans
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + Query.ToString() + ")@" + (FirstTime ? "START" : (More ? (Doc() + ":" + Start() + "-" + End()) : "END"));
+            return this.GetType().Name + "(" + Query.ToString() + ")@" + (FirstTime ? "START" : (More ? (Doc + ":" + Start + "-" + End) : "END"));
         }
 
         private void InitList(bool next)
@@ -421,7 +422,7 @@ namespace Lucene.Net.Search.Spans
 
         private bool AtMatch()  // LUCENENET TODO: Make property
         {
-            return (Min().Doc() == Max.Doc()) && ((Max.End() - Min().Start() - TotalLength) <= Slop);
+            return (Min().Doc == Max.Doc) && ((Max.End - Min().Start - TotalLength) <= Slop);
         }
     }
 }

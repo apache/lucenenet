@@ -418,14 +418,14 @@ namespace Lucene.Net.Search.Spans
                 //if we expect payloads, then isPayloadAvailable should be true
                 if (expectedNumPayloads > 0)
                 {
-                    Assert.IsTrue(spans.PayloadAvailable == true, "isPayloadAvailable is not returning the correct value: " + spans.PayloadAvailable + " and it should be: " + (expectedNumPayloads > 0));
+                    Assert.IsTrue(spans.IsPayloadAvailable == true, "isPayloadAvailable is not returning the correct value: " + spans.IsPayloadAvailable + " and it should be: " + (expectedNumPayloads > 0));
                 }
                 else
                 {
-                    Assert.IsTrue(spans.PayloadAvailable == false, "isPayloadAvailable should be false");
+                    Assert.IsTrue(spans.IsPayloadAvailable == false, "isPayloadAvailable should be false");
                 }
                 //See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
-                if (spans.PayloadAvailable)
+                if (spans.IsPayloadAvailable)
                 {
                     var payload = spans.Payload;
                     Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     Console.WriteLine("\nSpans Dump --");
                 }
-                if (spans.PayloadAvailable)
+                if (spans.IsPayloadAvailable)
                 {
                     var payload = spans.Payload;
                     if (VERBOSE)
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search.Spans
                         Console.WriteLine("payloads for span:" + payload.Count);
                         foreach (var bytes in payload)
                         {
-                            Console.WriteLine("doc:" + spans.Doc() + " s:" + spans.Start() + " e:" + spans.End() + " " + Encoding.UTF8.GetString((byte[])(Array)bytes));
+                            Console.WriteLine("doc:" + spans.Doc + " s:" + spans.Start + " e:" + spans.End + " " + Encoding.UTF8.GetString((byte[])(Array)bytes));
                         }
                     }
 

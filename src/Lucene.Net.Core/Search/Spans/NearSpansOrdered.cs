@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Spans
 
             protected override int Compare(int i, int j)
             {
-                return OuterInstance.SubSpansByDoc[i].Doc() - OuterInstance.SubSpansByDoc[j].Doc();
+                return OuterInstance.SubSpansByDoc[i].Doc - OuterInstance.SubSpansByDoc[j].Doc;
             }
         }
 
@@ -127,21 +127,21 @@ namespace Lucene.Net.Search.Spans
         }
 
         // inherit javadocs
-        public override int Doc()
+        public override int Doc
         // inherit javadocs
         {
-            return MatchDoc;
+            get { return MatchDoc; }
         }
 
-        public override int Start()
+        public override int Start
         // inherit javadocs
         {
-            return MatchStart;
+            get { return MatchStart; }
         }
 
-        public override int End()
+        public override int End
         {
-            return MatchEnd;
+            get { return MatchEnd; }
         }
 
         public virtual Spans[] SubSpans // LUCENENET TODO: Make GetSubSpans() (properties shouldn't return array)
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool PayloadAvailable
+        public override bool IsPayloadAvailable
         {
             get
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search.Spans
                 }
                 More = true;
             }
-            else if (More && (subSpans[0].Doc() < target))
+            else if (More && (subSpans[0].Doc < target))
             {
                 if (subSpans[0].SkipTo(target))
                 {
@@ -261,8 +261,8 @@ namespace Lucene.Net.Search.Spans
         {
             sorter.Sort(0, SubSpansByDoc.Length);
             int firstIndex = 0;
-            int maxDoc = SubSpansByDoc[SubSpansByDoc.Length - 1].Doc();
-            while (SubSpansByDoc[firstIndex].Doc() != maxDoc)
+            int maxDoc = SubSpansByDoc[SubSpansByDoc.Length - 1].Doc;
+            while (SubSpansByDoc[firstIndex].Doc != maxDoc)
             {
                 if (!SubSpansByDoc[firstIndex].SkipTo(maxDoc))
                 {
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Spans
                     InSameDoc = false;
                     return false;
                 }
-                maxDoc = SubSpansByDoc[firstIndex].Doc();
+                maxDoc = SubSpansByDoc[firstIndex].Doc;
                 if (++firstIndex == SubSpansByDoc.Length)
                 {
                     firstIndex = 0;
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.Spans
             }
             for (int i = 0; i < SubSpansByDoc.Length; i++)
             {
-                Debug.Assert((SubSpansByDoc[i].Doc() == maxDoc), " NearSpansOrdered.toSameDoc() spans " + SubSpansByDoc[0] + "\n at doc " + SubSpansByDoc[i].Doc() + ", but should be at " + maxDoc);
+                Debug.Assert((SubSpansByDoc[i].Doc == maxDoc), " NearSpansOrdered.toSameDoc() spans " + SubSpansByDoc[0] + "\n at doc " + SubSpansByDoc[i].Doc + ", but should be at " + maxDoc);
             }
             InSameDoc = true;
             return true;
@@ -291,11 +291,11 @@ namespace Lucene.Net.Search.Spans
         ///              and spans1 ends before spans2. </returns>
         internal static bool DocSpansOrdered(Spans spans1, Spans spans2)
         {
-            Debug.Assert(spans1.Doc() == spans2.Doc(), "doc1 " + spans1.Doc() + " != doc2 " + spans2.Doc());
-            int start1 = spans1.Start();
-            int start2 = spans2.Start();
+            Debug.Assert(spans1.Doc == spans2.Doc, "doc1 " + spans1.Doc + " != doc2 " + spans2.Doc);
+            int start1 = spans1.Start;
+            int start2 = spans2.Start;
             /* Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end() : */
-            return (start1 == start2) ? (spans1.End() < spans2.End()) : (start1 < start2);
+            return (start1 == start2) ? (spans1.End < spans2.End) : (start1 < start2);
         }
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace Lucene.Net.Search.Spans
         /// </summary>
         private bool StretchToOrder()
         {
-            MatchDoc = subSpans[0].Doc();
+            MatchDoc = subSpans[0].Doc;
             for (int i = 1; InSameDoc && (i < subSpans.Length); i++)
             {
                 while (!DocSpansOrdered(subSpans[i - 1], subSpans[i]))
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search.Spans
                         More = false;
                         break;
                     }
-                    else if (MatchDoc != subSpans[i].Doc())
+                    else if (MatchDoc != subSpans[i].Doc)
                     {
                         InSameDoc = false;
                         break;
@@ -341,10 +341,10 @@ namespace Lucene.Net.Search.Spans
         /// </summary>
         private bool ShrinkToAfterShortestMatch()
         {
-            MatchStart = subSpans[subSpans.Length - 1].Start();
-            MatchEnd = subSpans[subSpans.Length - 1].End();
+            MatchStart = subSpans[subSpans.Length - 1].Start;
+            MatchEnd = subSpans[subSpans.Length - 1].End;
             var possibleMatchPayloads = new HashSet<byte[]>();
-            if (subSpans[subSpans.Length - 1].PayloadAvailable)
+            if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
             {
                 //LUCENE TO-DO UnionWith or AddAll(Set<>, IEnumerable<>)
                 possibleMatchPayloads.UnionWith(subSpans[subSpans.Length - 1].Payload);
@@ -358,15 +358,15 @@ namespace Lucene.Net.Search.Spans
             for (int i = subSpans.Length - 2; i >= 0; i--)
             {
                 Spans prevSpans = subSpans[i];
-                if (CollectPayloads && prevSpans.PayloadAvailable)
+                if (CollectPayloads && prevSpans.IsPayloadAvailable)
                 {
                     var payload = prevSpans.Payload;
                     possiblePayload = new List<byte[]>(payload.Count);
                     possiblePayload.AddRange(payload);
                 }
 
-                int prevStart = prevSpans.Start();
-                int prevEnd = prevSpans.End();
+                int prevStart = prevSpans.Start;
+                int prevEnd = prevSpans.End;
                 while (true) // Advance prevSpans until after (lastStart, lastEnd)
                 {
                     if (!prevSpans.Next())
@@ -375,15 +375,15 @@ namespace Lucene.Net.Search.Spans
                         More = false;
                         break; // Check remaining subSpans for final match.
                     }
-                    else if (MatchDoc != prevSpans.Doc())
+                    else if (MatchDoc != prevSpans.Doc)
                     {
                         InSameDoc = false; // The last subSpans is not advanced here.
                         break; // Check remaining subSpans for last match in this document.
                     }
                     else
                     {
-                        int ppStart = prevSpans.Start();
-                        int ppEnd = prevSpans.End(); // Cannot avoid invoking .end()
+                        int ppStart = prevSpans.Start;
+                        int ppEnd = prevSpans.End; // Cannot avoid invoking .end()
                         if (!DocSpansOrdered(ppStart, ppEnd, lastStart, lastEnd))
                         {
                             break; // Check remaining subSpans.
@@ -392,7 +392,7 @@ namespace Lucene.Net.Search.Spans
                         {
                             prevStart = ppStart;
                             prevEnd = ppEnd;
-                            if (CollectPayloads && prevSpans.PayloadAvailable)
+                            if (CollectPayloads && prevSpans.IsPayloadAvailable)
                             {
                                 var payload = prevSpans.Payload;
                                 possiblePayload = new List<byte[]>(payload.Count);
@@ -433,7 +433,7 @@ namespace Lucene.Net.Search.Spans
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + Query.ToString() + ")@" + (FirstTime ? "START" : (More ? (Doc() + ":" + Start() + "-" + End()) : "END"));
+            return this.GetType().Name + "(" + Query.ToString() + ")@" + (FirstTime ? "START" : (More ? (Doc + ":" + Start + "-" + End) : "END"));
         }
     }
 }

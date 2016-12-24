@@ -173,17 +173,17 @@ namespace Lucene.Net.Search.Spans
 
                 while (moreInclude && moreExclude)
                 {
-                    if (includeSpans.Doc() > excludeSpans.Doc()) // skip exclude
+                    if (includeSpans.Doc > excludeSpans.Doc) // skip exclude
                     {
-                        moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
+                        moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
                     }
 
-                    while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start() - OuterInstance.Pre) // while exclude is before
+                    while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - OuterInstance.Pre) // while exclude is before
                     {
                         moreExclude = excludeSpans.Next(); // increment exclude
                     }
 
-                    if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() + OuterInstance.Post <= excludeSpans.Start()) // if no intersection
+                    if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + OuterInstance.Post <= excludeSpans.Start) // if no intersection
                     {
                         break; // we found a match
                     }
@@ -205,17 +205,17 @@ namespace Lucene.Net.Search.Spans
                     return false;
                 }
 
-                if (moreExclude && includeSpans.Doc() > excludeSpans.Doc()) // skip exclude
+                if (moreExclude && includeSpans.Doc > excludeSpans.Doc) // skip exclude
                 {
-                    moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
+                    moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
                 }
 
-                while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start() - OuterInstance.Pre) // while exclude is before
+                while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - OuterInstance.Pre) // while exclude is before
                 {
                     moreExclude = excludeSpans.Next(); // increment exclude
                 }
 
-                if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() + OuterInstance.Post <= excludeSpans.Start()) // if no intersection
+                if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + OuterInstance.Post <= excludeSpans.Start) // if no intersection
                 {
                     return true; // we found a match
                 }
@@ -223,20 +223,20 @@ namespace Lucene.Net.Search.Spans
                 return Next(); // scan to next match
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return includeSpans.Doc();
+                get { return includeSpans.Doc; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return includeSpans.Start();
+                get { return includeSpans.Start; }
             }
 
-            public override int End()
+            public override int End
             // TODO: Remove warning after API has been finalized
             {
-                return includeSpans.End();
+                get { return includeSpans.End; }
             }
 
             public override ICollection<byte[]> Payload
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search.Spans
                 get
                 {
                     List<byte[]> result = null;
-                    if (includeSpans.PayloadAvailable)
+                    if (includeSpans.IsPayloadAvailable)
                     {
                         result = new List<byte[]>(includeSpans.Payload);
                     }
@@ -253,11 +253,11 @@ namespace Lucene.Net.Search.Spans
             }
 
             // TODO: Remove warning after API has been finalized
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
-                    return includeSpans.PayloadAvailable;
+                    return includeSpans.IsPayloadAvailable;
                 }
             }
 

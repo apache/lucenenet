@@ -150,31 +150,40 @@ namespace Lucene.Net.Search.Spans
             return false;
         }
 
-        public override int Doc()
+        public override int Doc
         {
-            if (Current == null)
+            get
             {
-                return DocIdSetIterator.NO_MORE_DOCS;
+                if (Current == null)
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
+                return Current.Doc + Leaves[LeafOrd].DocBase;
             }
-            return Current.Doc() + Leaves[LeafOrd].DocBase;
         }
 
-        public override int Start()
+        public override int Start
         {
-            if (Current == null)
+            get
             {
-                return DocIdSetIterator.NO_MORE_DOCS;
+                if (Current == null)
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
+                return Current.Start;
             }
-            return Current.Start();
         }
 
-        public override int End()
+        public override int End
         {
-            if (Current == null)
+            get
             {
-                return DocIdSetIterator.NO_MORE_DOCS;
+                if (Current == null)
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
+                return Current.End;
             }
-            return Current.End();
         }
 
         public override ICollection<byte[]> Payload
@@ -189,7 +198,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override bool PayloadAvailable
+        public override bool IsPayloadAvailable
         {
             get
             {
@@ -197,7 +206,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     return false;
                 }
-                return Current.PayloadAvailable;
+                return Current.IsPayloadAvailable;
             }
         }
 

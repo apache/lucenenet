@@ -91,19 +91,19 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override int Doc()
+        public override int Doc
         {
-            return Doc_Renamed;
+            get { return Doc_Renamed; }
         }
 
-        public override int Start()
+        public override int Start
         {
-            return Position;
+            get { return Position; }
         }
 
-        public override int End()
+        public override int End
         {
-            return Position + 1;
+            get { return Position + 1; }
         }
 
         public override long Cost()
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool PayloadAvailable
+        public override bool IsPayloadAvailable
         {
             get
             {
@@ -168,19 +168,19 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return DocIdSetIterator.NO_MORE_DOCS;
+                get { return DocIdSetIterator.NO_MORE_DOCS; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return -1;
+                get { return -1; }
             }
 
-            public override int End()
+            public override int End
             {
-                return -1;
+                get { return -1; }
             }
 
             public override ICollection<byte[]> Payload
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override bool PayloadAvailable
+            public override bool IsPayloadAvailable
             {
                 get
                 {
