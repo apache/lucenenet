@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             List<CharacterRunAutomaton> list = new List<CharacterRunAutomaton>();
             if (query is BooleanQuery)
             {
-                BooleanClause[] clauses = ((BooleanQuery)query).Clauses;
+                BooleanClause[] clauses = ((BooleanQuery)query).GetClauses();
                 foreach (BooleanClause clause in clauses)
                 {
                     if (!clause.IsProhibited)

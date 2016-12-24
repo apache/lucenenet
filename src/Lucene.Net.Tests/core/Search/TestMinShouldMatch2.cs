@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                 BooleanQuery bq = (BooleanQuery)weight.Query;
                 this.MinNrShouldMatch = bq.MinimumNumberShouldMatch;
                 this.Sims = new SimScorer[(int)Dv.ValueCount];
-                foreach (BooleanClause clause in bq.Clauses)
+                foreach (BooleanClause clause in bq.GetClauses())
                 {
                     Debug.Assert(!clause.IsProhibited);
                     Debug.Assert(!clause.IsRequired);

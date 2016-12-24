@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 assertTrue("expected instance of BooleanQuery but was "
                     + query.GetType(), query is BooleanQuery);
                 BooleanQuery bquery = (BooleanQuery)query;
-                BooleanClause[] clauses = bquery.Clauses;
+                BooleanClause[] clauses = bquery.GetClauses();
                 assertEquals(2, clauses.Length);
                 BooleanClause booleanClause = clauses[0];
                 query = booleanClause.Query;

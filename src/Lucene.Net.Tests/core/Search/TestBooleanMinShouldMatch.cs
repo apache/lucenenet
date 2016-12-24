@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
 
             public virtual void PostCreate(BooleanQuery q)
             {
-                BooleanClause[] c = q.Clauses;
+                BooleanClause[] c = q.GetClauses();
                 int opt = 0;
                 for (int i = 0; i < c.Length; i++)
                 {

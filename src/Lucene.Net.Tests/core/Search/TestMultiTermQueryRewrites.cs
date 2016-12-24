@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             q = ExtractInnerQuery(q);
             BooleanQuery bq = (BooleanQuery)q;
             Term last = null, act;
-            foreach (BooleanClause clause in bq.Clauses)
+            foreach (BooleanClause clause in bq.GetClauses())
             {
                 act = ExtractTerm(clause.Query);
                 if (last != null)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
 
         private void CheckBooleanQueryBoosts(BooleanQuery bq)
         {
-            foreach (BooleanClause clause in bq.Clauses)
+            foreach (BooleanClause clause in bq.GetClauses())
             {
                 TermQuery mtq = (TermQuery)clause.Query;
                 Assert.AreEqual(Convert.ToSingle(mtq.Term.Text()), mtq.Boost, 0, "Parallel sorting of boosts in rewrite mode broken");

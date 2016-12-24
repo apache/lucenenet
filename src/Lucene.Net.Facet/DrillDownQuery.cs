@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet
         {
             query = new BooleanQuery(true); // disable coord
 
-            BooleanClause[] clauses = other.query.Clauses;
+            BooleanClause[] clauses = other.query.GetClauses();
             if (clauses.Length == other.drillDownDims.Count)
             {
                 throw new System.ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
@@ -151,11 +151,11 @@ namespace Lucene.Net.Facet
                 index = idx.Value;
             }
 
-            if (query.Clauses.Length == drillDownDims.Count + 1)
+            if (query.GetClauses().Length == drillDownDims.Count + 1)
             {
                 index++;
             }
-            ConstantScoreQuery q = (ConstantScoreQuery)query.Clauses[index].Query;
+            ConstantScoreQuery q = (ConstantScoreQuery)query.GetClauses()[index].Query;
             if ((q.Query is BooleanQuery) == false)
             {
                 // App called .add(dim, customQuery) and then tried to
@@ -285,17 +285,17 @@ namespace Lucene.Net.Facet
 
         public override Query Rewrite(IndexReader r)
         {
-            if (!query.Clauses.Any())
+            if (!query.GetClauses().Any())
             {
                 return new MatchAllDocsQuery();
             }
 
             IList<Filter> filters = new List<Filter>();
             IList<Query> queries = new List<Query>();
-            IList<BooleanClause> clauses = query.Clauses;
+            IList<BooleanClause> clauses = query.GetClauses();
             Query baseQuery;
             int startIndex;
-            if (drillDownDims.Count == query.Clauses.Count())
+            if (drillDownDims.Count == query.GetClauses().Count())
             {
                 baseQuery = new MatchAllDocsQuery();
                 startIndex = 0;

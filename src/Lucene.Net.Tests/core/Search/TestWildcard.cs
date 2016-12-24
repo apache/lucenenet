@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             AssertMatches(searcher, wq, 0);
             Query q = searcher.Rewrite(wq);
             Assert.IsTrue(q is BooleanQuery);
-            Assert.AreEqual(0, ((BooleanQuery)q).Clauses.Length);
+            Assert.AreEqual(0, ((BooleanQuery)q).GetClauses().Length);
             reader.Dispose();
             indexStore.Dispose();
         }

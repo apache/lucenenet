@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Payloads
         {
             if (query is BooleanQuery)
             {
-                BooleanClause[] queryClauses = ((BooleanQuery)query).Clauses;
+                BooleanClause[] queryClauses = ((BooleanQuery)query).GetClauses();
 
                 for (int i = 0; i < queryClauses.Length; i++)
                 {

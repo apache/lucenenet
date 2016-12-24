@@ -269,7 +269,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         + "\"");
                 }
                 BooleanQuery bq = (BooleanQuery)contents;
-                BooleanClause[] bclauses = bq.Clauses;
+                BooleanClause[] bclauses = bq.GetClauses();
                 SpanQuery[] allSpanClauses = new SpanQuery[bclauses.Length];
                 // For all clauses e.g. one* two~
                 for (int i = 0; i < bclauses.Length; i++)
@@ -360,7 +360,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 List<SpanQuery> ors = new List<SpanQuery>();
                 List<SpanQuery> nots = new List<SpanQuery>();
-                BooleanClause[] bclauses = qc.Clauses;
+                BooleanClause[] bclauses = qc.GetClauses();
 
                 // For all clauses e.g. one* two~
                 for (int i = 0; i < bclauses.Length; i++)

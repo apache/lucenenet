@@ -161,7 +161,7 @@ namespace Lucene.Net.Facet
             }
 
             BooleanQuery ddq = query.BooleanQuery;
-            BooleanClause[] clauses = ddq.Clauses;
+            BooleanClause[] clauses = ddq.GetClauses();
 
             Query baseQuery;
             int startClause;

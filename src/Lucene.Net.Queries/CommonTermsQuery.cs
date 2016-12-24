@@ -204,12 +204,8 @@ namespace Lucene.Net.Queries
                 }
 
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numLowFreqClauses = lowFreq.clauses().size();
-            int numLowFreqClauses = lowFreq.Clauses.Length;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numHighFreqClauses = highFreq.clauses().size();
-            int numHighFreqClauses = highFreq.Clauses.Length;
+            int numLowFreqClauses = lowFreq.GetClauses().Length;
+            int numHighFreqClauses = highFreq.GetClauses().Length;
             if (lowFreqOccur == Occur.SHOULD && numLowFreqClauses > 0)
             {
                 int minMustMatch = CalcLowFreqMinimumNumberShouldMatch(numLowFreqClauses);
@@ -220,7 +216,7 @@ namespace Lucene.Net.Queries
                 int minMustMatch = CalcHighFreqMinimumNumberShouldMatch(numHighFreqClauses);
                 highFreq.MinimumNumberShouldMatch = minMustMatch;
             }
-            if (lowFreq.Clauses.Length == 0)
+            if (lowFreq.GetClauses().Length == 0)
             {
                 /*
                  * if lowFreq is empty we rewrite the high freq terms in a conjunction to
@@ -236,7 +232,7 @@ namespace Lucene.Net.Queries
                 highFreq.Boost = Boost;
                 return highFreq;
             }
-            else if (highFreq.Clauses.Length == 0)
+            else if (highFreq.GetClauses().Length == 0)
             {
                 // only do low freq terms - we don't have high freq terms
                 lowFreq.Boost = Boost;

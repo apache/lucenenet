@@ -675,13 +675,13 @@ namespace Lucene.Net.QueryParsers.Simple
         /// </summary>
         protected virtual Query Simplify(BooleanQuery bq)
         {
-            if (!bq.Clauses.Any())
+            if (!bq.GetClauses().Any())
             {
                 return null;
             }
-            else if (bq.Clauses.Length == 1)
+            else if (bq.GetClauses().Length == 1)
             {
-                return bq.Clauses[0].Query;
+                return bq.GetClauses()[0].Query;
             }
             else
             {

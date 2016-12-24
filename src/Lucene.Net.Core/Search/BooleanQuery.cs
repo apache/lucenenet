@@ -172,19 +172,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the set of clauses in this query. </summary>
-        public virtual BooleanClause[] Clauses // LUCENENET TODO: Change to GetClauses() (array, conversion)
+        public virtual BooleanClause[] GetClauses()
         {
-            get
-            {
-                return clauses.ToArray();
-            }
+            return clauses.ToArray();
         }
 
         /// <summary>
         /// Returns the list of clauses in this query. </summary>
-        public virtual IList<BooleanClause> GetClauses() // LUCENENET TODO: Make property
+        public virtual IList<BooleanClause> Clauses
         {
-            return clauses;
+            get { return clauses; }
         }
 
         /// <summary>
@@ -194,7 +191,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public IEnumerator<BooleanClause> GetEnumerator()
         {
-            return GetClauses().GetEnumerator();
+            return Clauses.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -214,38 +211,38 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// The Similarity implementation. </summary>
-            protected Similarity similarity; // LUCENENET TODO: rename
+            protected Similarity m_similarity;
 
-            protected List<Weight> Weights; // LUCENENET TODO: rename
-            protected int maxCoord; // num optional + num required // LUCENENET TODO: rename
-            private readonly bool DisableCoord; // LUCENENET TODO: rename
+            protected List<Weight> m_weights;
+            protected int m_maxCoord; // num optional + num required
+            private readonly bool m_disableCoord;
 
             public BooleanWeight(BooleanQuery outerInstance, IndexSearcher searcher, bool disableCoord)
             {
                 this.OuterInstance = outerInstance;
-                this.similarity = searcher.Similarity;
-                this.DisableCoord = disableCoord;
-                Weights = new List<Weight>(outerInstance.clauses.Count);
+                this.m_similarity = searcher.Similarity;
+                this.m_disableCoord = disableCoord;
+                m_weights = new List<Weight>(outerInstance.clauses.Count);
                 for (int i = 0; i < outerInstance.clauses.Count; i++)
                 {
                     BooleanClause c = outerInstance.clauses[i];
                     Weight w = c.Query.CreateWeight(searcher);
-                    Weights.Add(w);
+                    m_weights.Add(w);
                     if (!c.IsProhibited)
                     {
-                        maxCoord++;
+                        m_maxCoord++;
                     }
                 }
             }
 
             public Similarity Similarity
             {
-                get { return similarity; }
+                get { return m_similarity; }
             }
 
             public int MaxCoord
             {
-                get { return maxCoord; }
+                get { return m_maxCoord; }
             }
 
             public override Query Query
@@ -261,10 +258,10 @@ namespace Lucene.Net.Search
                 get
                 {
                     float sum = 0.0f;
-                    for (int i = 0; i < Weights.Count; i++)
+                    for (int i = 0; i < m_weights.Count; i++)
                     {
                         // call sumOfSquaredWeights for all clauses in case of side effects
-                        float s = Weights[i].ValueForNormalization; // sum sub weights
+                        float s = m_weights[i].ValueForNormalization; // sum sub weights
                         if (!OuterInstance.clauses[i].IsProhibited)
                         {
                             // only add to sum for non-prohibited clauses
@@ -284,13 +281,13 @@ namespace Lucene.Net.Search
                 // so coord() is not applied. But when BQ cannot optimize itself away
                 // for a single clause (minNrShouldMatch, prohibited clauses, etc), its
                 // important not to apply coord(1,1) for consistency, it might not be 1.0F
-                return maxOverlap == 1 ? 1F : similarity.Coord(overlap, maxOverlap);
+                return maxOverlap == 1 ? 1F : m_similarity.Coord(overlap, maxOverlap);
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
                 topLevelBoost *= OuterInstance.Boost; // incorporate boost
-                foreach (Weight w in Weights)
+                foreach (Weight w in m_weights)
                 {
                     // normalize all clauses, (even if prohibited in case of side affects)
                     w.Normalize(norm, topLevelBoost);
@@ -307,7 +304,7 @@ namespace Lucene.Net.Search
                 bool fail = false;
                 int shouldMatchCount = 0;
                 IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
-                for (IEnumerator<Weight> wIter = Weights.GetEnumerator(); wIter.MoveNext(); )
+                for (IEnumerator<Weight> wIter = m_weights.GetEnumerator(); wIter.MoveNext(); )
                 {
                     Weight w = wIter.Current;
                     cIter.MoveNext();
@@ -369,7 +366,7 @@ namespace Lucene.Net.Search
                 sumExpl.Match = 0 < coord ? true : false;
                 sumExpl.Value = sum;
 
-                float coordFactor = DisableCoord ? 1.0f : Coord(coord, maxCoord);
+                float coordFactor = m_disableCoord ? 1.0f : Coord(coord, m_maxCoord);
                 if (coordFactor == 1.0f)
                 {
                     return sumExpl; // eliminate wrapper
@@ -378,7 +375,7 @@ namespace Lucene.Net.Search
                 {
                     ComplexExplanation result = new ComplexExplanation(sumExpl.IsMatch, sum * coordFactor, "product of:");
                     result.AddDetail(sumExpl);
-                    result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + maxCoord + ")"));
+                    result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + m_maxCoord + ")"));
                     return result;
                 }
             }
@@ -395,7 +392,7 @@ namespace Lucene.Net.Search
                 IList<BulkScorer> prohibited = new List<BulkScorer>();
                 IList<BulkScorer> optional = new List<BulkScorer>();
                 IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
-                foreach (Weight w in Weights)
+                foreach (Weight w in m_weights)
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
@@ -425,7 +422,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Check if we can and should return a BooleanScorer
-                return new BooleanScorer(this, DisableCoord, OuterInstance.minNrShouldMatch, optional, prohibited, maxCoord);
+                return new BooleanScorer(this, m_disableCoord, OuterInstance.minNrShouldMatch, optional, prohibited, m_maxCoord);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
@@ -434,7 +431,7 @@ namespace Lucene.Net.Search
                 IList<Scorer> prohibited = new List<Scorer>();
                 IList<Scorer> optional = new List<Scorer>();
                 IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
-                foreach (Weight w in Weights)
+                foreach (Weight w in m_weights)
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
@@ -476,7 +473,7 @@ namespace Lucene.Net.Search
                 // simple conjunction
                 if (optional.Count == 0 && prohibited.Count == 0)
                 {
-                    float coord = DisableCoord ? 1.0f : Coord(required.Count, maxCoord);
+                    float coord = m_disableCoord ? 1.0f : Coord(required.Count, m_maxCoord);
                     return new ConjunctionScorer(this, required.ToArray(), coord);
                 }
 
@@ -486,13 +483,13 @@ namespace Lucene.Net.Search
                     var coord = new float[optional.Count + 1];
                     for (int i = 0; i < coord.Length; i++)
                     {
-                        coord[i] = DisableCoord ? 1.0f : Coord(i, maxCoord);
+                        coord[i] = m_disableCoord ? 1.0f : Coord(i, m_maxCoord);
                     }
                     return new DisjunctionSumScorer(this, optional.ToArray(), coord);
                 }
 
                 // Return a BooleanScorer2
-                return new BooleanScorer2(this, DisableCoord, OuterInstance.minNrShouldMatch, required, prohibited, optional, maxCoord);
+                return new BooleanScorer2(this, m_disableCoord, OuterInstance.minNrShouldMatch, required, prohibited, optional, m_maxCoord);
             }
 
             public override bool ScoresDocsOutOfOrder()

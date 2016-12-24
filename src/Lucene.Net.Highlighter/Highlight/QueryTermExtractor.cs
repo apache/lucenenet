@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         private static void GetTermsFromBooleanQuery(BooleanQuery query, HashSet<WeightedTerm> terms, bool prohibited, string fieldName)
         {
-            var queryClauses = query.GetClauses();
+            var queryClauses = query.Clauses;
             for (int i = 0; i < queryClauses.Count; i++)
             {
                 if (prohibited || queryClauses[i].Occur != Occur.MUST_NOT)

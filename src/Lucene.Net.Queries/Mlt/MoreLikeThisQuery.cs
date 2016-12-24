@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries.Mlt
             mlt.MaxQueryTerms = MaxQueryTerms;
             mlt.StopWords = StopWords;
             var bq = (BooleanQuery)mlt.Like(new StringReader(LikeText), fieldName);
-            var clauses = bq.Clauses;
+            var clauses = bq.GetClauses();
             //make at least half the terms match
             bq.MinimumNumberShouldMatch = (int)(clauses.Length * PercentTermsToMatch);
             return bq;

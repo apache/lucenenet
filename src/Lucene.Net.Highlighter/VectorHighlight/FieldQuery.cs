@@ -367,7 +367,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 else if (query is MultiTermQuery && reader != null)
                 {
                     BooleanQuery mtqTerms = (BooleanQuery)query.Rewrite(reader);
-                    foreach (BooleanClause clause in mtqTerms.Clauses)
+                    foreach (BooleanClause clause in mtqTerms.GetClauses())
                     {
                         termSet.Add(((TermQuery)clause.Query).Term.Text());
                     }

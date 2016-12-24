@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Highlight
         {
             if (query is BooleanQuery)
             {
-                IList<BooleanClause> queryClauses = ((BooleanQuery)query).GetClauses();
+                IList<BooleanClause> queryClauses = ((BooleanQuery)query).Clauses;
 
                 for (int i = 0; i < queryClauses.Count; i++)
                 {
