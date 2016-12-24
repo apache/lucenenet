@@ -49,13 +49,13 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// the automaton to match index terms against </summary>
-        protected readonly Automaton Automaton_Renamed; // LUCENENET TODO: rename
+        protected readonly Automaton m_automaton;
 
-        protected readonly CompiledAutomaton Compiled; // LUCENENET TODO: rename
+        protected readonly CompiledAutomaton m_compiled;
 
         /// <summary>
         /// term containing the field, and possibly some pattern structure </summary>
-        protected readonly Term Term; // LUCENENET TODO: rename (important for subclasses)
+        protected readonly Term m_term;
 
         /// <summary>
         /// Create a new AutomatonQuery from an <seealso cref="Automaton"/>.
@@ -67,22 +67,22 @@ namespace Lucene.Net.Search
         public AutomatonQuery(Term term, Automaton automaton)
             : base(term.Field)
         {
-            this.Term = term;
-            this.Automaton_Renamed = automaton;
-            this.Compiled = new CompiledAutomaton(automaton);
+            this.m_term = term;
+            this.m_automaton = automaton;
+            this.m_compiled = new CompiledAutomaton(automaton);
         }
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            return Compiled.GetTermsEnum(terms);
+            return m_compiled.GetTermsEnum(terms);
         }
 
         public override int GetHashCode()
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + Compiled.GetHashCode();
-            result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
+            result = prime * result + m_compiled.GetHashCode();
+            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -101,18 +101,18 @@ namespace Lucene.Net.Search
                 return false;
             }
             AutomatonQuery other = (AutomatonQuery)obj;
-            if (!Compiled.Equals(other.Compiled))
+            if (!m_compiled.Equals(other.m_compiled))
             {
                 return false;
             }
-            if (Term == null)
+            if (m_term == null)
             {
-                if (other.Term != null)
+                if (other.m_term != null)
                 {
                     return false;
                 }
             }
-            else if (!Term.Equals(other.Term))
+            else if (!m_term.Equals(other.m_term))
             {
                 return false;
             }
@@ -122,15 +122,15 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Term.Field.Equals(field))
+            if (!m_term.Field.Equals(field))
             {
-                buffer.Append(Term.Field);
+                buffer.Append(m_term.Field);
                 buffer.Append(":");
             }
             buffer.Append(this.GetType().Name);
             buffer.Append(" {");
             buffer.Append('\n');
-            buffer.Append(Automaton_Renamed.ToString());
+            buffer.Append(m_automaton.ToString());
             buffer.Append("}");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Automaton_Renamed;
+                return m_automaton;
             }
         }
     }
