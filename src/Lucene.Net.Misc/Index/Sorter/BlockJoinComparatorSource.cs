@@ -139,13 +139,10 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    bottomParent = parentSlots[value];
-                    bottomChild = childSlots[value];
-                }
+                bottomParent = parentSlots[slot];
+                bottomChild = childSlots[slot];
             }
 
             public override object TopValue
@@ -260,7 +257,7 @@ namespace Lucene.Net.Index.Sorter
                     // TODO: would be better if copy() didnt cause a term lookup in TermOrdVal & co,
                     // the segments are always the same here...
                     comparators[i].Copy(0, docID1);
-                    comparators[i].Bottom = 0;
+                    comparators[i].SetBottom(0);
                     int comp = reverseMul[i] * comparators[i].CompareBottom(docID2);
                     if (comp != 0)
                     {

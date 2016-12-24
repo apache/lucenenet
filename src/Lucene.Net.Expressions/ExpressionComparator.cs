@@ -51,9 +51,9 @@ namespace Lucene.Net.Expressions
             return values[slot1].CompareTo(values[slot2]);
         }
 
-        public override int Bottom
+        public override void SetBottom(int slot)
         {
-            set { bottom = values[value]; }
+            bottom = values[slot];
         }
 
         public override object TopValue

@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Grouping
                 int lastComparatorSlot = orderedGroups.Last().ComparatorSlot;
                 foreach (FieldComparator fc in comparators)
                 {
-                    fc.Bottom = lastComparatorSlot;
+                    fc.SetBottom(lastComparatorSlot);
                 }
 
                 return;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     foreach (FieldComparator fc in comparators)
                     {
-                        fc.Bottom = newLast.ComparatorSlot;
+                        fc.SetBottom(newLast.ComparatorSlot);
                     }
                 }
             }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Search.Grouping
 
             foreach (FieldComparator fc in comparators)
             {
-                fc.Bottom = orderedGroups.Last().ComparatorSlot;
+                fc.SetBottom(orderedGroups.Last().ComparatorSlot);
             }
         }
 

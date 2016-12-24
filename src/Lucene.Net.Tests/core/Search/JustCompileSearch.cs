@@ -137,12 +137,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
+                throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override object TopValue

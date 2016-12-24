@@ -215,7 +215,7 @@ namespace Lucene.Net.Join
 
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    comparators[i].Bottom = bottom.Slot;
+                    comparators[i].SetBottom(bottom.Slot);
                 }
             }
             else
@@ -243,7 +243,7 @@ namespace Lucene.Net.Join
                     // End of startup transient: queue just filled up:
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = bottom.Slot;
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
             }

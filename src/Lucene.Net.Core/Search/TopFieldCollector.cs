@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, float.NaN);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, float.NaN);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -337,7 +337,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparator.Copy(Bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.Bottom = Bottom.Slot;
+                    comparator.SetBottom(Bottom.Slot);
                 }
                 else
                 {
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (QueueFull)
                     {
-                        comparator.Bottom = Bottom.Slot;
+                        comparator.SetBottom(Bottom.Slot);
                     }
                 }
             }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -659,7 +659,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -676,7 +676,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -748,7 +748,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -765,7 +765,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -838,7 +838,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -858,7 +858,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -927,7 +927,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -947,7 +947,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }
@@ -1104,7 +1104,7 @@ namespace Lucene.Net.Search
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = Bottom.Slot;
+                        comparators[i].SetBottom(Bottom.Slot);
                     }
                 }
                 else
@@ -1131,7 +1131,7 @@ namespace Lucene.Net.Search
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = Bottom.Slot;
+                            comparators[i].SetBottom(Bottom.Slot);
                         }
                     }
                 }

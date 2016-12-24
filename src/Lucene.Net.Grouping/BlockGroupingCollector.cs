@@ -221,7 +221,7 @@ namespace Lucene.Net.Search.Grouping
                         //System.out.println("    set bottom=" + bottomSlot);
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].Bottom = bottomSlot;
+                            comparators[i].SetBottom(bottomSlot);
                         }
                         //System.out.println("     QUEUE FULL");
                     }
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Grouping
                     //System.out.println("    set bottom=" + bottomSlot);
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Bottom = bottomSlot;
+                        comparators[i].SetBottom(bottomSlot);
                     }
                 }
             }
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.Grouping
                     foreach (FieldComparator fc in comparators)
                     {
                         fc.Copy(bottomSlot, doc);
-                        fc.Bottom = bottomSlot;
+                        fc.SetBottom(bottomSlot);
                     }
                     topGroupDoc = doc;
                 }
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search.Grouping
                         // Necessary because some comparators cache
                         // details of bottom slot; this forces them to
                         // re-cache:
-                        fc.Bottom = bottomSlot;
+                        fc.SetBottom(bottomSlot);
                     }
                     topGroupDoc = doc;
                 }
@@ -617,7 +617,7 @@ namespace Lucene.Net.Search.Grouping
                     // Necessary because some comparators cache
                     // details of bottom slot; this forces them to
                     // re-cache:
-                    fc.Bottom = bottomSlot;
+                    fc.SetBottom(bottomSlot);
                 }
                 topGroupDoc = doc;
                 //System.out.println("        doc competes w/ top groups");

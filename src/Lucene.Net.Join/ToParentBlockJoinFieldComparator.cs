@@ -51,12 +51,9 @@ namespace Lucene.Net.Join
             return _wrappedComparator.Compare(slot1, slot2);
         }
 
-        public override int Bottom
+        public override void SetBottom(int slot)
         {
-            set
-            {
-                _wrappedComparator.Bottom = value;
-            }
+            _wrappedComparator.SetBottom(slot);
         }
 
         public override object TopValue

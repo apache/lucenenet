@@ -180,12 +180,9 @@ namespace Lucene.Net.Search
                 return values[slot2] - values[slot1]; // values will be small enough that there is no overflow concern
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    bottomVal = values[value];
-                }
+                bottomVal = values[slot];
             }
 
             public override object TopValue

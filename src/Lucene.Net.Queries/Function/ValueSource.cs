@@ -173,12 +173,9 @@ namespace Lucene.Net.Queries.Function
                 return this;
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.bottom = values[value];
-                }
+                this.bottom = values[slot];
             }
 
             public override object TopValue

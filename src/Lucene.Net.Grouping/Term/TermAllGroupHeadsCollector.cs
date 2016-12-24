@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     comparators[i] = sortFields[i].GetComparator(1, i).SetNextReader(outerInstance.readerContext);
                     comparators[i].Scorer = outerInstance.scorer;
                     comparators[i].Copy(0, doc);
-                    comparators[i].Bottom = 0;
+                    comparators[i].SetBottom(0);
                 }
             }
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 foreach (FieldComparator comparator in comparators)
                 {
                     comparator.Copy(0, doc);
-                    comparator.Bottom = 0;
+                    comparator.SetBottom(0);
                 }
                 this.Doc = doc + outerInstance.readerContext.DocBase;
             }

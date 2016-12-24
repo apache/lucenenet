@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
         /// will always be called before <seealso cref="#compareBottom"/>.
         /// </summary>
         /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
-        public abstract override int Bottom { set; } // LUCENENET TODO: Change to SetBottom(int slot)
+        public abstract override void SetBottom(int slot);
 
         /// <summary>
         /// Record the top value, for future calls to {@link
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
         /// will always be called before <seealso cref="#compareBottom"/>.
         /// </summary>
         /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
-        public abstract int Bottom { set; }// LUCENENET TODO: Change to SetBottom(int slot)
+        public abstract void SetBottom(int slot);
 
         /// <summary>
         /// Record the top value, for future calls to {@link
@@ -417,12 +417,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.bottom = Values[value];
-                }
+                this.bottom = Values[slot];
             }
 
             public override object TopValue
@@ -511,12 +508,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
@@ -605,12 +599,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
@@ -701,12 +692,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
@@ -793,12 +781,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
@@ -888,12 +873,9 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
@@ -966,12 +948,9 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Scores[value];
-                }
+                this.Bottom_Renamed = Scores[slot];
             }
 
             public override object TopValue
@@ -1062,12 +1041,9 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = DocIDs[value];
-                }
+                this.Bottom_Renamed = DocIDs[slot];
             }
 
             public override object TopValue
@@ -1305,50 +1281,47 @@ namespace Lucene.Net.Search
                 if (BottomSlot != -1)
                 {
                     // Recompute bottomOrd/SameReader
-                    Bottom = BottomSlot;
+                    SetBottom(BottomSlot);
                 }
 
                 return this;
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    BottomSlot = value;
+                BottomSlot = slot;
 
-                    BottomValue = Values[BottomSlot];
-                    if (CurrentReaderGen == ReaderGen[BottomSlot])
+                BottomValue = Values[BottomSlot];
+                if (CurrentReaderGen == ReaderGen[BottomSlot])
+                {
+                    BottomOrd = Ords[BottomSlot];
+                    BottomSameReader = true;
+                }
+                else
+                {
+                    if (BottomValue == null)
                     {
-                        BottomOrd = Ords[BottomSlot];
+                        // missingOrd is null for all segments
+                        Debug.Assert(Ords[BottomSlot] == MissingOrd);
+                        BottomOrd = MissingOrd;
                         BottomSameReader = true;
+                        ReaderGen[BottomSlot] = CurrentReaderGen;
                     }
                     else
                     {
-                        if (BottomValue == null)
+                        int ord = TermsIndex.LookupTerm(BottomValue);
+                        if (ord < 0)
                         {
-                            // missingOrd is null for all segments
-                            Debug.Assert(Ords[BottomSlot] == MissingOrd);
-                            BottomOrd = MissingOrd;
-                            BottomSameReader = true;
-                            ReaderGen[BottomSlot] = CurrentReaderGen;
+                            BottomOrd = -ord - 2;
+                            BottomSameReader = false;
                         }
                         else
                         {
-                            int ord = TermsIndex.LookupTerm(BottomValue);
-                            if (ord < 0)
-                            {
-                                BottomOrd = -ord - 2;
-                                BottomSameReader = false;
-                            }
-                            else
-                            {
-                                BottomOrd = ord;
-                                // exact value match
-                                BottomSameReader = true;
-                                ReaderGen[BottomSlot] = CurrentReaderGen;
-                                Ords[BottomSlot] = BottomOrd;
-                            }
+                            BottomOrd = ord;
+                            // exact value match
+                            BottomSameReader = true;
+                            ReaderGen[BottomSlot] = CurrentReaderGen;
+                            Ords[BottomSlot] = BottomOrd;
                         }
                     }
                 }
@@ -1492,12 +1465,9 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            public override int Bottom
+            public override void SetBottom(int slot)
             {
-                set
-                {
-                    this.Bottom_Renamed = Values[value];
-                }
+                this.Bottom_Renamed = Values[slot];
             }
 
             public override object TopValue
