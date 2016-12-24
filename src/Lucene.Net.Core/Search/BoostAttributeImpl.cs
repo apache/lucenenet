@@ -17,38 +17,32 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    /*LUCENE TO-DO Unnecessary class
+    using Attribute = Lucene.Net.Util.Attribute;
 
-	using Attribute = Lucene.Net.Util.Attribute;
+    /// <summary>
+    /// Implementation class for <seealso cref="IBoostAttribute"/>.
+    /// @lucene.internal
+    /// </summary>
+    public sealed class BoostAttribute : Attribute, IBoostAttribute
+    {
+        /// <summary>
+        /// Sets the boost in this attribute </summary>
+        private float boost = 1.0f;
 
-	/// <summary>
-	/// Implementation class for <seealso cref="BoostAttribute"/>.
-	/// @lucene.internal
-	/// </summary>
-	public sealed class BoostAttributeImpl : BoostAttribute, Attribute
-	{
-	  private float Boost_Renamed = 1.0f;
+        public float Boost
+        {
+            get { return boost; }
+            set { boost = value; }
+        }
 
-	  public override float Boost
-	  {
-		  set
-		  {
-			this.Boost_Renamed = value;
-		  }
-		  get
-		  {
-			return Boost_Renamed;
-		  }
-	  }
+        public override void Clear()
+        {
+            boost = 1.0f;
+        }
 
-	  public override void Clear()
-	  {
-		Boost_Renamed = 1.0f;
-	  }
-
-	  public override void CopyTo(Attribute target)
-	  {
-		((BoostAttribute) target).Boost = Boost_Renamed;
-	  }
-	}*/
+        public override void CopyTo(Attribute target)
+        {
+            ((BoostAttribute)target).Boost = boost;
+        }
+    }
 }
