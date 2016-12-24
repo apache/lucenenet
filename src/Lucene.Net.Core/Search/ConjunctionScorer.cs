@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
     /// Scorer for conjunctions, sets of queries, all of which are required. </summary>
     internal class ConjunctionScorer : Scorer
     {
-        protected int LastDoc = -1; // LUCENENET TODO: rename
+        protected int lastDoc = -1;
         protected readonly DocsAndFreqs[] docsAndFreqs;
-        private readonly DocsAndFreqs Lead; // LUCENENET TODO: rename (private)
-        private readonly float Coord; // LUCENENET TODO: rename (private)
+        private readonly DocsAndFreqs lead;
+        private readonly float coord;
 
         internal ConjunctionScorer(Weight weight, Scorer[] scorers)
             : this(weight, scorers, 1f)
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         internal ConjunctionScorer(Weight weight, Scorer[] scorers, float coord)
             : base(weight)
         {
-            this.Coord = coord;
+            this.coord = coord;
             this.docsAndFreqs = new DocsAndFreqs[scorers.Length];
             for (int i = 0; i < scorers.Length; i++)
             {
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
             // lead the matching.
             ArrayUtil.TimSort(docsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
 
-            Lead = docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
+            lead = docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
         }
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
@@ -110,25 +110,25 @@ namespace Lucene.Net.Search
                 }
             advanceHeadBreak:
                 // advance head for next iteration
-                doc = Lead.Doc = Lead.Scorer.Advance(doc);
+                doc = lead.Doc = lead.Scorer.Advance(doc);
             }
         }
 
         public override int Advance(int target)
         {
-            Lead.Doc = Lead.Scorer.Advance(target);
-            return LastDoc = DoNext(Lead.Doc);
+            lead.Doc = lead.Scorer.Advance(target);
+            return lastDoc = DoNext(lead.Doc);
         }
 
         public override int DocID()
         {
-            return LastDoc;
+            return lastDoc;
         }
 
         public override int NextDoc()
         {
-            Lead.Doc = Lead.Scorer.NextDoc();
-            return LastDoc = DoNext(Lead.Doc);
+            lead.Doc = lead.Scorer.NextDoc();
+            return lastDoc = DoNext(lead.Doc);
         }
 
         public override float Score()
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
             {
                 sum += docs.Scorer.Score();
             }
-            return sum * Coord;
+            return sum * coord;
         }
 
         public override int Freq
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 
         public override long Cost()
         {
-            return Lead.Scorer.Cost();
+            return lead.Scorer.Cost();
         }
 
         public override ICollection<ChildScorer> Children
@@ -167,14 +167,15 @@ namespace Lucene.Net.Search
 
         internal sealed class DocsAndFreqs
         {
-            internal readonly long Cost;  // LUCENENET TODO: make property
-            internal readonly Scorer Scorer;  // LUCENENET TODO: make property
-            internal int Doc = -1;  // LUCENENET TODO: make property
+            internal long Cost { get; private set; }
+            internal Scorer Scorer { get; private set; }
+            internal int Doc { get; set; }
 
             internal DocsAndFreqs(Scorer scorer)
             {
                 this.Scorer = scorer;
                 this.Cost = scorer.Cost();
+                this.Doc = -1;
             }
         }
     }
