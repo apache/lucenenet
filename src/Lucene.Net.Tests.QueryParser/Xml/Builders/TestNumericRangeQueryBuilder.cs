@@ -59,8 +59,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToInt32(-1), numRangeFilter.Min);
             assertEquals(Convert.ToInt32(10), numRangeFilter.Max);
             assertEquals("AGE", numRangeFilter.Field);
-            assertTrue(numRangeFilter.IncludesMin());
-            assertTrue(numRangeFilter.IncludesMax());
+            assertTrue(numRangeFilter.IncludesMin);
+            assertTrue(numRangeFilter.IncludesMax);
 
             String xml2 = "<NumericRangeQuery fieldName='AGE' type='int' lowerTerm='-1' upperTerm='10' includeUpper='false'/>";
             XmlDocument doc2 = GetDocumentFromString(xml2);
@@ -71,8 +71,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToInt32(-1), numRangeFilter2.Min);
             assertEquals(Convert.ToInt32(10), numRangeFilter2.Max);
             assertEquals("AGE", numRangeFilter2.Field);
-            assertTrue(numRangeFilter2.IncludesMin());
-            assertFalse(numRangeFilter2.IncludesMax());
+            assertTrue(numRangeFilter2.IncludesMin);
+            assertFalse(numRangeFilter2.IncludesMax);
         }
 
         [Test]
@@ -88,8 +88,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToInt64(-2321L), numRangeFilter.Min);
             assertEquals(Convert.ToInt64(60000000L), numRangeFilter.Max);
             assertEquals("AGE", numRangeFilter.Field);
-            assertTrue(numRangeFilter.IncludesMin());
-            assertTrue(numRangeFilter.IncludesMax());
+            assertTrue(numRangeFilter.IncludesMin);
+            assertTrue(numRangeFilter.IncludesMax);
 
             String xml2 = "<NumericRangeQuery fieldName='AGE' type='LoNg' lowerTerm='-2321' upperTerm='60000000' includeUpper='false'/>";
             XmlDocument doc2 = GetDocumentFromString(xml2);
@@ -100,8 +100,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToInt64(-2321L), numRangeFilter2.Min);
             assertEquals(Convert.ToInt64(60000000L), numRangeFilter2.Max);
             assertEquals("AGE", numRangeFilter2.Field);
-            assertTrue(numRangeFilter2.IncludesMin());
-            assertFalse(numRangeFilter2.IncludesMax());
+            assertTrue(numRangeFilter2.IncludesMin);
+            assertFalse(numRangeFilter2.IncludesMax);
         }
 
         [Test]
@@ -119,8 +119,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToDouble(-23.21d), numRangeFilter.Min);
             assertEquals(Convert.ToDouble(60000.00023d), numRangeFilter.Max);
             assertEquals("AGE", numRangeFilter.Field);
-            assertTrue(numRangeFilter.IncludesMin());
-            assertTrue(numRangeFilter.IncludesMax());
+            assertTrue(numRangeFilter.IncludesMin);
+            assertTrue(numRangeFilter.IncludesMax);
 
             String xml2 = "<NumericRangeQuery fieldName='AGE' type='doubLe' lowerTerm='-23.21' upperTerm='60000.00023' includeUpper='false'/>";
             XmlDocument doc2 = GetDocumentFromString(xml2);
@@ -131,8 +131,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToDouble(-23.21d), numRangeFilter2.Min);
             assertEquals(Convert.ToDouble(60000.00023d), numRangeFilter2.Max);
             assertEquals("AGE", numRangeFilter2.Field);
-            assertTrue(numRangeFilter2.IncludesMin());
-            assertFalse(numRangeFilter2.IncludesMax());
+            assertTrue(numRangeFilter2.IncludesMin);
+            assertFalse(numRangeFilter2.IncludesMax);
         }
 
         [Test]
@@ -150,8 +150,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToSingle(-2.321432f), numRangeFilter.Min);
             assertEquals(Convert.ToSingle(32432.23f), numRangeFilter.Max);
             assertEquals("AGE", numRangeFilter.Field);
-            assertTrue(numRangeFilter.IncludesMin());
-            assertTrue(numRangeFilter.IncludesMax());
+            assertTrue(numRangeFilter.IncludesMin);
+            assertTrue(numRangeFilter.IncludesMax);
 
             String xml2 = "<NumericRangeQuery fieldName='AGE' type='FLOAT' lowerTerm='-2.321432' upperTerm='32432.23' includeUpper='false' precisionStep='2' />";
             XmlDocument doc2 = GetDocumentFromString(xml2);
@@ -163,8 +163,8 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             assertEquals(Convert.ToSingle(-2.321432f), numRangeFilter2.Min);
             assertEquals(Convert.ToSingle(32432.23f), numRangeFilter2.Max);
             assertEquals("AGE", numRangeFilter2.Field);
-            assertTrue(numRangeFilter2.IncludesMin());
-            assertFalse(numRangeFilter2.IncludesMax());
+            assertTrue(numRangeFilter2.IncludesMin);
+            assertFalse(numRangeFilter2.IncludesMax);
         }
 
         private static XmlDocument GetDocumentFromString(String str)
