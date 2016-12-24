@@ -406,12 +406,12 @@ namespace Lucene.Net.Search
             IndexReader oldReader = reader;
             reader = RefreshReader(reader);
             Assert.IsTrue(reader == oldReader);
-            int missCount = filter.MissCount;
+            int missCount = filter.missCount;
             docs = searcher.Search(constantScore, 1);
             Assert.AreEqual(1, docs.TotalHits, "[just filter] Should find a hit...");
 
             // cache hit:
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
 
             // now delete the doc, refresh the reader, and see that it's not there
             writer.DeleteDocuments(new Term("id", "1"));
@@ -424,12 +424,12 @@ namespace Lucene.Net.Search
 
             searcher = NewSearcher(reader, false, Similarity);
 
-            missCount = filter.MissCount;
+            missCount = filter.missCount;
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(0, docs.TotalHits, "[query + filter] Should *not* find a hit...");
 
             // cache hit
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
             docs = searcher.Search(constantScore, 1);
             Assert.AreEqual(0, docs.TotalHits, "[just filter] Should *not* find a hit...");
 
@@ -441,12 +441,12 @@ namespace Lucene.Net.Search
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(1, docs.TotalHits, "[query + filter] Should find a hit...");
-            missCount = filter.MissCount;
+            missCount = filter.missCount;
             Assert.IsTrue(missCount > 0);
             constantScore = new ConstantScoreQuery(filter);
             docs = searcher.Search(constantScore, 1);
             Assert.AreEqual(1, docs.TotalHits, "[just filter] Should find a hit...");
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
 
             writer.AddDocument(doc);
 
@@ -460,13 +460,13 @@ namespace Lucene.Net.Search
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(2, docs.TotalHits, "[query + filter] Should find 2 hits...");
-            Assert.IsTrue(filter.MissCount > missCount);
-            missCount = filter.MissCount;
+            Assert.IsTrue(filter.missCount > missCount);
+            missCount = filter.missCount;
 
             constantScore = new ConstantScoreQuery(filter);
             docs = searcher.Search(constantScore, 1);
             Assert.AreEqual(2, docs.TotalHits, "[just filter] Should find a hit...");
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
 
             // now delete the doc, refresh the reader, and see that it's not there
             writer.DeleteDocuments(new Term("id", "1"));
@@ -477,12 +477,12 @@ namespace Lucene.Net.Search
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(0, docs.TotalHits, "[query + filter] Should *not* find a hit...");
             // CWF reused the same entry (it dynamically applied the deletes):
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
 
             docs = searcher.Search(constantScore, 1);
             Assert.AreEqual(0, docs.TotalHits, "[just filter] Should *not* find a hit...");
             // CWF reused the same entry (it dynamically applied the deletes):
-            Assert.AreEqual(missCount, filter.MissCount);
+            Assert.AreEqual(missCount, filter.missCount);
 
             // NOTE: silliness to make sure JRE does not eliminate
             // our holding onto oldReader to prevent

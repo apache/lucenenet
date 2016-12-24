@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
         }
 
         // for testing
-        internal int HitCount, MissCount; // LUCENENET TODO: rename (private), make internal properties
+        internal int hitCount, missCount;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
@@ -117,11 +117,11 @@ namespace Lucene.Net.Search
             DocIdSet docIdSet = _cache[key];
             if (docIdSet != null)
             {
-                HitCount++;
+                hitCount++;
             }
             else
             {
-                MissCount++;
+                missCount++;
                 docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
                 Debug.Assert(docIdSet.Cacheable);
                 _cache[key] = docIdSet;
