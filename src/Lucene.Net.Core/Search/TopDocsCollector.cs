@@ -1,5 +1,6 @@
-using System;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -19,8 +20,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Util;
 
     /// <summary>
     /// A base class for all collectors that return a <seealso cref="TopDocs"/> output. this

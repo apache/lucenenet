@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -16,8 +18,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Util;
 
     internal sealed class PhraseQueue : PriorityQueue<PhrasePositions>
     {

@@ -17,10 +17,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    // javadocs only
-    // javadocs only
-    // javadocs only
-
     /// <summary>
     /// Add this <seealso cref="Attribute"/> to a <seealso cref="TermsEnum"/> returned by <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>
     /// and update the boost on each returned term. this enables to control the boost factor

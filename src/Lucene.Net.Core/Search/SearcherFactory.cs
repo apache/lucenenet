@@ -1,5 +1,3 @@
-using Lucene.Net.Index;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -20,10 +18,6 @@ namespace Lucene.Net.Search
      */
 
     using IndexReader = Lucene.Net.Index.IndexReader;
-
-    // javadocs
-    // javadocs
-    // javadocs
 
     /// <summary>
     /// Factory class used by <seealso cref="SearcherManager"/> to

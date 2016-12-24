@@ -19,7 +19,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    // javadocs
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>

@@ -2,12 +2,6 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-    using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using AutomatonProvider = Lucene.Net.Util.Automaton.AutomatonProvider;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
-    using Term = Lucene.Net.Index.Term;
-    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +18,12 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Automaton = Lucene.Net.Util.Automaton.Automaton;
+    using AutomatonProvider = Lucene.Net.Util.Automaton.AutomatonProvider;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using Term = Lucene.Net.Index.Term;
+    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
     /// A fast regular expression query based on the

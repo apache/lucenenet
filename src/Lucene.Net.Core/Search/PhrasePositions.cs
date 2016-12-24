@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -16,8 +18,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Index;
 
     /// <summary>
     /// Position of a term in a document that takes into account the term offset within the phrase.

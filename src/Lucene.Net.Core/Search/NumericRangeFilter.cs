@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -16,13 +18,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    using System; // for javadocs
 
     /// <summary>
     /// A <seealso cref="Filter"/> that only accepts numeric values within

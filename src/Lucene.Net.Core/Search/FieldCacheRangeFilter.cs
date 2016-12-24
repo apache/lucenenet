@@ -21,11 +21,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    using AtomicReader = Lucene.Net.Index.AtomicReader; // for javadocs
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
