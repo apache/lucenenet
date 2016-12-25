@@ -37,31 +37,31 @@ namespace Lucene.Net.Search
     public abstract class LiveFieldValues<S, T> : ReferenceManager.RefreshListener, IDisposable
         where S : class
     {
-        private volatile IDictionary<string, T> Current = new ConcurrentDictionary<string, T>(); // LUCENENET TODO: Rename (private)
-        private volatile IDictionary<string, T> Old = new ConcurrentDictionary<string, T>(); // LUCENENET TODO: Rename (private)
-        private readonly ReferenceManager<S> Mgr; // LUCENENET TODO: Rename (private)
-        private readonly T MissingValue; // LUCENENET TODO: Rename (private)
+        private volatile IDictionary<string, T> current = new ConcurrentDictionary<string, T>();
+        private volatile IDictionary<string, T> old = new ConcurrentDictionary<string, T>();
+        private readonly ReferenceManager<S> mgr;
+        private readonly T missingValue;
 
         public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
         {
-            this.MissingValue = missingValue;
-            this.Mgr = mgr;
+            this.missingValue = missingValue;
+            this.mgr = mgr;
             mgr.AddListener(this);
         }
 
         public void Dispose()
         {
-            Mgr.RemoveListener(this);
+            mgr.RemoveListener(this);
         }
 
         public virtual void BeforeRefresh()
         {
-            Old = Current;
+            old = current;
             // Start sending all updates after this point to the new
             // map.  While reopen is running, any lookup will first
             // try this new map, then fallback to old, then to the
             // current searcher:
-            Current = new ConcurrentDictionary<string, T>();
+            current = new ConcurrentDictionary<string, T>();
         }
 
         public virtual void AfterRefresh(bool didRefresh)
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             // entries in it, which is fine: it means they were
             // actually already included in the previously opened
             // reader.  So we can safely clear old here:
-            Old = new ConcurrentDictionary<string, T>();
+            old = new ConcurrentDictionary<string, T>();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void Add(string id, T value)
         {
-            Current[id] = value;
+            current[id] = value;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void Delete(string id)
         {
-            Current[id] = MissingValue;
+            current[id] = missingValue;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual int Size() // LUCENENET TODO: Change to Count property
         {
-            return Current.Count + Old.Count;
+            return current.Count + old.Count;
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace Lucene.Net.Search
         {
             // First try to get the "live" value:
             T value;
-            Current.TryGetValue(id, out value);
-            if (EqualityComparer<T>.Default.Equals(value, MissingValue))
+            current.TryGetValue(id, out value);
+            if (EqualityComparer<T>.Default.Equals(value, missingValue))
             {
                 // Deleted but the deletion is not yet reflected in
                 // the reader:
@@ -124,8 +124,8 @@ namespace Lucene.Net.Search
             }
             else
             {
-                Old.TryGetValue(id, out value);
-                if (EqualityComparer<T>.Default.Equals(value, MissingValue))
+                old.TryGetValue(id, out value);
+                if (EqualityComparer<T>.Default.Equals(value, missingValue))
                 {
                     // Deleted but the deletion is not yet reflected in
                     // the reader:
@@ -140,14 +140,14 @@ namespace Lucene.Net.Search
                     // It either does not exist in the index, or, it was
                     // already flushed & NRT reader was opened on the
                     // segment, so fallback to current searcher:
-                    S s = Mgr.Acquire();
+                    S s = mgr.Acquire();
                     try
                     {
                         return LookupFromSearcher(s, id);
                     }
                     finally
                     {
-                        Mgr.Release(s);
+                        mgr.Release(s);
                     }
                 }
             }
