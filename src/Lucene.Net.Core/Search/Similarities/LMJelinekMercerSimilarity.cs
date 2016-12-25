@@ -78,12 +78,9 @@ namespace Lucene.Net.Search.Similarities
             }
         }
 
-        public override string Name
+        public override string GetName()
         {
-            get
-            {
-                return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda); // LUCENENET TODO: Formatting problem
-            }
+            return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda); // LUCENENET TODO: Formatting problem
         }
     }
 }

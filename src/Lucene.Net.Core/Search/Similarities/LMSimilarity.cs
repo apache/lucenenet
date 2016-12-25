@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Similarities
         /// included as well.
         /// <p>Used in <seealso cref="#toString()"/></p>.
         /// </summary>
-        public abstract string Name { get; } // LUCENENET TODO: Change back to GetName() (makes conversion)
+        public abstract string GetName();
 
         /// <summary>
         /// Returns the name of the LM method. If a custom collection model strategy is
@@ -93,11 +93,11 @@ namespace Lucene.Net.Search.Similarities
             string coll = collectionModel.Name;
             if (coll != null)
             {
-                return string.Format(CultureInfo.InvariantCulture, "LM %s - %s", Name, coll); // LUCENENET TODO: Formatting
+                return string.Format(CultureInfo.InvariantCulture, "LM %s - %s", GetName(), coll); // LUCENENET TODO: Formatting
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, "LM %s", Name); // LUCENENET TODO: Formatting
+                return string.Format(CultureInfo.InvariantCulture, "LM %s", GetName()); // LUCENENET TODO: Formatting
             }
         }
 
