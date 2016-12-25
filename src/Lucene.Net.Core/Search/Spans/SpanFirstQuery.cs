@@ -46,11 +46,11 @@ namespace Lucene.Net.Search.Spans
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
             Debug.Assert(spans.Start != spans.End, "start equals end: " + spans.Start);
-            if (spans.Start >= end)
+            if (spans.Start >= m_end)
             {
                 return AcceptStatus.NO_AND_ADVANCE;
             }
-            else if (spans.End <= end)
+            else if (spans.End <= m_end)
             {
                 return AcceptStatus.YES;
             }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append("spanFirst(");
             buffer.Append(m_match.ToString(field));
             buffer.Append(", ");
-            buffer.Append(end);
+            buffer.Append(m_end);
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery)m_match.Clone(), end);
+            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery)m_match.Clone(), m_end);
             spanFirstQuery.Boost = Boost;
             return spanFirstQuery;
         }
@@ -91,14 +91,14 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanFirstQuery other = (SpanFirstQuery)o;
-            return this.end == other.end && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
+            return this.m_end == other.m_end && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
         {
             int h = m_match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-            h ^= Number.FloatToIntBits(Boost) ^ end; // LUCENENET TODO: This was FloatToRawIntBits in the original
+            h ^= Number.FloatToIntBits(Boost) ^ m_end; // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

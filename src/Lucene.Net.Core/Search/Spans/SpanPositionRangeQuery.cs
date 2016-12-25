@@ -29,24 +29,24 @@ namespace Lucene.Net.Search.Spans
     /// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
     public class SpanPositionRangeQuery : SpanPositionCheckQuery
     {
-        protected int start = 0; // LUCENENET TODO: rename
-        protected int end; // LUCENENET TODO: rename
+        protected int m_start = 0;
+        protected int m_end;
 
         public SpanPositionRangeQuery(SpanQuery match, int start, int end)
             : base(match)
         {
-            this.start = start;
-            this.end = end;
+            this.m_start = start;
+            this.m_end = end;
         }
 
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
             Debug.Assert(spans.Start != spans.End);
-            if (spans.Start >= end)
+            if (spans.Start >= m_end)
             {
                 return AcceptStatus.NO_AND_ADVANCE;
             }
-            else if (spans.Start >= start && spans.End <= end)
+            else if (spans.Start >= m_start && spans.End <= m_end)
             {
                 return AcceptStatus.YES;
             }
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return start;
+                return m_start;
             }
         }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return end;
+                return m_end;
             }
         }
 
@@ -79,8 +79,8 @@ namespace Lucene.Net.Search.Spans
             StringBuilder buffer = new StringBuilder();
             buffer.Append("spanPosRange(");
             buffer.Append(m_match.ToString(field));
-            buffer.Append(", ").Append(start).Append(", ");
-            buffer.Append(end);
+            buffer.Append(", ").Append(m_start).Append(", ");
+            buffer.Append(m_end);
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanPositionRangeQuery result = new SpanPositionRangeQuery((SpanQuery)m_match.Clone(), start, end);
+            SpanPositionRangeQuery result = new SpanPositionRangeQuery((SpanQuery)m_match.Clone(), m_start, m_end);
             result.Boost = Boost;
             return result;
         }
@@ -105,14 +105,14 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanPositionRangeQuery other = (SpanPositionRangeQuery)o;
-            return this.end == other.end && this.start == other.start && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
+            return this.m_end == other.m_end && this.m_start == other.m_start && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
         {
             int h = m_match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-            h ^= Number.FloatToIntBits(Boost) ^ end ^ start; // LUCENENET TODO: This was FloatToRawIntBits in the original
+            h ^= Number.FloatToIntBits(Boost) ^ m_end ^ m_start; // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }
