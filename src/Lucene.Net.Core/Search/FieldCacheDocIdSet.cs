@@ -32,13 +32,13 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class FieldCacheDocIdSet : DocIdSet
     {
-        protected readonly int MaxDoc; // LUCENENET TODO: Rename
-        protected readonly Bits AcceptDocs; // LUCENENET TODO: Rename
+        protected readonly int m_maxDoc;
+        protected readonly Bits m_acceptDocs;
 
         public FieldCacheDocIdSet(int maxDoc, Bits acceptDocs)
         {
-            this.MaxDoc = maxDoc;
-            this.AcceptDocs = acceptDocs;
+            this.m_maxDoc = maxDoc;
+            this.m_acceptDocs = acceptDocs;
         }
 
         /// <summary>
@@ -60,61 +60,61 @@ namespace Lucene.Net.Search
 
         public override sealed Bits GetBits()
         {
-            return (AcceptDocs == null) ? (Bits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
+            return (m_acceptDocs == null) ? (Bits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
         }
 
         private class BitsAnonymousInnerClassHelper : Bits
         {
-            private readonly FieldCacheDocIdSet OuterInstance;
+            private readonly FieldCacheDocIdSet outerInstance;
 
             public BitsAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual bool Get(int docid)
             {
-                return OuterInstance.MatchDoc(docid);
+                return outerInstance.MatchDoc(docid);
             }
 
             public virtual int Length()
             {
-                return OuterInstance.MaxDoc;
+                return outerInstance.m_maxDoc;
             }
         }
 
         private class BitsAnonymousInnerClassHelper2 : Bits
         {
-            private readonly FieldCacheDocIdSet OuterInstance;
+            private readonly FieldCacheDocIdSet outerInstance;
 
             public BitsAnonymousInnerClassHelper2(FieldCacheDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual bool Get(int docid)
             {
-                return OuterInstance.MatchDoc(docid) && OuterInstance.AcceptDocs.Get(docid);
+                return outerInstance.MatchDoc(docid) && outerInstance.m_acceptDocs.Get(docid);
             }
 
             public virtual int Length()
             {
-                return OuterInstance.MaxDoc;
+                return outerInstance.m_maxDoc;
             }
         }
 
         public override sealed DocIdSetIterator GetIterator()
         {
-            if (AcceptDocs == null)
+            if (m_acceptDocs == null)
             {
                 // Specialization optimization disregard acceptDocs
                 return new DocIdSetIteratorAnonymousInnerClassHelper(this);
             }
-            else if (AcceptDocs is FixedBitSet || AcceptDocs is OpenBitSet)
+            else if (m_acceptDocs is FixedBitSet || m_acceptDocs is OpenBitSet)
             {
                 // special case for FixedBitSet / OpenBitSet: use the iterator and filter it
                 // (used e.g. when Filters are chained by FilteredQuery)
-                return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, ((DocIdSet)AcceptDocs).GetIterator());
+                return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, ((DocIdSet)m_acceptDocs).GetIterator());
             }
             else
             {
@@ -125,11 +125,11 @@ namespace Lucene.Net.Search
 
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
-            private readonly FieldCacheDocIdSet OuterInstance;
+            private readonly FieldCacheDocIdSet outerInstance;
 
             public DocIdSetIteratorAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 doc = -1;
             }
 
@@ -145,19 +145,19 @@ namespace Lucene.Net.Search
                 do
                 {
                     doc++;
-                    if (doc >= OuterInstance.MaxDoc)
+                    if (doc >= outerInstance.m_maxDoc)
                     {
                         return doc = NO_MORE_DOCS;
                     }
-                } while (!OuterInstance.MatchDoc(doc));
+                } while (!outerInstance.MatchDoc(doc));
                 return doc;
             }
 
             public override int Advance(int target)
             {
-                for (doc = target; doc < OuterInstance.MaxDoc; doc++)
+                for (doc = target; doc < outerInstance.m_maxDoc; doc++)
                 {
-                    if (OuterInstance.MatchDoc(doc))
+                    if (outerInstance.MatchDoc(doc))
                     {
                         return doc;
                     }
@@ -167,33 +167,33 @@ namespace Lucene.Net.Search
 
             public override long Cost()
             {
-                return OuterInstance.MaxDoc;
+                return outerInstance.m_maxDoc;
             }
         }
 
         private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
         {
-            private readonly FieldCacheDocIdSet OuterInstance;
+            private readonly FieldCacheDocIdSet outerInstance;
 
             public FilteredDocIdSetIteratorAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
                 : base(iterator)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override bool Match(int doc)
             {
-                return OuterInstance.MatchDoc(doc);
+                return outerInstance.MatchDoc(doc);
             }
         }
 
         private class DocIdSetIteratorAnonymousInnerClassHelper2 : DocIdSetIterator
         {
-            private readonly FieldCacheDocIdSet OuterInstance;
+            private readonly FieldCacheDocIdSet outerInstance;
 
             public DocIdSetIteratorAnonymousInnerClassHelper2(FieldCacheDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 doc = -1;
             }
 
@@ -209,19 +209,19 @@ namespace Lucene.Net.Search
                 do
                 {
                     doc++;
-                    if (doc >= OuterInstance.MaxDoc)
+                    if (doc >= outerInstance.m_maxDoc)
                     {
                         return doc = NO_MORE_DOCS;
                     }
-                } while (!(OuterInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc)));
+                } while (!(outerInstance.MatchDoc(doc) && outerInstance.m_acceptDocs.Get(doc)));
                 return doc;
             }
 
             public override int Advance(int target)
             {
-                for (doc = target; doc < OuterInstance.MaxDoc; doc++)
+                for (doc = target; doc < outerInstance.m_maxDoc; doc++)
                 {
-                    if (OuterInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc))
+                    if (outerInstance.MatchDoc(doc) && outerInstance.m_acceptDocs.Get(doc))
                     {
                         return doc;
                     }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search
 
             public override long Cost()
             {
-                return OuterInstance.MaxDoc;
+                return outerInstance.m_maxDoc;
             }
         }
     }
