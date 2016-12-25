@@ -403,18 +403,18 @@ namespace Lucene.Net.Search
             return hash;
         }
 
-        private IComparer<BytesRef> BytesComparator_Renamed = BytesRef.UTF8SortedAsUnicodeComparer; // LUCENENET TODO: Rename (private)
+        private IComparer<BytesRef> bytesComparator = BytesRef.UTF8SortedAsUnicodeComparer;
 
         // LUCENENET TODO: Rename BytesComparer ?
         public virtual IComparer<BytesRef> BytesComparator
         {
             set
             {
-                BytesComparator_Renamed = value;
+                bytesComparator = value;
             }
             get
             {
-                return BytesComparator_Renamed;
+                return bytesComparator;
             }
         }
 
