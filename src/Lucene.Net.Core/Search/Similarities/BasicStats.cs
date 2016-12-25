@@ -23,53 +23,52 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public class BasicStats : Similarity.SimWeight
     {
-        // LUCENENET TODO: These fields should probably be made private/internal since they can be accessed through properties
-        protected internal readonly string field;
+        protected internal readonly string m_field;
 
         /// <summary>
         /// The number of documents. </summary>
-        protected internal long NumberOfDocuments_Renamed;
+        protected long m_numberOfDocuments;
 
         /// <summary>
         /// The total number of tokens in the field. </summary>
-        protected internal long NumberOfFieldTokens_Renamed;
+        protected long m_numberOfFieldTokens;
 
         /// <summary>
         /// The average field length. </summary>
-        protected internal float AvgFieldLength_Renamed;
+        protected internal float m_avgFieldLength;
 
         /// <summary>
         /// The document frequency. </summary>
-        protected internal long DocFreq_Renamed;
+        protected long m_docFreq;
 
         /// <summary>
         /// The total number of occurrences of this term across all documents. </summary>
-        protected internal long TotalTermFreq_Renamed;
+        protected long m_totalTermFreq;
 
         // -------------------------- Boost-related stuff --------------------------
 
         /// <summary>
         /// Query's inner boost. </summary>
-        protected internal readonly float QueryBoost;
+        protected readonly float m_queryBoost;
 
         /// <summary>
         /// Any outer query's boost. </summary>
-        protected internal float TopLevelBoost;
+        protected float m_topLevelBoost;
 
         /// <summary>
         /// For most Similarities, the immediate and the top level query boosts are
         /// not handled differently. Hence, this field is just the product of the
         /// other two.
         /// </summary>
-        protected internal float TotalBoost_Renamed;
+        protected float m_totalBoost;
 
         /// <summary>
         /// Constructor. Sets the query boost. </summary>
         public BasicStats(string field, float queryBoost)
         {
-            this.field = field;
-            this.QueryBoost = queryBoost;
-            this.TotalBoost_Renamed = queryBoost;
+            this.m_field = field;
+            this.m_queryBoost = queryBoost;
+            this.m_totalBoost = queryBoost;
         }
 
         // ------------------------- Getter/setter methods -------------------------
@@ -80,11 +79,11 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return NumberOfDocuments_Renamed;
+                return m_numberOfDocuments;
             }
             set
             {
-                this.NumberOfDocuments_Renamed = value;
+                this.m_numberOfDocuments = value;
             }
         }
 
@@ -95,11 +94,11 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return NumberOfFieldTokens_Renamed;
+                return m_numberOfFieldTokens;
             }
             set
             {
-                this.NumberOfFieldTokens_Renamed = value;
+                this.m_numberOfFieldTokens = value;
             }
         }
 
@@ -109,11 +108,11 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return AvgFieldLength_Renamed;
+                return m_avgFieldLength;
             }
             set
             {
-                this.AvgFieldLength_Renamed = value;
+                this.m_avgFieldLength = value;
             }
         }
 
@@ -123,11 +122,11 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return DocFreq_Renamed;
+                return m_docFreq;
             }
             set
             {
-                this.DocFreq_Renamed = value;
+                this.m_docFreq = value;
             }
         }
 
@@ -137,17 +136,17 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return TotalTermFreq_Renamed;
+                return m_totalTermFreq;
             }
             set
             {
-                this.TotalTermFreq_Renamed = value;
+                this.m_totalTermFreq = value;
             }
         }
 
         public virtual string Field
         {
-            get { return field; }
+            get { return m_field; }
         }
 
         // -------------------------- Boost-related stuff --------------------------
@@ -169,7 +168,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         protected internal virtual float RawNormalizationValue()
         {
-            return QueryBoost;
+            return m_queryBoost;
         }
 
         /// <summary>
@@ -178,8 +177,8 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public override void Normalize(float queryNorm, float topLevelBoost)
         {
-            this.TopLevelBoost = topLevelBoost;
-            TotalBoost_Renamed = QueryBoost * topLevelBoost;
+            this.m_topLevelBoost = topLevelBoost;
+            m_totalBoost = m_queryBoost * topLevelBoost;
         }
 
         /// <summary>
@@ -188,7 +187,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return TotalBoost_Renamed;
+                return m_totalBoost;
             }
         }
     }

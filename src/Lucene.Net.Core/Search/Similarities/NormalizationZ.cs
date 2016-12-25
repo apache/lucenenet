@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override float Tfn(BasicStats stats, float tf, float len)
         {
-            return (float)(tf * Math.Pow(stats.AvgFieldLength_Renamed / len, z));
+            return (float)(tf * Math.Pow(stats.m_avgFieldLength / len, z));
         }
 
         public override string ToString()
