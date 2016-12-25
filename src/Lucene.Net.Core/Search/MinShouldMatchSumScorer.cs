@@ -38,39 +38,39 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The overall number of non-finalized scorers </summary>
-        private int NumScorers; // LUCENENET TODO: Rename (private)
+        private int numScorers;
 
         /// <summary>
         /// The minimum number of scorers that should match </summary>
-        private readonly int Mm; // LUCENENET TODO: Rename (private)
+        private readonly int mm;
 
         /// <summary>
         /// A static array of all subscorers sorted by decreasing cost </summary>
-        private readonly Scorer[] SortedSubScorers; // LUCENENET TODO: Rename (private)
+        private readonly Scorer[] sortedSubScorers;
 
         /// <summary>
         /// A monotonically increasing index into the array pointing to the next subscorer that is to be excluded </summary>
-        private int SortedSubScorersIdx = 0; // LUCENENET TODO: Rename (private)
+        private int sortedSubScorersIdx = 0;
 
-        private readonly Scorer[] SubScorers; // the first numScorers-(mm-1) entries are valid // LUCENENET TODO: Rename (private)
-        private int NrInHeap; // 0..(numScorers-(mm-1)-1) // LUCENENET TODO: Rename (private)
+        private readonly Scorer[] subScorers; // the first numScorers-(mm-1) entries are valid
+        private int nrInHeap; // 0..(numScorers-(mm-1)-1)
 
         /// <summary>
         /// mmStack is supposed to contain the most costly subScorers that still did
         ///  not run out of docs, sorted by increasing sparsity of docs returned by that subScorer.
         ///  For now, the cost of subscorers is assumed to be inversely correlated with sparsity.
         /// </summary>
-        private readonly Scorer[] MmStack; // of size mm-1: 0..mm-2, always full // LUCENENET TODO: Rename (private)
+        private readonly Scorer[] mmStack; // of size mm-1: 0..mm-2, always full
 
         /// <summary>
         /// The document number of the current match. </summary>
-        private int Doc = -1; // LUCENENET TODO: Rename (private)
+        private int doc = -1;
 
         /// <summary>
         /// The number of subscorers that provide the current match. </summary>
-        protected int NrMatchers = -1; // LUCENENET TODO: Rename (private)
+        protected int m_nrMatchers = -1;
 
-        private double Score_Renamed = float.NaN; // LUCENENET TODO: Rename (private)
+        private double score = float.NaN;
 
         /// <summary>
         /// Construct a <code>MinShouldMatchSumScorer</code>.
@@ -86,35 +86,35 @@ namespace Lucene.Net.Search
         public MinShouldMatchSumScorer(Weight weight, IList<Scorer> subScorers, int minimumNrMatchers)
             : base(weight)
         {
-            this.NrInHeap = this.NumScorers = subScorers.Count;
+            this.nrInHeap = this.numScorers = subScorers.Count;
 
             if (minimumNrMatchers <= 0)
             {
                 throw new System.ArgumentException("Minimum nr of matchers must be positive");
             }
-            if (NumScorers <= 1)
+            if (numScorers <= 1)
             {
                 throw new System.ArgumentException("There must be at least 2 subScorers");
             }
 
-            this.Mm = minimumNrMatchers;
-            this.SortedSubScorers = subScorers.ToArray();
+            this.mm = minimumNrMatchers;
+            this.sortedSubScorers = subScorers.ToArray();
             // sorting by decreasing subscorer cost should be inversely correlated with
             // next docid (assuming costs are due to generating many postings)
-            ArrayUtil.TimSort(SortedSubScorers, new ComparatorAnonymousInnerClassHelper(this));
+            ArrayUtil.TimSort(sortedSubScorers, new ComparatorAnonymousInnerClassHelper(this));
             // take mm-1 most costly subscorers aside
-            this.MmStack = new Scorer[Mm - 1];
-            for (int i = 0; i < Mm - 1; i++)
+            this.mmStack = new Scorer[mm - 1];
+            for (int i = 0; i < mm - 1; i++)
             {
-                MmStack[i] = SortedSubScorers[i];
+                mmStack[i] = sortedSubScorers[i];
             }
-            NrInHeap -= Mm - 1;
-            this.SortedSubScorersIdx = Mm - 1;
+            nrInHeap -= mm - 1;
+            this.sortedSubScorersIdx = mm - 1;
             // take remaining into heap, if any, and heapify
-            this.SubScorers = new Scorer[NrInHeap];
-            for (int i = 0; i < NrInHeap; i++)
+            this.subScorers = new Scorer[nrInHeap];
+            for (int i = 0; i < nrInHeap; i++)
             {
-                this.SubScorers[i] = this.SortedSubScorers[Mm - 1 + i];
+                this.subScorers[i] = this.sortedSubScorers[mm - 1 + i];
             }
             MinheapHeapify();
             Debug.Assert(MinheapCheck());
@@ -122,11 +122,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<Scorer>
         {
-            private readonly MinShouldMatchSumScorer OuterInstance;
+            private readonly MinShouldMatchSumScorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper(MinShouldMatchSumScorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(Scorer o1, Scorer o2)
@@ -148,10 +148,10 @@ namespace Lucene.Net.Search
         {
             get
             {
-                List<ChildScorer> children = new List<ChildScorer>(NumScorers);
-                for (int i = 0; i < NumScorers; i++)
+                List<ChildScorer> children = new List<ChildScorer>(numScorers);
+                for (int i = 0; i < numScorers; i++)
                 {
-                    children.Add(new ChildScorer(SubScorers[i], "SHOULD"));
+                    children.Add(new ChildScorer(subScorers[i], "SHOULD"));
                 }
                 return children;
             }
@@ -159,23 +159,23 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            Debug.Assert(Doc != NO_MORE_DOCS);
+            Debug.Assert(doc != NO_MORE_DOCS);
             while (true)
             {
                 // to remove current doc, call next() on all subScorers on current doc within heap
-                while (SubScorers[0].DocID == Doc)
+                while (subScorers[0].DocID == doc)
                 {
-                    if (SubScorers[0].NextDoc() != NO_MORE_DOCS)
+                    if (subScorers[0].NextDoc() != NO_MORE_DOCS)
                     {
                         MinheapSiftDown(0);
                     }
                     else
                     {
                         MinheapRemoveRoot();
-                        NumScorers--;
-                        if (NumScorers < Mm)
+                        numScorers--;
+                        if (numScorers < mm)
                         {
-                            return Doc = NO_MORE_DOCS;
+                            return doc = NO_MORE_DOCS;
                         }
                     }
                     //assert minheapCheck();
@@ -183,43 +183,43 @@ namespace Lucene.Net.Search
 
                 EvaluateSmallestDocInHeap();
 
-                if (NrMatchers >= Mm) // doc satisfies mm constraint
+                if (m_nrMatchers >= mm) // doc satisfies mm constraint
                 {
                     break;
                 }
             }
-            return Doc;
+            return doc;
         }
 
         private void EvaluateSmallestDocInHeap()
         {
             // within heap, subScorer[0] now contains the next candidate doc
-            Doc = SubScorers[0].DocID;
-            if (Doc == NO_MORE_DOCS)
+            doc = subScorers[0].DocID;
+            if (doc == NO_MORE_DOCS)
             {
-                NrMatchers = int.MaxValue; // stop looping
+                m_nrMatchers = int.MaxValue; // stop looping
                 return;
             }
             // 1. score and count number of matching subScorers within heap
-            Score_Renamed = SubScorers[0].Score();
-            NrMatchers = 1;
+            score = subScorers[0].Score();
+            m_nrMatchers = 1;
             CountMatches(1);
             CountMatches(2);
             // 2. score and count number of matching subScorers within stack,
             // short-circuit: stop when mm can't be reached for current doc, then perform on heap next()
             // TODO instead advance() might be possible, but complicates things
-            for (int i = Mm - 2; i >= 0; i--) // first advance sparsest subScorer
+            for (int i = mm - 2; i >= 0; i--) // first advance sparsest subScorer
             {
-                if (MmStack[i].DocID >= Doc || MmStack[i].Advance(Doc) != NO_MORE_DOCS)
+                if (mmStack[i].DocID >= doc || mmStack[i].Advance(doc) != NO_MORE_DOCS)
                 {
-                    if (MmStack[i].DocID == Doc) // either it was already on doc, or got there via advance()
+                    if (mmStack[i].DocID == doc) // either it was already on doc, or got there via advance()
                     {
-                        NrMatchers++;
-                        Score_Renamed += MmStack[i].Score();
+                        m_nrMatchers++;
+                        score += mmStack[i].Score();
                     } // scorer advanced to next after doc, check if enough scorers left for current doc
                     else
                     {
-                        if (NrMatchers + i < Mm) // too few subScorers left, abort advancing
+                        if (m_nrMatchers + i < mm) // too few subScorers left, abort advancing
                         {
                             return; // continue looping TODO consider advance() here
                         }
@@ -227,27 +227,27 @@ namespace Lucene.Net.Search
                 } // subScorer exhausted
                 else
                 {
-                    NumScorers--;
-                    if (NumScorers < Mm) // too few subScorers left
+                    numScorers--;
+                    if (numScorers < mm) // too few subScorers left
                     {
-                        Doc = NO_MORE_DOCS;
-                        NrMatchers = int.MaxValue; // stop looping
+                        doc = NO_MORE_DOCS;
+                        m_nrMatchers = int.MaxValue; // stop looping
                         return;
                     }
-                    if (Mm - 2 - i > 0)
+                    if (mm - 2 - i > 0)
                     {
                         // shift RHS of array left
-                        Array.Copy(MmStack, i + 1, MmStack, i, Mm - 2 - i);
+                        Array.Copy(mmStack, i + 1, mmStack, i, mm - 2 - i);
                     }
                     // find next most costly subScorer within heap TODO can this be done better?
-                    while (!MinheapRemove(SortedSubScorers[SortedSubScorersIdx++]))
+                    while (!MinheapRemove(sortedSubScorers[sortedSubScorersIdx++]))
                     {
                         //assert minheapCheck();
                     }
                     // add the subScorer removed from heap to stack
-                    MmStack[Mm - 2] = SortedSubScorers[SortedSubScorersIdx - 1];
+                    mmStack[mm - 2] = sortedSubScorers[sortedSubScorersIdx - 1];
 
-                    if (NrMatchers + i < Mm) // too few subScorers left, abort advancing
+                    if (m_nrMatchers + i < mm) // too few subScorers left, abort advancing
                     {
                         return; // continue looping TODO consider advance() here
                     }
@@ -262,10 +262,10 @@ namespace Lucene.Net.Search
         // then also change freq() to just always compute it from scratch
         private void CountMatches(int root)
         {
-            if (root < NrInHeap && SubScorers[root].DocID == Doc)
+            if (root < nrInHeap && subScorers[root].DocID == doc)
             {
-                NrMatchers++;
-                Score_Renamed += SubScorers[root].Score();
+                m_nrMatchers++;
+                score += subScorers[root].Score();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }
@@ -277,17 +277,17 @@ namespace Lucene.Net.Search
         /// </summary>
         public override float Score()
         {
-            return (float)Score_Renamed;
+            return (float)score;
         }
 
         public override int DocID
         {
-            get { return Doc; }
+            get { return doc; }
         }
 
         public override int Freq
         {
-            get { return NrMatchers; }
+            get { return m_nrMatchers; }
         }
 
         /// <summary>
@@ -300,24 +300,24 @@ namespace Lucene.Net.Search
         ///         target, or -1 if none exist. </returns>
         public override int Advance(int target)
         {
-            if (NumScorers < Mm)
+            if (numScorers < mm)
             {
-                return Doc = NO_MORE_DOCS;
+                return doc = NO_MORE_DOCS;
             }
             // advance all Scorers in heap at smaller docs to at least target
-            while (SubScorers[0].DocID < target)
+            while (subScorers[0].DocID < target)
             {
-                if (SubScorers[0].Advance(target) != NO_MORE_DOCS)
+                if (subScorers[0].Advance(target) != NO_MORE_DOCS)
                 {
                     MinheapSiftDown(0);
                 }
                 else
                 {
                     MinheapRemoveRoot();
-                    NumScorers--;
-                    if (NumScorers < Mm)
+                    numScorers--;
+                    if (numScorers < mm)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
                 }
                 //assert minheapCheck();
@@ -325,9 +325,9 @@ namespace Lucene.Net.Search
 
             EvaluateSmallestDocInHeap();
 
-            if (NrMatchers >= Mm)
+            if (m_nrMatchers >= mm)
             {
-                return Doc;
+                return doc;
             }
             else
             {
@@ -339,14 +339,14 @@ namespace Lucene.Net.Search
         {
             // cost for merging of lists analog to DisjunctionSumScorer
             long costCandidateGeneration = 0;
-            for (int i = 0; i < NrInHeap; i++)
+            for (int i = 0; i < nrInHeap; i++)
             {
-                costCandidateGeneration += SubScorers[i].Cost();
+                costCandidateGeneration += subScorers[i].Cost();
             }
             // TODO is cost for advance() different to cost for iteration + heap merge
             //      and how do they compare overall to pure disjunctions?
             const float c1 = 1.0f, c2 = 1.0f; // maybe a constant, maybe a proportion between costCandidateGeneration and sum(subScorer_to_be_advanced.cost())?
-            return (long)(c1 * costCandidateGeneration + c2 * costCandidateGeneration * (Mm - 1)); // advance() cost -  heap-merge cost
+            return (long)(c1 * costCandidateGeneration + c2 * costCandidateGeneration * (mm - 1)); // advance() cost -  heap-merge cost
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected void MinheapHeapify()
         {
-            for (int i = (NrInHeap >> 1) - 1; i >= 0; i--)
+            for (int i = (nrInHeap >> 1) - 1; i >= 0; i--)
             {
                 MinheapSiftDown(i);
             }
@@ -367,40 +367,40 @@ namespace Lucene.Net.Search
         protected void MinheapSiftDown(int root)
         {
             // TODO could this implementation also move rather than swapping neighbours?
-            Scorer scorer = SubScorers[root];
+            Scorer scorer = subScorers[root];
             int doc = scorer.DocID;
             int i = root;
-            while (i <= (NrInHeap >> 1) - 1)
+            while (i <= (nrInHeap >> 1) - 1)
             {
                 int lchild = (i << 1) + 1;
-                Scorer lscorer = SubScorers[lchild];
+                Scorer lscorer = subScorers[lchild];
                 int ldoc = lscorer.DocID;
                 int rdoc = int.MaxValue, rchild = (i << 1) + 2;
                 Scorer rscorer = null;
-                if (rchild < NrInHeap)
+                if (rchild < nrInHeap)
                 {
-                    rscorer = SubScorers[rchild];
+                    rscorer = subScorers[rchild];
                     rdoc = rscorer.DocID;
                 }
                 if (ldoc < doc)
                 {
                     if (rdoc < ldoc)
                     {
-                        SubScorers[i] = rscorer;
-                        SubScorers[rchild] = scorer;
+                        subScorers[i] = rscorer;
+                        subScorers[rchild] = scorer;
                         i = rchild;
                     }
                     else
                     {
-                        SubScorers[i] = lscorer;
-                        SubScorers[lchild] = scorer;
+                        subScorers[i] = lscorer;
+                        subScorers[lchild] = scorer;
                         i = lchild;
                     }
                 }
                 else if (rdoc < doc)
                 {
-                    SubScorers[i] = rscorer;
-                    SubScorers[rchild] = scorer;
+                    subScorers[i] = rscorer;
+                    subScorers[rchild] = scorer;
                     i = rchild;
                 }
                 else
@@ -412,17 +412,17 @@ namespace Lucene.Net.Search
 
         protected void MinheapSiftUp(int i)
         {
-            Scorer scorer = SubScorers[i];
+            Scorer scorer = subScorers[i];
             int doc = scorer.DocID;
             // find right place for scorer
             while (i > 0)
             {
                 int parent = (i - 1) >> 1;
-                Scorer pscorer = SubScorers[parent];
+                Scorer pscorer = subScorers[parent];
                 int pdoc = pscorer.DocID;
                 if (pdoc > doc) // move root down, make space
                 {
-                    SubScorers[i] = SubScorers[parent];
+                    subScorers[i] = subScorers[parent];
                     i = parent;
                 } // done, found right place
                 else
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search
                     break;
                 }
             }
-            SubScorers[i] = scorer;
+            subScorers[i] = scorer;
         }
 
         /// <summary>
@@ -438,15 +438,15 @@ namespace Lucene.Net.Search
         /// </summary>
         protected void MinheapRemoveRoot()
         {
-            if (NrInHeap == 1)
+            if (nrInHeap == 1)
             {
                 //subScorers[0] = null; // not necessary
-                NrInHeap = 0;
+                nrInHeap = 0;
             }
             else
             {
-                NrInHeap--;
-                SubScorers[0] = SubScorers[NrInHeap];
+                nrInHeap--;
+                subScorers[0] = subScorers[nrInHeap];
                 //subScorers[nrInHeap] = null; // not necessary
                 MinheapSiftDown(0);
             }
@@ -459,11 +459,11 @@ namespace Lucene.Net.Search
         protected bool MinheapRemove(Scorer scorer)
         {
             // find scorer: O(nrInHeap)
-            for (int i = 0; i < NrInHeap; i++)
+            for (int i = 0; i < nrInHeap; i++)
             {
-                if (SubScorers[i] == scorer) // remove scorer
+                if (subScorers[i] == scorer) // remove scorer
                 {
-                    SubScorers[i] = SubScorers[--NrInHeap];
+                    subScorers[i] = subScorers[--nrInHeap];
                     //if (i != nrInHeap) subScorers[nrInHeap] = null; // not necessary
                     MinheapSiftUp(i);
                     MinheapSiftDown(i);
@@ -480,17 +480,17 @@ namespace Lucene.Net.Search
 
         private bool MinheapCheck(int root)
         {
-            if (root >= NrInHeap)
+            if (root >= nrInHeap)
             {
                 return true;
             }
             int lchild = (root << 1) + 1;
             int rchild = (root << 1) + 2;
-            if (lchild < NrInHeap && SubScorers[root].DocID > SubScorers[lchild].DocID)
+            if (lchild < nrInHeap && subScorers[root].DocID > subScorers[lchild].DocID)
             {
                 return false;
             }
-            if (rchild < NrInHeap && SubScorers[root].DocID > SubScorers[rchild].DocID)
+            if (rchild < nrInHeap && subScorers[root].DocID > subScorers[rchild].DocID)
             {
                 return false;
             }

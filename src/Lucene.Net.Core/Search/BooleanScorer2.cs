@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 
             public override float Score()
             {
-                OuterInstance.coordinator.NrMatchers += base.NrMatchers;
+                OuterInstance.coordinator.NrMatchers += base.m_nrMatchers;
                 return base.Score();
             }
         }
