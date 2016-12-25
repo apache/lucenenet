@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class MultiPhraseQuery : Query
     {
-        private string Field; // LUCENENET TODO: Rename (private)
+        private string field;
         private List<Term[]> termArrays = new List<Term[]>();
         private readonly List<int> positions = new List<int>();
 
@@ -110,14 +110,14 @@ namespace Lucene.Net.Search
         {
             if (termArrays.Count == 0)
             {
-                Field = terms[0].Field;
+                field = terms[0].Field;
             }
 
             for (var i = 0; i < terms.Length; i++)
             {
-                if (!terms[i].Field.Equals(Field))
+                if (!terms[i].Field.Equals(field))
                 {
-                    throw new System.ArgumentException("All phrase terms must be in the same field (" + Field + "): " + terms[i]);
+                    throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
                 }
             }
 
@@ -167,16 +167,16 @@ namespace Lucene.Net.Search
 
         private class MultiPhraseWeight : Weight
         {
-            private readonly MultiPhraseQuery OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly MultiPhraseQuery outerInstance;
 
-            private readonly Similarity Similarity; // LUCENENET TODO: Rename (private)
-            private readonly Similarity.SimWeight Stats; // LUCENENET TODO: Rename (private)
-            private readonly IDictionary<Term, TermContext> TermContexts = new Dictionary<Term, TermContext>(); // LUCENENET TODO: Rename (private)
+            private readonly Similarity similarity;
+            private readonly Similarity.SimWeight stats; 
+            private readonly IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
 
             public MultiPhraseWeight(MultiPhraseQuery outerInstance, IndexSearcher searcher)
             {
-                this.OuterInstance = outerInstance;
-                this.Similarity = searcher.Similarity;
+                this.outerInstance = outerInstance;
+                this.similarity = searcher.Similarity;
                 IndexReaderContext context = searcher.TopReaderContext;
 
                 // compute idf
@@ -186,45 +186,45 @@ namespace Lucene.Net.Search
                     foreach (Term term in terms)
                     {
                         TermContext termContext;
-                        TermContexts.TryGetValue(term, out termContext);
+                        termContexts.TryGetValue(term, out termContext);
                         if (termContext == null)
                         {
                             termContext = TermContext.Build(context, term);
-                            TermContexts[term] = termContext;
+                            termContexts[term] = termContext;
                         }
                         allTermStats.Add(searcher.TermStatistics(term, termContext));
                     }
                 }
-                Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.Field), allTermStats.ToArray());
+                stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.field), allTermStats.ToArray());
             }
 
             public override Query Query
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             public override float GetValueForNormalization()
             {
-                return Stats.GetValueForNormalization();
+                return stats.GetValueForNormalization();
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                Stats.Normalize(queryNorm, topLevelBoost);
+                stats.Normalize(queryNorm, topLevelBoost);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                Debug.Assert(OuterInstance.termArrays.Count > 0);
+                Debug.Assert(outerInstance.termArrays.Count > 0);
                 AtomicReader reader = (context.AtomicReader);
                 Bits liveDocs = acceptDocs;
 
-                PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[OuterInstance.termArrays.Count];
+                PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[outerInstance.termArrays.Count];
 
-                Terms fieldTerms = reader.Terms(OuterInstance.Field);
+                Terms fieldTerms = reader.Terms(outerInstance.field);
                 if (fieldTerms == null)
                 {
                     return null;
@@ -235,14 +235,14 @@ namespace Lucene.Net.Search
 
                 for (int pos = 0; pos < postingsFreqs.Length; pos++)
                 {
-                    Term[] terms = OuterInstance.termArrays[pos];
+                    Term[] terms = outerInstance.termArrays[pos];
 
                     DocsAndPositionsEnum postingsEnum;
                     int docFreq;
 
                     if (terms.Length > 1)
                     {
-                        postingsEnum = new UnionDocsAndPositionsEnum(liveDocs, context, terms, TermContexts, termsEnum);
+                        postingsEnum = new UnionDocsAndPositionsEnum(liveDocs, context, terms, termContexts, termsEnum);
 
                         // coarse -- this overcounts since a given doc can
                         // have more than one term:
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
                         for (int termIdx = 0; termIdx < terms.Length; termIdx++)
                         {
                             Term term = terms[termIdx];
-                            TermState termState = TermContexts[term].Get(context.Ord);
+                            TermState termState = termContexts[term].Get(context.Ord);
                             if (termState == null)
                             {
                                 // Term not in reader
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
                     else
                     {
                         Term term = terms[0];
-                        TermState termState = TermContexts[term].Get(context.Ord);
+                        TermState termState = termContexts[term].Get(context.Ord);
                         if (termState == null)
                         {
                             // Term not in reader
@@ -288,18 +288,18 @@ namespace Lucene.Net.Search
                         docFreq = termsEnum.DocFreq();
                     }
 
-                    postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, (int)OuterInstance.positions[pos], terms);
+                    postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, (int)outerInstance.positions[pos], terms);
                 }
 
                 // sort by increasing docFreq order
-                if (OuterInstance.slop == 0)
+                if (outerInstance.slop == 0)
                 {
                     ArrayUtil.TimSort(postingsFreqs);
                 }
 
-                if (OuterInstance.slop == 0)
+                if (outerInstance.slop == 0)
                 {
-                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.DoSimScorer(Stats, context));
+                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, similarity.DoSimScorer(stats, context));
                     if (s.noDocs)
                     {
                         return null;
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.DoSimScorer(Stats, context));
+                    return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.slop, similarity.DoSimScorer(stats, context));
                 }
             }
 
@@ -323,10 +323,10 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = OuterInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
-                        SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
+                        float freq = outerInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
+                        SimScorer docScorer = similarity.DoSimScorer(stats, context);
                         ComplexExplanation result = new ComplexExplanation();
-                        result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+                        result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                         result.AddDetail(scoreExplanation);
                         result.Value = scoreExplanation.Value;
@@ -374,9 +374,9 @@ namespace Lucene.Net.Search
         public override sealed string ToString(string f)
         {
             StringBuilder buffer = new StringBuilder();
-            if (Field == null || !Field.Equals(f))
+            if (field == null || !field.Equals(f))
             {
-                buffer.Append(Field);
+                buffer.Append(field);
                 buffer.Append(":");
             }
 
