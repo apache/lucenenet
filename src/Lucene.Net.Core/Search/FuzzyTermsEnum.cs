@@ -55,37 +55,37 @@ namespace Lucene.Net.Search
     {
         private void InitializeInstanceFields()
         {
-            BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
+            boostAtt = Attributes.AddAttribute<IBoostAttribute>();
         }
 
-        private TermsEnum ActualEnum; // LUCENENET TODO: Rename (private)
-        private IBoostAttribute ActualBoostAtt; // LUCENENET TODO: Rename (private)
+        private TermsEnum actualEnum;
+        private IBoostAttribute actualBoostAtt;
 
-        private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
+        private IBoostAttribute boostAtt;
 
-        private readonly IMaxNonCompetitiveBoostAttribute MaxBoostAtt; // LUCENENET TODO: Rename (private)
-        private readonly ILevenshteinAutomataAttribute DfaAtt; // LUCENENET TODO: Rename (private)
+        private readonly IMaxNonCompetitiveBoostAttribute maxBoostAtt;
+        private readonly ILevenshteinAutomataAttribute dfaAtt;
 
-        private float Bottom; // LUCENENET TODO: Rename (private)
-        private BytesRef BottomTerm; // LUCENENET TODO: Rename (private)
+        private float bottom;
+        private BytesRef bottomTerm;
 
         // TODO: chicken-and-egg
-        private readonly IComparer<BytesRef> TermComparator = BytesRef.UTF8SortedAsUnicodeComparer; // LUCENENET TODO: Rename (private)
+        private readonly IComparer<BytesRef> termComparator = BytesRef.UTF8SortedAsUnicodeComparer;
 
-        protected readonly float MinSimilarity_Renamed; // LUCENENET TODO: Rename
-        protected readonly float Scale_factor; // LUCENENET TODO: Rename
+        protected readonly float m_minSimilarity;
+        protected readonly float m_scaleFactor;
 
-        protected readonly int TermLength; // LUCENENET TODO: Rename 
+        protected readonly int m_termLength;
 
-        protected int MaxEdits; // LUCENENET TODO: Rename 
-        protected readonly bool Raw; // LUCENENET TODO: Rename 
+        protected int m_maxEdits; 
+        protected readonly bool m_raw;
 
-        protected readonly Terms Terms; // LUCENENET TODO: Rename 
-        private readonly Term Term_Renamed; // LUCENENET TODO: Rename (private)
-        protected readonly int[] TermText; // LUCENENET TODO: Rename
-        protected readonly int RealPrefixLength; // LUCENENET TODO: Rename
+        protected readonly Terms m_terms;
+        private readonly Term term;
+        protected readonly int[] m_termText;
+        protected readonly int m_realPrefixLength;
 
-        private readonly bool Transpositions; // LUCENENET TODO: Rename (private)
+        private readonly bool transpositions;
 
         /// <summary>
         /// Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
@@ -119,47 +119,47 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("prefixLength cannot be less than 0");
             }
-            this.Terms = terms;
-            this.Term_Renamed = term;
+            this.m_terms = terms;
+            this.term = term;
 
             // convert the string into a utf32 int[] representation for fast comparisons
             string utf16 = term.Text();
             //this.TermText = new int[utf16.codePointCount(0, utf16.Length)];
-            this.TermText = new int[Character.CodePointCount(utf16, 0, utf16.Length)];
+            this.m_termText = new int[Character.CodePointCount(utf16, 0, utf16.Length)];
             for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
             {
-                TermText[j++] = cp = Character.CodePointAt(utf16, i);
+                m_termText[j++] = cp = Character.CodePointAt(utf16, i);
             }
-            this.TermLength = TermText.Length;
-            this.DfaAtt = atts.AddAttribute<ILevenshteinAutomataAttribute>();
+            this.m_termLength = m_termText.Length;
+            this.dfaAtt = atts.AddAttribute<ILevenshteinAutomataAttribute>();
 
             //The prefix could be longer than the word.
             //It's kind of silly though.  It means we must match the entire word.
-            this.RealPrefixLength = prefixLength > TermLength ? TermLength : prefixLength;
+            this.m_realPrefixLength = prefixLength > m_termLength ? m_termLength : prefixLength;
             // if minSimilarity >= 1, we treat it as number of edits
             if (minSimilarity >= 1f)
             {
-                this.MinSimilarity_Renamed = 0; // just driven by number of edits
-                MaxEdits = (int)minSimilarity;
-                Raw = true;
+                this.m_minSimilarity = 0; // just driven by number of edits
+                m_maxEdits = (int)minSimilarity;
+                m_raw = true;
             }
             else
             {
-                this.MinSimilarity_Renamed = minSimilarity;
+                this.m_minSimilarity = minSimilarity;
                 // calculate the maximum k edits for this similarity
-                MaxEdits = InitialMaxDistance(this.MinSimilarity_Renamed, TermLength);
-                Raw = false;
+                m_maxEdits = InitialMaxDistance(this.m_minSimilarity, m_termLength);
+                m_raw = false;
             }
-            if (transpositions && MaxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
+            if (transpositions && m_maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
                 throw new System.NotSupportedException("with transpositions enabled, distances > " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + " are not supported ");
             }
-            this.Transpositions = transpositions;
-            this.Scale_factor = 1.0f / (1.0f - this.MinSimilarity_Renamed);
+            this.transpositions = transpositions;
+            this.m_scaleFactor = 1.0f / (1.0f - this.m_minSimilarity);
 
-            this.MaxBoostAtt = atts.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
-            Bottom = MaxBoostAtt.MaxNonCompetitiveBoost;
-            BottomTerm = MaxBoostAtt.CompetitiveTerm;
+            this.maxBoostAtt = atts.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
+            bottom = maxBoostAtt.MaxNonCompetitiveBoost;
+            bottomTerm = maxBoostAtt.CompetitiveTerm;
             BottomChanged(null, true);
         }
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             {
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
-                return new AutomatonFuzzyTermsEnum(this, Terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
+                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
             }
             else
             {
@@ -186,20 +186,20 @@ namespace Lucene.Net.Search
         /// initialize levenshtein DFAs up to maxDistance, if possible </summary>
         private IList<CompiledAutomaton> InitAutomata(int maxDistance)
         {
-            IList<CompiledAutomaton> runAutomata = DfaAtt.Automata();
+            IList<CompiledAutomaton> runAutomata = dfaAtt.Automata();
             //System.out.println("cached automata size: " + runAutomata.size());
             if (runAutomata.Count <= maxDistance && maxDistance <= LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                LevenshteinAutomata builder = new LevenshteinAutomata(UnicodeUtil.NewString(TermText, RealPrefixLength, TermText.Length - RealPrefixLength), Transpositions);
+                LevenshteinAutomata builder = new LevenshteinAutomata(UnicodeUtil.NewString(m_termText, m_realPrefixLength, m_termText.Length - m_realPrefixLength), transpositions);
 
                 for (int i = runAutomata.Count; i <= maxDistance; i++)
                 {
                     Automaton a = builder.ToAutomaton(i);
                     //System.out.println("compute automaton n=" + i);
                     // constant prefix
-                    if (RealPrefixLength > 0)
+                    if (m_realPrefixLength > 0)
                     {
-                        Automaton prefix = BasicAutomata.MakeString(UnicodeUtil.NewString(TermText, 0, RealPrefixLength));
+                        Automaton prefix = BasicAutomata.MakeString(UnicodeUtil.NewString(m_termText, 0, m_realPrefixLength));
                         a = BasicOperations.Concatenate(prefix, a);
                     }
                     runAutomata.Add(new CompiledAutomaton(a, true, false));
@@ -214,8 +214,8 @@ namespace Lucene.Net.Search
         {
             set
             {
-                this.ActualEnum = value;
-                this.ActualBoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
+                this.actualEnum = value;
+                this.actualBoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
             }
         }
 
@@ -225,21 +225,21 @@ namespace Lucene.Net.Search
         /// </summary>
         private void BottomChanged(BytesRef lastTerm, bool init)
         {
-            int oldMaxEdits = MaxEdits;
+            int oldMaxEdits = m_maxEdits;
 
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
-            bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
+            bool termAfter = bottomTerm == null || (lastTerm != null && termComparator.Compare(lastTerm, bottomTerm) >= 0);
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
+            while (m_maxEdits > 0 && (termAfter ? bottom >= CalculateMaxBoost(m_maxEdits) : bottom > CalculateMaxBoost(m_maxEdits)))
             {
-                MaxEdits--;
+                m_maxEdits--;
             }
 
-            if (oldMaxEdits != MaxEdits || init) // the maximum n has changed
+            if (oldMaxEdits != m_maxEdits || init) // the maximum n has changed
             {
-                MaxEditDistanceChanged(lastTerm, MaxEdits, init);
+                MaxEditDistanceChanged(lastTerm, m_maxEdits, init);
             }
         }
 
@@ -265,32 +265,32 @@ namespace Lucene.Net.Search
         // for some number of edits, the maximum possible scaled boost
         private float CalculateMaxBoost(int nEdits)
         {
-            float similarity = 1.0f - ((float)nEdits / (float)(TermLength));
-            return (similarity - MinSimilarity_Renamed) * Scale_factor;
+            float similarity = 1.0f - ((float)nEdits / (float)(m_termLength));
+            return (similarity - m_minSimilarity) * m_scaleFactor;
         }
 
-        private BytesRef QueuedBottom = null; // LUCENENET TODO: Rename (private)
+        private BytesRef queuedBottom = null;
 
         public override BytesRef Next()
         {
-            if (QueuedBottom != null)
+            if (queuedBottom != null)
             {
-                BottomChanged(QueuedBottom, false);
-                QueuedBottom = null;
+                BottomChanged(queuedBottom, false);
+                queuedBottom = null;
             }
 
-            BytesRef term = ActualEnum.Next();
-            BoostAtt.Boost = ActualBoostAtt.Boost;
+            BytesRef term = actualEnum.Next();
+            boostAtt.Boost = actualBoostAtt.Boost;
 
-            float bottom = MaxBoostAtt.MaxNonCompetitiveBoost;
-            BytesRef bottomTerm = MaxBoostAtt.CompetitiveTerm;
-            if (term != null && (bottom != this.Bottom || bottomTerm != this.BottomTerm))
+            float bottom = maxBoostAtt.MaxNonCompetitiveBoost;
+            BytesRef bottomTerm = maxBoostAtt.CompetitiveTerm;
+            if (term != null && (bottom != this.bottom || bottomTerm != this.bottomTerm))
             {
-                this.Bottom = bottom;
-                this.BottomTerm = bottomTerm;
+                this.bottom = bottom;
+                this.bottomTerm = bottomTerm;
                 // clone the term before potentially doing something with it
                 // this is a rare but wonderful occurrence anyway
-                QueuedBottom = BytesRef.DeepCopyOf(term);
+                queuedBottom = BytesRef.DeepCopyOf(term);
             }
 
             return term;
@@ -299,65 +299,65 @@ namespace Lucene.Net.Search
         // proxy all other enum calls to the actual enum
         public override int DocFreq()
         {
-            return ActualEnum.DocFreq();
+            return actualEnum.DocFreq();
         }
 
         public override long TotalTermFreq()
         {
-            return ActualEnum.TotalTermFreq();
+            return actualEnum.TotalTermFreq();
         }
 
         public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
         {
-            return ActualEnum.Docs(liveDocs, reuse, flags);
+            return actualEnum.Docs(liveDocs, reuse, flags);
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
-            return ActualEnum.DocsAndPositions(liveDocs, reuse, flags);
+            return actualEnum.DocsAndPositions(liveDocs, reuse, flags);
         }
 
         public override void SeekExact(BytesRef term, TermState state)
         {
-            ActualEnum.SeekExact(term, state);
+            actualEnum.SeekExact(term, state);
         }
 
         public override TermState TermState()
         {
-            return ActualEnum.TermState();
+            return actualEnum.TermState();
         }
 
         public override IComparer<BytesRef> Comparator
         {
             get
             {
-                return ActualEnum.Comparator;
+                return actualEnum.Comparator;
             }
         }
 
         public override long Ord()
         {
-            return ActualEnum.Ord();
+            return actualEnum.Ord();
         }
 
         public override bool SeekExact(BytesRef text)
         {
-            return ActualEnum.SeekExact(text);
+            return actualEnum.SeekExact(text);
         }
 
         public override SeekStatus SeekCeil(BytesRef text)
         {
-            return ActualEnum.SeekCeil(text);
+            return actualEnum.SeekCeil(text);
         }
 
         public override void SeekExact(long ord)
         {
-            ActualEnum.SeekExact(ord);
+            actualEnum.SeekExact(ord);
         }
 
         public override BytesRef Term
         {
-            get { return ActualEnum.Term; }
+            get { return actualEnum.Term; }
         }
 
         /// <summary>
@@ -371,29 +371,29 @@ namespace Lucene.Net.Search
         {
             internal virtual void InitializeInstanceFields()
             {
-                BoostAtt = Attributes.AddAttribute<IBoostAttribute>();
+                boostAtt = Attributes.AddAttribute<IBoostAttribute>();
             }
 
-            private readonly FuzzyTermsEnum OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly FuzzyTermsEnum outerInstance;
 
-            private readonly ByteRunAutomaton[] Matchers; // LUCENENET TODO: Rename (private)
+            private readonly ByteRunAutomaton[] matchers;
 
-            private readonly BytesRef TermRef; // LUCENENET TODO: Rename (private)
+            private readonly BytesRef termRef;
 
-            private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
+            private IBoostAttribute boostAtt;
 
             public AutomatonFuzzyTermsEnum(FuzzyTermsEnum outerInstance, TermsEnum tenum, CompiledAutomaton[] compiled)
                 : base(tenum, false)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
-                this.Matchers = new ByteRunAutomaton[compiled.Length];
+                this.matchers = new ByteRunAutomaton[compiled.Length];
                 for (int i = 0; i < compiled.Length; i++)
                 {
-                    this.Matchers[i] = compiled[i].RunAutomaton;
+                    this.matchers[i] = compiled[i].RunAutomaton;
                 }
-                TermRef = new BytesRef(outerInstance.Term_Renamed.Text());
+                termRef = new BytesRef(outerInstance.term.Text());
             }
 
             /// <summary>
@@ -401,7 +401,7 @@ namespace Lucene.Net.Search
             protected override AcceptStatus Accept(BytesRef term)
             {
                 //System.out.println("AFTE.accept term=" + term);
-                int ed = Matchers.Length - 1;
+                int ed = matchers.Length - 1;
 
                 // we are wrapping either an intersect() TermsEnum or an AutomatonTermsENum,
                 // so we know the outer DFA always matches.
@@ -422,17 +422,17 @@ namespace Lucene.Net.Search
                 // scale to a boost and return (if similarity > minSimilarity)
                 if (ed == 0) // exact match
                 {
-                    BoostAtt.Boost = 1.0F;
+                    boostAtt.Boost = 1.0F;
                     //System.out.println("  yes");
                     return AcceptStatus.YES;
                 }
                 else
                 {
                     int codePointCount = UnicodeUtil.CodePointCount(term);
-                    float similarity = 1.0f - ((float)ed / (float)(Math.Min(codePointCount, OuterInstance.TermLength)));
-                    if (similarity > OuterInstance.MinSimilarity_Renamed)
+                    float similarity = 1.0f - ((float)ed / (float)(Math.Min(codePointCount, outerInstance.m_termLength)));
+                    if (similarity > outerInstance.m_minSimilarity)
                     {
-                        BoostAtt.Boost = (similarity - OuterInstance.MinSimilarity_Renamed) * OuterInstance.Scale_factor;
+                        boostAtt.Boost = (similarity - outerInstance.m_minSimilarity) * outerInstance.m_scaleFactor;
                         //System.out.println("  yes");
                         return AcceptStatus.YES;
                     }
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
             /// returns true if term is within k edits of the query term </summary>
             internal bool Matches(BytesRef term, int k)
             {
-                return k == 0 ? term.Equals(TermRef) : Matchers[k].Run(term.Bytes, term.Offset, term.Length);
+                return k == 0 ? term.Equals(termRef) : matchers[k].Run(term.Bytes, term.Offset, term.Length);
             }
         }
 
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return MinSimilarity_Renamed;
+                return m_minSimilarity;
             }
         }
 
@@ -467,7 +467,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Scale_factor;
+                return m_scaleFactor;
             }
         }
 

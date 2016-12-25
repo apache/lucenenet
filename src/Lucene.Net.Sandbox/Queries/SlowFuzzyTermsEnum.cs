@@ -85,14 +85,14 @@ namespace Lucene.Net.Sandbox.Queries
             /// </summary>
             /// <exception cref="IOException">If there is a low-level I/O error.</exception>
             public LinearFuzzyTermsEnum(SlowFuzzyTermsEnum outerInstance)
-                : base(outerInstance.Terms.Iterator(null))
+                : base(outerInstance.m_terms.Iterator(null))
             {
                 this.outerInstance = outerInstance;
                 this.boostAtt = Attributes.AddAttribute<IBoostAttribute>();
 
-                this.text = new int[outerInstance.TermLength - outerInstance.RealPrefixLength];
-                System.Array.Copy(outerInstance.TermText, outerInstance.RealPrefixLength, text, 0, text.Length);
-                string prefix = UnicodeUtil.NewString(outerInstance.TermText, 0, outerInstance.RealPrefixLength);
+                this.text = new int[outerInstance.m_termLength - outerInstance.m_realPrefixLength];
+                System.Array.Copy(outerInstance.m_termText, outerInstance.m_realPrefixLength, text, 0, text.Length);
+                string prefix = UnicodeUtil.NewString(outerInstance.m_termText, 0, outerInstance.m_realPrefixLength);
                 prefixBytesRef = new BytesRef(prefix);
                 this.d = new int[this.text.Length + 1];
                 this.p = new int[this.text.Length + 1];
@@ -124,7 +124,7 @@ namespace Lucene.Net.Sandbox.Queries
                 if (StringHelper.StartsWith(term, prefixBytesRef))
                 {
                     UnicodeUtil.UTF8toUTF32(term, utf32);
-                    int distance = CalcDistance(utf32.Ints, outerInstance.RealPrefixLength, utf32.Length - outerInstance.RealPrefixLength);
+                    int distance = CalcDistance(utf32.Ints, outerInstance.m_realPrefixLength, utf32.Length - outerInstance.m_realPrefixLength);
 
                     //Integer.MIN_VALUE is the sentinel that Levenshtein stopped early
                     if (distance == int.MinValue)
@@ -132,18 +132,18 @@ namespace Lucene.Net.Sandbox.Queries
                         return AcceptStatus.NO;
                     }
                     //no need to calc similarity, if raw is true and distance > maxEdits
-                    if (outerInstance.Raw == true && distance > outerInstance.MaxEdits)
+                    if (outerInstance.m_raw == true && distance > outerInstance.m_maxEdits)
                     {
                         return AcceptStatus.NO;
                     }
-                    float similarity = CalcSimilarity(distance, (utf32.Length - outerInstance.RealPrefixLength), text.Length);
+                    float similarity = CalcSimilarity(distance, (utf32.Length - outerInstance.m_realPrefixLength), text.Length);
 
                     //if raw is true, then distance must also be <= maxEdits by now
                     //given the previous if statement
-                    if (outerInstance.Raw == true ||
-                          (outerInstance.Raw == false && similarity > outerInstance.MinSimilarity))
+                    if (outerInstance.m_raw == true ||
+                          (outerInstance.m_raw == false && similarity > outerInstance.MinSimilarity))
                     {
-                        boostAtt.Boost = (similarity - outerInstance.MinSimilarity) * outerInstance.Scale_factor;
+                        boostAtt.Boost = (similarity - outerInstance.MinSimilarity) * outerInstance.m_scaleFactor;
                         return AcceptStatus.YES;
                     }
                     else
@@ -273,7 +273,7 @@ namespace Lucene.Net.Sandbox.Queries
                 // so it has not been changed (even though minimumSimilarity must be
                 // greater than 0.0)
 
-                return 1.0f - ((float)edits / (float)(outerInstance.RealPrefixLength + Math.Min(n, m)));
+                return 1.0f - ((float)edits / (float)(outerInstance.m_realPrefixLength + Math.Min(n, m)));
             }
 
             /// <summary>
@@ -285,8 +285,8 @@ namespace Lucene.Net.Sandbox.Queries
             /// <returns>the maximum levenshtein distance that we care about</returns>
             private int CalculateMaxDistance(int m)
             {
-                return outerInstance.Raw ? outerInstance.MaxEdits : Math.Min(outerInstance.MaxEdits,
-                    (int)((1 - outerInstance.MinSimilarity) * (Math.Min(text.Length, m) + outerInstance.RealPrefixLength)));
+                return outerInstance.m_raw ? outerInstance.m_maxEdits : Math.Min(outerInstance.m_maxEdits,
+                    (int)((1 - outerInstance.MinSimilarity) * (Math.Min(text.Length, m) + outerInstance.m_realPrefixLength)));
             }
         }
     }
