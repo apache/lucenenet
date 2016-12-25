@@ -30,85 +30,85 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class TermSpans : Spans
     {
-        protected readonly DocsAndPositionsEnum Postings_Renamed; // LUCENENET TODO: rename
-        protected readonly Term Term; // LUCENENET TODO: rename
-        protected int Doc_Renamed; // LUCENENET TODO: rename
-        protected int Freq; // LUCENENET TODO: rename
-        protected int Count; // LUCENENET TODO: rename
-        protected int Position; // LUCENENET TODO: rename
-        protected bool ReadPayload; // LUCENENET TODO: rename
+        protected readonly DocsAndPositionsEnum m_postings;
+        protected readonly Term m_term;
+        protected int m_doc;
+        protected int m_freq;
+        protected int m_count;
+        protected int m_position;
+        protected bool m_readPayload;
 
         public TermSpans(DocsAndPositionsEnum postings, Term term)
         {
-            this.Postings_Renamed = postings;
-            this.Term = term;
-            Doc_Renamed = -1;
+            this.m_postings = postings;
+            this.m_term = term;
+            m_doc = -1;
         }
 
         // only for EmptyTermSpans (below)
         internal TermSpans()
         {
-            Term = null;
-            Postings_Renamed = null;
+            m_term = null;
+            m_postings = null;
         }
 
         public override bool Next()
         {
-            if (Count == Freq)
+            if (m_count == m_freq)
             {
-                if (Postings_Renamed == null)
+                if (m_postings == null)
                 {
                     return false;
                 }
-                Doc_Renamed = Postings_Renamed.NextDoc();
-                if (Doc_Renamed == DocIdSetIterator.NO_MORE_DOCS)
+                m_doc = m_postings.NextDoc();
+                if (m_doc == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     return false;
                 }
-                Freq = Postings_Renamed.Freq;
-                Count = 0;
+                m_freq = m_postings.Freq;
+                m_count = 0;
             }
-            Position = Postings_Renamed.NextPosition();
-            Count++;
-            ReadPayload = false;
+            m_position = m_postings.NextPosition();
+            m_count++;
+            m_readPayload = false;
             return true;
         }
 
         public override bool SkipTo(int target)
         {
-            Debug.Assert(target > Doc_Renamed);
-            Doc_Renamed = Postings_Renamed.Advance(target);
-            if (Doc_Renamed == DocIdSetIterator.NO_MORE_DOCS)
+            Debug.Assert(target > m_doc);
+            m_doc = m_postings.Advance(target);
+            if (m_doc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 return false;
             }
 
-            Freq = Postings_Renamed.Freq;
-            Count = 0;
-            Position = Postings_Renamed.NextPosition();
-            Count++;
-            ReadPayload = false;
+            m_freq = m_postings.Freq;
+            m_count = 0;
+            m_position = m_postings.NextPosition();
+            m_count++;
+            m_readPayload = false;
             return true;
         }
 
         public override int Doc
         {
-            get { return Doc_Renamed; }
+            get { return m_doc; }
         }
 
         public override int Start
         {
-            get { return Position; }
+            get { return m_position; }
         }
 
         public override int End
         {
-            get { return Position + 1; }
+            get { return m_position + 1; }
         }
 
         public override long Cost()
         {
-            return Postings_Renamed.Cost();
+            return m_postings.Cost();
         }
 
         // TODO: Remove warning after API has been finalized
@@ -116,8 +116,8 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                var payload = Postings_Renamed.Payload;
-                ReadPayload = true;
+                var payload = m_postings.Payload;
+                m_readPayload = true;
                 byte[] bytes;
                 if (payload != null)
                 {
@@ -139,20 +139,20 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return ReadPayload == false && Postings_Renamed.Payload != null;
+                return m_readPayload == false && m_postings.Payload != null;
             }
         }
 
         public override string ToString()
         {
-            return "spans(" + Term.ToString() + ")@" + (Doc_Renamed == -1 ? "START" : (Doc_Renamed == int.MaxValue) ? "END" : Doc_Renamed + "-" + Position);
+            return "spans(" + m_term.ToString() + ")@" + (m_doc == -1 ? "START" : (m_doc == int.MaxValue) ? "END" : m_doc + "-" + m_position);
         }
 
         public virtual DocsAndPositionsEnum Postings
         {
             get
             {
-                return Postings_Renamed;
+                return m_postings;
             }
         }
 
