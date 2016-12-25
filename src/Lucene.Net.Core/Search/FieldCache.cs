@@ -313,7 +313,7 @@ namespace Lucene.Net.Search
         /// </p>
         /// @lucene.experimental
         /// </summary>
-        FieldCache.CacheEntry[] CacheEntries { get; } // LUCENENET TODO: Change to GetCacheEntries() (array)
+        FieldCache.CacheEntry[] GetCacheEntries();
 
         /// <summary>
         /// <p>

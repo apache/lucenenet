@@ -102,37 +102,34 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual FieldCache.CacheEntry[] CacheEntries
+        public virtual FieldCache.CacheEntry[] GetCacheEntries()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
+                foreach (KeyValuePair<Type, Cache> cacheEntry in caches)
                 {
-                    IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
-                    foreach (KeyValuePair<Type, Cache> cacheEntry in caches)
+                    Cache cache = cacheEntry.Value;
+                    Type cacheType = cacheEntry.Key;
+                    lock (cache.readerCache)
                     {
-                        Cache cache = cacheEntry.Value;
-                        Type cacheType = cacheEntry.Key;
-                        lock (cache.readerCache)
+                        foreach (KeyValuePair<object, IDictionary<CacheKey, object>> readerCacheEntry in cache.readerCache)
                         {
-                            foreach (KeyValuePair<object, IDictionary<CacheKey, object>> readerCacheEntry in cache.readerCache)
+                            object readerKey = readerCacheEntry.Key;
+                            if (readerKey == null)
                             {
-                                object readerKey = readerCacheEntry.Key;
-                                if (readerKey == null)
-                                {
-                                    continue;
-                                }
-                                IDictionary<CacheKey, object> innerCache = readerCacheEntry.Value;
-                                foreach (KeyValuePair<CacheKey, object> mapEntry in innerCache)
-                                {
-                                    CacheKey entry = mapEntry.Key;
-                                    result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.custom, mapEntry.Value));
-                                }
+                                continue;
+                            }
+                            IDictionary<CacheKey, object> innerCache = readerCacheEntry.Value;
+                            foreach (KeyValuePair<CacheKey, object> mapEntry in innerCache)
+                            {
+                                CacheKey entry = mapEntry.Key;
+                                result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.custom, mapEntry.Value));
                             }
                         }
                     }
-                    return result.ToArray();
                 }
+                return result.ToArray();
             }
         }
 

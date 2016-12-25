@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
 
             // // //
 
-            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
+            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.GetCacheEntries());
 
             if (0 < insanity.Length)
             {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
 
             // // //
 
-            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
+            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.GetCacheEntries());
 
             Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
             Assert.AreEqual(InsanityType.VALUEMISMATCH, insanity[0].Type, "wrong type of cache error");
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
 
             // // //
 
-            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
+            Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.GetCacheEntries());
 
             Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
             Assert.AreEqual(InsanityType.SUBREADER, insanity[0].Type, "wrong type of cache error");

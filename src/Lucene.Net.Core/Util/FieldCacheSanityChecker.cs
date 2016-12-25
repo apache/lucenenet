@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #check </seealso>
         public static Insanity[] CheckSanity(IFieldCache cache)
         {
-            return CheckSanity(cache.CacheEntries);
+            return CheckSanity(cache.GetCacheEntries());
         }
 
         /// <summary>

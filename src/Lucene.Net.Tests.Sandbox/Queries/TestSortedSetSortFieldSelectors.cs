@@ -66,7 +66,7 @@ namespace Lucene.Net.Sandbox.Queries
         private void assertNoFieldCaches()
         {
             // docvalues sorting should NOT create any fieldcache entries!
-            assertEquals(0, FieldCache.DEFAULT.CacheEntries.Length);
+            assertEquals(0, FieldCache.DEFAULT.GetCacheEntries().Length);
         }
 
         [Test]

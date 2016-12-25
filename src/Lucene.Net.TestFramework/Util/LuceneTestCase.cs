@@ -733,7 +733,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= Lucene.Net.Util.FieldCacheSanityChecker </seealso>
         protected static void AssertSaneFieldCaches(string msg)
         {
-            CacheEntry[] entries = FieldCache.DEFAULT.CacheEntries;
+            CacheEntry[] entries = FieldCache.DEFAULT.GetCacheEntries();
             Insanity[] insanity = null;
             try
             {

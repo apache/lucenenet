@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         private void AssertNoFieldCaches()
         {
             // docvalues sorting should NOT create any fieldcache entries!
-            Assert.AreEqual(0, FieldCache.DEFAULT.CacheEntries.Length);
+            Assert.AreEqual(0, FieldCache.DEFAULT.GetCacheEntries().Length);
         }
 
         /// <summary>
