@@ -42,11 +42,10 @@ namespace Lucene.Net.Search
 
     public class TermRangeQuery : MultiTermQuery
     {
-        // LUCENENET TODO: Rename (private)
-        private BytesRef LowerTerm_Renamed;
-        private BytesRef UpperTerm_Renamed;
-        private bool IncludeLower;
-        private bool IncludeUpper;
+        private BytesRef lowerTerm;
+        private BytesRef upperTerm;
+        private bool includeLower;
+        private bool includeUpper;
 
         /// <summary>
         /// Constructs a query selecting all terms greater/equal than <code>lowerTerm</code>
@@ -72,10 +71,10 @@ namespace Lucene.Net.Search
         public TermRangeQuery(string field, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
             : base(field)
         {
-            this.LowerTerm_Renamed = lowerTerm;
-            this.UpperTerm_Renamed = upperTerm;
-            this.IncludeLower = includeLower;
-            this.IncludeUpper = includeUpper;
+            this.lowerTerm = lowerTerm;
+            this.upperTerm = upperTerm;
+            this.includeLower = includeLower;
+            this.includeUpper = includeUpper;
         }
 
         /// <summary>
@@ -94,7 +93,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return LowerTerm_Renamed;
+                return lowerTerm;
             }
         }
 
@@ -104,7 +103,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return UpperTerm_Renamed;
+                return upperTerm;
             }
         }
 
@@ -112,30 +111,30 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
-            get { return IncludeLower; }
+            get { return includeLower; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
-            get { return IncludeUpper; }
+            get { return includeUpper; }
         }
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (LowerTerm_Renamed != null && UpperTerm_Renamed != null && LowerTerm_Renamed.CompareTo(UpperTerm_Renamed) > 0)
+            if (lowerTerm != null && upperTerm != null && lowerTerm.CompareTo(upperTerm) > 0)
             {
                 return TermsEnum.EMPTY;
             }
 
             TermsEnum tenum = terms.Iterator(null);
 
-            if ((LowerTerm_Renamed == null || (IncludeLower && LowerTerm_Renamed.Length == 0)) && UpperTerm_Renamed == null)
+            if ((lowerTerm == null || (includeLower && lowerTerm.Length == 0)) && upperTerm == null)
             {
                 return tenum;
             }
-            return new TermRangeTermsEnum(tenum, LowerTerm_Renamed, UpperTerm_Renamed, IncludeLower, IncludeUpper);
+            return new TermRangeTermsEnum(tenum, lowerTerm, upperTerm, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -148,12 +147,12 @@ namespace Lucene.Net.Search
                 buffer.Append(Field);
                 buffer.Append(":");
             }
-            buffer.Append(IncludeLower ? '[' : '{');
+            buffer.Append(includeLower ? '[' : '{');
             // TODO: all these toStrings for queries should just output the bytes, it might not be UTF-8!
-            buffer.Append(LowerTerm_Renamed != null ? ("*".Equals(Term.ToString(LowerTerm_Renamed)) ? "\\*" : Term.ToString(LowerTerm_Renamed)) : "*");
+            buffer.Append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm)) ? "\\*" : Term.ToString(lowerTerm)) : "*");
             buffer.Append(" TO ");
-            buffer.Append(UpperTerm_Renamed != null ? ("*".Equals(Term.ToString(UpperTerm_Renamed)) ? "\\*" : Term.ToString(UpperTerm_Renamed)) : "*");
-            buffer.Append(IncludeUpper ? ']' : '}');
+            buffer.Append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm)) ? "\\*" : Term.ToString(upperTerm)) : "*");
+            buffer.Append(includeUpper ? ']' : '}');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -162,10 +161,10 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + (IncludeLower ? 1231 : 1237);
-            result = prime * result + (IncludeUpper ? 1231 : 1237);
-            result = prime * result + ((LowerTerm_Renamed == null) ? 0 : LowerTerm_Renamed.GetHashCode());
-            result = prime * result + ((UpperTerm_Renamed == null) ? 0 : UpperTerm_Renamed.GetHashCode());
+            result = prime * result + (includeLower ? 1231 : 1237);
+            result = prime * result + (includeUpper ? 1231 : 1237);
+            result = prime * result + ((lowerTerm == null) ? 0 : lowerTerm.GetHashCode());
+            result = prime * result + ((upperTerm == null) ? 0 : upperTerm.GetHashCode());
             return result;
         }
 
@@ -184,33 +183,33 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermRangeQuery other = (TermRangeQuery)obj;
-            if (IncludeLower != other.IncludeLower)
+            if (includeLower != other.includeLower)
             {
                 return false;
             }
-            if (IncludeUpper != other.IncludeUpper)
+            if (includeUpper != other.includeUpper)
             {
                 return false;
             }
-            if (LowerTerm_Renamed == null)
+            if (lowerTerm == null)
             {
-                if (other.LowerTerm_Renamed != null)
+                if (other.lowerTerm != null)
                 {
                     return false;
                 }
             }
-            else if (!LowerTerm_Renamed.Equals(other.LowerTerm_Renamed))
+            else if (!lowerTerm.Equals(other.lowerTerm))
             {
                 return false;
             }
-            if (UpperTerm_Renamed == null)
+            if (upperTerm == null)
             {
-                if (other.UpperTerm_Renamed != null)
+                if (other.upperTerm != null)
                 {
                     return false;
                 }
             }
-            else if (!UpperTerm_Renamed.Equals(other.UpperTerm_Renamed))
+            else if (!upperTerm.Equals(other.upperTerm))
             {
                 return false;
             }
