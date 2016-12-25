@@ -49,11 +49,10 @@ namespace Lucene.Net.Search
     /// </summary>
     public class PhraseQuery : Query
     {
-        // LUCENENET TODO: Rename (private)
-        private string Field;
-        private List<Term> Terms_Renamed = new ValueList<Term>(4);
-        private List<int?> Positions_Renamed = new ValueList<int?>(4);
-        private int MaxPosition = 0;
+        private string field;
+        private List<Term> terms = new ValueList<Term>(4);
+        private List<int?> positions = new ValueList<int?>(4);
+        private int maxPosition = 0;
         private int slop = 0;
 
         /// <summary>
@@ -101,9 +100,9 @@ namespace Lucene.Net.Search
         public virtual void Add(Term term)
         {
             int position = 0;
-            if (Positions_Renamed.Count > 0)
+            if (positions.Count > 0)
             {
-                position = (int)Positions_Renamed[Positions_Renamed.Count - 1] + 1;
+                position = (int)positions[positions.Count - 1] + 1;
             }
 
             Add(term, position);
@@ -118,20 +117,20 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void Add(Term term, int position)
         {
-            if (Terms_Renamed.Count == 0)
+            if (terms.Count == 0)
             {
-                Field = term.Field;
+                field = term.Field;
             }
-            else if (!term.Field.Equals(Field))
+            else if (!term.Field.Equals(field))
             {
                 throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
             }
 
-            Terms_Renamed.Add(term);
-            Positions_Renamed.Add(Convert.ToInt32(position));
-            if (position > MaxPosition)
+            terms.Add(term);
+            positions.Add(Convert.ToInt32(position));
+            if (position > maxPosition)
             {
-                MaxPosition = position;
+                maxPosition = position;
             }
         }
 
@@ -141,7 +140,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Terms_Renamed.ToArray();
+                return terms.ToArray();
             }
         }
 
@@ -152,10 +151,10 @@ namespace Lucene.Net.Search
         {
             get
             {
-                int[] result = new int[Positions_Renamed.Count];
-                for (int i = 0; i < Positions_Renamed.Count; i++)
+                int[] result = new int[positions.Count];
+                for (int i = 0; i < positions.Count; i++)
                 {
-                    result[i] = (int)Positions_Renamed[i];
+                    result[i] = (int)positions[i];
                 }
                 return result;
             }
@@ -163,15 +162,15 @@ namespace Lucene.Net.Search
 
         public override Query Rewrite(IndexReader reader)
         {
-            if (Terms_Renamed.Count == 0)
+            if (terms.Count == 0)
             {
                 BooleanQuery bq = new BooleanQuery();
                 bq.Boost = Boost;
                 return bq;
             }
-            else if (Terms_Renamed.Count == 1)
+            else if (terms.Count == 1)
             {
-                TermQuery tq = new TermQuery(Terms_Renamed[0]);
+                TermQuery tq = new TermQuery(terms[0]);
                 tq.Boost = Boost;
                 return tq;
             }
@@ -183,60 +182,59 @@ namespace Lucene.Net.Search
 
         internal class PostingsAndFreq : IComparable<PostingsAndFreq>
         {
-            // LUCENENET TODO: Rename (private)
-            internal readonly DocsAndPositionsEnum Postings;
-            internal readonly int DocFreq;
-            internal readonly int Position;
-            internal readonly Term[] Terms;
-            internal readonly int NTerms; // for faster comparisons
+            internal readonly DocsAndPositionsEnum postings;
+            internal readonly int docFreq;
+            internal readonly int position;
+            internal readonly Term[] terms;
+            internal readonly int nTerms; // for faster comparisons
 
             public PostingsAndFreq(DocsAndPositionsEnum postings, int docFreq, int position, params Term[] terms)
             {
-                this.Postings = postings;
-                this.DocFreq = docFreq;
-                this.Position = position;
-                NTerms = terms == null ? 0 : terms.Length;
-                if (NTerms > 0)
+                this.postings = postings;
+                this.docFreq = docFreq;
+                this.position = position;
+                nTerms = terms == null ? 0 : terms.Length;
+                if (nTerms > 0)
                 {
                     if (terms.Length == 1)
                     {
-                        this.Terms = terms;
+                        this.terms = terms;
                     }
                     else
                     {
                         Term[] terms2 = new Term[terms.Length];
                         Array.Copy(terms, 0, terms2, 0, terms.Length);
                         Array.Sort(terms2);
-                        this.Terms = terms2;
+                        this.terms = terms2;
                     }
                 }
                 else
                 {
-                    this.Terms = null;
+                    this.terms = null;
                 }
             }
 
             public virtual int CompareTo(PostingsAndFreq other)
             {
-                if (DocFreq != other.DocFreq)
+                if (docFreq != other.docFreq)
                 {
-                    return DocFreq - other.DocFreq;
+                    return docFreq - other.docFreq;
                 }
-                if (Position != other.Position)
+                if (position != other.position)
                 {
-                    return Position - other.Position;
+                    return position - other.position;
                 }
-                if (NTerms != other.NTerms)
+                if (nTerms != other.nTerms)
                 {
-                    return NTerms - other.NTerms;
+                    return nTerms - other.nTerms;
                 }
-                if (NTerms == 0)
+                if (nTerms == 0)
                 {
                     return 0;
                 }
-                for (int i = 0; i < Terms.Length; i++)
+                for (int i = 0; i < terms.Length; i++)
                 {
-                    int res = Terms[i].CompareTo(other.Terms[i]);
+                    int res = terms[i].CompareTo(other.terms[i]);
                     if (res != 0)
                     {
                         return res;
@@ -249,11 +247,11 @@ namespace Lucene.Net.Search
             {
                 const int prime = 31;
                 int result = 1;
-                result = prime * result + DocFreq;
-                result = prime * result + Position;
-                for (int i = 0; i < NTerms; i++)
+                result = prime * result + docFreq;
+                result = prime * result + position;
+                for (int i = 0; i < nTerms; i++)
                 {
-                    result = prime * result + Terms[i].GetHashCode();
+                    result = prime * result + terms[i].GetHashCode();
                 }
                 return result;
             }
@@ -273,80 +271,79 @@ namespace Lucene.Net.Search
                     return false;
                 }
                 PostingsAndFreq other = (PostingsAndFreq)obj;
-                if (DocFreq != other.DocFreq)
+                if (docFreq != other.docFreq)
                 {
                     return false;
                 }
-                if (Position != other.Position)
+                if (position != other.position)
                 {
                     return false;
                 }
-                if (Terms == null)
+                if (terms == null)
                 {
-                    return other.Terms == null;
+                    return other.terms == null;
                 }
-                return Arrays.Equals(Terms, other.Terms);
+                return Arrays.Equals(terms, other.terms);
             }
         }
 
         private class PhraseWeight : Weight
         {
-            // LUCENENET TODO: Rename (private)
-            private readonly PhraseQuery OuterInstance;
+            private readonly PhraseQuery outerInstance;
 
-            internal readonly Similarity Similarity;
-            internal readonly Similarity.SimWeight Stats;
+            internal readonly Similarity similarity;
+            internal readonly Similarity.SimWeight stats;
 
             
-            internal TermContext[] States;
+            internal TermContext[] states;
 
             public PhraseWeight(PhraseQuery outerInstance, IndexSearcher searcher)
             {
-                this.OuterInstance = outerInstance;
-                this.Similarity = searcher.Similarity;
+                this.outerInstance = outerInstance;
+                this.similarity = searcher.Similarity;
                 IndexReaderContext context = searcher.TopReaderContext;
-                States = new TermContext[outerInstance.Terms_Renamed.Count];
-                TermStatistics[] termStats = new TermStatistics[outerInstance.Terms_Renamed.Count];
-                for (int i = 0; i < outerInstance.Terms_Renamed.Count; i++)
+                states = new TermContext[outerInstance.terms.Count];
+                TermStatistics[] termStats = new TermStatistics[outerInstance.terms.Count];
+                for (int i = 0; i < outerInstance.terms.Count; i++)
                 {
-                    Term term = outerInstance.Terms_Renamed[i];
-                    States[i] = TermContext.Build(context, term);
-                    termStats[i] = searcher.TermStatistics(term, States[i]);
+                    Term term = outerInstance.terms[i];
+                    states[i] = TermContext.Build(context, term);
+                    termStats[i] = searcher.TermStatistics(term, states[i]);
                 }
-                Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.Field), termStats);
+                stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.field), termStats);
             }
 
             public override string ToString()
             {
-                return "weight(" + OuterInstance + ")";
+                return "weight(" + outerInstance + ")";
             }
 
             public override Query Query
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             public override float GetValueForNormalization()
             {
-                return Stats.GetValueForNormalization();
+                return stats.GetValueForNormalization();
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                Stats.Normalize(queryNorm, topLevelBoost);
+                stats.Normalize(queryNorm, topLevelBoost);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                Debug.Assert(OuterInstance.Terms_Renamed.Count > 0);
+                Debug.Assert(outerInstance.terms.Count > 0);
                 AtomicReader reader = context.AtomicReader;
                 Bits liveDocs = acceptDocs;
-                PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[OuterInstance.Terms_Renamed.Count];
+                PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
 
-                Terms fieldTerms = reader.Terms(OuterInstance.Field);
+                Terms fieldTerms = reader.Terms(outerInstance.field);
                 if (fieldTerms == null)
                 {
                     return null;
@@ -355,10 +352,10 @@ namespace Lucene.Net.Search
                 // Reuse single TermsEnum below:
                 TermsEnum te = fieldTerms.Iterator(null);
 
-                for (int i = 0; i < OuterInstance.Terms_Renamed.Count; i++)
+                for (int i = 0; i < outerInstance.terms.Count; i++)
                 {
-                    Term t = OuterInstance.Terms_Renamed[i];
-                    TermState state = States[i].Get(context.Ord);
+                    Term t = outerInstance.terms[i];
+                    TermState state = states[i].Get(context.Ord);
                     if (state == null) // term doesnt exist in this segment
                     {
                         Debug.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
@@ -375,18 +372,18 @@ namespace Lucene.Net.Search
                         // term does exist, but has no positions
                         throw new InvalidOperationException("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
                     }
-                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)OuterInstance.Positions_Renamed[i], t);
+                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)outerInstance.positions[i], t);
                 }
 
                 // sort by increasing docFreq order
-                if (OuterInstance.slop == 0)
+                if (outerInstance.slop == 0)
                 {
                     ArrayUtil.TimSort(postingsFreqs);
                 }
 
-                if (OuterInstance.slop == 0) // optimize exact case
+                if (outerInstance.slop == 0) // optimize exact case
                 {
-                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.DoSimScorer(Stats, context));
+                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, similarity.DoSimScorer(stats, context));
                     if (s.noDocs)
                     {
                         return null;
@@ -398,7 +395,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.DoSimScorer(Stats, context));
+                    return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.slop, similarity.DoSimScorer(stats, context));
                 }
             }
 
@@ -416,10 +413,10 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = OuterInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
-                        SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
+                        float freq = outerInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
+                        SimScorer docScorer = similarity.DoSimScorer(stats, context);
                         ComplexExplanation result = new ComplexExplanation();
-                        result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+                        result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                         result.AddDetail(scoreExplanation);
                         result.Value = scoreExplanation.Value;
@@ -441,7 +438,7 @@ namespace Lucene.Net.Search
         public override void ExtractTerms(ISet<Term> queryTerms)
         {
             //LUCENE TO-DO Normal conundrum
-            queryTerms.UnionWith(Terms_Renamed);
+            queryTerms.UnionWith(terms);
         }
 
         /// <summary>
@@ -449,25 +446,25 @@ namespace Lucene.Net.Search
         public override string ToString(string f)
         {
             StringBuilder buffer = new StringBuilder();
-            if (Field != null && !Field.Equals(f))
+            if (field != null && !field.Equals(f))
             {
-                buffer.Append(Field);
+                buffer.Append(field);
                 buffer.Append(":");
             }
 
             buffer.Append("\"");
-            string[] pieces = new string[MaxPosition + 1];
-            for (int i = 0; i < Terms_Renamed.Count; i++)
+            string[] pieces = new string[maxPosition + 1];
+            for (int i = 0; i < terms.Count; i++)
             {
-                int pos = (int)Positions_Renamed[i];
+                int pos = (int)positions[i];
                 string s = pieces[pos];
                 if (s == null)
                 {
-                    s = (Terms_Renamed[i]).Text();
+                    s = (terms[i]).Text();
                 }
                 else
                 {
-                    s = s + "|" + (Terms_Renamed[i]).Text();
+                    s = s + "|" + (terms[i]).Text();
                 }
                 pieces[pos] = s;
             }
@@ -511,8 +508,8 @@ namespace Lucene.Net.Search
             PhraseQuery other = (PhraseQuery)o;
             return (this.Boost == other.Boost) 
                 && (this.slop == other.slop) 
-                && this.Terms_Renamed.SequenceEqual(other.Terms_Renamed) 
-                && this.Positions_Renamed.SequenceEqual(other.Positions_Renamed);
+                && this.terms.SequenceEqual(other.terms) 
+                && this.positions.SequenceEqual(other.positions);
         }
 
         /// <summary>
@@ -521,8 +518,8 @@ namespace Lucene.Net.Search
         {
             return Number.FloatToIntBits(Boost) 
                 ^ slop 
-                ^ Terms_Renamed.GetHashCode() 
-                ^ Positions_Renamed.GetHashCode();
+                ^ terms.GetHashCode() 
+                ^ positions.GetHashCode();
         }
     }
 }

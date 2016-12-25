@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
             this.NumPostings = postings == null ? 0 : postings.Length;
             Pq = new PhraseQueue(postings.Length);
             // min(cost)
-            Cost_Renamed = postings[0].Postings.Cost();
+            Cost_Renamed = postings[0].postings.Cost();
             // convert tps to a list of phrase positions.
             // note: phrase-position differs from term-position in that its position
             // reflects the phrase offset: pp.pos = tp.pos - offset.
@@ -67,12 +67,12 @@ namespace Lucene.Net.Search
             // when all PhrasePositions have exactly the same position.
             if (postings.Length > 0)
             {
-                Min = new PhrasePositions(postings[0].Postings, postings[0].Position, 0, postings[0].Terms);
+                Min = new PhrasePositions(postings[0].postings, postings[0].position, 0, postings[0].terms);
                 Max = Min;
                 Max.doc = -1;
                 for (int i = 1; i < postings.Length; i++)
                 {
-                    PhrasePositions pp = new PhrasePositions(postings[i].Postings, postings[i].Position, i, postings[i].Terms);
+                    PhrasePositions pp = new PhrasePositions(postings[i].postings, postings[i].position, i, postings[i].terms);
                     Max.next = pp;
                     Max = pp;
                     Max.doc = -1;

@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
             endMinus1 = postings.Length - 1;
 
             // min(cost)
-            cost = postings[0].Postings.Cost();
+            cost = postings[0].postings.Cost();
 
             for (int i = 0; i < postings.Length; i++)
             {
@@ -81,9 +81,9 @@ namespace Lucene.Net.Search
                 // the first term, then we just use .nextDoc() when
                 // ANDing.  this buys ~15% gain for phrases where
                 // freq of rarest 2 terms is close:
-                bool useAdvance = postings[i].DocFreq > 5 * postings[0].DocFreq;
-                chunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
-                if (i > 0 && postings[i].Postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
+                bool useAdvance = postings[i].docFreq > 5 * postings[0].docFreq;
+                chunkStates[i] = new ChunkState(postings[i].postings, -postings[i].position, useAdvance);
+                if (i > 0 && postings[i].postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     noDocs = true;
                     return;
