@@ -91,9 +91,9 @@ namespace Lucene.Net.Util.Packed
             private int curDocId;
             private readonly EliasFanoDecoder efDecoder;
 
-            public override int DocID()
+            public override int DocID
             {
-                return curDocId;
+                get { return curDocId; }
             }
 
             private int SetCurDocID(long value)

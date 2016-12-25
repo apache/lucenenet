@@ -120,9 +120,9 @@ namespace Lucene.Net.Search
             return lastDoc = DoNext(lead.Doc);
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return lastDoc;
+            get { return lastDoc; }
         }
 
         public override int NextDoc()

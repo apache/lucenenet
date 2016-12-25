@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum positions = terms.DocsAndPositions(MultiFields.GetLiveDocs(reader), null);
             while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
-                Assert.IsTrue((positions.DocID() % 2) == 1);
+                Assert.IsTrue((positions.DocID % 2) == 1);
             }
 
             reader.Dispose();

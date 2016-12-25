@@ -75,8 +75,8 @@ namespace Lucene.Net.Search
         /// <returns> true iff there is a non excluded required doc. </returns>
         private int ToNonExcluded()
         {
-            int exclDoc = ExclDisi.DocID();
-            int reqDoc = ReqScorer.DocID(); // may be excluded
+            int exclDoc = ExclDisi.DocID;
+            int reqDoc = ReqScorer.DocID; // may be excluded
             do
             {
                 if (reqDoc < exclDoc)
@@ -101,9 +101,9 @@ namespace Lucene.Net.Search
             return NO_MORE_DOCS;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return Doc;
+            get { return Doc; }
         }
 
         /// <summary>

@@ -297,15 +297,18 @@ namespace Lucene.Net.Spatial.Prefix
 
                 internal int idx = -1;
 
-                public override int DocID()
+                public override int DocID
                 {
-                    if (idx >= 0 && idx < size)
+                    get
                     {
-                        return docs[idx];
-                    }
-                    else
-                    {
-                        return -1;
+                        if (idx >= 0 && idx < size)
+                        {
+                            return docs[idx];
+                        }
+                        else
+                        {
+                            return -1;
+                        }
                     }
                 }
 

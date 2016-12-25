@@ -87,9 +87,9 @@ namespace Lucene.Net.Util
                 return Doc = NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override long Cost()
@@ -386,7 +386,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 Or(obs.Arr, obs.Words);
@@ -394,7 +394,7 @@ namespace Lucene.Net.Util
                 // iteration is used (to exhaust it):
                 obs.Advance(NumBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID() == -1)
+            else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 Or(fbs.bits, fbs.NumWords);
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 And(obs.Arr, obs.Words);
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
                 // iteration is used (to exhaust it):
                 obs.Advance(NumBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID() == -1)
+            else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 And(fbs.bits, fbs.NumWords);
@@ -539,7 +539,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 AndNot(obs.Arr, obs.Words);
@@ -547,7 +547,7 @@ namespace Lucene.Net.Util
                 // iteration is used (to exhaust it):
                 obs.Advance(NumBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID() == -1)
+            else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 AndNot(fbs.bits, fbs.NumWords);

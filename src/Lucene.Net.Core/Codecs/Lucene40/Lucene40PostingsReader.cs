@@ -378,9 +378,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 get { return Freq_Renamed; }
             }
 
-            public override sealed int DocID()
+            public override sealed int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override sealed int Advance(int target)
@@ -857,9 +857,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return (Doc = Accum);
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override int Freq
@@ -1097,9 +1097,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return (Doc = Accum);
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override int Freq

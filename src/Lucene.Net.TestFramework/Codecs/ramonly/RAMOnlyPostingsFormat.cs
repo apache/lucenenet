@@ -549,9 +549,9 @@ namespace Lucene.Net.Codecs.ramonly
                 get { return Current.Positions.Length; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Current.DocID;
+                get { return Current.DocID; }
             }
 
             public override long Cost()
@@ -606,9 +606,9 @@ namespace Lucene.Net.Codecs.ramonly
                 get { return Current.Positions.Length; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Current.DocID;
+                get { return Current.DocID; }
             }
 
             public override int NextPosition()

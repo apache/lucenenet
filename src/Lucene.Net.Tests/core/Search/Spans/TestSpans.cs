@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Spans
                 if (i == subIndex)
                 {
                     Assert.IsTrue(spanScorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "first doc");
-                    Assert.AreEqual(spanScorer.DocID() + ctx.DocBase, 11, "first doc number");
+                    Assert.AreEqual(spanScorer.DocID + ctx.DocBase, 11, "first doc number");
                     float score = spanScorer.Score();
                     Assert.IsTrue(score == 0.0f, "first doc score should be zero, " + score);
                 }

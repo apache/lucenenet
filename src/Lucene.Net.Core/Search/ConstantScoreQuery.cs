@@ -336,14 +336,14 @@ namespace Lucene.Net.Search
                 return docIdSetIterator.NextDoc();
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docIdSetIterator.DocID();
+                get { return docIdSetIterator.DocID; }
             }
 
             public override float Score()
             {
-                Debug.Assert(docIdSetIterator.DocID() != NO_MORE_DOCS);
+                Debug.Assert(docIdSetIterator.DocID != NO_MORE_DOCS);
                 return theScore;
             }
 

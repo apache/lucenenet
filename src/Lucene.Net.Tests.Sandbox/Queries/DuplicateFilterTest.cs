@@ -151,7 +151,7 @@ namespace Lucene.Net.Sandbox.Queries
                 int lastDoc = 0;
                 while (td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    lastDoc = td.DocID();
+                    lastDoc = td.DocID;
                 }
                 assertEquals("Duplicate urls should return last doc", lastDoc, hit.Doc);
             }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Sandbox.Queries
 
                 int lastDoc = 0;
                 td.NextDoc();
-                lastDoc = td.DocID();
+                lastDoc = td.DocID;
                 assertEquals("Duplicate urls should return first doc", lastDoc, hit.Doc);
             }
         }

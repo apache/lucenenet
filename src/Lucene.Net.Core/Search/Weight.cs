@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    int doc = Scorer.DocID();
+                    int doc = Scorer.DocID;
                     if (doc < 0)
                     {
                         doc = Scorer.NextDoc();

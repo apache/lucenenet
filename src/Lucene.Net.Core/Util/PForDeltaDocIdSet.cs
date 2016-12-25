@@ -344,12 +344,12 @@ namespace Lucene.Net.Util
                     Iterator it = new Iterator(dataArr, Cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
                     for (int k = 0; k < indexSize; ++k)
                     {
-                        docIDs.Add(it.DocID() + 1);
+                        docIDs.Add(it.DocID + 1);
                         offsets.Add(it.Offset);
                         for (int i = 0; i < IndexInterval_Renamed; ++i)
                         {
                             it.SkipBlock();
-                            if (it.DocID() == DocIdSetIterator.NO_MORE_DOCS)
+                            if (it.DocID == DocIdSetIterator.NO_MORE_DOCS)
                             {
                                 goto indexBreak;
                             }
@@ -433,9 +433,9 @@ namespace Lucene.Net.Util
                 DocID_Renamed = -1;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocID_Renamed;
+                get { return DocID_Renamed; }
             }
 
             internal virtual void PforDecompress(byte token)

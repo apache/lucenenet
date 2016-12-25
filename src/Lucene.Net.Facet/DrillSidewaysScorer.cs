@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet
             //if (DEBUG) {
             //  System.out.println("  doQueryFirstScoring");
             //}
-            int docID = baseScorer.DocID();
+            int docID = baseScorer.DocID;
 
             while (docID != DocsEnum.NO_MORE_DOCS)
             {
@@ -190,11 +190,11 @@ namespace Lucene.Net.Facet
                     // TODO: should we sort this 2nd dimension of
                     // docsEnums from most frequent to least?
                     DocIdSetIterator disi = disis[i];
-                    if (disi != null && disi.DocID() < docID)
+                    if (disi != null && disi.DocID < docID)
                     {
                         disi.Advance(docID);
                     }
-                    if (disi == null || disi.DocID() > docID)
+                    if (disi == null || disi.DocID > docID)
                     {
                         if (failedCollector != null)
                         {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Facet
                 DocIdSetIterator disi = disis[0];
                 if (disi != null)
                 {
-                    int docID = disi.DocID();
+                    int docID = disi.DocID;
                     while (docID < nextChunkStart)
                     {
                         int slot = docID & MASK;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Facet
                 disi = disis[1];
                 if (disi != null)
                 {
-                    int docID = disi.DocID();
+                    int docID = disi.DocID;
                     while (docID < nextChunkStart)
                     {
                         int slot = docID & MASK;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Facet
                     int ddDocID = docIDs[slot0];
                     Debug.Assert(ddDocID != -1);
 
-                    int baseDocID = baseScorer.DocID();
+                    int baseDocID = baseScorer.DocID;
                     if (baseDocID < ddDocID)
                     {
                         baseDocID = baseScorer.Advance(ddDocID);
@@ -433,7 +433,7 @@ namespace Lucene.Net.Facet
                     disi = disis[dim];
                     if (disi != null)
                     {
-                        int docID = disi.DocID();
+                        int docID = disi.DocID;
                         while (docID < nextChunkStart)
                         {
                             int slot = docID & MASK;
@@ -525,7 +525,7 @@ namespace Lucene.Net.Facet
                 //  System.out.println("\ncycle nextChunkStart=" + nextChunkStart + " docIds[0]=" + docIDs[0]);
                 //}
                 int filledCount = 0;
-                int docID = baseScorer.DocID();
+                int docID = baseScorer.DocID;
                 //if (DEBUG) {
                 //  System.out.println("  base docID=" + docID);
                 //}
@@ -565,7 +565,7 @@ namespace Lucene.Net.Facet
                 DocIdSetIterator disi = disis[0];
                 if (disi != null)
                 {
-                    docID = disi.DocID();
+                    docID = disi.DocID;
                     //if (DEBUG) {
                     //  System.out.println("    start docID=" + docID);
                     //}
@@ -593,7 +593,7 @@ namespace Lucene.Net.Facet
                     disi = disis[dim];
                     if (disi != null)
                     {
-                        docID = disi.DocID();
+                        docID = disi.DocID;
                         //if (DEBUG) {
                         //  System.out.println("    start docID=" + docID);
                         //}
@@ -737,9 +737,9 @@ namespace Lucene.Net.Facet
                 throw new System.NotSupportedException("FakeScorer doesn't support advance(int)");
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return outerInstance.collectDocID;
+                get { return outerInstance.collectDocID; }
             }
 
             public override int Freq

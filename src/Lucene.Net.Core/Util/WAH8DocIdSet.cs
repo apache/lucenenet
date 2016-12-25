@@ -850,9 +850,9 @@ namespace Lucene.Net.Util
                 NextWord();
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocID_Renamed;
+                get { return DocID_Renamed; }
             }
 
             public override int NextDoc()

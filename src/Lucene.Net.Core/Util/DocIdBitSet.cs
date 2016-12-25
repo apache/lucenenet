@@ -88,9 +88,9 @@ namespace Lucene.Net.Util
                 this.DocId = -1;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocId;
+                get { return DocId; }
             }
 
             public override int NextDoc()

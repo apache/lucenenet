@@ -679,9 +679,9 @@ namespace Lucene.Net.Search
             return true;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return Max.Doc;
+            get { return Max.Doc; }
         }
 
         public override int NextDoc()
@@ -696,7 +696,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            Debug.Assert(target > DocID());
+            Debug.Assert(target > DocID);
             do
             {
                 if (!AdvanceMin(target))

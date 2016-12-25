@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
                 docsEnum = termsEnum.Docs(Random().NextBoolean() ? bits : null, Random().NextBoolean() ? null : docsEnum);
                 Assert.IsNotNull(docsEnum);
                 Assert.AreEqual(0, docsEnum.NextDoc());
-                Assert.AreEqual(0, docsEnum.DocID());
+                Assert.AreEqual(0, docsEnum.DocID);
                 Assert.AreEqual(tk.Freqs[termsEnum.Term.Utf8ToString()], (int?)docsEnum.Freq);
                 Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
                 this.docsEnum.Value = docsEnum;

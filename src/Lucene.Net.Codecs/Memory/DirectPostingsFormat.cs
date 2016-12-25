@@ -1829,19 +1829,22 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                if (upto < 0)
+                get
                 {
-                    return -1;
-                }
-                else if (upto < postings.Length)
-                {
-                    return postings[upto];
-                }
-                else
-                {
-                    return NO_MORE_DOCS;
+                    if (upto < 0)
+                    {
+                        return -1;
+                    }
+                    else if (upto < postings.Length)
+                    {
+                        return postings[upto];
+                    }
+                    else
+                    {
+                        return NO_MORE_DOCS;
+                    }
                 }
             }
 
@@ -1912,19 +1915,22 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                if (upto < 0)
+                get
                 {
-                    return -1;
-                }
-                else if (upto < postings.Length)
-                {
-                    return postings[upto];
-                }
-                else
-                {
-                    return NO_MORE_DOCS;
+                    if (upto < 0)
+                    {
+                        return -1;
+                    }
+                    else if (upto < postings.Length)
+                    {
+                        return postings[upto];
+                    }
+                    else
+                    {
+                        return NO_MORE_DOCS;
+                    }
                 }
             }
 
@@ -2009,20 +2015,23 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                // TODO: store docID member?
-                if (upto < 0)
+                get
                 {
-                    return -1;
-                }
-                else if (upto < postings.Length)
-                {
-                    return postings[upto];
-                }
-                else
-                {
-                    return NO_MORE_DOCS;
+                    // TODO: store docID member?
+                    if (upto < 0)
+                    {
+                        return -1;
+                    }
+                    else if (upto < postings.Length)
+                    {
+                        return postings[upto];
+                    }
+                    else
+                    {
+                        return NO_MORE_DOCS;
+                    }
                 }
             }
 
@@ -2166,9 +2175,9 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed = NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
 
             public override int Freq
@@ -2300,9 +2309,9 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed = NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
 
             public override int Freq
@@ -2515,9 +2524,9 @@ namespace Lucene.Net.Codecs.Memory
                 get { return freqs[upto]; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
 
             public override int NextPosition()

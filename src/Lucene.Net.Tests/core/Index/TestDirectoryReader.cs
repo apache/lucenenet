@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             // reader as the TermDocs.
             while (td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
-                ret += td.DocID();
+                ret += td.DocID;
             }
 
             // really a dummy assert to ensure that we got some docs and to ensure that
@@ -679,7 +679,7 @@ namespace Lucene.Net.Index
                     while (tp1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         Assert.IsTrue(tp2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                        Assert.AreEqual(tp1.DocID(), tp2.DocID(), "Different doc id in postinglist of term " + enum1.Term + ".");
+                        Assert.AreEqual(tp1.DocID, tp2.DocID, "Different doc id in postinglist of term " + enum1.Term + ".");
                         Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term + ".");
                         for (int i = 0; i < tp1.Freq; i++)
                         {

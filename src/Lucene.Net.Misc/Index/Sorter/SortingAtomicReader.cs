@@ -502,9 +502,9 @@ namespace Lucene.Net.Index.Sorter
                 return SlowAdvance(target);
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
+                get { return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt]; }
             }
 
             public override int Freq
@@ -718,9 +718,9 @@ namespace Lucene.Net.Index.Sorter
                 return SlowAdvance(target);
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
+                get { return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt]; }
             }
 
             public override int EndOffset

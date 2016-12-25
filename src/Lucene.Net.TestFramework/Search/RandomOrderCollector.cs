@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
                 fakeScorer.doc = DocIDs[i];
                 fakeScorer.freq = Freqs[i];
                 fakeScorer.score = Scores[i];
-                @in.Collect(fakeScorer.DocID());
+                @in.Collect(fakeScorer.DocID);
             }
             Buffered = 0;
         }

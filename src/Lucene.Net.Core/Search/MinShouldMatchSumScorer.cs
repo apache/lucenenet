@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             while (true)
             {
                 // to remove current doc, call next() on all subScorers on current doc within heap
-                while (SubScorers[0].DocID() == Doc)
+                while (SubScorers[0].DocID == Doc)
                 {
                     if (SubScorers[0].NextDoc() != NO_MORE_DOCS)
                     {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
         private void EvaluateSmallestDocInHeap()
         {
             // within heap, subScorer[0] now contains the next candidate doc
-            Doc = SubScorers[0].DocID();
+            Doc = SubScorers[0].DocID;
             if (Doc == NO_MORE_DOCS)
             {
                 NrMatchers = int.MaxValue; // stop looping
@@ -210,9 +210,9 @@ namespace Lucene.Net.Search
             // TODO instead advance() might be possible, but complicates things
             for (int i = Mm - 2; i >= 0; i--) // first advance sparsest subScorer
             {
-                if (MmStack[i].DocID() >= Doc || MmStack[i].Advance(Doc) != NO_MORE_DOCS)
+                if (MmStack[i].DocID >= Doc || MmStack[i].Advance(Doc) != NO_MORE_DOCS)
                 {
-                    if (MmStack[i].DocID() == Doc) // either it was already on doc, or got there via advance()
+                    if (MmStack[i].DocID == Doc) // either it was already on doc, or got there via advance()
                     {
                         NrMatchers++;
                         Score_Renamed += MmStack[i].Score();
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
         // then also change freq() to just always compute it from scratch
         private void CountMatches(int root)
         {
-            if (root < NrInHeap && SubScorers[root].DocID() == Doc)
+            if (root < NrInHeap && SubScorers[root].DocID == Doc)
             {
                 NrMatchers++;
                 Score_Renamed += SubScorers[root].Score();
@@ -280,9 +280,9 @@ namespace Lucene.Net.Search
             return (float)Score_Renamed;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return Doc;
+            get { return Doc; }
         }
 
         public override int Freq
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
                 return Doc = NO_MORE_DOCS;
             }
             // advance all Scorers in heap at smaller docs to at least target
-            while (SubScorers[0].DocID() < target)
+            while (SubScorers[0].DocID < target)
             {
                 if (SubScorers[0].Advance(target) != NO_MORE_DOCS)
                 {
@@ -368,19 +368,19 @@ namespace Lucene.Net.Search
         {
             // TODO could this implementation also move rather than swapping neighbours?
             Scorer scorer = SubScorers[root];
-            int doc = scorer.DocID();
+            int doc = scorer.DocID;
             int i = root;
             while (i <= (NrInHeap >> 1) - 1)
             {
                 int lchild = (i << 1) + 1;
                 Scorer lscorer = SubScorers[lchild];
-                int ldoc = lscorer.DocID();
+                int ldoc = lscorer.DocID;
                 int rdoc = int.MaxValue, rchild = (i << 1) + 2;
                 Scorer rscorer = null;
                 if (rchild < NrInHeap)
                 {
                     rscorer = SubScorers[rchild];
-                    rdoc = rscorer.DocID();
+                    rdoc = rscorer.DocID;
                 }
                 if (ldoc < doc)
                 {
@@ -413,13 +413,13 @@ namespace Lucene.Net.Search
         protected void MinheapSiftUp(int i)
         {
             Scorer scorer = SubScorers[i];
-            int doc = scorer.DocID();
+            int doc = scorer.DocID;
             // find right place for scorer
             while (i > 0)
             {
                 int parent = (i - 1) >> 1;
                 Scorer pscorer = SubScorers[parent];
-                int pdoc = pscorer.DocID();
+                int pdoc = pscorer.DocID;
                 if (pdoc > doc) // move root down, make space
                 {
                     SubScorers[i] = SubScorers[parent];
@@ -486,11 +486,11 @@ namespace Lucene.Net.Search
             }
             int lchild = (root << 1) + 1;
             int rchild = (root << 1) + 2;
-            if (lchild < NrInHeap && SubScorers[root].DocID() > SubScorers[lchild].DocID())
+            if (lchild < NrInHeap && SubScorers[root].DocID > SubScorers[lchild].DocID)
             {
                 return false;
             }
-            if (rchild < NrInHeap && SubScorers[root].DocID() > SubScorers[rchild].DocID())
+            if (rchild < NrInHeap && SubScorers[root].DocID > SubScorers[rchild].DocID)
             {
                 return false;
             }

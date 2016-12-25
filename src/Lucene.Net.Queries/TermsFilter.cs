@@ -252,12 +252,12 @@ namespace Lucene.Net.Queries
                                 {
                                     result = new FixedBitSet(reader.MaxDoc);
                                     // lazy init but don't do it in the hot loop since we could read many docs
-                                    result.Set(docs.DocID());
+                                    result.Set(docs.DocID);
                                 }
                             }
                             while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                             {
-                                result.Set(docs.DocID());
+                                result.Set(docs.DocID);
                             }
                         }
                     }

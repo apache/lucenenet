@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
                 while (i < ChunkStates.Length)
                 {
                     ChunkState cs = ChunkStates[i];
-                    int doc2 = cs.PosEnum.DocID();
+                    int doc2 = cs.PosEnum.DocID;
                     if (cs.UseAdvance)
                     {
                         if (doc2 < doc)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
                 int i = 1;
                 while (i < ChunkStates.Length)
                 {
-                    int doc2 = ChunkStates[i].PosEnum.DocID();
+                    int doc2 = ChunkStates[i].PosEnum.DocID;
                     if (doc2 < doc)
                     {
                         doc2 = ChunkStates[i].PosEnum.Advance(doc);
@@ -215,9 +215,9 @@ namespace Lucene.Net.Search
             get { return Freq_Renamed; }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return DocID_Renamed;
+            get { return DocID_Renamed; }
         }
 
         public override float Score()

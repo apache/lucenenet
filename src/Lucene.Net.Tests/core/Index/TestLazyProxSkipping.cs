@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 10; i++)
             {
                 tp.NextDoc();
-                Assert.AreEqual(tp.DocID(), i);
+                Assert.AreEqual(tp.DocID, i);
                 Assert.AreEqual(tp.NextPosition(), 1);
             }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 10; i++)
             {
                 tp.NextDoc();
-                Assert.AreEqual(tp.DocID(), i);
+                Assert.AreEqual(tp.DocID, i);
                 Assert.AreEqual(tp.NextPosition(), 0);
             }
             reader.Dispose();

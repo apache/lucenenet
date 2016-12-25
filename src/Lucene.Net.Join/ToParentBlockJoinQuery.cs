@@ -378,13 +378,11 @@ namespace Lucene.Net.Join
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _parentDocRenamed;
+                get { return _parentDocRenamed; }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public float score() throws java.io.IOException
             public override float Score()
             {
                 return _parentScore;

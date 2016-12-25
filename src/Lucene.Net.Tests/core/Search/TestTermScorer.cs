@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             Scorer ts = weight.Scorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
             // The next doc should be doc 5
-            Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");
+            Assert.IsTrue(ts.DocID == 5, "doc should be number 5");
         }
 
         private class TestHit

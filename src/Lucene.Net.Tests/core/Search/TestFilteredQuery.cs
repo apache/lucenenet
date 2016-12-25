@@ -687,9 +687,9 @@ namespace Lucene.Net.Search
                         return TermDocsEnum.NextDoc();
                     }
 
-                    public override int DocID()
+                    public override int DocID
                     {
-                        return TermDocsEnum.DocID();
+                        get { return TermDocsEnum.DocID; }
                     }
 
                     public override int Advance(int target)

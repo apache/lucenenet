@@ -219,9 +219,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return ScorerDoc;
+                get { return ScorerDoc; }
             }
 
             public override float Score()
@@ -264,13 +264,13 @@ namespace Lucene.Net.Search
                 // the normalization trick already applies the boost of this query,
                 // so we can use the wrapped scorer directly:
                 collector.SetScorer(Scorer);
-                if (Scorer.DocID() == -1)
+                if (Scorer.DocID == -1)
                 {
                     Scorer.NextDoc();
                 }
                 while (true)
                 {
-                    int scorerDoc = Scorer.DocID();
+                    int scorerDoc = Scorer.DocID;
                     if (scorerDoc < maxDoc)
                     {
                         if (FilterBits.Get(scorerDoc))
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                return Scorer.DocID() != Scorer.NO_MORE_DOCS;
+                return Scorer.DocID != Scorer.NO_MORE_DOCS;
             }
         }
 
@@ -350,9 +350,9 @@ namespace Lucene.Net.Search
                 return AdvanceToNextCommonDoc();
             }
 
-            public override sealed int DocID()
+            public override sealed int DocID
             {
-                return SecondaryDoc;
+                get { return SecondaryDoc; }
             }
 
             public override sealed float Score()

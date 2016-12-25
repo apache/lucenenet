@@ -134,9 +134,9 @@ namespace Lucene.Net.Queries.Function
                 vals = outerInstance.func.GetValues(weight.context, context);
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return doc;
+                get { return doc; }
             }
 
             // instead of matching all docs, we could also embed a query.

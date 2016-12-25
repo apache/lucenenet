@@ -1177,9 +1177,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return Docs.Freq; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocID_Renamed;
+                get { return DocID_Renamed; }
             }
 
             public override long Cost()
@@ -1246,9 +1246,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return Pos.Freq; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocID_Renamed;
+                get { return DocID_Renamed; }
             }
 
             public override int NextPosition()

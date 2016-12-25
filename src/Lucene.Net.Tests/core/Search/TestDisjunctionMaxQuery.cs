@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
             bool skipOk = ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS;
             if (skipOk)
             {
-                Assert.Fail("firsttime skipTo found a match? ... " + r.Document(ds.DocID()).Get("id"));
+                Assert.Fail("firsttime skipTo found a match? ... " + r.Document(ds.DocID).Get("id"));
             }
         }
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
             Scorer ds = dw.Scorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
-            Assert.AreEqual("d4", r.Document(ds.DocID()).Get("id"), "found wrong docid");
+            Assert.AreEqual("d4", r.Document(ds.DocID).Get("id"), "found wrong docid");
         }
 
         [Test]

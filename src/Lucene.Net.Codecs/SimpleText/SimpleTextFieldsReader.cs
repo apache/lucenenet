@@ -272,9 +272,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return this;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _docId;
+                get { return _docId; }
             }
 
             public override int Freq
@@ -411,9 +411,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return this;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _docId;
+                get { return _docId; }
             }
 
             public override int Freq

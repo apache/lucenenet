@@ -102,9 +102,9 @@ namespace Lucene.Net.Search
 
                 internal int docid;
 
-                public override int DocID()
+                public override int DocID
                 {
-                    return docid;
+                    get { return docid; }
                 }
 
                 public override int NextDoc()

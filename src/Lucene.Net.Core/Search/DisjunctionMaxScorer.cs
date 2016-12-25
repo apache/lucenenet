@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 
         protected override void AfterNext()
         {
-            m_doc = m_subScorers[0].DocID();
+            m_doc = m_subScorers[0].DocID;
             if (m_doc != NO_MORE_DOCS)
             {
                 scoreSum = scoreMax = m_subScorers[0].Score();
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         // Recursively iterate all subScorers that generated last doc computing sum and max
         private void ScoreAll(int root)
         {
-            if (root < m_numScorers && m_subScorers[root].DocID() == m_doc)
+            if (root < m_numScorers && m_subScorers[root].DocID == m_doc)
             {
                 float sub = m_subScorers[root].Score();
                 freq++;

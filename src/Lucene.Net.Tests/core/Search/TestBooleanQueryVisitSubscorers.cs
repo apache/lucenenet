@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                 int freq = 0;
                 foreach (Scorer scorer in TqsSet)
                 {
-                    if (doc == scorer.DocID())
+                    if (doc == scorer.DocID)
                     {
                         freq += scorer.Freq;
                     }

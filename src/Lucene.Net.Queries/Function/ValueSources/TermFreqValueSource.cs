@@ -113,9 +113,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     get { return 0; }
                 }
 
-                public override int DocID()
+                public override int DocID
                 {
-                    return DocIdSetIterator.NO_MORE_DOCS;
+                    get { return DocIdSetIterator.NO_MORE_DOCS; }
                 }
 
                 public override int NextDoc()

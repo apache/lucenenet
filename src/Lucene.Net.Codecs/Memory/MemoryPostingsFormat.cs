@@ -512,9 +512,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
 
             public override int Advance(int target)
@@ -736,9 +736,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
 
             public override int Advance(int target)

@@ -406,9 +406,9 @@ namespace Lucene.Net.Join
                 get { return 1; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return currentDoc;
+                get { return currentDoc; }
             }
             
             public override int NextDoc()

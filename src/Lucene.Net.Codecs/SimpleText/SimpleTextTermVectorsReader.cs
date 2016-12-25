@@ -497,9 +497,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _doc;
+                get { return _doc; }
             }
 
             public override int NextDoc()
@@ -551,9 +551,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _doc;
+                get { return _doc; }
             }
 
             public override int NextDoc()

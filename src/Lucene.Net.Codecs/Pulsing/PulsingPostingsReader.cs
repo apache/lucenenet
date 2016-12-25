@@ -417,9 +417,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _docId;
+                get { return _docId; }
             }
 
             public override int NextDoc()
@@ -592,9 +592,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 get { return _freq; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _docId;
+                get { return _docId; }
             }
 
             public override int Advance(int target)

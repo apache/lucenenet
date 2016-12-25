@@ -316,7 +316,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             DocsEnum docs = MultiFields.GetTermDocsEnum(indexReader, null, Consts.FULL, new BytesRef(FacetsConfig.PathToString(cp.Components, cp.Length)), 0);
             if (docs != null && docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
-                ret = docs.DocID();
+                ret = docs.DocID;
 
                 // we only store the fact that a category exists, not its inexistence.
                 // This is required because the caches are shared with new DTR instances

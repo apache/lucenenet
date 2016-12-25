@@ -223,9 +223,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return DocID_Renamed;
+                get { return DocID_Renamed; }
             }
 
             public override int Freq
@@ -788,7 +788,7 @@ namespace Lucene.Net.Index
             }
 
             Assert.IsNotNull(docsEnum, "null DocsEnum");
-            int initialDocID = docsEnum.DocID();
+            int initialDocID = docsEnum.DocID;
             Assert.AreEqual(-1, initialDocID, "inital docID should be -1" + docsEnum);
 
             if (VERBOSE)
@@ -871,7 +871,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc(), "DocsEnum should have ended but didn't");
 
                         // Common bug is to forget to set this.Doc=NO_MORE_DOCS in the enum!:
-                        Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.DocID(), "DocsEnum should have ended but didn't");
+                        Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.DocID, "DocsEnum should have ended but didn't");
                     }
                     break;
                 }
@@ -897,7 +897,7 @@ namespace Lucene.Net.Index
                         int skipDocIDs = TestUtil.NextInt(Random(), 1, skipDocInc);
                         if (skipDocIDs > 0)
                         {
-                            targetDocID = expected.DocID() + skipDocIDs;
+                            targetDocID = expected.DocID + skipDocIDs;
                             expected.Advance(targetDocID);
                         }
                     }
@@ -918,15 +918,15 @@ namespace Lucene.Net.Index
                         {
                             if (targetDocID != -1)
                             {
-                                Console.WriteLine("  now advance to random target=" + targetDocID + " (" + expected.Upto + " of " + stopAt + ") current=" + docsEnum.DocID());
+                                Console.WriteLine("  now advance to random target=" + targetDocID + " (" + expected.Upto + " of " + stopAt + ") current=" + docsEnum.DocID);
                             }
                             else
                             {
-                                Console.WriteLine("  now advance to known-exists target=" + expected.DocID() + " (" + expected.Upto + " of " + stopAt + ") current=" + docsEnum.DocID());
+                                Console.WriteLine("  now advance to known-exists target=" + expected.DocID + " (" + expected.Upto + " of " + stopAt + ") current=" + docsEnum.DocID);
                             }
                         }
-                        int docID = docsEnum.Advance(targetDocID != -1 ? targetDocID : expected.DocID());
-                        Assert.AreEqual(expected.DocID(), docID, "docID is wrong");
+                        int docID = docsEnum.Advance(targetDocID != -1 ? targetDocID : expected.DocID);
+                        Assert.AreEqual(expected.DocID, docID, "docID is wrong");
                     }
                 }
                 else
@@ -934,10 +934,10 @@ namespace Lucene.Net.Index
                     expected.NextDoc();
                     if (VERBOSE)
                     {
-                        Console.WriteLine("  now nextDoc to " + expected.DocID() + " (" + expected.Upto + " of " + stopAt + ")");
+                        Console.WriteLine("  now nextDoc to " + expected.DocID + " (" + expected.Upto + " of " + stopAt + ")");
                     }
                     int docID = docsEnum.NextDoc();
-                    Assert.AreEqual(expected.DocID(), docID, "docID is wrong");
+                    Assert.AreEqual(expected.DocID, docID, "docID is wrong");
                     if (docID == DocsEnum.NO_MORE_DOCS)
                     {
                         break;

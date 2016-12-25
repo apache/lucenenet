@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                     DocsEnum de = TestUtil.Docs(Random(), te, null, null, DocsEnum.FLAG_NONE);
                     while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        visited.Set(de.DocID());
+                        visited.Set(de.DocID);
                     }
                 }
                 Assert.AreEqual(visited.Cardinality(), docCount);

@@ -162,7 +162,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             int num = reader.MaxDoc;
             for (int i = first; i < num; i++)
             {
-                if (positions.DocID() == i)
+                if (positions.DocID == i)
                 {
                     if (positions.Freq == 0) // shouldn't happen
                     {

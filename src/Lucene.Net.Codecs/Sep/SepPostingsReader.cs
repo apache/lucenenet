@@ -422,9 +422,9 @@ namespace Lucene.Net.Codecs.Sep
                 get { return _freq; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _doc;
+                get { return _doc; }
             }
 
             public override int Advance(int target)
@@ -597,9 +597,9 @@ namespace Lucene.Net.Codecs.Sep
                 get { return _freq; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _doc;
+                get { return _doc; }
             }
 
             public override int Advance(int target)

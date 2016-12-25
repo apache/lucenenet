@@ -164,9 +164,9 @@ namespace Lucene.Net.Util
             return CurDocId = (i << 6) + bitIndex;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return CurDocId;
+            get { return CurDocId; }
         }
 
         public override long Cost()

@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             // NOTE: prior rev of this test was failing to first
             // call next here:
             Assert.IsTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(positions.DocID() == 0);
+            Assert.IsTrue(positions.DocID == 0);
             Assert.IsTrue(positions.NextPosition() >= 0);
         }
 

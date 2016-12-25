@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    int docid = @in.DocID();
+                    int docid = @in.DocID;
                     Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
                 }
                 catch (System.NotSupportedException e)
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
                 {
                     State = DocsEnumState.ITERATING;
                 }
-                Debug.Assert(base.DocID() == nextDoc);
+                Debug.Assert(base.DocID == nextDoc);
                 return Doc = nextDoc;
             }
 
@@ -321,14 +321,17 @@ namespace Lucene.Net.Index
                 {
                     State = DocsEnumState.ITERATING;
                 }
-                Debug.Assert(base.DocID() == advanced);
+                Debug.Assert(base.DocID == advanced);
                 return Doc = advanced;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + input.GetType() + " " + base.DocID() + " instead of " + Doc);
-                return Doc;
+                get
+                {
+                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + input.GetType() + " " + base.DocID + " instead of " + Doc);
+                    return Doc;
+                }
             }
 
             public override int Freq
@@ -354,7 +357,7 @@ namespace Lucene.Net.Index
             public AssertingDocsAndPositionsEnum(DocsAndPositionsEnum @in)
                 : base(@in)
             {
-                int docid = @in.DocID();
+                int docid = @in.DocID;
                 Debug.Assert(docid == -1, "invalid initial doc id: " + docid);
                 Doc = -1;
             }
@@ -375,7 +378,7 @@ namespace Lucene.Net.Index
                     State = DocsEnumState.ITERATING;
                     PositionMax = base.Freq;
                 }
-                Debug.Assert(base.DocID() == nextDoc);
+                Debug.Assert(base.DocID == nextDoc);
                 return Doc = nextDoc;
             }
 
@@ -396,14 +399,17 @@ namespace Lucene.Net.Index
                     State = DocsEnumState.ITERATING;
                     PositionMax = base.Freq;
                 }
-                Debug.Assert(base.DocID() == advanced);
+                Debug.Assert(base.DocID == advanced);
                 return Doc = advanced;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + input.GetType() + " " + base.DocID() + " instead of " + Doc);
-                return Doc;
+                get
+                {
+                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + input.GetType() + " " + base.DocID + " instead of " + Doc);
+                    return Doc;
+                }
             }
 
             public override int Freq

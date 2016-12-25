@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
             IList<int?> docs = new List<int?>();
             while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
-                int docID = docsEnum.DocID();
+                int docID = docsEnum.DocID;
                 docs.Add(docID);
             }
             return ArrayUtil.ToIntArray(docs);

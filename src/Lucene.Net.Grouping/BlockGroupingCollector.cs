@@ -104,9 +104,9 @@ namespace Lucene.Net.Search.Grouping
                 get { throw new InvalidOperationException(); } // TODO: wtf does this class do?
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return doc;
+                get { return doc; }
             }
 
             public override int Advance(int target)

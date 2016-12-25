@@ -350,9 +350,9 @@ namespace Lucene.Net.Index.Sorter
             {
                 get { throw new System.NotSupportedException(); }
             }
-            public override int DocID()
+            public override int DocID
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
             public override int NextDoc()

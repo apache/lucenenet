@@ -169,14 +169,14 @@ namespace Lucene.Net.Util
             }
             else
             {
-                Assert.AreEqual(-1, it2.DocID());
+                Assert.AreEqual(-1, it2.DocID);
                 for (int doc = ds1.NextSetBit(0); doc != -1; doc = ds1.NextSetBit(doc + 1))
                 {
                     Assert.AreEqual(doc, it2.NextDoc());
-                    Assert.AreEqual(doc, it2.DocID());
+                    Assert.AreEqual(doc, it2.DocID);
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, it2.NextDoc());
-                Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, it2.DocID());
+                Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, it2.DocID);
             }
 
             // nextDoc / advance
@@ -197,7 +197,7 @@ namespace Lucene.Net.Util
                             doc = DocIdSetIterator.NO_MORE_DOCS;
                         }
                         Assert.AreEqual(doc, it2.NextDoc());
-                        Assert.AreEqual(doc, it2.DocID());
+                        Assert.AreEqual(doc, it2.DocID);
                     }
                     else
                     {
@@ -208,7 +208,7 @@ namespace Lucene.Net.Util
                             doc = DocIdSetIterator.NO_MORE_DOCS;
                         }
                         Assert.AreEqual(doc, it2.Advance(target));
-                        Assert.AreEqual(doc, it2.DocID());
+                        Assert.AreEqual(doc, it2.DocID);
                     }
                 }
             }

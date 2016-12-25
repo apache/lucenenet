@@ -166,7 +166,7 @@ namespace Lucene.Net.Index.Memory
                             DocsAndPositionsEnum memDocsAndPos = memTermsIter.DocsAndPositions(null, null);
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
                             {
-                                assertEquals(iwDocsAndPos.DocID(), memDocsAndPos.NextDoc());
+                                assertEquals(iwDocsAndPos.DocID, memDocsAndPos.NextDoc());
                                 assertEquals(iwDocsAndPos.Freq, memDocsAndPos.Freq);
                                 for (int i = 0; i < iwDocsAndPos.Freq; i++)
                                 {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index.Memory
                             DocsEnum memDocsAndPos = memTermsIter.Docs(null, null);
                             while (iwDocsAndPos.NextDoc() != DocsAndPositionsEnum.NO_MORE_DOCS)
                             {
-                                assertEquals(iwDocsAndPos.DocID(), memDocsAndPos.NextDoc());
+                                assertEquals(iwDocsAndPos.DocID, memDocsAndPos.NextDoc());
                                 assertEquals(iwDocsAndPos.Freq, memDocsAndPos.Freq);
                             }
                         }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index.Memory
             memory.AddField("foo", "bar", analyzer);
             AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
             DocsEnum disi = TestUtil.Docs(Random(), reader, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
-            int docid = disi.DocID();
+            int docid = disi.DocID;
             assertEquals(-1, docid);
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index.Memory
             TermsEnum te = reader.Terms("foo").Iterator(null);
             assertTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.Docs(null, disi, DocsEnum.FLAG_NONE);
-            docid = disi.DocID();
+            docid = disi.DocID;
             assertEquals(-1, docid);
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             reader.Dispose();
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index.Memory
                 AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
                 assertEquals(1, reader.Terms("foo").SumTotalTermFreq);
                 DocsAndPositionsEnum disi = reader.TermPositionsEnum(new Term("foo", "bar"));
-                int docid = disi.DocID();
+                int docid = disi.DocID;
                 assertEquals(-1, docid);
                 assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(0, disi.NextPosition());
@@ -372,7 +372,7 @@ namespace Lucene.Net.Index.Memory
                 TermsEnum te = reader.Terms("foo").Iterator(null);
                 assertTrue(te.SeekExact(new BytesRef("bar")));
                 disi = te.DocsAndPositions(null, disi);
-                docid = disi.DocID();
+                docid = disi.DocID;
                 assertEquals(-1, docid);
                 assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 reader.Dispose();

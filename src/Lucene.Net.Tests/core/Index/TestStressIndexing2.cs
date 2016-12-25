@@ -426,11 +426,11 @@ namespace Lucene.Net.Index
                     continue;
                 }
 
-                int id1 = termDocs1.DocID();
+                int id1 = termDocs1.DocID;
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs1.NextDoc());
 
                 Assert.IsTrue(termDocs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                int id2 = termDocs2.DocID();
+                int id2 = termDocs2.DocID;
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs2.NextDoc());
 
                 r2r1[id2] = id1;
@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
                                 {
                                     Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dpEnum.Freq;
-                                    Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
+                                    Console.WriteLine("        doc=" + dpEnum.DocID + " freq=" + freq);
                                     for (int posUpto = 0; posUpto < freq; posUpto++)
                                     {
                                         Console.WriteLine("          pos=" + dpEnum.NextPosition());
@@ -489,7 +489,7 @@ namespace Lucene.Net.Index
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
-                                    Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
+                                    Console.WriteLine("        doc=" + dEnum.DocID + " freq=" + freq);
                                 }
                             }
                         }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Index
                                 {
                                     Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dpEnum.Freq;
-                                    Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
+                                    Console.WriteLine("        doc=" + dpEnum.DocID + " freq=" + freq);
                                     for (int posUpto = 0; posUpto < freq; posUpto++)
                                     {
                                         Console.WriteLine("          pos=" + dpEnum.NextPosition());
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
-                                    Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
+                                    Console.WriteLine("        doc=" + dEnum.DocID + " freq=" + freq);
                                 }
                             }
                         }
@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
                     docs1 = TestUtil.Docs(Random(), termsEnum1, liveDocs1, docs1, DocsEnum.FLAG_FREQS);
                     while (docs1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        int d = docs1.DocID();
+                        int d = docs1.DocID;
                         int f = docs1.Freq;
                         info1[len1] = (((long)d) << 32) | f;
                         len1++;
@@ -633,7 +633,7 @@ namespace Lucene.Net.Index
                     docs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, docs2, DocsEnum.FLAG_FREQS);
                     while (docs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        int d = r2r1[docs2.DocID()];
+                        int d = r2r1[docs2.DocID];
                         int f = docs2.Freq;
                         info2[len2] = (((long)d) << 32) | f;
                         len2++;

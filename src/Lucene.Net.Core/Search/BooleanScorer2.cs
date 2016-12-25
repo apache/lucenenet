@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
 
             public override float Score()
             {
-                int doc = DocID();
+                int doc = DocID;
                 if (doc >= lastScoredDoc)
                 {
                     if (doc > lastScoredDoc)
@@ -147,9 +147,9 @@ namespace Lucene.Net.Search
                 get { return 1; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return scorer.DocID();
+                get { return scorer.DocID; }
             }
 
             public override int NextDoc()
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
 
             public override float Score()
             {
-                int doc = OuterInstance.DocID();
+                int doc = OuterInstance.DocID;
                 if (doc >= lastScoredDoc)
                 {
                     if (doc > lastScoredDoc)
@@ -337,9 +337,9 @@ namespace Lucene.Net.Search
             return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? prohibitedScorers[0] : new MinShouldMatchSumScorer(weight, prohibitedScorers))); // no prohibited
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return doc;
+            get { return doc; }
         }
 
         public override int NextDoc()

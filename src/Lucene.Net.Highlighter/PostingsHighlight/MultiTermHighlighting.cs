@@ -325,9 +325,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return currentDoc;
+                get { return currentDoc; }
             }
 
             public override int NextDoc()

@@ -270,9 +270,9 @@ namespace Lucene.Net.Join
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return _childDoc;
+                get { return _childDoc; }
             }
             
             public override float Score()

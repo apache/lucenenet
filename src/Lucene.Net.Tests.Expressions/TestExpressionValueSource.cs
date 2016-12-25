@@ -110,14 +110,14 @@ namespace Lucene.Net.Tests.Expressions
 			// everything
 			ValueSourceScorer scorer = values.GetRangeScorer(leaf.Reader, "4"
 				, "40", true, true);
-			AreEqual(-1, scorer.DocID());
+			AreEqual(-1, scorer.DocID);
 			AreEqual(0, scorer.NextDoc());
 			AreEqual(1, scorer.NextDoc());
 			AreEqual(2, scorer.NextDoc());
 			AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
 			// just the first doc
 			scorer = values.GetRangeScorer(leaf.Reader, "4", "40", false, false);
-			AreEqual(-1, scorer.DocID());
+			AreEqual(-1, scorer.DocID);
 			AreEqual(0, scorer.NextDoc());
 			AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
 		}

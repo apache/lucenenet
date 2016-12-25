@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         protected override void AfterNext()
         {
             Scorer sub = m_subScorers[0];
-            m_doc = sub.DocID();
+            m_doc = sub.DocID;
             if (m_doc != NO_MORE_DOCS)
             {
                 m_score = sub.Score();
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         // then change freq() to just always compute it from scratch
         private void CountMatches(int root)
         {
-            if (root < m_numScorers && m_subScorers[root].DocID() == m_doc)
+            if (root < m_numScorers && m_subScorers[root].DocID == m_doc)
             {
                 m_nrMatchers++;
                 m_score += m_subScorers[root].Score();

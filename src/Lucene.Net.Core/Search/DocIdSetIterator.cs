@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
                 return NO_MORE_DOCS;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return exhausted ? NO_MORE_DOCS : -1;
+                get { return exhausted ? NO_MORE_DOCS : -1; }
             }
 
             public override int NextDoc()
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
         ///
         /// @since 2.9
         /// </summary>
-        public abstract int DocID(); // LUCENENET TODO: Change to property getter
+        public abstract int DocID { get; }
 
         /// <summary>
         /// Advances to the next document in the set and returns the doc it is
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal int SlowAdvance(int target)
         {
-            Debug.Assert(DocID() == NO_MORE_DOCS || DocID() < target); // can happen when the enum is not positioned yet
+            Debug.Assert(DocID == NO_MORE_DOCS || DocID < target); // can happen when the enum is not positioned yet
             int doc;
             do
             {

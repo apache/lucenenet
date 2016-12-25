@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
                 MaxDoc = reader.MaxDoc;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override int NextDoc()

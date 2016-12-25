@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                        Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
+                        Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID);
                     }
                 }
             }
@@ -368,8 +368,8 @@ namespace Lucene.Net.Search
                     int op = Order[(Opidx[0]++) % Order.Length];
                     // System.out.println(op==skip_op ?
                     // "skip("+(sdoc[0]+1)+")":"next()");
-                    bool more = op == Skip_op ? scorer.Advance(scorer.DocID() + 1) != DocIdSetIterator.NO_MORE_DOCS : scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS;
-                    int scorerDoc = scorer.DocID();
+                    bool more = op == Skip_op ? scorer.Advance(scorer.DocID + 1) != DocIdSetIterator.NO_MORE_DOCS : scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS;
+                    int scorerDoc = scorer.DocID;
                     float scorerScore = scorer.Score();
                     float scorerScore2 = scorer.Score();
                     float scoreDiff = Math.Abs(score - scorerScore);
@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
+                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID);
                     }
                     leafPtr++;
                 }
@@ -448,7 +448,7 @@ namespace Lucene.Net.Search
                 if (scorer != null)
                 {
                     bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                    Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
+                    Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID);
                 }
             }
         }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search
                         Weight w = s.CreateNormalizedWeight(q);
                         Scorer scorer_ = w.Scorer(Context[leafPtr], liveDocs);
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
-                        Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
+                        Assert.AreEqual(doc, scorer_.DocID, "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID);
                         float skipToScore = scorer_.Score();
                         Assert.AreEqual(skipToScore, scorer_.Score(), MaxDiff, "unstable skipTo(" + i + ") score!");
                         Assert.AreEqual(score, skipToScore, MaxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
@@ -528,7 +528,7 @@ namespace Lucene.Net.Search
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
+                        Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID);
                     }
                     leafPtr++;
                 }

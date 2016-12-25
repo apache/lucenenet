@@ -57,9 +57,9 @@ namespace Lucene.Net.Facet
         {
             foreach (Scorer s in allScorers)
             {
-                if (docID != s.DocID())
+                if (docID != s.DocID)
                 {
-                    throw new InvalidOperationException("subScorer=" + s + " has docID=" + s.DocID() + " != collected docID=" + docID);
+                    throw new InvalidOperationException("subScorer=" + s + " has docID=" + s.DocID + " != collected docID=" + docID);
                 }
             }
         }

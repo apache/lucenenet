@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(t, b.Utf8ToString());
                 DocsEnum td = TestUtil.Docs(Random(), te, liveDocs, null, DocsEnum.FLAG_NONE);
                 Assert.IsTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                Assert.AreEqual(0, td.DocID());
+                Assert.AreEqual(0, td.DocID);
                 Assert.AreEqual(td.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
             }
             Assert.IsNull(te.Next());

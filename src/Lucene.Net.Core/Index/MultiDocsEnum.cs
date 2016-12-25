@@ -97,9 +97,9 @@ namespace Lucene.Net.Index
             get { return current.Freq; }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return doc;
+            get { return doc; }
         }
 
         public override int Advance(int target)

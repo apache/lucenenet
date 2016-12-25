@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
                 IList<ScoreDoc> hits = new List<ScoreDoc>();
                 while (scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    hits.Add(new ScoreDoc(scorer.DocID(), scorer.Score()));
+                    hits.Add(new ScoreDoc(scorer.DocID, scorer.Score()));
                 }
 
                 if (VERBOSE)

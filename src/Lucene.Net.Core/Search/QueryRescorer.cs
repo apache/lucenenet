@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
                 }
 
                 int targetDoc = docID - docBase;
-                int actualDoc = scorer.DocID();
+                int actualDoc = scorer.DocID;
                 if (actualDoc < targetDoc)
                 {
                     actualDoc = scorer.Advance(targetDoc);

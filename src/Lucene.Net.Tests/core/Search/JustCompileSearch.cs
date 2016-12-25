@@ -73,9 +73,9 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileDocIdSetIterator : DocIdSetIterator
         {
-            public override int DocID()
+            public override int DocID
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override int NextDoc()
@@ -238,9 +238,9 @@ namespace Lucene.Net.Search
                 get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override int NextDoc()

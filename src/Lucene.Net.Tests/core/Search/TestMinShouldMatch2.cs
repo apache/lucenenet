@@ -383,9 +383,9 @@ namespace Lucene.Net.Search
                 get { return CurrentMatched; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return CurrentDoc;
+                get { return CurrentDoc; }
             }
 
             public override int NextDoc()

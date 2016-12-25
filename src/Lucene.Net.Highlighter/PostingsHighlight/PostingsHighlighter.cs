@@ -634,7 +634,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 }
                 else
                 {
-                    pDoc = de.DocID();
+                    pDoc = de.DocID;
                     if (pDoc < doc)
                     {
                         pDoc = de.Advance(doc);
@@ -849,9 +849,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 get { return 0; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return NO_MORE_DOCS;
+                get { return NO_MORE_DOCS; }
             }
 
             public override int NextDoc()

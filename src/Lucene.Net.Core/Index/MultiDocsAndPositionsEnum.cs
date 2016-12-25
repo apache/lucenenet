@@ -101,9 +101,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return doc;
+            get { return doc; }
         }
 
         public override int Advance(int target)

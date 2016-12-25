@@ -33,9 +33,9 @@ namespace Lucene.Net.Join
         {
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return doc;
+            get { return doc; }
         }
 
         public override int NextDoc()

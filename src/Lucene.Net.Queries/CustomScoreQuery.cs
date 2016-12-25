@@ -351,9 +351,9 @@ namespace Lucene.Net.Queries
                 return doc;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return subQueryScorer.DocID();
+                get { return subQueryScorer.DocID; }
             }
 
             /*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
@@ -364,7 +364,7 @@ namespace Lucene.Net.Queries
                 {
                     vScores[i] = valSrcScorers[i].Score();
                 }
-                return qWeight * provider.CustomScore(subQueryScorer.DocID(), subQueryScorer.Score(), vScores);
+                return qWeight * provider.CustomScore(subQueryScorer.DocID, subQueryScorer.Score(), vScores);
             }
 
             public override int Freq

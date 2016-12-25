@@ -25,7 +25,7 @@ namespace Lucene.Net.Expressions
 
         public override double DoubleVal(int document)
         {
-            Debug.Assert(document == scorer.DocID());
+            Debug.Assert(document == scorer.DocID);
             var score = scorer.Score();
             Console.WriteLine("Score = {0}",score);
             return score;

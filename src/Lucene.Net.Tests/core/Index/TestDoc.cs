@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
 
                     while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        @out.Write(" doc=" + positions.DocID());
+                        @out.Write(" doc=" + positions.DocID);
                         @out.Write(" TF=" + positions.Freq);
                         @out.Write(" pos=");
                         @out.Write(positions.NextPosition());

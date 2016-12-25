@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 
         public override float Score()
         {
-            int doc = Scorer.DocID();
+            int doc = Scorer.DocID;
             if (doc != CurDoc)
             {
                 CurScore = Scorer.Score();
@@ -61,9 +61,9 @@ namespace Lucene.Net.Search
             get { return Scorer.Freq; }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return Scorer.DocID();
+            get { return Scorer.DocID; }
         }
 
         public override int NextDoc()

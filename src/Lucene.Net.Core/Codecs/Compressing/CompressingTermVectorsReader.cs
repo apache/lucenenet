@@ -1172,9 +1172,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             public override int NextDoc()

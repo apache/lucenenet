@@ -85,9 +85,9 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 get { throw new System.NotSupportedException(); }
             }
-            public override int DocID()
+            public override int DocID
             {
-                return docID_Renamed;
+                get { return docID_Renamed; }
             }
             public override int NextDoc()
             {

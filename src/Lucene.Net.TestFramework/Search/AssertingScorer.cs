@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 
         internal virtual bool Iterating()
         {
-            switch (DocID())
+            switch (DocID)
             {
                 case -1:
                 case NO_MORE_DOCS:
@@ -129,9 +129,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return @in.DocID();
+            get { return @in.DocID; }
         }
 
         public override int NextDoc()

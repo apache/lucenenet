@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             {
                 while (td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    td.DocID();
+                    var _ = td.DocID;
                     count++;
                 }
             }

@@ -60,19 +60,19 @@ namespace Lucene.Net.Search
         protected void HeapAdjust(int root)
         {
             Scorer scorer = m_subScorers[root];
-            int doc = scorer.DocID();
+            int doc = scorer.DocID;
             int i = root;
             while (i <= (m_numScorers >> 1) - 1)
             {
                 int lchild = (i << 1) + 1;
                 Scorer lscorer = m_subScorers[lchild];
-                int ldoc = lscorer.DocID();
+                int ldoc = lscorer.DocID;
                 int rdoc = int.MaxValue, rchild = (i << 1) + 2;
                 Scorer rscorer = null;
                 if (rchild < m_numScorers)
                 {
                     rscorer = m_subScorers[rchild];
-                    rdoc = rscorer.DocID();
+                    rdoc = rscorer.DocID;
                 }
                 if (ldoc < doc)
                 {
@@ -144,9 +144,9 @@ namespace Lucene.Net.Search
             return sum;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return m_doc;
+            get { return m_doc; }
         }
 
         public override int NextDoc()
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
                         return m_doc = NO_MORE_DOCS;
                     }
                 }
-                if (m_subScorers[0].DocID() != m_doc)
+                if (m_subScorers[0].DocID != m_doc)
                 {
                     AfterNext();
                     return m_doc;
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
                         return m_doc = NO_MORE_DOCS;
                     }
                 }
-                if (m_subScorers[0].DocID() >= target)
+                if (m_subScorers[0].DocID >= target)
                 {
                     AfterNext();
                     return m_doc;

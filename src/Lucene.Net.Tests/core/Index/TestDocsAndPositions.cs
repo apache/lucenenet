@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                     int advance = docsAndPosEnum.Advance(Random().Next(atomicReaderContext.Reader.MaxDoc));
                     do
                     {
-                        string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.DocID(); // TODO: + " usePayloads: " + usePayload;
+                        string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.DocID; // TODO: + " usePayloads: " + usePayload;
                         Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
                         Assert.AreEqual(0, docsAndPosEnum.NextPosition(), msg);
                         Assert.AreEqual(4, docsAndPosEnum.Freq, msg);
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
                     // now run through the scorer and check if all positions are there...
                     do
                     {
-                        int docID = docsAndPosEnum.DocID();
+                        int docID = docsAndPosEnum.DocID;
                         if (docID == DocIdSetIterator.NO_MORE_DOCS)
                         {
                             break;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
                     {
                         if (freqInDoc[context.DocBase + j] != 0)
                         {
-                            Assert.AreEqual(j, docsEnum.DocID());
+                            Assert.AreEqual(j, docsEnum.DocID);
                             Assert.AreEqual(docsEnum.Freq, freqInDoc[context.DocBase + j]);
                             if (i % 2 == 0 && Random().Next(10) == 0)
                             {
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.DocID(), "DocBase: " + context.DocBase + " maxDoc: " + maxDoc + " " + docsEnum.GetType());
+                    Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.DocID, "DocBase: " + context.DocBase + " maxDoc: " + maxDoc + " " + docsEnum.GetType());
                 }
             }
 
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
             DirectoryReader reader = writer.Reader;
             AtomicReader r = GetOnlySegmentReader(reader);
             DocsEnum disi = TestUtil.Docs(Random(), r, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
-            int docid = disi.DocID();
+            int docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
             TermsEnum te = r.Terms("foo").Iterator(null);
             Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
             disi = TestUtil.Docs(Random(), te, null, disi, DocsEnum.FLAG_NONE);
-            docid = disi.DocID();
+            docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             writer.Dispose();
@@ -411,7 +411,7 @@ namespace Lucene.Net.Index
             DirectoryReader reader = writer.Reader;
             AtomicReader r = GetOnlySegmentReader(reader);
             DocsAndPositionsEnum disi = r.TermPositionsEnum(new Term("foo", "bar"));
-            int docid = disi.DocID();
+            int docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Index
             TermsEnum te = r.Terms("foo").Iterator(null);
             Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.DocsAndPositions(null, disi);
-            docid = disi.DocID();
+            docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             writer.Dispose();

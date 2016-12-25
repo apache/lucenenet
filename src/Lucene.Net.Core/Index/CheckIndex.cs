@@ -1288,7 +1288,7 @@ namespace Lucene.Net.Index
                             totalTermFreq = 0;
                             while (docsNoDel.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                             {
-                                visitedDocs.Set(docsNoDel.DocID());
+                                visitedDocs.Set(docsNoDel.DocID);
                                 docCount++;
                                 totalTermFreq += docsNoDel.Freq;
                             }
@@ -1300,7 +1300,7 @@ namespace Lucene.Net.Index
                             totalTermFreq = -1;
                             while (docsNoDel.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                             {
-                                visitedDocs.Set(docsNoDel.DocID());
+                                visitedDocs.Set(docsNoDel.DocID);
                                 docCount++;
                             }
                         }

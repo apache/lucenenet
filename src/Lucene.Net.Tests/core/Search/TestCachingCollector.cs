@@ -45,9 +45,9 @@ namespace Lucene.Net.Search
                 get { return 0; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return 0;
+                get { return 0; }
             }
 
             public override int NextDoc()

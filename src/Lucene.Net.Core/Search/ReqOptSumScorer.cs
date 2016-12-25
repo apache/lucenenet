@@ -59,9 +59,9 @@ namespace Lucene.Net.Search
             return ReqScorer.Advance(target);
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return ReqScorer.DocID();
+            get { return ReqScorer.DocID; }
         }
 
         /// <summary>
@@ -72,14 +72,14 @@ namespace Lucene.Net.Search
         public override float Score()
         {
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
-            int curDoc = ReqScorer.DocID();
+            int curDoc = ReqScorer.DocID;
             float reqScore = ReqScorer.Score();
             if (OptScorer == null)
             {
                 return reqScore;
             }
 
-            int optScorerDoc = OptScorer.DocID();
+            int optScorerDoc = OptScorer.DocID;
             if (optScorerDoc < curDoc && (optScorerDoc = OptScorer.Advance(curDoc)) == NO_MORE_DOCS)
             {
                 OptScorer = null;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             {
                 // we might have deferred advance()
                 Score();
-                return (OptScorer != null && OptScorer.DocID() == ReqScorer.DocID()) ? 2 : 1;
+                return (OptScorer != null && OptScorer.DocID == ReqScorer.DocID) ? 2 : 1;
             }
         }
 

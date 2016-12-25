@@ -2046,8 +2046,8 @@ namespace Lucene.Net.Util
                 Assert.IsNull(rightDocs);
                 return;
             }
-            Assert.AreEqual(-1, leftDocs.DocID(), info);
-            Assert.AreEqual(-1, rightDocs.DocID(), info);
+            Assert.AreEqual(-1, leftDocs.DocID, info);
+            Assert.AreEqual(-1, rightDocs.DocID, info);
             int docid;
             while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
@@ -2075,8 +2075,8 @@ namespace Lucene.Net.Util
                 Assert.IsNull(rightDocs);
                 return;
             }
-            Assert.AreEqual(-1, leftDocs.DocID(), info);
-            Assert.AreEqual(-1, rightDocs.DocID(), info);
+            Assert.AreEqual(-1, leftDocs.DocID, info);
+            Assert.AreEqual(-1, rightDocs.DocID, info);
             int docid;
             while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {

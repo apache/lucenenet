@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
                 foreach (KeyValuePair<Query, Scorer> ent in SubScorers)
                 {
                     Scorer value = ent.Value;
-                    int matchId = value.DocID();
+                    int matchId = value.DocID;
                     freqs[ent.Key] = matchId == doc ? value.Freq : 0.0f;
                 }
                 DocCounts[doc + DocBase] = freqs;

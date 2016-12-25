@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 
                     docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsEnum.FLAG_NONE);
                     Assert.IsNotNull(docsEnum);
-                    int doc = docsEnum.DocID();
+                    int doc = docsEnum.DocID;
                     Assert.AreEqual(-1, doc);
                     Assert.IsTrue(docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                     Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
 
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsNotNull(dpEnum);
-                int doc = dpEnum.DocID();
+                int doc = dpEnum.DocID;
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-                doc = dpEnum.DocID();
+                doc = dpEnum.DocID;
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.IsNotNull(dpEnum);

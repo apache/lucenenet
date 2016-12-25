@@ -93,9 +93,9 @@ namespace Lucene.Net.Codecs
             get { return Current.Freq; }
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return Doc;
+            get { return Doc; }
         }
 
         public override int Advance(int target)

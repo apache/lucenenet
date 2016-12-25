@@ -517,9 +517,9 @@ namespace Lucene.Net.Search
 
                     internal int docID;
 
-                    public override int DocID()
+                    public override int DocID
                     {
-                        return docID;
+                        get { return docID; }
                     }
 
                     public override int Freq

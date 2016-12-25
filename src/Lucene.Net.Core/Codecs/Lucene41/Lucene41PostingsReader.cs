@@ -393,9 +393,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 get { return Freq_Renamed; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             private void RefillDocs()
@@ -726,9 +726,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 get { return Freq_Renamed; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             private void RefillDocs()
@@ -1244,9 +1244,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 get { return Freq_Renamed; }
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return Doc;
+                get { return Doc; }
             }
 
             private void RefillDocs()
