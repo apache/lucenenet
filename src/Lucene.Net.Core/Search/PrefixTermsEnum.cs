@@ -31,17 +31,17 @@ namespace Lucene.Net.Search
     /// </summary>
     public class PrefixTermsEnum : FilteredTermsEnum
     {
-        private readonly BytesRef PrefixRef; // LUCENENET TODO: Rename (private)
+        private readonly BytesRef prefixRef;
 
         public PrefixTermsEnum(TermsEnum tenum, BytesRef prefixText)
             : base(tenum)
         {
-            SetInitialSeekTerm(this.PrefixRef = prefixText);
+            SetInitialSeekTerm(this.prefixRef = prefixText);
         }
 
         protected override AcceptStatus Accept(BytesRef term)
         {
-            if (StringHelper.StartsWith(term, PrefixRef))
+            if (StringHelper.StartsWith(term, prefixRef))
             {
                 return AcceptStatus.YES;
             }
