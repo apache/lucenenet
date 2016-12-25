@@ -31,8 +31,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public class FieldValueFilter : Filter
     {
-        private readonly string Field_Renamed; // LUCENENET TODO: rename (private)
-        private readonly bool Negate_Renamed; // LUCENENET TODO: rename (private)
+        private readonly string field;
+        private readonly bool negate;
 
         /// <summary>
         /// Creates a new <seealso cref="FieldValueFilter"/>
@@ -55,8 +55,8 @@ namespace Lucene.Net.Search
         ///  </param>
         public FieldValueFilter(string field, bool negate)
         {
-            this.Field_Renamed = field;
-            this.Negate_Renamed = negate;
+            this.field = field;
+            this.negate = negate;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         /// <returns> the field this filter is applied on. </returns>
         public virtual string Field
         {
-            get { return Field_Renamed; }
+            get { return field; }
         }
 
         /// <summary>
@@ -72,13 +72,13 @@ namespace Lucene.Net.Search
         /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
         public virtual bool Negate
         {
-            get { return Negate_Renamed; }
+            get { return negate; }
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            Bits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), Field_Renamed);
-            if (Negate_Renamed)
+            Bits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), field);
+            if (negate)
             {
                 if (docsWithField is Bits_MatchAllBits)
                 {
@@ -104,39 +104,39 @@ namespace Lucene.Net.Search
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
         {
-            private readonly FieldValueFilter OuterInstance; // LUCENENET TODO: rename (private)
+            private readonly FieldValueFilter outerInstance;
 
-            private Bits DocsWithField; // LUCENENET TODO: rename (private)
+            private Bits docsWithField;
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
                 : base(maxDoc, acceptDocs)
             {
-                this.OuterInstance = outerInstance;
-                this.DocsWithField = docsWithField;
+                this.outerInstance = outerInstance;
+                this.docsWithField = docsWithField;
             }
 
             protected internal override sealed bool MatchDoc(int doc)
             {
-                return !DocsWithField.Get(doc);
+                return !docsWithField.Get(doc);
             }
         }
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
         {
-            private readonly FieldValueFilter OuterInstance; // LUCENENET TODO: rename (private)
+            private readonly FieldValueFilter outerInstance;
 
-            private readonly Bits DocsWithField; // LUCENENET TODO: rename (private)
+            private readonly Bits docsWithField;
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
                 : base(maxDoc, acceptDocs)
             {
-                this.OuterInstance = outerInstance;
-                this.DocsWithField = docsWithField;
+                this.outerInstance = outerInstance;
+                this.docsWithField = docsWithField;
             }
 
             protected internal override sealed bool MatchDoc(int doc)
             {
-                return DocsWithField.Get(doc);
+                return docsWithField.Get(doc);
             }
         }
 
@@ -144,8 +144,8 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
-            result = prime * result + (Negate_Renamed ? 1231 : 1237);
+            result = prime * result + ((field == null) ? 0 : field.GetHashCode());
+            result = prime * result + (negate ? 1231 : 1237);
             return result;
         }
 
@@ -164,18 +164,18 @@ namespace Lucene.Net.Search
                 return false;
             }
             FieldValueFilter other = (FieldValueFilter)obj;
-            if (Field_Renamed == null)
+            if (field == null)
             {
-                if (other.Field_Renamed != null)
+                if (other.field != null)
                 {
                     return false;
                 }
             }
-            else if (!Field_Renamed.Equals(other.Field_Renamed))
+            else if (!field.Equals(other.field))
             {
                 return false;
             }
-            if (Negate_Renamed != other.Negate_Renamed)
+            if (negate != other.negate)
             {
                 return false;
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return "FieldValueFilter [field=" + Field_Renamed + ", negate=" + Negate_Renamed + "]";
+            return "FieldValueFilter [field=" + field + ", negate=" + negate + "]";
         }
     }
 }
