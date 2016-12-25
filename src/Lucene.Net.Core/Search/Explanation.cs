@@ -85,12 +85,9 @@ namespace Lucene.Net.Search
         /// A short one line summary which should contain all high level
         /// information about this Explanation, without the "Details"
         /// </summary>
-        protected internal virtual string Summary // LUCENENET TODO: Change to GetSummary() (conversion)
+        protected virtual string GetSummary()
         {
-            get
-            {
-                return Value + " = " + Description;
-            }
+            return Value + " = " + Description;
         }
 
         /// <summary>
@@ -132,7 +129,7 @@ namespace Lucene.Net.Search
             {
                 buffer.Append("  ");
             }
-            buffer.Append(Summary);
+            buffer.Append(GetSummary());
             buffer.Append("\n");
 
             Explanation[] details = Details;
@@ -155,7 +152,7 @@ namespace Lucene.Net.Search
             buffer.Append("<ul>\n");
 
             buffer.Append("<li>");
-            buffer.Append(Summary);
+            buffer.Append(GetSummary());
             buffer.Append("<br />\n");
 
             Explanation[] details = Details;

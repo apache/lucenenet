@@ -72,17 +72,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override string Summary
+        protected override string GetSummary()
         {
-            get
+            if (null == Match)
             {
-                if (null == Match)
-                {
-                    return base.Summary;
-                }
-
-                return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
+                return base.GetSummary();
             }
+
+            return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
         }
     }
 }
