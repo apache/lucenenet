@@ -39,21 +39,21 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The &mu; parameter. </summary>
-        private readonly float Mu_Renamed; // LUCENENET TODO: Rename
+        private readonly float mu;
 
         /// <summary>
         /// Instantiates the similarity with the provided &mu; parameter. </summary>
         public LMDirichletSimilarity(CollectionModel collectionModel, float mu)
             : base(collectionModel)
         {
-            this.Mu_Renamed = mu;
+            this.mu = mu;
         }
 
         /// <summary>
         /// Instantiates the similarity with the provided &mu; parameter. </summary>
         public LMDirichletSimilarity(float mu)
         {
-            this.Mu_Renamed = mu;
+            this.mu = mu;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override float Score(BasicStats stats, float freq, float docLen)
         {
-            float score = stats.TotalBoost * (float)(Math.Log(1 + freq / (Mu_Renamed * ((LMStats)stats).CollectionProbability)) + Math.Log(Mu_Renamed / (docLen + Mu_Renamed)));
+            float score = stats.TotalBoost * (float)(Math.Log(1 + freq / (mu * ((LMStats)stats).CollectionProbability)) + Math.Log(mu / (docLen + mu)));
             return score > 0.0f ? score : 0.0f;
         }
 
@@ -83,12 +83,12 @@ namespace Lucene.Net.Search.Similarities
                 expl.AddDetail(new Explanation(stats.TotalBoost, "boost"));
             }
 
-            expl.AddDetail(new Explanation(Mu_Renamed, "mu"));
+            expl.AddDetail(new Explanation(mu, "mu"));
             Explanation weightExpl = new Explanation();
-            weightExpl.Value = (float)Math.Log(1 + freq / (Mu_Renamed * ((LMStats)stats).CollectionProbability));
+            weightExpl.Value = (float)Math.Log(1 + freq / (mu * ((LMStats)stats).CollectionProbability));
             weightExpl.Description = "term weight";
             expl.AddDetail(weightExpl);
-            expl.AddDetail(new Explanation((float)Math.Log(Mu_Renamed / (docLen + Mu_Renamed)), "document norm"));
+            expl.AddDetail(new Explanation((float)Math.Log(mu / (docLen + mu)), "document norm"));
             base.Explain(expl, stats, doc, freq, docLen);
         }
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Mu_Renamed;
+                return mu;
             }
         }
 
