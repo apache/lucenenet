@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     public class PositiveScoresOnlyCollector : Collector
     {
         private readonly Collector c;
-        private Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+        private Scorer scorer;
 
         public PositiveScoresOnlyCollector(Collector c)
         {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 
         public override void Collect(int doc)
         {
-            if (Scorer_Renamed.Score() > 0)
+            if (scorer.Score() > 0)
             {
                 c.Collect(doc);
             }
@@ -51,8 +51,8 @@ namespace Lucene.Net.Search
         {
             // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call
             // score() also.
-            this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
-            c.SetScorer(this.Scorer_Renamed);
+            this.scorer = new ScoreCachingWrappingScorer(scorer);
+            c.SetScorer(this.scorer);
         }
 
         public override bool AcceptsDocsOutOfOrder
