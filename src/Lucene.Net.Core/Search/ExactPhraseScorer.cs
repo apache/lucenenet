@@ -38,13 +38,13 @@ namespace Lucene.Net.Search
 
         private sealed class ChunkState
         {
-            internal readonly DocsAndPositionsEnum PosEnum; // LUCENENET TODO: Make property
-            internal readonly int Offset; // LUCENENET TODO: Make property
-            internal readonly bool UseAdvance; // LUCENENET TODO: Make property
-            internal int PosUpto; // LUCENENET TODO: Make property
-            internal int PosLimit; // LUCENENET TODO: Make property
-            internal int Pos; // LUCENENET TODO: Make property
-            internal int LastPos; // LUCENENET TODO: Make property
+            internal DocsAndPositionsEnum PosEnum { get; private set; }
+            internal int Offset { get; private set; }
+            internal bool UseAdvance { get; private set; }
+            internal int PosUpto { get; set; }
+            internal int PosLimit { get; set; }
+            internal int Pos { get; set; }
+            internal int LastPos { get; set; }
 
             public ChunkState(DocsAndPositionsEnum posEnum, int offset, bool useAdvance)
             {
