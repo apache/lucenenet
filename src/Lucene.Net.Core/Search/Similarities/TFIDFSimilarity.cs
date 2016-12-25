@@ -731,16 +731,16 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         private class IDFStats : SimWeight
         {
-            internal readonly string Field; // LUCENENET TODO: Make property
+            internal string Field { get; private set; }
 
             /// <summary>
             /// The idf and its explanation </summary>
-            internal readonly Explanation Idf; // LUCENENET TODO: Make property
+            internal Explanation Idf { get; private set; }
 
-            internal float QueryNorm; // LUCENENET TODO: Make property
-            internal float QueryWeight; // LUCENENET TODO: Make property
-            internal readonly float QueryBoost; // LUCENENET TODO: Make property
-            internal float Value; // LUCENENET TODO: Make property
+            internal float QueryNorm { get; set; }
+            internal float QueryWeight { get; set; }
+            internal float QueryBoost { get; private set; }
+            internal float Value { get; set; }
 
             public IDFStats(string field, Explanation idf, float queryBoost)
             {
