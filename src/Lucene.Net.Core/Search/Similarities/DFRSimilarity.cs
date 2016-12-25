@@ -74,15 +74,15 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The basic model for information content. </summary>
-        protected internal readonly BasicModel BasicModel_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly BasicModel m_basicModel;
 
         /// <summary>
         /// The first normalization of the information content. </summary>
-        protected internal readonly AfterEffect AfterEffect_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly AfterEffect m_afterEffect;
 
         /// <summary>
         /// The term frequency normalization. </summary>
-        protected internal readonly Normalization Normalization_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly Normalization m_normalization;
 
         /// <summary>
         /// Creates DFRSimilarity from the three components.
@@ -99,15 +99,15 @@ namespace Lucene.Net.Search.Similarities
             {
                 throw new System.NullReferenceException("null parameters not allowed.");
             }
-            this.BasicModel_Renamed = basicModel;
-            this.AfterEffect_Renamed = afterEffect;
-            this.Normalization_Renamed = normalization;
+            this.m_basicModel = basicModel;
+            this.m_afterEffect = afterEffect;
+            this.m_normalization = normalization;
         }
 
         public override float Score(BasicStats stats, float freq, float docLen)
         {
-            float tfn = Normalization_Renamed.Tfn(stats, freq, docLen);
-            return stats.TotalBoost * BasicModel_Renamed.Score(stats, tfn) * AfterEffect_Renamed.Score(stats, tfn);
+            float tfn = m_normalization.Tfn(stats, freq, docLen);
+            return stats.TotalBoost * m_basicModel.Score(stats, tfn) * m_afterEffect.Score(stats, tfn);
         }
 
         protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
@@ -117,16 +117,16 @@ namespace Lucene.Net.Search.Similarities
                 expl.AddDetail(new Explanation(stats.TotalBoost, "boost"));
             }
 
-            Explanation normExpl = Normalization_Renamed.Explain(stats, freq, docLen);
+            Explanation normExpl = m_normalization.Explain(stats, freq, docLen);
             float tfn = normExpl.Value;
             expl.AddDetail(normExpl);
-            expl.AddDetail(BasicModel_Renamed.Explain(stats, tfn));
-            expl.AddDetail(AfterEffect_Renamed.Explain(stats, tfn));
+            expl.AddDetail(m_basicModel.Explain(stats, tfn));
+            expl.AddDetail(m_afterEffect.Explain(stats, tfn));
         }
 
         public override string ToString()
         {
-            return "DFR " + BasicModel_Renamed.ToString() + AfterEffect_Renamed.ToString() + Normalization_Renamed.ToString();
+            return "DFR " + m_basicModel.ToString() + m_afterEffect.ToString() + m_normalization.ToString();
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return BasicModel_Renamed;
+                return m_basicModel;
             }
         }
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return AfterEffect_Renamed;
+                return m_afterEffect;
             }
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Normalization_Renamed;
+                return m_normalization;
             }
         }
     }
