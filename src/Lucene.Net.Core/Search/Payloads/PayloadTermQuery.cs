@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new PayloadTermSpanScorer(this, (TermSpans)query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.DoSimScorer(Stats, context));
+                return new PayloadTermSpanScorer(this, (TermSpans)m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity.DoSimScorer(m_stats, context));
             }
 
             protected class PayloadTermSpanScorer : SpanScorer
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Payloads
 
                         m_freq += m_docScorer.ComputeSlopFactor(matchLength);
                         m_numMatches++;
-                        ProcessPayload(OuterInstance.Similarity);
+                        ProcessPayload(OuterInstance.m_similarity);
 
                         m_more = m_spans.Next(); // this moves positions to the next match in this
                         // document
@@ -184,9 +184,9 @@ namespace Lucene.Net.Search.Payloads
                     if (newDoc == doc)
                     {
                         float freq = scorer.SloppyFreq;
-                        Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
+                        Similarity.SimScorer docScorer = m_similarity.DoSimScorer(m_stats, context);
                         Explanation expl = new Explanation();
-                        expl.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+                        expl.Description = "weight(" + Query + " in " + doc + ") [" + m_similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                         expl.AddDetail(scoreExplanation);
                         expl.Value = scoreExplanation.Value;

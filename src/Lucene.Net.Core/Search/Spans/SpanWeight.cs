@@ -31,17 +31,17 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanWeight : Weight
     {
-        protected Similarity Similarity; // LUCENENET TODO: rename
-        protected IDictionary<Term, TermContext> TermContexts; // LUCENENET TODO: rename
-        protected SpanQuery query; // LUCENENET TODO: rename
-        protected Similarity.SimWeight Stats; // LUCENENET TODO: rename
+        protected Similarity m_similarity;
+        protected IDictionary<Term, TermContext> m_termContexts;
+        protected SpanQuery m_query;
+        protected Similarity.SimWeight m_stats;
 
         public SpanWeight(SpanQuery query, IndexSearcher searcher)
         {
-            this.Similarity = searcher.Similarity;
-            this.query = query;
+            this.m_similarity = searcher.Similarity;
+            this.m_query = query;
 
-            TermContexts = new Dictionary<Term, TermContext>();
+            m_termContexts = new Dictionary<Term, TermContext>();
             SortedSet<Term> terms = new SortedSet<Term>();
             query.ExtractTerms(terms);
             IndexReaderContext context = searcher.TopReaderContext;
@@ -51,13 +51,13 @@ namespace Lucene.Net.Search.Spans
             {
                 TermContext state = TermContext.Build(context, term);
                 termStats[i] = searcher.TermStatistics(term, state);
-                TermContexts[term] = state;
+                m_termContexts[term] = state;
                 i++;
             }
             string field = query.Field;
             if (field != null)
             {
-                Stats = Similarity.ComputeWeight(query.Boost, searcher.CollectionStatistics(query.Field), termStats);
+                m_stats = m_similarity.ComputeWeight(query.Boost, searcher.CollectionStatistics(query.Field), termStats);
             }
         }
 
@@ -65,32 +65,32 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return query;
+                return m_query;
             }
         }
 
         public override float GetValueForNormalization()
         {
-            return Stats == null ? 1.0f : Stats.GetValueForNormalization();
+            return m_stats == null ? 1.0f : m_stats.GetValueForNormalization();
         }
 
         public override void Normalize(float queryNorm, float topLevelBoost)
         {
-            if (Stats != null)
+            if (m_stats != null)
             {
-                Stats.Normalize(queryNorm, topLevelBoost);
+                m_stats.Normalize(queryNorm, topLevelBoost);
             }
         }
 
         public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
         {
-            if (Stats == null)
+            if (m_stats == null)
             {
                 return null;
             }
             else
             {
-                return new SpanScorer(query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.DoSimScorer(Stats, context));
+                return new SpanScorer(m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity.DoSimScorer(m_stats, context));
             }
         }
 
@@ -103,9 +103,9 @@ namespace Lucene.Net.Search.Spans
                 if (newDoc == doc)
                 {
                     float freq = scorer.SloppyFreq;
-                    Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
+                    Similarity.SimScorer docScorer = m_similarity.DoSimScorer(m_stats, context);
                     ComplexExplanation result = new ComplexExplanation();
-                    result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+                    result.Description = "weight(" + Query + " in " + doc + ") [" + m_similarity.GetType().Name + "], result of:";
                     Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                     result.AddDetail(scoreExplanation);
                     result.Value = scoreExplanation.Value;
