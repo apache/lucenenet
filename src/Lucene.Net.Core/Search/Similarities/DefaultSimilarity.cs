@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Similarities
         public override float LengthNorm(FieldInvertState state)
         {
             int numTerms;
-            if (DiscountOverlaps_Renamed)
+            if (m_discountOverlaps)
             {
                 numTerms = state.Length - state.NumOverlap;
             }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        protected bool DiscountOverlaps_Renamed = true; // LUCENENET TODO: rename
+        protected bool m_discountOverlaps = true;
 
         /// <summary>
         /// Determines whether overlap tokens (Tokens with
@@ -176,11 +176,11 @@ namespace Lucene.Net.Search.Similarities
         {
             set
             {
-                DiscountOverlaps_Renamed = value;
+                m_discountOverlaps = value;
             }
             get
             {
-                return DiscountOverlaps_Renamed;
+                return m_discountOverlaps;
             }
         }
 
