@@ -46,15 +46,15 @@ namespace Lucene.Net.Search
         /// HitQueue for example aggregates the top scoring documents, while other PQ
         /// implementations may hold documents sorted by other criteria.
         /// </summary>
-        protected PriorityQueue<T> Pq; // LUCENENET TODO: Rename
+        protected PriorityQueue<T> m_pq;
 
         /// <summary>
         /// The total number of documents that the collector encountered. </summary>
-        protected int TotalHits_Renamed; // LUCENENET TODO: Rename 
+        protected int m_totalHits;
 
         protected TopDocsCollector(PriorityQueue<T> pq)
         {
-            this.Pq = pq;
+            this.m_pq = pq;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         {
             for (int i = howMany - 1; i >= 0; i--)
             {
-                results[i] = Pq.Pop();
+                results[i] = m_pq.Pop();
             }
         }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
-            return results == null ? EMPTY_TOPDOCS : new TopDocs(TotalHits_Renamed, results);
+            return results == null ? EMPTY_TOPDOCS : new TopDocs(m_totalHits, results);
         }
 
         /// <summary>
@@ -86,11 +86,11 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return TotalHits_Renamed;
+                return m_totalHits;
             }
             internal set
             {
-                TotalHits_Renamed = value;
+                m_totalHits = value;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
                 // In case pq was populated with sentinel values, there might be less
                 // results than pq.size(). Therefore return all results until either
                 // pq.size() or totalHits.
-                return TotalHits_Renamed < Pq.Size() ? TotalHits_Renamed : Pq.Size();
+                return m_totalHits < m_pq.Size() ? m_totalHits : m_pq.Size();
             }
         }
 
@@ -176,9 +176,9 @@ namespace Lucene.Net.Search
             // Note that this loop will usually not be executed, since the common usage
             // should be that the caller asks for the last howMany results. However it's
             // needed here for completeness.
-            for (int i = Pq.Size() - start - howMany; i > 0; i--)
+            for (int i = m_pq.Size() - start - howMany; i > 0; i--)
             {
-                Pq.Pop();
+                m_pq.Pop();
             }
 
             // Get the requested results from pq.

@@ -61,12 +61,12 @@ namespace Lucene.Net.Search
             {
                 // bottom.score is already set to Float.NaN in add().
                 Bottom.Doc = DocBase + doc;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
@@ -177,12 +177,12 @@ namespace Lucene.Net.Search
             {
                 Bottom.Doc = DocBase + doc;
                 Bottom.Score = score;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
                     float score = Scorer_Renamed.Score();
 
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search
                     float score = Scorer_Renamed.Score();
 
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             {
                 Bottom.Doc = DocBase + doc;
                 Bottom.Score = score;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
                 {
                     MaxScore = score;
                 }
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
                 {
                     MaxScore = score;
                 }
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
@@ -426,12 +426,12 @@ namespace Lucene.Net.Search
             {
                 // bottom.score is already set to Float.NaN in add().
                 Bottom.Doc = DocBase + doc;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -473,7 +473,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -569,7 +569,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -612,7 +612,7 @@ namespace Lucene.Net.Search
             {
                 Bottom.Doc = DocBase + doc;
                 Bottom.Score = score;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
@@ -622,7 +622,7 @@ namespace Lucene.Net.Search
                 {
                     MaxScore = score;
                 }
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -664,7 +664,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -708,7 +708,7 @@ namespace Lucene.Net.Search
                 {
                     MaxScore = score;
                 }
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -753,7 +753,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -794,12 +794,12 @@ namespace Lucene.Net.Search
             {
                 Bottom.Doc = DocBase + doc;
                 Bottom.Score = score;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -843,7 +843,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -885,7 +885,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                ++TotalHits_Renamed;
+                ++m_totalHits;
                 if (QueueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
@@ -932,7 +932,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = TotalHits_Renamed - 1;
+                    int slot = m_totalHits - 1;
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
                     {
@@ -1006,14 +1006,14 @@ namespace Lucene.Net.Search
             {
                 Bottom.Doc = DocBase + doc;
                 Bottom.Score = score;
-                Bottom = Pq.UpdateTop();
+                Bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 //System.out.println("  collect doc=" + doc);
 
-                TotalHits_Renamed++;
+                m_totalHits++;
 
                 float score = float.NaN;
                 if (TrackMaxScore)
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Search
                     {
                         score = Scorer_Renamed.Score();
                     }
-                    Bottom = Pq.Add(new Entry(slot, DocBase + doc, score));
+                    Bottom = m_pq.Add(new Entry(slot, DocBase + doc, score));
                     QueueFull = CollectedHits == NumHits;
                     if (QueueFull)
                     {
@@ -1365,8 +1365,8 @@ namespace Lucene.Net.Search
 
         internal void Add(int slot, int doc, float score)
         {
-            Bottom = Pq.Add(new Entry(slot, DocBase + doc, score));
-            QueueFull = TotalHits_Renamed == NumHits;
+            Bottom = m_pq.Add(new Entry(slot, DocBase + doc, score));
+            QueueFull = m_totalHits == NumHits;
         }
 
         /*
@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Search
             if (FillFields)
             {
                 // avoid casting if unnecessary.
-                FieldValueHitQueue<Entry> queue = (FieldValueHitQueue<Entry>)Pq;
+                FieldValueHitQueue<Entry> queue = (FieldValueHitQueue<Entry>)m_pq;
                 for (int i = howMany - 1; i >= 0; i--)
                 {
                     results[i] = queue.FillFields(queue.Pop());
@@ -1389,7 +1389,7 @@ namespace Lucene.Net.Search
             {
                 for (int i = howMany - 1; i >= 0; i--)
                 {
-                    Entry entry = Pq.Pop();
+                    Entry entry = m_pq.Pop();
                     results[i] = new FieldDoc(entry.Doc, entry.Score);
                 }
             }
@@ -1405,7 +1405,7 @@ namespace Lucene.Net.Search
             }
 
             // If this is a maxScoring tracking collector and there were no results,
-            return new TopFieldDocs(TotalHits_Renamed, results, ((FieldValueHitQueue<Entry>)Pq).Fields, MaxScore);
+            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, MaxScore);
         }
 
         public override bool AcceptsDocsOutOfOrder

@@ -53,11 +53,11 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    for (int i = Pq.Size(); i > 1; i--)
+                    for (int i = m_pq.Size(); i > 1; i--)
                     {
-                        Pq.Pop();
+                        m_pq.Pop();
                     }
-                    maxScore = Pq.Pop().Score;
+                    maxScore = m_pq.Pop().Score;
                 }
 
                 return new TopDocs(TotalHits, results, maxScore);
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++TotalHits;
-                Pq.InsertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
+                m_pq.InsertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
             }
 
             public override void SetNextReader(AtomicReaderContext context)

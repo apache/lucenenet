@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(score != float.NegativeInfinity);
                 Debug.Assert(!float.IsNaN(score));
 
-                TotalHits_Renamed++;
+                m_totalHits++;
                 if (score <= PqTop.Score)
                 {
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
                 }
                 PqTop.Doc = doc + DocBase;
                 PqTop.Score = score;
-                PqTop = Pq.UpdateTop();
+                PqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(score != float.NegativeInfinity);
                 Debug.Assert(!float.IsNaN(score));
 
-                TotalHits_Renamed++;
+                m_totalHits++;
 
                 if (score > After.Score || (score == After.Score && doc <= AfterDoc))
                 {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
                 CollectedHits++;
                 PqTop.Doc = doc + DocBase;
                 PqTop.Score = score;
-                PqTop = Pq.UpdateTop();
+                PqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -129,12 +129,12 @@ namespace Lucene.Net.Search
 
             protected override int TopDocsSize
             {
-                get { return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size(); }
+                get { return CollectedHits < m_pq.Size() ? CollectedHits : m_pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                return results == null ? new TopDocs(TotalHits_Renamed, new ScoreDoc[0], float.NaN) : new TopDocs(TotalHits_Renamed, results);
+                return results == null ? new TopDocs(m_totalHits, new ScoreDoc[0], float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
 
-                TotalHits_Renamed++;
+                m_totalHits++;
                 if (score < PqTop.Score)
                 {
                     // Doesn't compete w/ bottom entry in queue
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
                 }
                 PqTop.Doc = doc;
                 PqTop.Score = score;
-                PqTop = Pq.UpdateTop();
+                PqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
 
-                TotalHits_Renamed++;
+                m_totalHits++;
                 if (score > After.Score || (score == After.Score && doc <= AfterDoc))
                 {
                     // hit was collected on a previous page
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                 CollectedHits++;
                 PqTop.Doc = doc;
                 PqTop.Score = score;
-                PqTop = Pq.UpdateTop();
+                PqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -235,12 +235,12 @@ namespace Lucene.Net.Search
 
             protected override int TopDocsSize
             {
-                get { return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size(); }
+                get { return CollectedHits < m_pq.Size() ? CollectedHits : m_pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                return results == null ? new TopDocs(TotalHits_Renamed, new ScoreDoc[0], float.NaN) : new TopDocs(TotalHits_Renamed, results);
+                return results == null ? new TopDocs(m_totalHits, new ScoreDoc[0], float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
         {
             // HitQueue implements getSentinelObject to return a ScoreDoc, so we know
             // that at this point top() is already initialized.
-            PqTop = Pq.Top();
+            PqTop = m_pq.Top();
         }
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -317,14 +317,14 @@ namespace Lucene.Net.Search
             }
             else
             {
-                for (int i = Pq.Size(); i > 1; i--)
+                for (int i = m_pq.Size(); i > 1; i--)
                 {
-                    Pq.Pop();
+                    m_pq.Pop();
                 }
-                maxScore = Pq.Pop().Score;
+                maxScore = m_pq.Pop().Score;
             }
 
-            return new TopDocs(TotalHits_Renamed, results, maxScore);
+            return new TopDocs(m_totalHits, results, maxScore);
         }
 
         public override void SetNextReader(AtomicReaderContext context)
