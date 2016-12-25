@@ -46,23 +46,23 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
+                float score = scorer.Score();
 
                 // this collector cannot handle these scores:
                 Debug.Assert(score != float.NegativeInfinity);
                 Debug.Assert(!float.IsNaN(score));
 
                 m_totalHits++;
-                if (score <= PqTop.Score)
+                if (score <= pqTop.Score)
                 {
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
                     // with equal score to pqTop.score cannot compete since HitQueue favors
                     // documents with lower doc Ids. Therefore reject those docs too.
                     return;
                 }
-                PqTop.Doc = doc + DocBase;
-                PqTop.Score = score;
-                PqTop = m_pq.UpdateTop();
+                pqTop.Doc = doc + docBase;
+                pqTop.Score = score;
+                pqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -74,22 +74,22 @@ namespace Lucene.Net.Search
         // Assumes docs are scored in order.
         private class InOrderPagingScoreDocCollector : TopScoreDocCollector
         {
-            internal readonly ScoreDoc After; // LUCENENET TODO: Rename (private)
+            internal readonly ScoreDoc after;
 
             // this is always after.doc - docBase, to save an add when score == after.score
-            internal int AfterDoc; // LUCENENET TODO: Rename (private)
+            internal int afterDoc;
 
-            internal int CollectedHits; // LUCENENET TODO: Rename (private)
+            internal int collectedHits;
 
             internal InOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
             {
-                this.After = after;
+                this.after = after;
             }
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
+                float score = scorer.Score();
 
                 // this collector cannot handle these scores:
                 Debug.Assert(score != float.NegativeInfinity);
@@ -97,23 +97,23 @@ namespace Lucene.Net.Search
 
                 m_totalHits++;
 
-                if (score > After.Score || (score == After.Score && doc <= AfterDoc))
+                if (score > after.Score || (score == after.Score && doc <= afterDoc))
                 {
                     // hit was collected on a previous page
                     return;
                 }
 
-                if (score <= PqTop.Score)
+                if (score <= pqTop.Score)
                 {
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
                     // with equal score to pqTop.score cannot compete since HitQueue favors
                     // documents with lower doc Ids. Therefore reject those docs too.
                     return;
                 }
-                CollectedHits++;
-                PqTop.Doc = doc + DocBase;
-                PqTop.Score = score;
-                PqTop = m_pq.UpdateTop();
+                collectedHits++;
+                pqTop.Doc = doc + docBase;
+                pqTop.Score = score;
+                pqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -124,12 +124,12 @@ namespace Lucene.Net.Search
             public override void SetNextReader(AtomicReaderContext context)
             {
                 base.SetNextReader(context);
-                AfterDoc = After.Doc - DocBase;
+                afterDoc = after.Doc - docBase;
             }
 
             protected override int TopDocsSize
             {
-                get { return CollectedHits < m_pq.Size() ? CollectedHits : m_pq.Size(); }
+                get { return collectedHits < m_pq.Size() ? collectedHits : m_pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -148,26 +148,26 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
+                float score = scorer.Score();
 
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
 
                 m_totalHits++;
-                if (score < PqTop.Score)
+                if (score < pqTop.Score)
                 {
                     // Doesn't compete w/ bottom entry in queue
                     return;
                 }
-                doc += DocBase;
-                if (score == PqTop.Score && doc > PqTop.Doc)
+                doc += docBase;
+                if (score == pqTop.Score && doc > pqTop.Doc)
                 {
                     // Break tie in score by doc ID:
                     return;
                 }
-                PqTop.Doc = doc;
-                PqTop.Score = score;
-                PqTop = m_pq.UpdateTop();
+                pqTop.Doc = doc;
+                pqTop.Score = score;
+                pqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -179,47 +179,47 @@ namespace Lucene.Net.Search
         // Assumes docs are scored out of order.
         private class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector
         {
-            internal readonly ScoreDoc After; // LUCENENET TODO: Rename (private)
+            internal readonly ScoreDoc after;
 
             // this is always after.doc - docBase, to save an add when score == after.score
-            internal int AfterDoc; // LUCENENET TODO: Rename (private)
+            internal int afterDoc;
 
-            internal int CollectedHits; // LUCENENET TODO: Rename (private)
+            internal int collectedHits;
 
             internal OutOfOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
             {
-                this.After = after;
+                this.after = after;
             }
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
+                float score = scorer.Score();
 
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
 
                 m_totalHits++;
-                if (score > After.Score || (score == After.Score && doc <= AfterDoc))
+                if (score > after.Score || (score == after.Score && doc <= afterDoc))
                 {
                     // hit was collected on a previous page
                     return;
                 }
-                if (score < PqTop.Score)
+                if (score < pqTop.Score)
                 {
                     // Doesn't compete w/ bottom entry in queue
                     return;
                 }
-                doc += DocBase;
-                if (score == PqTop.Score && doc > PqTop.Doc)
+                doc += docBase;
+                if (score == pqTop.Score && doc > pqTop.Doc)
                 {
                     // Break tie in score by doc ID:
                     return;
                 }
-                CollectedHits++;
-                PqTop.Doc = doc;
-                PqTop.Score = score;
-                PqTop = m_pq.UpdateTop();
+                collectedHits++;
+                pqTop.Doc = doc;
+                pqTop.Score = score;
+                pqTop = m_pq.UpdateTop();
             }
 
             public override bool AcceptsDocsOutOfOrder
@@ -230,12 +230,12 @@ namespace Lucene.Net.Search
             public override void SetNextReader(AtomicReaderContext context)
             {
                 base.SetNextReader(context);
-                AfterDoc = After.Doc - DocBase;
+                afterDoc = after.Doc - docBase;
             }
 
             protected override int TopDocsSize
             {
-                get { return CollectedHits < m_pq.Size() ? CollectedHits : m_pq.Size(); }
+                get { return collectedHits < m_pq.Size() ? collectedHits : m_pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -286,9 +286,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal ScoreDoc PqTop; // LUCENENET TODO: Rename (private)
-        internal int DocBase = 0; // LUCENENET TODO: Rename (private)
-        internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+        internal ScoreDoc pqTop;
+        internal int docBase = 0;
+        internal Scorer scorer;
 
         // prevents instantiation
         private TopScoreDocCollector(int numHits)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
         {
             // HitQueue implements getSentinelObject to return a ScoreDoc, so we know
             // that at this point top() is already initialized.
-            PqTop = m_pq.Top();
+            pqTop = m_pq.Top();
         }
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -329,12 +329,12 @@ namespace Lucene.Net.Search
 
         public override void SetNextReader(AtomicReaderContext context)
         {
-            DocBase = context.DocBase;
+            docBase = context.DocBase;
         }
 
         public override void SetScorer(Scorer scorer)
         {
-            this.Scorer_Renamed = scorer;
+            this.scorer = scorer;
         }
     }
 }
