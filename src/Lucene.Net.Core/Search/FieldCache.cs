@@ -442,7 +442,7 @@ namespace Lucene.Net.Search
 
         public sealed class CreationPlaceholder
         {
-            internal object Value; // LUCENENET TODO: make property
+            internal object Value { get; set; }
         }
 
         public interface IParser
