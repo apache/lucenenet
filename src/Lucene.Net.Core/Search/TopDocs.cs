@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The total number of hits for the query. </summary>
-        public int TotalHits; // LUCENENET TODO: Make property
+        public int TotalHits { get; set; }
 
         /// <summary>
         /// The top hits for the query. </summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Stores the maximum score value encountered, needed for normalizing. </summary>
-        private float MaxScore_Renamed; // LUCENENET TODO: Rename (private)
+        private float maxScore;
 
         /// <summary>
         /// Returns the maximum score value encountered. Note that in case
@@ -49,11 +49,11 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return MaxScore_Renamed;
+                return maxScore;
             }
             set
             {
-                this.MaxScore_Renamed = value;
+                this.maxScore = value;
             }
         }
 
@@ -68,17 +68,17 @@ namespace Lucene.Net.Search
         {
             this.TotalHits = totalHits;
             this.ScoreDocs = scoreDocs;
-            this.MaxScore_Renamed = maxScore;
+            this.maxScore = maxScore;
         }
 
         // Refers to one hit:
         private class ShardRef
         {
             // Which shard (index into shardHits[]):
-            internal readonly int ShardIndex; // LUCENENET TODO: Rename (private)
+            internal int ShardIndex { get; private set; }
 
             // Which hit within the shard:
-            internal int HitIndex; // LUCENENET TODO: Rename (private)
+            internal int HitIndex { get; set; }
 
             public ShardRef(int shardIndex)
             {
@@ -95,15 +95,15 @@ namespace Lucene.Net.Search
         // relevance score, descending:
         private class ScoreMergeSortQueue : PriorityQueue<ShardRef>
         {
-            internal readonly ScoreDoc[][] ShardHits;
+            internal readonly ScoreDoc[][] shardHits;
 
             public ScoreMergeSortQueue(TopDocs[] shardHits)
                 : base(shardHits.Length)
             {
-                this.ShardHits = new ScoreDoc[shardHits.Length][];
+                this.shardHits = new ScoreDoc[shardHits.Length][];
                 for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
                 {
-                    this.ShardHits[shardIDX] = shardHits[shardIDX].ScoreDocs;
+                    this.shardHits[shardIDX] = shardHits[shardIDX].ScoreDocs;
                 }
             }
 
@@ -111,8 +111,8 @@ namespace Lucene.Net.Search
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
                 Debug.Assert(first != second);
-                float firstScore = ShardHits[first.ShardIndex][first.HitIndex].Score;
-                float secondScore = ShardHits[second.ShardIndex][second.HitIndex].Score;
+                float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
+                float secondScore = shardHits[second.ShardIndex][second.HitIndex].Score;
 
                 if (firstScore < secondScore)
                 {
@@ -147,22 +147,22 @@ namespace Lucene.Net.Search
         private class MergeSortQueue : PriorityQueue<ShardRef>
         {
             // These are really FieldDoc instances:
-            internal readonly ScoreDoc[][] ShardHits; // LUCENENET TODO: Rename (private)
+            internal readonly ScoreDoc[][] shardHits;
 
             internal readonly FieldComparator[] comparators;
-            internal readonly int[] ReverseMul; // LUCENENET TODO: Rename (private)
+            internal readonly int[] reverseMul;
 
             public MergeSortQueue(Sort sort, TopDocs[] shardHits)
                 : base(shardHits.Length)
             {
-                this.ShardHits = new ScoreDoc[shardHits.Length][];
+                this.shardHits = new ScoreDoc[shardHits.Length][];
                 for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
                 {
                     ScoreDoc[] shard = shardHits[shardIDX].ScoreDocs;
                     //System.out.println("  init shardIdx=" + shardIDX + " hits=" + shard);
                     if (shard != null)
                     {
-                        this.ShardHits[shardIDX] = shard;
+                        this.shardHits[shardIDX] = shard;
                         // Fail gracefully if API is misused:
                         for (int hitIDX = 0; hitIDX < shard.Length; hitIDX++)
                         {
@@ -182,12 +182,12 @@ namespace Lucene.Net.Search
 
                 SortField[] sortFields = sort.GetSort();
                 comparators = new FieldComparator[sortFields.Length];
-                ReverseMul = new int[sortFields.Length];
+                reverseMul = new int[sortFields.Length];
                 for (int compIDX = 0; compIDX < sortFields.Length; compIDX++)
                 {
                     SortField sortField = sortFields[compIDX];
                     comparators[compIDX] = sortField.GetComparator(1, compIDX);
-                    ReverseMul[compIDX] = sortField.Reverse ? -1 : 1;
+                    reverseMul[compIDX] = sortField.Reverse ? -1 : 1;
                 }
             }
 
@@ -195,8 +195,8 @@ namespace Lucene.Net.Search
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
                 Debug.Assert(first != second);
-                FieldDoc firstFD = (FieldDoc)ShardHits[first.ShardIndex][first.HitIndex];
-                FieldDoc secondFD = (FieldDoc)ShardHits[second.ShardIndex][second.HitIndex];
+                FieldDoc firstFD = (FieldDoc)shardHits[first.ShardIndex][first.HitIndex];
+                FieldDoc secondFD = (FieldDoc)shardHits[second.ShardIndex][second.HitIndex];
                 //System.out.println("  lessThan:\n     first=" + first + " doc=" + firstFD.doc + " score=" + firstFD.score + "\n    second=" + second + " doc=" + secondFD.doc + " score=" + secondFD.score);
 
                 for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
                     FieldComparator comp = comparators[compIDX];
                     //System.out.println("    cmp idx=" + compIDX + " cmp1=" + firstFD.fields[compIDX] + " cmp2=" + secondFD.fields[compIDX] + " reverse=" + reverseMul[compIDX]);
 
-                    int cmp = ReverseMul[compIDX] * comp.CompareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);
+                    int cmp = reverseMul[compIDX] * comp.CompareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);
 
                     if (cmp != 0)
                     {
