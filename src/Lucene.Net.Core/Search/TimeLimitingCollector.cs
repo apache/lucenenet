@@ -200,12 +200,9 @@ namespace Lucene.Net.Search
         /// reset the timer for each phase.  Once time is up subsequent phases need to timeout quickly.
         /// </summary>
         /// <param name="collector"> The actual collector performing search functionality </param>
-        public virtual Collector Collector // LUCENENET TODO: Make SetCollector(Collector collector)
+        public virtual void SetCollector(Collector collector)
         {
-            set
-            {
-                this.collector = value;
-            }
+            this.collector = collector;
         }
 
         /// <summary>
