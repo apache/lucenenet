@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanPayloadCheckQuery : SpanPositionCheckQuery
     {
-        protected readonly ICollection<byte[]> PayloadToMatch; // LUCENENET TODO: rename
+        protected readonly ICollection<byte[]> m_payloadToMatch;
 
         ///
         /// <param name="match"> The underlying <seealso cref="Lucene.Net.Search.Spans.SpanQuery"/> to check </param>
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Spans
             {
                 throw new System.ArgumentException("SpanNearQuery not allowed");
             }
-            this.PayloadToMatch = payloadToMatch;
+            this.m_payloadToMatch = payloadToMatch;
         }
 
         protected override AcceptStatus AcceptPosition(Spans spans)
@@ -56,10 +56,10 @@ namespace Lucene.Net.Search.Spans
             if (result == true)
             {
                 var candidate = spans.Payload;
-                if (candidate.Count == PayloadToMatch.Count)
+                if (candidate.Count == m_payloadToMatch.Count)
                 {
                     //TODO: check the byte arrays are the same
-                    var toMatchIter = PayloadToMatch.GetEnumerator();
+                    var toMatchIter = m_payloadToMatch.GetEnumerator();
                     //check each of the byte arrays, in order
                     //hmm, can't rely on order here
                     foreach (var candBytes in candidate)
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append("spanPayCheck(");
             buffer.Append(match.ToString(field));
             buffer.Append(", payloadRef: ");
-            foreach (var bytes in PayloadToMatch)
+            foreach (var bytes in m_payloadToMatch)
             {
                 ToStringUtils.ByteArray(buffer, bytes);
                 buffer.Append(';');
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanPayloadCheckQuery result = new SpanPayloadCheckQuery((SpanQuery)match.Clone(), PayloadToMatch);
+            SpanPayloadCheckQuery result = new SpanPayloadCheckQuery((SpanQuery)match.Clone(), m_payloadToMatch);
             result.Boost = Boost;
             return result;
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanPayloadCheckQuery other = (SpanPayloadCheckQuery)o;
-            return this.PayloadToMatch.Equals(other.PayloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
+            return this.m_payloadToMatch.Equals(other.m_payloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Spans
             int h = match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
-            h ^= PayloadToMatch.GetHashCode();
+            h ^= m_payloadToMatch.GetHashCode();
             h ^= Number.FloatToIntBits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
