@@ -70,14 +70,14 @@ namespace Lucene.Net.Search.Payloads
 
         public override object Clone()
         {
-            int sz = clauses.Count;
+            int sz = m_clauses.Count;
             SpanQuery[] newClauses = new SpanQuery[sz];
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)clauses[i].Clone();
+                newClauses[i] = (SpanQuery)m_clauses[i].Clone();
             }
-            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder, function);
+            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, m_slop, m_inOrder, function);
             boostingNearQuery.Boost = Boost;
             return boostingNearQuery;
         }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Payloads
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("payloadNear([");
-            IEnumerator<SpanQuery> i = clauses.GetEnumerator();
+            IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
             bool hasCommaSpace = false;
             while (i.MoveNext())
             {
@@ -100,9 +100,9 @@ namespace Lucene.Net.Search.Payloads
                 buffer.Remove(buffer.Length - 2, 2);
 
             buffer.Append("], ");
-            buffer.Append(slop);
+            buffer.Append(m_slop);
             buffer.Append(", ");
-            buffer.Append(inOrder);
+            buffer.Append(m_inOrder);
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

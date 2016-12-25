@@ -36,12 +36,12 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
-        protected internal readonly IList<SpanQuery> clauses; // LUCENENET TODO: rename
-        protected internal int slop; // LUCENENET TODO: rename
-        protected internal bool inOrder; // LUCENENET TODO: rename
+        protected internal readonly IList<SpanQuery> m_clauses;
+        protected internal int m_slop;
+        protected internal bool m_inOrder;
 
-        protected internal string field; // LUCENENET TODO: rename
-        private bool CollectPayloads; // LUCENENET TODO: rename camelCase
+        protected internal string m_field;
+        private bool collectPayloads;
 
         /// <summary>
         /// Construct a SpanNearQuery.  Matches spans matching a span from each
@@ -60,23 +60,23 @@ namespace Lucene.Net.Search.Spans
         public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder, bool collectPayloads)
         {
             // copy clauses array into an ArrayList
-            this.clauses = new List<SpanQuery>(clauses.Length);
+            this.m_clauses = new List<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpanQuery clause = clauses[i];
-                if (field == null) // check field
+                if (m_field == null) // check field
                 {
-                    field = clause.Field;
+                    m_field = clause.Field;
                 }
-                else if (clause.Field != null && !clause.Field.Equals(field))
+                else if (clause.Field != null && !clause.Field.Equals(m_field))
                 {
                     throw new System.ArgumentException("Clauses must have same field.");
                 }
-                this.clauses.Add(clause);
+                this.m_clauses.Add(clause);
             }
-            this.CollectPayloads = collectPayloads;
-            this.slop = slop;
-            this.inOrder = inOrder;
+            this.collectPayloads = collectPayloads;
+            this.m_slop = slop;
+            this.m_inOrder = inOrder;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return clauses.ToArray();
+                return m_clauses.ToArray();
             }
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return slop;
+                return m_slop;
             }
         }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return inOrder;
+                return m_inOrder;
             }
         }
 
@@ -113,13 +113,13 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return field;
+                return m_field;
             }
         }
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            foreach (SpanQuery clause in clauses)
+            foreach (SpanQuery clause in m_clauses)
             {
                 clause.ExtractTerms(terms);
             }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("spanNear([");
-            IEnumerator<SpanQuery> i = clauses.GetEnumerator();
+            IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
             while (i.MoveNext())
             {
                 SpanQuery clause = i.Current;
@@ -137,12 +137,12 @@ namespace Lucene.Net.Search.Spans
                 buffer.Append(", ");
             }
             //LUCENENET TODO: Change logic above to skip this instead of removing it
-            if (clauses.Count > 0)
+            if (m_clauses.Count > 0)
                 buffer.Remove(buffer.Length - 2, 2);
             buffer.Append("], ");
-            buffer.Append(slop);
+            buffer.Append(m_slop);
             buffer.Append(", ");
-            buffer.Append(inOrder);
+            buffer.Append(m_inOrder);
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -150,25 +150,25 @@ namespace Lucene.Net.Search.Spans
 
         public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            if (clauses.Count == 0) // optimize 0-clause case
+            if (m_clauses.Count == 0) // optimize 0-clause case
             {
                 return (new SpanOrQuery(Clauses)).GetSpans(context, acceptDocs, termContexts);
             }
 
-            if (clauses.Count == 1) // optimize 1-clause case
+            if (m_clauses.Count == 1) // optimize 1-clause case
             {
-                return clauses[0].GetSpans(context, acceptDocs, termContexts);
+                return m_clauses[0].GetSpans(context, acceptDocs, termContexts);
             }
 
-            return inOrder ? (Spans)new NearSpansOrdered(this, context, acceptDocs, termContexts, CollectPayloads) : (Spans)new NearSpansUnordered(this, context, acceptDocs, termContexts);
+            return m_inOrder ? (Spans)new NearSpansOrdered(this, context, acceptDocs, termContexts, collectPayloads) : (Spans)new NearSpansUnordered(this, context, acceptDocs, termContexts);
         }
 
         public override Query Rewrite(IndexReader reader)
         {
             SpanNearQuery clone = null;
-            for (int i = 0; i < clauses.Count; i++)
+            for (int i = 0; i < m_clauses.Count; i++)
             {
-                SpanQuery c = clauses[i];
+                SpanQuery c = m_clauses[i];
                 SpanQuery query = (SpanQuery)c.Rewrite(reader);
                 if (query != c) // clause rewrote: must clone
                 {
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Spans
                     {
                         clone = (SpanNearQuery)this.Clone();
                     }
-                    clone.clauses[i] = query;
+                    clone.m_clauses[i] = query;
                 }
             }
             if (clone != null)
@@ -191,14 +191,14 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            int sz = clauses.Count;
+            int sz = m_clauses.Count;
             SpanQuery[] newClauses = new SpanQuery[sz];
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)clauses[i].Clone();
+                newClauses[i] = (SpanQuery)m_clauses[i].Clone();
             }
-            SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
+            SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, m_slop, m_inOrder);
             spanNearQuery.Boost = Boost;
             return spanNearQuery;
         }
@@ -218,15 +218,15 @@ namespace Lucene.Net.Search.Spans
 
             SpanNearQuery spanNearQuery = (SpanNearQuery)o;
 
-            if (inOrder != spanNearQuery.inOrder)
+            if (m_inOrder != spanNearQuery.m_inOrder)
             {
                 return false;
             }
-            if (slop != spanNearQuery.slop)
+            if (m_slop != spanNearQuery.m_slop)
             {
                 return false;
             }
-            if (!clauses.SequenceEqual(spanNearQuery.clauses))
+            if (!m_clauses.SequenceEqual(spanNearQuery.m_clauses))
             {
                 return false;
             }
@@ -238,14 +238,14 @@ namespace Lucene.Net.Search.Spans
         {
             int result;
             //If this doesn't work, hash all elements together. This version was used to improve the speed of hashing
-            result = HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count);
+            result = HashHelpers.CombineHashCodes(m_clauses.First().GetHashCode(), m_clauses.Last().GetHashCode(), m_clauses.Count);
             // Mix bits before folding in things like boost, since it could cancel the
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
             result ^= (result << 14) | ((int)((uint)result >> 19)); // reversible
             result += Number.FloatToIntBits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
-            result += slop;
-            result ^= (inOrder ? unchecked((int)0x99AFD3BD) : 0);
+            result += m_slop;
+            result ^= (m_inOrder ? unchecked((int)0x99AFD3BD) : 0);
             return result;
         }
     }
