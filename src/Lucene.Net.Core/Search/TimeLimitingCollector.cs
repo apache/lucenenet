@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
         /// </p> </summary>
         /// <returns> the global TimerThreads <seealso cref="Counter"/>
         /// @lucene.experimental </returns>
-        public static Counter GlobalCounter // LUCENENET TODO: Make GetGlobalCounter() (may spawn new thread)
+        public static Counter GlobalCounter
         {
             get
             {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <returns> the global <seealso cref="TimerThread"/>
         /// @lucene.experimental </returns>
-        public static TimerThread GlobalTimerThread // LUCENENET TODO: Make GetGlobalTimerThread() (may spawn new thread)
+        public static TimerThread GlobalTimerThread
         {
             get
             {
