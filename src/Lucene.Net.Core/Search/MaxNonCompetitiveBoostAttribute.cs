@@ -26,18 +26,18 @@ namespace Lucene.Net.Search
     /// </summary>
     public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
     {
-        private float MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity; // LUCENENET TODO: Rename (private)
-        private BytesRef CompetitiveTerm_Renamed = null; // LUCENENET TODO: Rename (private)
+        private float maxNonCompetitiveBoost = float.NegativeInfinity;
+        private BytesRef competitiveTerm = null;
 
         public float MaxNonCompetitiveBoost
         {
             set
             {
-                this.MaxNonCompetitiveBoost_Renamed = value;
+                this.maxNonCompetitiveBoost = value;
             }
             get
             {
-                return MaxNonCompetitiveBoost_Renamed;
+                return maxNonCompetitiveBoost;
             }
         }
 
@@ -45,25 +45,25 @@ namespace Lucene.Net.Search
         {
             set
             {
-                this.CompetitiveTerm_Renamed = value;
+                this.competitiveTerm = value;
             }
             get
             {
-                return CompetitiveTerm_Renamed;
+                return competitiveTerm;
             }
         }
 
         public override void Clear()
         {
-            MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity;
-            CompetitiveTerm_Renamed = null;
+            maxNonCompetitiveBoost = float.NegativeInfinity;
+            competitiveTerm = null;
         }
 
         public override void CopyTo(Attribute target)
         {
             MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute)target;
-            t.MaxNonCompetitiveBoost = MaxNonCompetitiveBoost_Renamed;
-            t.CompetitiveTerm = CompetitiveTerm_Renamed;
+            t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;
+            t.CompetitiveTerm = competitiveTerm;
         }
     }
 }
