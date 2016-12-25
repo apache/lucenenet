@@ -95,22 +95,22 @@ namespace Lucene.Net.Search
 
     public class FieldCacheTermsFilter : Filter
     {
-        private string Field;// LUCENENET TODO: Rename (private)
-        private BytesRef[] Terms;// LUCENENET TODO: Rename (private)
+        private string field;
+        private BytesRef[] terms;
 
         public FieldCacheTermsFilter(string field, params BytesRef[] terms)
         {
-            this.Field = field;
-            this.Terms = terms;
+            this.field = field;
+            this.terms = terms;
         }
 
         public FieldCacheTermsFilter(string field, params string[] terms)
         {
-            this.Field = field;
-            this.Terms = new BytesRef[terms.Length];
+            this.field = field;
+            this.terms = new BytesRef[terms.Length];
             for (int i = 0; i < terms.Length; i++)
             {
-                this.Terms[i] = new BytesRef(terms[i]);
+                this.terms[i] = new BytesRef(terms[i]);
             }
         }
 
@@ -124,11 +124,11 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            SortedDocValues fcsi = FieldCache.GetTermsIndex((context.AtomicReader), Field);
+            SortedDocValues fcsi = FieldCache.GetTermsIndex((context.AtomicReader), field);
             FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
-            for (int i = 0; i < Terms.Length; i++)
+            for (int i = 0; i < terms.Length; i++)
             {
-                int ord = fcsi.LookupTerm(Terms[i]);
+                int ord = fcsi.LookupTerm(terms[i]);
                 if (ord >= 0)
                 {
                     bits.Set(ord);
@@ -139,22 +139,22 @@ namespace Lucene.Net.Search
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
         {
-            private readonly FieldCacheTermsFilter OuterInstance;
+            private readonly FieldCacheTermsFilter outerInstance;
 
-            private SortedDocValues Fcsi;
-            private FixedBitSet Bits;
+            private SortedDocValues fcsi;
+            private FixedBitSet bits;
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldCacheTermsFilter outerInstance, int maxDoc, Bits acceptDocs, SortedDocValues fcsi, FixedBitSet bits)
                 : base(maxDoc, acceptDocs)
             {
-                this.OuterInstance = outerInstance;
-                this.Fcsi = fcsi;
-                this.Bits = bits;
+                this.outerInstance = outerInstance;
+                this.fcsi = fcsi;
+                this.bits = bits;
             }
 
             protected internal override sealed bool MatchDoc(int doc)
             {
-                int ord = Fcsi.GetOrd(doc);
+                int ord = fcsi.GetOrd(doc);
                 if (ord == -1)
                 {
                     // missing
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return Bits.Get(ord);
+                    return bits.Get(ord);
                 }
             }
         }
