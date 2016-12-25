@@ -46,20 +46,20 @@ namespace Lucene.Net.Search
 
         internal class MultiTermQueryDocTermOrdsWrapperFilter : Filter
         {
-            protected readonly MultiTermQuery Query; // LUCENENET TODO: rename (private)
+            protected readonly MultiTermQuery m_query;
 
             /// <summary>
             /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.
             /// </summary>
             protected internal MultiTermQueryDocTermOrdsWrapperFilter(MultiTermQuery query)
             {
-                this.Query = query;
+                this.m_query = query;
             }
 
             public override string ToString()
             {
                 // query.toString should be ok for the filter, too, if the query boost is 1.0f
-                return Query.ToString();
+                return m_query.ToString();
             }
 
             public override sealed bool Equals(object o)
@@ -74,14 +74,14 @@ namespace Lucene.Net.Search
                 }
                 if (this.GetType().Equals(o.GetType()))
                 {
-                    return this.Query.Equals(((MultiTermQueryDocTermOrdsWrapperFilter)o).Query);
+                    return this.m_query.Equals(((MultiTermQueryDocTermOrdsWrapperFilter)o).m_query);
                 }
                 return false;
             }
 
             public override sealed int GetHashCode()
             {
-                return Query.GetHashCode();
+                return m_query.GetHashCode();
             }
 
             /// <summary>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    return Query.Field;
+                    return m_query.Field;
                 }
             }
 
@@ -100,10 +100,10 @@ namespace Lucene.Net.Search
             /// </summary>
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), Query.m_field);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 LongBitSet termSet = new LongBitSet(docTermOrds.ValueCount);
-                TermsEnum termsEnum = Query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
+                TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
 
                 Debug.Assert(termsEnum != null);
                 if (termsEnum.Next() != null)
@@ -124,14 +124,14 @@ namespace Lucene.Net.Search
 
             private class TermsAnonymousInnerClassHelper : Terms
             {
-                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance; // LUCENENET TODO: rename (private)
+                private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;
 
-                private SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
+                private SortedSetDocValues docTermOrds;
 
                 public TermsAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, SortedSetDocValues docTermOrds)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.DocTermOrds = docTermOrds;
+                    this.outerInstance = outerInstance;
+                    this.docTermOrds = docTermOrds;
                 }
 
                 public override IComparer<BytesRef> Comparator
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 
                 public override TermsEnum Iterator(TermsEnum reuse)
                 {
-                    return DocTermOrds.TermsEnum();
+                    return docTermOrds.TermsEnum();
                 }
 
                 public override long SumTotalTermFreq
@@ -199,27 +199,27 @@ namespace Lucene.Net.Search
 
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
-                private readonly MultiTermQueryDocTermOrdsWrapperFilter OuterInstance; // LUCENENET TODO: rename (private)
+                private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;
 
-                private SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
-                private LongBitSet TermSet; // LUCENENET TODO: rename (private)
+                private SortedSetDocValues docTermOrds;
+                private LongBitSet termSet;
 
                 public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, LongBitSet termSet)
                     : base(maxDoc, acceptDocs)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.DocTermOrds = docTermOrds;
-                    this.TermSet = termSet;
+                    this.outerInstance = outerInstance;
+                    this.docTermOrds = docTermOrds;
+                    this.termSet = termSet;
                 }
 
                 protected internal override sealed bool MatchDoc(int doc)
                 {
-                    DocTermOrds.SetDocument(doc);
+                    docTermOrds.SetDocument(doc);
                     long ord;
                     // TODO: we could track max bit set and early terminate (since they come in sorted order)
-                    while ((ord = DocTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+                    while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        if (TermSet.Get(ord))
+                        if (termSet.Get(ord))
                         {
                             return true;
                         }
