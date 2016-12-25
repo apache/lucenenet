@@ -177,23 +177,20 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual object MissingValue // LUCENENET TODO: Change back to SetMissingValue() method - properties should always have a getter
+        public virtual void SetMissingValue(object value)
         {
-            set
+            if (type == SortFieldType.STRING)
             {
-                if (type == SortFieldType.STRING)
+                if (value != STRING_FIRST && value != STRING_LAST)
                 {
-                    if (value != STRING_FIRST && value != STRING_LAST)
-                    {
-                        throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
-                    }
+                    throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
                 }
-                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
-                {
-                    throw new System.ArgumentException("Missing value only works for numeric or STRING types");
-                }
-                this.missingValue = value;
             }
+            else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
+            {
+                throw new System.ArgumentException("Missing value only works for numeric or STRING types");
+            }
+            this.missingValue = value;
         }
 
         /// <summary>

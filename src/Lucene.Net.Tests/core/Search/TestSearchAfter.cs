@@ -81,11 +81,11 @@ namespace Lucene.Net.Search
                 {
                     bool reversed = rev == 0;
                     SortField sf = new SortField(field, SortFieldType.STRING, reversed);
-                    sf.MissingValue = SortField.STRING_FIRST;
+                    sf.SetMissingValue(SortField.STRING_FIRST);
                     AllSortFields.Add(sf);
 
                     sf = new SortField(field, SortFieldType.STRING, reversed);
-                    sf.MissingValue = SortField.STRING_LAST;
+                    sf.SetMissingValue(SortField.STRING_LAST);
                     AllSortFields.Add(sf);
                 }
             }
@@ -97,25 +97,25 @@ namespace Lucene.Net.Search
                 if (sf.Type == SortFieldType.INT)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT, sf.Reverse);
-                    sf2.MissingValue = Random().Next();
+                    sf2.SetMissingValue(Random().Next());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.LONG)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.LONG, sf.Reverse);
-                    sf2.MissingValue = Random().NextLong();
+                    sf2.SetMissingValue(Random().NextLong());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.FLOAT)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.FLOAT, sf.Reverse);
-                    sf2.MissingValue = (float)Random().NextDouble();
+                    sf2.SetMissingValue((float)Random().NextDouble());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.DOUBLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.Reverse);
-                    sf2.MissingValue = Random().NextDouble();
+                    sf2.SetMissingValue(Random().NextDouble());
                     AllSortFields.Add(sf2);
                 }
             }

@@ -133,16 +133,13 @@ namespace Lucene.Net.Sandbox.Queries
         /// Note that this must be <see cref="SortField.STRING_FIRST"/> or 
         /// <see cref="SortField.STRING_LAST"/>.
         /// </summary>
-        public override object MissingValue
+        public override void SetMissingValue(object value)
         {
-            set
+            if (value != STRING_FIRST && value != STRING_LAST)
             {
-                if (value != STRING_FIRST && value != STRING_LAST)
-                {
-                    throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
-                }
-                this.missingValue = value;
+                throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
             }
+            this.missingValue = value;
         }
 
         internal class TermOrdValComparatorAnonymousHelper : FieldComparator.TermOrdValComparator
