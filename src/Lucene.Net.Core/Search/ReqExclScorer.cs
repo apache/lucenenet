@@ -28,9 +28,9 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class ReqExclScorer : Scorer
     {
-        private Scorer ReqScorer; // LUCENENET TODO: Rename (private)
-        private DocIdSetIterator ExclDisi; // LUCENENET TODO: Rename (private)
-        private int Doc = -1;
+        private Scorer reqScorer;
+        private DocIdSetIterator exclDisi;
+        private int doc = -1;
 
         /// <summary>
         /// Construct a <code>ReqExclScorer</code>. </summary>
@@ -39,27 +39,27 @@ namespace Lucene.Net.Search
         public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi)
             : base(reqScorer.weight)
         {
-            this.ReqScorer = reqScorer;
-            this.ExclDisi = exclDisi;
+            this.reqScorer = reqScorer;
+            this.exclDisi = exclDisi;
         }
 
         public override int NextDoc()
         {
-            if (ReqScorer == null)
+            if (reqScorer == null)
             {
-                return Doc;
+                return doc;
             }
-            Doc = ReqScorer.NextDoc();
-            if (Doc == NO_MORE_DOCS)
+            doc = reqScorer.NextDoc();
+            if (doc == NO_MORE_DOCS)
             {
-                ReqScorer = null; // exhausted, nothing left
-                return Doc;
+                reqScorer = null; // exhausted, nothing left
+                return doc;
             }
-            if (ExclDisi == null)
+            if (exclDisi == null)
             {
-                return Doc;
+                return doc;
             }
-            return Doc = ToNonExcluded();
+            return doc = ToNonExcluded();
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace Lucene.Net.Search
         /// <returns> true iff there is a non excluded required doc. </returns>
         private int ToNonExcluded()
         {
-            int exclDoc = ExclDisi.DocID;
-            int reqDoc = ReqScorer.DocID; // may be excluded
+            int exclDoc = exclDisi.DocID;
+            int reqDoc = reqScorer.DocID; // may be excluded
             do
             {
                 if (reqDoc < exclDoc)
@@ -85,10 +85,10 @@ namespace Lucene.Net.Search
                 }
                 else if (reqDoc > exclDoc)
                 {
-                    exclDoc = ExclDisi.Advance(reqDoc);
+                    exclDoc = exclDisi.Advance(reqDoc);
                     if (exclDoc == NO_MORE_DOCS)
                     {
-                        ExclDisi = null; // exhausted, no more exclusions
+                        exclDisi = null; // exhausted, no more exclusions
                         return reqDoc;
                     }
                     if (exclDoc > reqDoc)
@@ -96,14 +96,14 @@ namespace Lucene.Net.Search
                         return reqDoc; // not excluded
                     }
                 }
-            } while ((reqDoc = ReqScorer.NextDoc()) != NO_MORE_DOCS);
-            ReqScorer = null; // exhausted, nothing left
+            } while ((reqDoc = reqScorer.NextDoc()) != NO_MORE_DOCS);
+            reqScorer = null; // exhausted, nothing left
             return NO_MORE_DOCS;
         }
 
         public override int DocID
         {
-            get { return Doc; }
+            get { return doc; }
         }
 
         /// <summary>
@@ -112,12 +112,12 @@ namespace Lucene.Net.Search
         /// <returns> The score of the required scorer. </returns>
         public override float Score()
         {
-            return ReqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
+            return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
         }
 
         public override int Freq
         {
-            get { return ReqScorer.Freq; }
+            get { return reqScorer.Freq; }
         }
 
         public override ICollection<ChildScorer> Children
@@ -125,32 +125,32 @@ namespace Lucene.Net.Search
             get
             {
                 //LUCENE TO-DO
-                return new[] { new ChildScorer(ReqScorer, "FILTERED") };
+                return new[] { new ChildScorer(reqScorer, "FILTERED") };
                 //return Collections.singleton(new ChildScorer(ReqScorer, "FILTERED"));
             }
         }
 
         public override int Advance(int target)
         {
-            if (ReqScorer == null)
+            if (reqScorer == null)
             {
-                return Doc = NO_MORE_DOCS;
+                return doc = NO_MORE_DOCS;
             }
-            if (ExclDisi == null)
+            if (exclDisi == null)
             {
-                return Doc = ReqScorer.Advance(target);
+                return doc = reqScorer.Advance(target);
             }
-            if (ReqScorer.Advance(target) == NO_MORE_DOCS)
+            if (reqScorer.Advance(target) == NO_MORE_DOCS)
             {
-                ReqScorer = null;
-                return Doc = NO_MORE_DOCS;
+                reqScorer = null;
+                return doc = NO_MORE_DOCS;
             }
-            return Doc = ToNonExcluded();
+            return doc = ToNonExcluded();
         }
 
         public override long Cost()
         {
-            return ReqScorer.Cost();
+            return reqScorer.Cost();
         }
     }
 }
