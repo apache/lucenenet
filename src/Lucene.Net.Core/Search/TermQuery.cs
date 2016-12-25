@@ -42,53 +42,53 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermQuery : Query
     {
-        private readonly Term _term;
-        private readonly int DocFreq; // LUCENENET TODO: Rename (private)
-        private readonly TermContext PerReaderTermState; // LUCENENET TODO: Rename (private)
+        private readonly Term term;
+        private readonly int docFreq;
+        private readonly TermContext perReaderTermState;
 
         internal sealed class TermWeight : Weight
         {
-            private readonly TermQuery OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly TermQuery outerInstance;
 
-            internal readonly Similarity Similarity; // LUCENENET TODO: Rename (private)
-            internal readonly Similarity.SimWeight Stats; // LUCENENET TODO: Rename (private)
-            internal readonly TermContext TermStates; // LUCENENET TODO: Rename (private)
+            internal readonly Similarity similarity;
+            internal readonly Similarity.SimWeight stats;
+            internal readonly TermContext termStates;
 
             public TermWeight(TermQuery outerInstance, IndexSearcher searcher, TermContext termStates)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 Debug.Assert(termStates != null, "TermContext must not be null");
-                this.TermStates = termStates;
-                this.Similarity = searcher.Similarity;
-                this.Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance._term.Field), searcher.TermStatistics(outerInstance._term, termStates));
+                this.termStates = termStates;
+                this.similarity = searcher.Similarity;
+                this.stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.term.Field), searcher.TermStatistics(outerInstance.term, termStates));
             }
 
             public override string ToString()
             {
-                return "weight(" + OuterInstance + ")";
+                return "weight(" + outerInstance + ")";
             }
 
             public override Query Query
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             public override float GetValueForNormalization()
             {
-                return Stats.GetValueForNormalization();
+                return stats.GetValueForNormalization();
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                Stats.Normalize(queryNorm, topLevelBoost);
+                stats.Normalize(queryNorm, topLevelBoost);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                Debug.Assert(TermStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), "The top-reader used to create Weight (" + TermStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
+                Debug.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), "The top-reader used to create Weight (" + termStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);
                 if (termsEnum == null)
                 {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
                 }
                 DocsEnum docs = termsEnum.Docs(acceptDocs, null);
                 Debug.Assert(docs != null);
-                return new TermScorer(this, docs, Similarity.DoSimScorer(Stats, context));
+                return new TermScorer(this, docs, similarity.DoSimScorer(stats, context));
             }
 
             /// <summary>
@@ -105,15 +105,15 @@ namespace Lucene.Net.Search
             /// </summary>
             private TermsEnum GetTermsEnum(AtomicReaderContext context)
             {
-                TermState state = TermStates.Get(context.Ord);
+                TermState state = termStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
-                    Debug.Assert(TermNotInReader(context.AtomicReader, OuterInstance._term), "no termstate found but term exists in reader term=" + OuterInstance._term);
+                    Debug.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), "no termstate found but term exists in reader term=" + outerInstance.term);
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
-                TermsEnum termsEnum = context.AtomicReader.Terms(OuterInstance._term.Field).Iterator(null);
-                termsEnum.SeekExact(OuterInstance._term.Bytes, state);
+                TermsEnum termsEnum = context.AtomicReader.Terms(outerInstance.term.Field).Iterator(null);
+                termsEnum.SeekExact(outerInstance.term.Bytes, state);
                 return termsEnum;
             }
 
@@ -133,9 +133,9 @@ namespace Lucene.Net.Search
                     if (newDoc == doc)
                     {
                         float freq = scorer.Freq;
-                        SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
+                        SimScorer docScorer = similarity.DoSimScorer(stats, context);
                         ComplexExplanation result = new ComplexExplanation();
-                        result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+                        result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "termFreq=" + freq));
                         result.AddDetail(scoreExplanation);
                         result.Value = scoreExplanation.Value;
@@ -161,9 +161,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermQuery(Term t, int docFreq)
         {
-            _term = t;
-            this.DocFreq = docFreq;
-            PerReaderTermState = null;
+            term = t;
+            this.docFreq = docFreq;
+            perReaderTermState = null;
         }
 
         /// <summary>
@@ -174,9 +174,9 @@ namespace Lucene.Net.Search
         public TermQuery(Term t, TermContext states)
         {
             Debug.Assert(states != null);
-            _term = t;
-            DocFreq = states.DocFreq;
-            PerReaderTermState = states;
+            term = t;
+            docFreq = states.DocFreq;
+            perReaderTermState = states;
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return _term;
+                return term;
             }
         }
 
@@ -193,21 +193,21 @@ namespace Lucene.Net.Search
         {
             IndexReaderContext context = searcher.TopReaderContext;
             TermContext termState;
-            if (PerReaderTermState == null || PerReaderTermState.TopReaderContext != context)
+            if (perReaderTermState == null || perReaderTermState.TopReaderContext != context)
             {
                 // make TermQuery single-pass if we don't have a PRTS or if the context differs!
-                termState = TermContext.Build(context, _term);
+                termState = TermContext.Build(context, term);
             }
             else
             {
                 // PRTS was pre-build for this IS
-                termState = this.PerReaderTermState;
+                termState = this.perReaderTermState;
             }
 
             // we must not ignore the given docFreq - if set use the given value (lie)
-            if (DocFreq != -1)
+            if (docFreq != -1)
             {
-                termState.DocFreq = DocFreq;
+                termState.DocFreq = docFreq;
             }
 
             return new TermWeight(this, searcher, termState);
@@ -223,12 +223,12 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!_term.Field.Equals(field))
+            if (!term.Field.Equals(field))
             {
-                buffer.Append(_term.Field);
+                buffer.Append(term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(_term.Text());
+            buffer.Append(term.Text());
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -242,14 +242,14 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermQuery other = (TermQuery)o;
-            return (this.Boost == other.Boost) && this._term.Equals(other._term);
+            return (this.Boost == other.Boost) && this.term.Equals(other.term);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ _term.GetHashCode();
+            return Number.FloatToIntBits(Boost) ^ term.GetHashCode();
         }
     }
 }
