@@ -568,9 +568,9 @@ namespace Lucene.Net.Search
                 _lastIndex = 0;
             }
 
-            internal int Size() // LUCENENET TODO: Make property and rename Count
+            internal int Size // LUCENENET TODO: rename Count
             {
-                return (_lastIndex - _index);
+                get { return (_lastIndex - _index); }
             }
 
             private void GrowArray()
@@ -651,7 +651,7 @@ namespace Lucene.Net.Search
             } while (_queue.Size() > 0 && _queue.Top().DocID() == _doc);
 
             _posList.Sort();
-            _freq = _posList.Size();
+            _freq = _posList.Size;
 
             return _doc;
         }
