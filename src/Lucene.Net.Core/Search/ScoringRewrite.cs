@@ -124,16 +124,16 @@ namespace Lucene.Net.Search
             ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);
 
-            int size = col.Terms.Size();
+            int size = col.terms.Size();
             if (size > 0)
             {
-                int[] sort = col.Terms.Sort(col.TermsEnum.Comparator);
-                float[] boost = col.Array.Boost;
-                TermContext[] termStates = col.Array.TermState;
+                int[] sort = col.terms.Sort(col.termsEnum.Comparator);
+                float[] boost = col.array.boost;
+                TermContext[] termStates = col.array.termState;
                 for (int i = 0; i < size; i++)
                 {
                     int pos = sort[i];
-                    Term term = new Term(query.Field, col.Terms.Get(pos, new BytesRef()));
+                    Term term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
                     Debug.Assert(reader.DocFreq(term) == termStates[pos].DocFreq);
                     AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
                 }
@@ -145,48 +145,48 @@ namespace Lucene.Net.Search
         {
             internal void InitializeInstanceFields()
             {
-                Terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
+                terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
             }
 
-            private readonly ScoringRewrite<Q> OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly ScoringRewrite<Q> outerInstance;
 
             public ParallelArraysTermCollector(ScoringRewrite<Q> outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
             }
 
-            internal readonly TermFreqBoostByteStart Array = new TermFreqBoostByteStart(16); // LUCENENET TODO: Rename (private)
-            internal BytesRefHash Terms; // LUCENENET TODO: Rename (private)
-            internal TermsEnum TermsEnum; // LUCENENET TODO: Rename (private)
+            internal readonly TermFreqBoostByteStart array = new TermFreqBoostByteStart(16);
+            internal BytesRefHash terms;
+            internal TermsEnum termsEnum;
 
-            private IBoostAttribute BoostAtt; // LUCENENET TODO: Rename (private)
+            private IBoostAttribute boostAtt;
 
             public override void SetNextEnum(TermsEnum termsEnum)
             {
-                this.TermsEnum = termsEnum;
-                this.BoostAtt = termsEnum.Attributes.AddAttribute<IBoostAttribute>();
+                this.termsEnum = termsEnum;
+                this.boostAtt = termsEnum.Attributes.AddAttribute<IBoostAttribute>();
             }
 
             public override bool Collect(BytesRef bytes)
             {
-                int e = Terms.Add(bytes);
-                TermState state = TermsEnum.TermState();
+                int e = terms.Add(bytes);
+                TermState state = termsEnum.TermState();
                 Debug.Assert(state != null);
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
                     int pos = (-e) - 1;
-                    Array.TermState[pos].Register(state, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
-                    Debug.Assert(Array.Boost[pos] == BoostAtt.Boost, "boost should be equal in all segment TermsEnums");
+                    array.termState[pos].Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    Debug.Assert(array.boost[pos] == boostAtt.Boost, "boost should be equal in all segment TermsEnums");
                 }
                 else
                 {
                     // new entry: we populate the entry initially
-                    Array.Boost[e] = BoostAtt.Boost;
-                    Array.TermState[e] = new TermContext(TopReaderContext, state, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
-                    OuterInstance.CheckMaxClauseCount(Terms.Size());
+                    array.boost[e] = boostAtt.Boost;
+                    array.termState[e] = new TermContext(TopReaderContext, state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    outerInstance.CheckMaxClauseCount(terms.Size());
                 }
                 return true;
             }
@@ -196,8 +196,8 @@ namespace Lucene.Net.Search
         /// Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq </summary>
         internal sealed class TermFreqBoostByteStart : BytesRefHash.DirectBytesStartArray
         {
-            internal float[] Boost; // LUCENENET TODO: Rename (private)
-            internal TermContext[] TermState; // LUCENENET TODO: Rename (private)
+            internal float[] boost;
+            internal TermContext[] termState;
 
             public TermFreqBoostByteStart(int initSize)
                 : base(initSize)
@@ -207,30 +207,30 @@ namespace Lucene.Net.Search
             public override int[] Init()
             {
                 int[] ord = base.Init();
-                Boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_FLOAT)];
-                TermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Debug.Assert(TermState.Length >= ord.Length && Boost.Length >= ord.Length);
+                boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_FLOAT)];
+                termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                Debug.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 
             public override int[] Grow()
             {
                 int[] ord = base.Grow();
-                Boost = ArrayUtil.Grow(Boost, ord.Length);
-                if (TermState.Length < ord.Length)
+                boost = ArrayUtil.Grow(boost, ord.Length);
+                if (termState.Length < ord.Length)
                 {
                     TermContext[] tmpTermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(TermState, 0, tmpTermState, 0, TermState.Length);
-                    TermState = tmpTermState;
+                    Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
+                    termState = tmpTermState;
                 }
-                Debug.Assert(TermState.Length >= ord.Length && Boost.Length >= ord.Length);
+                Debug.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 
             public override int[] Clear()
             {
-                Boost = null;
-                TermState = null;
+                boost = null;
+                termState = null;
                 return base.Clear();
             }
         }
