@@ -36,13 +36,13 @@ namespace Lucene.Net.Search.Spans
     /// Matches spans containing a term. </summary>
     public class SpanTermQuery : SpanQuery
     {
-        protected Term term; // LUCENENET TODO: rename
+        protected Term m_term;
 
         /// <summary>
         /// Construct a SpanTermQuery matching the named term's spans. </summary>
         public SpanTermQuery(Term term)
         {
-            this.term = term;
+            this.m_term = term;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return term;
+                return m_term;
             }
         }
 
@@ -59,25 +59,25 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return term.Field;
+                return m_term.Field;
             }
         }
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            terms.Add(term);
+            terms.Add(m_term);
         }
 
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (term.Field.Equals(field))
+            if (m_term.Field.Equals(field))
             {
-                buffer.Append(term.Text());
+                buffer.Append(m_term.Text());
             }
             else
             {
-                buffer.Append(term.ToString());
+                buffer.Append(m_term.ToString());
             }
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spans
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -106,14 +106,14 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
             SpanTermQuery other = (SpanTermQuery)obj;
-            if (term == null)
+            if (m_term == null)
             {
-                if (other.term != null)
+                if (other.m_term != null)
                 {
                     return false;
                 }
             }
-            else if (!term.Equals(other.term))
+            else if (!m_term.Equals(other.m_term))
             {
                 return false;
             }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Spans
         public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             TermContext termContext;
-            termContexts.TryGetValue(term, out termContext);
+            termContexts.TryGetValue(m_term, out termContext);
             TermState state;
             if (termContext == null)
             {
@@ -132,11 +132,11 @@ namespace Lucene.Net.Search.Spans
                 Fields fields = context.AtomicReader.Fields;
                 if (fields != null)
                 {
-                    Terms terms = fields.Terms(term.Field);
+                    Terms terms = fields.Terms(m_term.Field);
                     if (terms != null)
                     {
                         TermsEnum termsEnum = terms.Iterator(null);
-                        if (termsEnum.SeekExact(term.Bytes))
+                        if (termsEnum.SeekExact(m_term.Bytes))
                         {
                             state = termsEnum.TermState();
                         }
@@ -165,19 +165,19 @@ namespace Lucene.Net.Search.Spans
                 return TermSpans.EMPTY_TERM_SPANS;
             }
 
-            TermsEnum termsEnum_ = context.AtomicReader.Terms(term.Field).Iterator(null);
-            termsEnum_.SeekExact(term.Bytes, state);
+            TermsEnum termsEnum_ = context.AtomicReader.Terms(m_term.Field).Iterator(null);
+            termsEnum_.SeekExact(m_term.Bytes, state);
 
             DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);
 
             if (postings != null)
             {
-                return new TermSpans(postings, term);
+                return new TermSpans(postings, m_term);
             }
             else
             {
                 // term does exist, but has no positions
-                throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + term.Text() + ")");
+                throw new InvalidOperationException("field \"" + m_term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + m_term.Text() + ")");
             }
         }
     }
