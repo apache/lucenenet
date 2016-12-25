@@ -396,7 +396,7 @@ namespace Lucene.Net.Search
             _writer.WaitAfterUpdate = true; // wait in addDocument to let some reopens go through
             long lastGen = writer.UpdateDocument(new Term("foo", "bar"), doc); // once this returns the doc is already reflected in the last reopen
 
-            Assert.IsFalse(manager.SearcherCurrent); // false since there is a delete in the queue
+            Assert.IsFalse(manager.IsSearcherCurrent()); // false since there is a delete in the queue
 
             IndexSearcher searcher = manager.Acquire();
             try

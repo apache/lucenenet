@@ -52,12 +52,12 @@ namespace Lucene.Net.Search
     /// a separate background thread, that periodically calls maybeReopen. Finally,
     /// be sure to call <seealso cref="#close"/> once you are done.
     /// </summary>
-    /// <seealso cref= SearcherFactory
+    /// <seealso cref="SearcherFactory"/>
     ///
     /// @lucene.experimental </seealso>
     public sealed class SearcherManager : ReferenceManager<IndexSearcher>
     {
-        private readonly SearcherFactory SearcherFactory; // LUCENENET TODO: Rename (private)
+        private readonly SearcherFactory searcherFactory;
 
         /// <summary>
         /// Creates and returns a new SearcherManager from the given
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
         ///          performance by passing <code>false</code>. See
         ///          <seealso cref="DirectoryReader#openIfChanged(DirectoryReader, IndexWriter, boolean)"/>. </param>
         /// <param name="searcherFactory">
-        ///          An optional <seealso cref="SearcherFactory"/>. Pass <code>null</code> if you
+        ///          An optional <see cref="SearcherFactory"/>. Pass <code>null</code> if you
         ///          don't require the searcher to be warmed before going live or other
         ///          custom behavior.
         /// </param>
@@ -86,14 +86,14 @@ namespace Lucene.Net.Search
             {
                 searcherFactory = new SearcherFactory();
             }
-            this.SearcherFactory = searcherFactory;
+            this.searcherFactory = searcherFactory;
             Current = GetSearcher(searcherFactory, DirectoryReader.Open(writer, applyAllDeletes));
         }
 
         /// <summary>
         /// Creates and returns a new SearcherManager from the given <seealso cref="Directory"/>. </summary>
         /// <param name="dir"> the directory to open the DirectoryReader on. </param>
-        /// <param name="searcherFactory"> An optional <seealso cref="SearcherFactory"/>. Pass
+        /// <param name="searcherFactory"> An optional <see cref="SearcherFactory"/>. Pass
         ///        <code>null</code> if you don't require the searcher to be warmed
         ///        before going live or other custom behavior.
         /// </param>
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
             {
                 searcherFactory = new SearcherFactory();
             }
-            this.SearcherFactory = searcherFactory;
+            this.searcherFactory = searcherFactory;
             Current = GetSearcher(searcherFactory, DirectoryReader.Open(dir));
         }
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return GetSearcher(SearcherFactory, newReader);
+                return GetSearcher(searcherFactory, newReader);
             }
         }
 
@@ -142,21 +142,18 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if no changes have occured since this searcher
         /// ie. reader was opened, otherwise <code>false</code>. </summary>
         /// <seealso cref= DirectoryReader#isCurrent()  </seealso>
-        public bool SearcherCurrent // LUCENENET TODO: Change to IsSearcherCurrent() - too complex to be a property (and increments a ref counter as a side effect)
+        public bool IsSearcherCurrent()
         {
-            get
+            IndexSearcher searcher = Acquire();
+            try
             {
-                IndexSearcher searcher = Acquire();
-                try
-                {
-                    IndexReader r = searcher.IndexReader;
-                    Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
-                    return ((DirectoryReader)r).IsCurrent;
-                }
-                finally
-                {
-                    Release(searcher);
-                }
+                IndexReader r = searcher.IndexReader;
+                Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
+                return ((DirectoryReader)r).IsCurrent;
+            }
+            finally
+            {
+                Release(searcher);
             }
         }
 
@@ -188,27 +185,5 @@ namespace Lucene.Net.Search
             }
             return searcher;
         }
-
-        // LUCENENET TODO: Not sure why this is here, but it doesn't seem necessary
-        //public delegate void SearchExecutor(IndexSearcher arg);
-        //public void ExecuteSearch(SearchExecutor searchFunc, OnErrorDelegate onErrorFunc = null)
-        //{
-        //    var s = Acquire();
-        //    try
-        //    {
-        //        searchFunc(s);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        if (onErrorFunc != null)
-        //        {
-        //            onErrorFunc(e);
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        Release(s);
-        //    }
-        //}
     }
 }

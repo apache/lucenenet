@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
                 {
                     Writer.Commit();
                 }
-                Assert.IsTrue(Mgr.MaybeRefresh() || Mgr.SearcherCurrent);
+                Assert.IsTrue(Mgr.MaybeRefresh() || Mgr.IsSearcherCurrent());
                 return Mgr.Acquire();
             }
         }
