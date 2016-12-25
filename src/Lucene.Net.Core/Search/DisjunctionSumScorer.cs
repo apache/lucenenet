@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The number of subscorers that provide the current match. </summary>
-        protected internal int NrMatchers = -1; // LUCENENET TODO: Rename (private)
+        protected internal int m_nrMatchers = -1;
 
-        protected internal double score = float.NaN;
-        private readonly float[] Coord; // LUCENENET TODO: Rename (private)
+        protected internal double m_score = float.NaN;
+        private readonly float[] coord;
 
         /// <summary>
         /// Construct a <code>DisjunctionScorer</code>. </summary>
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("There must be at least 2 subScorers");
             }
-            this.Coord = coord;
+            this.coord = coord;
         }
 
         protected override void AfterNext()
@@ -51,8 +51,8 @@ namespace Lucene.Net.Search
             m_doc = sub.DocID();
             if (m_doc != NO_MORE_DOCS)
             {
-                score = sub.Score();
-                NrMatchers = 1;
+                m_score = sub.Score();
+                m_nrMatchers = 1;
                 CountMatches(1);
                 CountMatches(2);
             }
@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
         {
             if (root < m_numScorers && m_subScorers[root].DocID() == m_doc)
             {
-                NrMatchers++;
-                score += m_subScorers[root].Score();
+                m_nrMatchers++;
+                m_score += m_subScorers[root].Score();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }
@@ -79,12 +79,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public override float Score()
         {
-            return (float)score * Coord[NrMatchers];
+            return (float)m_score * coord[m_nrMatchers];
         }
 
         public override int Freq
         {
-            get { return NrMatchers; }
+            get { return m_nrMatchers; }
         }
     }
 }
