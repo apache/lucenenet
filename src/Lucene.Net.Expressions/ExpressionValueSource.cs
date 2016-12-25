@@ -51,7 +51,7 @@ namespace Lucene.Net.Expressions
 				    var valueSource = source as ExpressionValueSource;
 				    if (valueSource != null)
 					{
-						if (valueSource.NeedsScores())
+						if (valueSource.NeedsScores)
 						{
 							needsScores = true;
 						}
@@ -161,9 +161,9 @@ namespace Lucene.Net.Expressions
 			return true;
 		}
 
-		internal bool NeedsScores()
+		internal bool NeedsScores
 		{
-			return needsScores;
+			get { return needsScores; }
 		}
 	}
 }

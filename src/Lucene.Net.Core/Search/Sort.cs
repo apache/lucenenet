@@ -224,16 +224,19 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns true if the relevance score is needed to sort documents. </summary>
-        public virtual bool NeedsScores()
+        public virtual bool NeedsScores
         {
-            foreach (SortField sortField in fields)
+            get
             {
-                if (sortField.NeedsScores())
+                foreach (SortField sortField in fields)
                 {
-                    return true;
+                    if (sortField.NeedsScores)
+                    {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         internal Sorter(Sort sort)
         {
-            if (sort.NeedsScores())
+            if (sort.NeedsScores)
             {
                 throw new System.ArgumentException("Cannot sort an index with a Sort that refers to the relevance score");
             }

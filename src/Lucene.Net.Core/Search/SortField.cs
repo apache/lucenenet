@@ -581,9 +581,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Whether the relevance score is needed to sort documents. </summary>
-        public virtual bool NeedsScores() // LUCENENET TODO: make property
+        public virtual bool NeedsScores
         {
-            return type == Type_e.SCORE;
+            get { return type == Type_e.SCORE; }
         }
     }
 }

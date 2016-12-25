@@ -78,15 +78,15 @@ namespace Lucene.Net.Tests.Expressions
 			bindings.Add("g", exprG);
 			bindings.Add("h", exprH);
 			bindings.Add("i", exprI);
-			IsTrue(exprA.GetSortField(bindings, true).NeedsScores());
-			IsFalse(exprB.GetSortField(bindings, true).NeedsScores());
-			IsFalse(exprC.GetSortField(bindings, true).NeedsScores());
-			IsTrue(exprD.GetSortField(bindings, true).NeedsScores());
-			IsFalse(exprE.GetSortField(bindings, true).NeedsScores());
-			IsTrue(exprF.GetSortField(bindings, true).NeedsScores());
-			IsFalse(exprG.GetSortField(bindings, true).NeedsScores());
-			IsTrue(exprH.GetSortField(bindings, true).NeedsScores());
-			IsFalse(exprI.GetSortField(bindings, false).NeedsScores());
+			IsTrue(exprA.GetSortField(bindings, true).NeedsScores);
+			IsFalse(exprB.GetSortField(bindings, true).NeedsScores);
+			IsFalse(exprC.GetSortField(bindings, true).NeedsScores);
+			IsTrue(exprD.GetSortField(bindings, true).NeedsScores);
+			IsFalse(exprE.GetSortField(bindings, true).NeedsScores);
+			IsTrue(exprF.GetSortField(bindings, true).NeedsScores);
+			IsFalse(exprG.GetSortField(bindings, true).NeedsScores);
+			IsTrue(exprH.GetSortField(bindings, true).NeedsScores);
+			IsFalse(exprI.GetSortField(bindings, false).NeedsScores);
 		}
 	}
 }

@@ -829,7 +829,7 @@ namespace Lucene.Net.Search
             public TopFieldDocs Call()
             {
                 Debug.Assert(Slice.Leaves.Length == 1);
-                TopFieldDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs, Sort, true, DoDocScores || Sort.NeedsScores(), DoMaxScore);
+                TopFieldDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs, Sort, true, DoDocScores || Sort.NeedsScores, DoMaxScore);
                 @lock.Lock();
                 try
                 {

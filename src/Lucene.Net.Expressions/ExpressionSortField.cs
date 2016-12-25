@@ -78,9 +78,9 @@ namespace Lucene.Net.Expressions
 			return buffer.ToString();
 		}
 
-		public override bool NeedsScores()
+		public override bool NeedsScores
 		{
-			return source.NeedsScores();
+			get { return source.NeedsScores; }
 		}
 	}
 }
