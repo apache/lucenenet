@@ -36,26 +36,26 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The &lambda; parameter. </summary>
-        private readonly float Lambda_Renamed; // LUCENENET TODO: Rename
+        private readonly float lambda;
 
         /// <summary>
         /// Instantiates with the specified collectionModel and &lambda; parameter. </summary>
         public LMJelinekMercerSimilarity(CollectionModel collectionModel, float lambda)
             : base(collectionModel)
         {
-            this.Lambda_Renamed = lambda;
+            this.lambda = lambda;
         }
 
         /// <summary>
         /// Instantiates with the specified &lambda; parameter. </summary>
         public LMJelinekMercerSimilarity(float lambda)
         {
-            this.Lambda_Renamed = lambda;
+            this.lambda = lambda;
         }
 
         public override float Score(BasicStats stats, float freq, float docLen)
         {
-            return stats.TotalBoost * (float)Math.Log(1 + ((1 - Lambda_Renamed) * freq / docLen) / (Lambda_Renamed * ((LMStats)stats).CollectionProbability));
+            return stats.TotalBoost * (float)Math.Log(1 + ((1 - lambda) * freq / docLen) / (lambda * ((LMStats)stats).CollectionProbability));
         }
 
         protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 expl.AddDetail(new Explanation(stats.TotalBoost, "boost"));
             }
-            expl.AddDetail(new Explanation(Lambda_Renamed, "lambda"));
+            expl.AddDetail(new Explanation(lambda, "lambda"));
             base.Explain(expl, stats, doc, freq, docLen);
         }
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Lambda_Renamed;
+                return lambda;
             }
         }
 
