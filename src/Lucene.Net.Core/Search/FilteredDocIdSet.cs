@@ -39,14 +39,14 @@ namespace Lucene.Net.Search
 
     public abstract class FilteredDocIdSet : DocIdSet
     {
-        private readonly DocIdSet _innerSet;
+        private readonly DocIdSet innerSet;
 
         /// <summary>
         /// Constructor. </summary>
         /// <param name="innerSet"> Underlying DocIdSet </param>
         public FilteredDocIdSet(DocIdSet innerSet)
         {
-            _innerSet = innerSet;
+            this.innerSet = innerSet;
         }
 
         /// <summary>
@@ -55,36 +55,36 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return _innerSet.IsCacheable;
+                return innerSet.IsCacheable;
             }
         }
 
         public override Bits GetBits()
         {
-            Bits bits = _innerSet.GetBits();
+            Bits bits = innerSet.GetBits();
             return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
         }
 
         private class BitsAnonymousInnerClassHelper : Bits
         {
-            private readonly FilteredDocIdSet OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly FilteredDocIdSet outerInstance;
 
-            private Bits Bits; // LUCENENET TODO: Rename (private)
+            private Bits bits;
 
             public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, Bits bits)
             {
-                this.OuterInstance = outerInstance;
-                this.Bits = bits;
+                this.outerInstance = outerInstance;
+                this.bits = bits;
             }
 
             public virtual bool Get(int docid)
             {
-                return Bits.Get(docid) && OuterInstance.Match(docid);
+                return bits.Get(docid) && outerInstance.Match(docid);
             }
 
             public virtual int Length()
             {
-                return Bits.Length();
+                return bits.Length();
             }
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
         /// <seealso cref= FilteredDocIdSetIterator </seealso>
         public override DocIdSetIterator GetIterator()
         {
-            DocIdSetIterator iterator = _innerSet.GetIterator();
+            DocIdSetIterator iterator = innerSet.GetIterator();
             if (iterator == null)
             {
                 return null;
@@ -110,17 +110,17 @@ namespace Lucene.Net.Search
 
         private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
         {
-            private readonly FilteredDocIdSet OuterInstance;
+            private readonly FilteredDocIdSet outerInstance;
 
             public FilteredDocIdSetIteratorAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
                 : base(iterator)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override bool Match(int docid)
             {
-                return OuterInstance.Match(docid);
+                return outerInstance.Match(docid);
             }
         }
     }
