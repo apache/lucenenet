@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// the sub-similarities used to create the combined score </summary>
-        protected internal readonly Similarity[] Sims; // LUCENENET TODO: Rename camelCase
+        protected internal readonly Similarity[] m_sims;
 
         /// <summary>
         /// Creates a MultiSimilarity which will sum the scores
@@ -39,30 +39,30 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public MultiSimilarity(Similarity[] sims)
         {
-            this.Sims = sims;
+            this.m_sims = sims;
         }
 
         public override long ComputeNorm(FieldInvertState state)
         {
-            return Sims[0].ComputeNorm(state);
+            return m_sims[0].ComputeNorm(state);
         }
 
         public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
-            SimWeight[] subStats = new SimWeight[Sims.Length];
+            SimWeight[] subStats = new SimWeight[m_sims.Length];
             for (int i = 0; i < subStats.Length; i++)
             {
-                subStats[i] = Sims[i].ComputeWeight(queryBoost, collectionStats, termStats);
+                subStats[i] = m_sims[i].ComputeWeight(queryBoost, collectionStats, termStats);
             }
             return new MultiStats(subStats);
         }
 
         public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            SimScorer[] subScorers = new SimScorer[Sims.Length];
+            SimScorer[] subScorers = new SimScorer[m_sims.Length];
             for (int i = 0; i < subScorers.Length; i++)
             {
-                subScorers[i] = Sims[i].DoSimScorer(((MultiStats)stats).subStats[i], context);
+                subScorers[i] = m_sims[i].DoSimScorer(((MultiStats)stats).subStats[i], context);
             }
             return new MultiSimScorer(subScorers);
         }
