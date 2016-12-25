@@ -24,16 +24,16 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The score of this document for the query. </summary>
-        public float Score; // LUCENENET TODO: Make property
+        public float Score { get; set; } // LUCENENET NOTE: For some reason, this was not readonly - should it be?
 
         /// <summary>
         /// A hit document's number. </summary>
         /// <seealso cref= IndexSearcher#doc(int)  </seealso>
-        public int Doc; // LUCENENET TODO: Make property
+        public int Doc { get; set; } // LUCENENET NOTE: For some reason, this was not readonly - should it be?
 
         /// <summary>
         /// Only set by <seealso cref="TopDocs#merge"/> </summary>
-        public int ShardIndex; // LUCENENET TODO: Make property
+        public int ShardIndex { get; set; } // LUCENENET NOTE: For some reason, this was not readonly - should it be?
 
         /// <summary>
         /// Constructs a ScoreDoc. </summary>
