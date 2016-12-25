@@ -38,8 +38,8 @@ namespace Lucene.Net.Search
     /// <seealso cref=     CachingWrapperFilter </seealso>
     public class FilteredQuery : Query
     {
-        private readonly Query Query_Renamed; // LUCENENET TODO: Rename (private)
-        private readonly Filter Filter_Renamed; // LUCENENET TODO: Rename (private)
+        private readonly Query query;
+        private readonly Filter filter;
         private readonly FilterStrategy strategy;
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace Lucene.Net.Search
                 throw new System.ArgumentException("FilterStrategy can not be null");
             }
             this.strategy = strategy;
-            this.Query_Renamed = query;
-            this.Filter_Renamed = filter;
+            this.query = query;
+            this.filter = filter;
         }
 
         /// <summary>
@@ -81,20 +81,20 @@ namespace Lucene.Net.Search
         /// </summary>
         public override Weight CreateWeight(IndexSearcher searcher)
         {
-            Weight weight = Query_Renamed.CreateWeight(searcher);
+            Weight weight = query.CreateWeight(searcher);
             return new WeightAnonymousInnerClassHelper(this, weight);
         }
 
         private class WeightAnonymousInnerClassHelper : Weight
         {
-            private readonly FilteredQuery OuterInstance;
+            private readonly FilteredQuery outerInstance;
 
-            private Lucene.Net.Search.Weight Weight;
+            private Lucene.Net.Search.Weight weight;
 
             public WeightAnonymousInnerClassHelper(FilteredQuery outerInstance, Lucene.Net.Search.Weight weight)
             {
-                this.OuterInstance = outerInstance;
-                this.Weight = weight;
+                this.outerInstance = outerInstance;
+                this.weight = weight;
             }
 
             public override bool ScoresDocsOutOfOrder
@@ -104,18 +104,18 @@ namespace Lucene.Net.Search
 
             public override float GetValueForNormalization()
             {
-                return Weight.GetValueForNormalization() * OuterInstance.Boost * OuterInstance.Boost; // boost sub-weight
+                return weight.GetValueForNormalization() * outerInstance.Boost * outerInstance.Boost; // boost sub-weight
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                Weight.Normalize(norm, topLevelBoost * OuterInstance.Boost); // incorporate boost
+                weight.Normalize(norm, topLevelBoost * outerInstance.Boost); // incorporate boost
             }
 
             public override Explanation Explain(AtomicReaderContext ir, int i)
             {
-                Explanation inner = Weight.Explain(ir, i);
-                Filter f = OuterInstance.Filter_Renamed;
+                Explanation inner = weight.Explain(ir, i);
+                Filter f = outerInstance.filter;
                 DocIdSet docIdSet = f.GetDocIdSet(ir, ir.AtomicReader.LiveDocs);
                 DocIdSetIterator docIdSetIterator = docIdSet == null ? DocIdSetIterator.Empty() : docIdSet.GetIterator();
                 if (docIdSetIterator == null)
@@ -139,38 +139,38 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             // return a filtering scorer
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                Debug.Assert(OuterInstance.Filter_Renamed != null);
+                Debug.Assert(outerInstance.filter != null);
 
-                DocIdSet filterDocIdSet = OuterInstance.Filter_Renamed.GetDocIdSet(context, acceptDocs);
+                DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
                 }
 
-                return OuterInstance.strategy.FilteredScorer(context, Weight, filterDocIdSet);
+                return outerInstance.strategy.FilteredScorer(context, weight, filterDocIdSet);
             }
 
             // return a filtering top scorer
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
             {
-                Debug.Assert(OuterInstance.Filter_Renamed != null);
+                Debug.Assert(outerInstance.filter != null);
 
-                DocIdSet filterDocIdSet = OuterInstance.Filter_Renamed.GetDocIdSet(context, acceptDocs);
+                DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
                 }
 
-                return OuterInstance.strategy.FilteredBulkScorer(context, Weight, scoreDocsInOrder, filterDocIdSet);
+                return outerInstance.strategy.FilteredBulkScorer(context, weight, scoreDocsInOrder, filterDocIdSet);
             }
         }
 
@@ -182,15 +182,15 @@ namespace Lucene.Net.Search
         /// </summary>
         private sealed class QueryFirstScorer : Scorer
         {
-            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
-            private int ScorerDoc = -1; // LUCENENET TODO: Rename (private)
-            private readonly Bits FilterBits; // LUCENENET TODO: Rename (private)
+            private readonly Scorer scorer;
+            private int scorerDoc = -1;
+            private readonly Bits filterBits;
 
             internal QueryFirstScorer(Weight weight, Bits filterBits, Scorer other)
                 : base(weight)
             {
-                this.Scorer = other;
-                this.FilterBits = filterBits;
+                this.scorer = other;
+                this.filterBits = filterBits;
             }
 
             public override int NextDoc()
@@ -198,86 +198,86 @@ namespace Lucene.Net.Search
                 int doc;
                 for (; ; )
                 {
-                    doc = Scorer.NextDoc();
-                    if (doc == Scorer.NO_MORE_DOCS || FilterBits.Get(doc))
+                    doc = scorer.NextDoc();
+                    if (doc == Scorer.NO_MORE_DOCS || filterBits.Get(doc))
                     {
-                        return ScorerDoc = doc;
+                        return scorerDoc = doc;
                     }
                 }
             }
 
             public override int Advance(int target)
             {
-                int doc = Scorer.Advance(target);
-                if (doc != Scorer.NO_MORE_DOCS && !FilterBits.Get(doc))
+                int doc = scorer.Advance(target);
+                if (doc != Scorer.NO_MORE_DOCS && !filterBits.Get(doc))
                 {
-                    return ScorerDoc = NextDoc();
+                    return scorerDoc = NextDoc();
                 }
                 else
                 {
-                    return ScorerDoc = doc;
+                    return scorerDoc = doc;
                 }
             }
 
             public override int DocID
             {
-                get { return ScorerDoc; }
+                get { return scorerDoc; }
             }
 
             public override float Score()
             {
-                return Scorer.Score();
+                return scorer.Score();
             }
 
             public override int Freq
             {
-                get { return Scorer.Freq; }
+                get { return scorer.Freq; }
             }
 
             public override ICollection<ChildScorer> Children
             {
                 get
                 {
-                    return new[] { new ChildScorer(Scorer, "FILTERED") };
+                    return new[] { new ChildScorer(scorer, "FILTERED") };
                 }
             }
 
             public override long Cost()
             {
-                return Scorer.Cost();
+                return scorer.Cost();
             }
         }
 
         private class QueryFirstBulkScorer : BulkScorer
         {
-            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
-            private readonly Bits FilterBits; // LUCENENET TODO: Rename (private)
+            private readonly Scorer scorer;
+            private readonly Bits filterBits;
 
             public QueryFirstBulkScorer(Scorer scorer, Bits filterBits)
             {
-                this.Scorer = scorer;
-                this.FilterBits = filterBits;
+                this.scorer = scorer;
+                this.filterBits = filterBits;
             }
 
             public override bool Score(Collector collector, int maxDoc)
             {
                 // the normalization trick already applies the boost of this query,
                 // so we can use the wrapped scorer directly:
-                collector.SetScorer(Scorer);
-                if (Scorer.DocID == -1)
+                collector.SetScorer(scorer);
+                if (scorer.DocID == -1)
                 {
-                    Scorer.NextDoc();
+                    scorer.NextDoc();
                 }
                 while (true)
                 {
-                    int scorerDoc = Scorer.DocID;
+                    int scorerDoc = scorer.DocID;
                     if (scorerDoc < maxDoc)
                     {
-                        if (FilterBits.Get(scorerDoc))
+                        if (filterBits.Get(scorerDoc))
                         {
                             collector.Collect(scorerDoc);
                         }
-                        Scorer.NextDoc();
+                        scorer.NextDoc();
                     }
                     else
                     {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                return Scorer.DocID != Scorer.NO_MORE_DOCS;
+                return scorer.DocID != Scorer.NO_MORE_DOCS;
             }
         }
 
@@ -297,109 +297,109 @@ namespace Lucene.Net.Search
         /// </summary>
         private class LeapFrogScorer : Scorer
         {
-            private readonly DocIdSetIterator Secondary; // LUCENENET TODO: Rename (private)
-            private readonly DocIdSetIterator Primary; // LUCENENET TODO: Rename (private)
-            private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
-            protected int PrimaryDoc = -1;  // LUCENENET TODO: Rename (private)
-            protected int SecondaryDoc = -1; // LUCENENET TODO: Rename (private)
+            private readonly DocIdSetIterator secondary;
+            private readonly DocIdSetIterator primary;
+            private readonly Scorer scorer;
+            protected int m_primaryDoc = -1;
+            protected int m_secondaryDoc = -1;
 
             protected internal LeapFrogScorer(Weight weight, DocIdSetIterator primary, DocIdSetIterator secondary, Scorer scorer)
                 : base(weight)
             {
-                this.Primary = primary;
-                this.Secondary = secondary;
-                this.Scorer = scorer;
+                this.primary = primary;
+                this.secondary = secondary;
+                this.scorer = scorer;
             }
 
             private int AdvanceToNextCommonDoc()
             {
                 for (; ; )
                 {
-                    if (SecondaryDoc < PrimaryDoc)
+                    if (m_secondaryDoc < m_primaryDoc)
                     {
-                        SecondaryDoc = Secondary.Advance(PrimaryDoc);
+                        m_secondaryDoc = secondary.Advance(m_primaryDoc);
                     }
-                    else if (SecondaryDoc == PrimaryDoc)
+                    else if (m_secondaryDoc == m_primaryDoc)
                     {
-                        return PrimaryDoc;
+                        return m_primaryDoc;
                     }
                     else
                     {
-                        PrimaryDoc = Primary.Advance(SecondaryDoc);
+                        m_primaryDoc = primary.Advance(m_secondaryDoc);
                     }
                 }
             }
 
             public override sealed int NextDoc()
             {
-                PrimaryDoc = PrimaryNext();
+                m_primaryDoc = PrimaryNext();
                 return AdvanceToNextCommonDoc();
             }
 
             protected virtual int PrimaryNext()
             {
-                return Primary.NextDoc();
+                return primary.NextDoc();
             }
 
             public override sealed int Advance(int target)
             {
-                if (target > PrimaryDoc)
+                if (target > m_primaryDoc)
                 {
-                    PrimaryDoc = Primary.Advance(target);
+                    m_primaryDoc = primary.Advance(target);
                 }
                 return AdvanceToNextCommonDoc();
             }
 
             public override sealed int DocID
             {
-                get { return SecondaryDoc; }
+                get { return m_secondaryDoc; }
             }
 
             public override sealed float Score()
             {
-                return Scorer.Score();
+                return scorer.Score();
             }
 
             public override sealed int Freq
             {
-                get { return Scorer.Freq; }
+                get { return scorer.Freq; }
             }
 
             public override sealed ICollection<ChildScorer> Children
             {
                 get
                 {
-                    return new[] { new ChildScorer(Scorer, "FILTERED") };
+                    return new[] { new ChildScorer(scorer, "FILTERED") };
                 }
             }
 
             public override long Cost()
             {
-                return Math.Min(Primary.Cost(), Secondary.Cost());
+                return Math.Min(primary.Cost(), secondary.Cost());
             }
         }
 
         // TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
         private sealed class PrimaryAdvancedLeapFrogScorer : LeapFrogScorer
         {
-            private readonly int FirstFilteredDoc; // LUCENENET TODO: Rename (private)
+            private readonly int firstFilteredDoc;
 
             internal PrimaryAdvancedLeapFrogScorer(Weight weight, int firstFilteredDoc, DocIdSetIterator filterIter, Scorer other)
                 : base(weight, filterIter, other, other)
             {
-                this.FirstFilteredDoc = firstFilteredDoc;
-                this.PrimaryDoc = firstFilteredDoc; // initialize to prevent and advance call to move it further
+                this.firstFilteredDoc = firstFilteredDoc;
+                this.m_primaryDoc = firstFilteredDoc; // initialize to prevent and advance call to move it further
             }
 
             protected override int PrimaryNext()
             {
-                if (SecondaryDoc != -1)
+                if (m_secondaryDoc != -1)
                 {
                     return base.PrimaryNext();
                 }
                 else
                 {
-                    return FirstFilteredDoc;
+                    return firstFilteredDoc;
                 }
             }
         }
@@ -411,12 +411,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public override Query Rewrite(IndexReader reader)
         {
-            Query queryRewritten = Query_Renamed.Rewrite(reader);
+            Query queryRewritten = query.Rewrite(reader);
 
-            if (queryRewritten != Query_Renamed)
+            if (queryRewritten != query)
             {
                 // rewrite to a new FilteredQuery wrapping the rewritten query
-                Query rewritten = new FilteredQuery(queryRewritten, Filter_Renamed, strategy);
+                Query rewritten = new FilteredQuery(queryRewritten, filter, strategy);
                 rewritten.Boost = this.Boost;
                 return rewritten;
             }
@@ -433,7 +433,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query_Renamed;
+                return query;
             }
         }
 
@@ -443,7 +443,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Filter_Renamed;
+                return filter;
             }
         }
 
@@ -469,9 +469,9 @@ namespace Lucene.Net.Search
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("filtered(");
-            buffer.Append(Query_Renamed.ToString(s));
+            buffer.Append(query.ToString(s));
             buffer.Append(")->");
-            buffer.Append(Filter_Renamed);
+            buffer.Append(filter);
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search
             }
             Debug.Assert(o is FilteredQuery);
             FilteredQuery fq = (FilteredQuery)o;
-            return fq.Query_Renamed.Equals(this.Query_Renamed) && fq.Filter_Renamed.Equals(this.Filter_Renamed) && fq.strategy.Equals(this.strategy);
+            return fq.query.Equals(this.query) && fq.filter.Equals(this.filter) && fq.strategy.Equals(this.strategy);
         }
 
         /// <summary>
@@ -499,8 +499,8 @@ namespace Lucene.Net.Search
         {
             int hash = base.GetHashCode();
             hash = hash * 31 + strategy.GetHashCode();
-            hash = hash * 31 + Query_Renamed.GetHashCode();
-            hash = hash * 31 + Filter_Renamed.GetHashCode();
+            hash = hash * 31 + query.GetHashCode();
+            hash = hash * 31 + filter.GetHashCode();
             return hash;
         }
 
@@ -662,11 +662,11 @@ namespace Lucene.Net.Search
 
         private sealed class LeapFrogFilterStrategy : FilterStrategy
         {
-            private readonly bool ScorerFirst; // LUCENENET TODO: Rename (private)
+            private readonly bool scorerFirst;
 
             internal LeapFrogFilterStrategy(bool scorerFirst)
             {
-                this.ScorerFirst = scorerFirst;
+                this.scorerFirst = scorerFirst;
             }
 
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
@@ -684,7 +684,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                if (ScorerFirst)
+                if (scorerFirst)
                 {
                     return new LeapFrogScorer(weight, scorer, filterIter, scorer);
                 }
