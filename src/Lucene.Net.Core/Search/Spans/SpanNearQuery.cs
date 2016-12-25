@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return true if matches are required to be in-order. </summary>
-        public virtual bool InOrder // LUCENENET TODO: Change to IsInOrder
+        public virtual bool IsInOrder
         {
             get
             {
