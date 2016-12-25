@@ -20,60 +20,60 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A <seealso cref="Scorer"/> which wraps another scorer and caches the score of the
+    /// A <seealso cref="scorer"/> which wraps another scorer and caches the score of the
     /// current document. Successive calls to <seealso cref="#score()"/> will return the same
     /// result and will not invoke the wrapped Scorer's score() method, unless the
     /// current document has changed.<br>
     /// this class might be useful due to the changes done to the <seealso cref="Collector"/>
     /// interface, in which the score is not computed for a document by default, only
     /// if the collector requests it. Some collectors may need to use the score in
-    /// several places, however all they have in hand is a <seealso cref="Scorer"/> object, and
+    /// several places, however all they have in hand is a <seealso cref="scorer"/> object, and
     /// might end up computing the score of a document more than once.
     /// </summary>
     public class ScoreCachingWrappingScorer : Scorer
     {
-        private readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
-        private int CurDoc = -1; // LUCENENET TODO: Rename (private)
-        private float CurScore; // LUCENENET TODO: Rename (private)
+        private readonly Scorer scorer;
+        private int curDoc = -1;
+        private float curScore;
 
         /// <summary>
         /// Creates a new instance by wrapping the given scorer. </summary>
         public ScoreCachingWrappingScorer(Scorer scorer)
             : base(scorer.weight)
         {
-            this.Scorer = scorer;
+            this.scorer = scorer;
         }
 
         public override float Score()
         {
-            int doc = Scorer.DocID;
-            if (doc != CurDoc)
+            int doc = scorer.DocID;
+            if (doc != curDoc)
             {
-                CurScore = Scorer.Score();
-                CurDoc = doc;
+                curScore = scorer.Score();
+                curDoc = doc;
             }
 
-            return CurScore;
+            return curScore;
         }
 
         public override int Freq
         {
-            get { return Scorer.Freq; }
+            get { return scorer.Freq; }
         }
 
         public override int DocID
         {
-            get { return Scorer.DocID; }
+            get { return scorer.DocID; }
         }
 
         public override int NextDoc()
         {
-            return Scorer.NextDoc();
+            return scorer.NextDoc();
         }
 
         public override int Advance(int target)
         {
-            return Scorer.Advance(target);
+            return scorer.Advance(target);
         }
 
         public override ICollection<ChildScorer> Children
@@ -81,14 +81,14 @@ namespace Lucene.Net.Search
             get
             {
                 //LUCENE TO-DO
-                return new[] { new ChildScorer(Scorer, "CACHED") };
+                return new[] { new ChildScorer(scorer, "CACHED") };
                 //return Collections.singleton(new ChildScorer(Scorer, "CACHED"));
             }
         }
 
         public override long Cost()
         {
-            return Scorer.Cost();
+            return scorer.Cost();
         }
     }
 }
