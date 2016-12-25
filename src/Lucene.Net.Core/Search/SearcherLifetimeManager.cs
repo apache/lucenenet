@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// See <seealso cref="#prune"/>. </summary>
-        public interface Pruner // LUCENENET TODO: Rename with "I"
+        public interface IPruner
         {
             /// <summary>
             /// Return true if this searcher should be removed. </summary>
@@ -229,9 +229,9 @@ namespace Lucene.Net.Search
         ///  more than the specified seconds, than the newest
         ///  searcher.
         /// </summary>
-        public sealed class PruneByAge : Pruner
+        public sealed class PruneByAge : IPruner
         {
-            private readonly double MaxAgeSec; // LUCENENET TODO: Rename (private)
+            private readonly double maxAgeSec;
 
             public PruneByAge(double maxAgeSec)
             {
@@ -239,17 +239,17 @@ namespace Lucene.Net.Search
                 {
                     throw new System.ArgumentException("maxAgeSec must be > 0 (got " + maxAgeSec + ")");
                 }
-                this.MaxAgeSec = maxAgeSec;
+                this.maxAgeSec = maxAgeSec;
             }
 
             public bool DoPrune(double ageSec, IndexSearcher searcher)
             {
-                return ageSec > MaxAgeSec;
+                return ageSec > maxAgeSec;
             }
         }
 
         /// <summary>
-        /// Calls provided <seealso cref="Pruner"/> to prune entries.  The
+        /// Calls provided <seealso cref="IPruner"/> to prune entries.  The
         ///  entries are passed to the Pruner in sorted (newest to
         ///  oldest IndexSearcher) order.
         ///
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
         ///  from the same background thread that opens new
         ///  searchers.
         /// </summary>
-        public virtual void Prune(Pruner pruner)
+        public virtual void Prune(IPruner pruner)
         {
             lock (this)
             {

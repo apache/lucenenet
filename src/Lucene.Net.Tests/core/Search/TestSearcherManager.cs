@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
     {
         internal bool WarmCalled;
 
-        private SearcherLifetimeManager.Pruner Pruner;
+        private SearcherLifetimeManager.IPruner Pruner;
 
         [Test]
         public virtual void TestSearcherManager_Mem()
