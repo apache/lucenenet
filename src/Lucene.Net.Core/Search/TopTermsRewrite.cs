@@ -255,15 +255,16 @@ namespace Lucene.Net.Search
 
         internal sealed class ScoreTerm : IComparable<ScoreTerm>
         {
-            public readonly IComparer<BytesRef> TermComp; // LUCENENET TODO: Make property
-            public readonly BytesRef Bytes = new BytesRef(); // LUCENENET TODO: Make property
-            public float Boost; // LUCENENET TODO: Make property
-            public readonly TermContext TermState; // LUCENENET TODO: Make property
+            public IComparer<BytesRef> TermComp { get; private set; }
+            public BytesRef Bytes { get; private set; }
+            public float Boost { get; set; }
+            public TermContext TermState { get; private set; }
 
             public ScoreTerm(IComparer<BytesRef> termComp, TermContext termState)
             {
                 this.TermComp = termComp;
                 this.TermState = termState;
+                this.Bytes = new BytesRef();
             }
 
             public int CompareTo(ScoreTerm other)
