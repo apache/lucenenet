@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class QueryRescorer : Rescorer
     {
-        private readonly Query Query; // LUCENENET TODO: Rename (private)
+        private readonly Query query;
 
         /// <summary>
         /// Sole constructor, passing the 2nd pass query to
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public QueryRescorer(Query query)
         {
-            this.Query = query;
+            this.query = query;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
 
-            Weight weight = searcher.CreateNormalizedWeight(Query);
+            Weight weight = searcher.CreateNormalizedWeight(query);
 
             // Now merge sort docIDs from hits, with reader's leaves:
             int hitUpto = 0;
@@ -125,11 +125,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
-            private readonly QueryRescorer OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly QueryRescorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper(QueryRescorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(ScoreDoc a, ScoreDoc b)
@@ -140,11 +140,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
         {
-            private readonly QueryRescorer OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly QueryRescorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper2(QueryRescorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(ScoreDoc a, ScoreDoc b)
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 
         public override Explanation Explain(IndexSearcher searcher, Explanation firstPassExplanation, int docID)
         {
-            Explanation secondPassExplanation = searcher.Explain(Query, docID);
+            Explanation secondPassExplanation = searcher.Explain(query, docID);
 
             float? secondPassScore = secondPassExplanation.IsMatch ? (float?)secondPassExplanation.Value : null;
 
@@ -215,12 +215,12 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
-            private double Weight;
+            private double weight;
 
             public QueryRescorerAnonymousInnerClassHelper(Lucene.Net.Search.Query query, double weight)
                 : base(query)
             {
-                this.Weight = weight;
+                this.weight = weight;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
                 float score = firstPassScore;
                 if (secondPassMatches)
                 {
-                    score += (float)(Weight * secondPassScore);
+                    score += (float)(weight * secondPassScore);
                 }
                 return score;
             }
