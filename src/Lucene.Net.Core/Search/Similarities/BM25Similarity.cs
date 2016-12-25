@@ -288,31 +288,31 @@ namespace Lucene.Net.Search.Similarities
         {
             /// <summary>
             /// BM25's idf </summary>
-            internal readonly Explanation Idf; // LUCENENET TODO: Make property
+            internal Explanation Idf { get; private set; }
 
             /// <summary>
             /// The average document length. </summary>
-            internal readonly float Avgdl; // LUCENENET TODO: Make property
+            internal float Avgdl { get; private set; }
 
             /// <summary>
             /// query's inner boost </summary>
-            internal readonly float QueryBoost; // LUCENENET TODO: Make property
+            internal float QueryBoost { get; private set; }
 
             /// <summary>
             /// query's outer boost (only for explain) </summary>
-            internal float TopLevelBoost; // LUCENENET TODO: Make property
+            internal float TopLevelBoost { get; set; }
 
             /// <summary>
             /// weight (idf * boost) </summary>
-            internal float Weight; // LUCENENET TODO: Make property
+            internal float Weight { get; set; }
 
             /// <summary>
             /// field name, for pulling norms </summary>
-            internal readonly string Field; // LUCENENET TODO: Make property
+            internal string Field { get; private set; }
 
             /// <summary>
             /// precomputed norm[256] with k1 * ((1 - b) + b * dl / avgdl) </summary>
-            internal readonly float[] Cache; // LUCENENET TODO: Make property
+            internal float[] Cache { get; private set; }
 
             internal BM25Stats(string field, Explanation idf, float queryBoost, float avgdl, float[] cache)
             {
