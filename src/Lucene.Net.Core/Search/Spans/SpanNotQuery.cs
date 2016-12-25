@@ -37,8 +37,8 @@ namespace Lucene.Net.Search.Spans
     {
         private SpanQuery include;
         private SpanQuery exclude;
-        private readonly int Pre; // LUCENENET TODO: rename
-        private readonly int Post; // LUCENENET TODO: rename
+        private readonly int pre;
+        private readonly int post;
 
         /// <summary>
         /// Construct a SpanNotQuery matching spans from <code>include</code> which
@@ -68,8 +68,8 @@ namespace Lucene.Net.Search.Spans
         {
             this.include = include;
             this.exclude = exclude;
-            this.Pre = (pre >= 0) ? pre : 0;
-            this.Post = (post >= 0) ? post : 0;
+            this.pre = (pre >= 0) ? pre : 0;
+            this.post = (post >= 0) ? post : 0;
 
             if (include.Field != null && exclude.Field != null && !include.Field.Equals(exclude.Field))
             {
@@ -118,9 +118,9 @@ namespace Lucene.Net.Search.Spans
             buffer.Append(", ");
             buffer.Append(exclude.ToString(field));
             buffer.Append(", ");
-            buffer.Append(Convert.ToString(Pre));
+            buffer.Append(Convert.ToString(pre));
             buffer.Append(", ");
-            buffer.Append(Convert.ToString(Post));
+            buffer.Append(Convert.ToString(post));
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)include.Clone(), (SpanQuery)exclude.Clone(), Pre, Post);
+            SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)include.Clone(), (SpanQuery)exclude.Clone(), pre, post);
             spanNotQuery.Boost = Boost;
             return spanNotQuery;
         }
@@ -140,18 +140,18 @@ namespace Lucene.Net.Search.Spans
 
         private class SpansAnonymousInnerClassHelper : Spans
         {
-            private readonly SpanNotQuery OuterInstance;
+            private readonly SpanNotQuery outerInstance;
 
-            private AtomicReaderContext Context;
-            private Bits AcceptDocs;
-            private IDictionary<Term, TermContext> TermContexts;
+            private AtomicReaderContext context;
+            private Bits acceptDocs;
+            private IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanNotQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
-                this.OuterInstance = outerInstance;
-                this.Context = context;
-                this.AcceptDocs = acceptDocs;
-                this.TermContexts = termContexts;
+                this.outerInstance = outerInstance;
+                this.context = context;
+                this.acceptDocs = acceptDocs;
+                this.termContexts = termContexts;
                 includeSpans = outerInstance.include.GetSpans(context, acceptDocs, termContexts);
                 moreInclude = true;
                 excludeSpans = outerInstance.exclude.GetSpans(context, acceptDocs, termContexts);
@@ -178,12 +178,12 @@ namespace Lucene.Net.Search.Spans
                         moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
                     }
 
-                    while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - OuterInstance.Pre) // while exclude is before
+                    while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - outerInstance.pre) // while exclude is before
                     {
                         moreExclude = excludeSpans.Next(); // increment exclude
                     }
 
-                    if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + OuterInstance.Post <= excludeSpans.Start) // if no intersection
+                    if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + outerInstance.post <= excludeSpans.Start) // if no intersection
                     {
                         break; // we found a match
                     }
@@ -210,12 +210,12 @@ namespace Lucene.Net.Search.Spans
                     moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
                 }
 
-                while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - OuterInstance.Pre) // while exclude is before
+                while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - outerInstance.pre) // while exclude is before
                 {
                     moreExclude = excludeSpans.Next(); // increment exclude
                 }
 
-                if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + OuterInstance.Post <= excludeSpans.Start) // if no intersection
+                if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + outerInstance.post <= excludeSpans.Start) // if no intersection
                 {
                     return true; // we found a match
                 }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Spans
 
             public override string ToString()
             {
-                return "spans(" + OuterInstance.ToString() + ")";
+                return "spans(" + outerInstance.ToString() + ")";
             }
         }
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanNotQuery other = (SpanNotQuery)o;
-            return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.Pre == other.Pre && this.Post == other.Post;
+            return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.pre == other.pre && this.post == other.post;
         }
 
         public override int GetHashCode()
@@ -323,9 +323,9 @@ namespace Lucene.Net.Search.Spans
             h = Number.RotateLeft(h, 1);
             h ^= exclude.GetHashCode();
             h = Number.RotateLeft(h, 1);
-            h ^= Pre;
+            h ^= pre;
             h = Number.RotateLeft(h, 1);
-            h ^= Post;
+            h ^= post;
             return h;
         }
     }
