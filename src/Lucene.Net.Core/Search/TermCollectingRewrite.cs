@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
                     continue;
                 }
 
-                Terms terms = fields.Terms(query.field);
+                Terms terms = fields.Terms(query.m_field);
                 if (terms == null)
                 {
                     // field does not exist

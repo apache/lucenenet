@@ -90,7 +90,7 @@ namespace Lucene.Net.Sandbox.Queries
             if (maxExpansions < 0)
                 throw new ArgumentException("maxExpansions < 0");
 
-            SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions));
+            MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions);
 
             string text = term.Text();
             int len = text.CodePointCount(0, text.Length);

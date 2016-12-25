@@ -34,10 +34,10 @@ namespace Lucene.Net.Search
         protected internal override void AssertSame(string regexp)
         {
             RegexpQuery fieldCache = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-            fieldCache.SetRewriteMethod(new FieldCacheRewriteMethod());
+            fieldCache.MultiTermRewriteMethod = (new FieldCacheRewriteMethod());
 
             RegexpQuery filter = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-            filter.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            filter.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
             TopDocs fieldCacheDocs = Searcher1.Search(fieldCache, 25);
             TopDocs filterDocs = Searcher2.Search(filter, 25);
@@ -54,9 +54,9 @@ namespace Lucene.Net.Search
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
 
-            a1.SetRewriteMethod(new FieldCacheRewriteMethod());
-            a2.SetRewriteMethod(new FieldCacheRewriteMethod());
-            b.SetRewriteMethod(new FieldCacheRewriteMethod());
+            a1.MultiTermRewriteMethod = (new FieldCacheRewriteMethod());
+            a2.MultiTermRewriteMethod = (new FieldCacheRewriteMethod());
+            b.MultiTermRewriteMethod = (new FieldCacheRewriteMethod());
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
             QueryUtils.Check(a1);

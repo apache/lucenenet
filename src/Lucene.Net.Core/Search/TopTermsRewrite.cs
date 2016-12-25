@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 
             foreach (ScoreTerm st in scoreTerms)
             {
-                Term term = new Term(query.field, st.Bytes);
+                Term term = new Term(query.m_field, st.Bytes);
                 Debug.Assert(reader.DocFreq(term) == st.TermState.DocFreq, "reader DF is " + reader.DocFreq(term) + " vs " + st.TermState.DocFreq + " term=" + term);
                 AddClause(q, term, st.TermState.DocFreq, query.Boost * st.Boost, st.TermState); // add to query
             }

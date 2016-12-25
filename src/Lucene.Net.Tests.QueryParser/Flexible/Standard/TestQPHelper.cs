@@ -321,15 +321,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser qp = new StandardQueryParser(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
             Query q = qp.Parse("foo*bar", "field");
             assertTrue(q is WildcardQuery);
-            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
+            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).MultiTermRewriteMethod);
 
             q = qp.Parse("foo*", "field");
             assertTrue(q is PrefixQuery);
-            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
+            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).MultiTermRewriteMethod);
 
             q = qp.Parse("[a TO z]", "field");
             assertTrue(q is TermRangeQuery);
-            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).GetRewriteMethod());
+            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((MultiTermQuery)q).MultiTermRewriteMethod);
         }
         [Test]
         public void TestCJK()
@@ -694,12 +694,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void TestRange()
         {
             AssertQueryEquals("[ a TO z]", null, "[a TO z]");
-            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).GetRewriteMethod());
+            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).MultiTermRewriteMethod);
 
             StandardQueryParser qp = new StandardQueryParser();
 
             qp.MultiTermRewriteMethod = (MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]", "field")).GetRewriteMethod());
+            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]", "field")).MultiTermRewriteMethod);
 
             // test open ranges
             AssertQueryEquals("[ a TO * ]", null, "[a TO *]");
@@ -1246,11 +1246,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertEquals(q, qp.Parse("/[A-Z][123]/", df));
             q.Boost = (0.5f);
             assertEquals(q, qp.Parse("/[A-Z][123]/^0.5", df));
-            qp.MultiTermRewriteMethod = (MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            q.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE); // LUCENENET TODO: Inconsistent API betwen RegexpQuery and StandardQueryParser
+            qp.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            q.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             assertTrue(qp.Parse("/[A-Z][123]/^0.5", df) is RegexpQuery);
             assertEquals(q, qp.Parse("/[A-Z][123]/^0.5", df));
-            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((RegexpQuery)qp.Parse("/[A-Z][123]/^0.5", df)).GetRewriteMethod());
+            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((RegexpQuery)qp.Parse("/[A-Z][123]/^0.5", df)).MultiTermRewriteMethod);
             qp.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
 
             Query escaped = new RegexpQuery(new Term("field", "[a-z]\\/[123]"));

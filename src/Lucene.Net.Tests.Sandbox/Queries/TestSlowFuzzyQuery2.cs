@@ -128,7 +128,7 @@ namespace Lucene.Net.Sandbox.Queries
 #pragma warning disable 612, 618
                 SlowFuzzyQuery q = new SlowFuzzyQuery(new Term("field", query), minScore, prefix);
 #pragma warning restore 612, 618
-                q.SetRewriteMethod(new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(pqSize));
+                q.MultiTermRewriteMethod = new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(pqSize);
                 int expectedResults = int.Parse(reader.ReadLine(), CultureInfo.InvariantCulture);
                 TopDocs docs = searcher.Search(q, expectedResults);
                 assertEquals(expectedResults, docs.TotalHits);

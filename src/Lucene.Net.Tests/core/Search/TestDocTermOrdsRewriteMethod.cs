@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
         protected internal virtual void AssertSame(string regexp)
         {
             RegexpQuery docValues = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-            docValues.SetRewriteMethod(new DocTermOrdsRewriteMethod());
+            docValues.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
             RegexpQuery inverted = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
 
             TopDocs invertedDocs = Searcher1.Search(inverted, 25);
@@ -153,9 +153,9 @@ namespace Lucene.Net.Search
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
 
-            a1.SetRewriteMethod(new DocTermOrdsRewriteMethod());
-            a2.SetRewriteMethod(new DocTermOrdsRewriteMethod());
-            b.SetRewriteMethod(new DocTermOrdsRewriteMethod());
+            a1.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
+            a2.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
+            b.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
             QueryUtils.Check(a1);

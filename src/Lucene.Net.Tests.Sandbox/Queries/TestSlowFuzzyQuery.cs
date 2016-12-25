@@ -414,7 +414,7 @@ namespace Lucene.Net.Sandbox.Queries
             writer.Dispose();
 
             SlowFuzzyQuery query = new SlowFuzzyQuery(new Term("field", "lucene"));
-            query.SetRewriteMethod(new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(50));
+            query.MultiTermRewriteMethod = new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(50);
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             assertEquals(3, hits.Length);
             // normally, 'Lucenne' would be the first result as IDF will skew the score.

@@ -215,7 +215,7 @@ namespace Lucene.Net.Search.Highlight
                         return;
                     }
                     MultiTermQuery copy = (MultiTermQuery) query.Clone();
-                    copy.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                    copy.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                     origQuery = copy;
                 }
                 IndexReader reader = GetLeafContext().Reader;

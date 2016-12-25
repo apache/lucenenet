@@ -185,7 +185,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 // Must use old-style RangeQuery in order to produce a BooleanQuery
                 // that can be turned into SpanOr clause
                 TermRangeQuery rangeQuery = TermRangeQuery.NewStringRange(field, part1, part2, startInclusive, endInclusive);
-                rangeQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                rangeQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                 return rangeQuery;
             }
             return base.NewRangeQuery(field, part1, part2, startInclusive, endInclusive);

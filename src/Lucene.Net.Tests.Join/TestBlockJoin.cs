@@ -241,7 +241,7 @@ namespace Lucene.Net.Tests.Join
             MultiTermQuery qc = NumericRangeQuery.NewIntRange("year", 2007, 2007, true, true);
             // Hacky: this causes the query to need 2 rewrite
             // iterations: 
-            qc.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+            qc.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
 

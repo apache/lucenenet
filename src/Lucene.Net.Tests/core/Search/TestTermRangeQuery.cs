@@ -160,7 +160,7 @@ namespace Lucene.Net.Search
 
         private void CheckBooleanTerms(IndexSearcher searcher, TermRangeQuery query, params string[] terms)
         {
-            query.SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(50));
+            query.MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(50);
             BooleanQuery bq = (BooleanQuery)searcher.Rewrite(query);
             var allowedTerms = AsSet(terms);
             Assert.AreEqual(allowedTerms.Count, bq.GetClauses().Length);

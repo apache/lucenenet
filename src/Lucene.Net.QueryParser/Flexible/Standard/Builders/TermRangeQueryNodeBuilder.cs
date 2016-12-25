@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                 .GetTag(MultiTermRewriteMethodProcessor.TAG_ID);
             if (method != null)
             {
-                rangeQuery.SetRewriteMethod(method);
+                rangeQuery.MultiTermRewriteMethod = method;
             }
 
             return rangeQuery;

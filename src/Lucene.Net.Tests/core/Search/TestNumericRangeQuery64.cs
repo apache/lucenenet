@@ -179,13 +179,13 @@ namespace Lucene.Net.Search
                 {
                     case 0:
                         type = " (constant score filter rewrite)";
-                        q.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+                        q.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
                         topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
                         break;
 
                     case 1:
                         type = " (constant score boolean rewrite)";
-                        q.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+                        q.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
                         topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
                         break;
 

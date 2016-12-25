@@ -83,25 +83,25 @@ namespace Lucene.Net.Search
             MultiTermQuery wq = new WildcardQuery(new Term("field", "nowildcard"));
             AssertMatches(searcher, wq, 1);
 
-            wq.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            wq.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             wq.Boost = 0.1F;
             Query q = searcher.Rewrite(wq);
             Assert.IsTrue(q is TermQuery);
             Assert.AreEqual(q.Boost, wq.Boost, 0);
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            wq.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             wq.Boost = 0.2F;
             q = searcher.Rewrite(wq);
             Assert.IsTrue(q is ConstantScoreQuery);
             Assert.AreEqual(q.Boost, wq.Boost, 0.1);
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+            wq.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
             wq.Boost = 0.3F;
             q = searcher.Rewrite(wq);
             Assert.IsTrue(q is ConstantScoreQuery);
             Assert.AreEqual(q.Boost, wq.Boost, 0.1);
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+            wq.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
             wq.Boost = 0.4F;
             q = searcher.Rewrite(wq);
             Assert.IsTrue(q is ConstantScoreQuery);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(reader);
 
             MultiTermQuery wq = new WildcardQuery(new Term("field", ""));
-            wq.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            wq.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             AssertMatches(searcher, wq, 0);
             Query q = searcher.Rewrite(wq);
             Assert.IsTrue(q is BooleanQuery);

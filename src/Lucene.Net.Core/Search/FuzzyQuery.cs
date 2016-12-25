@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             this.PrefixLength_Renamed = prefixLength;
             this.Transpositions_Renamed = transpositions;
             this.MaxExpansions = maxExpansions;
-            SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions));
+            MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions);
         }
 
         /// <summary>

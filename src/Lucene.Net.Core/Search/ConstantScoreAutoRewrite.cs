@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
                         int pos = sort[i];
                         // docFreq is not used for constant score here, we pass 1
                         // to explicitely set a fake value, so it's not calculated
-                        AddClause(bq, new Term(query.field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.termState[pos]);
+                        AddClause(bq, new Term(query.m_field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.termState[pos]);
                     }
                 }
                 // Strip scores

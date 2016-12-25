@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         public static Query Csrq(string f, string l, string h, bool il, bool ih)
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: query=" + query);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
         public static Query Csrq(string f, string l, string h, bool il, bool ih, MultiTermQuery.RewriteMethod method)
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
-            query.SetRewriteMethod(method);
+            query.MultiTermRewriteMethod = (method);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: query=" + query + " method=" + method);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
         public static Query Cspq(Term prefix)
         {
             PrefixQuery query = new PrefixQuery(prefix);
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
             return query;
         }
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
         public static Query Cswcq(Term wild)
         {
             WildcardQuery query = new WildcardQuery(wild);
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
             return query;
         }
 

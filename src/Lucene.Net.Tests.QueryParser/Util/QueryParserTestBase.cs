@@ -591,12 +591,12 @@ namespace Lucene.Net.QueryParsers.Util
             AssertQueryEquals("[ a TO z}", null, "[a TO z}");
             AssertQueryEquals("{ a TO z]", null, "{a TO z]");
 
-            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]")).GetRewriteMethod());
+            assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]")).MultiTermRewriteMethod);
 
             ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
 
             qp.MultiTermRewriteMethod=(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)GetQuery("[ a TO z]", qp)).GetRewriteMethod());
+            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)GetQuery("[ a TO z]", qp)).MultiTermRewriteMethod);
 
             // test open ranges
             AssertQueryEquals("[ a TO * ]", null, "[a TO *]");
@@ -1051,10 +1051,10 @@ namespace Lucene.Net.QueryParsers.Util
             assertEquals(q, GetQuery("/[A-Z][123]/", qp));
             q.Boost = (0.5f);
             assertEquals(q, GetQuery("/[A-Z][123]/^0.5", qp));
-            qp.MultiTermRewriteMethod=(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            q.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            qp.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            q.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             assertTrue(GetQuery("/[A-Z][123]/^0.5", qp) is RegexpQuery);
-            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((RegexpQuery)GetQuery("/[A-Z][123]/^0.5", qp)).GetRewriteMethod());
+            assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((RegexpQuery)GetQuery("/[A-Z][123]/^0.5", qp)).MultiTermRewriteMethod);
             assertEquals(q, GetQuery("/[A-Z][123]/^0.5", qp));
             qp.MultiTermRewriteMethod=(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
 

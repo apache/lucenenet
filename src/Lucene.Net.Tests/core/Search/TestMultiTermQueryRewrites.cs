@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
         private void CheckDuplicateTerms(MultiTermQuery.RewriteMethod method)
         {
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.SetRewriteMethod(method);
+            mtq.MultiTermRewriteMethod = (method);
             Query q1 = Searcher.Rewrite(mtq);
             Query q2 = MultiSearcher.Rewrite(mtq);
             Query q3 = MultiSearcherDupls.Rewrite(mtq);
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
         private void CheckBoosts(MultiTermQuery.RewriteMethod method)
         {
             MultiTermQuery mtq = new MultiTermQueryAnonymousInnerClassHelper(this);
-            mtq.SetRewriteMethod(method);
+            mtq.MultiTermRewriteMethod = (method);
             Query q1 = Searcher.Rewrite(mtq);
             Query q2 = MultiSearcher.Rewrite(mtq);
             Query q3 = MultiSearcherDupls.Rewrite(mtq);
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
             BooleanQuery.MaxClauseCount = 3;
 
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.SetRewriteMethod(method);
+            mtq.MultiTermRewriteMethod = (method);
             try
             {
                 MultiSearcherDupls.Rewrite(mtq);
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
             BooleanQuery.MaxClauseCount = 3;
 
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.SetRewriteMethod(method);
+            mtq.MultiTermRewriteMethod = (method);
             try
             {
                 MultiSearcherDupls.Rewrite(mtq);

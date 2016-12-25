@@ -110,16 +110,16 @@ namespace Lucene.Net.Search
         {
             AutomatonQuery query = new AutomatonQuery(NewTerm("bogus"), automaton);
 
-            query.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
             Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
             Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
             Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-            query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
             Assert.AreEqual(expected, AutomatonQueryNrHits(query));
         }
 

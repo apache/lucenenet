@@ -514,7 +514,7 @@ namespace Lucene.Net.QueryParsers.Classic
         protected internal virtual Query NewPrefixQuery(Term prefix)
         {
             PrefixQuery query = new PrefixQuery(prefix);
-            query.SetRewriteMethod(MultiTermRewriteMethod);
+            query.MultiTermRewriteMethod = MultiTermRewriteMethod;
             return query;
         }
 
@@ -526,7 +526,7 @@ namespace Lucene.Net.QueryParsers.Classic
         protected internal virtual Query NewRegexpQuery(Term regexp)
         {
             RegexpQuery query = new RegexpQuery(regexp);
-            query.SetRewriteMethod(MultiTermRewriteMethod);
+            query.MultiTermRewriteMethod = MultiTermRewriteMethod;
             return query;
         }
 
@@ -619,7 +619,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             TermRangeQuery query = new TermRangeQuery(field, start, end, startInclusive, endInclusive);
 
-            query.SetRewriteMethod(MultiTermRewriteMethod);
+            query.MultiTermRewriteMethod = MultiTermRewriteMethod;
             return query;
         }
 
@@ -640,7 +640,7 @@ namespace Lucene.Net.QueryParsers.Classic
         protected internal virtual Query NewWildcardQuery(Term t)
         {
             WildcardQuery query = new WildcardQuery(t);
-            query.SetRewriteMethod(MultiTermRewriteMethod);
+            query.MultiTermRewriteMethod = MultiTermRewriteMethod;
             return query;
         }
 

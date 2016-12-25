@@ -59,26 +59,26 @@ namespace Lucene.Net.Search.Spans
         {
             this.query = query;
 
-            MultiTermQuery.RewriteMethod method = this.query.GetRewriteMethod();
+            MultiTermQuery.RewriteMethod method = this.query.MultiTermRewriteMethod;
             if (method is ITopTermsRewrite)
             {
                 int pqsize = ((ITopTermsRewrite)method).Size;
-                RewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
+                MultiTermRewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
             }
             else
             {
-                RewriteMethod = SCORING_SPAN_QUERY_REWRITE;
+                MultiTermRewriteMethod = SCORING_SPAN_QUERY_REWRITE;
             }
         }
 
         /// <summary>
         /// Expert: returns the rewriteMethod
         /// </summary>
-        public SpanRewriteMethod RewriteMethod // LUCENENET TODO: Change to GetRewriteMethod() and SetRewriteMethod() (consistency and error)
+        public SpanRewriteMethod MultiTermRewriteMethod
         {
             get
             {
-                MultiTermQuery.RewriteMethod m = query.GetRewriteMethod();
+                MultiTermQuery.RewriteMethod m = query.MultiTermRewriteMethod;
                 if (!(m is SpanRewriteMethod))
                 {
                     throw new System.NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spans
             }
             set
             {
-                query.SetRewriteMethod(value);
+                query.MultiTermRewriteMethod = value;
             }
         }
 
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public interface ISpanMultiTermQueryWrapper
     {
-        SpanRewriteMethod RewriteMethod { get; }
+        SpanRewriteMethod MultiTermRewriteMethod { get; }
         Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
         string Field { get; }
         Query WrappedQuery { get; }

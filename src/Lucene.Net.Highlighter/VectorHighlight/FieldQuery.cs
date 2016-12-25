@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 if (sourceQuery is MultiTermQuery)
                 {
                     MultiTermQuery copy = (MultiTermQuery)sourceQuery.Clone();
-                    copy.SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(MAX_MTQ_TERMS));
+                    copy.MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(MAX_MTQ_TERMS);
                     query = copy;
                 }
                 Query rewritten = query.Rewrite(reader);

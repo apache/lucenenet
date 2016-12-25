@@ -844,7 +844,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 numHighlights = 0;
                 FuzzyQuery fuzzyQuery = new FuzzyQuery(new Term(FIELD_NAME, "kinnedy"), 2);
-                fuzzyQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                fuzzyQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                 doSearching(fuzzyQuery);
                 instance.DoStandardHighlights(analyzer, searcher, hits, query, this, true);
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -861,7 +861,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 numHighlights = 0;
                 WildcardQuery wildcardQuery = new WildcardQuery(new Term(FIELD_NAME, "k?nnedy"));
-                wildcardQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                wildcardQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                 doSearching(wildcardQuery);
                 instance.DoStandardHighlights(analyzer, searcher, hits, query, this);
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -878,7 +878,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 numHighlights = 0;
                 WildcardQuery wildcardQuery = new WildcardQuery(new Term(FIELD_NAME, "k*dy"));
-                wildcardQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                wildcardQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                 doSearching(wildcardQuery);
                 instance.DoStandardHighlights(analyzer, searcher, hits, query, this);
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -904,7 +904,7 @@ namespace Lucene.Net.Search.Highlight
                         new BytesRef("kannedy"),
                         new BytesRef("kznnedy"),
                         true, true);
-                rangeQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                rangeQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
 
                 query = rangeQuery;
                 doSearching(query);
@@ -924,7 +924,7 @@ namespace Lucene.Net.Search.Highlight
             numHighlights = 0;
 
             query = new WildcardQuery(new Term(FIELD_NAME, "ken*"));
-            ((WildcardQuery)query).SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            ((WildcardQuery)query).MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             searcher = NewSearcher(reader);
             // can't rewrite ConstantScore if you want to highlight it -
             // it rewrites to ConstantScoreQuery which cannot be highlighted
@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Search.Highlight
                 BooleanQuery booleanQuery = new BooleanQuery();
                 booleanQuery.Add(new TermQuery(new Term(FIELD_NAME, "john")), Occur.SHOULD);
                 PrefixQuery prefixQuery = new PrefixQuery(new Term(FIELD_NAME, "kenn"));
-                prefixQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                prefixQuery.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                 booleanQuery.Add(prefixQuery, Occur.SHOULD);
 
                 doSearching(booleanQuery);

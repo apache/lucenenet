@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
         {
             Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.NewBytesRefRange(FieldName, lowerVal, upperVal, includeLower, includeUpper));
             MultiTermQuery inverted = new TermRangeQuery(FieldName, lowerVal, upperVal, includeLower, includeUpper);
-            inverted.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            inverted.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
             TopDocs invertedDocs = Searcher1.Search(inverted, 25);
             TopDocs docValuesDocs = Searcher2.Search(docValues, 25);

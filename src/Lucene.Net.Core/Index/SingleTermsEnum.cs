@@ -23,10 +23,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Subclass of FilteredTermsEnum for enumerating a single term.
     /// <p>
-    /// For example, this can be used by <seealso cref="MultiTermQuery"/>s
+    /// For example, this can be used by <see cref="Search.MultiTermQuery"/>s
     /// that need only visit one term, but want to preserve
-    /// MultiTermQuery semantics such as {@link
-    /// MultiTermQuery#getRewriteMethod}.
+    /// MultiTermQuery semantics such as <see cref="Search.MultiTermQuery.MultiTermRewriteMethod"/>.
     /// </summary>
     public sealed class SingleTermsEnum : FilteredTermsEnum
     {

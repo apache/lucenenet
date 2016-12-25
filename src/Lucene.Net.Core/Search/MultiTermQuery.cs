@@ -61,8 +61,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class MultiTermQuery : Query
     {
-        protected internal readonly string field; // LUCENENET TODO: Rename
-        protected RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT; // LUCENENET TODO: Rename (or move RewriteMethod class)
+        protected internal readonly string m_field;
+        protected RewriteMethod m_rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 
         /// <summary>
         /// Abstract class that defines how the query is rewritten. </summary>
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("field must not be null");
             }
-            this.field = field;
+            this.m_field = field;
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return field;
+                return m_field;
             }
         }
 
@@ -333,32 +333,28 @@ namespace Lucene.Net.Search
         /// </summary>
         public override sealed Query Rewrite(IndexReader reader)
         {
-            return rewriteMethod.Rewrite(reader, this);
+            return m_rewriteMethod.Rewrite(reader, this);
         }
 
-        /*
-              /// <seealso cref= #setRewriteMethod </seealso>
-              public virtual RewriteMethod RewriteMethod
-              {
-                  get
-                  {
-                    return rewriteMethod;
-                  }
-                  set
-                  {
-                    rewriteMethod = value;
-                  }
-              }
-                */
 
-        public virtual RewriteMethod GetRewriteMethod() // LUCENENET TODO: Make property ? Find out why the above was abandoned
+        // LUCENENET NOTE: Renamed from RewriteMethod to prevent a naming
+        // conflict with the RewriteMethod class. MultiTermRewriteMethod is consistent
+        // with the name used in QueryParserBase.
+        /// <summary>
+        /// Gets or Sets the rewrite method to be used when executing the
+        /// query.  You can use one of the four core methods, or
+        /// implement your own subclass of <see cref="RewriteMethod"/>.
+        /// </summary>
+        public virtual RewriteMethod MultiTermRewriteMethod 
         {
-            return rewriteMethod;
-        }
-
-        public virtual void SetRewriteMethod(RewriteMethod value) // LUCENENET TODO: Make property ?
-        {
-            rewriteMethod = value;
+            get
+            {
+                return m_rewriteMethod;
+            }
+            set
+            {
+                m_rewriteMethod = value;
+            }
         }
 
         public override int GetHashCode()
@@ -366,10 +362,10 @@ namespace Lucene.Net.Search
             const int prime = 31;
             int result = 1;
             result = prime * result + Number.FloatToIntBits(Boost);
-            result = prime * result + rewriteMethod.GetHashCode();
-            if (field != null)
+            result = prime * result + m_rewriteMethod.GetHashCode();
+            if (m_field != null)
             {
-                result = prime * result + field.GetHashCode();
+                result = prime * result + m_field.GetHashCode();
             }
             return result;
         }
@@ -393,11 +389,11 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (!rewriteMethod.Equals(other.rewriteMethod))
+            if (!m_rewriteMethod.Equals(other.m_rewriteMethod))
             {
                 return false;
             }
-            return (other.field == null ? field == null : other.field.Equals(field));
+            return (other.m_field == null ? m_field == null : other.m_field.Equals(m_field));
         }
     }
 }

@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             /// </summary>
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), Query.field);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), Query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 LongBitSet termSet = new LongBitSet(docTermOrds.ValueCount);
                 TermsEnum termsEnum = Query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));

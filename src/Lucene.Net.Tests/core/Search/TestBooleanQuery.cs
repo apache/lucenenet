@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
             query.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
             WildcardQuery wildcardQuery = new WildcardQuery(new Term("field", "ba*"));
-            wildcardQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            wildcardQuery.MultiTermRewriteMethod = (MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
             query.Add(wildcardQuery, Occur.MUST_NOT);
 
             MultiReader multireader = new MultiReader(reader1, reader2);

@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode.GetTag(MultiTermRewriteMethodProcessor.TAG_ID);
             if (method != null)
             {
-                q.SetRewriteMethod(method);
+                q.MultiTermRewriteMethod = method;
             }
 
             return q;
