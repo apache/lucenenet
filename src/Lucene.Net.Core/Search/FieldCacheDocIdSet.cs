@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
         /// this DocIdSet is always cacheable (does not go back
         /// to the reader for iteration)
         /// </summary>
-        public override sealed bool Cacheable
+        public override sealed bool IsCacheable
         {
             get
             {

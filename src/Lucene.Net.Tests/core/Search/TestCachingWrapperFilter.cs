@@ -306,10 +306,10 @@ namespace Lucene.Net.Search
             }
             else
             {
-                Assert.IsTrue(cachedSet.Cacheable);
-                Assert.AreEqual(shouldCacheable, originalSet.Cacheable);
+                Assert.IsTrue(cachedSet.IsCacheable);
+                Assert.AreEqual(shouldCacheable, originalSet.IsCacheable);
                 //System.out.println("Original: "+originalSet.getClass().getName()+" -- cached: "+cachedSet.getClass().getName());
-                if (originalSet.Cacheable)
+                if (originalSet.IsCacheable)
                 {
                     Assert.AreEqual(originalSet.GetType(), cachedSet.GetType(), "Cached DocIdSet must be of same class like uncached, if cacheable");
                 }

@@ -114,7 +114,7 @@ namespace Lucene.Net.Tests.Queries
                 return null;
             }
 
-            public override bool Cacheable
+            public override bool IsCacheable
             {
                 get
                 {

@@ -51,11 +51,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// this DocIdSet implementation is cacheable if the inner set is cacheable. </summary>
-        public override bool Cacheable
+        public override bool IsCacheable
         {
             get
             {
-                return _innerSet.Cacheable;
+                return _innerSet.IsCacheable;
             }
         }
 

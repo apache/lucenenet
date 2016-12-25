@@ -598,7 +598,7 @@ namespace Lucene.Net.Util
             this.WordNums = wordNums;
         }
 
-        public override bool Cacheable
+        public override bool IsCacheable
         {
             get
             {

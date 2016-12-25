@@ -378,7 +378,7 @@ namespace Lucene.Net.Util
             this.Offsets = offsets;
         }
 
-        public override bool Cacheable
+        public override bool IsCacheable
         {
             get
             {

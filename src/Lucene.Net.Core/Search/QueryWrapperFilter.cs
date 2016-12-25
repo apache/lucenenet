@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
                 return Weight.Scorer(PrivateContext, AcceptDocs);
             }
 
-            public override bool Cacheable
+            public override bool IsCacheable
             {
                 get
                 {

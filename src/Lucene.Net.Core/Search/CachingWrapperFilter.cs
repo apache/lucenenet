@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
                 // this is better than returning null, as the nonnull result can be cached
                 return EMPTY_DOCIDSET;
             }
-            else if (docIdSet.Cacheable)
+            else if (docIdSet.IsCacheable)
             {
                 return docIdSet;
             }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
             {
                 missCount++;
                 docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
-                Debug.Assert(docIdSet.Cacheable);
+                Debug.Assert(docIdSet.IsCacheable);
                 _cache[key] = docIdSet;
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
                 return DocIdSetIterator.Empty();
             }
 
-            public override bool Cacheable
+            public override bool IsCacheable
             {
                 get
                 {

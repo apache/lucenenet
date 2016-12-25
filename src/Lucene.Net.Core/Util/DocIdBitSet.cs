@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this DocIdSet implementation is cacheable. </summary>
-        public override bool Cacheable
+        public override bool IsCacheable
         {
             get
             {

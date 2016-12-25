@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         /// that does its iteration very effective and fast without doing disk I/O,
         /// override this method and return <code>true</code>.
         /// </summary>
-        public virtual bool Cacheable // LUCENENET TODO: Rename IsCacheable
+        public virtual bool IsCacheable
         {
             get
             {
