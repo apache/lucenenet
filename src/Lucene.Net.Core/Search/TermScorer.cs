@@ -27,8 +27,8 @@ namespace Lucene.Net.Search
     /// </summary>
     internal sealed class TermScorer : Scorer
     {
-        private readonly DocsEnum DocsEnum; // LUCENENET TODO: Rename (private)
-        private readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: Rename (private)
+        private readonly DocsEnum docsEnum;
+        private readonly Similarity.SimScorer docScorer;
 
         /// <summary>
         /// Construct a <code>TermScorer</code>.
@@ -43,18 +43,18 @@ namespace Lucene.Net.Search
         internal TermScorer(Weight weight, DocsEnum td, Similarity.SimScorer docScorer)
             : base(weight)
         {
-            this.DocScorer = docScorer;
-            this.DocsEnum = td;
+            this.docScorer = docScorer;
+            this.docsEnum = td;
         }
 
         public override int DocID
         {
-            get { return DocsEnum.DocID; }
+            get { return docsEnum.DocID; }
         }
 
         public override int Freq
         {
-            get { return DocsEnum.Freq; }
+            get { return docsEnum.Freq; }
         }
 
         /// <summary>
@@ -63,31 +63,31 @@ namespace Lucene.Net.Search
         /// <returns> the document matching the query or NO_MORE_DOCS if there are no more documents. </returns>
         public override int NextDoc()
         {
-            return DocsEnum.NextDoc();
+            return docsEnum.NextDoc();
         }
 
         public override float Score()
         {
             Debug.Assert(DocID != NO_MORE_DOCS);
-            return DocScorer.Score(DocsEnum.DocID, DocsEnum.Freq);
+            return docScorer.Score(docsEnum.DocID, docsEnum.Freq);
         }
 
         /// <summary>
         /// Advances to the first match beyond the current whose document number is
         /// greater than or equal to a given target. <br>
-        /// The implementation uses <seealso cref="DocsEnum#advance(int)"/>.
+        /// The implementation uses <seealso cref="docsEnum#advance(int)"/>.
         /// </summary>
         /// <param name="target">
         ///          The target document number. </param>
         /// <returns> the matching document or NO_MORE_DOCS if none exist. </returns>
         public override int Advance(int target)
         {
-            return DocsEnum.Advance(target);
+            return docsEnum.Advance(target);
         }
 
         public override long Cost()
         {
-            return DocsEnum.Cost();
+            return docsEnum.Cost();
         }
 
         /// <summary>
