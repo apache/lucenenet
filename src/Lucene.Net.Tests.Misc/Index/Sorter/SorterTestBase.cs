@@ -63,9 +63,9 @@ namespace Lucene.Net.Index.Sorter
             }
 
 
-            public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
+            public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
-                return @in.DoSimScorer(weight, context);
+                return @in.GetSimScorer(weight, context);
             }
 
         }

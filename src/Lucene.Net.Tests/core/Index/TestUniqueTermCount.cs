@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException();
             }
 
-            public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
+            public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
                 throw new InvalidOperationException();
             }

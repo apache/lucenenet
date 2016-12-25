@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new PayloadNearSpanScorer(outerInstance, m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity, m_similarity.DoSimScorer(m_stats, context));
+                return new PayloadNearSpanScorer(outerInstance, m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity, m_similarity.GetSimScorer(m_stats, context));
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Payloads
                     if (newDoc == doc)
                     {
                         float freq = scorer.Freq;
-                        Similarity.SimScorer docScorer = m_similarity.DoSimScorer(m_stats, context);
+                        Similarity.SimScorer docScorer = m_similarity.GetSimScorer(m_stats, context);
                         Explanation expl = new Explanation();
                         expl.Description = "weight(" + Query + " in " + doc + ") [" + m_similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));

@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
+            public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

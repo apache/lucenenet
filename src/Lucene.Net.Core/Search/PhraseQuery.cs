@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
 
                 if (outerInstance.slop == 0) // optimize exact case
                 {
-                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, similarity.DoSimScorer(stats, context));
+                    ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, similarity.GetSimScorer(stats, context));
                     if (s.noDocs)
                     {
                         return null;
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.slop, similarity.DoSimScorer(stats, context));
+                    return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.slop, similarity.GetSimScorer(stats, context));
                 }
             }
 
@@ -414,7 +414,7 @@ namespace Lucene.Net.Search
                     if (newDoc == doc)
                     {
                         float freq = outerInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
-                        SimScorer docScorer = similarity.DoSimScorer(stats, context);
+                        SimScorer docScorer = similarity.GetSimScorer(stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));

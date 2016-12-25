@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Similarities
             return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
 
-        public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
+        public override sealed SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             BM25Stats bm25stats = (BM25Stats)stats;
             return new BM25DocScorer(this, bm25stats, context.AtomicReader.GetNormValues(bm25stats.Field));

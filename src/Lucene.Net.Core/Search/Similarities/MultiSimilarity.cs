@@ -57,12 +57,12 @@ namespace Lucene.Net.Search.Similarities
             return new MultiStats(subStats);
         }
 
-        public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
+        public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             SimScorer[] subScorers = new SimScorer[m_sims.Length];
             for (int i = 0; i < subScorers.Length; i++)
             {
-                subScorers[i] = m_sims[i].DoSimScorer(((MultiStats)stats).subStats[i], context);
+                subScorers[i] = m_sims[i].GetSimScorer(((MultiStats)stats).subStats[i], context);
             }
             return new MultiSimScorer(subScorers);
         }

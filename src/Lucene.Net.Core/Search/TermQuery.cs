@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
                 }
                 DocsEnum docs = termsEnum.Docs(acceptDocs, null);
                 Debug.Assert(docs != null);
-                return new TermScorer(this, docs, similarity.DoSimScorer(stats, context));
+                return new TermScorer(this, docs, similarity.GetSimScorer(stats, context));
             }
 
             /// <summary>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
                     if (newDoc == doc)
                     {
                         float freq = scorer.Freq;
-                        SimScorer docScorer = similarity.DoSimScorer(stats, context);
+                        SimScorer docScorer = similarity.GetSimScorer(stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "termFreq=" + freq));

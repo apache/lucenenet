@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
+            public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
                 return new SimScorerAnonymousInnerClassHelper(this);
             }

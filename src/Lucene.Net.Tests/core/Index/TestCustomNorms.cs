@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
                 throw new System.NotSupportedException();
             }
 
-            public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
+            public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
                 throw new System.NotSupportedException();
             }

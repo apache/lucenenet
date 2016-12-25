@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Similarities
             return result;
         }
 
-        public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
+        public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             if (stats is MultiSimilarity.MultiStats)
             {

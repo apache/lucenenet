@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="context"> segment of the inverted index to be scored. </param>
         /// <returns> SloppySimScorer for scoring documents across <code>context</code> </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public abstract SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context); // LUCENENET TODO: Rename SimScorer() (or GetSimScorer())
+        public abstract SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context);
 
         /// <summary>
         /// API for scoring "sloppy" queries such as <seealso cref="TermQuery"/>,
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search.Similarities
         /// within-document frequency adjusted for "sloppiness" by
         /// <seealso cref="SimScorer#computeSlopFactor(int)"/>.
         /// </summary>
-        public abstract class SimScorer // LUCENENET TODO: de-nest from this class so we can name the above method SimScorer()
+        public abstract class SimScorer
         {
             /// <summary>
             /// Sole constructor. (For invocation by subclass

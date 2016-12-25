@@ -680,7 +680,7 @@ namespace Lucene.Net.Search.Similarities
             return new IDFStats(collectionStats.Field, idf, queryBoost);
         }
 
-        public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
+        public override sealed SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             IDFStats idfstats = (IDFStats)stats;
             return new TFIDFSimScorer(this, idfstats, context.AtomicReader.GetNormValues(idfstats.Field));
