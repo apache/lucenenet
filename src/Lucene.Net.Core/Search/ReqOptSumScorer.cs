@@ -32,9 +32,9 @@ namespace Lucene.Net.Search
         /// The scorers passed from the constructor.
         /// These are set to null as soon as their next() or skipTo() returns false.
         /// </summary>
-        private Scorer ReqScorer; // LUCENENET TODO: Rename (private)
+        private Scorer reqScorer;
 
-        private Scorer OptScorer; // LUCENENET TODO: Rename (private)
+        private Scorer optScorer;
 
         /// <summary>
         /// Construct a <code>ReqOptScorer</code>. </summary>
@@ -45,23 +45,23 @@ namespace Lucene.Net.Search
         {
             Debug.Assert(reqScorer != null);
             Debug.Assert(optScorer != null);
-            this.ReqScorer = reqScorer;
-            this.OptScorer = optScorer;
+            this.reqScorer = reqScorer;
+            this.optScorer = optScorer;
         }
 
         public override int NextDoc()
         {
-            return ReqScorer.NextDoc();
+            return reqScorer.NextDoc();
         }
 
         public override int Advance(int target)
         {
-            return ReqScorer.Advance(target);
+            return reqScorer.Advance(target);
         }
 
         public override int DocID
         {
-            get { return ReqScorer.DocID; }
+            get { return reqScorer.DocID; }
         }
 
         /// <summary>
@@ -72,21 +72,21 @@ namespace Lucene.Net.Search
         public override float Score()
         {
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
-            int curDoc = ReqScorer.DocID;
-            float reqScore = ReqScorer.Score();
-            if (OptScorer == null)
+            int curDoc = reqScorer.DocID;
+            float reqScore = reqScorer.Score();
+            if (optScorer == null)
             {
                 return reqScore;
             }
 
-            int optScorerDoc = OptScorer.DocID;
-            if (optScorerDoc < curDoc && (optScorerDoc = OptScorer.Advance(curDoc)) == NO_MORE_DOCS)
+            int optScorerDoc = optScorer.DocID;
+            if (optScorerDoc < curDoc && (optScorerDoc = optScorer.Advance(curDoc)) == NO_MORE_DOCS)
             {
-                OptScorer = null;
+                optScorer = null;
                 return reqScore;
             }
 
-            return optScorerDoc == curDoc ? reqScore + OptScorer.Score() : reqScore;
+            return optScorerDoc == curDoc ? reqScore + optScorer.Score() : reqScore;
         }
 
         public override int Freq
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             {
                 // we might have deferred advance()
                 Score();
-                return (OptScorer != null && OptScorer.DocID == ReqScorer.DocID) ? 2 : 1;
+                return (optScorer != null && optScorer.DocID == reqScorer.DocID) ? 2 : 1;
             }
         }
 
@@ -104,15 +104,15 @@ namespace Lucene.Net.Search
             get
             {
                 List<ChildScorer> children = new List<ChildScorer>(2);
-                children.Add(new ChildScorer(ReqScorer, "MUST"));
-                children.Add(new ChildScorer(OptScorer, "SHOULD"));
+                children.Add(new ChildScorer(reqScorer, "MUST"));
+                children.Add(new ChildScorer(optScorer, "SHOULD"));
                 return children;
             }
         }
 
         public override long Cost()
         {
-            return ReqScorer.Cost();
+            return reqScorer.Cost();
         }
     }
 }
