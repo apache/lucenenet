@@ -69,13 +69,13 @@ namespace Lucene.Net.Search
             {
                 Min = new PhrasePositions(postings[0].Postings, postings[0].Position, 0, postings[0].Terms);
                 Max = Min;
-                Max.Doc = -1;
+                Max.doc = -1;
                 for (int i = 1; i < postings.Length; i++)
                 {
                     PhrasePositions pp = new PhrasePositions(postings[i].Postings, postings[i].Position, i, postings[i].Terms);
                     Max.next = pp;
                     Max = pp;
-                    Max.Doc = -1;
+                    Max.doc = -1;
                 }
                 Max.next = Min; // make it cyclic for easier manipulation
             }
@@ -108,15 +108,15 @@ namespace Lucene.Net.Search
             float freq = 0.0f;
             NumMatches = 0;
             PhrasePositions pp = Pq.Pop();
-            int matchLength = End - pp.Position;
-            int next = Pq.Top().Position;
+            int matchLength = End - pp.position;
+            int next = Pq.Top().position;
             while (AdvancePP(pp))
             {
                 if (HasRpts && !AdvanceRpts(pp))
                 {
                     break; // pps exhausted
                 }
-                if (pp.Position > next) // done minimizing current match-length
+                if (pp.position > next) // done minimizing current match-length
                 {
                     if (matchLength <= Slop)
                     {
@@ -125,12 +125,12 @@ namespace Lucene.Net.Search
                     }
                     Pq.Add(pp);
                     pp = Pq.Pop();
-                    next = Pq.Top().Position;
-                    matchLength = End - pp.Position;
+                    next = Pq.Top().position;
+                    matchLength = End - pp.position;
                 }
                 else
                 {
-                    int matchLength2 = End - pp.Position;
+                    int matchLength2 = End - pp.position;
                     if (matchLength2 < matchLength)
                     {
                         matchLength = matchLength2;
@@ -153,9 +153,9 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (pp.Position > End)
+            if (pp.position > End)
             {
-                End = pp.Position;
+                End = pp.position;
             }
             return true;
         }
@@ -167,13 +167,13 @@ namespace Lucene.Net.Search
         /// </summary>
         private bool AdvanceRpts(PhrasePositions pp)
         {
-            if (pp.RptGroup < 0)
+            if (pp.rptGroup < 0)
             {
                 return true; // not a repeater
             }
-            PhrasePositions[] rg = RptGroups[pp.RptGroup];
+            PhrasePositions[] rg = RptGroups[pp.rptGroup];
             FixedBitSet bits = new FixedBitSet(rg.Length); // for re-queuing after collisions are resolved
-            int k0 = pp.RptInd;
+            int k0 = pp.rptInd;
             int k;
             while ((k = Collide(pp)) >= 0)
             {
@@ -197,9 +197,9 @@ namespace Lucene.Net.Search
             {
                 PhrasePositions pp2 = Pq.Pop();
                 RptStack[n++] = pp2;
-                if (pp2.RptGroup >= 0 && pp2.RptInd < numBits && bits.Get(pp2.RptInd)) // this bit may not have been set
+                if (pp2.rptGroup >= 0 && pp2.rptInd < numBits && bits.Get(pp2.rptInd)) // this bit may not have been set
                 {
-                    bits.Clear(pp2.RptInd);
+                    bits.Clear(pp2.rptInd);
                 }
             }
             // add back to queue
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
         /// compare two pps, but only by position and offset </summary>
         private PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2)
         {
-            if (pp.Position < pp2.Position || (pp.Position == pp2.Position && pp.Offset < pp2.Offset))
+            if (pp.position < pp2.position || (pp.position == pp2.position && pp.offset < pp2.offset))
             {
                 return pp;
             }
@@ -226,13 +226,13 @@ namespace Lucene.Net.Search
         private int Collide(PhrasePositions pp)
         {
             int tpPos = TpPos(pp);
-            PhrasePositions[] rg = RptGroups[pp.RptGroup];
+            PhrasePositions[] rg = RptGroups[pp.rptGroup];
             for (int i = 0; i < rg.Length; i++)
             {
                 PhrasePositions pp2 = rg[i];
                 if (pp2 != pp && TpPos(pp2) == tpPos)
                 {
-                    return pp2.RptInd;
+                    return pp2.rptInd;
                 }
             }
             return -1;
@@ -277,9 +277,9 @@ namespace Lucene.Net.Search
             for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 pp.FirstPosition();
-                if (pp.Position > End)
+                if (pp.position > End)
                 {
-                    End = pp.Position;
+                    End = pp.position;
                 }
                 Pq.Add(pp);
             }
@@ -316,9 +316,9 @@ namespace Lucene.Net.Search
             Pq.Clear();
             for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
-                if (pp.Position > End)
+                if (pp.position > End)
                 {
-                    End = pp.Position;
+                    End = pp.position;
                 }
                 Pq.Add(pp);
             }
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                             {
                                 return false; // exhausted
                             }
-                            if (pp2.RptInd < i) // should not happen?
+                            if (pp2.rptInd < i) // should not happen?
                             {
                                 incr = 0;
                                 break;
@@ -433,7 +433,7 @@ namespace Lucene.Net.Search
                 RptGroups[i] = rg;
                 for (int j = 0; j < rg.Length; j++)
                 {
-                    rg[j].RptInd = j; // we use this index for efficient re-queuing
+                    rg[j].rptInd = j; // we use this index for efficient re-queuing
                 }
             }
         }
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search
 
             public virtual int Compare(PhrasePositions pp1, PhrasePositions pp2)
             {
-                return pp1.Offset - pp2.Offset;
+                return pp1.offset - pp2.offset;
             }
         }
 
@@ -465,7 +465,7 @@ namespace Lucene.Net.Search
                 for (int i = 0; i < rpp.Length; i++)
                 {
                     PhrasePositions pp = rpp[i];
-                    if (pp.RptGroup >= 0) // already marked as a repetition
+                    if (pp.rptGroup >= 0) // already marked as a repetition
                     {
                         continue;
                     }
@@ -473,21 +473,21 @@ namespace Lucene.Net.Search
                     for (int j = i + 1; j < rpp.Length; j++)
                     {
                         PhrasePositions pp2 = rpp[j];
-                        if (pp2.RptGroup >= 0 || pp2.Offset == pp.Offset || TpPos(pp2) != tpPos) // not a repetition -  not a repetition: two PPs are originally in same offset in the query! -  already marked as a repetition
+                        if (pp2.rptGroup >= 0 || pp2.offset == pp.offset || TpPos(pp2) != tpPos) // not a repetition -  not a repetition: two PPs are originally in same offset in the query! -  already marked as a repetition
                         {
                             continue;
                         }
                         // a repetition
-                        int g = pp.RptGroup;
+                        int g = pp.rptGroup;
                         if (g < 0)
                         {
                             g = res.Count;
-                            pp.RptGroup = g;
+                            pp.rptGroup = g;
                             List<PhrasePositions> rl = new List<PhrasePositions>(2);
                             rl.Add(pp);
                             res.Add(rl);
                         }
-                        pp2.RptGroup = g;
+                        pp2.rptGroup = g;
                         res[g].Add(pp2);
                     }
                 }
@@ -506,14 +506,14 @@ namespace Lucene.Net.Search
                 }
                 foreach (PhrasePositions pp in rpp)
                 {
-                    foreach (Term t in pp.Terms)
+                    foreach (Term t in pp.terms)
                     {
                         if (rptTerms.ContainsKey(t))
                         {
                             int g = tg[t];
                             tmp[g].Add(pp);
-                            Debug.Assert(pp.RptGroup == -1 || pp.RptGroup == g);
-                            pp.RptGroup = g;
+                            Debug.Assert(pp.rptGroup == -1 || pp.rptGroup == g);
+                            pp.rptGroup = g;
                         }
                     }
                 }
@@ -529,7 +529,7 @@ namespace Lucene.Net.Search
         /// Actual position in doc of a PhrasePosition, relies on that position = tpPos - offset) </summary>
         private int TpPos(PhrasePositions pp)
         {
-            return pp.Position + pp.Offset;
+            return pp.position + pp.offset;
         }
 
         /// <summary>
@@ -540,7 +540,7 @@ namespace Lucene.Net.Search
             Dictionary<Term, int?> tcnt = new Dictionary<Term, int?>();
             for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
-                foreach (Term t in pp.Terms)
+                foreach (Term t in pp.terms)
                 {
                     int? cnt0;
                     tcnt.TryGetValue(t, out cnt0);
@@ -562,12 +562,12 @@ namespace Lucene.Net.Search
             List<PhrasePositions> rp = new List<PhrasePositions>();
             for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
-                foreach (Term t in pp.Terms)
+                foreach (Term t in pp.terms)
                 {
                     if (rptTerms.ContainsKey(t))
                     {
                         rp.Add(pp);
-                        HasMultiTermRpts |= (pp.Terms.Length > 1);
+                        HasMultiTermRpts |= (pp.terms.Length > 1);
                         break;
                     }
                 }
@@ -584,7 +584,7 @@ namespace Lucene.Net.Search
             {
                 FixedBitSet b = new FixedBitSet(tord.Count);
                 var ord = new int?();
-                foreach (var t in pp.Terms.Where(t => (ord = tord[t]) != null))
+                foreach (var t in pp.terms.Where(t => (ord = tord[t]) != null))
                 {
                     b.Set((int)ord);
                 }
@@ -671,7 +671,7 @@ namespace Lucene.Net.Search
         {
             if (!Min.SkipTo(target))
             {
-                Max.Doc = NO_MORE_DOCS; // for further calls to docID()
+                Max.doc = NO_MORE_DOCS; // for further calls to docID()
                 return false;
             }
             Min = Min.next; // cyclic
@@ -681,17 +681,17 @@ namespace Lucene.Net.Search
 
         public override int DocID
         {
-            get { return Max.Doc; }
+            get { return Max.doc; }
         }
 
         public override int NextDoc()
         {
-            return Advance(Max.Doc + 1); // advance to the next doc after #docID()
+            return Advance(Max.doc + 1); // advance to the next doc after #docID()
         }
 
         public override float Score()
         {
-            return DocScorer.Score(Max.Doc, SloppyFreq_Renamed);
+            return DocScorer.Score(Max.doc, SloppyFreq_Renamed);
         }
 
         public override int Advance(int target)
@@ -703,20 +703,20 @@ namespace Lucene.Net.Search
                 {
                     return NO_MORE_DOCS;
                 }
-                while (Min.Doc < Max.Doc)
+                while (Min.doc < Max.doc)
                 {
-                    if (!AdvanceMin(Max.Doc))
+                    if (!AdvanceMin(Max.doc))
                     {
                         return NO_MORE_DOCS;
                     }
                 }
                 // found a doc with all of the terms
                 SloppyFreq_Renamed = PhraseFreq(); // check for phrase
-                target = Min.Doc + 1; // next target in case sloppyFreq is still 0
+                target = Min.doc + 1; // next target in case sloppyFreq is still 0
             } while (SloppyFreq_Renamed == 0f);
 
             // found a match
-            return Max.Doc;
+            return Max.doc;
         }
 
         public override long Cost()

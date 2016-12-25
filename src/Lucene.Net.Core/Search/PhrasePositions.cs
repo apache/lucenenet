@@ -24,30 +24,29 @@ namespace Lucene.Net.Search
     /// </summary>
     internal sealed class PhrasePositions
     {
-        // LUCENENET TODO: Rename (private)
-        internal int Doc; // current doc
-        internal int Position; // position in doc
-        internal int Count; // remaining pos in this doc
-        internal int Offset; // position in phrase
-        internal readonly int Ord; // unique across all PhrasePositions instances
-        internal readonly DocsAndPositionsEnum Postings; // stream of docs & positions
+        internal int doc; // current doc
+        internal int position; // position in doc
+        internal int count; // remaining pos in this doc
+        internal int offset; // position in phrase
+        internal readonly int ord; // unique across all PhrasePositions instances
+        internal readonly DocsAndPositionsEnum postings; // stream of docs & positions
         internal PhrasePositions next; // used to make lists
-        internal int RptGroup = -1; // >=0 indicates that this is a repeating PP
-        internal int RptInd; // index in the rptGroup
-        internal readonly Term[] Terms; // for repetitions initialization
+        internal int rptGroup = -1; // >=0 indicates that this is a repeating PP
+        internal int rptInd; // index in the rptGroup
+        internal readonly Term[] terms; // for repetitions initialization
 
         internal PhrasePositions(DocsAndPositionsEnum postings, int o, int ord, Term[] terms)
         {
-            this.Postings = postings;
-            Offset = o;
-            this.Ord = ord;
-            this.Terms = terms;
+            this.postings = postings;
+            offset = o;
+            this.ord = ord;
+            this.terms = terms;
         }
 
         internal bool Next() // increments to next doc
         {
-            Doc = Postings.NextDoc();
-            if (Doc == DocIdSetIterator.NO_MORE_DOCS)
+            doc = postings.NextDoc();
+            if (doc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 return false;
             }
@@ -56,8 +55,8 @@ namespace Lucene.Net.Search
 
         internal bool SkipTo(int target)
         {
-            Doc = Postings.Advance(target);
-            if (Doc == DocIdSetIterator.NO_MORE_DOCS)
+            doc = postings.Advance(target);
+            if (doc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 return false;
             }
@@ -66,7 +65,7 @@ namespace Lucene.Net.Search
 
         internal void FirstPosition()
         {
-            Count = Postings.Freq; // read first pos
+            count = postings.Freq; // read first pos
             NextPosition();
         }
 
@@ -78,9 +77,9 @@ namespace Lucene.Net.Search
         /// </summary>
         internal bool NextPosition()
         {
-            if (Count-- > 0) // read subsequent pos's
+            if (count-- > 0) // read subsequent pos's
             {
-                Position = Postings.NextPosition() - Offset;
+                position = postings.NextPosition() - offset;
                 return true;
             }
             else
@@ -93,10 +92,10 @@ namespace Lucene.Net.Search
         /// for debug purposes </summary>
         public override string ToString()
         {
-            string s = "d:" + Doc + " o:" + Offset + " p:" + Position + " c:" + Count;
-            if (RptGroup >= 0)
+            string s = "d:" + doc + " o:" + offset + " p:" + position + " c:" + count;
+            if (rptGroup >= 0)
             {
-                s += " rpt:" + RptGroup + ",i" + RptInd;
+                s += " rpt:" + rptGroup + ",i" + rptInd;
             }
             return s;
         }
