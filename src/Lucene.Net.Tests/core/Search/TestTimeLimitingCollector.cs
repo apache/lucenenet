@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
         private Collector CreateTimedCollector(MyHitCollector hc, long timeAllowed, bool greedy)
         {
             TimeLimitingCollector res = new TimeLimitingCollector(hc, counter, timeAllowed);
-            res.Greedy = (greedy); // set to true to make sure at least one doc is collected.
+            res.IsGreedy = (greedy); // set to true to make sure at least one doc is collected.
             return res;
         }
 

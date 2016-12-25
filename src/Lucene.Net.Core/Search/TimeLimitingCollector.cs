@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         /// first allow the wrapped hit collector to collect current doc and only then
         /// throw a <seealso cref="TimeExceededException"/>. </summary>
         /// <seealso cref= #setGreedy(boolean) </seealso>
-        public virtual bool Greedy // LUCENENET TODO: Rename IsGreedy
+        public virtual bool IsGreedy
         {
             get
             {
