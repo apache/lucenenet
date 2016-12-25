@@ -78,71 +78,71 @@ namespace Lucene.Net.Search.Spans
         /// Wraps a Spans, and can be used to form a linked list. </summary>
         private class SpansCell : Spans
         {
-            private readonly NearSpansUnordered OuterInstance;
+            private readonly NearSpansUnordered outerInstance;
 
-            internal Spans Spans; // LUCENENET TODO: Make property
-            internal SpansCell Next_Renamed; // LUCENENET TODO: Make property
-            private int Length = -1;
-            private int Index;
+            internal Spans spans;
+            internal SpansCell next;
+            private int length = -1;
+            private int index;
 
             public SpansCell(NearSpansUnordered outerInstance, Spans spans, int index)
             {
-                this.OuterInstance = outerInstance;
-                this.Spans = spans;
-                this.Index = index;
+                this.outerInstance = outerInstance;
+                this.spans = spans;
+                this.index = index;
             }
 
             public override bool Next()
             {
-                return Adjust(Spans.Next());
+                return Adjust(spans.Next());
             }
 
             public override bool SkipTo(int target)
             {
-                return Adjust(Spans.SkipTo(target));
+                return Adjust(spans.SkipTo(target));
             }
 
             private bool Adjust(bool condition)
             {
-                if (Length != -1)
+                if (length != -1)
                 {
-                    OuterInstance.TotalLength -= Length; // subtract old length
+                    outerInstance.TotalLength -= length; // subtract old length
                 }
                 if (condition)
                 {
-                    Length = End - Start;
-                    OuterInstance.TotalLength += Length; // add new length
+                    length = End - Start;
+                    outerInstance.TotalLength += length; // add new length
 
-                    if (OuterInstance.Max == null || Doc > OuterInstance.Max.Doc || (Doc == OuterInstance.Max.Doc) && (End > OuterInstance.Max.End))
+                    if (outerInstance.Max == null || Doc > outerInstance.Max.Doc || (Doc == outerInstance.Max.Doc) && (End > outerInstance.Max.End))
                     {
-                        OuterInstance.Max = this;
+                        outerInstance.Max = this;
                     }
                 }
-                OuterInstance.More = condition;
+                outerInstance.More = condition;
                 return condition;
             }
 
             public override int Doc
             {
-                get { return Spans.Doc; }
+                get { return spans.Doc; }
             }
 
             public override int Start
             {
-                get { return Spans.Start; }
+                get { return spans.Start; }
             }
 
             public override int End
             // TODO: Remove warning after API has been finalized
             {
-                get { return Spans.End; }
+                get { return spans.End; }
             }
 
             public override ICollection<byte[]> Payload
             {
                 get
                 {
-                    return new List<byte[]>(Spans.Payload);
+                    return new List<byte[]>(spans.Payload);
                 }
             }
 
@@ -151,18 +151,18 @@ namespace Lucene.Net.Search.Spans
             {
                 get
                 {
-                    return Spans.IsPayloadAvailable;
+                    return spans.IsPayloadAvailable;
                 }
             }
 
             public override long Cost()
             {
-                return Spans.Cost();
+                return spans.Cost();
             }
 
             public override string ToString()
             {
-                return Spans.ToString() + "#" + Index;
+                return spans.ToString() + "#" + index;
             }
         }
 
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Spans
             {
                 SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
                 Ordered.Add(cell);
-                subSpans[i] = cell.Spans;
+                subSpans[i] = cell.spans;
             }
         }
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Spans
             }
             else if (More)
             {
-                if (Min().Next()) // trigger further scanning
+                if (Min.Next()) // trigger further scanning
                 {
                     Queue.UpdateTop(); // maintain queue
                 }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Spans
             {
                 bool queueStale = false;
 
-                if (Min().Doc != Max.Doc) // maintain list
+                if (Min.Doc != Max.Doc) // maintain list
                 {
                     QueueToList();
                     queueStale = true;
@@ -242,12 +242,12 @@ namespace Lucene.Net.Search.Spans
                     queueStale = false;
                 }
 
-                if (AtMatch())
+                if (AtMatch)
                 {
                     return true;
                 }
 
-                More = Min().Next();
+                More = Min.Next();
                 if (More)
                 {
                     Queue.UpdateTop(); // maintain queue
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Spans
             if (FirstTime) // initialize
             {
                 InitList(false);
-                for (SpansCell cell = First; More && cell != null; cell = cell.Next_Renamed)
+                for (SpansCell cell = First; More && cell != null; cell = cell.next)
                 {
                     More = cell.SkipTo(target); // skip all
                 }
@@ -273,9 +273,9 @@ namespace Lucene.Net.Search.Spans
             } // normal case
             else
             {
-                while (More && Min().Doc < target) // skip as needed
+                while (More && Min.Doc < target) // skip as needed
                 {
-                    if (Min().SkipTo(target))
+                    if (Min.SkipTo(target))
                     {
                         Queue.UpdateTop();
                     }
@@ -285,22 +285,22 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
             }
-            return More && (AtMatch() || Next());
+            return More && (AtMatch || Next());
         }
 
-        private SpansCell Min() // LUCENENET TODO: Make property
+        private SpansCell Min
         {
-            return Queue.Top();
+            get { return Queue.Top(); }
         }
 
         public override int Doc
         {
-            get { return Min().Doc; }
+            get { return Min.Doc; }
         }
 
         public override int Start
         {
-            get { return Min().Start; }
+            get { return Min.Start; }
         }
 
         // TODO: Remove warning after API has been finalized
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search.Spans
             get
             {
                 var matchPayload = new HashSet<byte[]>();
-                for (var cell = First; cell != null; cell = cell.Next_Renamed)
+                for (var cell = First; cell != null; cell = cell.next)
                 {
                     if (cell.IsPayloadAvailable)
                     {
@@ -335,14 +335,14 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                SpansCell pointer = Min();
+                SpansCell pointer = Min;
                 while (pointer != null)
                 {
                     if (pointer.IsPayloadAvailable)
                     {
                         return true;
                     }
-                    pointer = pointer.Next_Renamed;
+                    pointer = pointer.next;
                 }
 
                 return false;
@@ -384,22 +384,22 @@ namespace Lucene.Net.Search.Spans
         {
             if (Last != null) // add next to end of list
             {
-                Last.Next_Renamed = cell;
+                Last.next = cell;
             }
             else
             {
                 First = cell;
             }
             Last = cell;
-            cell.Next_Renamed = null;
+            cell.next = null;
         }
 
         private void FirstToLast()
         {
-            Last.Next_Renamed = First; // move first to end of list
+            Last.next = First; // move first to end of list
             Last = First;
-            First = First.Next_Renamed;
-            Last.Next_Renamed = null;
+            First = First.next;
+            Last.next = null;
         }
 
         private void QueueToList()
@@ -414,15 +414,15 @@ namespace Lucene.Net.Search.Spans
         private void ListToQueue()
         {
             Queue.Clear(); // rebuild queue
-            for (SpansCell cell = First; cell != null; cell = cell.Next_Renamed)
+            for (SpansCell cell = First; cell != null; cell = cell.next)
             {
                 Queue.Add(cell); // add to queue from list
             }
         }
 
-        private bool AtMatch()  // LUCENENET TODO: Make property
+        private bool AtMatch
         {
-            return (Min().Doc == Max.Doc) && ((Max.End - Min().Start - TotalLength) <= Slop);
+            get { return (Min.Doc == Max.Doc) && ((Max.End - Min.Start - TotalLength) <= Slop); }
         }
     }
 }
