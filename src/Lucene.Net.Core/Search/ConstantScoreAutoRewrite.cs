@@ -166,11 +166,11 @@ namespace Lucene.Net.Search
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
-                    Array.termState[pos].Register(termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos].Register(termState, m_readerContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
                 }
                 else
                 {
-                    Array.termState[pos] = new TermContext(TopReaderContext, termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos] = new TermContext(m_topReaderContext, termState, m_readerContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
                 }
                 return true;
             }

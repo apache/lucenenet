@@ -97,13 +97,13 @@ namespace Lucene.Net.Search
 
         internal abstract class TermCollector
         {
-            protected internal AtomicReaderContext ReaderContext; // LUCENENET TODO: Rename (private)
-            protected internal IndexReaderContext TopReaderContext; // LUCENENET TODO: Rename (private)
+            protected internal AtomicReaderContext m_readerContext;
+            protected internal IndexReaderContext m_topReaderContext;
 
             public virtual void SetReaderContext(IndexReaderContext topReaderContext, AtomicReaderContext readerContext)
             {
-                this.ReaderContext = readerContext;
-                this.TopReaderContext = topReaderContext;
+                this.m_readerContext = readerContext;
+                this.m_topReaderContext = topReaderContext;
             }
 
             /// <summary>

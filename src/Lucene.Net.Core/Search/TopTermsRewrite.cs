@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
                 // lazy init the initial ScoreTerm because comparator is not known on ctor:
                 if (st == null)
                 {
-                    st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
+                    st = new ScoreTerm(this.termComp, new TermContext(m_topReaderContext));
                 }
                 boostAtt = termsEnum.Attributes.AddAttribute<IBoostAttribute>();
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
                     Debug.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
-                    t2.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
                 }
                 else
                 {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
                     st.Boost = boost;
                     visitedTerms[st.Bytes] = st;
                     Debug.Assert(st.TermState.DocFreq == 0);
-                    st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
                     StQueue.Add(st);
                     // possibly drop entries from queue
                     if (StQueue.Size() > MaxSize)
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        st = new ScoreTerm(termComp, new TermContext(TopReaderContext));
+                        st = new ScoreTerm(termComp, new TermContext(m_topReaderContext));
                     }
                     Debug.Assert(StQueue.Size() <= MaxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
