@@ -28,12 +28,12 @@ namespace Lucene.Net.Search
     internal class DisjunctionMaxScorer : DisjunctionScorer
     {
         /* Multiplier applied to non-maximum-scoring subqueries for a document as they are summed into the result. */
-        private readonly float TieBreakerMultiplier; // LUCENENET TODO: Rename (private)
-        private int Freq_Renamed = -1; // LUCENENET TODO: Rename (private)
+        private readonly float tieBreakerMultiplier;
+        private int freq = -1;
 
         /* Used when scoring currently matching doc. */
-        private float ScoreSum; // LUCENENET TODO: Rename (private)
-        private float ScoreMax; // LUCENENET TODO: Rename (private)
+        private float scoreSum;
+        private float scoreMax;
 
         /// <summary>
         /// Creates a new instance of DisjunctionMaxScorer
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         public DisjunctionMaxScorer(Weight weight, float tieBreakerMultiplier, Scorer[] subScorers)
             : base(weight, subScorers)
         {
-            this.TieBreakerMultiplier = tieBreakerMultiplier;
+            this.tieBreakerMultiplier = tieBreakerMultiplier;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         /// <returns> the score of the current generated document </returns>
         public override float Score()
         {
-            return ScoreMax + (ScoreSum - ScoreMax) * TieBreakerMultiplier;
+            return scoreMax + (scoreSum - scoreMax) * tieBreakerMultiplier;
         }
 
         protected override void AfterNext()
@@ -64,8 +64,8 @@ namespace Lucene.Net.Search
             Doc = SubScorers[0].DocID();
             if (Doc != NO_MORE_DOCS)
             {
-                ScoreSum = ScoreMax = SubScorers[0].Score();
-                Freq_Renamed = 1;
+                scoreSum = scoreMax = SubScorers[0].Score();
+                freq = 1;
                 ScoreAll(1);
                 ScoreAll(2);
             }
@@ -77,9 +77,9 @@ namespace Lucene.Net.Search
             if (root < NumScorers && SubScorers[root].DocID() == Doc)
             {
                 float sub = SubScorers[root].Score();
-                Freq_Renamed++;
-                ScoreSum += sub;
-                ScoreMax = Math.Max(ScoreMax, sub);
+                freq++;
+                scoreSum += sub;
+                scoreMax = Math.Max(scoreMax, sub);
                 ScoreAll((root << 1) + 1);
                 ScoreAll((root << 1) + 2);
             }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
         public override int Freq
         {
-            get { return Freq_Renamed; }
+            get { return freq; }
         }
     }
 }
