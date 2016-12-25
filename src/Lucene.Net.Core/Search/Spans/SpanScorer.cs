@@ -24,83 +24,83 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanScorer : Scorer
     {
-        protected Spans Spans; // LUCENENET TODO: rename
+        protected Spans m_spans;
 
-        protected bool More = true; // LUCENENET TODO: rename
+        protected bool m_more = true;
 
-        protected int Doc; // LUCENENET TODO: rename
-        protected float Freq_Renamed; // LUCENENET TODO: rename
-        protected int NumMatches; // LUCENENET TODO: rename
-        protected readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: rename
+        protected int m_doc;
+        protected float m_freq;
+        protected int m_numMatches;
+        protected readonly Similarity.SimScorer m_docScorer;
 
         protected internal SpanScorer(Spans spans, Weight weight, Similarity.SimScorer docScorer)
             : base(weight)
         {
-            this.DocScorer = docScorer;
-            this.Spans = spans;
+            this.m_docScorer = docScorer;
+            this.m_spans = spans;
 
-            Doc = -1;
-            More = spans.Next();
+            m_doc = -1;
+            m_more = spans.Next();
         }
 
         public override int NextDoc()
         {
             if (!SetFreqCurrentDoc())
             {
-                Doc = NO_MORE_DOCS;
+                m_doc = NO_MORE_DOCS;
             }
-            return Doc;
+            return m_doc;
         }
 
         public override int Advance(int target)
         {
-            if (!More)
+            if (!m_more)
             {
-                return Doc = NO_MORE_DOCS;
+                return m_doc = NO_MORE_DOCS;
             }
-            if (Spans.Doc < target) // setFreqCurrentDoc() leaves spans.doc() ahead
+            if (m_spans.Doc < target) // setFreqCurrentDoc() leaves spans.doc() ahead
             {
-                More = Spans.SkipTo(target);
+                m_more = m_spans.SkipTo(target);
             }
             if (!SetFreqCurrentDoc())
             {
-                Doc = NO_MORE_DOCS;
+                m_doc = NO_MORE_DOCS;
             }
-            return Doc;
+            return m_doc;
         }
 
         protected virtual bool SetFreqCurrentDoc()
         {
-            if (!More)
+            if (!m_more)
             {
                 return false;
             }
-            Doc = Spans.Doc;
-            Freq_Renamed = 0.0f;
-            NumMatches = 0;
+            m_doc = m_spans.Doc;
+            m_freq = 0.0f;
+            m_numMatches = 0;
             do
             {
-                int matchLength = Spans.End - Spans.Start;
-                Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
-                NumMatches++;
-                More = Spans.Next();
-            } while (More && (Doc == Spans.Doc));
+                int matchLength = m_spans.End - m_spans.Start;
+                m_freq += m_docScorer.ComputeSlopFactor(matchLength);
+                m_numMatches++;
+                m_more = m_spans.Next();
+            } while (m_more && (m_doc == m_spans.Doc));
             return true;
         }
 
         public override int DocID
         {
-            get { return Doc; }
+            get { return m_doc; }
         }
 
         public override float Score()
         {
-            return DocScorer.Score(Doc, Freq_Renamed);
+            return m_docScorer.Score(m_doc, m_freq);
         }
 
         public override int Freq
         {
-            get { return NumMatches; }
+            get { return m_numMatches; }
         }
 
         /// <summary>
@@ -110,12 +110,12 @@ namespace Lucene.Net.Search.Spans
         // only public so .payloads can see it.
         public virtual float SloppyFreq
         {
-            get { return Freq_Renamed; }
+            get { return m_freq; }
         }
 
         public override long Cost()
         {
-            return Spans.Cost();
+            return m_spans.Cost();
         }
     }
 }

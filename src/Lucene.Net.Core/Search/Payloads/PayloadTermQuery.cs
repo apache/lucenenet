@@ -97,27 +97,27 @@ namespace Lucene.Net.Search.Payloads
 
                 protected override bool SetFreqCurrentDoc()
                 {
-                    if (!More)
+                    if (!m_more)
                     {
                         return false;
                     }
-                    Doc = Spans.Doc;
-                    Freq_Renamed = 0.0f;
-                    NumMatches = 0;
+                    m_doc = m_spans.Doc;
+                    m_freq = 0.0f;
+                    m_numMatches = 0;
                     PayloadScore_Renamed = 0;
                     PayloadsSeen = 0;
-                    while (More && Doc == Spans.Doc)
+                    while (m_more && m_doc == m_spans.Doc)
                     {
-                        int matchLength = Spans.End - Spans.Start;
+                        int matchLength = m_spans.End - m_spans.Start;
 
-                        Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
-                        NumMatches++;
+                        m_freq += m_docScorer.ComputeSlopFactor(matchLength);
+                        m_numMatches++;
                         ProcessPayload(OuterInstance.Similarity);
 
-                        More = Spans.Next(); // this moves positions to the next match in this
+                        m_more = m_spans.Next(); // this moves positions to the next match in this
                         // document
                     }
-                    return More || (Freq_Renamed != 0);
+                    return m_more || (m_freq != 0);
                 }
 
                 protected internal virtual void ProcessPayload(Similarity similarity)
@@ -128,11 +128,11 @@ namespace Lucene.Net.Search.Payloads
                         Payload = postings.Payload;
                         if (Payload != null)
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start, Spans.End, PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start, Spans.End, Payload));
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, Payload));
                         }
                         else
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start, Spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
                         }
                         PayloadsSeen++;
                     }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Payloads
                 ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
                 protected internal virtual float GetPayloadScore()
                 {
-                    return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
+                    return OuterInstance.OuterInstance.Function.DocScore(m_doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
                 }
             }
 

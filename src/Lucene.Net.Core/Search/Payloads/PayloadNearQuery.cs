@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.Bytes = thePayload;
                     scratch.Offset = 0;
                     scratch.Length = thePayload.Length;
-                    payloadScore = outerInstance.function.CurrentScore(Doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, DocScorer.ComputePayloadFactor(Doc, spans.Start, spans.End, scratch));
+                    payloadScore = outerInstance.function.CurrentScore(m_doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, m_docScorer.ComputePayloadFactor(m_doc, spans.Start, spans.End, scratch));
                     ++payloadsSeen;
                 }
             }
@@ -275,29 +275,29 @@ namespace Lucene.Net.Search.Payloads
             //
             protected override bool SetFreqCurrentDoc()
             {
-                if (!More)
+                if (!m_more)
                 {
                     return false;
                 }
-                Doc = spans.Doc;
-                Freq_Renamed = 0.0f;
+                m_doc = spans.Doc;
+                m_freq = 0.0f;
                 payloadScore = 0;
                 payloadsSeen = 0;
                 do
                 {
                     int matchLength = spans.End - spans.Start;
-                    Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
+                    m_freq += m_docScorer.ComputeSlopFactor(matchLength);
                     Spans[] spansArr = new Spans[1];
                     spansArr[0] = spans;
                     GetPayloads(spansArr);
-                    More = spans.Next();
-                } while (More && (Doc == spans.Doc));
+                    m_more = spans.Next();
+                } while (m_more && (m_doc == spans.Doc));
                 return true;
             }
 
             public override float Score()
             {
-                return base.Score() * outerInstance.function.DocScore(Doc, outerInstance.fieldName, payloadsSeen, payloadScore);
+                return base.Score() * outerInstance.function.DocScore(m_doc, outerInstance.fieldName, payloadsSeen, payloadScore);
             }
         }
     }
