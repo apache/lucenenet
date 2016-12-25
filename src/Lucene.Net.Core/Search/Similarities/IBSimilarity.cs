@@ -68,15 +68,15 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The probabilistic distribution used to model term occurrence. </summary>
-        protected internal readonly Distribution Distribution_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly Distribution m_distribution;
 
         /// <summary>
         /// The <em>lambda (&lambda;<sub>w</sub>)</em> parameter. </summary>
-        protected internal readonly Lambda Lambda_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly Lambda m_lambda;
 
         /// <summary>
         /// The term frequency normalization. </summary>
-        protected internal readonly Normalization Normalization_Renamed; // LUCENENET TODO: Rename
+        protected internal readonly Normalization m_normalization;
 
         /// <summary>
         /// Creates IBSimilarity from the three components.
@@ -89,14 +89,14 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="normalization"> term frequency normalization </param>
         public IBSimilarity(Distribution distribution, Lambda lambda, Normalization normalization)
         {
-            this.Distribution_Renamed = distribution;
-            this.Lambda_Renamed = lambda;
-            this.Normalization_Renamed = normalization;
+            this.m_distribution = distribution;
+            this.m_lambda = lambda;
+            this.m_normalization = normalization;
         }
 
         public override float Score(BasicStats stats, float freq, float docLen)
         {
-            return stats.TotalBoost * Distribution_Renamed.Score(stats, Normalization_Renamed.Tfn(stats, freq, docLen), Lambda_Renamed.CalculateLambda(stats));
+            return stats.TotalBoost * m_distribution.Score(stats, m_normalization.Tfn(stats, freq, docLen), m_lambda.CalculateLambda(stats));
         }
 
         protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
@@ -105,11 +105,11 @@ namespace Lucene.Net.Search.Similarities
             {
                 expl.AddDetail(new Explanation(stats.TotalBoost, "boost"));
             }
-            Explanation normExpl = Normalization_Renamed.Explain(stats, freq, docLen);
-            Explanation lambdaExpl = Lambda_Renamed.Explain(stats);
+            Explanation normExpl = m_normalization.Explain(stats, freq, docLen);
+            Explanation lambdaExpl = m_lambda.Explain(stats);
             expl.AddDetail(normExpl);
             expl.AddDetail(lambdaExpl);
-            expl.AddDetail(Distribution_Renamed.Explain(stats, normExpl.Value, lambdaExpl.Value));
+            expl.AddDetail(m_distribution.Explain(stats, normExpl.Value, lambdaExpl.Value));
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public override string ToString()
         {
-            return "IB " + Distribution_Renamed.ToString() + "-" + Lambda_Renamed.ToString() + Normalization_Renamed.ToString();
+            return "IB " + m_distribution.ToString() + "-" + m_lambda.ToString() + m_normalization.ToString();
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Distribution_Renamed;
+                return m_distribution;
             }
         }
 
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Lambda_Renamed;
+                return m_lambda;
             }
         }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return Normalization_Renamed;
+                return m_normalization;
             }
         }
     }
