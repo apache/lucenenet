@@ -79,14 +79,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        // LUCENENET TODO: Rename (private)
-        private long T0 = long.MinValue;
-        private long Timeout = long.MinValue;
+        private long t0 = long.MinValue;
+        private long timeout = long.MinValue;
         private Collector collector;
-        private readonly Counter Clock;
-        private readonly long TicksAllowed;
+        private readonly Counter clock;
+        private readonly long ticksAllowed;
         private bool greedy = false;
-        private int DocBase;
+        private int docBase;
 
         /// <summary>
         /// Create a TimeLimitedCollector wrapper over another <seealso cref="Collector"/> with a specified timeout. </summary>
@@ -97,8 +96,8 @@ namespace Lucene.Net.Search
         public TimeLimitingCollector(Collector collector, Counter clock, long ticksAllowed)
         {
             this.collector = collector;
-            this.Clock = clock;
-            this.TicksAllowed = ticksAllowed;
+            this.clock = clock;
+            this.ticksAllowed = ticksAllowed;
         }
 
         /// <summary>
@@ -122,8 +121,8 @@ namespace Lucene.Net.Search
         {
             set
             {
-                T0 = value;
-                Timeout = T0 + TicksAllowed;
+                t0 = value;
+                timeout = t0 + ticksAllowed;
             }
         }
 
@@ -133,7 +132,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void SetBaseline()
         {
-            Baseline = Clock.Get();
+            Baseline = clock.Get();
         }
 
         /// <summary>
@@ -163,8 +162,8 @@ namespace Lucene.Net.Search
         ///           if the time allowed has exceeded. </exception>
         public override void Collect(int doc)
         {
-            long time = Clock.Get();
-            if (Timeout < time)
+            long time = clock.Get();
+            if (timeout < time)
             {
                 if (greedy)
                 {
@@ -172,7 +171,7 @@ namespace Lucene.Net.Search
                     collector.Collect(doc);
                 }
                 //System.out.println(this+"  failing on:  "+(docBase + doc)+"  "+(time-t0));
-                throw new TimeExceededException(Timeout - T0, time - T0, DocBase + doc);
+                throw new TimeExceededException(timeout - t0, time - t0, docBase + doc);
             }
             //System.out.println(this+"  collecting: "+(docBase + doc)+"  "+(time-t0));
             collector.Collect(doc);
@@ -181,8 +180,8 @@ namespace Lucene.Net.Search
         public override void SetNextReader(AtomicReaderContext context)
         {
             collector.SetNextReader(context);
-            this.DocBase = context.DocBase;
-            if (long.MinValue == T0)
+            this.docBase = context.DocBase;
+            if (long.MinValue == t0)
             {
                 SetBaseline();
             }
@@ -226,7 +225,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return TimerThreadHolder.THREAD.Counter;
+                return TimerThreadHolder.THREAD.counter;
             }
         }
 
@@ -280,17 +279,17 @@ namespace Lucene.Net.Search
             //   afford losing a tick or two.
             //
             // See section 17 of the Java Language Specification for details.
-            private long Time = 0; // LUCENENET TODO: Rename (private)
+            private long time = 0;
 
-            private volatile bool Stop = false; // LUCENENET TODO: Rename (private)
+            private volatile bool stop = false;
             private long resolution;
-            internal readonly Counter Counter; // LUCENENET TODO: Rename counter, make private, make property named Counter for access
+            internal readonly Counter counter;
 
             public TimerThread(long resolution, Counter counter)
                 : base(THREAD_NAME)
             {
                 this.resolution = resolution;
-                this.Counter = counter;
+                this.counter = counter;
                 this.SetDaemon(true);
             }
 
@@ -301,10 +300,10 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-                while (!Stop)
+                while (!stop)
                 {
                     // TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
-                    Counter.AddAndGet(resolution);
+                    counter.AddAndGet(resolution);
 #if !NETSTANDARD
                     try
                     {
@@ -327,7 +326,7 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    return Time;
+                    return time;
                 }
             }
 
@@ -336,7 +335,7 @@ namespace Lucene.Net.Search
             /// </summary>
             public void StopTimer()
             {
-                Stop = true;
+                stop = true;
             }
 
             /// <summary>
