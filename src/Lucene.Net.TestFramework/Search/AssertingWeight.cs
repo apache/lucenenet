@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         {
             this.Random = random;
             this.@in = @in;
-            ScoresDocsOutOfOrder_Renamed = @in.ScoresDocsOutOfOrder() || random.NextBoolean();
+            ScoresDocsOutOfOrder_Renamed = @in.ScoresDocsOutOfOrder || random.NextBoolean();
         }
 
         public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -106,9 +106,9 @@ namespace Lucene.Net.Search
             return inScorer;
         }
 
-        public override bool ScoresDocsOutOfOrder()
+        public override bool ScoresDocsOutOfOrder
         {
-            return ScoresDocsOutOfOrder_Renamed;
+            get { return ScoresDocsOutOfOrder_Renamed; }
         }
     }
 }

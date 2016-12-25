@@ -146,9 +146,9 @@ namespace Lucene.Net.Join
                 throw new NotSupportedException(GetType().Name + " cannot explain match on parent document");
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 

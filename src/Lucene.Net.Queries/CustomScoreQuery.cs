@@ -303,9 +303,9 @@ namespace Lucene.Net.Queries
                 return res;
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
 
         }

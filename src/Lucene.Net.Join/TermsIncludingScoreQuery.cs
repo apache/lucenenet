@@ -138,11 +138,14 @@ namespace Lucene.Net.Join
                 return new ComplexExplanation(false, 0.0f, "Not a match");
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                // We have optimized impls below if we are allowed
-                // to score out-of-order:
-                return true;
+                get
+                {
+                    // We have optimized impls below if we are allowed
+                    // to score out-of-order:
+                    return true;
+                }
             }
 
             public override Query Query

@@ -206,9 +206,9 @@ namespace Lucene.Net.Search
         /// <b>NOTE:</b> the default implementation returns <code>false</code>, i.e.
         /// the <code>Scorer</code> scores documents in-order.
         /// </summary>
-        public virtual bool ScoresDocsOutOfOrder() // LUCENENET TODO: Make property
+        public virtual bool ScoresDocsOutOfOrder
         {
-            return false;
+            get { return false; }
         }
     }
 }

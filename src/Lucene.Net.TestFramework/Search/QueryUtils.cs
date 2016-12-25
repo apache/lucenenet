@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
         {
             //System.out.println("Checking "+q);
             IList<AtomicReaderContext> readerContextArray = s.TopReaderContext.Leaves;
-            if (s.CreateNormalizedWeight(q).ScoresDocsOutOfOrder()) // in this case order of skipTo() might differ from that of next().
+            if (s.CreateNormalizedWeight(q).ScoresDocsOutOfOrder) // in this case order of skipTo() might differ from that of next().
             {
                 return;
             }

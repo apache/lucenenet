@@ -189,9 +189,9 @@ namespace Lucene.Net.Join
                 return new ComplexExplanation(false, 0.0f, "Not a match");
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                return false;
+                get { return false; }
             }
         }
 

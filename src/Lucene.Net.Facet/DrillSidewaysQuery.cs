@@ -143,11 +143,14 @@ namespace Lucene.Net.Facet
                 baseWeight.Normalize(norm, topLevelBoost);
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                // TODO: would be nice if AssertingIndexSearcher
-                // confirmed this for us
-                return false;
+                get
+                {
+                    // TODO: would be nice if AssertingIndexSearcher
+                    // confirmed this for us
+                    return false;
+                }
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)

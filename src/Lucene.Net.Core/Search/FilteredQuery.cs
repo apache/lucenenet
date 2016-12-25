@@ -97,9 +97,9 @@ namespace Lucene.Net.Search
                 this.Weight = weight;
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
             public override float GetValueForNormalization()

@@ -219,9 +219,9 @@ namespace Lucene.Net.Search
                 return new ConstantScorer(outerInstance, disi, this, queryWeight);
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                return (innerWeight != null) ? innerWeight.ScoresDocsOutOfOrder() : false;
+                get { return (innerWeight != null) ? innerWeight.ScoresDocsOutOfOrder : false; }
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)

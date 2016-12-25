@@ -489,24 +489,27 @@ namespace Lucene.Net.Search
                 return new BooleanScorer2(this, m_disableCoord, OuterInstance.minNrShouldMatch, required, prohibited, optional, m_maxCoord);
             }
 
-            public override bool ScoresDocsOutOfOrder()
+            public override bool ScoresDocsOutOfOrder
             {
-                if (OuterInstance.minNrShouldMatch > 1)
+                get
                 {
-                    // BS2 (in-order) will be used by scorer()
-                    return false;
-                }
-                foreach (BooleanClause c in OuterInstance.clauses)
-                {
-                    if (c.IsRequired)
+                    if (OuterInstance.minNrShouldMatch > 1)
                     {
                         // BS2 (in-order) will be used by scorer()
                         return false;
                     }
-                }
+                    foreach (BooleanClause c in OuterInstance.clauses)
+                    {
+                        if (c.IsRequired)
+                        {
+                            // BS2 (in-order) will be used by scorer()
+                            return false;
+                        }
+                    }
 
-                // scorer() will return an out-of-order scorer if requested.
-                return true;
+                    // scorer() will return an out-of-order scorer if requested.
+                    return true;
+                }
             }
         }
 
