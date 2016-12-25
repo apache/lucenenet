@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
                 if (OuterInstance.slop == 0)
                 {
                     ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.DoSimScorer(Stats, context));
-                    if (s.NoDocs)
+                    if (s.noDocs)
                     {
                         return null;
                     }

@@ -25,16 +25,16 @@ namespace Lucene.Net.Search
 
     internal sealed class ExactPhraseScorer : Scorer
     {
-        private readonly int EndMinus1; // LUCENENET TODO: rename (private)
+        private readonly int endMinus1;
 
         private const int CHUNK = 4096;
 
-        private int Gen; // LUCENENET TODO: rename (private)
-        private readonly int[] Counts = new int[CHUNK]; // LUCENENET TODO: rename (private)
-        private readonly int[] Gens = new int[CHUNK]; // LUCENENET TODO: rename (private)
+        private int gen;
+        private readonly int[] counts = new int[CHUNK];
+        private readonly int[] gens = new int[CHUNK];
 
-        internal bool NoDocs; // LUCENENET TODO: rename (private)
-        private readonly long Cost_Renamed; // LUCENENET TODO: rename (private)
+        internal bool noDocs;
+        private readonly long cost; 
 
         private sealed class ChunkState
         {
@@ -54,24 +54,24 @@ namespace Lucene.Net.Search
             }
         }
 
-        private readonly ChunkState[] ChunkStates; // LUCENENET TODO: rename (private)
+        private readonly ChunkState[] chunkStates;
 
-        private int DocID_Renamed = -1; // LUCENENET TODO: rename (private)
-        private int Freq_Renamed; // LUCENENET TODO: rename (private)
+        private int docID = -1;
+        private int freq;
 
-        private readonly Similarity.SimScorer DocScorer; // LUCENENET TODO: rename (private)
+        private readonly Similarity.SimScorer docScorer;
 
         internal ExactPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings, Similarity.SimScorer docScorer)
             : base(weight)
         {
-            this.DocScorer = docScorer;
+            this.docScorer = docScorer;
 
-            ChunkStates = new ChunkState[postings.Length];
+            chunkStates = new ChunkState[postings.Length];
 
-            EndMinus1 = postings.Length - 1;
+            endMinus1 = postings.Length - 1;
 
             // min(cost)
-            Cost_Renamed = postings[0].Postings.Cost();
+            cost = postings[0].Postings.Cost();
 
             for (int i = 0; i < postings.Length; i++)
             {
@@ -82,10 +82,10 @@ namespace Lucene.Net.Search
                 // ANDing.  this buys ~15% gain for phrases where
                 // freq of rarest 2 terms is close:
                 bool useAdvance = postings[i].DocFreq > 5 * postings[0].DocFreq;
-                ChunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
+                chunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
                 if (i > 0 && postings[i].Postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    NoDocs = true;
+                    noDocs = true;
                     return;
                 }
             }
@@ -96,18 +96,18 @@ namespace Lucene.Net.Search
             while (true)
             {
                 // first (rarest) term
-                int doc = ChunkStates[0].PosEnum.NextDoc();
+                int doc = chunkStates[0].PosEnum.NextDoc();
                 if (doc == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    DocID_Renamed = doc;
+                    docID = doc;
                     return doc;
                 }
 
                 // not-first terms
                 int i = 1;
-                while (i < ChunkStates.Length)
+                while (i < chunkStates.Length)
                 {
-                    ChunkState cs = ChunkStates[i];
+                    ChunkState cs = chunkStates[i];
                     int doc2 = cs.PosEnum.DocID;
                     if (cs.UseAdvance)
                     {
@@ -141,16 +141,16 @@ namespace Lucene.Net.Search
                     i++;
                 }
 
-                if (i == ChunkStates.Length)
+                if (i == chunkStates.Length)
                 {
                     // this doc has all the terms -- now test whether
                     // phrase occurs
-                    DocID_Renamed = doc;
+                    docID = doc;
 
-                    Freq_Renamed = PhraseFreq();
-                    if (Freq_Renamed != 0)
+                    freq = PhraseFreq();
+                    if (freq != 0)
                     {
-                        return DocID_Renamed;
+                        return docID;
                     }
                 }
             }
@@ -159,10 +159,10 @@ namespace Lucene.Net.Search
         public override int Advance(int target)
         {
             // first term
-            int doc = ChunkStates[0].PosEnum.Advance(target);
+            int doc = chunkStates[0].PosEnum.Advance(target);
             if (doc == DocIdSetIterator.NO_MORE_DOCS)
             {
-                DocID_Renamed = DocIdSetIterator.NO_MORE_DOCS;
+                docID = DocIdSetIterator.NO_MORE_DOCS;
                 return doc;
             }
 
@@ -170,12 +170,12 @@ namespace Lucene.Net.Search
             {
                 // not-first terms
                 int i = 1;
-                while (i < ChunkStates.Length)
+                while (i < chunkStates.Length)
                 {
-                    int doc2 = ChunkStates[i].PosEnum.DocID;
+                    int doc2 = chunkStates[i].PosEnum.DocID;
                     if (doc2 < doc)
                     {
-                        doc2 = ChunkStates[i].PosEnum.Advance(doc);
+                        doc2 = chunkStates[i].PosEnum.Advance(doc);
                     }
                     if (doc2 > doc)
                     {
@@ -184,22 +184,22 @@ namespace Lucene.Net.Search
                     i++;
                 }
 
-                if (i == ChunkStates.Length)
+                if (i == chunkStates.Length)
                 {
                     // this doc has all the terms -- now test whether
                     // phrase occurs
-                    DocID_Renamed = doc;
-                    Freq_Renamed = PhraseFreq();
-                    if (Freq_Renamed != 0)
+                    docID = doc;
+                    freq = PhraseFreq();
+                    if (freq != 0)
                     {
-                        return DocID_Renamed;
+                        return docID;
                     }
                 }
 
-                doc = ChunkStates[0].PosEnum.NextDoc();
+                doc = chunkStates[0].PosEnum.NextDoc();
                 if (doc == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    DocID_Renamed = doc;
+                    docID = doc;
                     return doc;
                 }
             }
@@ -212,27 +212,27 @@ namespace Lucene.Net.Search
 
         public override int Freq
         {
-            get { return Freq_Renamed; }
+            get { return freq; }
         }
 
         public override int DocID
         {
-            get { return DocID_Renamed; }
+            get { return docID; }
         }
 
         public override float Score()
         {
-            return DocScorer.Score(DocID_Renamed, Freq_Renamed);
+            return docScorer.Score(docID, freq);
         }
 
         private int PhraseFreq()
         {
-            Freq_Renamed = 0; // LUCENENET TODO: rename (private)
+            freq = 0; // LUCENENET TODO: rename (private)
 
             // init chunks
-            for (int i = 0; i < ChunkStates.Length; i++)
+            for (int i = 0; i < chunkStates.Length; i++)
             {
-                ChunkState cs = ChunkStates[i];
+                ChunkState cs = chunkStates[i];
                 cs.PosLimit = cs.PosEnum.Freq;
                 cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
                 cs.PosUpto = 1;
@@ -250,27 +250,27 @@ namespace Lucene.Net.Search
 
             while (!end)
             {
-                Gen++;
+                gen++;
 
-                if (Gen == 0)
+                if (gen == 0)
                 {
                     // wraparound
-                    Arrays.Fill(Gens, 0);
-                    Gen++;
+                    Arrays.Fill(gens, 0);
+                    gen++;
                 }
 
                 // first term
                 {
-                    ChunkState cs = ChunkStates[0];
+                    ChunkState cs = chunkStates[0];
                     while (cs.Pos < chunkEnd)
                     {
                         if (cs.Pos > cs.LastPos)
                         {
                             cs.LastPos = cs.Pos;
                             int posIndex = cs.Pos - chunkStart;
-                            Counts[posIndex] = 1;
-                            Debug.Assert(Gens[posIndex] != Gen);
-                            Gens[posIndex] = Gen;
+                            counts[posIndex] = 1;
+                            Debug.Assert(gens[posIndex] != gen);
+                            gens[posIndex] = gen;
                         }
 
                         if (cs.PosUpto == cs.PosLimit)
@@ -285,9 +285,9 @@ namespace Lucene.Net.Search
 
                 // middle terms
                 bool any = true;
-                for (int t = 1; t < EndMinus1; t++)
+                for (int t = 1; t < endMinus1; t++)
                 {
-                    ChunkState cs = ChunkStates[t];
+                    ChunkState cs = chunkStates[t];
                     any = false;
                     while (cs.Pos < chunkEnd)
                     {
@@ -295,10 +295,10 @@ namespace Lucene.Net.Search
                         {
                             cs.LastPos = cs.Pos;
                             int posIndex = cs.Pos - chunkStart;
-                            if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == t)
+                            if (posIndex >= 0 && gens[posIndex] == gen && counts[posIndex] == t)
                             {
                                 // viable
-                                Counts[posIndex]++;
+                                counts[posIndex]++;
                                 any = true;
                             }
                         }
@@ -329,16 +329,16 @@ namespace Lucene.Net.Search
                 // last term
 
                 {
-                    ChunkState cs = ChunkStates[EndMinus1];
+                    ChunkState cs = chunkStates[endMinus1];
                     while (cs.Pos < chunkEnd)
                     {
                         if (cs.Pos > cs.LastPos)
                         {
                             cs.LastPos = cs.Pos;
                             int posIndex = cs.Pos - chunkStart;
-                            if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == EndMinus1)
+                            if (posIndex >= 0 && gens[posIndex] == gen && counts[posIndex] == endMinus1)
                             {
-                                Freq_Renamed++;
+                                freq++;
                             }
                         }
 
@@ -356,12 +356,12 @@ namespace Lucene.Net.Search
                 chunkEnd += CHUNK;
             }
 
-            return Freq_Renamed;
+            return freq;
         }
 
         public override long Cost()
         {
-            return Cost_Renamed;
+            return cost;
         }
     }
 }
