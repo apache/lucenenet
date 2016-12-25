@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Instantiates with the specified collectionModel and &lambda; parameter. </summary>
-        public LMJelinekMercerSimilarity(CollectionModel collectionModel, float lambda)
+        public LMJelinekMercerSimilarity(ICollectionModel collectionModel, float lambda)
             : base(collectionModel)
         {
             this.lambda = lambda;

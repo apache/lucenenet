@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Instantiates the similarity with the provided &mu; parameter. </summary>
-        public LMDirichletSimilarity(CollectionModel collectionModel, float mu)
+        public LMDirichletSimilarity(ICollectionModel collectionModel, float mu)
             : base(collectionModel)
         {
             this.mu = mu;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Instantiates the similarity with the default &mu; value of 2000. </summary>
-        public LMDirichletSimilarity(CollectionModel collectionModel)
+        public LMDirichletSimilarity(ICollectionModel collectionModel)
             : this(collectionModel, 2000)
         {
         }
