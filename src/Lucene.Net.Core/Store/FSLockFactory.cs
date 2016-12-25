@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Directory for the lock files.
         /// </summary>
-        protected internal DirectoryInfo LockDir_Renamed = null;
+        protected internal DirectoryInfo LockDir_Renamed = null; // LUCENENET TODO: Rename m_
 
         /// <summary>
         /// Set the lock directory. this method can be only called

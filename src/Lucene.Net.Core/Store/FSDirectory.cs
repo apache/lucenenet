@@ -114,6 +114,7 @@ namespace Lucene.Net.Store
         [Obsolete("this constant is no longer used since Lucene 4.5.")]
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
+        // LUCENENET TODO: rename m_
         protected internal readonly DirectoryInfo directory; // The underlying filesystem directory
         protected internal readonly ISet<string> StaleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
         private int ChunkSize = DEFAULT_READ_CHUNK_SIZE;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Store
         ///
         /// <p>See <a href="#subclasses">above</a>
         /// </summary>
-        public static FSDirectory Open(DirectoryInfo path)
+        public static FSDirectory Open(DirectoryInfo path) // LUCENENET TODO: Add overloads to pass the directory as a string
         {
             return Open(path, null);
         }
@@ -192,7 +193,7 @@ namespace Lucene.Net.Store
             {
                 //NIOFSDirectory is not implemented in Lucene.Net
                 //return new NIOFSDirectory(path, lockFactory);
-                return new SimpleFSDirectory(path, lockFactory);
+                return new SimpleFSDirectory(path, lockFactory); // LUCENENET TODO: NIOFSDirectory IS implemented in .NET - switch back to original
             }
         }
 
@@ -257,22 +258,6 @@ namespace Lucene.Net.Store
 
             return result;
         }
-
-        /*
-	  private class FilenameFilterAnonymousInnerClassHelper : FilenameFilter
-	  {
-		  private File Dir;
-
-		  public FilenameFilterAnonymousInnerClassHelper(File dir)
-		  {
-			  this.Dir = dir;
-		  }
-
-		  public override bool Accept(DirectoryInfo dir, string file)
-		  {
-			return !(new DirectoryInfo(Path.Combine(dir.FullName, file))).Directory;
-		  }
-	  }*/
 
         /// <summary>
         /// Lists all files (not subdirectories) in the
@@ -340,7 +325,7 @@ namespace Lucene.Net.Store
             return new FSIndexOutput(this, name);
         }
 
-        protected internal virtual void EnsureCanWrite(string name)
+        protected virtual void EnsureCanWrite(string name)
         {
             if (!directory.Exists)
             {
@@ -368,7 +353,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected internal virtual void OnIndexOutputClosed(FSIndexOutput io)
+        protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
             StaleFiles.Add(io.Name);
         }
@@ -463,18 +448,18 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Writes output with <seealso cref="RandomAccessFile#write(byte[], int, int)"/>
         /// </summary>
-        protected internal class FSIndexOutput : BufferedIndexOutput
+        protected class FSIndexOutput : BufferedIndexOutput
         {
             /// <summary>
             /// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
             /// a native buffer outside of stack if the write buffer size is larger.
             /// </summary>
-            internal const int CHUNK_SIZE = 8192;
+            private const int CHUNK_SIZE = 8192;
 
-            internal readonly FSDirectory Parent;
+            private readonly FSDirectory Parent;
             internal readonly string Name;
-            internal readonly FileStream File;
-            internal volatile bool IsOpen; // remember if the file is open, so that we don't try to close it more than once
+            private readonly FileStream File;
+            private volatile bool IsOpen; // remember if the file is open, so that we don't try to close it more than once
 
             public FSIndexOutput(FSDirectory parent, string name)
                 : base(CHUNK_SIZE)
@@ -533,13 +518,15 @@ namespace Lucene.Net.Store
             {
                 get { return File.Length; }
             }
+
+            // LUCENENET NOTE: FileStream doesn't have a way to set length
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="name"></param>
-        protected void Fsync(String name, bool isDir = false)
+        protected virtual void Fsync(string name, bool isDir = false) // LUCENENET TODO: remove optional arg and make second overload (note the original only had one overload)
         {
             IOUtils.Fsync(Path.Combine(directory.FullName, name), isDir);            
         }

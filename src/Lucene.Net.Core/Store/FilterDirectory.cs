@@ -32,11 +32,11 @@ namespace Lucene.Net.Store
     /// </summary>
     public class FilterDirectory : Directory
     {
-        protected internal readonly Directory @in;
+        protected internal readonly Directory @in; // LUCENENET TODO: Rename m_in
 
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
-        protected internal FilterDirectory(Directory @in)
+        protected FilterDirectory(Directory @in)
         {
             this.@in = @in;
         }
@@ -124,42 +124,6 @@ namespace Lucene.Net.Store
         public override string ToString()
         {
             return this.GetType().Name + "(" + @in.ToString() + ")";
-        }
-
-        //All of the following methods are here for TestFilterDirectory
-        public override ChecksumIndexInput OpenChecksumInput(string name, IOContext context)
-        {
-            return base.OpenChecksumInput(name, context);
-        }
-
-        public override void Copy(Directory to, string src, string dest, IOContext context)
-        {
-            base.Copy(to, src, dest, context);
-        }
-
-        public override IndexInputSlicer CreateSlicer(string name, IOContext context)
-        {
-            return base.CreateSlicer(name, context);
-        }
-
-        public override void EnsureOpen()
-        {
-            base.EnsureOpen();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override bool IsOpen
-        {
-            get { return base.IsOpen; }
         }
     }
 }

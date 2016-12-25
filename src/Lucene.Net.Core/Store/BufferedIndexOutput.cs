@@ -158,7 +158,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        [Obsolete]
         public override void Seek(long pos)
         {
             Flush();

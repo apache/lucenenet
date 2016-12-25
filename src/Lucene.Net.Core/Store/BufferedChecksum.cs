@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
             this.Buffer = new byte[bufferSize];
         }
 
-        public void Update(int b)
+        public virtual void Update(int b)
         {
             if (Upto == Buffer.Length)
             {
@@ -58,12 +58,12 @@ namespace Lucene.Net.Store
             Buffer[Upto++] = (byte)b;
         }
 
-        public void Update(byte[] b)
+        public virtual void Update(byte[] b)
         {
             Update(b, 0, b.Length);
         }
 
-        public void Update(byte[] b, int off, int len)
+        public virtual void Update(byte[] b, int off, int len)
         {
             if (len >= Buffer.Length)
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
         {
             if (Upto > 0)
             {
-                @in.Update((byte[])(Array)Buffer, 0, Upto);
+                @in.Update((byte[])(Array)Buffer, 0, Upto); // LUCENENET TODO: remove cast
             }
             Upto = 0;
         }

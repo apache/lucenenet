@@ -63,11 +63,11 @@ namespace Lucene.Net.Store
         /// Set the file length. By default, this method does
         /// nothing (it's optional for a Directory to implement
         /// it).  But, certain Directory implementations (for </summary>
-        /// example <seealso cref= FSDirectory) can use this to inform the
+        /// example <see cref="FSDirectory"/>) can use this to inform the
         /// underlying IO system to pre-allocate the file to the
         /// specified size.  If the length is longer than the
         /// current file length, the bytes added to the file are
-        /// undefined.  Otherwise the file is truncated. </seealso>
+        /// undefined.  Otherwise the file is truncated.
         /// <param name="length"> file length </param>
         public virtual long Length
         {

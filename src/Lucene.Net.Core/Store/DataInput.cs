@@ -86,7 +86,7 @@ namespace Lucene.Net.Store
         /// the value is positive!
         /// </summary>
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
-        public virtual short ReadShort()
+        public virtual short ReadShort() // LUCENENET TODO: Rename ReadInt16() ?
         {
             return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Reads four bytes and returns an int. </summary>
         /// <seealso cref= DataOutput#writeInt(int) </seealso>
-        public virtual int ReadInt()
+        public virtual int ReadInt() // LUCENENET TODO: Rename ReadInt32() ?
         {
             return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
         }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
         /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
         /// </summary>
         /// <seealso cref= DataOutput#writeVInt(int) </seealso>
-        public virtual int ReadVInt()
+        public virtual int ReadVInt() // LUCENENET TODO: Rename ReadVInt32() ?
         {
             // .NET Port: Going back to original code instead of Java code below due to sbyte/byte diff
             /*byte b = ReadByte();
@@ -156,7 +156,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Reads eight bytes and returns a long. </summary>
         /// <seealso cref= DataOutput#writeLong(long) </seealso>
-        public virtual long ReadLong()
+        public virtual long ReadLong() // LUCENENET TODO: Rename ReadInt64() ?
         {
             long halfA = ((long)ReadInt()) << 32;
             long halfB = (ReadInt() & 0xFFFFFFFFL);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
         /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
         /// </summary>
         /// <seealso cref= DataOutput#writeVLong(long) </seealso>
-        public virtual long ReadVLong()
+        public virtual long ReadVLong() // LUCENENET TODO: Rename ReadVInt64() ?
         {
             // .NET Port: going back to old style code
             /*byte b = ReadByte();

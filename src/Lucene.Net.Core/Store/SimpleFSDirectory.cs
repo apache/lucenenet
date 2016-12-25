@@ -179,7 +179,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// IndexInput methods </summary>
-            protected internal override void ReadInternal(byte[] b, int offset, int len)
+            protected override void ReadInternal(byte[] b, int offset, int len)
             {
                 lock (File)
                 {

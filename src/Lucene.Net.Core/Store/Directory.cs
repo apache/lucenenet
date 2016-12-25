@@ -41,9 +41,9 @@ namespace Lucene.Net.Store
     /// instance using <seealso cref="setLockFactory"/>.
     ///
     /// </summary>
-    public abstract class Directory : IDisposable
+    public abstract class Directory : IDisposable // LUCENENET TODO: Subclass System.IO.FileSystemInfo ?
     {
-        protected volatile bool isOpen = true;
+        protected volatile bool isOpen = true; // LUCENENET TODO: Make private for CLS and wrap with property for protected access (and move to classes where this is used)
 
         /// <summary>
         /// Returns an array of strings, one for each file in the directory.
@@ -57,6 +57,7 @@ namespace Lucene.Net.Store
         /// Returns true iff a file with the given name exists.
         /// </summary>
         ///  @deprecated this method will be removed in 5.0
+        [Obsolete("this method will be removed in 5.0")]
         public abstract bool FileExists(string name);
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace Lucene.Net.Store
         /// Directories).
         /// </summary>
         /// <param name="lockFactory"> instance of <seealso cref="LockFactory"/>. </param>
-        public abstract LockFactory LockFactory { set; get; }
+        public abstract LockFactory LockFactory { set; get; } // LUCENENET TODO: Make SetLockFactory a separate method (complexity)
 
         /// <summary>
         /// Return a string identifier that uniquely differentiates
@@ -149,7 +150,7 @@ namespace Lucene.Net.Store
         /// are considered "the same index".  this is how locking
         /// "scopes" to the right index.
         /// </summary>
-        public virtual string LockID
+        public virtual string LockID // LUCENENET TODO: make GetLockID() (conversion)
         {
             get
             {
@@ -265,7 +266,6 @@ namespace Lucene.Net.Store
                 @base.Dispose();
             }
 
-            [Obsolete]
             public override IndexInput OpenFullSlice()
             {
                 return (IndexInput)@base.Clone();
@@ -273,7 +273,7 @@ namespace Lucene.Net.Store
         }
 
         /// <exception cref="AlreadyClosedException"> if this Directory is closed </exception>
-        public virtual void EnsureOpen()
+        protected internal virtual void EnsureOpen() // LUCENENET TODO: This was abstract in Lucene
         {
             if (!isOpen)
                 throw new AlreadyClosedException("this Directory is closed");
@@ -355,7 +355,7 @@ namespace Lucene.Net.Store
             /// <param name="b"> the array to read bytes into </param>
             /// <param name="offset"> the offset in the array to start storing bytes </param>
             /// <param name="len"> the number of bytes to read </param>
-            protected internal override void ReadInternal(byte[] b, int offset, int len)
+            protected override void ReadInternal(byte[] b, int offset, int len)
             {
                 long start = FilePointer;
                 if (start + len > Length_Renamed)
@@ -385,6 +385,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool IsOpen { get { return isOpen; }}
+        public virtual bool IsOpen { get { return isOpen; }} // LUCENENET TODO: This wasn't here in the original (move where appropriate)
     }
 }

@@ -79,12 +79,12 @@ namespace Lucene.Net.Store
             Limit = offset + len;
         }
 
-        public int Length()
+        public int Length() // LUCENENET TODO: Make property
         {
             return Limit;
         }
 
-        public bool Eof()
+        public bool Eof() // LUCENENET TODO: Make property
         {
             return Pos == Limit;
         }

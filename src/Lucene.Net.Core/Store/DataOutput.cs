@@ -44,7 +44,13 @@ namespace Lucene.Net.Store
         /// <seealso cref= IndexInput#readByte() </seealso>
         public abstract void WriteByte(byte b);
 
-        public void WriteBytes(byte[] b, int length)
+        /// <summary>
+        /// Writes an array of bytes.
+        /// </summary>
+        /// <param name="b">the bytes to write</param>
+        /// <param name="length">the number of bytes to write</param>
+        /// <seealso cref="DataInput.ReadBytes(byte[], int, int)"/>
+        public virtual void WriteBytes(byte[] b, int length)
         {
             WriteBytes(b, 0, length);
         }
@@ -63,7 +69,7 @@ namespace Lucene.Net.Store
         /// 32-bit unsigned integer written as four bytes, high-order bytes first.
         /// </summary>
         /// <seealso cref= DataInput#readInt() </seealso>
-        public virtual void WriteInt(int i)
+        public virtual void WriteInt(int i) // LUCENENET TODO: Rename WriteInt32() ?
         {
             WriteByte((byte)(sbyte)(i >> 24));
             WriteByte((byte)(sbyte)(i >> 16));
@@ -74,7 +80,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Writes a short as two bytes. </summary>
         /// <seealso cref= DataInput#readShort() </seealso>
-        public virtual void WriteShort(short i)
+        public virtual void WriteShort(short i) // LUCENENET TODO: Rename WriteInt16() ?
         {
             WriteByte((byte)(sbyte)((ushort)i >> 8));
             WriteByte((byte)(sbyte)(ushort)i);
@@ -186,7 +192,7 @@ namespace Lucene.Net.Store
         /// supported, but should be avoided. </param>
         /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
         /// <seealso cref= DataInput#readVInt() </seealso>
-        public void WriteVInt(int i)
+        public void WriteVInt(int i) // LUCENENET TODO: Rename WriteVInt32() ?
         {
             while ((i & ~0x7F) != 0)
             {
@@ -202,7 +208,7 @@ namespace Lucene.Net.Store
         /// 64-bit unsigned integer written as eight bytes, high-order bytes first.
         /// </summary>
         /// <seealso cref= DataInput#readLong() </seealso>
-        public virtual void WriteLong(long i)
+        public virtual void WriteLong(long i) // LUCENENET TODO: Rename WriteInt64() ?
         {
             WriteInt((int)(i >> 32));
             WriteInt((int)i);
@@ -215,7 +221,7 @@ namespace Lucene.Net.Store
         /// <p>
         /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>. </summary>
         /// <seealso cref= DataInput#readVLong() </seealso>
-        public void WriteVLong(long i)
+        public void WriteVLong(long i) // LUCENENET TODO: Rename WriteVInt64() ?
         {
             Debug.Assert(i >= 0L);
             while ((i & ~0x7FL) != 0L)
@@ -241,6 +247,8 @@ namespace Lucene.Net.Store
             WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
         }
 
+        // LUCENENET: This helper method is here because OfflineSorter
+        // uses java.io.DataOutput in Lucene, but Lucene.Net uses this class
         public void Write(byte[] b, int off, int len)
         {
             WriteBytes(b, off, len);

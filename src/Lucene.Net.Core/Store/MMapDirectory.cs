@@ -279,7 +279,7 @@ namespace Lucene.Net.Store
             /// for that in the JVM. On Windows, this leads to the fact,
             /// that mmapped files cannot be modified or deleted.
             /// </summary>
-            protected internal override void FreeBuffer(ByteBuffer buffer)
+            protected override void FreeBuffer(ByteBuffer buffer)
             {
                 // .NET port: this should free the memory mapped view accessor
                 var mmfbb = buffer as MemoryMappedFileByteBuffer;

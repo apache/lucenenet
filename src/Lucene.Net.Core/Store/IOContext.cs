@@ -37,23 +37,23 @@ namespace Lucene.Net.Store
             MERGE,
             READ,
             FLUSH,
-            DEFAULT
+            DEFAULT // LUCENENET TODO: Eliminate nullables and make this value 0
         }
 
         /// <summary>
         /// An object of a enumerator Context type
         /// </summary>
-        public readonly UsageContext? Context;
+        public readonly UsageContext? Context; // LUCENENET TODO: make property, eliminate the nullable ?
 
-        public readonly MergeInfo MergeInfo;
+        public readonly MergeInfo MergeInfo; // LUCENENET TODO: make property
 
-        public readonly FlushInfo FlushInfo;
+        public readonly FlushInfo FlushInfo; // LUCENENET TODO: make property
 
-        public readonly bool ReadOnce;
+        public readonly bool ReadOnce; // LUCENENET TODO: make property
 
         public static readonly IOContext DEFAULT = new IOContext(UsageContext.DEFAULT);
 
-        public static readonly IOContext READONCE = new IOContext(true);
+        public static readonly IOContext READONCE = new IOContext(true); // LUCENENET TODO: fix naming collision
 
         public static readonly IOContext READ = new IOContext(false);
 
@@ -170,14 +170,14 @@ namespace Lucene.Net.Store
             return true;
         }
 
-        public static IEnumerable<UsageContext> ContextValues()
-        {
-            // .NET port: This is to make up for enums in .NET not having a Values method.
-            yield return UsageContext.DEFAULT;
-            yield return UsageContext.FLUSH;
-            yield return UsageContext.MERGE;
-            yield return UsageContext.READ;
-        }
+        //public static IEnumerable<UsageContext> ContextValues()
+        //{
+        //    // .NET port: This is to make up for enums in .NET not having a Values method.
+        //    yield return UsageContext.DEFAULT;
+        //    yield return UsageContext.FLUSH;
+        //    yield return UsageContext.MERGE;
+        //    yield return UsageContext.READ;
+        //}
 
         public override string ToString()
         {

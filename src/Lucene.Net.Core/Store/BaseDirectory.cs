@@ -25,11 +25,14 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
+        // LUCENENET NOTE: isOpen moved to Directory class,
+        // but since it is volatile, we need to access it through a property
+
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
         /// this Directory instance).
         /// </summary>
-        protected internal LockFactory _lockFactory;
+        protected internal LockFactory _lockFactory; // LUCENENET TODO: Rename
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -53,7 +56,7 @@ namespace Lucene.Net.Store
 
         public override LockFactory LockFactory
         {
-            set
+            set // LUCENENET TODO: Make SetLockFactory() a separate method
             {
                 Debug.Assert(value != null);
                 this._lockFactory = value;
@@ -65,7 +68,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed void EnsureOpen()
+        protected internal override sealed void EnsureOpen()
         {
             if (!IsOpen)
             {

@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
         ///  describing this resource; it's returned from
         ///  <seealso cref="#toString"/>.
         /// </summary>
-        protected internal IndexInput(string resourceDescription)
+        protected IndexInput(string resourceDescription)
         {
             if (resourceDescription == null)
             {
@@ -69,7 +69,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// The number of bytes in the file. </summary>
-        public abstract long Length();
+        public abstract long Length(); // LUCENENET TODO: make property
 
         public override string ToString()
         {

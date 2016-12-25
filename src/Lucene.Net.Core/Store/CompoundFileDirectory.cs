@@ -78,8 +78,8 @@ namespace Lucene.Net.Store
         /// Offset/Length for a slice inside of a compound file </summary>
         public sealed class FileEntry
         {
-            internal long Offset;
-            internal long Length;
+            internal long Offset; // LUCENENET TODO: make property
+            internal long Length; // LUCENENET TODO: make property
         }
 
         private readonly Directory Directory_Renamed;
@@ -360,7 +360,6 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns true iff a file with the given name exists. </summary>
-        [Obsolete]
         public override bool FileExists(string name)
         {
             EnsureOpen();

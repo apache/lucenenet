@@ -71,12 +71,12 @@ namespace Lucene.Net.Store
             this.Clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper>.NewConcurrentHashMap() : null;
 
             Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-            //assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue;
+            //assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue; // LUCENENET TODO: why isn't this in place?
 
-            //Seek(0L);
+            //Seek(0L); // LUCENENET TODO: why isn't this in place?
         }
 
-        public ByteBuffer[] Buffers
+        internal ByteBuffer[] Buffers // LUCENENET TODO: this shouldn't be a property - perhaps make a SetBuffers() internal method
         {
             get { return buffers; }
             set
@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void ReadBytes(byte[] b, int offset, int len)
+        public override sealed void ReadBytes(byte[] b, int offset, int len)
         {
             try
             {
@@ -391,7 +391,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Called when the contents of a buffer will be no longer needed.
         /// </summary>
-        protected internal abstract void FreeBuffer(ByteBuffer b);
+        protected abstract void FreeBuffer(ByteBuffer b);
 
         public override sealed string ToString()
         {

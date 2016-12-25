@@ -195,13 +195,13 @@ namespace Lucene.Net.Store
                 return End - Off;
             }
 
-            protected internal override void NewBuffer(byte[] newBuffer)
+            protected override void NewBuffer(byte[] newBuffer)
             {
                 base.NewBuffer(newBuffer);
                 ByteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer);
             }
 
-            protected internal override void ReadInternal(byte[] b, int offset, int len)
+            protected override void ReadInternal(byte[] b, int offset, int len)
             {
                 ByteBuffer bb;
 

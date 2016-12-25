@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -21,7 +23,11 @@ namespace Lucene.Net.Store
     /// this exception is thrown when there is an attempt to
     /// access something that has already been closed.
     /// </summary>
-    public class AlreadyClosedException : System.Exception
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
+    public class AlreadyClosedException : System.Exception // LUCENENET TODO: Replace with ObjectDisposedException and comment out
     {
         public AlreadyClosedException(string message)
             : base(message)

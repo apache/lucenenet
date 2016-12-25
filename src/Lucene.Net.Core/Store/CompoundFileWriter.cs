@@ -39,17 +39,17 @@ namespace Lucene.Net.Store
         {
             /// <summary>
             /// source file </summary>
-            internal string File;
+            internal string File; // LUCENENET TODO: make property
 
-            internal long Length;
+            internal long Length; // LUCENENET TODO: make property
 
             /// <summary>
             /// temporary holder for the start of this file's data section </summary>
-            internal long Offset;
+            internal long Offset; // LUCENENET TODO: make property
 
             /// <summary>
             /// the directory which contains the file. </summary>
-            internal Directory Dir;
+            internal Directory Dir; // LUCENENET TODO: make property
         }
 
         // Before versioning started.
@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
             DataFileName = name;
         }
 
-        private IndexOutput Output
+        private IndexOutput Output // LUCENENET TODO: Change to GetOutput() (throws exceptions)
         {
             get
             {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private IndexOutput GetOutput()
+        private IndexOutput GetOutput() // LUCENENET TODO: Move to where Output property is now and delete unnecessary Output property
         {
             lock (this)
             {
@@ -384,12 +384,12 @@ namespace Lucene.Net.Store
         {
             private readonly CompoundFileWriter OuterInstance;
 
-            internal readonly IndexOutput @delegate;
-            internal readonly long Offset;
-            internal bool Closed;
-            internal FileEntry Entry;
-            internal long WrittenBytes;
-            internal readonly bool IsSeparate;
+            private readonly IndexOutput @delegate;
+            private readonly long Offset;
+            private bool Closed;
+            private FileEntry Entry;
+            private long WrittenBytes;
+            private readonly bool IsSeparate;
 
             internal DirectCFSIndexOutput(CompoundFileWriter outerInstance, IndexOutput @delegate, FileEntry entry, bool isSeparate)
                 : base()
@@ -436,7 +436,6 @@ namespace Lucene.Net.Store
                 }
             }
 
-            [Obsolete]
             public override void Seek(long pos)
             {
                 Debug.Assert(!Closed);

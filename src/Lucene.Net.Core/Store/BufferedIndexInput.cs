@@ -78,9 +78,9 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Change the buffer size used by this IndexInput </summary>
-        public int BufferSize_
+        public int BufferSize_ // LUCENENET TODO: Rename BufferSize
         {
-            set
+            set // LUCENENET TODO: make this into SetBufferSize() (complexity)
             {
                 Debug.Assert(Buffer == null || bufferSize == Buffer.Length, "buffer=" + Buffer + " bufferSize=" + bufferSize + " buffer.length=" + (Buffer != null ? Buffer.Length : 0));
                 if (value != bufferSize)
@@ -117,7 +117,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected internal virtual void NewBuffer(byte[] newBuffer)
+        protected virtual void NewBuffer(byte[] newBuffer)
         {
             // Subclasses can do something here
             Buffer = newBuffer;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Store
         /// <param name="b"> the array to read bytes into </param>
         /// <param name="offset"> the offset in the array to start storing bytes </param>
         /// <param name="length"> the number of bytes to read </param>
-        protected internal abstract void ReadInternal(byte[] b, int offset, int length);
+        protected abstract void ReadInternal(byte[] b, int offset, int length);
 
         public override sealed long FilePointer
         {
@@ -428,7 +428,7 @@ namespace Lucene.Net.Store
         /// advance the buffer position.
         /// </summary>
         /// <returns> the number of bytes actually flushed from the in-memory buffer. </returns>
-        protected internal int FlushBuffer(IndexOutput @out, long numBytes)
+        protected int FlushBuffer(IndexOutput @out, long numBytes)
         {
             int toCopy = BufferLength - BufferPosition;
             if (toCopy > numBytes)

@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
         ///  describing this resource; it's returned from
         ///  <seealso cref="#toString"/>.
         /// </summary>
-        protected internal ChecksumIndexInput(string resourceDescription)
+        protected ChecksumIndexInput(string resourceDescription)
             : base(resourceDescription)
         {
         }
