@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
         public class Entry : ScoreDoc
         {
-            public int Slot; // LUCENENET TODO: make property
+            public int Slot { get; set; } // LUCENENET NOTE: For some reason, this was not made readonly in the original
 
             public Entry(int slot, int doc, float score)
                 : base(doc, score)
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
 
-                int c = oneReverseMul * FirstComparator.Compare(hitA.Slot, hitB.Slot);
+                int c = oneReverseMul * m_firstComparator.Compare(hitA.Slot, hitB.Slot);
                 if (c != 0)
                 {
                     return c > 0;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
             public MultiComparatorsFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
-                int numComparators = comparators.Length;
+                int numComparators = m_comparators.Length;
                 for (int i = 0; i < numComparators; ++i)
                 {
                     SortField field = fields[i];
@@ -114,10 +114,10 @@ namespace Lucene.Net.Search
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
 
-                int numComparators = comparators.Length;
+                int numComparators = m_comparators.Length;
                 for (int i = 0; i < numComparators; ++i)
                 {
-                    int c = ReverseMul[i] * comparators[i].Compare(hitA.Slot, hitB.Slot);
+                    int c = ReverseMul[i] * m_comparators[i].Compare(hitA.Slot, hitB.Slot);
                     if (c != 0)
                     {
                         // Short circuit
@@ -188,17 +188,17 @@ namespace Lucene.Net.Search
             // All these are required by this class's API - need to return arrays.
             // Therefore even in the case of a single comparator, create an array
             // anyway.
-            this.fields = fields;
+            this.m_fields = fields;
             int numComparators = fields.Length;
-            comparators = new FieldComparator[numComparators];
-            reverseMul = new int[numComparators];
+            m_comparators = new FieldComparator[numComparators];
+            m_reverseMul = new int[numComparators];
         }
 
         public virtual FieldComparator[] Comparators // LUCENENET TODO: Make GetComparators() (array)
         {
             get
             {
-                return comparators;
+                return m_comparators;
             }
         }
 
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return reverseMul;
+                return m_reverseMul;
             }
         }
 
@@ -214,18 +214,23 @@ namespace Lucene.Net.Search
         {
             if (pos == 0)
             {
-                FirstComparator = comparator;
+                m_firstComparator = comparator;
             }
-            comparators[pos] = comparator;
+            m_comparators[pos] = comparator;
         }
 
         /// <summary>
         /// Stores the sort criteria being used. </summary>
-        protected readonly SortField[] fields;
+        protected readonly SortField[] m_fields;
 
-        protected readonly FieldComparator[] comparators; // use setComparator to change this array // LUCENENET TODO: Rename
-        protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0] // LUCENENET TODO: Make property
-        protected readonly int[] reverseMul; // LUCENENET TODO: Rename
+        protected readonly FieldComparator[] m_comparators; // use setComparator to change this array // LUCENENET TODO: Rename m_comparers
+        protected FieldComparator m_firstComparator; // this must always be equal to comparators[0] // LUCENENET TODO: Rename m_firstComparer
+        protected readonly int[] m_reverseMul;
+
+        internal FieldComparator FirstComparator
+        {
+            get { return this.m_firstComparator; }
+        }
 
         public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
@@ -257,7 +262,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return fields;
+                return m_fields;
             }
         }
     }
