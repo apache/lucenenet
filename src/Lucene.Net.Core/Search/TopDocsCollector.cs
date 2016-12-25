@@ -96,12 +96,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The number of valid PQ entries </summary>
-        protected virtual int TopDocsSize() // LUCENENET TODO: Make property, rename TopDocsCount
+        protected virtual int TopDocsSize // LUCENENET TODO: rename TopDocsCount
         {
-            // In case pq was populated with sentinel values, there might be less
-            // results than pq.size(). Therefore return all results until either
-            // pq.size() or totalHits.
-            return TotalHits_Renamed < Pq.Size() ? TotalHits_Renamed : Pq.Size();
+            get
+            {
+                // In case pq was populated with sentinel values, there might be less
+                // results than pq.size(). Therefore return all results until either
+                // pq.size() or totalHits.
+                return TotalHits_Renamed < Pq.Size() ? TotalHits_Renamed : Pq.Size();
+            }
         }
 
         /// <summary>
