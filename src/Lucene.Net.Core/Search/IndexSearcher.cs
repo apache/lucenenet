@@ -845,9 +845,9 @@ namespace Lucene.Net.Search
                     }
 
                     // Carry over maxScore from sub:
-                    if (doMaxScore && docs.MaxScore > hq.MaxScore)
+                    if (doMaxScore && docs.MaxScore > hq.maxScore)
                     {
-                        hq.MaxScore = docs.MaxScore;
+                        hq.maxScore = docs.MaxScore;
                     }
                 }
                 finally

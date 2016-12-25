@@ -46,30 +46,30 @@ namespace Lucene.Net.Search
         private class OneComparatorNonScoringCollector : TopFieldCollector
         {
             internal FieldComparator comparator;
-            internal readonly int ReverseMul; // LUCENENET TODO: Rename (private)
-            internal readonly FieldValueHitQueue<Entry> Queue; // LUCENENET TODO: Rename (private)
+            internal readonly int reverseMul;
+            internal readonly FieldValueHitQueue<Entry> queue;
 
             public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
-                this.Queue = queue;
+                this.queue = queue;
                 comparator = queue.Comparators[0];
-                ReverseMul = queue.ReverseMul[0];
+                reverseMul = queue.ReverseMul[0];
             }
 
             internal void UpdateBottom(int doc)
             {
                 // bottom.score is already set to Float.NaN in add().
-                Bottom.Doc = DocBase + doc;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
-                    if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is larger than anything else in the queue, and
@@ -78,9 +78,9 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -89,18 +89,18 @@ namespace Lucene.Net.Search
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                this.DocBase = context.DocBase;
-                Queue.SetComparator(0, comparator.SetNextReader(context));
-                comparator = Queue.FirstComparator;
+                this.docBase = context.DocBase;
+                queue.SetComparator(0, comparator.SetNextReader(context));
+                comparator = queue.FirstComparator;
             }
             
             public override void SetScorer(Scorer scorer)
@@ -125,19 +125,19 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = ReverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -146,9 +146,9 @@ namespace Lucene.Net.Search
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
 
         private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+            internal Scorer scorer;
 
             public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -175,17 +175,17 @@ namespace Lucene.Net.Search
 
             internal void UpdateBottom(int doc, float score)
             {
-                Bottom.Doc = DocBase + doc;
-                Bottom.Score = score;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom.Score = score;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
-                    if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is largest than anything else in the queue, and
@@ -194,33 +194,33 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute the score only if the hit is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Compute the score only if the hit is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
 
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
 
             public override void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
                 comparator.SetScorer(scorer);
             }
         }
@@ -241,36 +241,36 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = ReverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
                     }
 
                     // Compute the score only if the hit is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Compute the score only if the hit is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
 
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -294,27 +294,27 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
-                MaxScore = float.NegativeInfinity;
+                maxScore = float.NegativeInfinity;
             }
 
             internal void UpdateBottom(int doc, float score)
             {
-                Bottom.Doc = DocBase + doc;
-                Bottom.Score = score;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom.Score = score;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 float score = scorer.Score();
-                if (score > MaxScore)
+                if (score > maxScore)
                 {
-                    MaxScore = score;
+                    maxScore = score;
                 }
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
-                    if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is largest than anything else in the queue, and
@@ -323,9 +323,9 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -334,9 +334,9 @@ namespace Lucene.Net.Search
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -364,24 +364,24 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 float score = scorer.Score();
-                if (score > MaxScore)
+                if (score > maxScore)
                 {
-                    MaxScore = score;
+                    maxScore = score;
                 }
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = ReverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(Bottom.Slot, doc);
+                    comparator.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(Bottom.Slot);
+                    comparator.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -390,9 +390,9 @@ namespace Lucene.Net.Search
                     // Copy hit into queue
                     comparator.Copy(slot, doc);
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
-                        comparator.SetBottom(Bottom.Slot);
+                        comparator.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -411,33 +411,33 @@ namespace Lucene.Net.Search
         private class MultiComparatorNonScoringCollector : TopFieldCollector
         {
             internal readonly FieldComparator[] comparators;
-            internal readonly int[] ReverseMul; // LUCENENET TODO: Rename (private)
-            internal readonly FieldValueHitQueue<Entry> Queue; // LUCENENET TODO: Rename (private)
+            internal readonly int[] reverseMul;
+            internal readonly FieldValueHitQueue<Entry> queue;
 
             public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
-                this.Queue = queue;
+                this.queue = queue;
                 comparators = queue.Comparators;
-                ReverseMul = queue.ReverseMul;
+                reverseMul = queue.ReverseMul;
             }
 
             internal void UpdateBottom(int doc)
             {
                 // bottom.score is already set to Float.NaN in add().
-                Bottom.Doc = DocBase + doc;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -460,14 +460,14 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -480,11 +480,11 @@ namespace Lucene.Net.Search
                         comparators[i].Copy(slot, doc);
                     }
                     Add(slot, doc, float.NaN);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -492,10 +492,10 @@ namespace Lucene.Net.Search
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                DocBase = context.DocBase;
+                docBase = context.DocBase;
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    Queue.SetComparator(i, comparators[i].SetNextReader(context));
+                    queue.SetComparator(i, comparators[i].SetNextReader(context));
                 }
             }
 
@@ -525,12 +525,12 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search
                         else if (i == comparators.Length - 1)
                         {
                             // this is the equals case.
-                            if (doc + DocBase > Bottom.Doc)
+                            if (doc + docBase > bottom.Doc)
                             {
                                 // Definitely not competitive
                                 return;
@@ -556,14 +556,14 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -576,11 +576,11 @@ namespace Lucene.Net.Search
                         comparators[i].Copy(slot, doc);
                     }
                     Add(slot, doc, float.NaN);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -599,36 +599,36 @@ namespace Lucene.Net.Search
 
         private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+            internal Scorer scorer;
 
             public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
-                MaxScore = float.NegativeInfinity;
+                maxScore = float.NegativeInfinity;
             }
 
             internal void UpdateBottom(int doc, float score)
             {
-                Bottom.Doc = DocBase + doc;
-                Bottom.Score = score;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom.Score = score;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
-                if (score > MaxScore)
+                float score = scorer.Score();
+                if (score > maxScore)
                 {
-                    MaxScore = score;
+                    maxScore = score;
                 }
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -651,14 +651,14 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -671,11 +671,11 @@ namespace Lucene.Net.Search
                         comparators[i].Copy(slot, doc);
                     }
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -683,7 +683,7 @@ namespace Lucene.Net.Search
 
             public override void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
                 base.SetScorer(scorer);
             }
         }
@@ -703,18 +703,18 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = Scorer_Renamed.Score();
-                if (score > MaxScore)
+                float score = scorer.Score();
+                if (score > maxScore)
                 {
-                    MaxScore = score;
+                    maxScore = score;
                 }
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -728,7 +728,7 @@ namespace Lucene.Net.Search
                         else if (i == comparators.Length - 1)
                         {
                             // this is the equals case.
-                            if (doc + DocBase > Bottom.Doc)
+                            if (doc + docBase > bottom.Doc)
                             {
                                 // Definitely not competitive
                                 return;
@@ -740,14 +740,14 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -760,11 +760,11 @@ namespace Lucene.Net.Search
                         comparators[i].Copy(slot, doc);
                     }
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -783,7 +783,7 @@ namespace Lucene.Net.Search
 
         private class MultiComparatorScoringNoMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-            internal Scorer Scorer_Renamed; // LUCENENET TODO: Rename (private)
+            internal Scorer scorer;
 
             public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
@@ -792,20 +792,20 @@ namespace Lucene.Net.Search
 
             internal void UpdateBottom(int doc, float score)
             {
-                Bottom.Doc = DocBase + doc;
-                Bottom.Score = score;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom.Score = score;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -828,16 +828,16 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -851,13 +851,13 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -865,7 +865,7 @@ namespace Lucene.Net.Search
 
             public override void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
                 base.SetScorer(scorer);
             }
         }
@@ -886,12 +886,12 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++m_totalHits;
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -905,7 +905,7 @@ namespace Lucene.Net.Search
                         else if (i == comparators.Length - 1)
                         {
                             // this is the equals case.
-                            if (doc + DocBase > Bottom.Doc)
+                            if (doc + docBase > bottom.Doc)
                             {
                                 // Definitely not competitive
                                 return;
@@ -917,16 +917,16 @@ namespace Lucene.Net.Search
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -940,13 +940,13 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = Scorer_Renamed.Score();
+                    float score = scorer.Score();
                     Add(slot, doc, score);
-                    if (QueueFull)
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -954,7 +954,7 @@ namespace Lucene.Net.Search
 
             public override void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
                 base.SetScorer(scorer);
             }
 
@@ -970,29 +970,28 @@ namespace Lucene.Net.Search
 
         private sealed class PagingFieldCollector : TopFieldCollector
         {
-            // LUCENENET TODO: Rename (private)
-            internal Scorer Scorer_Renamed;
-            internal int CollectedHits;
+            internal Scorer scorer;
+            internal int collectedHits;
             internal readonly FieldComparator[] comparators;
-            internal readonly int[] ReverseMul;
-            internal readonly FieldValueHitQueue<Entry> Queue;
-            internal readonly bool TrackDocScores;
-            internal readonly bool TrackMaxScore;
-            internal readonly FieldDoc After;
-            internal int AfterDoc;
+            internal readonly int[] reverseMul;
+            internal readonly FieldValueHitQueue<Entry> queue;
+            internal readonly bool trackDocScores;
+            internal readonly bool trackMaxScore;
+            internal readonly FieldDoc after;
+            internal int afterDoc;
 
             public PagingFieldCollector(FieldValueHitQueue<Entry> queue, FieldDoc after, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore)
                 : base(queue, numHits, fillFields)
             {
-                this.Queue = queue;
-                this.TrackDocScores = trackDocScores;
-                this.TrackMaxScore = trackMaxScore;
-                this.After = after;
+                this.queue = queue;
+                this.trackDocScores = trackDocScores;
+                this.trackMaxScore = trackMaxScore;
+                this.after = after;
                 comparators = queue.Comparators;
-                ReverseMul = queue.ReverseMul;
+                reverseMul = queue.ReverseMul;
 
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
-                MaxScore = float.NegativeInfinity;
+                maxScore = float.NegativeInfinity;
 
                 // Tell all comparators their top value:
                 for (int i = 0; i < comparators.Length; i++)
@@ -1004,9 +1003,9 @@ namespace Lucene.Net.Search
 
             internal void UpdateBottom(int doc, float score)
             {
-                Bottom.Doc = DocBase + doc;
-                Bottom.Score = score;
-                Bottom = m_pq.UpdateTop();
+                bottom.Doc = docBase + doc;
+                bottom.Score = score;
+                bottom = m_pq.UpdateTop();
             }
 
             public override void Collect(int doc)
@@ -1016,22 +1015,22 @@ namespace Lucene.Net.Search
                 m_totalHits++;
 
                 float score = float.NaN;
-                if (TrackMaxScore)
+                if (trackMaxScore)
                 {
-                    score = Scorer_Renamed.Score();
-                    if (score > MaxScore)
+                    score = scorer.Score();
+                    if (score > maxScore)
                     {
-                        MaxScore = score;
+                        maxScore = score;
                     }
                 }
 
-                if (QueueFull)
+                if (queueFull)
                 {
                     // Fastmatch: return if this hit is no better than
                     // the worst hit currently in the queue:
                     for (int i = 0; ; i++)
                     {
-                        int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -1045,7 +1044,7 @@ namespace Lucene.Net.Search
                         else if (i == comparators.Length - 1)
                         {
                             // this is the equals case.
-                            if (doc + DocBase > Bottom.Doc)
+                            if (doc + docBase > bottom.Doc)
                             {
                                 // Definitely not competitive
                                 return;
@@ -1062,7 +1061,7 @@ namespace Lucene.Net.Search
                 {
                     FieldComparator comp = comparators[compIDX];
 
-                    int cmp = ReverseMul[compIDX] * comp.CompareTop(doc);
+                    int cmp = reverseMul[compIDX] * comp.CompareTop(doc);
                     if (cmp > 0)
                     {
                         // Already collected on a previous page
@@ -1079,39 +1078,39 @@ namespace Lucene.Net.Search
                 }
 
                 // Tie-break by docID:
-                if (sameValues && doc <= AfterDoc)
+                if (sameValues && doc <= afterDoc)
                 {
                     // Already collected on a previous page
                     //System.out.println("    skip: tie-break");
                     return;
                 }
 
-                if (QueueFull)
+                if (queueFull)
                 {
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].Copy(Bottom.Slot, doc);
+                        comparators[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
-                    if (TrackDocScores && !TrackMaxScore)
+                    if (trackDocScores && !trackMaxScore)
                     {
-                        score = Scorer_Renamed.Score();
+                        score = scorer.Score();
                     }
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparators.Length; i++)
                     {
-                        comparators[i].SetBottom(Bottom.Slot);
+                        comparators[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
                 {
-                    CollectedHits++;
+                    collectedHits++;
 
                     // Startup transient: queue hasn't gathered numHits yet
-                    int slot = CollectedHits - 1;
+                    int slot = collectedHits - 1;
                     //System.out.println("    slot=" + slot);
                     // Copy hit into queue
                     for (int i = 0; i < comparators.Length; i++)
@@ -1120,17 +1119,17 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    if (TrackDocScores && !TrackMaxScore)
+                    if (trackDocScores && !trackMaxScore)
                     {
-                        score = Scorer_Renamed.Score();
+                        score = scorer.Score();
                     }
-                    Bottom = m_pq.Add(new Entry(slot, DocBase + doc, score));
-                    QueueFull = CollectedHits == NumHits;
-                    if (QueueFull)
+                    bottom = m_pq.Add(new Entry(slot, docBase + doc, score));
+                    queueFull = collectedHits == numHits;
+                    if (queueFull)
                     {
                         for (int i = 0; i < comparators.Length; i++)
                         {
-                            comparators[i].SetBottom(Bottom.Slot);
+                            comparators[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -1138,7 +1137,7 @@ namespace Lucene.Net.Search
 
             public override void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
                 for (int i = 0; i < comparators.Length; i++)
                 {
                     comparators[i].SetScorer(scorer);
@@ -1152,29 +1151,29 @@ namespace Lucene.Net.Search
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                DocBase = context.DocBase;
-                AfterDoc = After.Doc - DocBase;
+                docBase = context.DocBase;
+                afterDoc = after.Doc - docBase;
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    Queue.SetComparator(i, comparators[i].SetNextReader(context));
+                    queue.SetComparator(i, comparators[i].SetNextReader(context));
                 }
             }
         }
 
         private static readonly ScoreDoc[] EMPTY_SCOREDOCS = new ScoreDoc[0];
 
-        private readonly bool FillFields; // LUCENENET TODO: Rename (private)
+        private readonly bool fillFields;
 
-        /*
-         * Stores the maximum score value encountered, needed for normalizing. If
-         * document scores are not tracked, this value is initialized to NaN.
-         */
-        internal float MaxScore = float.NaN; // LUCENENET TODO: Rename (private)
+        /// <summary>
+        /// Stores the maximum score value encountered, needed for normalizing. If
+        /// document scores are not tracked, this value is initialized to NaN.
+        /// </summary>
+        internal float maxScore = float.NaN;
 
-        internal readonly int NumHits; // LUCENENET TODO: Rename (private)
-        internal FieldValueHitQueue.Entry Bottom = null; // LUCENENET TODO: Rename (private)
-        internal bool QueueFull; // LUCENENET TODO: Rename (private)
-        internal int DocBase; // LUCENENET TODO: Rename (private)
+        internal readonly int numHits;
+        internal FieldValueHitQueue.Entry bottom = null;
+        internal bool queueFull;
+        internal int docBase;
 
         // Declaring the constructor private prevents extending this class by anyone
         // else. Note that the class cannot be final since it's extended by the
@@ -1184,8 +1183,8 @@ namespace Lucene.Net.Search
         private TopFieldCollector(PriorityQueue<Entry> pq, int numHits, bool fillFields)
             : base(pq)
         {
-            this.NumHits = numHits;
-            this.FillFields = fillFields;
+            this.numHits = numHits;
+            this.fillFields = fillFields;
         }
 
         /// <summary>
@@ -1365,8 +1364,8 @@ namespace Lucene.Net.Search
 
         internal void Add(int slot, int doc, float score)
         {
-            Bottom = m_pq.Add(new Entry(slot, DocBase + doc, score));
-            QueueFull = m_totalHits == NumHits;
+            bottom = m_pq.Add(new Entry(slot, docBase + doc, score));
+            queueFull = m_totalHits == numHits;
         }
 
         /*
@@ -1376,7 +1375,7 @@ namespace Lucene.Net.Search
 
         protected override void PopulateResults(ScoreDoc[] results, int howMany)
         {
-            if (FillFields)
+            if (fillFields)
             {
                 // avoid casting if unnecessary.
                 FieldValueHitQueue<Entry> queue = (FieldValueHitQueue<Entry>)m_pq;
@@ -1401,11 +1400,11 @@ namespace Lucene.Net.Search
             {
                 results = EMPTY_SCOREDOCS;
                 // Set maxScore to NaN, in case this is a maxScore tracking collector.
-                MaxScore = float.NaN;
+                maxScore = float.NaN;
             }
 
             // If this is a maxScoring tracking collector and there were no results,
-            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, MaxScore);
+            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, maxScore);
         }
 
         public override bool AcceptsDocsOutOfOrder
