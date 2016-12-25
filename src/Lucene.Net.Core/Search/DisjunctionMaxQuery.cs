@@ -127,21 +127,20 @@ namespace Lucene.Net.Search
         /// </summary>
         protected class DisjunctionMaxWeight : Weight
         {
-            private readonly DisjunctionMaxQuery OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly DisjunctionMaxQuery outerInstance;
 
             /// <summary>
             /// The Weights for our subqueries, in 1-1 correspondence with disjuncts </summary>
-             // LUCENENET TODO: Rename
-            protected List<Weight> Weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+            protected List<Weight> m_weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 
             /// <summary>
             /// Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights. </summary>
             public DisjunctionMaxWeight(DisjunctionMaxQuery outerInstance, IndexSearcher searcher)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 foreach (Query disjunctQuery in outerInstance.disjuncts)
                 {
-                    Weights.Add(disjunctQuery.CreateWeight(searcher));
+                    m_weights.Add(disjunctQuery.CreateWeight(searcher));
                 }
             }
 
@@ -153,29 +152,29 @@ namespace Lucene.Net.Search
                 /// <summary>
                 /// Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. </summary>
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             public override float GetValueForNormalization()
             {
                 float max = 0.0f, sum = 0.0f;
-                foreach (Weight currentWeight in Weights)
+                foreach (Weight currentWeight in m_weights)
                 {
                     float sub = currentWeight.GetValueForNormalization();
                     sum += sub;
                     max = Math.Max(max, sub);
                 }
-                float boost = OuterInstance.Boost;
-                return (((sum - max) * OuterInstance.tieBreakerMultiplier * OuterInstance.tieBreakerMultiplier) + max) * boost * boost;
+                float boost = outerInstance.Boost;
+                return (((sum - max) * outerInstance.tieBreakerMultiplier * outerInstance.tieBreakerMultiplier) + max) * boost * boost;
             }
 
             /// <summary>
             /// Apply the computed normalization factor to our subqueries </summary>
             public override void Normalize(float norm, float topLevelBoost)
             {
-                topLevelBoost *= OuterInstance.Boost; // Incorporate our boost
-                foreach (Weight wt in Weights)
+                topLevelBoost *= outerInstance.Boost; // Incorporate our boost
+                foreach (Weight wt in m_weights)
                 {
                     wt.Normalize(norm, topLevelBoost);
                 }
@@ -186,7 +185,7 @@ namespace Lucene.Net.Search
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
                 IList<Scorer> scorers = new List<Scorer>();
-                foreach (Weight w in Weights)
+                foreach (Weight w in m_weights)
                 {
                     // we will advance() subscorers
                     Scorer subScorer = w.Scorer(context, acceptDocs);
@@ -200,7 +199,7 @@ namespace Lucene.Net.Search
                     // no sub-scorers had any documents
                     return null;
                 }
-                DisjunctionMaxScorer result = new DisjunctionMaxScorer(this, OuterInstance.tieBreakerMultiplier, scorers.ToArray());
+                DisjunctionMaxScorer result = new DisjunctionMaxScorer(this, outerInstance.tieBreakerMultiplier, scorers.ToArray());
                 return result;
             }
 
@@ -208,14 +207,14 @@ namespace Lucene.Net.Search
             /// Explain the score we computed for doc </summary>
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                if (OuterInstance.disjuncts.Count == 1)
+                if (outerInstance.disjuncts.Count == 1)
                 {
-                    return Weights[0].Explain(context, doc);
+                    return m_weights[0].Explain(context, doc);
                 }
                 ComplexExplanation result = new ComplexExplanation();
                 float max = 0.0f, sum = 0.0f;
-                result.Description = OuterInstance.tieBreakerMultiplier == 0.0f ? "max of:" : "max plus " + OuterInstance.tieBreakerMultiplier + " times others of:";
-                foreach (Weight wt in Weights)
+                result.Description = outerInstance.tieBreakerMultiplier == 0.0f ? "max of:" : "max plus " + outerInstance.tieBreakerMultiplier + " times others of:";
+                foreach (Weight wt in m_weights)
                 {
                     Explanation e = wt.Explain(context, doc);
                     if (e.IsMatch)
@@ -226,7 +225,7 @@ namespace Lucene.Net.Search
                         max = Math.Max(max, e.Value);
                     }
                 }
-                result.Value = max + (sum - max) * OuterInstance.tieBreakerMultiplier;
+                result.Value = max + (sum - max) * outerInstance.tieBreakerMultiplier;
                 return result;
             }
         } // end of DisjunctionMaxWeight inner class
