@@ -62,17 +62,17 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
         /// <returns> the field this filter is applied on. </returns>
-        public virtual string Field() // LUCENENET TODO: make property
+        public virtual string Field
         {
-            return Field_Renamed;
+            get { return Field_Renamed; }
         }
 
         /// <summary>
         /// Returns <code>true</code> iff this filter is negated, otherwise <code>false</code> </summary>
         /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
-        public virtual bool Negate() // LUCENENET TODO: make property (confusing)
+        public virtual bool Negate
         {
-            return Negate_Renamed;
+            get { return Negate_Renamed; }
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
