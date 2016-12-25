@@ -35,44 +35,44 @@ namespace Lucene.Net.Search
     {
         private class MatchAllScorer : Scorer
         {
-            private readonly MatchAllDocsQuery OuterInstance;
+            private readonly MatchAllDocsQuery outerInstance;
 
-            internal readonly float Score_Renamed; // LUCENENET TODO: Rename (private)
-            private int Doc = -1; // LUCENENET TODO: Rename (private)
-            private readonly int MaxDoc; // LUCENENET TODO: Rename (private)
-            private readonly Bits LiveDocs; // LUCENENET TODO: Rename (private)
+            internal readonly float score;
+            private int doc = -1;
+            private readonly int maxDoc;
+            private readonly Bits liveDocs;
 
             internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, Bits liveDocs, Weight w, float score)
                 : base(w)
             {
-                this.OuterInstance = outerInstance;
-                this.LiveDocs = liveDocs;
-                this.Score_Renamed = score;
-                MaxDoc = reader.MaxDoc;
+                this.outerInstance = outerInstance;
+                this.liveDocs = liveDocs;
+                this.score = score;
+                maxDoc = reader.MaxDoc;
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                Doc++;
-                while (LiveDocs != null && Doc < MaxDoc && !LiveDocs.Get(Doc))
+                doc++;
+                while (liveDocs != null && doc < maxDoc && !liveDocs.Get(doc))
                 {
-                    Doc++;
+                    doc++;
                 }
-                if (Doc == MaxDoc)
+                if (doc == maxDoc)
                 {
-                    Doc = NO_MORE_DOCS;
+                    doc = NO_MORE_DOCS;
                 }
-                return Doc;
+                return doc;
             }
 
             public override float Score()
             {
-                return Score_Renamed;
+                return score;
             }
 
             public override int Freq
@@ -82,67 +82,67 @@ namespace Lucene.Net.Search
 
             public override int Advance(int target)
             {
-                Doc = target - 1;
+                doc = target - 1;
                 return NextDoc();
             }
 
             public override long Cost()
             {
-                return MaxDoc;
+                return maxDoc;
             }
         }
 
         private class MatchAllDocsWeight : Weight
         {
-            private readonly MatchAllDocsQuery OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly MatchAllDocsQuery outerInstance;
 
-            private float QueryWeight; // LUCENENET TODO: Rename (private)
-            private float QueryNorm; // LUCENENET TODO: Rename (private)
+            private float queryWeight;
+            private float queryNorm;
 
             public MatchAllDocsWeight(MatchAllDocsQuery outerInstance, IndexSearcher searcher)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override string ToString()
             {
-                return "weight(" + OuterInstance + ")";
+                return "weight(" + outerInstance + ")";
             }
 
             public override Query Query
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
             public override float GetValueForNormalization()
             {
-                QueryWeight = OuterInstance.Boost;
-                return QueryWeight * QueryWeight;
+                queryWeight = outerInstance.Boost;
+                return queryWeight * queryWeight;
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                this.QueryNorm = queryNorm * topLevelBoost;
-                QueryWeight *= this.QueryNorm;
+                this.queryNorm = queryNorm * topLevelBoost;
+                queryWeight *= this.queryNorm;
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new MatchAllScorer(OuterInstance, context.Reader, acceptDocs, this, QueryWeight);
+                return new MatchAllScorer(outerInstance, context.Reader, acceptDocs, this, queryWeight);
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 // explain query weight
-                Explanation queryExpl = new ComplexExplanation(true, QueryWeight, "MatchAllDocsQuery, product of:");
-                if (OuterInstance.Boost != 1.0f)
+                Explanation queryExpl = new ComplexExplanation(true, queryWeight, "MatchAllDocsQuery, product of:");
+                if (outerInstance.Boost != 1.0f)
                 {
-                    queryExpl.AddDetail(new Explanation(OuterInstance.Boost, "boost"));
+                    queryExpl.AddDetail(new Explanation(outerInstance.Boost, "boost"));
                 }
-                queryExpl.AddDetail(new Explanation(QueryNorm, "queryNorm"));
+                queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
 
                 return queryExpl;
             }
