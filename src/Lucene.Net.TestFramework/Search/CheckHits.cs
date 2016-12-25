@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
                 return;
             }
 
-            Explanation[] detail = expl.Details;
+            Explanation[] detail = expl.GetDetails();
             // TODO: can we improve this entire method? its really geared to work only with TF/IDF
             if (expl.Description.EndsWith("computed from:"))
             {

@@ -92,16 +92,13 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The sub-nodes of this explanation node. </summary>
-        public virtual Explanation[] Details // LUCENENET TODO: Change to GetDetails() (array, conversion)
+        public virtual Explanation[] GetDetails()
         {
-            get
+            if (details == null)
             {
-                if (details == null)
-                {
-                    return null;
-                }
-                return details.ToArray();
+                return null;
             }
+            return details.ToArray();
         }
 
         /// <summary>
@@ -132,7 +129,7 @@ namespace Lucene.Net.Search
             buffer.Append(GetSummary());
             buffer.Append("\n");
 
-            Explanation[] details = Details;
+            Explanation[] details = GetDetails();
             if (details != null)
             {
                 for (int i = 0; i < details.Length; i++)
@@ -155,7 +152,7 @@ namespace Lucene.Net.Search
             buffer.Append(GetSummary());
             buffer.Append("<br />\n");
 
-            Explanation[] details = Details;
+            Explanation[] details = GetDetails();
             if (details != null)
             {
                 for (int i = 0; i < details.Length; i++)
