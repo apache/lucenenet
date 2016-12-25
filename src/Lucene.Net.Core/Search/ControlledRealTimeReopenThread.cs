@@ -47,17 +47,17 @@ namespace Lucene.Net.Search
             ReopenCond = ReopenLock.NewCondition();
         }*/
 
-        private readonly ReferenceManager<T> Manager; // LUCENENET TODO: Rename (private)
-        private readonly long TargetMaxStaleNS; // LUCENENET TODO: Rename (private)
-        private readonly long TargetMinStaleNS; // LUCENENET TODO: Rename (private)
-        private readonly TrackingIndexWriter Writer; // LUCENENET TODO: Rename (private)
-        private volatile bool Finish; // LUCENENET TODO: Rename (private)
-        private long WaitingGen; // LUCENENET TODO: Rename (private)
-        private long SearchingGen; // LUCENENET TODO: Rename (private)
-        private long RefreshStartGen; // LUCENENET TODO: Rename (private)
+        private readonly ReferenceManager<T> manager;
+        private readonly long targetMaxStaleNS;
+        private readonly long targetMinStaleNS;
+        private readonly TrackingIndexWriter writer;
+        private volatile bool finish;
+        private long waitingGen;
+        private long searchingGen;
+        private long refreshStartGen;
 
-        private readonly ReentrantLock ReopenLock = new ReentrantLock(); // LUCENENET TODO: Rename (private)
-        private ManualResetEvent ReopenCond = new ManualResetEvent(false); // LUCENENET TODO: Rename (private)
+        private readonly ReentrantLock reopenLock = new ReentrantLock();
+        private ManualResetEvent reopenCond = new ManualResetEvent(false);
 
         /// <summary>
         /// Create ControlledRealTimeReopenThread, to periodically
@@ -81,20 +81,20 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec + ") < targetMinStaleSec (=" + targetMinStaleSec + ")");
             }
-            this.Writer = writer;
-            this.Manager = manager;
-            this.TargetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
-            this.TargetMinStaleNS = (long)(1000000000 * targetMinStaleSec);
+            this.writer = writer;
+            this.manager = manager;
+            this.targetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
+            this.targetMinStaleNS = (long)(1000000000 * targetMinStaleSec);
             manager.AddListener(new HandleRefresh(this));
         }
 
         private class HandleRefresh : ReferenceManager.RefreshListener
         {
-            private readonly ControlledRealTimeReopenThread<T> OuterInstance;
+            private readonly ControlledRealTimeReopenThread<T> outerInstance;
 
             public HandleRefresh(ControlledRealTimeReopenThread<T> outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual void BeforeRefresh()
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
 
             public virtual void AfterRefresh(bool didRefresh)
             {
-                OuterInstance.RefreshDone();
+                outerInstance.RefreshDone();
             }
         }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                SearchingGen = RefreshStartGen;
+                searchingGen = refreshStartGen;
                 Monitor.PulseAll(this);
             }
         }
@@ -122,17 +122,17 @@ namespace Lucene.Net.Search
             {
                 //System.out.println("NRT: set finish");
 
-                Finish = true;
+                finish = true;
 
                 // So thread wakes up and notices it should finish:
-                ReopenLock.Lock();
+                reopenLock.Lock();
                 try
                 {
-                    ReopenCond.Set();
+                    reopenCond.Set();
                 }
                 finally
                 {
-                    ReopenLock.Unlock();
+                    reopenLock.Unlock();
                 }
 
 #if !NETSTANDARD
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                 }
 #endif
                 // Max it out so any waiting search threads will return:
-                SearchingGen = long.MaxValue;
+                searchingGen = long.MaxValue;
                 Monitor.PulseAll(this);
             }
         }
@@ -189,34 +189,34 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                long curGen = Writer.Generation;
+                long curGen = writer.Generation;
                 if (targetGen > curGen)
                 {
                     throw new System.ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
                 }
-                if (targetGen > SearchingGen)
+                if (targetGen > searchingGen)
                 {
                     // Notify the reopen thread that the waitingGen has
                     // changed, so it may wake up and realize it should
                     // not sleep for much or any longer before reopening:
-                    ReopenLock.Lock();
+                    reopenLock.Lock();
 
                     // Need to find waitingGen inside lock as its used to determine
                     // stale time
-                    WaitingGen = Math.Max(WaitingGen, targetGen);
+                    waitingGen = Math.Max(waitingGen, targetGen);
 
                     try
                     {
-                        ReopenCond.Set();
+                        reopenCond.Set();
                     }
                     finally
                     {
-                        ReopenLock.Unlock();
+                        reopenLock.Unlock();
                     }
 
                     long startMS = Environment.TickCount;//System.nanoTime() / 1000000;
 
-                    while (targetGen > SearchingGen)
+                    while (targetGen > searchingGen)
                     {
                         if (maxMS < 0)
                         {
@@ -248,30 +248,30 @@ namespace Lucene.Net.Search
             long lastReopenStartNS = DateTime.Now.Ticks * 100;
 
             //System.out.println("reopen: start");
-            while (!Finish)
+            while (!finish)
             {
                 // TODO: try to guestimate how long reopen might
                 // take based on past data?
 
                 // Loop until we've waiting long enough before the
                 // next reopen:
-                while (!Finish)
+                while (!finish)
                 {
                     // Need lock before finding out if has waiting
 
-                    ReopenLock.Lock();
+                    reopenLock.Lock();
 
                     try
                     {
                         // True if we have someone waiting for reopened searcher:
-                        bool hasWaiting = WaitingGen > SearchingGen;
-                        long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? TargetMinStaleNS : TargetMaxStaleNS);
+                        bool hasWaiting = waitingGen > searchingGen;
+                        long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
 
                         long sleepNS = nextReopenStartNS - (DateTime.Now.Ticks * 100);
 
                         if (sleepNS > 0)
                         {
-                            ReopenCond.WaitOne(new TimeSpan(sleepNS / 100));//Convert NS to Ticks
+                            reopenCond.WaitOne(new TimeSpan(sleepNS / 100));//Convert NS to Ticks
                         }
                         else
                         {
@@ -288,11 +288,11 @@ namespace Lucene.Net.Search
 #endif
                     finally
                     {
-                        ReopenLock.Unlock();
+                        reopenLock.Unlock();
                     }
                 }
 
-                if (Finish)
+                if (finish)
                 {
                     break;
                 }
@@ -301,10 +301,10 @@ namespace Lucene.Net.Search
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
-                RefreshStartGen = Writer.GetAndIncrementGeneration();
+                refreshStartGen = writer.GetAndIncrementGeneration();
                 try
                 {
-                    Manager.MaybeRefreshBlocking();
+                    manager.MaybeRefreshBlocking();
                 }
                 catch (System.IO.IOException ioe)
                 {
