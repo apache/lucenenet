@@ -31,11 +31,11 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public abstract class SpanPositionCheckQuery : SpanQuery
     {
-        protected SpanQuery match; // LUCENENET TODO: rename
+        protected SpanQuery m_match;
 
         public SpanPositionCheckQuery(SpanQuery match)
         {
-            this.match = match;
+            this.m_match = match;
         }
 
         /// <returns> the SpanQuery whose matches are filtered.
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return match;
+                return m_match;
             }
         }
 
@@ -53,13 +53,13 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return match.Field;
+                return m_match.Field;
             }
         }
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            match.ExtractTerms(terms);
+            m_match.ExtractTerms(terms);
         }
 
         /// <summary>
@@ -106,11 +106,11 @@ namespace Lucene.Net.Search.Spans
         {
             SpanPositionCheckQuery clone = null;
 
-            var rewritten = (SpanQuery)match.Rewrite(reader);
-            if (rewritten != match)
+            var rewritten = (SpanQuery)m_match.Rewrite(reader);
+            if (rewritten != m_match)
             {
                 clone = (SpanPositionCheckQuery)this.Clone();
-                clone.match = rewritten;
+                clone.m_match = rewritten;
             }
 
             if (clone != null)
@@ -125,19 +125,19 @@ namespace Lucene.Net.Search.Spans
 
         protected class PositionCheckSpan : Spans
         {
-            private readonly SpanPositionCheckQuery OuterInstance; // LUCENENET TODO: rename
+            private readonly SpanPositionCheckQuery outerInstance;
 
-            private Spans Spans; // LUCENENET TODO: rename
+            private Spans spans;
 
             public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
-                this.OuterInstance = outerInstance;
-                Spans = outerInstance.match.GetSpans(context, acceptDocs, termContexts);
+                this.outerInstance = outerInstance;
+                spans = outerInstance.m_match.GetSpans(context, acceptDocs, termContexts);
             }
 
             public override bool Next()
             {
-                if (!Spans.Next())
+                if (!spans.Next())
                 {
                     return false;
                 }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool SkipTo(int target)
             {
-                if (!Spans.SkipTo(target))
+                if (!spans.SkipTo(target))
                 {
                     return false;
                 }
@@ -159,20 +159,20 @@ namespace Lucene.Net.Search.Spans
             {
                 for (; ; )
                 {
-                    switch (OuterInstance.AcceptPosition(this))
+                    switch (outerInstance.AcceptPosition(this))
                     {
                         case AcceptStatus.YES:
                             return true;
 
                         case AcceptStatus.NO:
-                            if (!Spans.Next())
+                            if (!spans.Next())
                             {
                                 return false;
                             }
                             break;
 
                         case AcceptStatus.NO_AND_ADVANCE:
-                            if (!Spans.SkipTo(Spans.Doc + 1))
+                            if (!spans.SkipTo(spans.Doc + 1))
                             {
                                 return false;
                             }
@@ -183,18 +183,18 @@ namespace Lucene.Net.Search.Spans
 
             public override int Doc
             {
-                get { return Spans.Doc; }
+                get { return spans.Doc; }
             }
 
             public override int Start
             {
-                get { return Spans.Start; }
+                get { return spans.Start; }
             }
 
             public override int End
             // TODO: Remove warning after API has been finalized
             {
-                get { return Spans.End; }
+                get { return spans.End; }
             }
 
             public override ICollection<byte[]> Payload
@@ -202,9 +202,9 @@ namespace Lucene.Net.Search.Spans
                 get
                 {
                     List<byte[]> result = null;
-                    if (Spans.IsPayloadAvailable)
+                    if (spans.IsPayloadAvailable)
                     {
-                        result = new List<byte[]>(Spans.Payload);
+                        result = new List<byte[]>(spans.Payload);
                     }
                     return result; //TODO: any way to avoid the new construction?
                 }
@@ -216,18 +216,18 @@ namespace Lucene.Net.Search.Spans
             {
                 get
                 {
-                    return Spans.IsPayloadAvailable;
+                    return spans.IsPayloadAvailable;
                 }
             }
 
             public override long Cost()
             {
-                return Spans.Cost();
+                return spans.Cost();
             }
 
             public override string ToString()
             {
-                return "spans(" + OuterInstance.ToString() + ")";
+                return "spans(" + outerInstance.ToString() + ")";
             }
         }
     }

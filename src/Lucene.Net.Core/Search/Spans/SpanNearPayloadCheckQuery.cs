@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spans
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("spanPayCheck(");
-            buffer.Append(match.ToString(field));
+            buffer.Append(m_match.ToString(field));
             buffer.Append(", payloadRef: ");
             foreach (var bytes in m_payloadToMatch)
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery)match.Clone(), m_payloadToMatch);
+            SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery)m_match.Clone(), m_payloadToMatch);
             result.Boost = Boost;
             return result;
         }
@@ -117,12 +117,12 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanNearPayloadCheckQuery other = (SpanNearPayloadCheckQuery)o;
-            return this.m_payloadToMatch.Equals(other.m_payloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
+            return this.m_payloadToMatch.Equals(other.m_payloadToMatch) && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
         {
-            int h = match.GetHashCode();
+            int h = m_match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
             h ^= m_payloadToMatch.GetHashCode();
