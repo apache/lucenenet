@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class QueryWrapperFilter : Filter
     {
-        private readonly Query Query_Renamed; // LUCENENET TODO: Rename (private)
+        private readonly Query query;
 
         /// <summary>
         /// Constructs a filter which only matches documents matching
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
             {
                 throw new System.NullReferenceException("Query may not be null");
             }
-            this.Query_Renamed = query;
+            this.query = query;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query_Renamed;
+                return query;
             }
         }
 
@@ -60,29 +60,29 @@ namespace Lucene.Net.Search
         {
             // get a private context that is used to rewrite, createWeight and score eventually
             AtomicReaderContext privateContext = context.AtomicReader.AtomicContext;
-            Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(Query_Renamed);
+            Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(query);
             return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, privateContext, weight);
         }
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly QueryWrapperFilter OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly QueryWrapperFilter outerInstance;
 
-            private Bits AcceptDocs; // LUCENENET TODO: Rename (private)
-            private AtomicReaderContext PrivateContext; // LUCENENET TODO: Rename (private)
-            private Lucene.Net.Search.Weight Weight; // LUCENENET TODO: Rename (private)
+            private Bits acceptDocs;
+            private AtomicReaderContext privateContext;
+            private Lucene.Net.Search.Weight weight;
 
             public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, Bits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
             {
-                this.OuterInstance = outerInstance;
-                this.AcceptDocs = acceptDocs;
-                this.PrivateContext = privateContext;
-                this.Weight = weight;
+                this.outerInstance = outerInstance;
+                this.acceptDocs = acceptDocs;
+                this.privateContext = privateContext;
+                this.weight = weight;
             }
 
             public override DocIdSetIterator GetIterator()
             {
-                return Weight.Scorer(PrivateContext, AcceptDocs);
+                return weight.Scorer(privateContext, acceptDocs);
             }
 
             public override bool IsCacheable
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return "QueryWrapperFilter(" + Query_Renamed + ")";
+            return "QueryWrapperFilter(" + query + ")";
         }
 
         public override bool Equals(object o)
@@ -105,12 +105,12 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            return this.Query_Renamed.Equals(((QueryWrapperFilter)o).Query_Renamed);
+            return this.query.Equals(((QueryWrapperFilter)o).query);
         }
 
         public override int GetHashCode()
         {
-            return Query_Renamed.GetHashCode() ^ unchecked((int)0x923F64B9);
+            return query.GetHashCode() ^ unchecked((int)0x923F64B9);
         }
     }
 }
