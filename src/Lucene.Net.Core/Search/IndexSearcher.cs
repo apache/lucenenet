@@ -974,7 +974,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class LeafSlice
         {
-            internal readonly AtomicReaderContext[] Leaves; // LUCENENET TODO: Make property
+            internal AtomicReaderContext[] Leaves { get; private set; }
 
             public LeafSlice(params AtomicReaderContext[] leaves)
             {
