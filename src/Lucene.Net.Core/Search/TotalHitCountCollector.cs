@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 
     public class TotalHitCountCollector : Collector
     {
-        private int TotalHits_Renamed; // LUCENENET TODO: Rename (private)
+        private int totalHits;
 
         /// <summary>
         /// Returns how many hits matched the search. </summary>
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return TotalHits_Renamed;
+                return totalHits;
             }
         }
 
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 
         public override void Collect(int doc)
         {
-            TotalHits_Renamed++;
+            totalHits++;
         }
 
         public override void SetNextReader(AtomicReaderContext context)
