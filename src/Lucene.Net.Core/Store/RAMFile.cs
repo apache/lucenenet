@@ -25,10 +25,10 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMFile
     {
-        protected internal List<byte[]> Buffers = new List<byte[]>();
+        protected List<byte[]> Buffers = new List<byte[]>(); // LUCENENET TODO: Rename m_
         internal long Length_Renamed;
         internal RAMDirectory Directory;
-        protected internal long SizeInBytes_Renamed;
+        protected internal long SizeInBytes_Renamed; // LUCENENET TODO: Rename m_
 
         // File used as buffer, in no RAMDirectory
         public RAMFile()
@@ -38,11 +38,6 @@ namespace Lucene.Net.Store
         public RAMFile(RAMDirectory directory)
         {
             this.Directory = directory;
-        }
-
-        public void SetDirectory_Nunit(RAMDirectory value)
-        {
-            Directory = value;
         }
 
         // For non-stream access from thread that might be concurrent with writing
@@ -101,7 +96,7 @@ namespace Lucene.Net.Store
         /// Subclasses can allocate differently. </summary>
         /// <param name="size"> size of allocated buffer. </param>
         /// <returns> allocated buffer. </returns>
-        protected internal virtual byte[] NewBuffer(int size)
+        protected virtual byte[] NewBuffer(int size)
         {
             return new byte[size];
         }

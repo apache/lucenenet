@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -23,7 +24,10 @@ namespace Lucene.Net.Store
     /// this exception is thrown when you try to list a
     /// non-existent directory.
     /// </summary>
-
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NoSuchDirectoryException : FileNotFoundException
     {
         public NoSuchDirectoryException(string message)

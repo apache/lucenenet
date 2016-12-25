@@ -25,6 +25,10 @@ namespace Lucene.Net.Store
     /// happens when a writer tries to open an index
     /// that another writer already has open. </summary>
     /// <seealso cref= Lock#obtain(long) </seealso>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LockObtainFailedException : System.IO.IOException
     {
         public LockObtainFailedException(string message)

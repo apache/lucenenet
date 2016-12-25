@@ -35,7 +35,7 @@ namespace Lucene.Net.Store
         {
         }
 
-        public static NoLockFactory DoNoLockFactory
+        public static NoLockFactory DoNoLockFactory // LUCENENET TODO: Rename GetNoLockFactory() (name collision)
         {
             get
             {

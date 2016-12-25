@@ -36,14 +36,14 @@ namespace Lucene.Net.Store
     public class VerifyingLockFactory : LockFactory
     {
         internal readonly LockFactory Lf;
-        internal readonly Stream @in; //LUCENE TO-DO is this the proper class to use?
+        internal readonly Stream @in;
         internal readonly Stream @out;
 
         private class CheckedLock : Lock
         {
             private readonly VerifyingLockFactory OuterInstance;
 
-            internal readonly Lock @lock;
+            private readonly Lock @lock;
 
             public CheckedLock(VerifyingLockFactory outerInstance, Lock @lock)
             {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
                 this.@lock = @lock;
             }
 
-            private void Verify(sbyte message)
+            private void Verify(sbyte message) // LUCENENET TODO: sbyte unnecessary here
             {
                 OuterInstance.@out.WriteByte((byte)message);
                 OuterInstance.@out.Flush();

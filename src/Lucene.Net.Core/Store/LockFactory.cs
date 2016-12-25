@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 
     public abstract class LockFactory
     {
-        protected internal string LockPrefix_Renamed = null;
+        protected string LockPrefix_Renamed = null; // LUCENENET TODO: Rename m_lockPrefix
 
         /// <summary>
         /// Set the prefix in use for all locks created in this

@@ -133,16 +133,16 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Reads bytes with <seealso cref="FileChannel#read(ByteBuffer, long)"/>
         /// </summary>
-        protected internal class NIOFSIndexInput : BufferedIndexInput
+        protected class NIOFSIndexInput : BufferedIndexInput
         {
             /// <summary>
             /// The maximum chunk size for reads of 16384 bytes.
             /// </summary>
-            internal const int CHUNK_SIZE = 16384;
+            private const int CHUNK_SIZE = 16384;
 
             /// <summary>
             /// the file channel we will read from </summary>
-            protected internal readonly FileStream Channel;
+            protected readonly FileStream Channel;
 
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
@@ -150,13 +150,13 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
-            protected internal readonly long Off;
+            protected readonly long Off;
 
             /// <summary>
             /// end offset (start+length) </summary>
-            protected internal readonly long End;
+            protected readonly long End;
 
-            internal ByteBuffer ByteBuf; // wraps the buffer for NIO
+            private ByteBuffer ByteBuf; // wraps the buffer for NIO
 
             public NIOFSIndexInput(string resourceDesc, FileStream fc, IOContext context)
                 : base(resourceDesc, context)

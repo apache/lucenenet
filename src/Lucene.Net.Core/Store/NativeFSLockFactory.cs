@@ -168,7 +168,7 @@ namespace Lucene.Net.Store
                 catch (IOException e)
                 {
                     FailureReason = e;
-                    IOUtils.CloseWhileHandlingException(Channel);
+                    IOUtils.CloseWhileHandlingException(Channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
                     Channel = null;
                 }
                 // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
@@ -179,7 +179,7 @@ namespace Lucene.Net.Store
                     // acquire the lock, but, store the reason in case
                     // there is in fact a real error case.
                     FailureReason = e;
-                    IOUtils.CloseWhileHandlingException(Channel);
+                    IOUtils.CloseWhileHandlingException(Channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
                     Channel = null;
                 }
                 finally

@@ -249,7 +249,7 @@ namespace Lucene.Net.Store
 
         // LUCENENET: This helper method is here because OfflineSorter
         // uses java.io.DataOutput in Lucene, but Lucene.Net uses this class
-        public void Write(byte[] b, int off, int len)
+        internal void Write(byte[] b, int off, int len) // LUCENENET TODO: Remove this method and make OfflineSorter use WriteBytes
         {
             WriteBytes(b, off, len);
         }

@@ -38,10 +38,10 @@ namespace Lucene.Net.Store
 
     public class LockVerifyServer
     {
-        private static String GetTime(long startTime)
-        {
-            return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
-        }
+        //private static String GetTime(long startTime)
+        //{
+        //    return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
+        //}
 
         [STAThread]
         public static void Main(string[] args)

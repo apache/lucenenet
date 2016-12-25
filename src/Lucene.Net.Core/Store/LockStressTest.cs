@@ -152,9 +152,9 @@ namespace Lucene.Net.Store
             Console.WriteLine("Finished " + count + " tries.");
         }
 
-        private static int ToInt32(byte[] tempBuf, int p)
-        {
-            throw new NotImplementedException();
-        }
+        //private static int ToInt32(byte[] tempBuf, int p)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -43,8 +43,8 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMDirectory : BaseDirectory
     {
-        protected internal readonly IDictionary<string, RAMFile> FileMap = new ConcurrentDictionary<string, RAMFile>();
-        protected internal readonly AtomicLong sizeInBytes = new AtomicLong(0);
+        protected internal readonly IDictionary<string, RAMFile> FileMap = new ConcurrentDictionary<string, RAMFile>(); // LUCENENET TODO: Rename m_
+        protected internal readonly AtomicLong sizeInBytes = new AtomicLong(0); // LUCENENET TODO: Rename m_
 
         // *****
         // Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -62,28 +62,6 @@ namespace Lucene.Net.Store
             {
                 // Cannot happen
             }
-        }
-
-        public RAMFile GetNameFromFileMap_Nunit(string name)
-        {
-            RAMFile ramFile;
-            FileMap.TryGetValue(name, out ramFile);
-            return ramFile;
-        }
-
-        public void SetNameForFileMap_Nunit(string name, RAMFile ramFile)
-        {
-            FileMap[name] = ramFile;
-        }
-
-        public ICollection<RAMFile> GetFileMapValues_Nunit()
-        {
-            return FileMap.Values;
-        }
-
-        public void GetAndAddSizeInBytes_Nunit(long value)
-        {
-            sizeInBytes.AddAndGet(value);
         }
 
         /// <summary>
@@ -154,7 +132,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns true iff the named file exists in this directory. </summary>
-        public override sealed bool FileExists(string name)
+        public override sealed bool FileExists(string name) // LUCENENET TODO: Find out what happens when you inherit a deprecated member in Java
         {
             EnsureOpen();
             return FileMap.ContainsKey(name);
@@ -226,7 +204,7 @@ namespace Lucene.Net.Store
         /// overridden to return different <seealso cref="RAMFile"/> impls, that e.g. override
         /// <seealso cref="RAMFile#newBuffer(int)"/>.
         /// </summary>
-        protected internal virtual RAMFile NewRAMFile()
+        protected virtual RAMFile NewRAMFile()
         {
             return new RAMFile(this);
         }

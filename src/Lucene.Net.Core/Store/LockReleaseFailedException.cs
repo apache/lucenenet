@@ -15,12 +15,18 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace Lucene.Net.Store
 {
     /// <summary>
     /// this exception is thrown when the <code>write.lock</code>
     /// could not be released. </summary>
     /// <seealso cref= Lock#close() </seealso>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LockReleaseFailedException : System.IO.IOException
     {
         public LockReleaseFailedException(string message)

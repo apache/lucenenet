@@ -50,9 +50,9 @@ namespace Lucene.Net.Store
         /// </summary>
         public class SimpleRateLimiter : RateLimiter
         {
-            internal double mbPerSec;
-            internal double NsPerByte;
-            internal long LastNS;
+            private double mbPerSec;
+            private double NsPerByte;
+            private long LastNS;
 
             // TODO: we could also allow eg a sub class to dynamically
             // determine the allowed rate, eg if an app wants to
@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
             /// </summary>
             public override double MbPerSec
             {
-                set
+                set // LUCENENET TODO: make method ? has side effect
                 {
                     this.mbPerSec = value;
                     if (value == 0)

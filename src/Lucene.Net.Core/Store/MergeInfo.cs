@@ -24,13 +24,13 @@ namespace Lucene.Net.Store
 
     public class MergeInfo
     {
-        public readonly int TotalDocCount;
+        public readonly int TotalDocCount; // LUCENENET TODO: Make property
 
-        public readonly long EstimatedMergeBytes;
+        public readonly long EstimatedMergeBytes; // LUCENENET TODO: Make property
 
-        public readonly bool IsExternal;
+        public readonly bool IsExternal; // LUCENENET TODO: Make property
 
-        public readonly int MergeMaxNumSegments;
+        public readonly int MergeMaxNumSegments; // LUCENENET TODO: Make property
 
         /// <summary>
         /// <p>Creates a new <seealso cref="MergeInfo"/> instance from

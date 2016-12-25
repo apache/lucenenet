@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
             private long Capacity = 0;
             private readonly Dictionary<int, byte[]> SingleBuffers = new Dictionary<int, byte[]>();
 
-            protected internal override byte[] NewBuffer(int size)
+            protected override byte[] NewBuffer(int size)
             {
                 Capacity += size;
                 if (Capacity <= MAX_VALUE)

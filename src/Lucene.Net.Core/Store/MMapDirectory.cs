@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
         /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
         public static readonly int DEFAULT_MAX_BUFF = Constants.JRE_IS_64BIT ? (1 << 30) : (1 << 28);
 
-        internal readonly int ChunkSizePower;
+        private readonly int ChunkSizePower;
 
         /// <summary>
         /// Create a new MMapDirectory for the named location.
@@ -248,10 +248,10 @@ namespace Lucene.Net.Store
 
         public sealed class MMapIndexInput : ByteBufferIndexInput
         {
-            internal readonly bool UseUnmapHack;
-            internal string mapName;
+            private readonly bool UseUnmapHack;
+            private string mapName;
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
-            internal MMapDirectory outerInstance;
+            private readonly MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.ChunkSizePower, outerInstance.UseUnmap)

@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
             @in.Copy(to, src, dest, context);
         }
 
-        private RateLimiter GetRateLimiter(IOContext.UsageContext? context)
+        private RateLimiter GetRateLimiter(IOContext.UsageContext? context) // LUCENENET TODO: Can we get rid of the nullable?
         {
             Debug.Assert(context != null);
             RateLimiter ret;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext? context)
+        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext? context) // LUCENENET TODO: Can we get rid of the nullables?
         {
             EnsureOpen();
             if (context == null)

@@ -21,13 +21,13 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A memory-resident <seealso cref="IndexOutput"/> implementation.
+    /// A memory-resident <see cref="IndexOutput"/> implementation.
     ///
     /// @lucene.internal
     /// </summary>
     public class RAMOutputStream : IndexOutput
     {
-        public const int BUFFER_SIZE = 1024;
+        internal const int BUFFER_SIZE = 1024;
 
         private RAMFile File;
 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
         /// with the "root cause" Exception as to why the lock was
         /// not obtained.
         /// </summary>
-        public Exception FailureReason { get; protected set; }
+        protected internal Exception FailureReason { get; set; }
 
         /// <summary>
         /// Attempts to obtain an exclusive lock within amount of
@@ -129,14 +129,14 @@ namespace Lucene.Net.Store
         /// Returns true if the resource is currently locked.  Note that one must
         /// still call <seealso cref="#obtain()"/> before using the resource.
         /// </summary>
-        public abstract bool Locked { get; }
+        public abstract bool Locked { get; } // LUCENENET TODO: Rename IsLocked
 
         /// <summary>
         /// Utility class for executing code with exclusive access. </summary>
         public abstract class With
         {
-            internal Lock @lock;
-            internal long LockWaitTimeout;
+            private Lock @lock;
+            private long LockWaitTimeout;
 
             /// <summary>
             /// Constructs an executor that will grab the named lock. </summary>
@@ -148,7 +148,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Code to execute with exclusive access. </summary>
-            protected internal abstract object DoBody();
+            protected abstract object DoBody();
 
             /// <summary>
             /// Calls <seealso cref="#doBody"/> while <i>lock</i> is obtained.  Blocks if lock

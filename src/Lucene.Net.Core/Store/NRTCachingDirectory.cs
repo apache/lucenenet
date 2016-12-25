@@ -339,7 +339,7 @@ namespace Lucene.Net.Store
         /// Subclass can override this to customize logic; return
         ///  true if this file should be written to the RAMDirectory.
         /// </summary>
-        protected internal virtual bool DoCacheWrite(string name, IOContext context)
+        protected virtual bool DoCacheWrite(string name, IOContext context)
         {
             //System.out.println(Thread.currentThread().getName() + ": CACHE check merge=" + merge + " size=" + (merge==null ? 0 : merge.estimatedMergeBytes));
 

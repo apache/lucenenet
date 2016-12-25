@@ -98,7 +98,6 @@ namespace Lucene.Net.Store
                 return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
             }
 
-            [Obsolete]
             public override IndexInput OpenFullSlice()
             {
                 try
@@ -116,29 +115,29 @@ namespace Lucene.Net.Store
         /// Reads bytes with <seealso cref="RandomAccessFile#seek(long)"/> followed by
         /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.
         /// </summary>
-        public class SimpleFSIndexInput : BufferedIndexInput
+        protected internal class SimpleFSIndexInput : BufferedIndexInput
         {
             /// <summary>
             /// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
             /// a native buffer outside of stack if the read buffer size is larger.
             /// </summary>
-            internal const int CHUNK_SIZE = 8192;
+            private const int CHUNK_SIZE = 8192;
 
             /// <summary>
             /// the file channel we will read from </summary>
-            protected internal readonly FileStream File;
+            protected internal readonly FileStream File; // LUCENENET TODO: rename m_
 
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
-            public bool IsClone = false;
+            public bool IsClone = false; // LUCENENET TODO: make property
 
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
-            protected internal readonly long Off;
+            protected internal readonly long Off; // LUCENENET TODO: rename m_
 
             /// <summary>
             /// end offset (start+length) </summary>
-            protected internal readonly long End;
+            protected internal readonly long End; // LUCENENET TODO: rename m_
 
             public SimpleFSIndexInput(string resourceDesc, FileStream file, IOContext context)
                 : base(resourceDesc, context)
@@ -222,7 +221,7 @@ namespace Lucene.Net.Store
             {
                 get
                 {
-                    return File != null;// File.FD.valid();
+                    return File != null;// File.FD.valid(); // LUCENENET TODO: Check logic
                 }
             }
         }
