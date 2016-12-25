@@ -56,14 +56,14 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
         public bool IncludesMin
         {
-            get { return Query.IncludesMin; }
+            get { return m_query.IncludesMin; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
         public bool IncludesMax
         {
-            get { return Query.IncludesMax; }
+            get { return m_query.IncludesMax; }
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.Min;
+                return m_query.Min;
             }
         }
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.Max;
+                return m_query.Max;
             }
         }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.PrecisionStep;
+                return m_query.PrecisionStep;
             }
         }
     }

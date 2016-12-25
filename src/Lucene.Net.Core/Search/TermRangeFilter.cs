@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.LowerTerm;
+                return m_query.LowerTerm;
             }
         }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.UpperTerm;
+                return m_query.UpperTerm;
             }
         }
 
@@ -99,14 +99,14 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
-            get { return Query.IncludesLower; }
+            get { return m_query.IncludesLower; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
-            get { return Query.IncludesUpper; }
+            get { return m_query.IncludesUpper; }
         }
     }
 }

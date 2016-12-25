@@ -44,20 +44,20 @@ namespace Lucene.Net.Search
     /// </summary>
     public class MultiTermQueryWrapperFilter<Q> : Filter where Q : MultiTermQuery
     {
-        protected readonly Q Query; // LUCENENET TODO: Rename 
+        protected readonly Q m_query;
 
         /// <summary>
         /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.
         /// </summary>
         protected internal MultiTermQueryWrapperFilter(Q query)
         {
-            this.Query = query;
+            this.m_query = query;
         }
 
         public override string ToString()
         {
             // query.toString should be ok for the filter, too, if the query boost is 1.0f
-            return Query.ToString();
+            return m_query.ToString();
         }
 
         public override sealed bool Equals(object o)
@@ -72,14 +72,14 @@ namespace Lucene.Net.Search
             }
             if (this.GetType().Equals(o.GetType()))
             {
-                return this.Query.Equals(((MultiTermQueryWrapperFilter<Q>)o).Query);
+                return this.m_query.Equals(((MultiTermQueryWrapperFilter<Q>)o).m_query);
             }
             return false;
         }
 
         public override sealed int GetHashCode()
         {
-            return Query.GetHashCode();
+            return m_query.GetHashCode();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.Field;
+                return m_query.Field;
             }
         }
 
@@ -106,14 +106,14 @@ namespace Lucene.Net.Search
                 return null;
             }
 
-            Terms terms = fields.Terms(Query.m_field);
+            Terms terms = fields.Terms(m_query.m_field);
             if (terms == null)
             {
                 // field does not exist
                 return null;
             }
 
-            TermsEnum termsEnum = Query.GetTermsEnum(terms);
+            TermsEnum termsEnum = m_query.GetTermsEnum(terms);
             Debug.Assert(termsEnum != null);
             if (termsEnum.Next() != null)
             {

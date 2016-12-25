@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Query.Prefix;
+                return m_query.Prefix;
             }
         }
 
