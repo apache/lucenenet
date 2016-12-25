@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
             manager.AddListener(new HandleRefresh(this));
         }
 
-        private class HandleRefresh : ReferenceManager.RefreshListener
+        private class HandleRefresh : ReferenceManager.IRefreshListener
         {
             private readonly ControlledRealTimeReopenThread<T> outerInstance;
 

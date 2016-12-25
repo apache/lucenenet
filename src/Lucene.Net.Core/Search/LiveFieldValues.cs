@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     ///  cannot in general know which thread "won".
     /// </summary>
 
-    public abstract class LiveFieldValues<S, T> : ReferenceManager.RefreshListener, IDisposable
+    public abstract class LiveFieldValues<S, T> : ReferenceManager.IRefreshListener, IDisposable
         where S : class
     {
         private volatile IDictionary<string, T> current = new ConcurrentDictionary<string, T>();

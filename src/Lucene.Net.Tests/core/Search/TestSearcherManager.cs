@@ -509,7 +509,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RefreshListenerAnonymousInnerClassHelper : ReferenceManager.RefreshListener
+        private class RefreshListenerAnonymousInnerClassHelper : ReferenceManager.IRefreshListener
         {
             private readonly TestSearcherManager OuterInstance;
 
