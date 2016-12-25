@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
         /// <param name="reqScorer"> The required scorer. this must match. </param>
         /// <param name="optScorer"> The optional scorer. this is used for scoring only. </param>
         public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer)
-            : base(reqScorer.weight)
+            : base(reqScorer.m_weight)
         {
             Debug.Assert(reqScorer != null);
             Debug.Assert(optScorer != null);

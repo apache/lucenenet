@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return "ExactPhraseScorer(" + weight + ")";
+            return "ExactPhraseScorer(" + m_weight + ")";
         }
 
         public override int Freq

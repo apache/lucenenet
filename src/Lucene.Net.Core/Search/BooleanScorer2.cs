@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
                 coordFactors = new float[outerInstance.optionalScorers.Count + outerInstance.requiredScorers.Count + 1];
                 for (int i = 0; i < coordFactors.Length; i++)
                 {
-                    coordFactors[i] = disableCoord ? 1.0f : ((BooleanWeight)outerInstance.weight).Coord(i, maxCoord);
+                    coordFactors[i] = disableCoord ? 1.0f : ((BooleanWeight)outerInstance.m_weight).Coord(i, maxCoord);
                 }
             }
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             internal float lastDocScore = float.NaN;
 
             internal SingleMatchScorer(BooleanScorer2 outerInstance, Scorer scorer)
-                : base(scorer.weight)
+                : base(scorer.m_weight)
             {
                 this.outerInstance = outerInstance;
                 this.scorer = scorer;
@@ -173,12 +173,12 @@ namespace Lucene.Net.Search
             // each scorer from the list counted as a single matcher
             if (minNrShouldMatch > 1)
             {
-                return new MinShouldMatchSumScorerAnonymousInnerClassHelper(this, weight, scorers, minNrShouldMatch);
+                return new MinShouldMatchSumScorerAnonymousInnerClassHelper(this, m_weight, scorers, minNrShouldMatch);
             }
             else
             {
                 // we pass null for coord[] since we coordinate ourselves and override score()
-                return new DisjunctionSumScorerAnonymousInnerClassHelper(this, weight, scorers.ToArray(), null);
+                return new DisjunctionSumScorerAnonymousInnerClassHelper(this, m_weight, scorers.ToArray(), null);
             }
         }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
         {
             // each scorer from the list counted as a single matcher
             int requiredNrMatchers = requiredScorers.Count;
-            return new ConjunctionScorerAnonymousInnerClassHelper(this, weight, requiredScorers.ToArray(), requiredNrMatchers);
+            return new ConjunctionScorerAnonymousInnerClassHelper(this, m_weight, requiredScorers.ToArray(), requiredNrMatchers);
         }
 
         private class ConjunctionScorerAnonymousInnerClassHelper : ConjunctionScorer
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
 
         private Scorer DualConjunctionSumScorer(bool disableCoord, Scorer req1, Scorer req2) // non counting.
         {
-            return new ConjunctionScorer(weight, new Scorer[] { req1, req2 });
+            return new ConjunctionScorer(m_weight, new Scorer[] { req1, req2 });
             // All scorers match, so defaultSimilarity always has 1 as
             // the coordination factor.
             // Therefore the sum of the scores of two scorers
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search
         /// <param name="requiredCountingSumScorer"> A required scorer already built. </param>
         private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
         {
-            return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? prohibitedScorers[0] : new MinShouldMatchSumScorer(weight, prohibitedScorers))); // no prohibited
+            return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? prohibitedScorers[0] : new MinShouldMatchSumScorer(m_weight, prohibitedScorers))); // no prohibited
         }
 
         public override int DocID

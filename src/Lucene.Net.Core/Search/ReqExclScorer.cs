@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
         /// <param name="reqScorer"> The scorer that must match, except where </param>
         /// <param name="exclDisi"> indicates exclusion. </param>
         public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi)
-            : base(reqScorer.weight)
+            : base(reqScorer.m_weight)
         {
             this.reqScorer = reqScorer;
             this.exclDisi = exclDisi;

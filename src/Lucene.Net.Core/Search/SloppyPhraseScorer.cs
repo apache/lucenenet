@@ -726,7 +726,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return "scorer(" + weight + ")";
+            return "scorer(" + m_weight + ")";
         }
     }
 }

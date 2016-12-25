@@ -375,7 +375,7 @@ namespace Lucene.Net.Search
             public override float Score()
             {
                 Debug.Assert(Score_Renamed != 0, CurrentMatched.ToString());
-                return (float)Score_Renamed * ((BooleanWeight)weight).Coord(CurrentMatched, ((BooleanWeight)weight).MaxCoord);
+                return (float)Score_Renamed * ((BooleanWeight)m_weight).Coord(CurrentMatched, ((BooleanWeight)m_weight).MaxCoord);
             }
 
             public override int Freq

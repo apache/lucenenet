@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a new instance by wrapping the given scorer. </summary>
         public ScoreCachingWrappingScorer(Scorer scorer)
-            : base(scorer.weight)
+            : base(scorer.m_weight)
         {
             this.scorer = scorer;
         }
