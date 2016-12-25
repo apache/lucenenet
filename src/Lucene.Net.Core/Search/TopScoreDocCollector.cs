@@ -127,9 +127,9 @@ namespace Lucene.Net.Search
                 AfterDoc = After.Doc - DocBase;
             }
 
-            protected override int TopDocsSize()
+            protected override int TopDocsSize
             {
-                return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size();
+                get { return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -233,9 +233,9 @@ namespace Lucene.Net.Search
                 AfterDoc = After.Doc - DocBase;
             }
 
-            protected override int TopDocsSize()
+            protected override int TopDocsSize
             {
-                return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size();
+                get { return CollectedHits < Pq.Size() ? CollectedHits : Pq.Size(); }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)

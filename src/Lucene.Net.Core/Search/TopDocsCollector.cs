@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
             // pq.size() or totalHits.
-            return TopDocs(0, TopDocsSize());
+            return TopDocs(0, TopDocsSize);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
             // pq.size() or totalHits.
-            return TopDocs(start, TopDocsSize());
+            return TopDocs(start, TopDocsSize);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
             // pq.size() or totalHits.
-            int size = TopDocsSize();
+            int size = TopDocsSize;
 
             // Don't bother to throw an exception, just return an empty TopDocs in case
             // the parameters are invalid or out of range.
