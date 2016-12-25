@@ -641,9 +641,9 @@ namespace Lucene.Net.Search
             get { return NumMatches; }
         }
 
-        internal float SloppyFreq() // LUCENENET TODO: Make property
+        internal float SloppyFreq
         {
-            return SloppyFreq_Renamed;
+            get { return SloppyFreq_Renamed; }
         }
 
         //  private void printQueue(PrintStream ps, PhrasePositions ext, String title) {

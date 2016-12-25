@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = OuterInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq();
+                        float freq = OuterInstance.slop == 0 ? scorer.Freq : ((SloppyPhraseScorer)scorer).SloppyFreq;
                         SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
