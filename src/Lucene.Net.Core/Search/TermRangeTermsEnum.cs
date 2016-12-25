@@ -32,12 +32,11 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermRangeTermsEnum : FilteredTermsEnum
     {
-        // LUCENENET TODO: Rename (private)
-        private readonly bool IncludeLower;
-        private readonly bool IncludeUpper;
-        private readonly BytesRef LowerBytesRef;
-        private readonly BytesRef UpperBytesRef;
-        private readonly IComparer<BytesRef> TermComp;
+        private readonly bool includeLower;
+        private readonly bool includeUpper;
+        private readonly BytesRef lowerBytesRef;
+        private readonly BytesRef upperBytesRef;
+        private readonly IComparer<BytesRef> termComp;
 
         /// <summary>
         /// Enumerates all terms greater/equal than <code>lowerTerm</code>
@@ -65,46 +64,46 @@ namespace Lucene.Net.Search
             // open ended range queries should always be inclusive.
             if (lowerTerm == null)
             {
-                this.LowerBytesRef = new BytesRef();
-                this.IncludeLower = true;
+                this.lowerBytesRef = new BytesRef();
+                this.includeLower = true;
             }
             else
             {
-                this.LowerBytesRef = lowerTerm;
-                this.IncludeLower = includeLower;
+                this.lowerBytesRef = lowerTerm;
+                this.includeLower = includeLower;
             }
 
             if (upperTerm == null)
             {
-                this.IncludeUpper = true;
-                UpperBytesRef = null;
+                this.includeUpper = true;
+                upperBytesRef = null;
             }
             else
             {
-                this.IncludeUpper = includeUpper;
-                UpperBytesRef = upperTerm;
+                this.includeUpper = includeUpper;
+                upperBytesRef = upperTerm;
             }
 
-            SetInitialSeekTerm(LowerBytesRef);
-            TermComp = Comparator;
+            SetInitialSeekTerm(lowerBytesRef);
+            termComp = Comparator;
         }
 
         protected override AcceptStatus Accept(BytesRef term)
         {
-            if (!this.IncludeLower && term.Equals(LowerBytesRef))
+            if (!this.includeLower && term.Equals(lowerBytesRef))
             {
                 return AcceptStatus.NO;
             }
 
             // Use this field's default sort ordering
-            if (UpperBytesRef != null)
+            if (upperBytesRef != null)
             {
-                int cmp = TermComp.Compare(UpperBytesRef, term);
+                int cmp = termComp.Compare(upperBytesRef, term);
                 /*
                  * if beyond the upper term, or is exclusive and this is equal to
                  * the upper term, break out
                  */
-                if ((cmp < 0) || (!IncludeUpper && cmp == 0))
+                if ((cmp < 0) || (!includeUpper && cmp == 0))
                 {
                     return AcceptStatus.END;
                 }
