@@ -60,11 +60,11 @@ namespace Lucene.Net.Search
         public const int DefaultMaxExpansions = 50;
         public const bool DefaultTranspositions = true;
 
-        private readonly int MaxEdits_Renamed; // LUCENENET TODO: Rename (private)
-        private readonly int MaxExpansions; // LUCENENET TODO: Rename (private)
-        private readonly bool Transpositions_Renamed; // LUCENENET TODO: Rename (private)
-        private readonly int PrefixLength_Renamed; // LUCENENET TODO: Rename (private)
-        private readonly Term _term;
+        private readonly int maxEdits;
+        private readonly int maxExpansions;
+        private readonly bool transpositions;
+        private readonly int prefixLength;
+        private readonly Term term;
 
         /// <summary>
         /// Create a new FuzzyQuery that will match terms with an edit distance
@@ -97,11 +97,11 @@ namespace Lucene.Net.Search
                 throw new System.ArgumentException("maxExpansions cannot be negative.");
             }
 
-            this._term = term;
-            this.MaxEdits_Renamed = maxEdits;
-            this.PrefixLength_Renamed = prefixLength;
-            this.Transpositions_Renamed = transpositions;
-            this.MaxExpansions = maxExpansions;
+            this.term = term;
+            this.maxEdits = maxEdits;
+            this.prefixLength = prefixLength;
+            this.transpositions = transpositions;
+            this.maxExpansions = maxExpansions;
             MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions);
         }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return MaxEdits_Renamed;
+                return maxEdits;
             }
         }
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return PrefixLength_Renamed;
+                return prefixLength;
             }
         }
 
@@ -160,17 +160,17 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Transpositions_Renamed;
+                return transpositions;
             }
         }
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (MaxEdits_Renamed == 0 || PrefixLength_Renamed >= _term.Text().Length) // can only match if it's exact
+            if (maxEdits == 0 || prefixLength >= term.Text().Length) // can only match if it's exact
             {
-                return new SingleTermsEnum(terms.Iterator(null), _term.Bytes);
+                return new SingleTermsEnum(terms.Iterator(null), term.Bytes);
             }
-            return new FuzzyTermsEnum(terms, atts, Term, MaxEdits_Renamed, PrefixLength_Renamed, Transpositions_Renamed);
+            return new FuzzyTermsEnum(terms, atts, Term, maxEdits, prefixLength, transpositions);
         }
 
         /// <summary>
@@ -180,21 +180,21 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return _term;
+                return term;
             }
         }
 
         public override string ToString(string field)
         {
             var buffer = new StringBuilder();
-            if (!_term.Field.Equals(field))
+            if (!term.Field.Equals(field))
             {
-                buffer.Append(_term.Field);
+                buffer.Append(term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(_term.Text());
+            buffer.Append(term.Text());
             buffer.Append('~');
-            buffer.Append(Convert.ToString(MaxEdits_Renamed));
+            buffer.Append(Convert.ToString(maxEdits));
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -203,11 +203,11 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + MaxEdits_Renamed;
-            result = prime * result + PrefixLength_Renamed;
-            result = prime * result + MaxExpansions;
-            result = prime * result + (Transpositions_Renamed ? 0 : 1);
-            result = prime * result + ((_term == null) ? 0 : _term.GetHashCode());
+            result = prime * result + maxEdits;
+            result = prime * result + prefixLength;
+            result = prime * result + maxExpansions;
+            result = prime * result + (transpositions ? 0 : 1);
+            result = prime * result + ((term == null) ? 0 : term.GetHashCode());
             return result;
         }
 
@@ -226,30 +226,30 @@ namespace Lucene.Net.Search
                 return false;
             }
             FuzzyQuery other = (FuzzyQuery)obj;
-            if (MaxEdits_Renamed != other.MaxEdits_Renamed)
+            if (maxEdits != other.maxEdits)
             {
                 return false;
             }
-            if (PrefixLength_Renamed != other.PrefixLength_Renamed)
+            if (prefixLength != other.prefixLength)
             {
                 return false;
             }
-            if (MaxExpansions != other.MaxExpansions)
+            if (maxExpansions != other.maxExpansions)
             {
                 return false;
             }
-            if (Transpositions_Renamed != other.Transpositions_Renamed)
+            if (transpositions != other.transpositions)
             {
                 return false;
             }
-            if (_term == null)
+            if (term == null)
             {
-                if (other._term != null)
+                if (other.term != null)
                 {
                     return false;
                 }
             }
-            else if (!_term.Equals(other._term))
+            else if (!term.Equals(other.term))
             {
                 return false;
             }
