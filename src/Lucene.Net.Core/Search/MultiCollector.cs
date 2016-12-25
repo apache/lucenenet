@@ -93,18 +93,18 @@ namespace Lucene.Net.Search
             }
         }
 
-        private readonly Collector[] Collectors; // LUCENENET TODO: Rename (private)
+        private readonly Collector[] collectors;
 
         private MultiCollector(params Collector[] collectors)
         {
-            this.Collectors = collectors;
+            this.collectors = collectors;
         }
 
         public override bool AcceptsDocsOutOfOrder
         {
             get
             {
-                foreach (Collector c in Collectors)
+                foreach (Collector c in collectors)
                 {
                     if (!c.AcceptsDocsOutOfOrder)
                     {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
 
         public override void Collect(int doc)
         {
-            foreach (Collector c in Collectors)
+            foreach (Collector c in collectors)
             {
                 c.Collect(doc);
             }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 
         public override void SetNextReader(AtomicReaderContext context)
         {
-            foreach (Collector c in Collectors)
+            foreach (Collector c in collectors)
             {
                 c.SetNextReader(context);
             }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
         
         public override void SetScorer(Scorer scorer)
         {
-            foreach (Collector c in Collectors)
+            foreach (Collector c in collectors)
             {
                 c.SetScorer(scorer);
             }
