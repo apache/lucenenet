@@ -25,8 +25,8 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class FilteredDocIdSetIterator : DocIdSetIterator
     {
-        protected DocIdSetIterator _innerIter; // LUCENENET TODO: Rename
-        private int Doc;
+        protected DocIdSetIterator m_innerIter;
+        private int doc;
 
         /// <summary>
         /// Constructor. </summary>
@@ -37,8 +37,8 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("null iterator");
             }
-            _innerIter = innerIter;
-            Doc = -1;
+            m_innerIter = innerIter;
+            doc = -1;
         }
 
         /// <summary>
@@ -50,48 +50,48 @@ namespace Lucene.Net.Search
 
         public override int DocID
         {
-            get { return Doc; }
+            get { return doc; }
         }
 
         public override int NextDoc()
         {
-            while ((Doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+            while ((doc = m_innerIter.NextDoc()) != NO_MORE_DOCS)
             {
-                if (Match(Doc))
+                if (Match(doc))
                 {
-                    return Doc;
+                    return doc;
                 }
             }
-            return Doc;
+            return doc;
         }
 
         public override int Advance(int target)
         {
-            Doc = _innerIter.Advance(target);
-            if (Doc != NO_MORE_DOCS)
+            doc = m_innerIter.Advance(target);
+            if (doc != NO_MORE_DOCS)
             {
-                if (Match(Doc))
+                if (Match(doc))
                 {
-                    return Doc;
+                    return doc;
                 }
                 else
                 {
-                    while ((Doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+                    while ((doc = m_innerIter.NextDoc()) != NO_MORE_DOCS)
                     {
-                        if (Match(Doc))
+                        if (Match(doc))
                         {
-                            return Doc;
+                            return doc;
                         }
                     }
-                    return Doc;
+                    return doc;
                 }
             }
-            return Doc;
+            return doc;
         }
 
         public override long Cost()
         {
-            return _innerIter.Cost();
+            return m_innerIter.Cost();
         }
     }
 }
