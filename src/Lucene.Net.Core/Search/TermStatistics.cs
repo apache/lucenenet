@@ -27,41 +27,40 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermStatistics
     {
-        // LUCENENET TODO: Rename (private)
-        private readonly BytesRef Term_Renamed;
-        private readonly long DocFreq_Renamed;
-        private readonly long TotalTermFreq_Renamed;
+        private readonly BytesRef term;
+        private readonly long docFreq;
+        private readonly long totalTermFreq;
 
         public TermStatistics(BytesRef term, long docFreq, long totalTermFreq)
         {
             Debug.Assert(docFreq >= 0);
             Debug.Assert(totalTermFreq == -1 || totalTermFreq >= docFreq); // #positions must be >= #postings
-            this.Term_Renamed = term;
-            this.DocFreq_Renamed = docFreq;
-            this.TotalTermFreq_Renamed = totalTermFreq;
+            this.term = term;
+            this.docFreq = docFreq;
+            this.totalTermFreq = totalTermFreq;
         }
 
         /// <summary>
         /// returns the term text </summary>
-        public BytesRef Term() // LUCENENET TODO: Make property
+        public BytesRef Term
         {
-            return Term_Renamed;
+            get { return term; }
         }
 
         /// <summary>
         /// returns the number of documents this term occurs in </summary>
         /// <seealso cref= TermsEnum#docFreq()  </seealso>
-        public long DocFreq() // LUCENENET TODO: Make property
+        public long DocFreq
         {
-            return DocFreq_Renamed;
+            get { return docFreq; }
         }
 
         /// <summary>
         /// returns the total number of occurrences of this term </summary>
         /// <seealso cref= TermsEnum#totalTermFreq()  </seealso>
-        public long TotalTermFreq() // LUCENENET TODO: Make property
+        public long TotalTermFreq
         {
-            return TotalTermFreq_Renamed;
+            get { return totalTermFreq; }
         }
     }
 }

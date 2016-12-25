@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Payloads
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = scorer.SloppyFreq();
+                        float freq = scorer.SloppyFreq;
                         Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                         Explanation expl = new Explanation();
                         expl.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";

@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spans
                 int newDoc = scorer.Advance(doc);
                 if (newDoc == doc)
                 {
-                    float freq = scorer.SloppyFreq();
+                    float freq = scorer.SloppyFreq;
                     Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                     ComplexExplanation result = new ComplexExplanation();
                     result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";

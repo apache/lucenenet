@@ -106,11 +106,11 @@ namespace Lucene.Net.Search.Similarities
         protected internal virtual void FillBasicStats(BasicStats stats, CollectionStatistics collectionStats, TermStatistics termStats)
         {
             // #positions(field) must be >= #positions(term)
-            Debug.Assert(collectionStats.SumTotalTermFreq == -1 || collectionStats.SumTotalTermFreq >= termStats.TotalTermFreq());
+            Debug.Assert(collectionStats.SumTotalTermFreq == -1 || collectionStats.SumTotalTermFreq >= termStats.TotalTermFreq);
             long numberOfDocuments = collectionStats.MaxDoc;
 
-            long docFreq = termStats.DocFreq();
-            long totalTermFreq = termStats.TotalTermFreq();
+            long docFreq = termStats.DocFreq;
+            long totalTermFreq = termStats.TotalTermFreq;
 
             // codec does not supply totalTermFreq: substitute docFreq
             if (totalTermFreq == -1)

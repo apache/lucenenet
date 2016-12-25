@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
                             Debug.Assert(subStats != null);
                         }
 
-                        long nodeDocFreq = subStats.DocFreq();
+                        long nodeDocFreq = subStats.DocFreq;
                         if (docFreq >= 0 && nodeDocFreq >= 0)
                         {
                             docFreq += nodeDocFreq;
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search
                             docFreq = -1;
                         }
 
-                        long nodeTotalTermFreq = subStats.TotalTermFreq();
+                        long nodeTotalTermFreq = subStats.TotalTermFreq;
                         if (totalTermFreq >= 0 && nodeTotalTermFreq >= 0)
                         {
                             totalTermFreq += nodeTotalTermFreq;
