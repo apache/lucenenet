@@ -97,16 +97,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower() // LUCENENET TODO: Make property
+        public virtual bool IncludesLower
         {
-            return Query.IncludesLower();
+            get { return Query.IncludesLower; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper() // LUCENENET TODO: Make property
+        public virtual bool IncludesUpper
         {
-            return Query.IncludesUpper();
+            get { return Query.IncludesUpper; }
         }
     }
 }

@@ -110,16 +110,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower() // LUCENENET TODO: Make property
+        public virtual bool IncludesLower
         {
-            return IncludeLower;
+            get { return IncludeLower; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper() // LUCENENET TODO: Make property
+        public virtual bool IncludesUpper
         {
-            return IncludeUpper;
+            get { return IncludeUpper; }
         }
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)

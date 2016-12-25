@@ -187,8 +187,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                     upperBound = new CharsRef(tq.UpperTerm.Utf8ToString());
                 }
 
-                includeLower = tq.IncludesLower();
-                includeUpper = tq.IncludesUpper();
+                includeLower = tq.IncludesLower;
+                includeUpper = tq.IncludesUpper;
             }
 
             public override bool Run(char[] s, int offset, int length)
