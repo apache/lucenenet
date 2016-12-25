@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         /// Just wraps a Scorer and performs top scoring using it. </summary>
         internal class DefaultBulkScorer : BulkScorer
         {
-            internal readonly Scorer Scorer; // LUCENENET TODO: Rename (private)
+            internal readonly Scorer scorer;
 
             public DefaultBulkScorer(Scorer scorer)
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
                 {
                     throw new System.NullReferenceException();
                 }
-                this.Scorer = scorer;
+                this.scorer = scorer;
             }
 
             public override bool Score(Collector collector, int max)
@@ -158,20 +158,20 @@ namespace Lucene.Net.Search
                 // then, scorer is a FakeScorer in that case, so any
                 // Collector doing something "interesting" in
                 // setScorer will be forced to use BS2 anyways:
-                collector.SetScorer(Scorer);
+                collector.SetScorer(scorer);
                 if (max == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    ScoreAll(collector, Scorer);
+                    ScoreAll(collector, scorer);
                     return false;
                 }
                 else
                 {
-                    int doc = Scorer.DocID;
+                    int doc = scorer.DocID;
                     if (doc < 0)
                     {
-                        doc = Scorer.NextDoc();
+                        doc = scorer.NextDoc();
                     }
-                    return ScoreRange(collector, Scorer, doc, max);
+                    return ScoreRange(collector, scorer, doc, max);
                 }
             }
 
