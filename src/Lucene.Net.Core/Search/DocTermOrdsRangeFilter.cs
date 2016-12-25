@@ -36,19 +36,19 @@ namespace Lucene.Net.Search
 
     public abstract class DocTermOrdsRangeFilter : Filter
     {
-        internal readonly string Field_Renamed; // LUCENENET TODO: rename (private)
-        internal readonly BytesRef LowerVal_Renamed; // LUCENENET TODO: rename (private)
-        internal readonly BytesRef UpperVal_Renamed; // LUCENENET TODO: rename (private)
-        internal readonly bool IncludeLower; // LUCENENET TODO: rename (private)
-        internal readonly bool IncludeUpper; // LUCENENET TODO: rename (private)
+        internal readonly string field;
+        internal readonly BytesRef lowerVal;
+        internal readonly BytesRef upperVal;
+        internal readonly bool includeLower;
+        internal readonly bool includeUpper;
 
         private DocTermOrdsRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
-            this.Field_Renamed = field;
-            this.LowerVal_Renamed = lowerVal;
-            this.UpperVal_Renamed = upperVal;
-            this.IncludeLower = includeLower;
-            this.IncludeUpper = includeUpper;
+            this.field = field;
+            this.lowerVal = lowerVal;
+            this.upperVal = upperVal;
+            this.includeLower = includeLower;
+            this.includeUpper = includeUpper;
         }
 
         /// <summary>
@@ -67,28 +67,16 @@ namespace Lucene.Net.Search
 
         private class DocTermOrdsRangeFilterAnonymousInnerClassHelper : DocTermOrdsRangeFilter
         {
-            // LUCENENET TODO: should rely on base class for these variables
-            private new string Field;
-            private new BytesRef LowerVal;
-            private new BytesRef UpperVal;
-            private new bool IncludeLower;
-            private new bool IncludeUpper;
-
             public DocTermOrdsRangeFilterAnonymousInnerClassHelper(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, lowerVal, upperVal, includeLower, includeUpper)
             {
-                this.Field = field;
-                this.LowerVal = lowerVal;
-                this.UpperVal = upperVal;
-                this.IncludeLower = includeLower;
-                this.IncludeUpper = includeUpper;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, Field);
-                long lowerPoint = LowerVal == null ? -1 : docTermOrds.LookupTerm(LowerVal);
-                long upperPoint = UpperVal == null ? -1 : docTermOrds.LookupTerm(UpperVal);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, field);
+                long lowerPoint = lowerVal == null ? -1 : docTermOrds.LookupTerm(lowerVal);
+                long upperPoint = upperVal == null ? -1 : docTermOrds.LookupTerm(upperVal);
 
                 long inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -96,11 +84,11 @@ namespace Lucene.Net.Search
                 // * binarySearchLookup returns -1, if value was null.
                 // * the value is <0 if no exact hit was found, the returned value
                 //   is (-(insertion point) - 1)
-                if (lowerPoint == -1 && LowerVal == null)
+                if (lowerPoint == -1 && lowerVal == null)
                 {
                     inclusiveLowerPoint = 0;
                 }
-                else if (IncludeLower && lowerPoint >= 0)
+                else if (includeLower && lowerPoint >= 0)
                 {
                     inclusiveLowerPoint = lowerPoint;
                 }
@@ -113,11 +101,11 @@ namespace Lucene.Net.Search
                     inclusiveLowerPoint = Math.Max(0, -lowerPoint - 1);
                 }
 
-                if (upperPoint == -1 && UpperVal == null)
+                if (upperPoint == -1 && upperVal == null)
                 {
                     inclusiveUpperPoint = long.MaxValue;
                 }
-                else if (IncludeUpper && upperPoint >= 0)
+                else if (includeUpper && upperPoint >= 0)
                 {
                     inclusiveUpperPoint = upperPoint;
                 }
@@ -142,32 +130,32 @@ namespace Lucene.Net.Search
 
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
-                private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper OuterInstance; // LUCENENET TODO: rename (private)
+                private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance;
 
-                private readonly SortedSetDocValues DocTermOrds; // LUCENENET TODO: rename (private)
-                private readonly long InclusiveLowerPoint; // LUCENENET TODO: rename (private)
-                private readonly long InclusiveUpperPoint; // LUCENENET TODO: rename (private)
+                private readonly SortedSetDocValues docTermOrds;
+                private readonly long inclusiveLowerPoint;
+                private readonly long inclusiveUpperPoint;
 
                 public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
                     : base(maxDoc, acceptDocs)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.DocTermOrds = docTermOrds;
-                    this.InclusiveLowerPoint = inclusiveLowerPoint;
-                    this.InclusiveUpperPoint = inclusiveUpperPoint;
+                    this.outerInstance = outerInstance;
+                    this.docTermOrds = docTermOrds;
+                    this.inclusiveLowerPoint = inclusiveLowerPoint;
+                    this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
                 protected internal override sealed bool MatchDoc(int doc)
                 {
-                    DocTermOrds.SetDocument(doc);
+                    docTermOrds.SetDocument(doc);
                     long ord;
-                    while ((ord = DocTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+                    while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        if (ord > InclusiveUpperPoint)
+                        if (ord > inclusiveUpperPoint)
                         {
                             return false;
                         }
-                        else if (ord >= InclusiveLowerPoint)
+                        else if (ord >= inclusiveLowerPoint)
                         {
                             return true;
                         }
@@ -179,12 +167,12 @@ namespace Lucene.Net.Search
 
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(Field_Renamed)).Append(":");
-            return sb.Append(IncludeLower ? '[' : '{')
-                .Append((LowerVal_Renamed == null) ? "*" : LowerVal_Renamed.ToString())
+            StringBuilder sb = (new StringBuilder(field)).Append(":");
+            return sb.Append(includeLower ? '[' : '{')
+                .Append((lowerVal == null) ? "*" : lowerVal.ToString())
                 .Append(" TO ")
-                .Append((UpperVal_Renamed == null) ? "*" : UpperVal_Renamed.ToString())
-                .Append(IncludeUpper ? ']' : '}')
+                .Append((upperVal == null) ? "*" : upperVal.ToString())
+                .Append(includeUpper ? ']' : '}')
                 .ToString();
         }
 
@@ -200,15 +188,15 @@ namespace Lucene.Net.Search
             }
             DocTermOrdsRangeFilter other = (DocTermOrdsRangeFilter)o;
 
-            if (!this.Field_Renamed.Equals(other.Field_Renamed) || this.IncludeLower != other.IncludeLower || this.IncludeUpper != other.IncludeUpper)
+            if (!this.field.Equals(other.field) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {
                 return false;
             }
-            if (this.LowerVal_Renamed != null ? !this.LowerVal_Renamed.Equals(other.LowerVal_Renamed) : other.LowerVal_Renamed != null)
+            if (this.lowerVal != null ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
             {
                 return false;
             }
-            if (this.UpperVal_Renamed != null ? !this.UpperVal_Renamed.Equals(other.UpperVal_Renamed) : other.UpperVal_Renamed != null)
+            if (this.upperVal != null ? !this.upperVal.Equals(other.upperVal) : other.upperVal != null)
             {
                 return false;
             }
@@ -217,11 +205,11 @@ namespace Lucene.Net.Search
 
         public override sealed int GetHashCode()
         {
-            int h = Field_Renamed.GetHashCode();
-            h ^= (LowerVal_Renamed != null) ? LowerVal_Renamed.GetHashCode() : 550356204;
+            int h = field.GetHashCode();
+            h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
             h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-            h ^= (UpperVal_Renamed != null) ? UpperVal_Renamed.GetHashCode() : -1674416163;
-            h ^= (IncludeLower ? 1549299360 : -365038026) ^ (IncludeUpper ? 1721088258 : 1948649653);
+            h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
+            h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
             return h;
         }
 
@@ -231,7 +219,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Field_Renamed;
+                return field;
             }
         }
 
@@ -239,14 +227,14 @@ namespace Lucene.Net.Search
         /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
-            get { return IncludeLower; }
+            get { return includeLower; }
         }
 
         /// <summary>
         /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
-            get { return IncludeUpper; }
+            get { return includeUpper; }
         }
 
         /// <summary>
@@ -255,7 +243,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return LowerVal_Renamed;
+                return lowerVal;
             }
         }
 
@@ -265,7 +253,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return UpperVal_Renamed;
+                return upperVal;
             }
         }
     }
