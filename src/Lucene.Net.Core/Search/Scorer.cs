@@ -97,12 +97,12 @@ namespace Lucene.Net.Search
             /// Child Scorer. (note this is typically a direct child, and may
             /// itself also have children).
             /// </summary>
-            public readonly Scorer Child; // LUCENENET TODO: make property
+            public Scorer Child { get; private set; }
 
             /// <summary>
             /// An arbitrary string relating this scorer to the parent.
             /// </summary>
-            public readonly string Relationship; // LUCENENET TODO: make property
+            public string Relationship { get; private set; }
 
             /// <summary>
             /// Creates a new ChildScorer node with the specified relationship.
