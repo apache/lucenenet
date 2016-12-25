@@ -126,7 +126,7 @@ namespace Lucene.Net.Tests.Expressions
                     Expression expr = JavascriptCompiler.Compile(s.Field);
                     SimpleBindings simpleBindings = new SimpleBindings();
                     simpleBindings.Add(s);
-                    bool reverse = s.Type == SortFieldType.SCORE || s.Reverse;
+                    bool reverse = s.Type == SortFieldType.SCORE || s.IsReverse;
                     mutated[i] = expr.GetSortField(simpleBindings, reverse);
                 }
                 else

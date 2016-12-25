@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns whether the sort should be reversed. </summary>
         /// <returns>  True if natural order should be reversed. </returns>
-        public virtual bool Reverse // LUCENENET TODO: Rename IsReverse (consistency)
+        public virtual bool IsReverse
         {
             get
             {

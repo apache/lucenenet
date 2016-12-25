@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Grouping.Function
             SortField[] sortFields = sortWithinGroup.GetSort();
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].Reverse ? -1 : 1;
+                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
             }
         }
 

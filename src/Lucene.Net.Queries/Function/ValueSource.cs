@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function
             {
                 var context = NewContext(searcher);
                 outerInstance.CreateWeight(context, searcher);
-                return new SortField(Field, new ValueSourceComparatorSource(outerInstance, context), Reverse);
+                return new SortField(Field, new ValueSourceComparatorSource(outerInstance, context), IsReverse);
             }
         }
 

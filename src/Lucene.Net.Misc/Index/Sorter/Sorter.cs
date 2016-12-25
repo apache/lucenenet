@@ -264,7 +264,7 @@ namespace Lucene.Net.Index.Sorter
 
             for (int i = 0; i < fields.Length; i++)
             {
-                reverseMul[i] = fields[i].Reverse ? -1 : 1;
+                reverseMul[i] = fields[i].IsReverse ? -1 : 1;
                 comparators[i] = fields[i].GetComparator(1, i);
                 comparators[i].SetNextReader(reader.AtomicContext);
                 comparators[i].SetScorer(FAKESCORER);

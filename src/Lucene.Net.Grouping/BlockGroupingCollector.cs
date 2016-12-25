@@ -316,7 +316,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 SortField sortField = sortFields[i];
                 comparators[i] = sortField.GetComparator(topNGroups, i);
-                reversed[i] = sortField.Reverse ? -1 : 1;
+                reversed[i] = sortField.IsReverse ? -1 : 1;
             }
         }
 

@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
 
         private int PhraseFreq()
         {
-            freq = 0; // LUCENENET TODO: rename (private)
+            freq = 0;
 
             // init chunks
             for (int i = 0; i < chunkStates.Length; i++)

@@ -608,7 +608,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                     if (cmp != 0)
                     {
-                        return sf.Reverse ? -cmp : cmp;
+                        return sf.IsReverse ? -cmp : cmp;
                     }
                 }
                 // Our sort always fully tie breaks:

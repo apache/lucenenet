@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
             m_reverseMul = new int[numComparators];
         }
 
-        public virtual FieldComparator[] Comparators // LUCENENET TODO: Make GetComparators() (array)
+        public virtual FieldComparator[] Comparators // LUCENENET TODO: Make GetComparators() (array) rename GetComparers
         {
             get
             {

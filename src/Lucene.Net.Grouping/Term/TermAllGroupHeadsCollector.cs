@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             SortField[] sortFields = sortWithinGroup.GetSort();
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].Reverse ? -1 : 1;
+                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
             }
         }
 
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             sortsIndex = new SortedDocValues[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].Reverse ? -1 : 1;
+                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             sortsIndex = new SortedDocValues[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].Reverse ? -1 : 1;
+                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             fields = new SortField[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].Reverse ? -1 : 1;
+                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }

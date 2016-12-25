@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     SortField sortField = sortFields[compIDX];
                     comparators[compIDX] = sortField.GetComparator(1, compIDX);
-                    reversed[compIDX] = sortField.Reverse ? -1 : 1;
+                    reversed[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
 

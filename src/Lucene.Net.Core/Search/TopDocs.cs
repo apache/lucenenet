@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                 {
                     SortField sortField = sortFields[compIDX];
                     comparators[compIDX] = sortField.GetComparator(1, compIDX);
-                    reverseMul[compIDX] = sortField.Reverse ? -1 : 1;
+                    reverseMul[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
 

@@ -115,7 +115,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("<sortedset" + ": \"").Append(Field).Append("\">");
-            if (Reverse) buffer.Append('!');
+            if (IsReverse) buffer.Append('!');
             if (missingValue != null)
             {
                 buffer.Append(" missingValue=");

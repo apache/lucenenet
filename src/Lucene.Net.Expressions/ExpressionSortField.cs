@@ -71,7 +71,7 @@ namespace Lucene.Net.Expressions
 			buffer.Append("<expr \"");
 			buffer.Append(Field);
 			buffer.Append("\">");
-			if (Reverse)
+			if (IsReverse)
 			{
 				buffer.Append('!');
 			}

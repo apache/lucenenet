@@ -80,7 +80,7 @@ namespace Lucene.Net.Index.Sorter
             FieldComparator[] parentComparators = new FieldComparator[parentFields.Length];
             for (int i = 0; i < parentFields.Length; i++)
             {
-                parentReverseMul[i] = parentFields[i].Reverse ? -1 : 1;
+                parentReverseMul[i] = parentFields[i].IsReverse ? -1 : 1;
                 parentComparators[i] = parentFields[i].GetComparator(1, i);
             }
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index.Sorter
             FieldComparator[] childComparators = new FieldComparator[childFields.Length];
             for (int i = 0; i < childFields.Length; i++)
             {
-                childReverseMul[i] = childFields[i].Reverse ? -1 : 1;
+                childReverseMul[i] = childFields[i].IsReverse ? -1 : 1;
                 childComparators[i] = childFields[i].GetComparator(1, i);
             }
 

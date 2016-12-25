@@ -96,25 +96,25 @@ namespace Lucene.Net.Search
                 SortField sf = AllSortFields[i];
                 if (sf.Type == SortFieldType.INT)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortFieldType.INT, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.INT, sf.IsReverse);
                     sf2.SetMissingValue(Random().Next());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.LONG)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortFieldType.LONG, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.LONG, sf.IsReverse);
                     sf2.SetMissingValue(Random().NextLong());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.FLOAT)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortFieldType.FLOAT, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.FLOAT, sf.IsReverse);
                     sf2.SetMissingValue((float)Random().NextDouble());
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.DOUBLE)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.IsReverse);
                     sf2.SetMissingValue(Random().NextDouble());
                     AllSortFields.Add(sf2);
                 }

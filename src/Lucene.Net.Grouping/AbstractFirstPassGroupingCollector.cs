@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Grouping
 
                 // use topNGroups + 1 so we have a spare slot to use for comparing (tracked by this.spareSlot):
                 comparators[i] = sortField.GetComparator(topNGroups + 1, i);
-                reversed[i] = sortField.Reverse ? -1 : 1;
+                reversed[i] = sortField.IsReverse ? -1 : 1;
             }
 
             spareSlot = topNGroups;
