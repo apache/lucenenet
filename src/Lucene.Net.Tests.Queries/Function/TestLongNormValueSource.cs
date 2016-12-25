@@ -81,7 +81,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 expectedDocs[i] = i;
                 expected[i] = new ScoreDoc(i, scores[i]);
             }
-            TopDocs docs = searcher.Search(q, 2, new Sort(new SortField("id", SortField.Type_e.STRING)));
+            TopDocs docs = searcher.Search(q, 2, new Sort(new SortField("id", SortFieldType.STRING)));
 
             /*
             for (int i=0;i<docs.scoreDocs.length;i++) {

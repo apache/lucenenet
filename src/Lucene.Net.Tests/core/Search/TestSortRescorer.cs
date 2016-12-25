@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual("2", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 
             // Now, rescore:
-            Sort sort = new Sort(new SortField("popularity", SortField.Type_e.INT, true));
+            Sort sort = new Sort(new SortField("popularity", SortFieldType.INT, true));
             Rescorer rescorer = new SortRescorer(sort);
             hits = rescorer.Rescore(Searcher, hits, 10);
             Assert.AreEqual(3, hits.TotalHits);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 
             TopDocs hits = s.Search(new TermQuery(new Term("field", "a")), numHits);
 
-            Rescorer rescorer = new SortRescorer(new Sort(new SortField("num", SortField.Type_e.INT, reverse)));
+            Rescorer rescorer = new SortRescorer(new Sort(new SortField("num", SortFieldType.INT, reverse)));
             TopDocs hits2 = rescorer.Rescore(s, hits, numHits);
 
             int[] expected = new int[numHits];

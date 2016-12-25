@@ -13,10 +13,10 @@ namespace Lucene.Net.Tests.Expressions
 		public virtual void TestValidExternals()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid0", SortField.Type_e.INT));
-			bindings.Add(new SortField("valid1", SortField.Type_e.INT));
-			bindings.Add(new SortField("valid2", SortField.Type_e.INT));
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("valid0", SortFieldType.INT));
+			bindings.Add(new SortField("valid1", SortFieldType.INT));
+			bindings.Add(new SortField("valid2", SortFieldType.INT));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			bindings.Add("valide0", JavascriptCompiler.Compile("valid0 - valid1 + valid2 + _score"
 				));
 			bindings.Validate();
@@ -30,7 +30,7 @@ namespace Lucene.Net.Tests.Expressions
 		public virtual void TestInvalidExternal()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid", SortField.Type_e.INT));
+			bindings.Add(new SortField("valid", SortFieldType.INT));
 			bindings.Add("invalid", JavascriptCompiler.Compile("badreference"));
 			try
 			{
@@ -47,7 +47,7 @@ namespace Lucene.Net.Tests.Expressions
 		public virtual void TestInvalidExternal2()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid", SortField.Type_e.INT));
+			bindings.Add(new SortField("valid", SortFieldType.INT));
 			bindings.Add("invalid", JavascriptCompiler.Compile("valid + badreference"));
 			try
 			{

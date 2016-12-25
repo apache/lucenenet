@@ -75,8 +75,8 @@ namespace Lucene.Net.Tests.Expressions
 			var expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			// we use SimpleBindings: which just maps variables to SortField instances
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
-			bindings.Add(new SortField("popularity", SortField.Type_e.INT));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
+			bindings.Add(new SortField("popularity", SortFieldType.INT));
 			// create a sort field and sort by it (reverse order)
 			Sort sort = new Sort(expr.GetSortField(bindings, true));
 			Query query = new TermQuery(new Term("body", "contents"));
@@ -89,7 +89,7 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			var expr = JavascriptCompiler.Compile("sqrt(_score)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			Sort sort = new Sort(expr.GetSortField(bindings, true));
 			Query query = new TermQuery(new Term("body", "contents"));
 			TopFieldDocs td = searcher.Search(query, null, 3, sort, true, true);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			var expr = JavascriptCompiler.Compile("_score + _score");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			Sort sort = new Sort(expr.GetSortField(bindings, true));
 			Query query = new TermQuery(new Term("body", "contents"));
 			TopFieldDocs td = searcher.Search(query, null, 3, sort, true, true);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Tests.Expressions
 			var expr1 = JavascriptCompiler.Compile("_score");
 			var expr2 = JavascriptCompiler.Compile("2*expr1");
 			var bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			bindings.Add("expr1", expr1);
 			Sort sort = new Sort(expr2.GetSortField(bindings, true));
 			Query query = new TermQuery(new Term("body", "contents"));
@@ -167,7 +167,7 @@ namespace Lucene.Net.Tests.Expressions
 					sb.Append("+");
 				}
 				sb.Append("x" + i);
-				bindings.Add(new SortField("x" + i, SortField.Type_e.SCORE));
+				bindings.Add(new SortField("x" + i, SortFieldType.SCORE));
 			}
 			var expr = JavascriptCompiler.Compile(sb.ToString());
 			var sort = new Sort(expr.GetSortField(bindings, true));
@@ -187,8 +187,8 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			var distance = JavascriptCompiler.Compile("haversin(40.7143528,-74.0059731,latitude,longitude)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("latitude", SortField.Type_e.DOUBLE));
-			bindings.Add(new SortField("longitude", SortField.Type_e.DOUBLE));
+			bindings.Add(new SortField("latitude", SortFieldType.DOUBLE));
+			bindings.Add(new SortField("longitude", SortFieldType.DOUBLE));
 			Sort sort = new Sort(distance.GetSortField(bindings, false));
 			TopFieldDocs td = searcher.Search(new MatchAllDocsQuery(), null, 3, sort);
 			FieldDoc d = (FieldDoc)td.ScoreDocs[0];

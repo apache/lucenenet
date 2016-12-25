@@ -487,15 +487,15 @@ namespace Lucene.Net.Tests.Join
             // sortFields.Add(SortField.FIELD_SCORE);
             if (Random().NextBoolean())
             {
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortField.Type_e.STRING, Random().NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
             }
             else if (Random().NextBoolean())
             {
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortField.Type_e.STRING, Random().NextBoolean()));
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortField.Type_e.STRING, Random().NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
             }
             // Break ties:
-            sortFields.Add(new SortField(prefix + "ID", SortField.Type_e.INT));
+            sortFields.Add(new SortField(prefix + "ID", SortFieldType.INT));
             return new Sort(sortFields.ToArray());
         }
 
@@ -1403,7 +1403,7 @@ namespace Lucene.Net.Tests.Join
             parentQuery.Add(childJoinQuery, Occur.SHOULD);
             parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
-            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
+            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
             TopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
 
@@ -1469,7 +1469,7 @@ namespace Lucene.Net.Tests.Join
             parentQuery.Add(childJoinQuery, Occur.SHOULD);
             parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
-            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
+            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
             TopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
 
@@ -1535,7 +1535,7 @@ namespace Lucene.Net.Tests.Join
             parentQuery.Add(childJoinQuery, Occur.SHOULD);
             parentQuery.Add(new TermQuery(new Term("parentText", "text")), Occur.SHOULD);
 
-            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
+            ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
 
             Assert.Throws<InvalidOperationException>(() => NewSearcher(r).Search(parentQuery, c));
 

@@ -180,16 +180,16 @@ namespace Lucene.Net.Search
             }
 
             IList<SortField> sortFields = new List<SortField>();
-            sortFields.Add(new SortField("string", SortField.Type_e.STRING, true));
-            sortFields.Add(new SortField("string", SortField.Type_e.STRING, false));
-            sortFields.Add(new SortField("int", SortField.Type_e.INT, true));
-            sortFields.Add(new SortField("int", SortField.Type_e.INT, false));
-            sortFields.Add(new SortField("float", SortField.Type_e.FLOAT, true));
-            sortFields.Add(new SortField("float", SortField.Type_e.FLOAT, false));
-            sortFields.Add(new SortField(null, SortField.Type_e.SCORE, true));
-            sortFields.Add(new SortField(null, SortField.Type_e.SCORE, false));
-            sortFields.Add(new SortField(null, SortField.Type_e.DOC, true));
-            sortFields.Add(new SortField(null, SortField.Type_e.DOC, false));
+            sortFields.Add(new SortField("string", SortFieldType.STRING, true));
+            sortFields.Add(new SortField("string", SortFieldType.STRING, false));
+            sortFields.Add(new SortField("int", SortFieldType.INT, true));
+            sortFields.Add(new SortField("int", SortFieldType.INT, false));
+            sortFields.Add(new SortField("float", SortFieldType.FLOAT, true));
+            sortFields.Add(new SortField("float", SortFieldType.FLOAT, false));
+            sortFields.Add(new SortField(null, SortFieldType.SCORE, true));
+            sortFields.Add(new SortField(null, SortFieldType.SCORE, false));
+            sortFields.Add(new SortField(null, SortFieldType.DOC, true));
+            sortFields.Add(new SortField(null, SortFieldType.DOC, false));
 
             for (int iter = 0; iter < 1000 * RANDOM_MULTIPLIER; iter++)
             {

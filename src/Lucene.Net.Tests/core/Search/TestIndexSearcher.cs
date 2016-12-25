@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher[] searchers = new IndexSearcher[] { new IndexSearcher(Reader), new IndexSearcher(Reader, service) };
             Query[] queries = new Query[] { new MatchAllDocsQuery(), new TermQuery(new Term("field", "1")) };
-            Sort[] sorts = new Sort[] { null, new Sort(new SortField("field2", SortField.Type_e.STRING)) };
+            Sort[] sorts = new Sort[] { null, new Sort(new SortField("field2", SortFieldType.STRING)) };
             Filter[] filters = new Filter[] { null, new QueryWrapperFilter(new TermQuery(new Term("field2", "true"))) };
             ScoreDoc[] afters = new ScoreDoc[] { null, new FieldDoc(0, 0f, new object[] { new BytesRef("boo!") }) };
 

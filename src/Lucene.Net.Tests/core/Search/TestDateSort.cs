@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
         {
             IndexSearcher searcher = NewSearcher(Reader);
 
-            Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.Type_e.STRING, true));
+            Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortFieldType.STRING, true));
             Query query = new TermQuery(new Term(TEXT_FIELD, "document"));
 
             // Execute the search and process the search results.

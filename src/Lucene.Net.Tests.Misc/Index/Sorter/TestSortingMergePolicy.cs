@@ -39,7 +39,7 @@ namespace Lucene.Net.Index.Sorter
         public override void SetUp()
         {
             base.SetUp();
-            sort = new Sort(new SortField("ndv", SortField.Type_e.LONG));
+            sort = new Sort(new SortField("ndv", SortFieldType.LONG));
             CreateRandomIndexes();
         }
 

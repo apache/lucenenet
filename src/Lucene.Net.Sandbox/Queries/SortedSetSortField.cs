@@ -80,7 +80,7 @@ namespace Lucene.Net.Sandbox.Queries
         /// NOTE: selectors other than <see cref="Selector.MIN"/> require optional codec support.
         /// </param>
         public SortedSetSortField(string field, bool reverse, Selector selector)
-            : base(field, SortField.Type_e.CUSTOM, reverse)
+            : base(field, SortFieldType.CUSTOM, reverse)
         {
             // LUCENENET NOTE: Selector enum cannot be null in .NET, so we avoid this issue by not making the parameter nullable
             //if (selector == null)

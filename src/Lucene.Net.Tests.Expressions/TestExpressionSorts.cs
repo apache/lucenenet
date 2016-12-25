@@ -96,11 +96,11 @@ namespace Lucene.Net.Tests.Expressions
             {
                 bool reversed = Random().NextBoolean();
                 SortField[] fields =
-				{ new SortField("int", SortField.Type_e.INT, reversed
-				    ), new SortField("long", SortField.Type_e.LONG, reversed), new SortField("float", 
-				        SortField.Type_e.FLOAT, reversed), new SortField("double", SortField.Type_e.DOUBLE, 
-				            reversed), new SortField("intdocvalues", SortField.Type_e.INT, reversed), new SortField
-				                ("floatdocvalues", SortField.Type_e.FLOAT, reversed), new SortField("score", SortField.Type_e.SCORE) };
+				{ new SortField("int", SortFieldType.INT, reversed
+				    ), new SortField("long", SortFieldType.LONG, reversed), new SortField("float", 
+				        SortFieldType.FLOAT, reversed), new SortField("double", SortFieldType.DOUBLE, 
+				            reversed), new SortField("intdocvalues", SortFieldType.INT, reversed), new SortField
+				                ("floatdocvalues", SortFieldType.FLOAT, reversed), new SortField("score", SortFieldType.SCORE) };
                 //TODO: Add Shuffle extension
                 //Collections.Shuffle(Arrays.AsList(fields), Random());
                 int numSorts = TestUtil.NextInt(Random(), 1, fields.Length);
@@ -126,7 +126,7 @@ namespace Lucene.Net.Tests.Expressions
                     Expression expr = JavascriptCompiler.Compile(s.Field);
                     SimpleBindings simpleBindings = new SimpleBindings();
                     simpleBindings.Add(s);
-                    bool reverse = s.Type == SortField.Type_e.SCORE || s.Reverse;
+                    bool reverse = s.Type == SortFieldType.SCORE || s.Reverse;
                     mutated[i] = expr.GetSortField(simpleBindings, reverse);
                 }
                 else

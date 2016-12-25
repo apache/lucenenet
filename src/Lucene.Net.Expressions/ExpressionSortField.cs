@@ -14,7 +14,7 @@ namespace Lucene.Net.Expressions
 		private readonly ExpressionValueSource source;
 
 		internal ExpressionSortField(string name, ExpressionValueSource source, bool reverse
-			) : base(name, Type_e.CUSTOM, reverse)
+			) : base(name, SortFieldType.CUSTOM, reverse)
 		{
 			this.source = source;
 		}

@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         {
             // log("Run testFieldSortCustomSearcher");
             // define the sort criteria
-            Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type_e.STRING), SortField.FIELD_SCORE);
+            Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
             IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
         {
             // log("Run testFieldSortSingleSearcher");
             // define the sort criteria
-            Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type_e.STRING), SortField.FIELD_SCORE);
+            Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
             IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);

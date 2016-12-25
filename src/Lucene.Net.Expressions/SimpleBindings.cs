@@ -74,27 +74,27 @@ namespace Lucene.Net.Expressions
             SortField field = (SortField)o;
             switch (field.Type)
             {
-                case SortField.Type_e.INT:
+                case SortFieldType.INT:
                     {
                         return new IntFieldSource(field.Field, (FieldCache.IIntParser)field.Parser);
                     }
 
-                case SortField.Type_e.LONG:
+                case SortFieldType.LONG:
                     {
                         return new LongFieldSource(field.Field, (FieldCache.ILongParser)field.Parser);
                     }
 
-                case SortField.Type_e.FLOAT:
+                case SortFieldType.FLOAT:
                     {
                         return new FloatFieldSource(field.Field, (FieldCache.IFloatParser)field.Parser);
                     }
 
-                case SortField.Type_e.DOUBLE:
+                case SortFieldType.DOUBLE:
                     {
                         return new DoubleFieldSource(field.Field, (FieldCache.IDoubleParser)field.Parser);
                     }
 
-                case SortField.Type_e.SCORE:
+                case SortFieldType.SCORE:
                     {
                         return GetScoreValueSource();
                     }

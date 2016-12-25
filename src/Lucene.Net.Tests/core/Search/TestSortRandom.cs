@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
                 bool missingIsNull;
                 if (DefaultCodecSupportsDocValues() && random.NextBoolean())
                 {
-                    sf = new SortField("stringdv", SortField.Type_e.STRING, reverse);
+                    sf = new SortField("stringdv", SortFieldType.STRING, reverse);
                     // Can only use sort missing if the DVFormat
                     // supports docsWithField:
                     sortMissingLast = DefaultCodecSupportsDocsWithField() && Random().NextBoolean();
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    sf = new SortField("string", SortField.Type_e.STRING, reverse);
+                    sf = new SortField("string", SortFieldType.STRING, reverse);
                     sortMissingLast = Random().NextBoolean();
                     missingIsNull = true;
                 }

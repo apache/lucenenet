@@ -396,21 +396,21 @@ namespace Lucene.Net.Search.Grouping
                 {
                     if (Random().nextBoolean())
                     {
-                        sortFields.Add(new SortField("sort1", SortField.Type_e.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
                     }
                     else
                     {
-                        sortFields.Add(new SortField("sort2", SortField.Type_e.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
                     }
                 }
                 else if (Random().nextBoolean())
                 {
-                    sortFields.Add(new SortField("sort1", SortField.Type_e.STRING, Random().nextBoolean()));
-                    sortFields.Add(new SortField("sort2", SortField.Type_e.STRING, Random().nextBoolean()));
+                    sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
+                    sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
                 }
             }
             // Break ties:
-            sortFields.Add(new SortField("id", SortField.Type_e.INT));
+            sortFields.Add(new SortField("id", SortFieldType.INT));
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
 
@@ -429,7 +429,7 @@ namespace Lucene.Net.Search.Grouping
                 foreach (SortField sf in sortFields)
                 {
                     int cmp;
-                    if (sf.Type == SortField.Type_e.SCORE)
+                    if (sf.Type == SortFieldType.SCORE)
                     {
                         if (d1.score > d2.score)
                         {
@@ -482,7 +482,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 IComparable c;
                 SortField sf = sortFields[fieldIDX];
-                if (sf.Type == SortField.Type_e.SCORE)
+                if (sf.Type == SortFieldType.SCORE)
                 {
                     c = new float?(d.score);
                 }
@@ -999,7 +999,7 @@ namespace Lucene.Net.Search.Grouping
 
                         foreach (SortField sf in docSort.GetSort())
                         {
-                            if (sf.Type == SortField.Type_e.SCORE)
+                            if (sf.Type == SortFieldType.SCORE)
                             {
                                 getScores = true;
                                 break;
@@ -1008,7 +1008,7 @@ namespace Lucene.Net.Search.Grouping
 
                         foreach (SortField sf in groupSort.GetSort())
                         {
-                            if (sf.Type == SortField.Type_e.SCORE)
+                            if (sf.Type == SortFieldType.SCORE)
                             {
                                 getScores = true;
                                 break;
@@ -1384,7 +1384,7 @@ namespace Lucene.Net.Search.Grouping
                             IDictionary<float, float> termScoreMap = scoreMap[searchTerm];
                             for (int groupSortIDX = 0; groupSortIDX < sortFields.Length; groupSortIDX++)
                             {
-                                if (sortFields[groupSortIDX].Type == SortField.Type_e.SCORE)
+                                if (sortFields[groupSortIDX].Type == SortFieldType.SCORE)
                                 {
                                     foreach (var groupDocsHits in expectedGroups.Groups)
                                     {
@@ -1401,7 +1401,7 @@ namespace Lucene.Net.Search.Grouping
                             SortField[] docSortFields = docSort.GetSort();
                             for (int docSortIDX = 0; docSortIDX < docSortFields.Length; docSortIDX++)
                             {
-                                if (docSortFields[docSortIDX].Type == SortField.Type_e.SCORE)
+                                if (docSortFields[docSortIDX].Type == SortFieldType.SCORE)
                                 {
                                     foreach (var groupDocsHits in expectedGroups.Groups)
                                     {

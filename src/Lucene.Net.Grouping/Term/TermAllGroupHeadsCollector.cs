@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             foreach (SortField sortField in sortWithinGroup.GetSort())
             {
-                if (sortField.Type == SortField.Type_e.SCORE)
+                if (sortField.Type == SortFieldType.SCORE)
                 {
                     sortAllFieldValue = false;
                 }
@@ -128,9 +128,9 @@ namespace Lucene.Net.Search.Grouping.Terms
         /// </summary>
         private static bool NeedGeneralImpl(SortField sortField)
         {
-            SortField.Type_e sortType = sortField.Type;
+            SortFieldType sortType = sortField.Type;
             // Note (MvG): We can also make an optimized impl when sorting is SortField.DOC
-            return sortType != SortField.Type_e.STRING_VAL && sortType != SortField.Type_e.STRING && sortType != SortField.Type_e.SCORE;
+            return sortType != SortFieldType.STRING_VAL && sortType != SortFieldType.STRING && sortType != SortFieldType.SCORE;
         }
     }
 
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             groupIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
             for (int i = 0; i < fields.Length; i++)
             {
-                if (fields[i].Type == SortField.Type_e.SCORE)
+                if (fields[i].Type == SortFieldType.SCORE)
                 {
                     continue;
                 }
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
                     for (int i = 0; i < sortsIndex.Length; i++)
                     {
-                        if (fields[i].Type == SortField.Type_e.SCORE)
+                        if (fields[i].Type == SortFieldType.SCORE)
                         {
                             continue;
                         }
@@ -407,7 +407,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 scores = new float[outerInstance.sortsIndex.Length];
                 for (int i = 0; i < outerInstance.sortsIndex.Length; i++)
                 {
-                    if (outerInstance.fields[i].Type == SortField.Type_e.SCORE)
+                    if (outerInstance.fields[i].Type == SortFieldType.SCORE)
                     {
                         scores[i] = outerInstance.scorer.Score();
                     }
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             public override int Compare(int compIDX, int doc)
             {
-                if (outerInstance.fields[compIDX].Type == SortField.Type_e.SCORE)
+                if (outerInstance.fields[compIDX].Type == SortFieldType.SCORE)
                 {
                     float score = outerInstance.scorer.Score();
                     if (scores[compIDX] < score)
@@ -464,7 +464,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 for (int i = 0; i < outerInstance.sortsIndex.Length; i++)
                 {
-                    if (outerInstance.fields[i].Type == Search.SortField.Type_e.SCORE)
+                    if (outerInstance.fields[i].Type == SortFieldType.SCORE)
                     {
                         scores[i] = outerInstance.scorer.Score();
                     }

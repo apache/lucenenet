@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits[0].Doc);
             QueryUtils.Check(Random(), filteredquery, Searcher, Similarity);
 
-            hits = Searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortField.Type_e.STRING))).ScoreDocs;
+            hits = Searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortFieldType.STRING))).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(1, hits[0].Doc);
 

@@ -200,16 +200,16 @@ namespace Lucene.Net.Analysis
 			Search.Query queryX = new TermQuery(new Term("contents", "x"));
 			Search.Query queryY = new TermQuery(new Term("contents", "y"));
 
-			sort.SetSort(new SortField("US", SortField.Type_e.STRING));
+			sort.SetSort(new SortField("US", SortFieldType.STRING));
 			this.AssertMatches(searcher, queryY, sort, usResult);
 
-			sort.SetSort(new SortField("France", SortField.Type_e.STRING));
+			sort.SetSort(new SortField("France", SortFieldType.STRING));
 			this.AssertMatches(searcher, queryX, sort, frResult);
 
-			sort.SetSort(new SortField("Sweden", SortField.Type_e.STRING));
+			sort.SetSort(new SortField("Sweden", SortFieldType.STRING));
 			this.AssertMatches(searcher, queryY, sort, svResult);
 
-			sort.SetSort(new SortField("Denmark", SortField.Type_e.STRING));
+			sort.SetSort(new SortField("Denmark", SortFieldType.STRING));
 			this.AssertMatches(searcher, queryY, sort, dkResult);
 			reader.Dispose();
 			indexStore.Dispose();

@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Grouping
             w.Dispose();
             int maxDoc = reader.MaxDoc;
 
-            Sort sortWithinGroup = new Sort(new SortField("id_1", SortField.Type_e.INT, true));
+            Sort sortWithinGroup = new Sort(new SortField("id_1", SortFieldType.INT, true));
             var allGroupHeadsCollector = CreateRandomCollector(groupField, sortWithinGroup, canUseIDV, valueType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupHeadsCollector);
             assertTrue(ArrayContains(new int[] { 2, 3, 5, 7 }, allGroupHeadsCollector.RetrieveGroupHeads()));
@@ -140,13 +140,13 @@ namespace Lucene.Net.Search.Grouping
             assertTrue(OpenBitSetContains(new int[] { 1, 5 }, allGroupHeadsCollector.RetrieveGroupHeads(maxDoc), maxDoc));
 
             // STRING sort type triggers different implementation
-            Sort sortWithinGroup2 = new Sort(new SortField("id_2", SortField.Type_e.STRING, true));
+            Sort sortWithinGroup2 = new Sort(new SortField("id_2", SortFieldType.STRING, true));
             allGroupHeadsCollector = CreateRandomCollector(groupField, sortWithinGroup2, canUseIDV, valueType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupHeadsCollector);
             assertTrue(ArrayContains(new int[] { 2, 3, 5, 7 }, allGroupHeadsCollector.RetrieveGroupHeads()));
             assertTrue(OpenBitSetContains(new int[] { 2, 3, 5, 7 }, allGroupHeadsCollector.RetrieveGroupHeads(maxDoc), maxDoc));
 
-            Sort sortWithinGroup3 = new Sort(new SortField("id_2", SortField.Type_e.STRING, false));
+            Sort sortWithinGroup3 = new Sort(new SortField("id_2", SortFieldType.STRING, false));
             allGroupHeadsCollector = CreateRandomCollector(groupField, sortWithinGroup3, canUseIDV, valueType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupHeadsCollector);
             // 7 b/c higher doc id wins, even if order of field is in not in reverse.
@@ -529,27 +529,27 @@ namespace Lucene.Net.Search.Grouping
                 {
                     if (Random().nextBoolean())
                     {
-                        sortFields.Add(new SortField("sort1", SortField.Type_e.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
                     }
                     else
                     {
-                        sortFields.Add(new SortField("sort2", SortField.Type_e.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
                     }
                 }
                 else if (Random().nextBoolean())
                 {
-                    sortFields.Add(new SortField("sort1", SortField.Type_e.STRING, Random().nextBoolean()));
-                    sortFields.Add(new SortField("sort2", SortField.Type_e.STRING, Random().nextBoolean()));
+                    sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
+                    sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
                 }
             }
             // Break ties:
             if (Random().nextBoolean() && !scoreOnly)
             {
-                sortFields.Add(new SortField("sort3", SortField.Type_e.STRING));
+                sortFields.Add(new SortField("sort3", SortFieldType.STRING));
             }
             else if (!scoreOnly)
             {
-                sortFields.Add(new SortField("id", SortField.Type_e.INT));
+                sortFields.Add(new SortField("id", SortFieldType.INT));
             }
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Grouping
                 foreach (SortField sf in sortFields)
                 {
                     int cmp;
-                    if (sf.Type == SortField.Type_e.SCORE)
+                    if (sf.Type == SortFieldType.SCORE)
                     {
                         if (d1.score > d2.score)
                         {

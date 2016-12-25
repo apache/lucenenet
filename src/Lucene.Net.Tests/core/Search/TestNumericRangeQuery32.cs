@@ -644,7 +644,7 @@ namespace Lucene.Net.Search
                     upper = a;
                 }
                 Query tq = NumericRangeQuery.NewIntRange(field, precisionStep, lower, upper, true, true);
-                TopDocs topDocs = Searcher.Search(tq, null, NoDocs, new Sort(new SortField(field, SortField.Type_e.INT, true)));
+                TopDocs topDocs = Searcher.Search(tq, null, NoDocs, new Sort(new SortField(field, SortFieldType.INT, true)));
                 if (topDocs.TotalHits == 0)
                 {
                     continue;

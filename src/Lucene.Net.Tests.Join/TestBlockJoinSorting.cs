@@ -196,7 +196,7 @@ namespace Lucene.Net.Tests.Join
             ToParentBlockJoinQuery query = new ToParentBlockJoinQuery(new FilteredQuery(new MatchAllDocsQuery(), childFilter), new FixedBitSetCachingWrapperFilter(parentFilter), ScoreMode.None);
 
             // Sort by field ascending, order first
-            ToParentBlockJoinSortField sortField = new ToParentBlockJoinSortField("field2", SortField.Type_e.STRING, false, Wrap(parentFilter), Wrap(childFilter));
+            ToParentBlockJoinSortField sortField = new ToParentBlockJoinSortField("field2", SortFieldType.STRING, false, Wrap(parentFilter), Wrap(childFilter));
             Sort sort = new Sort(sortField);
             TopFieldDocs topDocs = searcher.Search(query, 5, sort);
             assertEquals(7, topDocs.TotalHits);
@@ -213,7 +213,7 @@ namespace Lucene.Net.Tests.Join
             assertEquals("i", ((BytesRef)((FieldDoc)topDocs.ScoreDocs[4]).Fields[0]).Utf8ToString());
 
             // Sort by field ascending, order last
-            sortField = new ToParentBlockJoinSortField("field2", SortField.Type_e.STRING, false, true, Wrap(parentFilter), Wrap(childFilter));
+            sortField = new ToParentBlockJoinSortField("field2", SortFieldType.STRING, false, true, Wrap(parentFilter), Wrap(childFilter));
             sort = new Sort(sortField);
             topDocs = searcher.Search(query, 5, sort);
             assertEquals(7, topDocs.TotalHits);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Tests.Join
             assertEquals("k", ((BytesRef)((FieldDoc)topDocs.ScoreDocs[4]).Fields[0]).Utf8ToString());
 
             // Sort by field descending, order last
-            sortField = new ToParentBlockJoinSortField("field2", SortField.Type_e.STRING, true, Wrap(parentFilter), Wrap(childFilter));
+            sortField = new ToParentBlockJoinSortField("field2", SortFieldType.STRING, true, Wrap(parentFilter), Wrap(childFilter));
             sort = new Sort(sortField);
             topDocs = searcher.Search(query, 5, sort);
             assertEquals(topDocs.TotalHits, 7);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Tests.Join
             // Sort by field descending, order last, sort filter (filter_1:T)
             childFilter = new QueryWrapperFilter(new TermQuery((new Term("filter_1", "T"))));
             query = new ToParentBlockJoinQuery(new FilteredQuery(new MatchAllDocsQuery(), childFilter), new FixedBitSetCachingWrapperFilter(parentFilter), ScoreMode.None);
-            sortField = new ToParentBlockJoinSortField("field2", SortField.Type_e.STRING, true, Wrap(parentFilter), Wrap(childFilter));
+            sortField = new ToParentBlockJoinSortField("field2", SortFieldType.STRING, true, Wrap(parentFilter), Wrap(childFilter));
             sort = new Sort(sortField);
             topDocs = searcher.Search(query, 5, sort);
             assertEquals(6, topDocs.TotalHits);

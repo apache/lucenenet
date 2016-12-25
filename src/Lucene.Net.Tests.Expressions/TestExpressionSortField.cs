@@ -12,8 +12,8 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
-			bindings.Add(new SortField("popularity", SortField.Type_e.INT));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
+			bindings.Add(new SortField("popularity", SortFieldType.INT));
 			SortField sf = expr.GetSortField(bindings, true);
 			AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString());
 		}
@@ -23,11 +23,11 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
-			bindings.Add(new SortField("popularity", SortField.Type_e.INT));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
+			bindings.Add(new SortField("popularity", SortFieldType.INT));
 			SimpleBindings otherBindings = new SimpleBindings();
-			otherBindings.Add(new SortField("_score", SortField.Type_e.LONG));
-			otherBindings.Add(new SortField("popularity", SortField.Type_e.INT));
+			otherBindings.Add(new SortField("_score", SortFieldType.LONG));
+			otherBindings.Add(new SortField("popularity", SortFieldType.INT));
 			SortField sf1 = expr.GetSortField(bindings, true);
 			// different order
 			SortField sf2 = expr.GetSortField(bindings, false);
@@ -67,8 +67,8 @@ namespace Lucene.Net.Tests.Expressions
 			Expression exprH = JavascriptCompiler.Compile("b / c + e * g - sqrt(f)");
 			// several variables
 			Expression exprI = JavascriptCompiler.Compile("b / c + e * g");
-			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
-			bindings.Add(new SortField("intfield", SortField.Type_e.INT));
+			bindings.Add(new SortField("_score", SortFieldType.SCORE));
+			bindings.Add(new SortField("intfield", SortFieldType.INT));
 			bindings.Add("a", exprA);
 			bindings.Add("b", exprB);
 			bindings.Add("c", exprC);

@@ -35,102 +35,18 @@ namespace Lucene.Net.Search
     /// <seealso cref= Sort </seealso>
     public class SortField
     {
-        /// <summary>
-        /// Specifies the type of the terms to be sorted, or special types such as CUSTOM
-        /// </summary>
-        public enum Type_e // LUCENENET TODO: Rename to Type, de-nest from this class ? Perhaps rename to SortFieldType
-        {
-            /// <summary>
-            /// Sort by document score (relevance).  Sort values are Float and higher
-            /// values are at the front.
-            /// </summary>
-            SCORE,
-
-            /// <summary>
-            /// Sort by document number (index order).  Sort values are Integer and lower
-            /// values are at the front.
-            /// </summary>
-            DOC,
-
-            /// <summary>
-            /// Sort using term values as Strings.  Sort values are String and lower
-            /// values are at the front.
-            /// </summary>
-            STRING,
-
-            /// <summary>
-            /// Sort using term values as encoded Integers.  Sort values are Integer and
-            /// lower values are at the front.
-            /// </summary>
-            INT, // LUCENENET TODO: Rename to INT32 ?
-
-            /// <summary>
-            /// Sort using term values as encoded Floats.  Sort values are Float and
-            /// lower values are at the front.
-            /// </summary>
-            FLOAT, // LUCENENET TODO: Rename to SINGLE ?
-
-            /// <summary>
-            /// Sort using term values as encoded Longs.  Sort values are Long and
-            /// lower values are at the front.
-            /// </summary>
-            LONG,  // LUCENENET TODO: Rename to INT64 ?
-
-            /// <summary>
-            /// Sort using term values as encoded Doubles.  Sort values are Double and
-            /// lower values are at the front.
-            /// </summary>
-            DOUBLE,
-
-            /// <summary>
-            /// Sort using term values as encoded Shorts.  Sort values are Short and
-            /// lower values are at the front.
-            /// </summary>
-            [System.Obsolete]
-            SHORT, // LUCENENET TODO: Rename to INT16 ?
-
-            /// <summary>
-            /// Sort using a custom Comparator.  Sort values are any Comparable and
-            /// sorting is done according to natural order.
-            /// </summary>
-            CUSTOM,
-
-            /// <summary>
-            /// Sort using term values as encoded Bytes.  Sort values are Byte and
-            /// lower values are at the front.
-            /// </summary>
-            [System.Obsolete]
-            BYTE,
-
-            /// <summary>
-            /// Sort using term values as Strings, but comparing by
-            /// value (using String.compareTo) for all comparisons.
-            /// this is typically slower than <seealso cref="#STRING"/>, which
-            /// uses ordinals to do the sorting.
-            /// </summary>
-            STRING_VAL,
-
-            /// <summary>
-            /// Sort use byte[] index values. </summary>
-            BYTES,
-
-            /// <summary>
-            /// Force rewriting of SortField using <seealso cref="SortField#rewrite(IndexSearcher)"/>
-            /// before it can be used for sorting
-            /// </summary>
-            REWRITEABLE
-        }
+        // LUCENENET NOTE: de-nested the Type enum and renamed to SortFieldType to avoid potential naming collisions with System.Type
 
         /// <summary>
         /// Represents sorting by document score (relevance). </summary>
-        public static readonly SortField FIELD_SCORE = new SortField(null, Type_e.SCORE);
+        public static readonly SortField FIELD_SCORE = new SortField(null, SortFieldType.SCORE);
 
         /// <summary>
         /// Represents sorting by document number (index order). </summary>
-        public static readonly SortField FIELD_DOC = new SortField(null, Type_e.DOC);
+        public static readonly SortField FIELD_DOC = new SortField(null, SortFieldType.DOC);
 
         private string field;
-        private Type_e type; // defaults to determining type dynamically
+        private SortFieldType type; // defaults to determining type dynamically
         internal bool reverse = false; // defaults to natural order
         private FieldCache.IParser parser;
 
@@ -146,7 +62,7 @@ namespace Lucene.Net.Search
         /// <param name="field">  Name of field to sort by.  Can be <code>null</code> if
         ///               <code>type</code> is SCORE or DOC. </param>
         /// <param name="type">   Type of values in the terms. </param>
-        public SortField(string field, Type_e type)
+        public SortField(string field, SortFieldType type)
         {
             InitFieldType(field, type);
         }
@@ -158,7 +74,7 @@ namespace Lucene.Net.Search
         ///               <code>type</code> is SCORE or DOC. </param>
         /// <param name="type">   Type of values in the terms. </param>
         /// <param name="reverse"> True if natural order should be reversed. </param>
-        public SortField(string field, Type_e type, bool reverse)
+        public SortField(string field, SortFieldType type, bool reverse)
         {
             InitFieldType(field, type);
             this.reverse = reverse;
@@ -194,27 +110,27 @@ namespace Lucene.Net.Search
         {
             if (parser is FieldCache.IIntParser)
             {
-                InitFieldType(field, Type_e.INT);
+                InitFieldType(field, SortFieldType.INT);
             }
             else if (parser is FieldCache.IFloatParser)
             {
-                InitFieldType(field, Type_e.FLOAT);
+                InitFieldType(field, SortFieldType.FLOAT);
             }
             else if (parser is FieldCache.IShortParser)
             {
-                InitFieldType(field, Type_e.SHORT);
+                InitFieldType(field, SortFieldType.SHORT);
             }
             else if (parser is FieldCache.IByteParser)
             {
-                InitFieldType(field, Type_e.BYTE);
+                InitFieldType(field, SortFieldType.BYTE);
             }
             else if (parser is FieldCache.ILongParser)
             {
-                InitFieldType(field, Type_e.LONG);
+                InitFieldType(field, SortFieldType.LONG);
             }
             else if (parser is FieldCache.IDoubleParser)
             {
-                InitFieldType(field, Type_e.DOUBLE);
+                InitFieldType(field, SortFieldType.DOUBLE);
             }
             else
             {
@@ -265,14 +181,14 @@ namespace Lucene.Net.Search
         {
             set
             {
-                if (type == Type_e.STRING)
+                if (type == SortFieldType.STRING)
                 {
                     if (value != STRING_FIRST && value != STRING_LAST)
                     {
                         throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
                     }
                 }
-                else if (type != Type_e.BYTE && type != Type_e.SHORT && type != Type_e.INT && type != Type_e.FLOAT && type != Type_e.LONG && type != Type_e.DOUBLE)
+                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
                 {
                     throw new System.ArgumentException("Missing value only works for numeric or STRING types");
                 }
@@ -286,7 +202,7 @@ namespace Lucene.Net.Search
         /// <param name="comparator"> Returns a comparator for sorting hits. </param>
         public SortField(string field, FieldComparatorSource comparator)
         {
-            InitFieldType(field, Type_e.CUSTOM);
+            InitFieldType(field, SortFieldType.CUSTOM);
             this.comparatorSource = comparator;
         }
 
@@ -297,19 +213,19 @@ namespace Lucene.Net.Search
         /// <param name="reverse"> True if natural order should be reversed. </param>
         public SortField(string field, FieldComparatorSource comparator, bool reverse)
         {
-            InitFieldType(field, Type_e.CUSTOM);
+            InitFieldType(field, SortFieldType.CUSTOM);
             this.reverse = reverse;
             this.comparatorSource = comparator;
         }
 
         // Sets field & type, and ensures field is not NULL unless
         // type is SCORE or DOC
-        private void InitFieldType(string field, Type_e type)
+        private void InitFieldType(string field, SortFieldType type)
         {
             this.type = type;
             if (field == null)
             {
-                if (type != Type_e.SCORE && type != Type_e.DOC)
+                if (type != SortFieldType.SCORE && type != SortFieldType.DOC)
                 {
                     throw new System.ArgumentException("field can only be null when type is SCORE or DOC");
                 }
@@ -335,7 +251,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the type of contents in the field. </summary>
         /// <returns> One of the constants SCORE, DOC, STRING, INT or FLOAT. </returns>
-        public virtual Type_e Type
+        public virtual SortFieldType Type
         {
             get
             {
@@ -383,51 +299,51 @@ namespace Lucene.Net.Search
             StringBuilder buffer = new StringBuilder();
             switch (type)
             {
-                case Lucene.Net.Search.SortField.Type_e.SCORE:
+                case SortFieldType.SCORE:
                     buffer.Append("<score>");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.DOC:
+                case SortFieldType.DOC:
                     buffer.Append("<doc>");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.STRING:
+                case SortFieldType.STRING:
                     buffer.Append("<string" + ": \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.STRING_VAL:
+                case SortFieldType.STRING_VAL:
                     buffer.Append("<string_val" + ": \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.BYTE:
+                case SortFieldType.BYTE:
                     buffer.Append("<byte: \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.SHORT:
+                case SortFieldType.SHORT:
                     buffer.Append("<short: \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.INT:
+                case SortFieldType.INT:
                     buffer.Append("<int" + ": \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.LONG:
+                case SortFieldType.LONG:
                     buffer.Append("<long: \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.FLOAT:
+                case SortFieldType.FLOAT:
                     buffer.Append("<float" + ": \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.DOUBLE:
+                case SortFieldType.DOUBLE:
                     buffer.Append("<double" + ": \"").Append(field).Append("\">");
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.CUSTOM:
+                case SortFieldType.CUSTOM:
                     buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparatorSource).Append('>');
                     break;
 
-                case Lucene.Net.Search.SortField.Type_e.REWRITEABLE:
+                case SortFieldType.REWRITEABLE:
                     buffer.Append("<rewriteable: \"").Append(field).Append("\">");
                     break;
 
@@ -522,42 +438,42 @@ namespace Lucene.Net.Search
         {
             switch (type)
             {
-                case Type_e.SCORE:
+                case SortFieldType.SCORE:
                     return new FieldComparator.RelevanceComparator(numHits);
 
-                case Type_e.DOC:
+                case SortFieldType.DOC:
                     return new FieldComparator.DocComparator(numHits);
 
-                case Type_e.INT:
+                case SortFieldType.INT:
                     return new FieldComparator.IntComparator(numHits, field, parser, (int?)missingValue);
 
-                case Type_e.FLOAT:
+                case SortFieldType.FLOAT:
                     return new FieldComparator.FloatComparator(numHits, field, parser, (float?)missingValue);
 
-                case Type_e.LONG:
+                case SortFieldType.LONG:
                     return new FieldComparator.LongComparator(numHits, field, parser, (long?)missingValue);
 
-                case Type_e.DOUBLE:
+                case SortFieldType.DOUBLE:
                     return new FieldComparator.DoubleComparator(numHits, field, parser, (double?)missingValue);
 
-                case Type_e.BYTE:
+                case SortFieldType.BYTE:
                     return new FieldComparator.ByteComparator(numHits, field, parser, (sbyte?)missingValue);
 
-                case Type_e.SHORT:
+                case SortFieldType.SHORT:
                     return new FieldComparator.ShortComparator(numHits, field, parser, (short?)missingValue);
 
-                case Type_e.CUSTOM:
+                case SortFieldType.CUSTOM:
                     Debug.Assert(comparatorSource != null);
                     return comparatorSource.NewComparator(field, numHits, sortPos, reverse);
 
-                case Type_e.STRING:
+                case SortFieldType.STRING:
                     return new FieldComparator.TermOrdValComparator(numHits, field, missingValue == STRING_LAST);
 
-                case Type_e.STRING_VAL:
+                case SortFieldType.STRING_VAL:
                     // TODO: should we remove this?  who really uses it?
                     return new FieldComparator.TermValComparator(numHits, field);
 
-                case Type_e.REWRITEABLE:
+                case SortFieldType.REWRITEABLE:
                     throw new InvalidOperationException("SortField needs to be rewritten through Sort.rewrite(..) and SortField.rewrite(..)");
 
                 default:
@@ -583,7 +499,93 @@ namespace Lucene.Net.Search
         /// Whether the relevance score is needed to sort documents. </summary>
         public virtual bool NeedsScores
         {
-            get { return type == Type_e.SCORE; }
+            get { return type == SortFieldType.SCORE; }
         }
+    }
+
+    /// <summary>
+    /// Specifies the type of the terms to be sorted, or special types such as CUSTOM
+    /// </summary>
+    public enum SortFieldType // LUCENENET NOTE: de-nested and renamed from Type to avoid naming collision with Type property and with System.Type
+    {
+        /// <summary>
+        /// Sort by document score (relevance).  Sort values are Float and higher
+        /// values are at the front.
+        /// </summary>
+        SCORE,
+
+        /// <summary>
+        /// Sort by document number (index order).  Sort values are Integer and lower
+        /// values are at the front.
+        /// </summary>
+        DOC,
+
+        /// <summary>
+        /// Sort using term values as Strings.  Sort values are String and lower
+        /// values are at the front.
+        /// </summary>
+        STRING,
+
+        /// <summary>
+        /// Sort using term values as encoded Integers.  Sort values are Integer and
+        /// lower values are at the front.
+        /// </summary>
+        INT, // LUCENENET TODO: Rename to INT32 ?
+
+        /// <summary>
+        /// Sort using term values as encoded Floats.  Sort values are Float and
+        /// lower values are at the front.
+        /// </summary>
+        FLOAT, // LUCENENET TODO: Rename to SINGLE ?
+
+        /// <summary>
+        /// Sort using term values as encoded Longs.  Sort values are Long and
+        /// lower values are at the front.
+        /// </summary>
+        LONG,  // LUCENENET TODO: Rename to INT64 ?
+
+        /// <summary>
+        /// Sort using term values as encoded Doubles.  Sort values are Double and
+        /// lower values are at the front.
+        /// </summary>
+        DOUBLE,
+
+        /// <summary>
+        /// Sort using term values as encoded Shorts.  Sort values are Short and
+        /// lower values are at the front.
+        /// </summary>
+        [System.Obsolete]
+        SHORT, // LUCENENET TODO: Rename to INT16 ?
+
+        /// <summary>
+        /// Sort using a custom Comparator.  Sort values are any Comparable and
+        /// sorting is done according to natural order.
+        /// </summary>
+        CUSTOM,
+
+        /// <summary>
+        /// Sort using term values as encoded Bytes.  Sort values are Byte and
+        /// lower values are at the front.
+        /// </summary>
+        [System.Obsolete]
+        BYTE,
+
+        /// <summary>
+        /// Sort using term values as Strings, but comparing by
+        /// value (using String.compareTo) for all comparisons.
+        /// this is typically slower than <seealso cref="#STRING"/>, which
+        /// uses ordinals to do the sorting.
+        /// </summary>
+        STRING_VAL,
+
+        /// <summary>
+        /// Sort use byte[] index values. </summary>
+        BYTES,
+
+        /// <summary>
+        /// Force rewriting of SortField using <seealso cref="SortField#rewrite(IndexSearcher)"/>
+        /// before it can be used for sorting
+        /// </summary>
+        REWRITEABLE
     }
 }

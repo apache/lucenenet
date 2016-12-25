@@ -70,7 +70,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 expectedDocs[i] = i;
                 expected[i] = new ScoreDoc(i, scores[i]);
             }
-            TopDocs docs = @is.Search(q, 10, new Sort(new SortField("id", SortField.Type_e.STRING)));
+            TopDocs docs = @is.Search(q, 10, new Sort(new SortField("id", SortFieldType.STRING)));
             CheckHits.DoCheckHits(Random(), q, "", @is, expectedDocs, Similarity);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", @is);

@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Grouping
                     bool useDv = context.dvType != null && random.nextBoolean();
                     DocValuesType? dvType = useDv ? context.dvType : null;
                     string term = context.contentStrings[random.nextInt(context.contentStrings.Length)];
-                    Sort groupSort = new Sort(new SortField("id", SortField.Type_e.STRING));
+                    Sort groupSort = new Sort(new SortField("id", SortFieldType.STRING));
                     int topN = 1 + random.nextInt(10);
 
                     List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> expectedResult = CreateExpectedResult(context, term, groupSort, topN);

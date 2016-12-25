@@ -67,11 +67,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
 
-            AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] { new SortField("byte", SortField.Type_e.BYTE, false), new SortField("short", SortField.Type_e.SHORT, false), new SortField("int", SortField.Type_e.INT, false), new SortField("long", SortField.Type_e.LONG, false), new SortField("float", SortField.Type_e.FLOAT, false), new SortField("double", SortField.Type_e.DOUBLE, false), new SortField("bytes", SortField.Type_e.STRING, false), new SortField("bytesval", SortField.Type_e.STRING_VAL, false), new SortField("byte", SortField.Type_e.BYTE, true), new SortField("short", SortField.Type_e.SHORT, true), new SortField("int", SortField.Type_e.INT, true), new SortField("long", SortField.Type_e.LONG, true), new SortField("float", SortField.Type_e.FLOAT, true), new SortField("double", SortField.Type_e.DOUBLE, true), new SortField("bytes", SortField.Type_e.STRING, true), new SortField("bytesval", SortField.Type_e.STRING_VAL, true), SortField.FIELD_SCORE, SortField.FIELD_DOC }));
+            AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] { new SortField("byte", SortFieldType.BYTE, false), new SortField("short", SortFieldType.SHORT, false), new SortField("int", SortFieldType.INT, false), new SortField("long", SortFieldType.LONG, false), new SortField("float", SortFieldType.FLOAT, false), new SortField("double", SortFieldType.DOUBLE, false), new SortField("bytes", SortFieldType.STRING, false), new SortField("bytesval", SortFieldType.STRING_VAL, false), new SortField("byte", SortFieldType.BYTE, true), new SortField("short", SortFieldType.SHORT, true), new SortField("int", SortFieldType.INT, true), new SortField("long", SortFieldType.LONG, true), new SortField("float", SortFieldType.FLOAT, true), new SortField("double", SortFieldType.DOUBLE, true), new SortField("bytes", SortFieldType.STRING, true), new SortField("bytesval", SortFieldType.STRING_VAL, true), SortField.FIELD_SCORE, SortField.FIELD_DOC }));
 
             if (SupportsDocValues)
             {
-                AllSortFields.AddRange(Arrays.AsList(new SortField[] { new SortField("intdocvalues", SortField.Type_e.INT, false), new SortField("floatdocvalues", SortField.Type_e.FLOAT, false), new SortField("sortedbytesdocvalues", SortField.Type_e.STRING, false), new SortField("sortedbytesdocvaluesval", SortField.Type_e.STRING_VAL, false), new SortField("straightbytesdocvalues", SortField.Type_e.STRING_VAL, false), new SortField("intdocvalues", SortField.Type_e.INT, true), new SortField("floatdocvalues", SortField.Type_e.FLOAT, true), new SortField("sortedbytesdocvalues", SortField.Type_e.STRING, true), new SortField("sortedbytesdocvaluesval", SortField.Type_e.STRING_VAL, true), new SortField("straightbytesdocvalues", SortField.Type_e.STRING_VAL, true) }));
+                AllSortFields.AddRange(Arrays.AsList(new SortField[] { new SortField("intdocvalues", SortFieldType.INT, false), new SortField("floatdocvalues", SortFieldType.FLOAT, false), new SortField("sortedbytesdocvalues", SortFieldType.STRING, false), new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, false), new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, false), new SortField("intdocvalues", SortFieldType.INT, true), new SortField("floatdocvalues", SortFieldType.FLOAT, true), new SortField("sortedbytesdocvalues", SortFieldType.STRING, true), new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, true), new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, true) }));
             }
 
             // Also test missing first / last for the "string" sorts:
@@ -80,11 +80,11 @@ namespace Lucene.Net.Search
                 for (int rev = 0; rev < 2; rev++)
                 {
                     bool reversed = rev == 0;
-                    SortField sf = new SortField(field, SortField.Type_e.STRING, reversed);
+                    SortField sf = new SortField(field, SortFieldType.STRING, reversed);
                     sf.MissingValue = SortField.STRING_FIRST;
                     AllSortFields.Add(sf);
 
-                    sf = new SortField(field, SortField.Type_e.STRING, reversed);
+                    sf = new SortField(field, SortFieldType.STRING, reversed);
                     sf.MissingValue = SortField.STRING_LAST;
                     AllSortFields.Add(sf);
                 }
@@ -94,27 +94,27 @@ namespace Lucene.Net.Search
             for (int i = 0; i < limit; i++)
             {
                 SortField sf = AllSortFields[i];
-                if (sf.Type == SortField.Type_e.INT)
+                if (sf.Type == SortFieldType.INT)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortField.Type_e.INT, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.INT, sf.Reverse);
                     sf2.MissingValue = Random().Next();
                     AllSortFields.Add(sf2);
                 }
-                else if (sf.Type == SortField.Type_e.LONG)
+                else if (sf.Type == SortFieldType.LONG)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortField.Type_e.LONG, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.LONG, sf.Reverse);
                     sf2.MissingValue = Random().NextLong();
                     AllSortFields.Add(sf2);
                 }
-                else if (sf.Type == SortField.Type_e.FLOAT)
+                else if (sf.Type == SortFieldType.FLOAT)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortField.Type_e.FLOAT, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.FLOAT, sf.Reverse);
                     sf2.MissingValue = (float)Random().NextDouble();
                     AllSortFields.Add(sf2);
                 }
-                else if (sf.Type == SortField.Type_e.DOUBLE)
+                else if (sf.Type == SortFieldType.DOUBLE)
                 {
-                    SortField sf2 = new SortField(sf.Field, SortField.Type_e.DOUBLE, sf.Reverse);
+                    SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.Reverse);
                     sf2.MissingValue = Random().NextDouble();
                     AllSortFields.Add(sf2);
                 }

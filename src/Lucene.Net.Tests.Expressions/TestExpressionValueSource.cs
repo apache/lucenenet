@@ -66,7 +66,7 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			Expression expr = JavascriptCompiler.Compile("2*popularity");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("popularity", SortField.Type_e.LONG));
+			bindings.Add(new SortField("popularity", SortFieldType.LONG));
 			ValueSource vs = expr.GetValueSource(bindings);
 			AreEqual(1, reader.Leaves.Count);
 			AtomicReaderContext leaf = reader.Leaves[0];
@@ -102,7 +102,7 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			Expression expr = JavascriptCompiler.Compile("2*popularity");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("popularity", SortField.Type_e.LONG));
+			bindings.Add(new SortField("popularity", SortFieldType.LONG));
 			ValueSource vs = expr.GetValueSource(bindings);
 			AreEqual(1, reader.Leaves.Count);
 			AtomicReaderContext leaf = reader.Leaves[0];
@@ -127,8 +127,8 @@ namespace Lucene.Net.Tests.Expressions
 		{
 			Expression expr = JavascriptCompiler.Compile("sqrt(a) + ln(b)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("a", SortField.Type_e.INT));
-			bindings.Add(new SortField("b", SortField.Type_e.INT));
+			bindings.Add(new SortField("a", SortFieldType.INT));
+			bindings.Add(new SortField("b", SortFieldType.INT));
 			ValueSource vs1 = expr.GetValueSource(bindings);
 			// same instance
 			AreEqual(vs1, vs1);
@@ -142,14 +142,14 @@ namespace Lucene.Net.Tests.Expressions
 			AreEqual(vs1, vs2);
 			// equiv bindings (different instance)
 			SimpleBindings bindings2 = new SimpleBindings();
-			bindings2.Add(new SortField("a", SortField.Type_e.INT));
-			bindings2.Add(new SortField("b", SortField.Type_e.INT));
+			bindings2.Add(new SortField("a", SortFieldType.INT));
+			bindings2.Add(new SortField("b", SortFieldType.INT));
 			ValueSource vs3 = expr.GetValueSource(bindings2);
 			AreEqual(vs1, vs3);
 			// different bindings (same names, different types)
 			SimpleBindings bindings3 = new SimpleBindings();
-			bindings3.Add(new SortField("a", SortField.Type_e.LONG));
-			bindings3.Add(new SortField("b", SortField.Type_e.INT));
+			bindings3.Add(new SortField("a", SortFieldType.LONG));
+			bindings3.Add(new SortField("b", SortFieldType.INT));
 			ValueSource vs4 = expr.GetValueSource(bindings3);
 			IsFalse(vs1.Equals(vs4));
 		}

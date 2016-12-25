@@ -262,11 +262,11 @@ namespace Lucene.Net.Search
                                 }
                                 else if (what == 2)
                                 {
-                                    sort = new Sort(new SortField[] { new SortField("docid", SortField.Type_e.INT, Random().NextBoolean()) });
+                                    sort = new Sort(new SortField[] { new SortField("docid", SortFieldType.INT, Random().NextBoolean()) });
                                 }
                                 else
                                 {
-                                    sort = new Sort(new SortField[] { new SortField("title", SortField.Type_e.STRING, Random().NextBoolean()) });
+                                    sort = new Sort(new SortField[] { new SortField("title", SortFieldType.STRING, Random().NextBoolean()) });
                                 }
                             }
                         }

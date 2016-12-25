@@ -104,7 +104,7 @@ namespace Lucene.Net
                 Console.WriteLine("TEST: search query=" + query);
             }
 
-            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField(ID_FIELD, SortField.Type_e.INT));
+            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField(ID_FIELD, SortFieldType.INT));
 
             ScoreDoc[] hits = searcher.Search(query, null, MAX_DOCS, sort).ScoreDocs;
             PrintHits(@out, hits, searcher);

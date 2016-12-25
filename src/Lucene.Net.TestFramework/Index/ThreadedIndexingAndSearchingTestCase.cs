@@ -12,6 +12,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using Search;
     using System.IO;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Bits = Lucene.Net.Util.Bits;
@@ -834,10 +835,10 @@ namespace Lucene.Net.Index
         private int RunQuery(IndexSearcher s, Query q)
         {
             s.Search(q, 10);
-            int hitCount = s.Search(q, null, 10, new Sort(new SortField("title", SortField.Type_e.STRING))).TotalHits;
+            int hitCount = s.Search(q, null, 10, new Sort(new SortField("title", SortFieldType.STRING))).TotalHits;
             if (DefaultCodecSupportsDocValues())
             {
-                Sort dvSort = new Sort(new SortField("title", SortField.Type_e.STRING));
+                Sort dvSort = new Sort(new SortField("title", SortFieldType.STRING));
                 int hitCount2 = s.Search(q, null, 10, dvSort).TotalHits;
                 Assert.AreEqual(hitCount, hitCount2);
             }

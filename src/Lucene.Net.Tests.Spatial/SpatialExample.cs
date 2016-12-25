@@ -133,7 +133,7 @@ namespace Lucene.Net.Spatial
         {
             IndexReader indexReader = DirectoryReader.Open(directory);
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            Sort idSort = new Sort(new SortField("id", SortField.Type_e.INT));
+            Sort idSort = new Sort(new SortField("id", SortFieldType.INT));
 
             //--Filter by circle (<= distance from a point)
             {

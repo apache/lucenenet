@@ -29,8 +29,8 @@ namespace Lucene.Net.Index.Sorter
     {
         private static readonly Sort[] SORT = new Sort[]
         {
-            new Sort(new SortField(NUMERIC_DV_FIELD, SortField.Type_e.LONG)),
-            new Sort(new SortField(null, SortField.Type_e.DOC, true))
+            new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.LONG)),
+            new Sort(new SortField(null, SortFieldType.DOC, true))
         };
 
         [TestFixtureSetUp]
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index.Sorter
                 values.Sort();
                 if (Random().nextBoolean())
                 {
-                    sorter = new Sort(new SortField(NUMERIC_DV_FIELD, SortField.Type_e.LONG, true)); // descending
+                    sorter = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.LONG, true)); // descending
                     values.Reverse();
                 }
             }

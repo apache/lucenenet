@@ -64,6 +64,7 @@ namespace Lucene.Net.Facet
     using InfoStream = Lucene.Net.Util.InfoStream;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
+    using Search;
 
     [TestFixture]
     public class TestDrillSideways : FacetTestCase
@@ -765,7 +766,7 @@ namespace Lucene.Net.Facet
 
                 TestFacetResult expected = slowDrillSidewaysSearch(s, docs, contentToken, drillDowns, dimValues, filter);
 
-                Sort sort = new Sort(new SortField("id", SortField.Type_e.STRING));
+                Sort sort = new Sort(new SortField("id", SortFieldType.STRING));
                 DrillSideways ds;
                 if (doUseDV)
                 {
@@ -1316,7 +1317,7 @@ namespace Lucene.Net.Facet
             DrillSidewaysResult r = ds.Search(ddq, 10); // this used to fail on IllegalArgEx
             Assert.AreEqual(0, r.Hits.TotalHits);
 
-            r = ds.Search(ddq, null, null, 10, new Sort(new SortField("foo", SortField.Type_e.INT)), false, false); // this used to fail on IllegalArgEx
+            r = ds.Search(ddq, null, null, 10, new Sort(new SortField("foo", SortFieldType.INT)), false, false); // this used to fail on IllegalArgEx
             Assert.AreEqual(0, r.Hits.TotalHits);
 
             IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
