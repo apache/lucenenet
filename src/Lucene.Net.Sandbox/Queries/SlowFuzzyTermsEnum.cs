@@ -48,11 +48,11 @@ namespace Lucene.Net.Sandbox.Queries
             TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
             if (newEnum != null)
             {
-                Enum = newEnum;
+                SetEnum(newEnum);
             }
             else if (init)
             {
-                Enum = new LinearFuzzyTermsEnum(this);
+                SetEnum(new LinearFuzzyTermsEnum(this));
             }
         }
 

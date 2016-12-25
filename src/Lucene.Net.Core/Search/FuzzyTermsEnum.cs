@@ -210,13 +210,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// swap in a new actual enum to proxy to </summary>
-        protected virtual TermsEnum Enum // LUCENENET TODO: Change to SetEnum(TermsEnum actualEnum)
+        protected virtual void SetEnum(TermsEnum actualEnum)
         {
-            set
-            {
-                this.actualEnum = value;
-                this.actualBoostAtt = value.Attributes.AddAttribute<IBoostAttribute>();
-            }
+            this.actualEnum = actualEnum;
+            this.actualBoostAtt = actualEnum.Attributes.AddAttribute<IBoostAttribute>();
         }
 
         /// <summary>
@@ -253,7 +250,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
                 throw new System.ArgumentException("maxEdits cannot be > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE");
             }
-            Enum = newEnum;
+            SetEnum(newEnum);
         }
 
         // for some raw min similarity and input term length, the maximum # of edits
