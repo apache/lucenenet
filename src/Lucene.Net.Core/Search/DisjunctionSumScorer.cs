@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         internal DisjunctionSumScorer(Weight weight, Scorer[] subScorers, float[] coord)
             : base(weight, subScorers)
         {
-            if (NumScorers <= 1)
+            if (m_numScorers <= 1)
             {
                 throw new System.ArgumentException("There must be at least 2 subScorers");
             }
@@ -47,9 +47,9 @@ namespace Lucene.Net.Search
 
         protected override void AfterNext()
         {
-            Scorer sub = SubScorers[0];
-            Doc = sub.DocID();
-            if (Doc != NO_MORE_DOCS)
+            Scorer sub = m_subScorers[0];
+            m_doc = sub.DocID();
+            if (m_doc != NO_MORE_DOCS)
             {
                 score = sub.Score();
                 NrMatchers = 1;
@@ -64,10 +64,10 @@ namespace Lucene.Net.Search
         // then change freq() to just always compute it from scratch
         private void CountMatches(int root)
         {
-            if (root < NumScorers && SubScorers[root].DocID() == Doc)
+            if (root < m_numScorers && m_subScorers[root].DocID() == m_doc)
             {
                 NrMatchers++;
-                score += SubScorers[root].Score();
+                score += m_subScorers[root].Score();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }

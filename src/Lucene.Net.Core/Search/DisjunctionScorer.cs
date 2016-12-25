@@ -26,19 +26,19 @@ namespace Lucene.Net.Search
     /// </summary>
     internal abstract class DisjunctionScorer : Scorer
     {
-        protected readonly Scorer[] SubScorers; // LUCENENET TODO: Rename (private)
+        protected readonly Scorer[] m_subScorers;
 
         /// <summary>
         /// The document number of the current match. </summary>
-        protected int Doc = -1; // LUCENENET TODO: Rename (private)
+        protected int m_doc = -1;
 
-        protected int NumScorers; // LUCENENET TODO: Rename (private)
+        protected int m_numScorers;
 
         protected DisjunctionScorer(Weight weight, Scorer[] subScorers)
             : base(weight)
         {
-            this.SubScorers = subScorers;
-            this.NumScorers = subScorers.Length;
+            this.m_subScorers = subScorers;
+            this.m_numScorers = subScorers.Length;
             Heapify();
         }
 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected void Heapify()
         {
-            for (int i = (NumScorers >> 1) - 1; i >= 0; i--)
+            for (int i = (m_numScorers >> 1) - 1; i >= 0; i--)
             {
                 HeapAdjust(i);
             }
@@ -59,40 +59,40 @@ namespace Lucene.Net.Search
         /// </summary>
         protected void HeapAdjust(int root)
         {
-            Scorer scorer = SubScorers[root];
+            Scorer scorer = m_subScorers[root];
             int doc = scorer.DocID();
             int i = root;
-            while (i <= (NumScorers >> 1) - 1)
+            while (i <= (m_numScorers >> 1) - 1)
             {
                 int lchild = (i << 1) + 1;
-                Scorer lscorer = SubScorers[lchild];
+                Scorer lscorer = m_subScorers[lchild];
                 int ldoc = lscorer.DocID();
                 int rdoc = int.MaxValue, rchild = (i << 1) + 2;
                 Scorer rscorer = null;
-                if (rchild < NumScorers)
+                if (rchild < m_numScorers)
                 {
-                    rscorer = SubScorers[rchild];
+                    rscorer = m_subScorers[rchild];
                     rdoc = rscorer.DocID();
                 }
                 if (ldoc < doc)
                 {
                     if (rdoc < ldoc)
                     {
-                        SubScorers[i] = rscorer;
-                        SubScorers[rchild] = scorer;
+                        m_subScorers[i] = rscorer;
+                        m_subScorers[rchild] = scorer;
                         i = rchild;
                     }
                     else
                     {
-                        SubScorers[i] = lscorer;
-                        SubScorers[lchild] = scorer;
+                        m_subScorers[i] = lscorer;
+                        m_subScorers[lchild] = scorer;
                         i = lchild;
                     }
                 }
                 else if (rdoc < doc)
                 {
-                    SubScorers[i] = rscorer;
-                    SubScorers[rchild] = scorer;
+                    m_subScorers[i] = rscorer;
+                    m_subScorers[rchild] = scorer;
                     i = rchild;
                 }
                 else
@@ -107,16 +107,16 @@ namespace Lucene.Net.Search
         /// </summary>
         protected void HeapRemoveRoot()
         {
-            if (NumScorers == 1)
+            if (m_numScorers == 1)
             {
-                SubScorers[0] = null;
-                NumScorers = 0;
+                m_subScorers[0] = null;
+                m_numScorers = 0;
             }
             else
             {
-                SubScorers[0] = SubScorers[NumScorers - 1];
-                SubScorers[NumScorers - 1] = null;
-                --NumScorers;
+                m_subScorers[0] = m_subScorers[m_numScorers - 1];
+                m_subScorers[m_numScorers - 1] = null;
+                --m_numScorers;
                 HeapAdjust(0);
             }
         }
@@ -125,10 +125,10 @@ namespace Lucene.Net.Search
         {
             get
             {
-                List<ChildScorer> children = new List<ChildScorer>(NumScorers);
-                for (int i = 0; i < NumScorers; i++)
+                List<ChildScorer> children = new List<ChildScorer>(m_numScorers);
+                for (int i = 0; i < m_numScorers; i++)
                 {
-                    children.Add(new ChildScorer(SubScorers[i], "SHOULD"));
+                    children.Add(new ChildScorer(m_subScorers[i], "SHOULD"));
                 }
                 return children;
             }
@@ -137,64 +137,64 @@ namespace Lucene.Net.Search
         public override long Cost()
         {
             long sum = 0;
-            for (int i = 0; i < NumScorers; i++)
+            for (int i = 0; i < m_numScorers; i++)
             {
-                sum += SubScorers[i].Cost();
+                sum += m_subScorers[i].Cost();
             }
             return sum;
         }
 
         public override int DocID()
         {
-            return Doc;
+            return m_doc;
         }
 
         public override int NextDoc()
         {
-            Debug.Assert(Doc != NO_MORE_DOCS);
+            Debug.Assert(m_doc != NO_MORE_DOCS);
             while (true)
             {
-                if (SubScorers[0].NextDoc() != NO_MORE_DOCS)
+                if (m_subScorers[0].NextDoc() != NO_MORE_DOCS)
                 {
                     HeapAdjust(0);
                 }
                 else
                 {
                     HeapRemoveRoot();
-                    if (NumScorers == 0)
+                    if (m_numScorers == 0)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return m_doc = NO_MORE_DOCS;
                     }
                 }
-                if (SubScorers[0].DocID() != Doc)
+                if (m_subScorers[0].DocID() != m_doc)
                 {
                     AfterNext();
-                    return Doc;
+                    return m_doc;
                 }
             }
         }
 
         public override int Advance(int target)
         {
-            Debug.Assert(Doc != NO_MORE_DOCS);
+            Debug.Assert(m_doc != NO_MORE_DOCS);
             while (true)
             {
-                if (SubScorers[0].Advance(target) != NO_MORE_DOCS)
+                if (m_subScorers[0].Advance(target) != NO_MORE_DOCS)
                 {
                     HeapAdjust(0);
                 }
                 else
                 {
                     HeapRemoveRoot();
-                    if (NumScorers == 0)
+                    if (m_numScorers == 0)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return m_doc = NO_MORE_DOCS;
                     }
                 }
-                if (SubScorers[0].DocID() >= target)
+                if (m_subScorers[0].DocID() >= target)
                 {
                     AfterNext();
-                    return Doc;
+                    return m_doc;
                 }
             }
         }
