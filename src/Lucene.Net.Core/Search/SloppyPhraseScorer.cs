@@ -29,37 +29,36 @@ namespace Lucene.Net.Search
 
     internal sealed class SloppyPhraseScorer : Scorer
     {
-        // LUCENENET TODO: Rename (private)
-        private PhrasePositions Min, Max;
+        private PhrasePositions min, max;
 
-        private float SloppyFreq_Renamed; //phrase frequency in current doc as computed by phraseFreq().
+        private float sloppyFreq; //phrase frequency in current doc as computed by phraseFreq().
 
-        private readonly Similarity.SimScorer DocScorer;
+        private readonly Similarity.SimScorer docScorer;
 
-        private readonly int Slop;
-        private readonly int NumPostings;
-        private readonly PhraseQueue Pq; // for advancing min position
+        private readonly int slop;
+        private readonly int numPostings;
+        private readonly PhraseQueue pq; // for advancing min position
 
-        private int End; // current largest phrase position
+        private int end; // current largest phrase position
 
-        private bool HasRpts; // flag indicating that there are repetitions (as checked in first candidate doc)
-        private bool CheckedRpts; // flag to only check for repetitions in first candidate doc
-        private bool HasMultiTermRpts;
-        private PhrasePositions[][] RptGroups; // in each group are PPs that repeats each other (i.e. same term), sorted by (query) offset
-        private PhrasePositions[] RptStack; // temporary stack for switching colliding repeating pps
+        private bool hasRpts; // flag indicating that there are repetitions (as checked in first candidate doc)
+        private bool checkedRpts; // flag to only check for repetitions in first candidate doc
+        private bool hasMultiTermRpts;
+        private PhrasePositions[][] rptGroups; // in each group are PPs that repeats each other (i.e. same term), sorted by (query) offset
+        private PhrasePositions[] rptStack; // temporary stack for switching colliding repeating pps
 
-        private int NumMatches;
-        private readonly long Cost_Renamed;
+        private int numMatches;
+        private readonly long cost;
 
         internal SloppyPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings, int slop, Similarity.SimScorer docScorer)
             : base(weight)
         {
-            this.DocScorer = docScorer;
-            this.Slop = slop;
-            this.NumPostings = postings == null ? 0 : postings.Length;
-            Pq = new PhraseQueue(postings.Length);
+            this.docScorer = docScorer;
+            this.slop = slop;
+            this.numPostings = postings == null ? 0 : postings.Length;
+            pq = new PhraseQueue(postings.Length);
             // min(cost)
-            Cost_Renamed = postings[0].postings.Cost();
+            cost = postings[0].postings.Cost();
             // convert tps to a list of phrase positions.
             // note: phrase-position differs from term-position in that its position
             // reflects the phrase offset: pp.pos = tp.pos - offset.
@@ -67,17 +66,17 @@ namespace Lucene.Net.Search
             // when all PhrasePositions have exactly the same position.
             if (postings.Length > 0)
             {
-                Min = new PhrasePositions(postings[0].postings, postings[0].position, 0, postings[0].terms);
-                Max = Min;
-                Max.doc = -1;
+                min = new PhrasePositions(postings[0].postings, postings[0].position, 0, postings[0].terms);
+                max = min;
+                max.doc = -1;
                 for (int i = 1; i < postings.Length; i++)
                 {
                     PhrasePositions pp = new PhrasePositions(postings[i].postings, postings[i].position, i, postings[i].terms);
-                    Max.next = pp;
-                    Max = pp;
-                    Max.doc = -1;
+                    max.next = pp;
+                    max = pp;
+                    max.doc = -1;
                 }
-                Max.next = Min; // make it cyclic for easier manipulation
+                max.next = min; // make it cyclic for easier manipulation
             }
         }
 
@@ -106,41 +105,41 @@ namespace Lucene.Net.Search
                 return 0.0f;
             }
             float freq = 0.0f;
-            NumMatches = 0;
-            PhrasePositions pp = Pq.Pop();
-            int matchLength = End - pp.position;
-            int next = Pq.Top().position;
+            numMatches = 0;
+            PhrasePositions pp = pq.Pop();
+            int matchLength = end - pp.position;
+            int next = pq.Top().position;
             while (AdvancePP(pp))
             {
-                if (HasRpts && !AdvanceRpts(pp))
+                if (hasRpts && !AdvanceRpts(pp))
                 {
                     break; // pps exhausted
                 }
                 if (pp.position > next) // done minimizing current match-length
                 {
-                    if (matchLength <= Slop)
+                    if (matchLength <= slop)
                     {
-                        freq += DocScorer.ComputeSlopFactor(matchLength); // score match
-                        NumMatches++;
+                        freq += docScorer.ComputeSlopFactor(matchLength); // score match
+                        numMatches++;
                     }
-                    Pq.Add(pp);
-                    pp = Pq.Pop();
-                    next = Pq.Top().position;
-                    matchLength = End - pp.position;
+                    pq.Add(pp);
+                    pp = pq.Pop();
+                    next = pq.Top().position;
+                    matchLength = end - pp.position;
                 }
                 else
                 {
-                    int matchLength2 = End - pp.position;
+                    int matchLength2 = end - pp.position;
                     if (matchLength2 < matchLength)
                     {
                         matchLength = matchLength2;
                     }
                 }
             }
-            if (matchLength <= Slop)
+            if (matchLength <= slop)
             {
-                freq += DocScorer.ComputeSlopFactor(matchLength); // score match
-                NumMatches++;
+                freq += docScorer.ComputeSlopFactor(matchLength); // score match
+                numMatches++;
             }
             return freq;
         }
@@ -153,9 +152,9 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (pp.position > End)
+            if (pp.position > end)
             {
-                End = pp.position;
+                end = pp.position;
             }
             return true;
         }
@@ -171,7 +170,7 @@ namespace Lucene.Net.Search
             {
                 return true; // not a repeater
             }
-            PhrasePositions[] rg = RptGroups[pp.rptGroup];
+            PhrasePositions[] rg = rptGroups[pp.rptGroup];
             FixedBitSet bits = new FixedBitSet(rg.Length); // for re-queuing after collisions are resolved
             int k0 = pp.rptInd;
             int k;
@@ -195,8 +194,8 @@ namespace Lucene.Net.Search
             int numBits = bits.Length(); // larges bit we set
             while (bits.Cardinality() > 0)
             {
-                PhrasePositions pp2 = Pq.Pop();
-                RptStack[n++] = pp2;
+                PhrasePositions pp2 = pq.Pop();
+                rptStack[n++] = pp2;
                 if (pp2.rptGroup >= 0 && pp2.rptInd < numBits && bits.Get(pp2.rptInd)) // this bit may not have been set
                 {
                     bits.Clear(pp2.rptInd);
@@ -205,7 +204,7 @@ namespace Lucene.Net.Search
             // add back to queue
             for (int i = n - 1; i >= 0; i--)
             {
-                Pq.Add(RptStack[i]);
+                pq.Add(rptStack[i]);
             }
             return true;
         }
@@ -226,7 +225,7 @@ namespace Lucene.Net.Search
         private int Collide(PhrasePositions pp)
         {
             int tpPos = TpPos(pp);
-            PhrasePositions[] rg = RptGroups[pp.rptGroup];
+            PhrasePositions[] rg = rptGroups[pp.rptGroup];
             for (int i = 0; i < rg.Length; i++)
             {
                 PhrasePositions pp2 = rg[i];
@@ -254,12 +253,12 @@ namespace Lucene.Net.Search
         /// <returns> false if PPs are exhausted (and so current doc will not be a match)  </returns>
         private bool InitPhrasePositions()
         {
-            End = int.MinValue;
-            if (!CheckedRpts)
+            end = int.MinValue;
+            if (!checkedRpts)
             {
                 return InitFirstTime();
             }
-            if (!HasRpts)
+            if (!hasRpts)
             {
                 InitSimple();
                 return true; // PPs available
@@ -272,16 +271,16 @@ namespace Lucene.Net.Search
         private void InitSimple()
         {
             //System.err.println("initSimple: doc: "+min.doc);
-            Pq.Clear();
+            pq.Clear();
             // position pps and build queue from list
-            for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
+            for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 pp.FirstPosition();
-                if (pp.position > End)
+                if (pp.position > end)
                 {
-                    End = pp.position;
+                    end = pp.position;
                 }
-                Pq.Add(pp);
+                pq.Add(pp);
             }
         }
 
@@ -303,7 +302,7 @@ namespace Lucene.Net.Search
         /// move all PPs to their first position </summary>
         private void PlaceFirstPositions()
         {
-            for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
+            for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 pp.FirstPosition();
             }
@@ -313,14 +312,14 @@ namespace Lucene.Net.Search
         /// Fill the queue (all pps are already placed </summary>
         private void FillQueue()
         {
-            Pq.Clear();
-            for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
+            pq.Clear();
+            for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
-                if (pp.position > End)
+                if (pp.position > end)
                 {
-                    End = pp.position;
+                    end = pp.position;
                 }
-                Pq.Add(pp);
+                pq.Add(pp);
             }
         }
 
@@ -335,9 +334,9 @@ namespace Lucene.Net.Search
         /// <returns> false if PPs are exhausted.  </returns>
         private bool AdvanceRepeatGroups()
         {
-            foreach (PhrasePositions[] rg in RptGroups)
+            foreach (PhrasePositions[] rg in rptGroups)
             {
-                if (HasMultiTermRpts)
+                if (hasMultiTermRpts)
                 {
                     // more involved, some may not collide
                     int incr;
@@ -397,15 +396,15 @@ namespace Lucene.Net.Search
         private bool InitFirstTime()
         {
             //System.err.println("initFirstTime: doc: "+min.doc);
-            CheckedRpts = true;
+            checkedRpts = true;
             PlaceFirstPositions();
 
             var rptTerms = RepeatingTerms();
-            HasRpts = rptTerms.Count > 0;
+            hasRpts = rptTerms.Count > 0;
 
-            if (HasRpts)
+            if (hasRpts)
             {
-                RptStack = new PhrasePositions[NumPostings]; // needed with repetitions
+                rptStack = new PhrasePositions[numPostings]; // needed with repetitions
                 List<List<PhrasePositions>> rgs = GatherRptGroups(rptTerms);
                 SortRptGroups(rgs);
                 if (!AdvanceRepeatGroups())
@@ -424,13 +423,13 @@ namespace Lucene.Net.Search
         /// </summary>
         private void SortRptGroups(List<List<PhrasePositions>> rgs)
         {
-            RptGroups = new PhrasePositions[rgs.Count][];
+            rptGroups = new PhrasePositions[rgs.Count][];
             IComparer<PhrasePositions> cmprtr = new ComparatorAnonymousInnerClassHelper(this);
-            for (int i = 0; i < RptGroups.Length; i++)
+            for (int i = 0; i < rptGroups.Length; i++)
             {
                 PhrasePositions[] rg = rgs[i].ToArray();
                 Array.Sort(rg, cmprtr);
-                RptGroups[i] = rg;
+                rptGroups[i] = rg;
                 for (int j = 0; j < rg.Length; j++)
                 {
                     rg[j].rptInd = j; // we use this index for efficient re-queuing
@@ -440,11 +439,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<PhrasePositions>
         {
-            private readonly SloppyPhraseScorer OuterInstance; // LUCENENET TODO: Rename (private)
+            private readonly SloppyPhraseScorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper(SloppyPhraseScorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(PhrasePositions pp1, PhrasePositions pp2)
@@ -459,7 +458,7 @@ namespace Lucene.Net.Search
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
             List<List<PhrasePositions>> res = new List<List<PhrasePositions>>();
-            if (!HasMultiTermRpts)
+            if (!hasMultiTermRpts)
             {
                 // simpler - no multi-terms - can base on positions in first doc
                 for (int i = 0; i < rpp.Length; i++)
@@ -538,7 +537,7 @@ namespace Lucene.Net.Search
         {
             HashMap<Term, int?> tord = new HashMap<Term, int?>();
             Dictionary<Term, int?> tcnt = new Dictionary<Term, int?>();
-            for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
+            for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 foreach (Term t in pp.terms)
                 {
@@ -560,14 +559,14 @@ namespace Lucene.Net.Search
         private PhrasePositions[] RepeatingPPs(HashMap<Term, int?> rptTerms)
         {
             List<PhrasePositions> rp = new List<PhrasePositions>();
-            for (PhrasePositions pp = Min, prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
+            for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 foreach (Term t in pp.terms)
                 {
                     if (rptTerms.ContainsKey(t))
                     {
                         rp.Add(pp);
-                        HasMultiTermRpts |= (pp.terms.Length > 1);
+                        hasMultiTermRpts |= (pp.terms.Length > 1);
                         break;
                     }
                 }
@@ -638,12 +637,12 @@ namespace Lucene.Net.Search
 
         public override int Freq
         {
-            get { return NumMatches; }
+            get { return numMatches; }
         }
 
         internal float SloppyFreq
         {
-            get { return SloppyFreq_Renamed; }
+            get { return sloppyFreq; }
         }
 
         //  private void printQueue(PrintStream ps, PhrasePositions ext, String title) {
@@ -669,29 +668,29 @@ namespace Lucene.Net.Search
 
         private bool AdvanceMin(int target)
         {
-            if (!Min.SkipTo(target))
+            if (!min.SkipTo(target))
             {
-                Max.doc = NO_MORE_DOCS; // for further calls to docID()
+                max.doc = NO_MORE_DOCS; // for further calls to docID()
                 return false;
             }
-            Min = Min.next; // cyclic
-            Max = Max.next; // cyclic
+            min = min.next; // cyclic
+            max = max.next; // cyclic
             return true;
         }
 
         public override int DocID
         {
-            get { return Max.doc; }
+            get { return max.doc; }
         }
 
         public override int NextDoc()
         {
-            return Advance(Max.doc + 1); // advance to the next doc after #docID()
+            return Advance(max.doc + 1); // advance to the next doc after #docID()
         }
 
         public override float Score()
         {
-            return DocScorer.Score(Max.doc, SloppyFreq_Renamed);
+            return docScorer.Score(max.doc, sloppyFreq);
         }
 
         public override int Advance(int target)
@@ -703,25 +702,25 @@ namespace Lucene.Net.Search
                 {
                     return NO_MORE_DOCS;
                 }
-                while (Min.doc < Max.doc)
+                while (min.doc < max.doc)
                 {
-                    if (!AdvanceMin(Max.doc))
+                    if (!AdvanceMin(max.doc))
                     {
                         return NO_MORE_DOCS;
                     }
                 }
                 // found a doc with all of the terms
-                SloppyFreq_Renamed = PhraseFreq(); // check for phrase
-                target = Min.doc + 1; // next target in case sloppyFreq is still 0
-            } while (SloppyFreq_Renamed == 0f);
+                sloppyFreq = PhraseFreq(); // check for phrase
+                target = min.doc + 1; // next target in case sloppyFreq is still 0
+            } while (sloppyFreq == 0f);
 
             // found a match
-            return Max.doc;
+            return max.doc;
         }
 
         public override long Cost()
         {
-            return Cost_Renamed;
+            return cost;
         }
 
         public override string ToString()
