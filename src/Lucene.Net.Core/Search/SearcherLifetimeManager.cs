@@ -99,9 +99,9 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherTracker : IComparable<SearcherTracker>, IDisposable
         {
-            public readonly IndexSearcher Searcher; // LUCENENET TODO: Make property
-            public readonly double RecordTimeSec; // LUCENENET TODO: Make property
-            public readonly long Version; // LUCENENET TODO: Make property
+            public IndexSearcher Searcher { get; private set; }
+            public double RecordTimeSec { get; private set; }
+            public long Version { get; private set; }
 
             public SearcherTracker(IndexSearcher searcher)
             {
