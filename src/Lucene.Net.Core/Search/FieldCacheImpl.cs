@@ -835,8 +835,8 @@ namespace Lucene.Net.Search
                 this.MinValue = minValue;
             }
 
-            public GrowableWriter Writer;// LUCENENET TODO: make property
-            public long MinValue;// LUCENENET TODO: make property
+            public GrowableWriter Writer { get; set; } // LUCENENET NOTE: for some reason, this was not marked readonly
+            public long MinValue { get; set; } // LUCENENET NOTE: for some reason, this was not marked readonly
         }
 
         internal sealed class IntCache : Cache
