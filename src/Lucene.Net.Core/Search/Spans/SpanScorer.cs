@@ -108,9 +108,9 @@ namespace Lucene.Net.Search.Spans
         ///  @lucene.internal
         /// </summary>
         // only public so .payloads can see it.
-        public virtual float SloppyFreq() // LUCENENET TODO: make property
+        public virtual float SloppyFreq
         {
-            return Freq_Renamed;
+            get { return Freq_Renamed; }
         }
 
         public override long Cost()
