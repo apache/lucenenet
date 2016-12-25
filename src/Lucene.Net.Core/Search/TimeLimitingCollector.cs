@@ -117,13 +117,10 @@ namespace Lucene.Net.Search
         /// </pre>
         /// </p> </summary>
         /// <seealso cref= #setBaseline()  </seealso>
-        public virtual long Baseline // LUCENENET TODO: Make SetBaseline(long clockTime)
+        public virtual void SetBaseline(long clockTime)
         {
-            set
-            {
-                t0 = value;
-                timeout = t0 + ticksAllowed;
-            }
+            t0 = clockTime;
+            timeout = t0 + ticksAllowed;
         }
 
         /// <summary>
@@ -132,7 +129,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void SetBaseline()
         {
-            Baseline = clock.Get();
+            SetBaseline(clock.Get());
         }
 
         /// <summary>
