@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
          * threads, then another thread might update the buffer while the checksum is
          * being computed, making it invalid. See LUCENE-5583 for more information.
          */
-        private byte[] SkipBuffer;
+        private byte[] skipBuffer;
 
         /// <summary>
         /// Reads and returns a single byte. </summary>
@@ -322,15 +322,15 @@ namespace Lucene.Net.Store
             {
                 throw new System.ArgumentException("numBytes must be >= 0, got " + numBytes);
             }
-            if (SkipBuffer == null)
+            if (skipBuffer == null)
             {
-                SkipBuffer = new byte[SKIP_BUFFER_SIZE];
+                skipBuffer = new byte[SKIP_BUFFER_SIZE];
             }
-            Debug.Assert(SkipBuffer.Length == SKIP_BUFFER_SIZE);
+            Debug.Assert(skipBuffer.Length == SKIP_BUFFER_SIZE);
             for (long skipped = 0; skipped < numBytes; )
             {
                 var step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
-                ReadBytes(SkipBuffer, 0, step, false);
+                ReadBytes(skipBuffer, 0, step, false);
                 skipped += step;
             }
         }
