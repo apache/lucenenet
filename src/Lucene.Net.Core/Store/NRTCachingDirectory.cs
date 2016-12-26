@@ -63,12 +63,12 @@ namespace Lucene.Net.Store
 
     public class NRTCachingDirectory : Directory
     {
-        private readonly RAMDirectory Cache = new RAMDirectory();
+        private readonly RAMDirectory cache = new RAMDirectory();
 
         private readonly Directory @delegate;
 
-        private readonly long MaxMergeSizeBytes;
-        private readonly long MaxCachedBytes;
+        private readonly long maxMergeSizeBytes;
+        private readonly long maxCachedBytes;
 
         private const bool VERBOSE = false;
 
@@ -81,8 +81,8 @@ namespace Lucene.Net.Store
         public NRTCachingDirectory(Directory @delegate, double maxMergeSizeMB, double maxCachedMB)
         {
             this.@delegate = @delegate;
-            MaxMergeSizeBytes = (long)(maxMergeSizeMB * 1024 * 1024);
-            MaxCachedBytes = (long)(maxCachedMB * 1024 * 1024);
+            maxMergeSizeBytes = (long)(maxMergeSizeMB * 1024 * 1024);
+            maxCachedBytes = (long)(maxCachedMB * 1024 * 1024);
         }
 
         public virtual Directory Delegate
@@ -123,7 +123,7 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "NRTCachingDirectory(" + @delegate + "; maxCacheMB=" + (MaxCachedBytes / 1024 / 1024.0) + " maxMergeSizeMB=" + (MaxMergeSizeBytes / 1024 / 1024.0) + ")";
+            return "NRTCachingDirectory(" + @delegate + "; maxCacheMB=" + (maxCachedBytes / 1024 / 1024.0) + " maxMergeSizeMB=" + (maxMergeSizeBytes / 1024 / 1024.0) + ")";
         }
 
         public override string[] ListAll()
@@ -131,7 +131,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 ISet<string> files = new HashSet<string>();
-                foreach (string f in Cache.ListAll())
+                foreach (string f in cache.ListAll())
                 {
                     files.Add(f);
                 }
@@ -168,14 +168,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual long SizeInBytes()
         {
-            return Cache.SizeInBytes();
+            return cache.SizeInBytes();
         }
 
         public override bool FileExists(string name)
         {
             lock (this)
             {
-                return Cache.FileExists(name) || @delegate.FileExists(name);
+                return cache.FileExists(name) || @delegate.FileExists(name);
             }
         }
 
@@ -187,9 +187,9 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.deleteFile name=" + name);
                 }
-                if (Cache.FileExists(name))
+                if (cache.FileExists(name))
                 {
-                    Cache.DeleteFile(name);
+                    cache.DeleteFile(name);
                 }
                 else
                 {
@@ -202,9 +202,9 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (Cache.FileExists(name))
+                if (cache.FileExists(name))
                 {
-                    return Cache.FileLength(name);
+                    return cache.FileLength(name);
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Store
 
         public virtual string[] ListCachedFiles()
         {
-            return Cache.ListAll();
+            return cache.ListAll();
         }
 
         public override IndexOutput CreateOutput(string name, IOContext context)
@@ -238,13 +238,13 @@ namespace Lucene.Net.Store
                 {
                     // this is fine: file may not exist
                 }
-                return Cache.CreateOutput(name, context);
+                return cache.CreateOutput(name, context);
             }
             else
             {
                 try
                 {
-                    Cache.DeleteFile(name);
+                    cache.DeleteFile(name);
                 }
                 catch (System.IO.IOException ioe)
                 {
@@ -275,13 +275,13 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.openInput name=" + name);
                 }
-                if (Cache.FileExists(name))
+                if (cache.FileExists(name))
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("  from cache");
                     }
-                    return Cache.OpenInput(name, context);
+                    return cache.OpenInput(name, context);
                 }
                 else
                 {
@@ -299,13 +299,13 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.openInput name=" + name);
                 }
-                if (Cache.FileExists(name))
+                if (cache.FileExists(name))
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("  from cache");
                     }
-                    return Cache.CreateSlicer(name, context);
+                    return cache.CreateSlicer(name, context);
                 }
                 else
                 {
@@ -325,11 +325,11 @@ namespace Lucene.Net.Store
             // it for defensive reasons... or in case the app is
             // doing something custom (creating outputs directly w/o
             // using IndexWriter):
-            foreach (string fileName in Cache.ListAll())
+            foreach (string fileName in cache.ListAll())
             {
                 UnCache(fileName);
             }
-            Cache.Dispose();
+            cache.Dispose();
             @delegate.Dispose();
         }
 
@@ -351,22 +351,22 @@ namespace Lucene.Net.Store
                 bytes = context.FlushInfo.EstimatedSegmentSize;
             }
 
-            return !name.Equals(IndexFileNames.SEGMENTS_GEN) && (bytes <= MaxMergeSizeBytes) && (bytes + Cache.SizeInBytes()) <= MaxCachedBytes;
+            return !name.Equals(IndexFileNames.SEGMENTS_GEN) && (bytes <= maxMergeSizeBytes) && (bytes + cache.SizeInBytes()) <= maxCachedBytes;
         }
 
-        private readonly object UncacheLock = new object();
+        private readonly object uncacheLock = new object();
 
         private void UnCache(string fileName)
         {
             // Only let one thread uncache at a time; this only
             // happens during commit() or close():
-            lock (UncacheLock)
+            lock (uncacheLock)
             {
                 if (VERBOSE)
                 {
                     Console.WriteLine("nrtdir.unCache name=" + fileName);
                 }
-                if (!Cache.FileExists(fileName))
+                if (!cache.FileExists(fileName))
                 {
                     // Another thread beat us...
                     return;
@@ -376,7 +376,7 @@ namespace Lucene.Net.Store
                 IndexInput @in = null;
                 try
                 {
-                    @in = Cache.OpenInput(fileName, context);
+                    @in = cache.OpenInput(fileName, context);
                     @out.CopyBytes(@in, @in.Length);
                 }
                 finally
@@ -389,7 +389,7 @@ namespace Lucene.Net.Store
                 {
                     // Must sync here because other sync methods have
                     // if (cache.fileExists(name)) { ... } else { ... }:
-                    Cache.DeleteFile(fileName);
+                    cache.DeleteFile(fileName);
                 }
             }
         }
