@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -101,12 +102,13 @@ namespace Lucene.Net.Store
             @in.Dispose();
         }
 
+        public override void SetLockFactory(LockFactory lockFactory)
+        {
+            @in.SetLockFactory(lockFactory);
+        }
+
         public override LockFactory LockFactory
         {
-            set
-            {
-                @in.LockFactory = value;
-            }
             get
             {
                 return @in.LockFactory;

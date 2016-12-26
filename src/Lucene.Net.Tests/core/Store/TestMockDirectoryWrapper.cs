@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         public virtual void TestFailIfIndexWriterNotClosedChangeLockFactory()
         {
             MockDirectoryWrapper dir = NewMockDirectory();
-            dir.LockFactory = new SingleInstanceLockFactory();
+            dir.SetLockFactory(new SingleInstanceLockFactory());
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             try
             {

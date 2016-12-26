@@ -136,7 +136,15 @@ namespace Lucene.Net.Store
         /// Directories).
         /// </summary>
         /// <param name="lockFactory"> instance of <seealso cref="LockFactory"/>. </param>
-        public abstract LockFactory LockFactory { set; get; } // LUCENENET TODO: Make SetLockFactory a separate method (complexity)
+        public abstract void SetLockFactory(LockFactory lockFactory);
+
+        /// <summary>
+        /// Get the LockFactory that this Directory instance is
+        /// using for its locking implementation.  Note that this
+        /// may be null for Directory implementations that provide
+        /// their own locking implementation.
+        /// </summary>
+        public abstract LockFactory LockFactory { get; }
 
         /// <summary>
         /// Return a string identifier that uniquely differentiates

@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
             public CrashAfterCreateOutput(Directory realDirectory)
                 : base(realDirectory)
             {
-                LockFactory = realDirectory.LockFactory;
+                SetLockFactory(realDirectory.LockFactory);
             }
 
             public virtual string GetCrashAfterCreateOutput

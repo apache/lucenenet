@@ -99,10 +99,11 @@ namespace Lucene.Net.Store
             {
                 return @delegate.LockFactory;
             }
-            set
-            {
-                @delegate.LockFactory = value;
-            }
+        }
+
+        public override void SetLockFactory(LockFactory lockFactory)
+        {
+            @delegate.SetLockFactory(lockFactory);
         }
 
         public override string LockID

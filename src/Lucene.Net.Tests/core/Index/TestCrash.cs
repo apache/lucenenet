@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 
         private IndexWriter InitIndex(IConcurrentMergeScheduler scheduler, Random random, MockDirectoryWrapper dir, bool initialCommit)
         {
-            dir.LockFactory = NoLockFactory.DoNoLockFactory;
+            dir.SetLockFactory(NoLockFactory.DoNoLockFactory);
 
             scheduler.SetSuppressExceptions();
 

@@ -1238,7 +1238,7 @@ namespace Lucene.Net.Util
             BaseDirectoryWrapper wrapped = WrapDirectory(Random(), fsdir, bare);
             if (lf != null)
             {
-                wrapped.LockFactory = lf;
+                wrapped.SetLockFactory(lf);
             }
             return wrapped;
         }

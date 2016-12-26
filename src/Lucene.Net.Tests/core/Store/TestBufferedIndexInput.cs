@@ -329,7 +329,7 @@ namespace Lucene.Net.Store
             public MockFSDirectory(DirectoryInfo path, Random rand)
             {
                 this.Rand = rand;
-                LockFactory = NoLockFactory.DoNoLockFactory;
+                SetLockFactory(NoLockFactory.DoNoLockFactory);
                 Dir = new SimpleFSDirectory(path, null);
             }
 

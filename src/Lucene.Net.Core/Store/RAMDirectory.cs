@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
         {
             try
             {
-                LockFactory = new SingleInstanceLockFactory();
+                SetLockFactory(new SingleInstanceLockFactory());
             }
             catch (System.IO.IOException e)
             {

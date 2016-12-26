@@ -140,7 +140,7 @@ namespace Lucene.Net.Store
                 throw new NoSuchDirectoryException("file '" + path.FullName + "' exists but is not a directory"); //should be NoSuchDirectoryException
             }
 
-            LockFactory = lockFactory;
+            SetLockFactory(lockFactory);
         }
 
         /// <summary>
@@ -193,28 +193,25 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override LockFactory LockFactory
+        public override void SetLockFactory(LockFactory lockFactory)
         {
-            set
-            {
-                base.LockFactory = value;
+            base.SetLockFactory(lockFactory);
 
-                // for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
-                // in index dir. If no index dir is given, set ourselves
-                if (value is FSLockFactory)
+            // for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
+            // in index dir. If no index dir is given, set ourselves
+            if (lockFactory is FSLockFactory)
+            {
+                FSLockFactory lf = (FSLockFactory)lockFactory;
+                DirectoryInfo dir = lf.LockDir;
+                // if the lock factory has no lockDir set, use the this directory as lockDir
+                if (dir == null)
                 {
-                    FSLockFactory lf = (FSLockFactory) value;
-                    DirectoryInfo dir = lf.LockDir;
-                    // if the lock factory has no lockDir set, use the this directory as lockDir
-                    if (dir == null)
-                    {
-                        lf.LockDir = directory;
-                        lf.LockPrefix = null;
-                    }
-                    else if (dir.FullName.Equals(directory.FullName))
-                    {
-                        lf.LockPrefix = null;
-                    }
+                    lf.LockDir = directory;
+                    lf.LockPrefix = null;
+                }
+                else if (dir.FullName.Equals(directory.FullName))
+                {
+                    lf.LockPrefix = null;
                 }
             }
         }

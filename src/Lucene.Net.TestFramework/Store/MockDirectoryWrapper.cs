@@ -1251,20 +1251,21 @@ namespace Lucene.Net.Store
             }
         }
 
+        public override void SetLockFactory(LockFactory lockFactory)
+        {
+            lock (this)
+            {
+                MaybeYield();
+                // sneaky: we must pass the original this way to the dir, because
+                // some impls (e.g. FSDir) do instanceof here.
+                @in.SetLockFactory(lockFactory);
+                // now set our wrapped factory here
+                this.LockFactory_Renamed = new MockLockFactoryWrapper(this, lockFactory);
+            }
+        }
+
         public override LockFactory LockFactory
         {
-            set
-            {
-                lock (this)
-                {
-                    MaybeYield();
-                    // sneaky: we must pass the original this way to the dir, because
-                    // some impls (e.g. FSDir) do instanceof here.
-                    @in.LockFactory = value;
-                    // now set our wrapped factory here
-                    this.LockFactory_Renamed = new MockLockFactoryWrapper(this, value);
-                }
-            }
             get
             {
                 lock (this)

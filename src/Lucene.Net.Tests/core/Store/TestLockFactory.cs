@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
         {
             Directory dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
             MockLockFactory lf = new MockLockFactory(this);
-            dir.LockFactory = lf;
+            dir.SetLockFactory(lf);
 
             // Lock prefix should have been set:
             Assert.IsTrue(lf.LockPrefixSet, "lock prefix was not set by the RAMDirectory");
@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
         public virtual void TestRAMDirectoryNoLocking()
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            dir.LockFactory = NoLockFactory.DoNoLockFactory;
+            dir.SetLockFactory(NoLockFactory.DoNoLockFactory);
             dir.WrapLockFactory = false; // we are gonna explicitly test we get this back
             Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory.setLockFactory did not take");
 

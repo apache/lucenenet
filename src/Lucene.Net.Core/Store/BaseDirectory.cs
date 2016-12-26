@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
@@ -62,14 +63,15 @@ namespace Lucene.Net.Store
             }
         }
 
+        public override void SetLockFactory(LockFactory lockFactory)
+        {
+            Debug.Assert(lockFactory != null);
+            this.m_lockFactory = lockFactory;
+            lockFactory.LockPrefix = this.LockID;
+        }
+
         public override LockFactory LockFactory
         {
-            set // LUCENENET TODO: Make SetLockFactory() a separate method
-            {
-                Debug.Assert(value != null);
-                this.m_lockFactory = value;
-                value.LockPrefix = this.LockID;
-            }
             get
             {
                 return this.m_lockFactory;

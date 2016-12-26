@@ -1814,7 +1814,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoSegmentFile()
         {
             BaseDirectoryWrapper dir = NewDirectory();
-            dir.LockFactory = NoLockFactory.DoNoLockFactory;
+            dir.SetLockFactory(NoLockFactory.DoNoLockFactory);
             IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 
             Document doc = new Document();
@@ -2103,7 +2103,7 @@ namespace Lucene.Net.Index
             // Must use SimpleFSLockFactory... NativeFSLockFactory
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
-            d.LockFactory = new SimpleFSLockFactory();
+            d.SetLockFactory(new SimpleFSLockFactory());
             RandomIndexWriter w1 = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             w1.DeleteAll();
             try
