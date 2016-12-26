@@ -29,7 +29,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class CharSequenceOutputs : Outputs<CharsRef>
     {
         private static readonly CharsRef NO_OUTPUT = new CharsRef();
@@ -39,7 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static CharSequenceOutputs Singleton
+        public static CharSequenceOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency
         {
             get
             {

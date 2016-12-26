@@ -30,7 +30,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public abstract class Outputs<T>
     {
         // TODO: maybe change this API to allow for re-use of the

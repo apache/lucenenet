@@ -26,7 +26,6 @@ namespace Lucene.Net.Util.Fst
 
     // TODO: merge with PagedBytes, except PagedBytes doesn't
     // let you read while writing which FST needs
-
     internal class BytesStore : DataOutput
     {
         private readonly List<byte[]> blocks = new List<byte[]>();
@@ -269,7 +268,7 @@ namespace Lucene.Net.Util.Fst
         /// Writes an int at the absolute position without
         ///  changing the current pointer.
         /// </summary>
-        public virtual void WriteInt(long pos, int value)
+        public virtual void WriteInt(long pos, int value) // LUCENENET TODO: Change to WriteInt32 ?
         {
             int blockIndex = (int)(pos >> blockBits);
             int upto = (int)(pos & blockMask);
@@ -408,7 +407,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual FST.BytesReader ForwardReader
+        public virtual FST.BytesReader ForwardReader // LUCENENET TODO: Change to GetForwardReader() (returns new instance)
         {
             get
             {
@@ -480,7 +479,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     return ((long)nextBuffer - 1) * outerInstance.blockSize + nextRead;
                 }
-                set
+                set // LUCENENET TODO: change to SetPosition(long position) (side-effect)
                 {
                     int bufferIndex = (int)(value >> outerInstance.blockBits);
                     nextBuffer = bufferIndex + 1;
@@ -496,7 +495,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual FST.BytesReader ReverseReader
+        public virtual FST.BytesReader ReverseReader // LUCENENET TODO: Change to GetReverseReader() (returns new instance)
         {
             get
             {
@@ -525,7 +524,7 @@ namespace Lucene.Net.Util.Fst
                 nextRead = 0;
             }
 
-            private byte[] Current;
+            private byte[] Current; // LUCENENET TODO: rename
             private int nextBuffer;
             private int nextRead;
 
@@ -558,7 +557,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     return ((long)nextBuffer + 1) * outerInstance.blockSize + nextRead;
                 }
-                set
+                set // LUCENENET TODO: change to SetPosition(long position) (side-effect)
                 {
                     // NOTE: a little weird because if you
                     // setPosition(0), the next byte you read is

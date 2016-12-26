@@ -29,7 +29,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class IntSequenceOutputs : Outputs<IntsRef>
     {
         private static readonly IntsRef NO_OUTPUT = new IntsRef();
@@ -39,7 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static IntSequenceOutputs Singleton
+        public static IntSequenceOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency
         {
             get
             {

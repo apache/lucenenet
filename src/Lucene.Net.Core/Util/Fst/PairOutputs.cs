@@ -23,11 +23,10 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation, holding two other outputs.
+    /// An FST <see cref="Outputs{T}"/> implementation, holding two other outputs.
     ///
     /// @lucene.experimental
     /// </summary>
-
     public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair>
     {
         private readonly Pair NO_OUTPUT;
@@ -38,8 +37,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single pair of two outputs. </summary>
         public class Pair
         {
-            public readonly A Output1;
-            public readonly B Output2;
+            public readonly A Output1; // LUCENENET TODO: make property
+            public readonly B Output2; // LUCENENET TODO: make property
 
             // use newPair
             internal Pair(A output1, B output2)

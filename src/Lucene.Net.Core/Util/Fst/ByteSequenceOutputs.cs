@@ -29,7 +29,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class ByteSequenceOutputs : Outputs<BytesRef>
     {
         private static readonly BytesRef NO_OUTPUT = new BytesRef();
@@ -39,7 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static ByteSequenceOutputs Singleton
+        public static ByteSequenceOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency across API
         {
             get
             {

@@ -46,7 +46,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public class Builder<T>
     {
         private readonly NodeHash<T> dedupHash;
@@ -84,7 +83,7 @@ namespace Lucene.Net.Util.Fst
         /// Expert: this is invoked by Builder whenever a suffix
         ///  is serialized.
         /// </summary>
-        public abstract class FreezeTail<S>
+        public abstract class FreezeTail<S> // LUCENENET TODO: De-nest this class and move into a separate Builder class so it can be accessed without the generic type
         {
             public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, IntsRef prevInput);
         }
@@ -576,18 +575,18 @@ namespace Lucene.Net.Util.Fst
         /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
         public class Arc<S>
         {
-            public int Label; // really an "unsigned" byte
-            public INode Target;
-            public bool IsFinal;
-            public S Output;
-            public S NextFinalOutput;
+            public int Label; // really an "unsigned" byte // LUCENENET TODO: Make property
+            public INode Target; // LUCENENET TODO: Make property
+            public bool IsFinal; // LUCENENET TODO: Make property
+            public S Output; // LUCENENET TODO: Make property
+            public S NextFinalOutput; // LUCENENET TODO: Make property
         }
 
         // NOTE: not many instances of Node or CompiledNode are in
         // memory while the FST is being built; it's only the
         // current "frontier":
 
-        public interface INode
+        public interface INode // LUCENENET NOTE: made public rater than internal because it is returned in public types
         {
             bool IsCompiled { get; }
         }
@@ -599,7 +598,7 @@ namespace Lucene.Net.Util.Fst
 
         public sealed class CompiledNode : INode
         {
-            public long Node;
+            public long Node; // LUCENENET TODO: Make property
 
             public bool IsCompiled
             {
@@ -614,22 +613,22 @@ namespace Lucene.Net.Util.Fst
         /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
         public sealed class UnCompiledNode<S> : INode
         {
-            internal readonly Builder<S> Owner;
-            public int NumArcs;
-            public Arc<S>[] Arcs;
+            internal readonly Builder<S> Owner; // LUCENENET TODO: Make property
+            public int NumArcs; // LUCENENET TODO: Make property
+            public Arc<S>[] Arcs; // LUCENENET TODO: Make property
 
             // TODO: instead of recording isFinal/output on the
             // node, maybe we should use -1 arc to mean "end" (like
             // we do when reading the FST).  Would simplify much
             // code here...
-            public S Output;
+            public S Output; // LUCENENET TODO: Make property
 
-            public bool IsFinal;
-            public long InputCount;
+            public bool IsFinal; // LUCENENET TODO: Make property
+            public long InputCount; // LUCENENET TODO: Make property
 
             /// <summary>
             /// this node's depth, starting from the automaton root. </summary>
-            public readonly int Depth;
+            public readonly int Depth; // LUCENENET TODO: Make property
 
             /// <param name="depth">
             ///          The node's depth starting from the automaton root. Needed for
@@ -673,7 +672,7 @@ namespace Lucene.Net.Util.Fst
             public void AddArc(int label, INode target)
             {
                 Debug.Assert(label >= 0);
-                // LUCENENET: Commented this because it makes testing difficult in Visual Studio.
+                // LUCENENET TODO: Add this back in - it could be masking bugs (Commented this because it makes testing difficult in Visual Studio.)
                 //if (NumArcs != 0)
                 //{
                 //    Debug.Assert(label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);

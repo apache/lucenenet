@@ -25,29 +25,28 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
-    public abstract class FSTEnum<T>
+    public abstract class FSTEnum<T> // LUCENENET NOTE: changed from internal to public because has public subclasses
     {
-        protected internal readonly FST<T> fst;
+        protected readonly FST<T> fst;
 
-        protected internal FST.Arc<T>[] arcs = new FST.Arc<T>[10];
+        protected FST.Arc<T>[] arcs = new FST.Arc<T>[10];
 
         // outputs are cumulative
-        protected internal T[] output = new T[10];
+        protected T[] output = new T[10];
 
-        protected internal readonly T NO_OUTPUT;
-        protected internal readonly FST.BytesReader fstReader;
-        protected internal readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
+        protected readonly T NO_OUTPUT;
+        protected readonly FST.BytesReader fstReader;
+        protected readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
 
-        protected internal int upto;
-        protected internal int targetLength;
+        protected int upto;
+        protected int targetLength;
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
         ///  doFloor is true, advance positions to the biggest
         ///  term before target.
         /// </summary>
-        protected internal FSTEnum(FST<T> fst)
+        protected FSTEnum(FST<T> fst)
         {
             this.fst = fst;
             fstReader = fst.BytesReader;
@@ -56,17 +55,17 @@ namespace Lucene.Net.Util.Fst
             output[0] = NO_OUTPUT;
         }
 
-        protected internal abstract int TargetLabel { get; }
+        protected abstract int TargetLabel { get; }
 
-        protected internal abstract int CurrentLabel { get; set; }
+        protected abstract int CurrentLabel { get; set; }
 
-        protected internal abstract void Grow();
+        protected abstract void Grow();
 
         /// <summary>
         /// Rewinds enum state to match the shared prefix between
         ///  current term and target term
         /// </summary>
-        protected internal void RewindPrefix()
+        protected void RewindPrefix()
         {
             if (upto == 0)
             {
@@ -101,7 +100,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("  fall through upto=" + upto);
         }
 
-        protected internal virtual void DoNext()
+        protected virtual void DoNext()
         {
             //System.out.println("FE: next upto=" + upto);
             if (upto == 0)
@@ -134,7 +133,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to smallest term that's >= target. </summary>
-        protected internal virtual void DoSeekCeil()
+        protected virtual void DoSeekCeil()
         {
             //System.out.println("    advance len=" + target.length + " curlen=" + current.length);
 
@@ -305,7 +304,7 @@ namespace Lucene.Net.Util.Fst
         // SEEK_END)?  saves the eq check above?
         /// <summary>
         /// Seeks to largest term that's <= target. </summary>
-        protected internal virtual void DoSeekFloor()
+        protected virtual void DoSeekFloor()
         {
             // TODO: possibly caller could/should provide common
             // prefix length?  ie this work may be redundant if
@@ -500,7 +499,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to exactly target term. </summary>
-        protected internal virtual bool DoSeekExact()
+        protected virtual bool DoSeekExact()
         {
             // TODO: possibly caller could/should provide common
             // prefix length?  ie this work may be redundant if

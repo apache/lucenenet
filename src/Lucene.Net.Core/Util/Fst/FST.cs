@@ -141,11 +141,11 @@ namespace Lucene.Net.Util.Fst
         // produces this output
         internal T emptyOutput;
 
-        internal readonly BytesStore Bytes;
+        internal readonly BytesStore Bytes; // LUCENENET TODO: rename
 
         private long startNode = -1;
 
-        public readonly Outputs<T> Outputs;
+        public readonly Outputs<T> Outputs; // LUCENENET TODO: make property
 
         // Used for the BIT_TARGET_NEXT optimization (whereby
         // instead of storing the address of the target node for
@@ -155,6 +155,10 @@ namespace Lucene.Net.Util.Fst
 
         private readonly T NO_OUTPUT;
 
+        // LUCENENET NOTE: changed accessibility of the following 3 fields
+        // because we already have public properties that can read them.
+        // This class is sealed, so it is unclear what the benefit of setting
+        // them from outside is (if any).
         internal long nodeCount;
         private long arcCount;
         private long arcWithOutputCount;
@@ -216,7 +220,7 @@ namespace Lucene.Net.Util.Fst
             nodeRefToAddress = null;
         }
 
-        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28;
+        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28; // LUCENENET TODO: Move to FST class
 
         /// <summary>
         /// Load a previously saved FST. </summary>
@@ -351,7 +355,7 @@ namespace Lucene.Net.Util.Fst
             return size;
         }
 
-        public void Finish(long newStartNode)
+        internal void Finish(long newStartNode)
         {
             if (startNode != -1)
             {
@@ -639,7 +643,7 @@ namespace Lucene.Net.Util.Fst
 
         // serializes new node by appending its bytes to the end
         // of the current byte[]
-        public long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
+        internal long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
         {
             //System.out.println("FST.addNode pos=" + bytes.getPosition() + " numArcs=" + nodeIn.numArcs);
             if (nodeIn.NumArcs == 0)
@@ -1063,7 +1067,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         /// <returns> Returns <code>true</code> if <code>arc</code> points to a state in an
         /// expanded array format. </returns>
-        public bool IsExpandedTarget(FST.Arc<T> follow, FST.BytesReader @in)
+        internal bool IsExpandedTarget(FST.Arc<T> follow, FST.BytesReader @in)
         {
             if (!TargetHasArcs(follow))
             {
@@ -1488,7 +1492,7 @@ namespace Lucene.Net.Util.Fst
         /// Returns a <seealso cref="FST.BytesReader"/> for this FST, positioned at
         ///  position 0.
         /// </summary>
-        public FST.BytesReader BytesReader
+        public FST.BytesReader BytesReader // LUCENENET TODO: Change to GetBytesReader() (returns new instance)
         {
             get
             {
@@ -2270,17 +2274,17 @@ namespace Lucene.Net.Util.Fst
                 return this;
             }
 
-            internal bool Flag(int flag)
+            internal virtual bool Flag(int flag)
             {
                 return FST<T>.Flag(Flags, flag);
             }
 
-            public bool IsLast
+            public virtual bool IsLast
             {
                 get { return Flag(BIT_LAST_ARC); }
             }
 
-            public bool IsFinal
+            public virtual bool IsFinal
             {
                 get { return Flag(BIT_FINAL_ARC); }
             }
@@ -2315,8 +2319,8 @@ namespace Lucene.Net.Util.Fst
 
         internal class NodeAndInCount : IComparable<NodeAndInCount>
         {
-            internal readonly int Node;
-            internal readonly int Count;
+            internal readonly int Node; // LUCENENET TODO: make property
+            internal readonly int Count; // LUCENENET TODO: make property
 
             public NodeAndInCount(int node, int count)
             {

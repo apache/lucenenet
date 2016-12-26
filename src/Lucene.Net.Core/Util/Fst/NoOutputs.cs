@@ -28,7 +28,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class NoOutputs : Outputs<object>
     {
         internal static readonly object NO_OUTPUT = new ObjectAnonymousInnerClassHelper();
@@ -58,7 +57,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static NoOutputs Singleton
+        public static NoOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency
         {
             get
             {

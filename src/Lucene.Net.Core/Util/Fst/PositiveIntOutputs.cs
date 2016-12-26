@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static PositiveIntOutputs Singleton
+        public static PositiveIntOutputs Singleton // LUCENENET TODO: Change to GetSingleton() check consistency
         {
             get
             {

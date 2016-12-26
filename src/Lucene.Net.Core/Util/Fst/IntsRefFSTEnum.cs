@@ -25,7 +25,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class IntsRefFSTEnum<T> : FSTEnum<T>
     {
         private readonly IntsRef current = new IntsRef(10);
@@ -46,7 +45,7 @@ namespace Lucene.Net.Util.Fst
             current.Offset = 1;
         }
 
-        public IntsRefFSTEnum.InputOutput<T> Current()
+        public IntsRefFSTEnum.InputOutput<T> Current() // LUCENENET TODO: make property
         {
             return result;
         }
@@ -99,7 +98,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override int TargetLabel
+        protected override int TargetLabel
         {
             get
             {
@@ -114,7 +113,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override int CurrentLabel
+        protected override int CurrentLabel
         {
             get
             {
@@ -127,7 +126,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override void Grow()
+        protected override void Grow()
         {
             current.Ints = ArrayUtil.Grow(current.Ints, upto + 1);
         }
@@ -161,8 +160,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single input (IntsRef) + output pair. </summary>
         public class InputOutput<T>
         {
-            public IntsRef Input;
-            public T Output;
+            public IntsRef Input; // LUCENENET TODO: make property
+            public T Output; // LUCENENET TODO: make property
         }
     }
 }

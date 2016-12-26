@@ -25,7 +25,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class BytesRefFSTEnum<T> : FSTEnum<T>
     {
         private readonly BytesRef current = new BytesRef(10);
@@ -46,7 +45,7 @@ namespace Lucene.Net.Util.Fst
             current.Offset = 1;
         }
 
-        public BytesRefFSTEnum.InputOutput<T> Current()
+        public BytesRefFSTEnum.InputOutput<T> Current() // LUCENENET TODO: Make property
         {
             return result;
         }
@@ -99,7 +98,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override int TargetLabel
+        protected override int TargetLabel
         {
             get
             {
@@ -114,7 +113,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override int CurrentLabel
+        protected override int CurrentLabel
         {
             get
             {
@@ -127,7 +126,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        protected internal override void Grow()
+        protected override void Grow()
         {
             current.Bytes = ArrayUtil.Grow(current.Bytes, upto + 1);
         }
@@ -161,8 +160,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single input (BytesRef) + output pair. </summary>
         public class InputOutput<T>
         {
-            public BytesRef Input;
-            public T Output;
+            public BytesRef Input; // LUCENENET TODO: Make property
+            public T Output; // LUCENENET TODO: Make property
         }
     }
 }

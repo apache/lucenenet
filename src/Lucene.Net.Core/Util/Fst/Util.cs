@@ -300,9 +300,9 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public class FSTPath<T>
         {
-            public FST.Arc<T> Arc;
-            public T Cost;
-            public readonly IntsRef Input;
+            public FST.Arc<T> Arc; // LUCENENET TODO: make property
+            public T Cost; // LUCENENET TODO: make property
+            public readonly IntsRef Input; // LUCENENET TODO: make property
 
             /// <summary>
             /// Sole constructor </summary>
@@ -647,8 +647,8 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public sealed class Result<T>
         {
-            public readonly IntsRef Input;
-            public readonly T Output;
+            public readonly IntsRef Input; // LUCENENET TODO: make property
+            public readonly T Output; // LUCENENET TODO: make property
 
             public Result(IntsRef input, T output)
             {
@@ -667,12 +667,12 @@ namespace Lucene.Net.Util.Fst
             /// the specified queue size was large enough to find the complete list of results. this might
             /// be <code>false</code> if the <seealso cref="TopNSearcher"/> rejected too many results.
             /// </summary>
-            public readonly bool IsComplete;
+            public readonly bool IsComplete; // LUCENENET TODO: make property
 
             /// <summary>
             /// The top results
             /// </summary>
-            public readonly IList<Result<T>> TopN;
+            public readonly IList<Result<T>> TopN; // LUCENENET TODO: make property
 
             internal TopResults(bool isComplete, IList<Result<T>> topN)
             {
@@ -953,7 +953,12 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         private static void EmitDotState(TextWriter @out, string name, string shape, string color, string label)
         {
-            @out.Write("  " + name + " [" + (shape != null ? "shape=" + shape : "") + " " + (color != null ? "color=" + color : "") + " " + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " + "]\n");
+            @out.Write("  " + name 
+                + " [" 
+                + (shape != null ? "shape=" + shape : "") + " " 
+                + (color != null ? "color=" + color : "") + " " 
+                + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " 
+                + "]\n");
         }
 
         /// <summary>
