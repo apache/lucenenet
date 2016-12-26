@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Util
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new WholeSentenceTokenizer(reader));
             }
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SentenceAndWordTokenizer(reader));
             }

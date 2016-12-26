@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.words = words;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream stream = new KeepWordFilter(TEST_VERSION_CURRENT, tokenizer, new CharArraySet(TEST_VERSION_CURRENT, words, true));

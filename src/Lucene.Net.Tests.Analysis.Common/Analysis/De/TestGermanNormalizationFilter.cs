@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.De
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string field, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string field, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream stream = new GermanNormalizationFilter(tokenizer);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.De
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new GermanNormalizationFilter(tokenizer));

@@ -101,7 +101,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns number of states in automaton.
         /// </summary>
-        public int Size
+        public int Size // LUCENENET TODO: Rename Count
         {
             get
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns array of codepoint class interval start points. The array should
         /// not be modified by the caller.
         /// </summary>
-        public int[] CharIntervals
+        public int[] CharIntervals // LUCENENET TODO: Change to GetCharIntervals() (conversion, array)
         {
             get
             {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Gets character class of given codepoint
         /// </summary>
-        protected int GetCharClass(int c)
+        internal int GetCharClass(int c)
         {
             return SpecialOperations.FindIndex(c, _points);
         }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="a"> an automaton </param>
         /// <param name="maxInterval"></param>
         /// <param name="tableize"></param>
-        protected RunAutomaton(Automaton a, int maxInterval, bool tableize)
+        public RunAutomaton(Automaton a, int maxInterval, bool tableize)
         {
             this._maxInterval = maxInterval;
             a.Determinize();

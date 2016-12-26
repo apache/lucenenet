@@ -29,20 +29,20 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     /// <seealso cref= #build(Collection) </seealso>
     /// <seealso cref= BasicAutomata#makeStringUnion(Collection) </seealso>
-    public sealed class DaciukMihovAutomatonBuilder
+    internal sealed class DaciukMihovAutomatonBuilder
     {
         /// <summary>
         /// DFSA state with <code>char</code> labels on transitions.
         /// </summary>
-        public sealed class State
+        public sealed class State // LUCENENET NOTE: Made public because it is returned from a public member
         {
             /// <summary>
             /// An empty set of labels. </summary>
-            internal static readonly int[] NO_LABELS = new int[0];
+            private static readonly int[] NO_LABELS = new int[0];
 
             /// <summary>
             /// An empty set of states. </summary>
-            internal static readonly State[] NO_STATES = new State[0];
+            private static readonly State[] NO_STATES = new State[0];
 
             /// <summary>
             /// Labels of outgoing transitions. Indexed identically to <seealso cref="#states"/>.
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Automaton
             /// Return <code>true</code> if this state has any children (outgoing
             /// transitions).
             /// </summary>
-            internal bool HasChildren()
+            internal bool HasChildren() // LUCENENET TODO: make property
             {
                 return Labels.Length > 0;
             }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Return the most recent transitions's target state.
             /// </summary>
-            internal State LastChild()
+            internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
                 Debug.Assert(HasChildren(), "No outgoing transitions.");
                 return States[States.Length - 1];
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Compare two lists of objects for reference-equality.
             /// </summary>
-            internal static bool ReferenceEquals(object[] a1, object[] a2)
+            private static bool ReferenceEquals(object[] a1, object[] a2)
             {
                 if (a1.Length != a2.Length)
                 {

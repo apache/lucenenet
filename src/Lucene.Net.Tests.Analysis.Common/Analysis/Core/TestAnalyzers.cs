@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Core
         private class LowerCaseWhitespaceAnalyzer : Analyzer
         {
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, new LowerCaseFilter(TEST_VERSION_CURRENT, tokenizer));
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Core
         private class UpperCaseWhitespaceAnalyzer : Analyzer
         {
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, new UpperCaseFilter(TEST_VERSION_CURRENT, tokenizer));

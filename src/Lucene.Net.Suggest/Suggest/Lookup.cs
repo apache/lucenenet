@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest
             {
             }
 
-            protected override bool LessThan(LookupResult a, LookupResult b)
+            protected internal override bool LessThan(LookupResult a, LookupResult b)
             {
                 return a.value < b.value;
             }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Returns the top N results in descending order. </summary>
             /// <returns> the top N results in descending order. </returns>
-            public LookupResult[] Results
+            public LookupResult[] Results // LUCENENET TODO: Change to GetResults() (array)
             {
                 get
                 {

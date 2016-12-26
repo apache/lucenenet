@@ -140,7 +140,7 @@ namespace Lucene.Net.Util.Automaton
         /// Selects minimization algorithm (default: <code>MINIMIZE_HOPCROFT</code>).
         /// </summary>
         /// <param name="algorithm"> minimization algorithm </param>
-        public static int Minimization
+        public static int Minimization // LUCENENET TODO: Make SetMinimization(int algorithm)
         {
             set
             {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util.Automaton
         /// automata. By default, the flag is not set.
         /// </summary>
         /// <param name="flag"> if true, the flag is set </param>
-        public static bool MinimizeAlways
+        public static bool MinimizeAlways // LUCENENET TODO: Make SetMinimizeAlways(bool flag)
         {
             set
             {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return Allow_mutation;
             }
-            set
+            set // LUCENENET TODO: Remove setter
             {
                 Allow_mutation = value;
             }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public bool IsSingleton
+        internal bool IsSingleton
         {
             get
             {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Automaton
         /// Gets initial state.
         /// </summary>
         /// <returns> state </returns>
-        public virtual State InitialState
+        public virtual State InitialState // LUCENENET TODO: Change to GetIntitialState() (complexity, side-effect)
         {
             get
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util.Automaton
                 return Initial;
             }
 
-            set { Initial = value; }
+            set { Initial = value; }// LUCENENET TODO: Remove setter
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <returns> true if the automaton is definitely deterministic, false if the
         ///         automaton may be nondeterministic </returns>
-        public virtual bool Deterministic
+        public virtual bool Deterministic // LUCENENET TODO: Rename IsDeterministic
         {
             get
             {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Util.Automaton
         // cached
         private State[] NumberedStates_Renamed;
 
-        public virtual State[] NumberedStates
+        public virtual State[] NumberedStates // LUCENENET TODO: Change to GetNumberedStates() (complexity, array)
         {
             get
             {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util.Automaton
 
                 return NumberedStates_Renamed;
             }
-            set
+            set // LUCENENET TODO: make SetNumberedStates(State[] states)
             {
                 SetNumberedStates(value, value.Length);
             }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns the set of reachable accept states.
         /// </summary>
         /// <returns> set of <seealso cref="State"/> objects </returns>
-        public virtual ISet<State> AcceptStates
+        public virtual ISet<State> AcceptStates // LUCENENET TODO: Make GetAcceptStates() (complexity)
         {
             get
             {
@@ -463,7 +463,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns sorted array of all interval start points.
         /// </summary>
-        public virtual int[] StartPoints
+        public virtual int[] StartPoints // LUCENENET TODO: Change to GetStartPoints() (array, complexity)
         {
             get
             {
@@ -497,7 +497,7 @@ namespace Lucene.Net.Util.Automaton
         /// reachable from it.
         /// </summary>
         /// <returns> set of <seealso cref="State"/> objects </returns>
-        private State[] LiveStates
+        private State[] LiveStates // LUCENENET TODO: Make GetLiveStates() (array, conversion)
         {
             get
             {
@@ -597,7 +597,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a sorted array of transitions for each state (and sets state
         /// numbers).
         /// </summary>
-        public virtual Transition[][] SortedTransitions
+        public virtual Transition[][] SortedTransitions // LUCENENET TODO: Make GetSortedTransitions() (array, conversion)
         {
             get
             {
@@ -645,7 +645,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (IsSingleton)
                 {
-                    return singleton.Length;// codePointCount(0, singleton.Length) + 1;
+                    return singleton.Length;// codePointCount(0, singleton.Length) + 1; // LUCENENET TODO: revert to original code
                 }
                 return NumberedStates.Length;
             }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (IsSingleton)
                 {
-                    return singleton.Length;// codePointCount(0, singleton.Length);
+                    return singleton.Length;// codePointCount(0, singleton.Length); // LUCENENET TODO: revert to original code
                 }
                 int c = 0;
                 foreach (State s in NumberedStates)
@@ -677,7 +677,7 @@ namespace Lucene.Net.Util.Automaton
             throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
         }
 
-        /*public override int GetHashCode()
+        /*public override int GetHashCode() // LUCENENET TODO: Add this back in (as per the original)
         {
           throw new System.NotSupportedException();
         }*/
@@ -761,7 +761,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a clone of this automaton, expands if singleton.
         /// </summary>
-        public virtual Automaton CloneExpanded()
+        internal virtual Automaton CloneExpanded()
         {
             Automaton a = (Automaton)Clone();
             a.ExpandSingleton();
@@ -788,7 +788,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a clone of this automaton.
         /// </summary>
-        public object Clone()
+        public virtual object Clone()
         {
             Automaton a = (Automaton)base.MemberwiseClone();
             if (!IsSingleton)
@@ -940,7 +940,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <seealso cref="BasicOperations#isEmptyString(Automaton)"/>.
         /// </summary>
-        public virtual bool EmptyString
+        public virtual bool EmptyString // LUCENENET TODO: Rename IsEmptyString
         {
             get
             {

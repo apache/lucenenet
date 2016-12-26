@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Automaton
     // Just holds a set of int[] states, plus a corresponding
     // int[] count per state.  Used by
     // BasicOperations.determinize
-    public sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet>
+    internal sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet>
     {
         internal int[] Values;
         internal int[] Counts;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public FrozenIntSet ToFrozenIntSet()
+        public FrozenIntSet ToFrozenIntSet() // LUCENENET TODO: This didn't exist in the original
         {
             int[] c = new int[Upto];
             Array.Copy(Values, 0, c, 0, Upto);
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Automaton
 
         public override bool Equals(object _other)
         {
-            throw new NotImplementedException("ObjectEquals");
+            throw new NotImplementedException("ObjectEquals"); // LUCENENET TODO: Remove error message
             if (_other == null)
             {
                 return false;
@@ -234,12 +234,12 @@ namespace Lucene.Net.Util.Automaton
             return true;
         }
 
-        public bool Equals(SortedIntSet other)
+        public bool Equals(SortedIntSet other) // LUCENENET TODO: This didn't exist in the original
         {
             throw new NotImplementedException("SortedIntSet Equals");
         }
 
-        public bool Equals(FrozenIntSet other)
+        public bool Equals(FrozenIntSet other) // LUCENENET TODO: This didn't exist in the original
         {
             if (other == null)
             {
@@ -308,7 +308,7 @@ namespace Lucene.Net.Util.Automaton
 
             public override bool Equals(object _other)
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException(); // LUCENENET TODO: remove error
                 if (_other == null)
                 {
                     return false;
@@ -357,7 +357,7 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
 
-            public bool Equals(SortedIntSet other)
+            public bool Equals(SortedIntSet other) // LUCENENET TODO: This didn't exist in the original
             {
                 if (other == null)
                 {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Util.Automaton
                 return true;
             }
 
-            public bool Equals(FrozenIntSet other)
+            public bool Equals(FrozenIntSet other) // LUCENENET TODO: This didn't exist in the original
             {
                 if (other == null)
                 {

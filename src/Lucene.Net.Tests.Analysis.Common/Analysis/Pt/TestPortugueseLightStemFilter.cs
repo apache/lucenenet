@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Pt
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Pt
                 this.exclusionSet = exclusionSet;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Pt
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PortugueseLightStemFilter(tokenizer));

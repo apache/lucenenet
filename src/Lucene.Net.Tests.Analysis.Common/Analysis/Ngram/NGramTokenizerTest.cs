@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Ngram
                 this.max = max;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new NGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
                 return new TokenStreamComponents(tokenizer, tokenizer);

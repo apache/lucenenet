@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Automaton
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class MinimizationOperations
+    internal sealed class MinimizationOperations
     {
         private MinimizationOperations()
         {
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class IntPair
         {
-            internal readonly int N1, N2;
+            internal readonly int N1, N2; // LUCENENET TODO: Make property
 
             internal IntPair(int n1, int n2)
             {
@@ -262,9 +262,9 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class StateList
         {
-            internal int Size;
+            internal int Size; // LUCENENET TODO: Make property
 
-            internal StateListNode First, Last;
+            internal StateListNode First, Last; // LUCENENET TODO: Make property
 
             internal StateListNode Add(State q)
             {
@@ -274,11 +274,11 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class StateListNode
         {
-            internal readonly State q;
+            internal readonly State q; // LUCENENET TODO: Make property
 
-            internal StateListNode Next, Prev;
+            internal StateListNode Next, Prev; // LUCENENET TODO: Make property
 
-            internal readonly StateList Sl;
+            internal readonly StateList Sl; // LUCENENET TODO: Make property
 
             internal StateListNode(State q, StateList sl)
             {

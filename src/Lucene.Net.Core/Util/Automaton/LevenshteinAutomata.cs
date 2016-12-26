@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Automaton
         {
             protected internal readonly int w;
             protected internal readonly int n;
-            internal readonly int[] MinErrors;
+            private readonly int[] MinErrors;
 
             internal ParametricDescription(int w, int n, int[] minErrors)
             {
@@ -257,7 +257,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Return the number of states needed to compute a Levenshtein DFA
             /// </summary>
-            internal virtual int Size()
+            internal virtual int Size() // LUCENENET TODO: change to property, rename Count
             {
                 return MinErrors.Length * (w + 1);
             }
@@ -289,7 +289,24 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal abstract int Transition(int state, int position, int vector);
 
-            internal static readonly long[] MASKS = new long[] { 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff, 0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffffL, 0xffffffffL, 0x1ffffffffL, 0x3ffffffffL, 0x7ffffffffL, 0xfffffffffL, 0x1fffffffffL, 0x3fffffffffL, 0x7fffffffffL, 0xffffffffffL, 0x1ffffffffffL, 0x3ffffffffffL, 0x7ffffffffffL, 0xfffffffffffL, 0x1fffffffffffL, 0x3fffffffffffL, 0x7fffffffffffL, 0xffffffffffffL, 0x1ffffffffffffL, 0x3ffffffffffffL, 0x7ffffffffffffL, 0xfffffffffffffL, 0x1fffffffffffffL, 0x3fffffffffffffL, 0x7fffffffffffffL, 0xffffffffffffffL, 0x1ffffffffffffffL, 0x3ffffffffffffffL, 0x7ffffffffffffffL, 0xfffffffffffffffL, 0x1fffffffffffffffL, 0x3fffffffffffffffL, 0x7fffffffffffffffL };
+            private static readonly long[] MASKS = new long[] {
+                0x1, 0x3, 0x7, 0xf,
+                0x1f, 0x3f, 0x7f, 0xff,
+                0x1ff, 0x3ff, 0x7ff, 0xfff,
+                0x1fff, 0x3fff, 0x7fff, 0xffff,
+                0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
+                0x1fffff, 0x3fffff, 0x7fffff, 0xffffff,
+                0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff,
+                0x1fffffff, 0x3fffffff, 0x7fffffffL, 0xffffffffL,
+                0x1ffffffffL, 0x3ffffffffL, 0x7ffffffffL, 0xfffffffffL,
+                0x1fffffffffL, 0x3fffffffffL, 0x7fffffffffL, 0xffffffffffL,
+                0x1ffffffffffL, 0x3ffffffffffL, 0x7ffffffffffL, 0xfffffffffffL,
+                0x1fffffffffffL, 0x3fffffffffffL, 0x7fffffffffffL, 0xffffffffffffL,
+                0x1ffffffffffffL, 0x3ffffffffffffL, 0x7ffffffffffffL, 0xfffffffffffffL,
+                0x1fffffffffffffL, 0x3fffffffffffffL, 0x7fffffffffffffL, 0xffffffffffffffL,
+                0x1ffffffffffffffL, 0x3ffffffffffffffL, 0x7ffffffffffffffL, 0xfffffffffffffffL,
+                0x1fffffffffffffffL, 0x3fffffffffffffffL, 0x7fffffffffffffffL
+            };
 
             protected internal virtual int Unpack(long[] data, int index, int bitsPerValue)
             {

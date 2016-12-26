@@ -43,8 +43,8 @@ namespace Lucene.Net.Util.Automaton
     public class State : IComparable<State>
     {
         internal bool accept;
-        public Transition[] TransitionsArray;
-        public int numTransitions;
+        public Transition[] TransitionsArray; // LUCENENET TODO: make property ?
+        public int numTransitions; // LUCENENET TODO: make property ?
 
         internal int number;
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util.Automaton
         /// in the automaton.
         /// </summary>
         /// <returns> transition set </returns>
-        public virtual IEnumerable<Transition> Transitions
+        public virtual IEnumerable<Transition> Transitions // LUCENENET TODO: Make GetTransitions(), SetTransitions() (conversion, new instance)
         {
             get
             {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public virtual int NumTransitions()
+        public virtual int NumTransitions() // LUCENENET TODO: make property
         {
             return numTransitions;
         }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return number;
             }
-            set
+            internal set // LUCENENET TODO: This wasn't in the original
             {
                 number = value;
             }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Util.Automaton
         /// Compares this object with the specified object for order. States are
         /// ordered by the time of construction.
         /// </summary>
-        public int CompareTo(State s)
+        public virtual int CompareTo(State s)
         {
             return s.Id - Id;
         }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
     ///
     /// @lucene.experimental
     /// </summary>
-    public interface AutomatonProvider
+    public interface AutomatonProvider // LUCENENET TODO: Rename with "I"
     {
         /// <summary>
         /// Returns automaton of the given name.

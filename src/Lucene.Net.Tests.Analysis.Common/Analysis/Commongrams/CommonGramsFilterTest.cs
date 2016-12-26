@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.CommonGrams
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new CommonGramsQueryFilter(new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords)));
@@ -198,7 +198,7 @@ namespace Lucene.Net.Analysis.CommonGrams
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords));
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 CommonGramsFilter cgf = new CommonGramsFilter(TEST_VERSION_CURRENT, t, commonWords);
@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 CommonGramsFilter cgf = new CommonGramsFilter(TEST_VERSION_CURRENT, t, commonWords);

@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Automaton
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class SpecialOperations
+    internal sealed class SpecialOperations
     {
         private SpecialOperations()
         {

@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.ignoreCase = ignoreCase;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 TokenStream stream = new SynonymFilter(tokenizer, map, ignoreCase);
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new RemoveDuplicatesTokenFilter(tokenizer));

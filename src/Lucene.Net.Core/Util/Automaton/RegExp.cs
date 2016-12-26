@@ -746,7 +746,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns set of automaton identifiers that occur in this regular expression.
         /// </summary>
-        public virtual ISet<string> Identifiers
+        public virtual ISet<string> Identifiers // LUCENENET TODO: Change to GetIdentifiers() (makes conversion)
         {
             get
             {

@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Core
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Core
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
                 tokenizer.MaxTokenLength = int.MaxValue; // Tokenize arbitrary length URLs
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Core
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
                 TokenFilter filter = new EmailFilter(tokenizer);
@@ -587,7 +587,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_31, reader);
@@ -615,7 +615,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_34, reader);
@@ -642,7 +642,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_36, reader);
@@ -671,7 +671,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_40, reader);

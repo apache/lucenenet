@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Snowball
                 this.snowballLanguage = snowballLanguage;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));

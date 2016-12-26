@@ -553,7 +553,7 @@ namespace Lucene.Net.Analysis.El
 			  this.outerInstance = outerInstance;
 		  }
 
-		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new KeywordTokenizer(reader);
 			return new TokenStreamComponents(tokenizer, new GreekStemFilter(tokenizer));

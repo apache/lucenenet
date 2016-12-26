@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Automaton
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class BasicOperations
+    internal sealed class BasicOperations
     {
         private BasicOperations()
         {
@@ -677,11 +677,11 @@ namespace Lucene.Net.Util.Automaton
             internal int Count;
             internal PointTransitions[] Points = new PointTransitions[5];
 
-            internal const int HASHMAP_CUTOVER = 30;
-            internal readonly Dictionary<int?, PointTransitions> Map = new Dictionary<int?, PointTransitions>();
-            internal bool UseHash = false;
+            private const int HASHMAP_CUTOVER = 30;
+            private readonly Dictionary<int?, PointTransitions> Map = new Dictionary<int?, PointTransitions>();
+            private bool UseHash = false;
 
-            internal PointTransitions Next(int point)
+            private PointTransitions Next(int point)
             {
                 // 1st time we are seeing this point
                 if (Count == Points.Length)
@@ -700,7 +700,7 @@ namespace Lucene.Net.Util.Automaton
                 return points0;
             }
 
-            internal PointTransitions Find(int point)
+            private PointTransitions Find(int point)
             {
                 if (UseHash)
                 {

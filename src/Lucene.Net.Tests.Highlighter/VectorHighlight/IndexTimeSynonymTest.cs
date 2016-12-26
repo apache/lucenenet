@@ -368,7 +368,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.tokens = tokens;
             }
 
-            protected override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 Tokenizer ts = new TokenizerAnonymousHelper(Token.TOKEN_ATTRIBUTE_FACTORY, reader, tokens);
                 return new TokenStreamComponents(ts);

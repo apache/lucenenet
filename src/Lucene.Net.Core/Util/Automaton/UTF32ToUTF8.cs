@@ -54,15 +54,15 @@ namespace Lucene.Net.Util.Automaton
         // how many bits are "used" by utf8 at that byte
         private class UTF8Byte
         {
-            internal int Value; // TODO: change to byte
-            internal sbyte Bits;
+            internal int Value; // TODO: change to byte // LUCENENET TODO: make property
+            internal sbyte Bits; // LUCENENET TODO: make property
         }
 
         // Holds a single code point, as a sequence of 1-4 utf8 bytes:
         // TODO: maybe move to UnicodeUtil?
         private class UTF8Sequence
         {
-            internal readonly UTF8Byte[] Bytes;
+            private readonly UTF8Byte[] Bytes;
             internal int Len;
 
             public UTF8Sequence()
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            internal virtual void SetRest(int code, int numBytes)
+            private void SetRest(int code, int numBytes)
             {
                 for (int i = 0; i < numBytes; i++)
                 {

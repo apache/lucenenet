@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         internal sealed class BigramAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new BasicNGramTokenizer(reader));
             }

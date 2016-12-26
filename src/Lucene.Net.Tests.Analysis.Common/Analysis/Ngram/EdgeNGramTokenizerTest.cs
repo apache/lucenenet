@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Ngram
                 this.max = max;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
             {
                 Tokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Ngram
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, reader, Lucene43EdgeNGramTokenizer.Side.BACK, 2, 4);

@@ -226,13 +226,13 @@ namespace Lucene.Net.Analysis.CharFilters
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }
 
-            protected override TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 return new MappingCharFilter(outerInstance.normMap, reader);
             }
@@ -267,13 +267,13 @@ namespace Lucene.Net.Analysis.CharFilters
                 this.map = map;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }
 
-            protected override TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 return new MappingCharFilter(map, reader);
             }
@@ -305,13 +305,13 @@ namespace Lucene.Net.Analysis.CharFilters
                 this.map = map;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }
 
-            protected override TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 return new MappingCharFilter(map, reader);
             }
