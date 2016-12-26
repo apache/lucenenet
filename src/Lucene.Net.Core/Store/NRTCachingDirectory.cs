@@ -106,12 +106,9 @@ namespace Lucene.Net.Store
             @delegate.SetLockFactory(lockFactory);
         }
 
-        public override string LockID
+        public override string GetLockID()
         {
-            get
-            {
-                return @delegate.LockID;
-            }
+            return @delegate.GetLockID();
         }
 
         public override Lock MakeLock(string name)

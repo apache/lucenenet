@@ -1283,15 +1283,12 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override string LockID
+        public override string GetLockID()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    MaybeYield();
-                    return @in.LockID;
-                }
+                MaybeYield();
+                return @in.GetLockID();
             }
         }
 

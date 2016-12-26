@@ -115,12 +115,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override string LockID
+        public override string GetLockID()
         {
-            get
-            {
-                return @in.LockID;
-            }
+            return @in.GetLockID();
         }
 
         public override string ToString()

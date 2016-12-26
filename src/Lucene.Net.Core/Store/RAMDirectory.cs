@@ -107,12 +107,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override string LockID
+        public override string GetLockID()
         {
-            get
-            {
-                return "lucene-" + GetHashCode().ToString("x");
-            }
+            return "lucene-" + GetHashCode().ToString("x");
         }
 
         public override sealed string[] ListAll()

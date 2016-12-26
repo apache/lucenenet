@@ -154,12 +154,9 @@ namespace Lucene.Net.Store
         /// are considered "the same index".  this is how locking
         /// "scopes" to the right index.
         /// </summary>
-        public virtual string LockID // LUCENENET TODO: make GetLockID() (conversion)
+        public virtual string GetLockID()
         {
-            get
-            {
-                return this.ToString();
-            }
+            return this.ToString();
         }
 
         public override string ToString()

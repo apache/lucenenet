@@ -372,29 +372,26 @@ namespace Lucene.Net.Store
             StaleFiles.ExceptWith(toSync);
         }
 
-        public override string LockID
+        public override string GetLockID()
         {
-            get
+            EnsureOpen();
+            string dirName; // name to be hashed
+            try
             {
-                EnsureOpen();
-                string dirName; // name to be hashed
-                try
-                {
-                    dirName = directory.FullName;
-                }
-                catch (System.IO.IOException e)
-                {
-                    throw new Exception(e.ToString(), e);
-                }
-
-                int digest = 0;
-                for (int charIDX = 0; charIDX < dirName.Length; charIDX++)
-                {
-                    char ch = dirName[charIDX];
-                    digest = 31*digest + ch;
-                }
-                return "lucene-" + digest.ToString("x");
+                dirName = directory.FullName;
             }
+            catch (System.IO.IOException e)
+            {
+                throw new Exception(e.ToString(), e);
+            }
+
+            int digest = 0;
+            for (int charIDX = 0; charIDX < dirName.Length; charIDX++)
+            {
+                char ch = dirName[charIDX];
+                digest = 31*digest + ch;
+            }
+            return "lucene-" + digest.ToString("x");
         }
 
         /// <summary>
