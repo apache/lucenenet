@@ -181,9 +181,9 @@ namespace Lucene.Net.Facet
             {
                 return ii.GetHashCode();
             }
-            public override long Length()
+            public override long Length
             {
-                return ii.Length();
+                get { return ii.Length; }
             }
 
         }

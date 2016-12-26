@@ -212,13 +212,13 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
             {
-                input.Seek(input.Length() - CodecUtil.FooterLength() - 8);
+                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
                 dirOffset = input.ReadLong();
 
             }
             else if (_version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
-                input.Seek(input.Length() - 8);
+                input.Seek(input.Length - 8);
                 dirOffset = input.ReadLong();
             }
 
@@ -491,11 +491,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                                 clone.Seek(indexStart + termOffset);
                                 
-                                Debug.Assert(indexStart + termOffset < clone.Length(),
+                                Debug.Assert(indexStart + termOffset < clone.Length,
                                     String.Format("IndexStart: {0}, TermOffset: {1}, Len: {2}", indexStart, termOffset,
-                                        clone.Length()));
+                                        clone.Length));
                                 
-                                Debug.Assert(indexStart + termOffset + numTermBytes < clone.Length());
+                                Debug.Assert(indexStart + termOffset + numTermBytes < clone.Length);
 
                                 fgtir._termBytes.Copy(clone, numTermBytes);
                                 termOffsetUpto += numTermBytes;

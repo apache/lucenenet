@@ -170,10 +170,10 @@ namespace Lucene.Net.Store
         {
             MyBufferedIndexInput input = new MyBufferedIndexInput(1024);
             // see that we can read all the bytes at one go:
-            CheckReadBytes(input, (int)input.Length(), 0);
+            CheckReadBytes(input, (int)input.Length, 0);
             // go back and see that we can't read more than that, for small and
             // large overflows:
-            int pos = (int)input.Length() - 10;
+            int pos = (int)input.Length - 10;
             input.Seek(pos);
             CheckReadBytes(input, 10, pos);
             input.Seek(pos);
@@ -250,9 +250,9 @@ namespace Lucene.Net.Store
             {
             }
 
-            public override long Length()
+            public override long Length
             {
-                return Len;
+                get { return Len; }
             }
         }
 

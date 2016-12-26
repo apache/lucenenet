@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs
         {
             this.SkipPointer[0] = skipPointer;
             this.DocCount = df;
-            Debug.Assert(skipPointer >= 0 && skipPointer <= SkipStream[0].Length(), "invalid skip pointer: " + skipPointer + ", length=" + SkipStream[0].Length());
+            Debug.Assert(skipPointer >= 0 && skipPointer <= SkipStream[0].Length, "invalid skip pointer: " + skipPointer + ", length=" + SkipStream[0].Length);
             Array.Clear(SkipDoc, 0, SkipDoc.Length);
             Array.Clear(NumSkipped, 0, NumSkipped.Length);
             Array.Clear(ChildPointer, 0, ChildPointer.Length);
@@ -351,9 +351,9 @@ namespace Lucene.Net.Codecs
                 }
             }
 
-            public override long Length()
+            public override long Length
             {
-                return Data.Length;
+                get { return Data.Length; }
             }
 
             public override byte ReadByte()

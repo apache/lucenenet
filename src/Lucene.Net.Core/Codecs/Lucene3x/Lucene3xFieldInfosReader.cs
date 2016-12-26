@@ -125,9 +125,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), CollectionsHelper.EmptyMap<string, string>());
                 }
 
-                if (input.FilePointer != input.Length())
+                if (input.FilePointer != input.Length)
                 {
-                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length() + " (resource: " + input + ")");
+                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length + " (resource: " + input + ")");
                 }
                 FieldInfos fieldInfos = new FieldInfos(infos);
                 success = true;

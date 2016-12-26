@@ -230,7 +230,7 @@ namespace Lucene.Net.Store
             }
 
             // read the directory and init files
-            long streamLength = stream.Length();
+            long streamLength = stream.Length;
             FileEntry entry = null;
             for (int i = 0; i < count; i++)
             {

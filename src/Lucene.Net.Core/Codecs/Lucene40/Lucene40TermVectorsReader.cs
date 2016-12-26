@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(tvxVersion == tvdVersion);
                 Debug.Assert(tvxVersion == tvfVersion);
 
-                NumTotalDocs = (int)(Tvx.Length() - HEADER_LENGTH_INDEX >> 4);
+                NumTotalDocs = (int)(Tvx.Length - HEADER_LENGTH_INDEX >> 4);
 
                 this.Size_Renamed = NumTotalDocs;
                 Debug.Assert(size == 0 || NumTotalDocs == size);
@@ -216,8 +216,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 else
                 {
-                    tvdPosition = Tvd.Length();
-                    tvfPosition = Tvf.Length();
+                    tvdPosition = Tvd.Length;
+                    tvfPosition = Tvf.Length;
                     Debug.Assert(count == numDocs - 1);
                 }
                 tvdLengths[count] = (int)(tvdPosition - lastTvdPosition);

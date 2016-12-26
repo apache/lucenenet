@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckHeader(FieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
                 Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == FieldsStream.FilePointer);
                 Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == IndexStream.FilePointer);
-                long indexSize = IndexStream.Length() - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
+                long indexSize = IndexStream.Length - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
                 this.Size_Renamed = (int)(indexSize >> 3);
                 // Verify two sources of "maxDoc" agree:
                 if (this.Size_Renamed != si.DocCount)
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 else
                 {
-                    offset = FieldsStream.Length();
+                    offset = FieldsStream.Length;
                 }
                 lengths[count++] = (int)(offset - lastOffset);
                 lastOffset = offset;

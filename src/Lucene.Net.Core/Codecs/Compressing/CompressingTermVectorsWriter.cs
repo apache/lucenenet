@@ -950,7 +950,7 @@ namespace Lucene.Net.Codecs.Compressing
                         }
                     }
 
-                    vectorsStream.Seek(vectorsStream.Length() - CodecUtil.FooterLength());
+                    vectorsStream.Seek(vectorsStream.Length - CodecUtil.FooterLength());
                     CodecUtil.CheckFooter(vectorsStream);
                 }
             }

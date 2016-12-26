@@ -190,7 +190,7 @@ namespace Lucene.Net.Store
             {
                 os = to.CreateOutput(dest, context);
                 @is = OpenInput(src, context);
-                os.CopyBytes(@is, @is.Length());
+                os.CopyBytes(@is, @is.Length);
             }
             catch (System.IO.IOException ioe)
             {
@@ -378,9 +378,9 @@ namespace Lucene.Net.Store
                 @base.Dispose();
             }
 
-            public override long Length()
+            public override long Length
             {
-                return length;
+                get { return length; }
             }
         }
     }

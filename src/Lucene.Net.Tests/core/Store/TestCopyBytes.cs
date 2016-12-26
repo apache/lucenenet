@@ -187,7 +187,7 @@ namespace Lucene.Net.Store
             {
                 try
                 {
-                    Dst.CopyBytes(Src, Src.Length() - 100);
+                    Dst.CopyBytes(Src, Src.Length - 100);
                     Dst.Dispose();
                 }
                 catch (IOException ex)

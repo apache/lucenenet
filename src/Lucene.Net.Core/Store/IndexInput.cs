@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
     /// <seealso cref= Directory </seealso>
     public abstract class IndexInput : DataInput, IDisposable
     {
-        private readonly string ResourceDescription;
+        private readonly string resourceDescription;
 
         /// <summary>
         /// resourceDescription should be a non-null, opaque string
@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
             {
                 throw new System.ArgumentException("resourceDescription must not be null");
             }
-            this.ResourceDescription = resourceDescription;
+            this.resourceDescription = resourceDescription;
         }
 
         /// <summary>
@@ -69,11 +69,11 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// The number of bytes in the file. </summary>
-        public abstract long Length(); // LUCENENET TODO: make property
+        public abstract long Length { get; }
 
         public override string ToString()
         {
-            return ResourceDescription;
+            return resourceDescription;
         }
 
         /// <summary>

@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     throw new IndexFormatTooNewException(IndexStream, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                long indexSize = IndexStream.Length() - FORMAT_SIZE;
+                long indexSize = IndexStream.Length - FORMAT_SIZE;
 
                 if (docStoreOffset != -1)
                 {

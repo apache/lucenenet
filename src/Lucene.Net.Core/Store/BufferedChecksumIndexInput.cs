@@ -79,9 +79,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override long Length()
+        public override long Length
         {
-            return main.Length();
+            get { return main.Length; }
         }
 
         public override object Clone()

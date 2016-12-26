@@ -189,15 +189,15 @@ namespace Lucene.Net.Store
                 return clone;
             }
 
-            public override sealed long Length()
+            public override sealed long Length
             {
-                return End - Off;
+                get { return End - Off; }
             }
 
             protected override void NewBuffer(byte[] newBuffer)
             {
                 base.NewBuffer(newBuffer);
-                ByteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer);
+                ByteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer); // LUCENENET TODO: remove unnecessary cast
             }
 
             protected override void ReadInternal(byte[] b, int offset, int len)

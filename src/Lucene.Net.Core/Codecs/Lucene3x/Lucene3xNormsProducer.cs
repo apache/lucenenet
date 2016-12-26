@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             // if the size is exactly equal to maxDoc to detect a headerless file.
                             // NOTE: remove this check in Lucene 5.0!
                             string version = info.Version;
-                            bool isUnversioned = (version == null || StringHelper.VersionComparator.Compare(version, "3.2") < 0) && normInput.Length() == Maxdoc;
+                            bool isUnversioned = (version == null || StringHelper.VersionComparator.Compare(version, "3.2") < 0) && normInput.Length == Maxdoc;
                             if (isUnversioned)
                             {
                                 normSeek = 0;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                Debug.Assert(SingleNormStream == null || nextNormSeek == SingleNormStream.Length(), SingleNormStream != null ? "len: " + SingleNormStream.Length() + " expected: " + nextNormSeek : "null");
+                Debug.Assert(SingleNormStream == null || nextNormSeek == SingleNormStream.Length, SingleNormStream != null ? "len: " + SingleNormStream.Length + " expected: " + nextNormSeek : "null");
                 success = true;
             }
             finally

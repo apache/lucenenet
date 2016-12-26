@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Index
             string segmentsFileName = SegmentInfos.GetLastCommitSegmentsFileName(dir);
             IndexInput @in = dir.OpenInput(segmentsFileName, NewIOContext(Random()));
             IndexOutput @out = dir.CreateOutput(IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen), NewIOContext(Random()));
-            @out.CopyBytes(@in, @in.Length() - 1);
+            @out.CopyBytes(@in, @in.Length - 1);
             byte b = @in.ReadByte();
             @out.WriteByte((byte)(sbyte)(1 + b));
             @out.Dispose();
@@ -1406,7 +1406,7 @@ namespace Lucene.Net.Index
             string fileNameOut = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen);
             IndexInput @in = dir.OpenInput(fileNameIn, NewIOContext(Random()));
             IndexOutput @out = dir.CreateOutput(fileNameOut, NewIOContext(Random()));
-            long length = @in.Length();
+            long length = @in.Length;
             for (int i = 0; i < length - 1; i++)
             {
                 @out.WriteByte(@in.ReadByte());
@@ -1524,7 +1524,7 @@ namespace Lucene.Net.Index
             string fileNameOut = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen);
             IndexInput @in = dir.OpenInput(fileNameIn, NewIOContext(Random()));
             IndexOutput @out = dir.CreateOutput(fileNameOut, NewIOContext(Random()));
-            long length = @in.Length();
+            long length = @in.Length;
             for (int i = 0; i < length - 1; i++)
             {
                 @out.WriteByte(@in.ReadByte());

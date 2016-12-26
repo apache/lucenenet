@@ -90,13 +90,13 @@ namespace Lucene.Net.Index
         {
             Assert.IsNotNull(expected, msg + " null expected");
             Assert.IsNotNull(test, msg + " null test");
-            Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
+            Assert.AreEqual(expected.Length, test.Length, msg + " length");
             Assert.AreEqual(expected.FilePointer, test.FilePointer, msg + " position");
 
             var expectedBuffer = new byte[512];
             var testBuffer = new byte[expectedBuffer.Length];
 
-            long remainder = expected.Length() - expected.FilePointer;
+            long remainder = expected.Length - expected.FilePointer;
             while (remainder > 0)
             {
                 int readLen = (int)Math.Min(remainder, expectedBuffer.Length);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 
         private void AssertSameStreams(string msg, IndexInput expected, IndexInput actual, long seekTo)
         {
-            if (seekTo >= 0 && seekTo < expected.Length())
+            if (seekTo >= 0 && seekTo < expected.Length)
             {
                 expected.Seek(seekTo);
                 actual.Seek(seekTo);
@@ -124,23 +124,23 @@ namespace Lucene.Net.Index
             AssertSameStreams(msg + ", seek(0)", expected, actual, point);
 
             // seek to middle
-            point = expected.Length() / 2l;
+            point = expected.Length / 2l;
             AssertSameStreams(msg + ", seek(mid)", expected, actual, point);
 
             // seek to end - 2
-            point = expected.Length() - 2;
+            point = expected.Length - 2;
             AssertSameStreams(msg + ", seek(end-2)", expected, actual, point);
 
             // seek to end - 1
-            point = expected.Length() - 1;
+            point = expected.Length - 1;
             AssertSameStreams(msg + ", seek(end-1)", expected, actual, point);
 
             // seek to the end
-            point = expected.Length();
+            point = expected.Length;
             AssertSameStreams(msg + ", seek(end)", expected, actual, point);
 
             // seek past end
-            point = expected.Length() + 1;
+            point = expected.Length + 1;
             AssertSameStreams(msg + ", seek(end+1)", expected, actual, point);
         }
 
@@ -579,7 +579,7 @@ namespace Lucene.Net.Index
             SetUp_2();
             var cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
             IndexInput @is = cr.OpenInput("f2", NewIOContext(Random()));
-            @is.Seek(@is.Length() - 10);
+            @is.Seek(@is.Length - 10);
             var b = new byte[100];
             @is.ReadBytes(b, 0, 10);
 
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
                 //System.out.println("SUCCESS: single byte read past end of file: " + e);
             }
 
-            @is.Seek(@is.Length() - 10);
+            @is.Seek(@is.Length - 10);
             try
             {
                 @is.ReadBytes(b, 0, 50);
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
             for (int j = 0; j < 2; j++)
             {
                 IndexInput openInput = csr.OpenInput("seg_" + j + "_foo.txt", NewIOContext(Random()));
-                Assert.AreEqual(size * 4, openInput.Length());
+                Assert.AreEqual(size * 4, openInput.Length);
                 for (int i = 0; i < size; i++)
                 {
                     Assert.AreEqual(i * j, openInput.ReadInt());

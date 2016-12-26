@@ -124,11 +124,11 @@ namespace Lucene.Net.Codecs.Memory
         {
             if (version >= FSTTermsWriter.TERMS_VERSION_CHECKSUM)
             {
-                @in.Seek(@in.Length() - CodecUtil.FooterLength() - 8);
+                @in.Seek(@in.Length - CodecUtil.FooterLength() - 8);
             }
             else
             {
-                @in.Seek(@in.Length() - 8);
+                @in.Seek(@in.Length - 8);
             }
             @in.Seek(@in.ReadLong());
         }

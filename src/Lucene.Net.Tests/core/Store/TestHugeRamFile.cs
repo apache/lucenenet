@@ -109,7 +109,7 @@ namespace Lucene.Net.Store
             @out.Dispose();
             // input part
             var @in = new RAMInputStream("testcase", f);
-            Assert.AreEqual(n, @in.Length(), "input length must match");
+            Assert.AreEqual(n, @in.Length, "input length must match");
             //System.out.println("input length = "+in.Length()+" % 1024 = "+in.Length()%1024);
             for (int j = 0; j < L; j++)
             {

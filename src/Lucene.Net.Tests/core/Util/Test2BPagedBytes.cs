@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
             }
             dataOutput.Dispose();
             IndexInput input = dir.OpenInput("foo", IOContext.DEFAULT);
-            pb.Copy(input, input.Length());
+            pb.Copy(input, input.Length);
             input.Dispose();
             PagedBytes.Reader reader = pb.Freeze(true);
 

@@ -192,13 +192,13 @@ namespace Lucene.Net.Codecs.Lucene40
               System.out.println("  freqFP=" + termState.freqOffset);
             }
             */
-            Debug.Assert(termState.FreqOffset < FreqIn.Length());
+            Debug.Assert(termState.FreqOffset < FreqIn.Length);
 
             if (termState.DocFreq >= SkipMinimum)
             {
                 termState.SkipOffset = @in.ReadVLong();
                 // if (DEBUG) System.out.println("  skipOffset=" + termState.skipOffset + " vs freqIn.length=" + freqIn.length());
-                Debug.Assert(termState.FreqOffset + termState.SkipOffset < FreqIn.Length());
+                Debug.Assert(termState.FreqOffset + termState.SkipOffset < FreqIn.Length);
             }
             else
             {

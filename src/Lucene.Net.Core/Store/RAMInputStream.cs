@@ -59,9 +59,9 @@ namespace Lucene.Net.Store
             // nothing to do here
         }
 
-        public override long Length()
+        public override long Length
         {
-            return Length_Renamed;
+            get { return Length_Renamed; }
         }
 
         public override byte ReadByte()

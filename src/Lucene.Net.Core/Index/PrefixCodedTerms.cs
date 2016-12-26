@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 
             public virtual bool MoveNext()
             {
-                if (input.FilePointer < input.Length())
+                if (input.FilePointer < input.Length)
                 {
                     int code = input.ReadVInt();
                     if ((code & 1) != 0)

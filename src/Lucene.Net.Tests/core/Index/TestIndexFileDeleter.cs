@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             IndexInput @in = dir.OpenInput(src, NewIOContext(Random()));
             IndexOutput @out = dir.CreateOutput(dest, NewIOContext(Random()));
             var b = new byte[1024];
-            long remainder = @in.Length();
+            long remainder = @in.Length;
             while (remainder > 0)
             {
                 int len = (int)Math.Min(b.Length, remainder);

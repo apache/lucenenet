@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Util.Packed
 
                 in1.Seek(0L);
                 BlockPackedReader reader = new BlockPackedReader(in1, PackedInts.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
-                Assert.AreEqual(in1.FilePointer, in1.Length());
+                Assert.AreEqual(in1.FilePointer, in1.Length);
                 for (k = 0; k < valueCount; ++k)
                 {
                     Assert.AreEqual(values[k], reader.Get(k), "i=" + k);

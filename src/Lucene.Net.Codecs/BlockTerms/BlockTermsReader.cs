@@ -171,12 +171,12 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
             {
-                input.Seek(input.Length() - CodecUtil.FooterLength() - 8);
+                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
                 dirOffset = input.ReadLong();
             }
             else if (_version >= BlockTermsWriter.VERSION_APPEND_ONLY)
             {
-                input.Seek(input.Length() - 8);
+                input.Seek(input.Length - 8);
                 dirOffset = input.ReadLong();
             }
             input.Seek(dirOffset);

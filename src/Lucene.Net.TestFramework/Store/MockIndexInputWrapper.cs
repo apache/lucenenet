@@ -112,10 +112,13 @@ namespace Lucene.Net.Store
             @delegate.Seek(pos);
         }
 
-        public override long Length()
+        public override long Length
         {
-            EnsureOpen();
-            return @delegate.Length();
+            get
+            {
+                EnsureOpen();
+                return @delegate.Length;
+            }
         }
 
         public override byte ReadByte()

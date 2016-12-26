@@ -65,9 +65,9 @@ namespace Lucene.Net.Index
             Pointer = (int)pos;
         }
 
-        public override long Length()
+        public override long Length
         {
-            return Length_Renamed;
+            get { return Length_Renamed; }
         }
     }
 }

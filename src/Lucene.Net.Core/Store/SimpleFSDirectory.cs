@@ -171,9 +171,9 @@ namespace Lucene.Net.Store
                 return clone;
             }
 
-            public override sealed long Length()
+            public override sealed long Length
             {
-                return End - Off;
+                get { return End - Off; }
             }
 
             /// <summary>

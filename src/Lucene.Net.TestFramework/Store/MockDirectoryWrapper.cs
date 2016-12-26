@@ -352,7 +352,7 @@ namespace Lucene.Net.Store
                         }
                         IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
                         IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState));
-                        tempOut.CopyBytes(ii, ii.Length() / 2);
+                        tempOut.CopyBytes(ii, ii.Length / 2);
                         tempOut.Dispose();
                         ii.Dispose();
 
@@ -361,7 +361,7 @@ namespace Lucene.Net.Store
 
                         IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-                        @out.CopyBytes(ii, ii.Length());
+                        @out.CopyBytes(ii, ii.Length);
                         @out.Dispose();
                         ii.Dispose();
                         DeleteFile(tempFileName, true);

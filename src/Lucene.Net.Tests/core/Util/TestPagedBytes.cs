@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
                 IndexInput input = dir.OpenInput("foo", IOContext.DEFAULT);
                 DataInput @in = (DataInput)input.Clone();
 
-                p.Copy(input, input.Length());
+                p.Copy(input, input.Length);
                 PagedBytes.Reader reader = p.Freeze(random.NextBoolean());
 
                 byte[] verify = new byte[numBytes];

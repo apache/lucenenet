@@ -377,7 +377,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     @in = Cache.OpenInput(fileName, context);
-                    @out.CopyBytes(@in, @in.Length());
+                    @out.CopyBytes(@in, @in.Length);
                 }
                 finally
                 {

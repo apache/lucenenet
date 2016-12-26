@@ -192,7 +192,7 @@ namespace Lucene.Net.Store
                     // here, because there's no need to reread what we
                     // had in the buffer.
                     long after = bufferStart + bufferPosition + len;
-                    if (after > Length())
+                    if (after > Length)
                     {
                         throw new EndOfStreamException("read past EOF: " + this);
                     }
@@ -355,9 +355,9 @@ namespace Lucene.Net.Store
         {
             long start = bufferStart + bufferPosition;
             long end = start + bufferSize;
-            if (end > Length()) // don't read past EOF
+            if (end > Length) // don't read past EOF
             {
-                end = Length();
+                end = Length;
             }
             int newLength = (int)(end - start);
             if (newLength <= 0)

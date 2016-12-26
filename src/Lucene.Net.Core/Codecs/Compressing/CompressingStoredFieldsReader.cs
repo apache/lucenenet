@@ -119,14 +119,14 @@ namespace Lucene.Net.Codecs.Compressing
                 FieldsStream = d.OpenInput(fieldsStreamFN, context);
                 if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
                 {
-                    if (maxPointer + CodecUtil.FooterLength() != FieldsStream.Length())
+                    if (maxPointer + CodecUtil.FooterLength() != FieldsStream.Length)
                     {
-                        throw new CorruptIndexException("Invalid fieldsStream maxPointer (file truncated?): maxPointer=" + maxPointer + ", length=" + FieldsStream.Length());
+                        throw new CorruptIndexException("Invalid fieldsStream maxPointer (file truncated?): maxPointer=" + maxPointer + ", length=" + FieldsStream.Length);
                     }
                 }
                 else
                 {
-                    maxPointer = FieldsStream.Length();
+                    maxPointer = FieldsStream.Length;
                 }
                 this.MaxPointer = maxPointer;
                 string codecNameDat = formatName + CompressingStoredFieldsWriter.CODEC_SFX_DAT;
@@ -611,7 +611,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (OuterInstance.Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
                 {
-                    FieldsStream.Seek(FieldsStream.Length() - CodecUtil.FooterLength());
+                    FieldsStream.Seek(FieldsStream.Length - CodecUtil.FooterLength());
                     CodecUtil.CheckFooter(FieldsStream);
                 }
             }

@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 Debug.Assert(Format == tvdFormat);
                 Debug.Assert(Format == tvfFormat);
 
-                NumTotalDocs = (int)(Tvx.Length() >> 4);
+                NumTotalDocs = (int)(Tvx.Length >> 4);
 
                 if (-1 == docStoreOffset)
                 {
