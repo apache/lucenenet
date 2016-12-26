@@ -73,36 +73,36 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly IOContext Context;
-            private readonly FileInfo File;
-            private readonly FileStream Descriptor;
+            private readonly IOContext context;
+            private readonly FileInfo file;
+            private readonly FileStream descriptor;
 
             public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, IOContext context, FileInfo file, FileStream descriptor)
                 : base(outerInstance)
             {
-                this.Context = context;
-                this.File = file;
-                this.Descriptor = descriptor;
+                this.context = context;
+                this.file = file;
+                this.descriptor = descriptor;
             }
 
             public override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    Descriptor.Dispose();
+                    descriptor.Dispose();
                 }
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.GetBufferSize(Context));
+                return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + file.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, BufferedIndexInput.GetBufferSize(context));
             }
 
             public override IndexInput OpenFullSlice()
             {
                 try
                 {
-                    return OpenSlice("full-slice", 0, Descriptor.Length);
+                    return OpenSlice("full-slice", 0, descriptor.Length);
                 }
                 catch (System.IO.IOException ex)
                 {
@@ -125,34 +125,35 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// the file channel we will read from </summary>
-            protected internal readonly FileStream File; // LUCENENET TODO: rename m_
+            protected internal readonly FileStream m_file;
 
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
-            public bool IsClone = false; // LUCENENET TODO: make property
+            public bool IsClone { get; set; }
 
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
-            protected internal readonly long Off; // LUCENENET TODO: rename m_
+            protected internal readonly long m_off;
 
             /// <summary>
             /// end offset (start+length) </summary>
-            protected internal readonly long End; // LUCENENET TODO: rename m_
+            protected internal readonly long m_end;
 
             public SimpleFSIndexInput(string resourceDesc, FileStream file, IOContext context)
                 : base(resourceDesc, context)
             {
-                this.File = file;
-                this.Off = 0L;
-                this.End = file.Length;
+                this.m_file = file;
+                this.m_off = 0L;
+                this.m_end = file.Length;
+                this.IsClone = false;
             }
 
             public SimpleFSIndexInput(string resourceDesc, FileStream file, long off, long length, int bufferSize)
                 : base(resourceDesc, bufferSize)
             {
-                this.File = file;
-                this.Off = off;
-                this.End = off + length;
+                this.m_file = file;
+                this.m_off = off;
+                this.m_end = off + length;
                 this.IsClone = true;
             }
 
@@ -160,7 +161,7 @@ namespace Lucene.Net.Store
             {
                 if (!IsClone)
                 {
-                    File.Dispose();
+                    m_file.Dispose();
                 }
             }
 
@@ -173,20 +174,20 @@ namespace Lucene.Net.Store
 
             public override sealed long Length
             {
-                get { return End - Off; }
+                get { return m_end - m_off; }
             }
 
             /// <summary>
             /// IndexInput methods </summary>
             protected override void ReadInternal(byte[] b, int offset, int len)
             {
-                lock (File)
+                lock (m_file)
                 {
-                    long position = Off + FilePointer;
-                    File.Seek(position, SeekOrigin.Begin);
+                    long position = m_off + FilePointer;
+                    m_file.Seek(position, SeekOrigin.Begin);
                     int total = 0;
 
-                    if (position + len > End)
+                    if (position + len > m_end)
                     {
                         throw new EndOfStreamException("read past EOF: " + this);
                     }
@@ -196,10 +197,10 @@ namespace Lucene.Net.Store
                         while (total < len)
                         {
                             int toRead = Math.Min(CHUNK_SIZE, len - total);
-                            int i = File.Read(b, offset + total, toRead);
+                            int i = m_file.Read(b, offset + total, toRead);
                             if (i < 0) // be defensive here, even though we checked before hand, something could have changed
                             {
-                                throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
+                                throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
                             }
                             Debug.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
                             total += i;
@@ -221,7 +222,7 @@ namespace Lucene.Net.Store
             {
                 get
                 {
-                    return File != null;// File.FD.valid(); // LUCENENET TODO: Check logic
+                    return m_file != null;// File.FD.valid(); // LUCENENET TODO: Check logic
                 }
             }
         }
