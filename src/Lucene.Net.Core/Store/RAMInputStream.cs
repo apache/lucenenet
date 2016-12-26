@@ -28,30 +28,30 @@ namespace Lucene.Net.Store
     {
         internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 
-        private RAMFile File;
-        private long Length_Renamed;
+        private RAMFile file;
+        private long length;
 
-        private byte[] CurrentBuffer;
-        private int CurrentBufferIndex;
+        private byte[] currentBuffer;
+        private int currentBufferIndex;
 
-        private int BufferPosition;
-        private long BufferStart;
-        private int BufferLength;
+        private int bufferPosition;
+        private long bufferStart;
+        private int bufferLength;
 
         public RAMInputStream(string name, RAMFile f)
             : base("RAMInputStream(name=" + name + ")")
         {
-            File = f;
-            Length_Renamed = File.length;
-            if (Length_Renamed / BUFFER_SIZE >= int.MaxValue)
+            file = f;
+            length = file.length;
+            if (length / BUFFER_SIZE >= int.MaxValue)
             {
-                throw new System.IO.IOException("RAMInputStream too large length=" + Length_Renamed + ": " + name);
+                throw new System.IO.IOException("RAMInputStream too large length=" + length + ": " + name);
             }
 
             // make sure that we switch to the
             // first needed buffer lazily
-            CurrentBufferIndex = -1;
-            CurrentBuffer = null;
+            currentBufferIndex = -1;
+            currentBuffer = null;
         }
 
         public override void Dispose()
@@ -61,42 +61,42 @@ namespace Lucene.Net.Store
 
         public override long Length
         {
-            get { return Length_Renamed; }
+            get { return length; }
         }
 
         public override byte ReadByte()
         {
-            if (BufferPosition >= BufferLength)
+            if (bufferPosition >= bufferLength)
             {
-                CurrentBufferIndex++;
+                currentBufferIndex++;
                 SwitchCurrentBuffer(true);
             }
-            return CurrentBuffer[BufferPosition++];
+            return currentBuffer[bufferPosition++];
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             while (len > 0)
             {
-                if (BufferPosition >= BufferLength)
+                if (bufferPosition >= bufferLength)
                 {
-                    CurrentBufferIndex++;
+                    currentBufferIndex++;
                     SwitchCurrentBuffer(true);
                 }
 
-                int remainInBuffer = BufferLength - BufferPosition;
+                int remainInBuffer = bufferLength - bufferPosition;
                 int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
-                System.Buffer.BlockCopy(CurrentBuffer, BufferPosition, b, offset, bytesToCopy);
+                System.Buffer.BlockCopy(currentBuffer, bufferPosition, b, offset, bytesToCopy);
                 offset += bytesToCopy;
                 len -= bytesToCopy;
-                BufferPosition += bytesToCopy;
+                bufferPosition += bytesToCopy;
             }
         }
 
         private void SwitchCurrentBuffer(bool enforceEOF)
         {
-            BufferStart = (long)BUFFER_SIZE * (long)CurrentBufferIndex;
-            if (CurrentBufferIndex >= File.NumBuffers())
+            bufferStart = (long)BUFFER_SIZE * (long)currentBufferIndex;
+            if (currentBufferIndex >= file.NumBuffers())
             {
                 // end of file reached, no more buffers left
                 if (enforceEOF)
@@ -106,16 +106,16 @@ namespace Lucene.Net.Store
                 else
                 {
                     // Force EOF if a read takes place at this position
-                    CurrentBufferIndex--;
-                    BufferPosition = BUFFER_SIZE;
+                    currentBufferIndex--;
+                    bufferPosition = BUFFER_SIZE;
                 }
             }
             else
             {
-                CurrentBuffer = File.GetBuffer(CurrentBufferIndex);
-                BufferPosition = 0;
-                long buflen = Length_Renamed - BufferStart;
-                BufferLength = buflen > BUFFER_SIZE ? BUFFER_SIZE : (int)buflen;
+                currentBuffer = file.GetBuffer(currentBufferIndex);
+                bufferPosition = 0;
+                long buflen = length - bufferStart;
+                bufferLength = buflen > BUFFER_SIZE ? BUFFER_SIZE : (int)buflen;
             }
         }
 
@@ -123,18 +123,18 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return CurrentBufferIndex < 0 ? 0 : BufferStart + BufferPosition;
+                return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
             }
         }
 
         public override void Seek(long pos)
         {
-            if (CurrentBuffer == null || pos < BufferStart || pos >= BufferStart + BUFFER_SIZE)
+            if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
             {
-                CurrentBufferIndex = (int)(pos / BUFFER_SIZE);
+                currentBufferIndex = (int)(pos / BUFFER_SIZE);
                 SwitchCurrentBuffer(false);
             }
-            BufferPosition = (int)(pos % BUFFER_SIZE);
+            bufferPosition = (int)(pos % BUFFER_SIZE);
         }
     }
 }
