@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
