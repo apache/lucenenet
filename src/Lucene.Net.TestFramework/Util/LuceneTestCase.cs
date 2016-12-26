@@ -1615,7 +1615,7 @@ namespace Lucene.Net.Util
                         break;
 
                     case 2:
-                        context = IOContext.READONCE;
+                        context = IOContext.READ_ONCE;
                         break;
 
                     case 3:

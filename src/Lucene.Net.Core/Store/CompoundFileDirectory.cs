@@ -159,7 +159,7 @@ namespace Lucene.Net.Store
                     }
                     int version = CodecUtil.CheckHeaderNoMagic(stream, CompoundFileWriter.DATA_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
                     string entriesFileName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
-                    entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READONCE);
+                    entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READ_ONCE);
                     CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
                     int numEntries = entriesStream.ReadVInt();
                     mapping = new Dictionary<string, FileEntry>(numEntries);

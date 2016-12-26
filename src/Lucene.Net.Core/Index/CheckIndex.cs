@@ -567,7 +567,7 @@ namespace Lucene.Net.Index
             IndexInput input = null;
             try
             {
-                input = dir.OpenInput(segmentsFileName, IOContext.READONCE);
+                input = dir.OpenInput(segmentsFileName, IOContext.READ_ONCE);
             }
             catch (Exception t)
             {

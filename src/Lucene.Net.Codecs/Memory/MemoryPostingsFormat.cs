@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Codecs.Memory
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
             string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, EXTENSION);
-            ChecksumIndexInput @in = state.Directory.OpenChecksumInput(fileName, IOContext.READONCE);
+            ChecksumIndexInput @in = state.Directory.OpenChecksumInput(fileName, IOContext.READ_ONCE);
             var fields = new SortedDictionary<string, TermsReader>();
 
             try

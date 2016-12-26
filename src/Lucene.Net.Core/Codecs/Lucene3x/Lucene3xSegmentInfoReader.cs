@@ -61,12 +61,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         if (Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(si))
                         {
-                            dir = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(Lucene3xSegmentInfoFormat.GetDocStoreSegment(si), "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), IOContext.READONCE, false);
+                            dir = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(Lucene3xSegmentInfoFormat.GetDocStoreSegment(si), "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), IOContext.READ_ONCE, false);
                         }
                     }
                     else if (si.UseCompoundFile)
                     {
-                        dir = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READONCE, false);
+                        dir = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READ_ONCE, false);
                     }
 
                     try

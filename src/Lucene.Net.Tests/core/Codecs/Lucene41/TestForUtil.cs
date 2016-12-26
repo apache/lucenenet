@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             {
                 // decode
-                IndexInput @in = d.OpenInput("test.bin", IOContext.READONCE);
+                IndexInput @in = d.OpenInput("test.bin", IOContext.READ_ONCE);
                 ForUtil forUtil = new ForUtil(@in);
                 for (int i = 0; i < iterations; ++i)
                 {

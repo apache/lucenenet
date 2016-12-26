@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Util.Packed
             pout.Flush();
             Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @out.FilePointer);
             @out.Dispose();
-            IndexInput @in = dir.OpenInput("out.bin", IOContext.READONCE);
+            IndexInput @in = dir.OpenInput("out.bin", IOContext.READ_ONCE);
             PackedDataInput pin = new PackedDataInput(@in);
             for (int i = 0; i < longs.Length; ++i)
             {

@@ -42,17 +42,17 @@ namespace Lucene.Net.Store
         /// <summary>
         /// An object of a enumerator Context type
         /// </summary>
-        public readonly UsageContext? Context; // LUCENENET TODO: make property, eliminate the nullable ?
+        public UsageContext? Context { get; private set; } // LUCENENET TODO: eliminate the nullable ?
 
-        public readonly MergeInfo MergeInfo; // LUCENENET TODO: make property
+        public MergeInfo MergeInfo { get; private set; }
 
-        public readonly FlushInfo FlushInfo; // LUCENENET TODO: make property
+        public FlushInfo FlushInfo { get; private set; }
 
-        public readonly bool ReadOnce; // LUCENENET TODO: make property
+        public bool ReadOnce { get; private set; }
 
         public static readonly IOContext DEFAULT = new IOContext(UsageContext.DEFAULT);
 
-        public static readonly IOContext READONCE = new IOContext(true); // LUCENENET TODO: fix naming collision
+        public static readonly IOContext READ_ONCE = new IOContext(true);
 
         public static readonly IOContext READ = new IOContext(false);
 

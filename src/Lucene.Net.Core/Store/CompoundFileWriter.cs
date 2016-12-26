@@ -211,7 +211,7 @@ namespace Lucene.Net.Store
         /// </summary>
         private long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry)
         {
-            IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READONCE);
+            IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READ_ONCE);
             bool success = false;
             try
             {

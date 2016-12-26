@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
         {
             try
             {
-                IndexOutput genOutput = dir.CreateOutput(IndexFileNames.SEGMENTS_GEN, IOContext.READONCE);
+                IndexOutput genOutput = dir.CreateOutput(IndexFileNames.SEGMENTS_GEN, IOContext.READ_ONCE);
                 try
                 {
                     genOutput.WriteInt(FORMAT_SEGMENTS_GEN_CURRENT);
@@ -612,7 +612,7 @@ namespace Lucene.Net.Index
             IndexInput @in = null;
             try
             {
-                @in = directory.OpenInput(markerFileName, IOContext.READONCE);
+                @in = directory.OpenInput(markerFileName, IOContext.READ_ONCE);
                 if (CodecUtil.CheckHeader(@in, SEGMENT_INFO_UPGRADE_CODEC, SEGMENT_INFO_UPGRADE_VERSION, SEGMENT_INFO_UPGRADE_VERSION) == 0)
                 {
                     return true;
@@ -893,7 +893,7 @@ namespace Lucene.Net.Index
                         ChecksumIndexInput genInput = null;
                         try
                         {
-                            genInput = directory.OpenChecksumInput(IndexFileNames.SEGMENTS_GEN, IOContext.READONCE);
+                            genInput = directory.OpenChecksumInput(IndexFileNames.SEGMENTS_GEN, IOContext.READ_ONCE);
                         }
                         catch (IOException e)
                         {

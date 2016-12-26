@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             r.Dispose();
 
             FieldInfosReader infosReader = (new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)).FieldInfosFormat.FieldInfosReader;
-            FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READONCE);
+            FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READ_ONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
             long tiiFileLength = Directory.FileLength(segmentFileName);
             IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random()));

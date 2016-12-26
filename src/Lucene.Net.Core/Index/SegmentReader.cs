@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                 if (si.HasDeletions)
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
-                    liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory, si, IOContext.READONCE);
+                    liveDocs = codec.LiveDocsFormat.ReadLiveDocs(Directory, si, IOContext.READ_ONCE);
                 }
                 else
                 {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
         ///  deletes file.  Used by openIfChanged.
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr)
-            : this(si, sr, si.Info.Codec.LiveDocsFormat.ReadLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
+            : this(si, sr, si.Info.Codec.LiveDocsFormat.ReadLiveDocs(si.Info.Dir, si, IOContext.READ_ONCE), si.Info.DocCount - si.DelCount)
         {
         }
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             if (info.FieldInfosGen == -1 && info.Info.UseCompoundFile)
             {
                 // no fieldInfos gen and segment uses a compound file
-                dir = new CompoundFileDirectory(info.Info.Dir, IndexFileNames.SegmentFileName(info.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READONCE, false);
+                dir = new CompoundFileDirectory(info.Info.Dir, IndexFileNames.SegmentFileName(info.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READ_ONCE, false);
                 closeDir = true;
             }
             else
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
             try
             {
                 string segmentSuffix = info.FieldInfosGen == -1 ? "" : info.FieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX));
-                return info.Info.Codec.FieldInfosFormat.FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
+                return info.Info.Codec.FieldInfosFormat.FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READ_ONCE);
             }
             finally
             {
