@@ -72,14 +72,14 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MMapDirectory : FSDirectory
     {
-        private bool UseUnmapHack = UNMAP_SUPPORTED;
+        private bool useUnmapHack = UNMAP_SUPPORTED;
 
         /// <summary>
         /// Default max chunk size. </summary>
         /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
         public static readonly int DEFAULT_MAX_BUFF = Constants.JRE_IS_64BIT ? (1 << 30) : (1 << 28);
 
-        private readonly int ChunkSizePower;
+        private readonly int chunkSizePower;
 
         /// <summary>
         /// Create a new MMapDirectory for the named location.
@@ -129,8 +129,8 @@ namespace Lucene.Net.Store
             {
                 throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
             }
-            this.ChunkSizePower = 31 - Number.NumberOfLeadingZeros(maxChunkSize);
-            Debug.Assert(this.ChunkSizePower >= 0 && this.ChunkSizePower <= 30);
+            this.chunkSizePower = 31 - Number.NumberOfLeadingZeros(maxChunkSize);
+            Debug.Assert(this.chunkSizePower >= 0 && this.chunkSizePower <= 30);
         }
 
         /// <summary>
@@ -176,11 +176,11 @@ namespace Lucene.Net.Store
                 {
                     throw new System.ArgumentException("Unmap hack not supported on this platform!");
                 }
-                this.UseUnmapHack = value;
+                this.useUnmapHack = value;
             }
             get
             {
-                return UseUnmapHack;
+                return useUnmapHack;
             }
         }
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return 1 << ChunkSizePower;
+                return 1 << chunkSizePower;
             }
         }
 
@@ -216,47 +216,47 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly MMapDirectory OuterInstance;
+            private readonly MMapDirectory outerInstance;
 
-            private MMapIndexInput Full;
+            private MMapIndexInput full;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
                 : base(outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                this.Full = full;
+                this.outerInstance = outerInstance;
+                this.full = full;
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                OuterInstance.EnsureOpen();
-                return Full.Slice(sliceDescription, offset, length);
+                outerInstance.EnsureOpen();
+                return full.Slice(sliceDescription, offset, length);
             }
 
             public override IndexInput OpenFullSlice()
             {
-                OuterInstance.EnsureOpen();
-                return (IndexInput)Full.Clone();
+                outerInstance.EnsureOpen();
+                return (IndexInput)full.Clone();
             }
 
             public override void Dispose(bool disposing)
             {
-                Full.Dispose();
+                full.Dispose();
             }
         }
 
         public sealed class MMapIndexInput : ByteBufferIndexInput
         {
-            private readonly bool UseUnmapHack;
-            private string mapName;
+            private readonly bool useUnmapHack;
+            //private string mapName; // LUCENENET NOTE: Not used
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             private readonly MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
-                : base(resourceDescription, null, fc.Length, outerInstance.ChunkSizePower, outerInstance.UseUnmap)
+                : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, outerInstance.UseUnmap)
             {
                 this.outerInstance = outerInstance;
-                this.UseUnmapHack = outerInstance.UseUnmap;
+                this.useUnmapHack = outerInstance.UseUnmap;
                 this.Buffers = outerInstance.Map(this, fc, 0, fc.Length);
 
                 //Called here to let buffers get set up
@@ -332,13 +332,13 @@ namespace Lucene.Net.Store
         /// Maps a file into a set of buffers </summary>
         internal virtual ByteBuffer[] Map(MMapIndexInput input, FileStream fc, long offset, long length)
         {
-            if (Number.URShift(length, ChunkSizePower) >= int.MaxValue)
+            if (Number.URShift(length, chunkSizePower) >= int.MaxValue)
                 throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
 
-            long chunkSize = 1L << ChunkSizePower;
+            long chunkSize = 1L << chunkSizePower;
 
             // we always allocate one more buffer, the last one may be a 0 byte one
-            int nrBuffers = (int)((long)((ulong)length >> ChunkSizePower)) + 1;
+            int nrBuffers = (int)((long)((ulong)length >> chunkSizePower)) + 1;
 
             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
 
