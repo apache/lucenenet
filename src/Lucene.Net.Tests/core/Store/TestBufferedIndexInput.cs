@@ -340,7 +340,7 @@ namespace Lucene.Net.Store
                 {
                     BufferedIndexInput bii = (BufferedIndexInput)ip;
                     int bufferSize = 1024 + Math.Abs(Rand.Next() % 32768);
-                    bii.BufferSize_ = bufferSize;
+                    bii.SetBufferSize(bufferSize);
                     //count++;
                 }
                 //System.out.println("tweak'd " + count + " buffer sizes");

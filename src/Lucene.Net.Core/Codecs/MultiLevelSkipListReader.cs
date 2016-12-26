@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs
                     SkipStream[i] = (IndexInput)SkipStream[0].Clone();
                     if (InputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
                     {
-                        ((BufferedIndexInput)SkipStream[i]).BufferSize_ = (int)length;
+                        ((BufferedIndexInput)SkipStream[i]).SetBufferSize((int)length);
                     }
 
                     // move base stream beyond the current level

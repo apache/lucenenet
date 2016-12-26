@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
         {
             this.Directory_Renamed = directory;
             this.FileName = fileName;
-            this.ReadBufferSize = BufferedIndexInput.BufferSize(context);
+            this.ReadBufferSize = BufferedIndexInput.GetBufferSize(context);
             this.isOpen = false;
             this.OpenForWrite = openForWrite;
             if (!openForWrite)

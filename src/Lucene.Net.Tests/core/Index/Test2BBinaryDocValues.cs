@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                     dv.Get(i, scratch);
                     input.Reset((byte[])(Array)scratch.Bytes, scratch.Offset, scratch.Length);
                     Assert.AreEqual(expectedValue % 65535, input.ReadVInt());
-                    Assert.IsTrue(input.Eof());
+                    Assert.IsTrue(input.Eof);
                     expectedValue++;
                 }
             }

@@ -437,8 +437,8 @@ namespace Lucene.Net.Codecs
                 }
                 BlockCountByPrefixLen[frame.Prefix]++;
                 StartBlockCount++;
-                TotalBlockSuffixBytes += frame.SuffixesReader.Length();
-                TotalBlockStatsBytes += frame.StatsReader.Length();
+                TotalBlockSuffixBytes += frame.SuffixesReader.Length;
+                TotalBlockStatsBytes += frame.StatsReader.Length;
             }
 
             internal virtual void EndBlock(FieldReader.SegmentTermsEnum.Frame frame)
@@ -463,7 +463,7 @@ namespace Lucene.Net.Codecs
                     throw new InvalidOperationException();
                 }
                 EndBlockCount++;
-                long otherBytes = frame.FpEnd - frame.Fp - frame.SuffixesReader.Length() - frame.StatsReader.Length();
+                long otherBytes = frame.FpEnd - frame.Fp - frame.SuffixesReader.Length - frame.StatsReader.Length;
                 Debug.Assert(otherBytes > 0, "otherBytes=" + otherBytes + " frame.fp=" + frame.Fp + " frame.fpEnd=" + frame.FpEnd);
                 TotalBlockOtherBytes += otherBytes;
             }

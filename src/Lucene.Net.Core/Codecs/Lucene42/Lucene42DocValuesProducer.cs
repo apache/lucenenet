@@ -586,7 +586,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long NextOrd()
             {
-                if (Input.Eof())
+                if (Input.Eof)
                 {
                     return NO_MORE_ORDS;
                 }

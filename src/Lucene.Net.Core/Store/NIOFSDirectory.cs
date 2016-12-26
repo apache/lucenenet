@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + Path + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
+                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + Path + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.GetBufferSize(Context));
             }
 
             public override IndexInput OpenFullSlice()
@@ -205,7 +205,7 @@ namespace Lucene.Net.Store
                 ByteBuffer bb;
 
                 // Determine the ByteBuffer we should use
-                if (b == Buffer && 0 == offset)
+                if (b == m_buffer && 0 == offset)
                 {
                     // Use our own pre-wrapped byteBuf:
                     Debug.Assert(ByteBuf != null);

@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.Memory
                     var offset = statsBlockOrd * outerInstance.numSkipInfo;
                     var statsFP = (int)outerInstance.skipInfo[offset];
                     statsReader.Position = statsFP;
-                    for (int i = 0; i < INTERVAL && !statsReader.Eof(); i++)
+                    for (int i = 0; i < INTERVAL && !statsReader.Eof; i++)
                     {
                         int code = statsReader.ReadVInt();
                         if (outerInstance.HasFreqs)
@@ -442,7 +442,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     bytesStart[0] = metaBytesFP;
                     bytesLength[0] = (int)metaLongsReader.ReadVLong();
-                    for (int i = 1; i < INTERVAL && !metaLongsReader.Eof(); i++)
+                    for (int i = 1; i < INTERVAL && !metaLongsReader.Eof; i++)
                     {
                         for (int j = 0; j < outerInstance.longsSize; j++)
                         {

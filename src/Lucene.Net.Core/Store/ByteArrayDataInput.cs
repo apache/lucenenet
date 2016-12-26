@@ -28,10 +28,10 @@ namespace Lucene.Net.Store
     /// </summary>
     public sealed class ByteArrayDataInput : DataInput
     {
-        private byte[] Bytes;
+        private byte[] bytes;
 
-        private int Pos;
-        private int Limit;
+        private int pos;
+        private int limit;
 
         public ByteArrayDataInput(byte[] bytes)
         {
@@ -57,41 +57,41 @@ namespace Lucene.Net.Store
         // called reset w/ non-zero offset!!
         public void Rewind()
         {
-            Pos = 0;
+            pos = 0;
         }
 
         public int Position
         {
             get
             {
-                return Pos;
+                return pos;
             }
             set
             {
-                this.Pos = value;
+                this.pos = value;
             }
         }
 
         public void Reset(byte[] bytes, int offset, int len)
         {
-            this.Bytes = bytes;
-            Pos = offset;
-            Limit = offset + len;
+            this.bytes = bytes;
+            pos = offset;
+            limit = offset + len;
         }
 
-        public int Length() // LUCENENET TODO: Make property
+        public int Length
         {
-            return Limit;
+            get { return limit; }
         }
 
-        public bool Eof() // LUCENENET TODO: Make property
+        public bool Eof
         {
-            return Pos == Limit;
+            get { return pos == limit; }
         }
 
         public override void SkipBytes(long count)
         {
-            Pos += (int)count;
+            pos += (int)count;
         }
 
         /// <summary>
@@ -100,18 +100,18 @@ namespace Lucene.Net.Store
         /// </summary>
         public override short ReadShort()
         {
-            return (short)(ushort)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));
+            return (short)(ushort)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
         }
 
         public override int ReadInt()
         {
-            return ((Bytes[Pos++] & 0xFF) << 24) | ((Bytes[Pos++] & 0xFF) << 16) | ((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF);
+            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
         }
 
         public override long ReadLong()
         {
-            int i1 = ((Bytes[Pos++] & 0xff) << 24) | ((Bytes[Pos++] & 0xff) << 16) | ((Bytes[Pos++] & 0xff) << 8) | (Bytes[Pos++] & 0xff);
-            int i2 = ((Bytes[Pos++] & 0xff) << 24) | ((Bytes[Pos++] & 0xff) << 16) | ((Bytes[Pos++] & 0xff) << 8) | (Bytes[Pos++] & 0xff);
+            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
+            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
         }
 
@@ -127,31 +127,31 @@ namespace Lucene.Net.Store
             }
             return i;*/
 
-            byte b = Bytes[Pos++];
+            byte b = bytes[pos++];
             if ((sbyte)b >= 0)
             {
                 return b;
             }
             int i = b & 0x7F;
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7F) << 7;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7F) << 14;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7F) << 21;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             // Warning: the next ands use 0x0F / 0xF0 - beware copy/paste errors:
             i |= (b & 0x0F) << 28;
             if ((b & 0xF0) == 0)
@@ -173,55 +173,55 @@ namespace Lucene.Net.Store
             }
             return i;*/
 
-            byte b = Bytes[Pos++];
+            byte b = bytes[pos++];
             if ((sbyte)b >= 0)
             {
                 return b;
             }
             long i = b & 0x7FL;
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 7;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 14;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 21;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 28;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 35;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 42;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 49;
             if ((sbyte)b >= 0)
             {
                 return i;
             }
-            b = Bytes[Pos++];
+            b = bytes[pos++];
             i |= (b & 0x7FL) << 56;
             if ((sbyte)b >= 0)
             {
@@ -233,14 +233,14 @@ namespace Lucene.Net.Store
         // NOTE: AIOOBE not EOF if you read too much
         public override byte ReadByte()
         {
-            return Bytes[Pos++];
+            return bytes[pos++];
         }
 
         // NOTE: AIOOBE not EOF if you read too much
         public override void ReadBytes(byte[] b, int offset, int len)
         {
-            Buffer.BlockCopy(Bytes, Pos, b, offset, len);
-            Pos += len;
+            Buffer.BlockCopy(bytes, pos, b, offset, len);
+            pos += len;
         }
     }
 }

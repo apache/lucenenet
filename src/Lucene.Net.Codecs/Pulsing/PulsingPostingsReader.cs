@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 while (true)
                 {
-                    if (_postings.Eof())
+                    if (_postings.Eof)
                         return _docId = NO_MORE_DOCS;
                     
                     var code = _postings.ReadVInt();
@@ -569,7 +569,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     SkipPositions();
 
-                    if (_postings.Eof())
+                    if (_postings.Eof)
                     {
                         return _docId = NO_MORE_DOCS;
                     }

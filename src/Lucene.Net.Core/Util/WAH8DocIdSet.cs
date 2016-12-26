@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
 
             public virtual int Compare(Iterator wi1, Iterator wi2)
             {
-                return wi1.@in.Length() - wi2.@in.Length();
+                return wi1.@in.Length - wi2.@in.Length;
             }
         }
 
@@ -681,7 +681,7 @@ namespace Lucene.Net.Util
 
             internal virtual bool ReadSequence()
             {
-                if (@in.Eof())
+                if (@in.Eof)
                 {
                     WordNum = int.MaxValue;
                     return false;
@@ -697,7 +697,7 @@ namespace Lucene.Net.Util
                     AllOnesLength = ReadCleanLength(@in, token);
                 }
                 DirtyLength = ReadDirtyLength(@in, token);
-                Debug.Assert(@in.Length() - @in.Position >= DirtyLength, @in.Position + " " + @in.Length() + " " + DirtyLength);
+                Debug.Assert(@in.Length - @in.Position >= DirtyLength, @in.Position + " " + @in.Length + " " + DirtyLength);
                 ++SequenceNum;
                 return true;
             }
