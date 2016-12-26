@@ -23,9 +23,9 @@ namespace Lucene.Net.Store
     /// </summary>
     public class FlushInfo
     {
-        public readonly int NumDocs; // LUCENENET TODO: make property
+        public int NumDocs { get; private set; }
 
-        public readonly long EstimatedSegmentSize; // LUCENENET TODO: make property
+        public long EstimatedSegmentSize { get; private set; }
 
         /// <summary>
         /// <p>Creates a new <seealso cref="FlushInfo"/> instance from
