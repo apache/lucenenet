@@ -27,9 +27,9 @@ namespace Lucene.Net.Store
     public class NoLockFactory : LockFactory
     {
         // Single instance returned whenever makeLock is called.
-        private static NoLock SingletonLock = new NoLock();
+        private static NoLock singletonLock = new NoLock();
 
-        private static NoLockFactory Singleton = new NoLockFactory();
+        private static NoLockFactory singleton = new NoLockFactory();
 
         private NoLockFactory()
         {
@@ -39,13 +39,13 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return Singleton;
+                return singleton;
             }
         }
 
         public override Lock MakeLock(string lockName)
         {
-            return SingletonLock;
+            return singletonLock;
         }
 
         public override void ClearLock(string lockName)
