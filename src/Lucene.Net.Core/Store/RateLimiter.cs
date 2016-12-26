@@ -50,8 +50,8 @@ namespace Lucene.Net.Store
         public class SimpleRateLimiter : RateLimiter
         {
             private double mbPerSec;
-            private double NsPerByte;
-            private long LastNS;
+            private double nsPerByte;
+            private long lastNS;
 
             // TODO: we could also allow eg a sub class to dynamically
             // determine the allowed rate, eg if an app wants to
@@ -73,9 +73,9 @@ namespace Lucene.Net.Store
                 {
                     this.mbPerSec = value;
                     if (value == 0)
-                        NsPerByte = 0;
+                        nsPerByte = 0;
                     else
-                        NsPerByte = 1000000000.0 / (1024 * 1024 * value);
+                        nsPerByte = 1000000000.0 / (1024 * 1024 * value);
                 }
                 get
                 {
@@ -102,12 +102,12 @@ namespace Lucene.Net.Store
 
                 // TODO: this is purely instantaneous rate; maybe we
                 // should also offer decayed recent history one?
-                var targetNS = LastNS = LastNS + ((long)(bytes * NsPerByte));
+                var targetNS = lastNS = lastNS + ((long)(bytes * nsPerByte));
                 long startNS;
                 var curNS = startNS = DateTime.UtcNow.Ticks * 100 /* ns */;
-                if (LastNS < curNS)
+                if (lastNS < curNS)
                 {
-                    LastNS = curNS;
+                    lastNS = curNS;
                 }
 
                 // While loop because Thread.sleep doesn't always sleep
