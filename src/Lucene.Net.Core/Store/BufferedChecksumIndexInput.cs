@@ -25,29 +25,29 @@ namespace Lucene.Net.Store
     /// </summary>
     public class BufferedChecksumIndexInput : ChecksumIndexInput
     {
-        internal readonly IndexInput Main;
-        internal readonly IChecksum Digest;
+        internal readonly IndexInput main;
+        internal readonly IChecksum digest;
 
         /// <summary>
         /// Creates a new BufferedChecksumIndexInput </summary>
         public BufferedChecksumIndexInput(IndexInput main)
             : base("BufferedChecksumIndexInput(" + main + ")")
         {
-            this.Main = main;
-            this.Digest = new BufferedChecksum(new CRC32());
+            this.main = main;
+            this.digest = new BufferedChecksum(new CRC32());
         }
 
         public override byte ReadByte()
         {
-            byte b = Main.ReadByte();
-            Digest.Update(b);
+            byte b = main.ReadByte();
+            digest.Update(b);
             return b;
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
-            Main.ReadBytes(b, offset, len);
-            Digest.Update(b, offset, len);
+            main.ReadBytes(b, offset, len);
+            digest.Update(b, offset, len);
         }
 
         /*
@@ -62,26 +62,26 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return Digest.Value;
+                return digest.Value;
             }
         }
 
         public override void Dispose()
         {
-            Main.Dispose();
+            main.Dispose();
         }
 
         public override long FilePointer
         {
             get
             {
-                return Main.FilePointer;
+                return main.FilePointer;
             }
         }
 
         public override long Length()
         {
-            return Main.Length();
+            return main.Length();
         }
 
         public override object Clone()
