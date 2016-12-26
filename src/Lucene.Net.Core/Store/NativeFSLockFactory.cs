@@ -116,16 +116,16 @@ namespace Lucene.Net.Store
 
     internal class NativeFSLock : Lock
     {
-        private FileStream Channel;
-        private readonly DirectoryInfo Path;
+        private FileStream channel;
+        private readonly DirectoryInfo path;
         private readonly NativeFSLockFactory _creatingInstance;
-        private readonly DirectoryInfo LockDir;
+        private readonly DirectoryInfo lockDir;
 
         public NativeFSLock(NativeFSLockFactory creatingInstance, DirectoryInfo lockDir, string lockFileName)
         {
             _creatingInstance = creatingInstance;
-            this.LockDir = lockDir;
-            Path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
+            this.lockDir = lockDir;
+            path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
         }
 
         public override bool Obtain()
@@ -134,40 +134,40 @@ namespace Lucene.Net.Store
             {
                 FailureReason = null;
 
-                if (Channel != null)
+                if (channel != null)
                 {
                     // Our instance is already locked:
                     return false;
                 }
 
-                if (!System.IO.Directory.Exists(LockDir.FullName))
+                if (!System.IO.Directory.Exists(lockDir.FullName))
                 {
                     try
                     {
-                        System.IO.Directory.CreateDirectory(LockDir.FullName);
+                        System.IO.Directory.CreateDirectory(lockDir.FullName);
                     }
                     catch
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
+                        throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
                     }
                 }
-                else if (File.Exists(LockDir.FullName))
+                else if (File.Exists(lockDir.FullName))
                 {
-                    throw new IOException("Found regular file where directory expected: " + LockDir.FullName);
+                    throw new IOException("Found regular file where directory expected: " + lockDir.FullName);
                 }
 
                 var success = false;
                 try
                 {
-                    Channel = new FileStream(Path.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
+                    channel = new FileStream(path.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
 
                     success = true;
                 }
                 catch (IOException e)
                 {
                     FailureReason = e;
-                    IOUtils.CloseWhileHandlingException(Channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
-                    Channel = null;
+                    IOUtils.CloseWhileHandlingException(channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
+                    channel = null;
                 }
                 // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
                 catch (UnauthorizedAccessException e)
@@ -177,29 +177,29 @@ namespace Lucene.Net.Store
                     // acquire the lock, but, store the reason in case
                     // there is in fact a real error case.
                     FailureReason = e;
-                    IOUtils.CloseWhileHandlingException(Channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
-                    Channel = null;
+                    IOUtils.CloseWhileHandlingException(channel); // LUCENENET TODO: Remove this ? - we are supposed to leave this open until it is disposed
+                    channel = null;
                 }
                 finally
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(Channel);
-                        Channel = null;
+                        IOUtils.CloseWhileHandlingException(channel);
+                        channel = null;
                     }
                 }
 
-                return Channel != null;
+                return channel != null;
             }
         }
 
         public override void Dispose()
         {
             // LUCENENET: No lock to release, just dispose the channel
-            if (Channel != null)
+            if (channel != null)
             {
-                Channel.Dispose();
-                Channel = null;
+                channel.Dispose();
+                channel = null;
             }
         }
 
@@ -207,28 +207,28 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (Channel != null)
+                if (channel != null)
                 {
                     try
                     {
                         NativeFSLock _;
-                        _creatingInstance._locks.TryRemove(Path.FullName, out _);
+                        _creatingInstance._locks.TryRemove(path.FullName, out _);
                     }
                     finally
                     {
-                        IOUtils.CloseWhileHandlingException(Channel);
-                        Channel = null;
+                        IOUtils.CloseWhileHandlingException(channel);
+                        channel = null;
                     }
 
                     bool tmpBool;
-                    if (File.Exists(Path.FullName))
+                    if (File.Exists(path.FullName))
                     {
-                        File.Delete(Path.FullName);
+                        File.Delete(path.FullName);
                         tmpBool = true;
                     }
-                    else if (System.IO.Directory.Exists(Path.FullName))
+                    else if (System.IO.Directory.Exists(path.FullName))
                     {
-                        System.IO.Directory.Delete(Path.FullName);
+                        System.IO.Directory.Delete(path.FullName);
                         tmpBool = true;
                     }
                     else
@@ -237,7 +237,7 @@ namespace Lucene.Net.Store
                     }
                     if (!tmpBool)
                     {
-                        throw new LockReleaseFailedException("failed to delete " + Path);
+                        throw new LockReleaseFailedException("failed to delete " + path);
                     }
                 }
             }
@@ -252,17 +252,17 @@ namespace Lucene.Net.Store
                     // The test for is isLocked is not directly possible with native file locks:
 
                     // First a shortcut, if a lock reference in this instance is available
-                    if (Channel != null)
+                    if (channel != null)
                     {
                         return true;
                     }
 
                     // Look if lock file is present; if not, there can definitely be no lock!
                     bool tmpBool;
-                    if (System.IO.File.Exists(Path.FullName))
+                    if (System.IO.File.Exists(path.FullName))
                         tmpBool = true;
                     else
-                        tmpBool = System.IO.Directory.Exists(Path.FullName);
+                        tmpBool = System.IO.Directory.Exists(path.FullName);
                     if (!tmpBool)
                         return false;
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "NativeFSLock@" + Path;
+            return "NativeFSLock@" + path;
         }
     }
 }
