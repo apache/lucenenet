@@ -567,7 +567,7 @@ namespace Lucene.Net.Util
                 Debug.Assert(off >= 0 && off + len <= bytes.Length);
                 Debug.Assert(len >= 0);
                 Os.WriteShort((short)len);
-                Os.Write(bytes, off, len);
+                Os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
             }
 
             /// <summary>

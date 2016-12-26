@@ -245,15 +245,8 @@ namespace Lucene.Net.Store
             WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
         }
 
-        // LUCENENET: This helper method is here because OfflineSorter
-        // uses java.io.DataOutput in Lucene, but Lucene.Net uses this class
-        internal void Write(byte[] b, int off, int len) // LUCENENET TODO: Remove this method and make OfflineSorter use WriteBytes
-        {
-            WriteBytes(b, off, len);
-        }
-
         private const int COPY_BUFFER_SIZE = 16384;
-        private byte[] CopyBuffer;
+        private byte[] copyBuffer;
 
         /// <summary>
         /// Copy numBytes bytes from input to ourself. </summary>
@@ -261,9 +254,9 @@ namespace Lucene.Net.Store
         {
             Debug.Assert(numBytes >= 0, "numBytes=" + numBytes);
             long left = numBytes;
-            if (CopyBuffer == null)
+            if (copyBuffer == null)
             {
-                CopyBuffer = new byte[COPY_BUFFER_SIZE];
+                copyBuffer = new byte[COPY_BUFFER_SIZE];
             }
             while (left > 0)
             {
@@ -276,8 +269,8 @@ namespace Lucene.Net.Store
                 {
                     toCopy = (int)left;
                 }
-                input.ReadBytes(CopyBuffer, 0, toCopy);
-                WriteBytes(CopyBuffer, 0, toCopy);
+                input.ReadBytes(copyBuffer, 0, toCopy);
+                WriteBytes(copyBuffer, 0, toCopy);
                 left -= toCopy;
             }
         }
