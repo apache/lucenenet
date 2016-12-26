@@ -27,8 +27,8 @@ namespace Lucene.Net.Store
     public class BufferedChecksum : IChecksum
     {
         private readonly IChecksum @in;
-        private readonly byte[] Buffer;
-        private int Upto;
+        private readonly byte[] buffer;
+        private int upto;
 
         /// <summary>
         /// Default buffer size: 256 </summary>
@@ -46,16 +46,16 @@ namespace Lucene.Net.Store
         public BufferedChecksum(IChecksum @in, int bufferSize)
         {
             this.@in = @in;
-            this.Buffer = new byte[bufferSize];
+            this.buffer = new byte[bufferSize];
         }
 
         public virtual void Update(int b)
         {
-            if (Upto == Buffer.Length)
+            if (upto == buffer.Length)
             {
                 Flush();
             }
-            Buffer[Upto++] = (byte)b;
+            buffer[upto++] = (byte)b;
         }
 
         public virtual void Update(byte[] b)
@@ -65,19 +65,19 @@ namespace Lucene.Net.Store
 
         public virtual void Update(byte[] b, int off, int len)
         {
-            if (len >= Buffer.Length)
+            if (len >= buffer.Length)
             {
                 Flush();
                 @in.Update((byte[])(Array)b, off, len);
             }
             else
             {
-                if (Upto + len > Buffer.Length)
+                if (upto + len > buffer.Length)
                 {
                     Flush();
                 }
-                System.Buffer.BlockCopy(b, off, Buffer, Upto, len);
-                Upto += len;
+                System.Buffer.BlockCopy(b, off, buffer, upto, len);
+                upto += len;
             }
         }
 
@@ -92,17 +92,17 @@ namespace Lucene.Net.Store
 
         public void Reset()
         {
-            Upto = 0;
+            upto = 0;
             @in.Reset();
         }
 
         private void Flush()
         {
-            if (Upto > 0)
+            if (upto > 0)
             {
-                @in.Update((byte[])(Array)Buffer, 0, Upto); // LUCENENET TODO: remove cast
+                @in.Update((byte[])(Array)buffer, 0, upto); // LUCENENET TODO: remove cast
             }
-            Upto = 0;
+            upto = 0;
         }
     }
 }
