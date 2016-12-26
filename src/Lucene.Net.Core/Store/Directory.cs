@@ -41,8 +41,6 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class Directory : IDisposable // LUCENENET TODO: Subclass System.IO.FileSystemInfo ?
     {
-        protected volatile bool isOpen = true; // LUCENENET TODO: Make private for CLS and wrap with property for protected access (and move to classes where this is used)
-
         /// <summary>
         /// Returns an array of strings, one for each file in the directory.
         /// </summary>
@@ -271,10 +269,8 @@ namespace Lucene.Net.Store
         }
 
         /// <exception cref="AlreadyClosedException"> if this Directory is closed </exception>
-        protected internal virtual void EnsureOpen() // LUCENENET TODO: This was abstract in Lucene
+        protected internal virtual void EnsureOpen()
         {
-            if (!isOpen)
-                throw new AlreadyClosedException("this Directory is closed");
         }
 
         /// <summary>
@@ -382,7 +378,5 @@ namespace Lucene.Net.Store
                 return Length_Renamed;
             }
         }
-
-        public virtual bool IsOpen { get { return isOpen; }} // LUCENENET TODO: This wasn't here in the original (move where appropriate)
     }
 }

@@ -25,8 +25,16 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
-        // LUCENENET NOTE: isOpen moved to Directory class,
-        // but since it is volatile, we need to access it through a property
+        private volatile bool isOpen = true;
+
+        // LUCENENET specific - since we can't make a CLS-compliant 
+        // protected volatile field, we are exposing it through a protected
+        // property.
+        protected internal virtual bool IsOpen
+        {
+            get { return isOpen; }
+            set { isOpen = value; }
+        }
 
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
