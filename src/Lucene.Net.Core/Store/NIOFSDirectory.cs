@@ -91,36 +91,36 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly IOContext Context;
-            private readonly FileInfo Path;
-            private readonly FileStream Descriptor;
+            private readonly IOContext context;
+            private readonly FileInfo path;
+            private readonly FileStream descriptor;
 
             public IndexInputSlicerAnonymousInnerClassHelper(NIOFSDirectory outerInstance, IOContext context, FileInfo path, FileStream descriptor)
                 : base(outerInstance)
             {
-                this.Context = context;
-                this.Path = path;
-                this.Descriptor = descriptor;
+                this.context = context;
+                this.path = path;
+                this.descriptor = descriptor;
             }
 
             public override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    Descriptor.Dispose();
+                    descriptor.Dispose();
                 }
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + Path + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.GetBufferSize(Context));
+                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, BufferedIndexInput.GetBufferSize(context));
             }
 
             public override IndexInput OpenFullSlice()
             {
                 try
                 {
-                    return OpenSlice("full-slice", 0, Descriptor.Length);
+                    return OpenSlice("full-slice", 0, descriptor.Length);
                 }
                 catch (IOException ex)
                 {
@@ -141,63 +141,63 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// the file channel we will read from </summary>
-            protected readonly FileStream Channel;
+            protected readonly FileStream m_channel;
 
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
-            internal bool IsClone = false;
+            internal bool isClone = false;
 
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
-            protected readonly long Off;
+            protected readonly long m_off;
 
             /// <summary>
             /// end offset (start+length) </summary>
-            protected readonly long End;
+            protected readonly long m_end;
 
-            private ByteBuffer ByteBuf; // wraps the buffer for NIO
+            private ByteBuffer byteBuf; // wraps the buffer for NIO
 
             public NIOFSIndexInput(string resourceDesc, FileStream fc, IOContext context)
                 : base(resourceDesc, context)
             {
-                this.Channel = fc;
-                this.Off = 0L;
-                this.End = fc.Length;
+                this.m_channel = fc;
+                this.m_off = 0L;
+                this.m_end = fc.Length;
             }
 
             public NIOFSIndexInput(string resourceDesc, FileStream fc, long off, long length, int bufferSize)
                 : base(resourceDesc, bufferSize)
             {
-                this.Channel = fc;
-                this.Off = off;
-                this.End = off + length;
-                this.IsClone = true;
+                this.m_channel = fc;
+                this.m_off = off;
+                this.m_end = off + length;
+                this.isClone = true;
             }
 
             public override void Dispose()
             {
-                if (!IsClone)
+                if (!isClone)
                 {
-                    Channel.Dispose();
+                    m_channel.Dispose();
                 }
             }
 
             public override object Clone()
             {
                 NIOFSIndexInput clone = (NIOFSIndexInput)base.Clone();
-                clone.IsClone = true;
+                clone.isClone = true;
                 return clone;
             }
 
             public override sealed long Length
             {
-                get { return End - Off; }
+                get { return m_end - m_off; }
             }
 
             protected override void NewBuffer(byte[] newBuffer)
             {
                 base.NewBuffer(newBuffer);
-                ByteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer); // LUCENENET TODO: remove unnecessary cast
+                byteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer); // LUCENENET TODO: remove unnecessary cast
             }
 
             protected override void ReadInternal(byte[] b, int offset, int len)
@@ -208,10 +208,10 @@ namespace Lucene.Net.Store
                 if (b == m_buffer && 0 == offset)
                 {
                     // Use our own pre-wrapped byteBuf:
-                    Debug.Assert(ByteBuf != null);
-                    ByteBuf.Clear();
-                    ByteBuf.Limit = len;
-                    bb = ByteBuf;
+                    Debug.Assert(byteBuf != null);
+                    byteBuf.Clear();
+                    byteBuf.Limit = len;
+                    bb = byteBuf;
                 }
                 else
                 {
@@ -220,9 +220,9 @@ namespace Lucene.Net.Store
 
                 int readOffset = bb.Position;
                 int readLength = bb.Limit - readOffset;
-                long pos = FilePointer + Off;
+                long pos = FilePointer + m_off;
 
-                if (pos + len > End)
+                if (pos + len > m_end)
                 {
                     throw new EndOfStreamException("read past EOF: " + this);
                 }
@@ -241,10 +241,10 @@ namespace Lucene.Net.Store
                             limit = readOffset + readLength;
                         }
                         bb.Limit = limit;
-                        int i = Channel.Read(bb, pos);
+                        int i = m_channel.Read(bb, pos);
                         if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                         {
-                            throw new Exception("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + End);
+                            throw new Exception("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + m_end);
                         }
                         pos += i;
                         readOffset += i;
