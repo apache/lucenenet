@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public sealed class TrackingDirectoryWrapper : FilterDirectory
     {
-        private readonly ISet<string> CreatedFileNames = new ConcurrentHashSet<string>();
+        private readonly ISet<string> createdFileNames = new ConcurrentHashSet<string>();
 
         public TrackingDirectoryWrapper(Directory @in)
             : base(@in)
@@ -35,19 +35,19 @@ namespace Lucene.Net.Store
 
         public override void DeleteFile(string name)
         {
-            CreatedFileNames.Remove(name);
+            createdFileNames.Remove(name);
             m_input.DeleteFile(name);
         }
 
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
-            CreatedFileNames.Add(name);
+            createdFileNames.Add(name);
             return m_input.CreateOutput(name, context);
         }
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
-            CreatedFileNames.Add(dest);
+            createdFileNames.Add(dest);
             m_input.Copy(to, src, dest, context);
         }
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return CreatedFileNames;
+                return createdFileNames;
             }
         }
     }
