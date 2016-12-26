@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Directory for the lock files.
         /// </summary>
-        protected internal DirectoryInfo LockDir_Renamed = null; // LUCENENET TODO: Rename m_
+        protected internal DirectoryInfo m_lockDir = null;
 
         /// <summary>
         /// Set the lock directory. this method can be only called
@@ -41,21 +41,21 @@ namespace Lucene.Net.Store
         {
             set
             {
-                if (this.LockDir_Renamed != null)
+                if (this.m_lockDir != null)
                 {
                     throw new InvalidOperationException("You can set the lock directory for this factory only once.");
                 }
-                this.LockDir_Renamed = value;
+                this.m_lockDir = value;
             }
             get
             {
-                return LockDir_Renamed;
+                return m_lockDir;
             }
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + "@" + LockDir_Renamed;
+            return this.GetType().Name + "@" + m_lockDir;
         }
     }
 }

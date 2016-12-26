@@ -93,18 +93,18 @@ namespace Lucene.Net.Store
             {
                 lockName = m_lockPrefix + "-" + lockName;
             }
-            return new SimpleFSLock(LockDir_Renamed, lockName);
+            return new SimpleFSLock(m_lockDir, lockName);
         }
 
         public override void ClearLock(string lockName)
         {
-            if (LockDir_Renamed.Exists)
+            if (m_lockDir.Exists)
             {
                 if (m_lockPrefix != null)
                 {
                     lockName = m_lockPrefix + "-" + lockName;
                 }
-                FileInfo lockFile = new FileInfo(Path.Combine(LockDir_Renamed.FullName, lockName));
+                FileInfo lockFile = new FileInfo(Path.Combine(m_lockDir.FullName, lockName));
                 try
                 {
                     lockFile.Delete();

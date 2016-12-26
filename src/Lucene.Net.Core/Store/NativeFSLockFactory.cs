@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
                 lockName = m_lockPrefix + "-" + lockName;
             }
 
-            return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, LockDir_Renamed, s));
+            return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, m_lockDir, s));
         }
 
         public override void ClearLock(string lockName)
