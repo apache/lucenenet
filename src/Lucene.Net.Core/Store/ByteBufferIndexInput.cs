@@ -37,18 +37,18 @@ namespace Lucene.Net.Store
     {
         private ByteBuffer[] buffers;
 
-        private readonly long ChunkSizeMask;
-        private readonly int ChunkSizePower;
+        private readonly long chunkSizeMask;
+        private readonly int chunkSizePower;
 
-        private int Offset;
-        private long Length_Renamed;
-        private string SliceDescription;
+        private int offset;
+        private long length;
+        private string sliceDescription;
 
-        private int CurBufIndex;
+        private int curBufIndex;
 
-        private ByteBuffer CurBuf; // redundant for speed: buffers[curBufIndex]
-        private bool IsClone = false;
-        private readonly WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper> Clones;
+        private ByteBuffer curBuf; // redundant for speed: buffers[curBufIndex]
+        private bool isClone = false;
+        private readonly WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper> clones;
 
         private class BoolRefWrapper
         {
@@ -65,10 +65,10 @@ namespace Lucene.Net.Store
             : base(resourceDescription)
         {
             this.buffers = buffers;
-            this.Length_Renamed = length;
-            this.ChunkSizePower = chunkSizePower;
-            this.ChunkSizeMask = (1L << chunkSizePower) - 1L;
-            this.Clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper>.NewConcurrentHashMap() : null;
+            this.length = length;
+            this.chunkSizePower = chunkSizePower;
+            this.chunkSizeMask = (1L << chunkSizePower) - 1L;
+            this.clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper>.NewConcurrentHashMap() : null;
 
             Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
             //assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue; // LUCENENET TODO: why isn't this in place?
@@ -89,21 +89,21 @@ namespace Lucene.Net.Store
         {
             try
             {
-                return CurBuf.Get();
+                return curBuf.Get();
             }
             catch (BufferUnderflowException)
             {
                 do
                 {
-                    CurBufIndex++;
-                    if (CurBufIndex >= buffers.Length)
+                    curBufIndex++;
+                    if (curBufIndex >= buffers.Length)
                     {
                         throw new System.IO.EndOfStreamException("read past EOF: " + this);
                     }
-                    CurBuf = buffers[CurBufIndex];
-                    CurBuf.Position = 0;
-                } while (!CurBuf.HasRemaining);
-                return CurBuf.Get();
+                    curBuf = buffers[curBufIndex];
+                    curBuf.Position = 0;
+                } while (!curBuf.HasRemaining);
+                return curBuf.Get();
             }
             catch (System.NullReferenceException)
             {
@@ -115,26 +115,26 @@ namespace Lucene.Net.Store
         {
             try
             {
-                CurBuf.Get(b, offset, len);
+                curBuf.Get(b, offset, len);
             }
             catch (BufferUnderflowException)
             {
-                int curAvail = CurBuf.Remaining;
+                int curAvail = curBuf.Remaining;
                 while (len > curAvail)
                 {
-                    CurBuf.Get(b, offset, curAvail);
+                    curBuf.Get(b, offset, curAvail);
                     len -= curAvail;
                     offset += curAvail;
-                    CurBufIndex++;
-                    if (CurBufIndex >= buffers.Length)
+                    curBufIndex++;
+                    if (curBufIndex >= buffers.Length)
                     {
                         throw new System.IO.EndOfStreamException("read past EOF: " + this);
                     }
-                    CurBuf = buffers[CurBufIndex];
-                    CurBuf.Position = 0;
-                    curAvail = CurBuf.Remaining;
+                    curBuf = buffers[curBufIndex];
+                    curBuf.Position = 0;
+                    curAvail = curBuf.Remaining;
                 }
-                CurBuf.Get(b, offset, len);
+                curBuf.Get(b, offset, len);
             }
             catch (System.NullReferenceException)
             {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Store
         {
             try
             {
-                return CurBuf.GetShort();
+                return curBuf.GetShort();
             }
             catch (BufferUnderflowException)
             {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
         {
             try
             {
-                return CurBuf.GetInt();
+                return curBuf.GetInt();
             }
             catch (BufferUnderflowException)
             {
@@ -178,7 +178,7 @@ namespace Lucene.Net.Store
         {
             try
             {
-                return CurBuf.GetLong();
+                return curBuf.GetLong();
             }
             catch (BufferUnderflowException)
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Store
             {
                 try
                 {
-                    return (((long)CurBufIndex) << ChunkSizePower) + CurBuf.Position - Offset;
+                    return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
                 }
                 catch (System.NullReferenceException)
                 {
@@ -212,17 +212,17 @@ namespace Lucene.Net.Store
             {
                 throw new System.ArgumentException("Seeking to negative position: " + this);
             }
-            pos += Offset;
+            pos += offset;
             // we use >> here to preserve negative, so we will catch AIOOBE,
             // in case pos + offset overflows.
-            int bi = (int)(pos >> ChunkSizePower);
+            int bi = (int)(pos >> chunkSizePower);
             try
             {
                 ByteBuffer b = buffers[bi];
-                b.Position = ((int)(pos & ChunkSizeMask));
+                b.Position = ((int)(pos & chunkSizeMask));
                 // write values, on exception all is unchanged
-                this.CurBufIndex = bi;
-                this.CurBuf = b;
+                this.curBufIndex = bi;
+                this.curBuf = b;
             }
             catch (System.IndexOutOfRangeException)
             {
@@ -240,12 +240,12 @@ namespace Lucene.Net.Store
 
         public override sealed long Length()
         {
-            return Length_Renamed;
+            return length;
         }
 
         public override sealed object Clone()
         {
-            ByteBufferIndexInput clone = BuildSlice(0L, this.Length_Renamed);
+            ByteBufferIndexInput clone = BuildSlice(0L, this.length);
             try
             {
                 clone.Seek(FilePointer);
@@ -263,12 +263,12 @@ namespace Lucene.Net.Store
         /// </summary>
         public ByteBufferIndexInput Slice(string sliceDescription, long offset, long length)
         {
-            if (IsClone) // well we could, but this is stupid
+            if (isClone) // well we could, but this is stupid
             {
                 throw new InvalidOperationException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
             }
             ByteBufferIndexInput clone = BuildSlice(offset, length);
-            clone.SliceDescription = sliceDescription;
+            clone.sliceDescription = sliceDescription;
             try
             {
                 clone.Seek(0L);
@@ -287,26 +287,26 @@ namespace Lucene.Net.Store
             {
                 throw new AlreadyClosedException("Already closed: " + this);
             }
-            if (offset < 0 || length < 0 || offset + length > this.Length_Renamed)
+            if (offset < 0 || length < 0 || offset + length > this.length)
             {
-                throw new System.ArgumentException("slice() " + SliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.Length_Renamed + ": " + this);
+                throw new System.ArgumentException("slice() " + sliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.length + ": " + this);
             }
 
             // include our own offset into the final offset:
-            offset += this.Offset;
+            offset += this.offset;
 
             ByteBufferIndexInput clone = (ByteBufferIndexInput)base.Clone();
-            clone.IsClone = true;
+            clone.isClone = true;
             // we keep clone.clones, so it shares the same map with original and we have no additional cost on clones
-            Debug.Assert(clone.Clones == this.Clones);
+            Debug.Assert(clone.clones == this.clones);
             clone.buffers = BuildSlice(buffers, offset, length);
-            clone.Offset = (int)(offset & ChunkSizeMask);
-            clone.Length_Renamed = length;
+            clone.offset = (int)(offset & chunkSizeMask);
+            clone.length = length;
 
             // register the new clone in our clone list to clean it up on closing:
-            if (Clones != null)
+            if (clones != null)
             {
-                this.Clones.Put(clone, new BoolRefWrapper(true));
+                this.clones.Put(clone, new BoolRefWrapper(true));
             }
 
             return clone;
@@ -321,8 +321,8 @@ namespace Lucene.Net.Store
         {
             long sliceEnd = offset + length;
 
-            int startIndex = (int)((long)((ulong)offset >> ChunkSizePower));
-            int endIndex = (int)((long)((ulong)sliceEnd >> ChunkSizePower));
+            int startIndex = (int)((long)((ulong)offset >> chunkSizePower));
+            int endIndex = (int)((long)((ulong)sliceEnd >> chunkSizePower));
 
             // we always allocate one more slice, the last one may be a 0 byte one
             ByteBuffer[] slices = new ByteBuffer[endIndex - startIndex + 1];
@@ -333,7 +333,7 @@ namespace Lucene.Net.Store
             }
 
             // set the last buffer's limit for the sliced view.
-            slices[slices.Length - 1].Limit = ((int)(sliceEnd & ChunkSizeMask));
+            slices[slices.Length - 1].Limit = ((int)(sliceEnd & chunkSizeMask));
 
             return slices;
         }
@@ -341,8 +341,8 @@ namespace Lucene.Net.Store
         private void UnsetBuffers()
         {
             buffers = null;
-            CurBuf = null;
-            CurBufIndex = 0;
+            curBuf = null;
+            curBufIndex = 0;
         }
 
         public override void Dispose()
@@ -357,24 +357,24 @@ namespace Lucene.Net.Store
                 // make local copy, then un-set early
                 ByteBuffer[] bufs = buffers;
                 UnsetBuffers();
-                if (Clones != null)
+                if (clones != null)
                 {
-                    Clones.Remove(this);
+                    clones.Remove(this);
                 }
 
-                if (IsClone)
+                if (isClone)
                 {
                     return;
                 }
 
                 // for extra safety unset also all clones' buffers:
-                if (Clones != null)
+                if (clones != null)
                 {
-                    foreach (ByteBufferIndexInput clone in Clones.Keys)
+                    foreach (ByteBufferIndexInput clone in clones.Keys)
                     {
                         clone.UnsetBuffers();
                     }
-                    this.Clones.Clear();
+                    this.clones.Clear();
                 }
 
                 foreach (ByteBuffer b in bufs)
@@ -395,9 +395,9 @@ namespace Lucene.Net.Store
 
         public override sealed string ToString()
         {
-            if (SliceDescription != null)
+            if (sliceDescription != null)
             {
-                return base.ToString() + " [slice=" + SliceDescription + "]";
+                return base.ToString() + " [slice=" + sliceDescription + "]";
             }
             else
             {
